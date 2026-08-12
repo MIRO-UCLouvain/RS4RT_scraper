@@ -1,0 +1,96 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: badawytpu-ux/summer-practice-geant4
+url: https://github.com/badawytpu-ux/summer-practice-geant4
+platform: github
+description: 'Geant4 simulations for summer practice: proton Bragg peak and Pb-Al PET converter'
+license: null
+language: C++
+keywords: []
+stars: 0
+updated_at: '2026-08-02T16:36:16Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 particle-therapy term(s).
+readme_excerpt: '# Summer Practice — Geant4 (2026)
+
+
+  Monte Carlo simulations written during the summer practice at JINR (Dubna) using **Geant4**.
+
+  Two studies: the proton **Bragg peak** in a water phantom, and optimization of a two-layer
+
+  **Pb–Al converter** for a gas PET detector (511 keV gammas).
+
+
+  Author: Гад Таха Махмуд Бадави, group 0А31, Инженерная школа ядерных технологий, ТПУ.
+
+
+  ## Projects
+
+
+  ### Cube / Cube2 — proton Bragg peak
+
+  Water phantom 350×350×350 mm³, protons of 230 MeV (and 60–220 MeV).
+
+  - `watercube.cc` — main program (`int main()`).
+
+  - `DetectorConstruction.*` — phantom geometry (`G4_WATER`).
+
+  - `PrimaryGeneratorAction.*` — 230 MeV proton source.
+
+  - `PhysicsList`, `TrackerSD`, `TrackerHit` — physics and scoring.
+
+
+  Cube2 additionally contains the analysis programs (pure C++/ROOT):
+
+  - `task2_fit_all_energies_quadratic.cpp` — piecewise-quadratic approximation of the Bragg curves.
+
+  - `task3_parameterization.cpp` — energy parameterization R(E), Dmax(E) for arbitrary energy.
+
+
+  ### PETConverter_clean — Pb–Al converter
+
+  Two-layer Pb + Al converter for 511 keV gammas; records electrons leaving the Al layer.
+
+  - `PETConverter.cc` — main program (`int main()`).
+
+  - `src/DetectorConstruction.cc` — Pb and Al layers, thicknesses, electron scoring layer.
+
+  - `src/PrimaryGammaGeneratorAction.cc` — 511 keV gamma source.
+
+  - `src/TrackerSD.cc` — logs exit coordinates, kinetic energy, exit angle, radial displacement.
+
+  - `src/ElectronExitRunAction.cc` — converter efficiency (N_e / N_gamma).
+
+  - `analysis/` — ROOT programs for the Al/Pb thickness scans and result plots.
+
+  - `macros/` — run and scan macros.
+
+
+  ## Build
+
+
+  ```bash
+
+  cd PETConverter_clean
+
+  mkdir build && cd build
+
+  cmake ..
+
+  make
+
+  ./PETConverter run.mac
+
+  ```
+
+
+  The Cube/Cube2 phantom projects build the same way (Geant4 + CMake). The `task*.cpp`
+
+  analysis programs are standalone: `g++ task2_fit_all_energies_quadratic.cpp -o task2`.
+
+  '
