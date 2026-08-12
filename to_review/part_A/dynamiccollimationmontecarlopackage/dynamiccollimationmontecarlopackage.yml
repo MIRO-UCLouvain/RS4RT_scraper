@@ -1,0 +1,61 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: npnelson3/DynamicCollimationMonteCarloPackage
+url: https://github.com/npnelson3/DynamicCollimationMonteCarloPackage
+platform: github
+description: This is a TOPAS-based Monte Carlo package to help enable the simulation of pencil beam scanning
+  proton therapy beamlines and collimation devices.
+license: GPL-3.0
+language: C++
+keywords:
+- topasmc
+stars: 8
+updated_at: '2026-01-08T03:27:00Z'
+image_source: null
+heuristic_total_score: 19
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 3 particle-therapy term(s).
+- Matched 1 AI/ML term(s) in metadata/content.
+readme_excerpt: "# Dynamic Collimation Monte Carlo package\nBy Nick Nelson <npnelson3@gmail.com>\n\nPlease\
+  \ see https://doi.org/10.1002/mp.14846 for more information regarding the development of this package.\n\
+  \nTo cite this package, please cite through Zenodo: https://doi.org/10.5281/zenodo.4088273\n\n# Features\n\
+  The Dynamic Collimation Monte Carlo (DCMC) was developed to help facilitate the simulation of pencil\
+  \ beam scanning proton beams and collimation devices. The DCMC package utilized the the TOPAS Monte\
+  \ Carlo platform and consists of a generalized PBS source model and collimator component extensions.\
+  \ This guide assumes that users are fimiliar with the TOPAS Monte Carlo platform. For more info on TOPAS,\
+  \ please see [topasmc.org](topasmc.org).\n\nThe source model is particle generator extension for TOPAS\
+  \ and was specifically written to model a pencil beam scanning proton therapy beamline. It constists\
+  \ of a divergent point source placed at a user-specified SAD that samples a spot size function and back\
+  \ projects the sampled points to the SAD to deduce the angular distribution of the source. For most\
+  \ beamlines, magnets will deflect the beam in X and Y at different locations. This source model includes\
+  \ magnet-specific deflections given distances to the X and Y magnets from isocenter. If the magnet deflections\
+  \ are not invoked in the TOPAS parameter file, the divergent point source will rotate to produce the\
+  \ user-specified deflections.\n\nThe two collimation components included in the package are trimmers\
+  \ and apertures. The trimmers are modeled after the Dynamic Collimation System and linearly translate\
+  \ while rotating about the magnet planes to match the divergence of the scanned beam. The aperture is\
+  \ a Boolean geometry component with a user-specified cutout size and the native TOPAS commands can be\
+  \ used to alter the physical dimensions of the apertures.\n\n# Installation\nPlease see the TOPAS documentation\
+  \ for installing extensions. The .cc and .hh files must be placed in your TOPAS extension folder and\
+  \ cmake must be called to compile the new, extended TOPAS application. For example, if you have all\
+  \ of the extension files in a folder called DCMC, and that's within a folder that houses any other extensions\
+  \ you may have (topas_extensions), go to your topas directory and extecute the following:\n```\ncmake\
+  \ -DTOPAS_EXTENSIONS_DIR=../topas_extensions/DCMC\nmake -j8\n```\n\n# TOPAS Usage\nOnce you have compiled\
+  \ your extended version of TOPAS, the following describes how you would use these extensions in the\
+  \ TOPAS parameter file.\n## Source model (genericPBS)\nThis source was written to mimic a pencil beam\
+  \ scanning source for proton therapy. This source implements (optional) magnet-specific deflections\
+  \ downstream from a divergent point source. If the magnet-specific delfections are not wanted or required,\
+  \ the point source will rotate to provide the requested beam spot.\n\nBelow is a list of the arguments\
+  \ to genericPBS source requires:\n\n  - **MeanEnergy** = Average energy of Guassianly distributed energy\
+  \ spectrum.\n  - **EnergySigma** = Standard deviation of Gaussian energy spectrum.\n  - **Xpos** = Position\
+  \ in X of central axis of beam at isocenter.\n  - **Ypos** = Position in Y of central axis of beam at\
+  \ isocenter.\n  - **SAD** = Source to axis distance. Distance the sampled point source is placed from\
+  \ isocenter. This parameter is something that would be optimized one a beamline-specific basis. This\
+  \ parameter can be manipulated to alter the angular distribution of the point source.\n  - **XMagnetToIsoDistance**\
+  \ = Distance from isocenter to X bending magnet.\n  - **YMagnetToIsoDistance** = Distance from isocenter\
+  \ to Y bending magnet.\n  - **MagnetSpecificDeflections** = Boolean operator (True/False) on whether\
+  \ to invoke magnet-specific deflections. If true, deflections occur at magnet planes; if false, the\
+  \ point source rotates about the SAD to provide beam spot at (Xpos,Ypos).\n\n**IMPORTANT**: When calling\
+  \ this source in the TOPAS parameter file, the parameters d:So/MySource/BeamEnergy "

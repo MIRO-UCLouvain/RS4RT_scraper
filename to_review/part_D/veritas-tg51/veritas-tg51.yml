@@ -1,0 +1,164 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hwsalmon/veritas-tg51
+url: https://github.com/hwsalmon/veritas-tg51
+platform: github
+description: AAPM TG-51 absolute dosimetry calibration application for medical linear accelerators
+license: MIT
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-03-09T00:03:42Z'
+image_source: null
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 6 support term(s).
+- Matched 1 AI/ML term(s) in metadata/content.
+readme_excerpt: '# Veritas TG-51
+
+
+  **A desktop application for AAPM TG-51 absolute dosimetry calibrations on medical linear accelerators.**
+
+
+  ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
+
+  ![PySide6](https://img.shields.io/badge/UI-PySide6%20(Qt6)-green)
+
+  ![License](https://img.shields.io/badge/license-MIT-lightgrey)
+
+
+  ---
+
+
+  ## ⚠️ Important Notice — Authorised Use Only
+
+
+  > **This software is intended exclusively for use by qualified Medical Physicists and authorised radiation
+  therapy personnel.**
+
+  >
+
+  > Veritas TG-51 performs calculations that directly inform the calibration of ionising radiation treatment
+  machines. Incorrect use, data entry errors, or misinterpretation of results could lead to patient harm.
+
+  >
+
+  > - All calibration measurements must be performed by or under the direct supervision of a qualified
+  Medical Physicist.
+
+  > - Results must be independently verified before clinical use.
+
+  > - This software does not replace professional judgement or institutional QA procedures.
+
+  > - The authors accept no liability for clinical decisions made using this application.
+
+  >
+
+  > **By using this software you confirm that you are a qualified Medical Physicist or are operating under
+  the direct supervision of one.**
+
+
+  ---
+
+
+  ## Overview
+
+
+  Veritas TG-51 is a Python desktop application that replaces the traditional Excel-based TG-51 calibration
+  workflow. It implements the full AAPM TG-51 dosimetry protocol for both photon and electron beams, including
+  the 2022 (Report 374) and 2024 (Report 385 — WGTG51-e) addenda.
+
+
+  It is designed around the clinical workflow at a radiation therapy department, supporting multiple treatment
+  machines, energies, and instrumentation sets with a complete audit trail and professional PDF reporting.
+
+
+  ---
+
+
+  ## Protocol References
+
+
+  | Document | Coverage |
+
+  |---|---|
+
+  | Almond et al. *Med. Phys.* 1999;26(9):1847–1870 | Primary TG-51 protocol — photon & electron formalism
+  |
+
+  | McEwen et al. *Med. Phys.* 2014;41:041501 | TG-51 Addendum — beam quality for FFF beams |
+
+  | Muir et al. *Med. Phys.* 2022;49(9):6739–6764 | WGTG51 Report 374 — practical guidance, FFF, P_rp
+  |
+
+  | Muir et al. *Med. Phys.* 2024;51:5840–5857 | WGTG51 Report 385 — updated electron k_Q formalism |
+
+
+  ---
+
+
+  ## Features
+
+
+  ### Physics Engine
+
+
+  **Photon beams (TG-51 + 2014 Addendum + Report 374)**
+
+  - Beam quality determination: `%dd(10)_x` with open beam, lead foil (50 cm or 30 cm geometry), or interim
+  equation
+
+  - FFF beam support: lead foil mandatory; `P_rp` correction applied
+
+  - `k_Q` from TG-51 Table I via linear interpolation in `%dd(10)_x`
+
+  - Full correction chain: `M = M_raw × P_ion × P_TP × P_elec × P_pol × P_rp × P_leak`
+
+  - `P_TP` temperature-pressure correction (Eq. 10)
+
+  - `P_pol` polarity correction (Eq. 9) — sign-convention correct for negative-bias operation
+
+  - `P_ion` two-voltage technique (Eq. 12) for pulsed/pulsed-swept beams
+
+  - Absorbed dose at 10 cm and at d_max (via clinical PDD/TMR)
+
+
+  **Electron beams (2024 WGTG51-e Addendum — Report 385)**
+
+  - Updated `k_Q = k''_Q × k_Qecal` formalism — no measured gradient correction required
+
+  - Beam quality from `R_50` (via `I_50` with EPOM correction for PDI scanning only)
+
+  - `d_ref = 0.6 × R_50 − 0.1 cm`
+
+  - Cylindrical chamber positioned with central axis at `d_ref` (no EPOM shift for reference dosimetry)
+
+  - `k_Qecal` and `k''_Q` power-law fit (Table 4/5, Report 385) for Exradin A12 and other cylindrical
+  chambers
+
+  - Absorbed dose at `d_ref` and at `d_max` (via clinical PDD)
+
+
+  ### Instrumentation Support
+
+  - **Ion chambers**: Farmer-type cylindrical chambers (e.g. Standard Imaging Exradin A12)
+
+  - **Electrometers**: any electrometer with known `P_elec` factor
+
+  - Calibration date tracking with automatic `>2 year` overdue warning
+
+
+  ### Equipment Management
+
+  - Multi-institution, multi-machine database
+
+  - Institutions → Treatment Machines → Beam Energies hierarchy
+
+  - Ion chambers and electrometers are institution-independent — a single piece of equipment can be used
+  across multiple sites without re-entry
+
+  - Beam-level default values: `%dd shift`, clinical `%dd`'

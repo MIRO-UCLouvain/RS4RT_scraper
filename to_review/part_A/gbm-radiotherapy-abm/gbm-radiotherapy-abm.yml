@@ -1,0 +1,60 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: NafisaMaliat/GBM_Radiotherapy_ABM
+url: https://github.com/NafisaMaliat/GBM_Radiotherapy_ABM
+platform: github
+description: ''
+license: NOASSERTION
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-05-05T06:50:22Z'
+image_source: null
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+- Matched 2 support term(s).
+- Matched 2 AI/ML term(s) in metadata/content.
+readme_excerpt: "# GBM_Radiotherapy_ABM\n\n**Agent-Based Modelling of Heterogeneous Glioblastoma Radiotherapy\
+  \ Response — Extending a HAL-Based Simulation with Clonal Heterogeneity and Spatially Fractionated Radiation**\n\
+  \nThis repository is the official implementation for **Nafisa Maliat's BSc Computer Science Final Year\
+  \ Dissertation** at the University of Roehampton (2025–2026).\n\n---\n\n## What is this project?\n\n\
+  Glioblastoma multiforme (GBM) is the most aggressive primary brain tumour in adults, with a median survival\
+  \ of approximately 15 months despite maximal treatment. A core reason for this poor outcome is **intratumour\
+  \ heterogeneity**: GBM contains subpopulations of cells that differ in growth rate, radiation sensitivity,\
+  \ and immune evasion capacity, so a single radiotherapy strategy is unlikely to control all subpopulations\
+  \ at once.\n\nThis project is an **agent-based model (ABM)** that simulates how a heterogeneous GBM\
+  \ tumour responds to different radiotherapy strategies — Broad Beam (BB), Microbeam Radiation Therapy\
+  \ (MRT), and Minibeam Therapy (MB). Each tumour cell is an autonomous agent on a 2D lattice. Cells divide,\
+  \ die, are killed by lymphocytes, or are damaged by radiation according to biologically informed rules.\
+  \ Population-level behaviour — clonal selection, immune dynamics, treatment response — emerges from\
+  \ these local interactions.\n\nThe project extends a HAL-based GBM ABM originally written by **Tanaya\
+  \ Bowade (MSc, University of Roehampton, 2024)**. The inherited model treated the tumour as a single\
+  \ homogeneous population. This dissertation adds three tumour subclones with distinct phenotypes, a\
+  \ more biologically faithful Spatially Fractionated Radiation Therapy (SFRT) module, and a fully reproducible\
+  \ batch simulation pipeline.\n\n---\n\n## Research question\n\n> *How does explicit clonal heterogeneity\
+  \ affect simulated tumour response to spatially fractionated radiotherapy, and do SFRT approaches demonstrate\
+  \ differential advantages when the tumour contains resistant subpopulations?*\n\n---\n\n## What does\
+  \ it do?\n\nThe simulation runs a 100×100 2D lattice for 540 timesteps (each step represents ~1 biological\
+  \ day). At every step:\n\n1. **Tumour cells** decide their fate (radiation death, immune death, division,\
+  \ or quiescence) by drawing a single random number against cumulative probability thresholds derived\
+  \ from the Linear-Quadratic radiobiology model and the local immune response.\n2. **Triggering cells**\
+  \ (antigen-presenting cells, APCs) are activated by radiation-damaged tumour debris and recruit lymphocytes.\n\
+  3. **Lymphocytes** infiltrate the tumour at a baseline rate plus a radiation-amplified rate, kill tumour\
+  \ cells they neighbour, and decay over time.\n4. **Radiation** is applied at timestep 200 (volume-matched\
+  \ to Romano et al.'s Day 12 in vivo treatment point) according to the chosen scenario:\n   - **Broad\
+  \ Beam:** uniform dose over the whole grid.\n   - **MRT/MB:** spatial peaks (small/large radius beam\
+  \ circles) with a low valley dose between them; lymphocytes in valley regions are spared.\n5. **Three\
+  \ tumour subclones** are tracked independently:\n   - **Clone 0 (Baseline):** standard parameters.\n\
+  \   - **Clone 1 (Proliferative):** higher division rate (1.1× growth multiplier).\n   - **Clone 2 (Invasive/Resistant):**\
+  \ more radiation-resistant (0.4× radiosensitivity) and more immune-evasive (0.3× immune kill).\n\nOutputs\
+  \ include per-timestep CSV files of cell counts (per population and per clone), MP4 videos of the simulation\
+  \ grid, and Python analysis notebooks that compute tumour growth slopes and compare them against the\
+  \ published in vivo data of Romano et al. (2021).\n\n---\n\n## How does it work? — Architecture\n\n\
+  The simulation is built on top of the **HAL (Hybrid Automata Library)** framework. Cells are agents\
+  \ on a 2D grid; the grid manages stepping and visualisation; analysis is performed in Python notebooks\
+  \ against the CSV outputs.\n\n```\n                       ┌────────────────────┐\n                 \
+  \      │  BatchRunner.java  │  ← drives 14 scenarios × "

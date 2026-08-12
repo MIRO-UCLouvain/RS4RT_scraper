@@ -1,0 +1,44 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: jjgomezcadenas/PTCryspMC.jl
+url: https://github.com/jjgomezcadenas/PTCryspMC.jl
+platform: github
+description: Proton Therapy CRYSP simulations MC (in Julia)
+license: null
+language: Julia
+keywords: []
+stars: 0
+updated_at: '2026-07-30T23:36:26Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+readme_excerpt: "# PTCryspMC.jl\n\nProton-therapy CRYSP simulations: a fast, photon-only Monte Carlo of\
+  \ a PET scanner's response\n(in Julia).\n\nThe code produces, for a given scanner, the list of coincidences\
+  \ (lines of response) it would\nrecord from positron annihilations, with each line tagged **true**,\
+  \ **scatter**, or **random**.\nThat list is the input to a separate range-precision analysis.\n\n##\
+  \ Two modes\n\nA shared physics engine (geometry, photon transport, detector response) is driven in\
+  \ two modes,\nselected by `[source].mode` in the run config:\n\n- **Clinical** (`mode = \"clinic\"`)\
+  \ — a radiotracer distribution at a known activity: one or more\n  regions (a named geometry volume,\
+  \ or an inline shape), each with a concentration or a total\n  activity; an isotope (F-18 default) and\
+  \ an acquisition window derive the number of annihilations\n  from the decay curve. Structured phantoms\
+  \ (e.g. NEMA-IQ) need no geometry change. **Built and\n  validated** — the currently-running mode; the\
+  \ count-driven uniform phantom survives as its\n  special case. Detectors so far: pure CsI and cryogenic\
+  \ BGO.\n- **Proton Activity** (`mode = \"api\"`) — the positron activity a proton dose leaves behind\
+  \ (β⁺\n  emitters from nuclear fragmentation), read from a frozen `ptcryspg4` scenario with its per-isotope\n\
+  \  decay budgets. **Built and validated.** Runs export to the `PtCryspProds/` products tree\n  (`scripts/run/publish_prod.jl`)\
+  \ for the downstream reconstruction / range-precision repo.\n\n## Running\n\n- **Production chain**\
+  \ — per *named* config (it never runs unnamed):\n  `scripts/run/run_prod.sh <config> [config ...]` →\
+  \ `prod/<tag>/`. The chain is\n  `simulate_source_mt.jl` → `singles.h5` → `build_true_coincidences_from_singles.jl`\
+  \ +\n  `build_randoms_from_singles.jl` → `reco_lors.jl` → `lors_det.h5` (the list-mode deliverable),\n\
+  \  plus a control-plot PNG.\n- **Dev chain** (full interaction stacks, CSV): `scripts/run/run_matrix.sh`\
+  \ → `output/<tag>/`.\n- **Tests**: `julia --project=. -e 'using Pkg; Pkg.test()'`.\n\n## Documentation\n\
+  \n- `docs/PTCryspMC_phys.tex` — the engine: photon physics, geometry, transport, detector response.\n\
+  - `docs/PTCryspMC_app.tex` — the application: the Clinical and Proton Activity (API) modes.\n- `docs/SCHEMA.md`\
+  \ — the output-file schema (generated from the code; a test keeps it in sync).\n- `CLAUDE.md` — orientation,\
+  \ decisions, and code layout. `dev/status.md` — current status and the\n  deferred-work register.\n\n\
+  Build the manual PDFs with `python3 py/build_latex.py` (compiles `docs/*.tex` and clears the LaTeX\n\
+  aux clutter; figures are regenerated from `py/fig_*.py` with `--figures`).\n"

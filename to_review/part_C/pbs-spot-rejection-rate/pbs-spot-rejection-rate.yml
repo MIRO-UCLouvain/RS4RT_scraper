@@ -1,0 +1,54 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: SIVERT-pCT/pbs-spot-rejection-rate
+url: https://github.com/SIVERT-pCT/pbs-spot-rejection-rate
+platform: github
+description: Implementation of "Uncertainty-aware spot rejection rate as quality metric for proton therapy"
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2023-08-09T13:36:36Z'
+image_source: null
+heuristic_total_score: 27
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+- Matched 1 support term(s).
+- Matched 4 AI/ML term(s) in metadata/content.
+readme_excerpt: "# Uncertainty-aware spot rejection rate as quality metric for proton therapy\n\nAlexander\
+  \ Schilling on behalf of the\n[Bergen pCT collaboration](https://www.uib.no/en/ift/142356/medical-physics-bergen-pct-project)\n\
+  and the [SIVERT research training group](https://sivert.info/)\n\nImplementation of the paper \"Uncertainty-aware\
+  \ spot rejection rate as quality metric for proton therapy.\"\n\n## Repository Structure\n\n`src` contains\
+  \ the Python source code. Executable scripts are at the top level and all modules are in sub-directories.\n\
+  \n`data` contains supplementary data and the directory is used as output of the scripts.\n\nEverything\
+  \ is implemented in Python with the required 3rd-party libraries listed in requirements.txt, which can\
+  \ be\ninstalled via pip:\n\n    $ pip install -r requirements.txt\n\n## Simulation Data\n\n36258 treatment\
+  \ spot simulations in an anthropomorphic head phantom (715-HN) (Giacometti et al. 2017)\nand 35673 simulations\
+  \ in a second anthropomorphic head phantom (VHF) (Ackermann et al. 1995)\nwith 1e7 primary protons each\
+  \ have been carried out.\nUsed spot/rotation/energy combinations were determined through probing simulations,\n\
+  the results of which can be found in `data/probing_results.csv` and `data/probing_results_vhf.csv`.\n\
+  The simulation data is publicly available:\n\n[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8192778.svg)](https://doi.org/10.5281/zenodo.8192778)\n\
+  \n## Feature Generation\n\n> Feature generation requires a MetaImage file of the head phantom you want\
+  \ to use\n> and a Singularity image of the simulation environment (for lateral shift simulation).\n\n\
+  The raw simulation data can be used to generate features for machine learning through the `generate_features.py`\
+  \ script:\n\n    $ cd src\n    $ python generate_features.py -o ../data/features.csv \"../data/sims/*/*.json\"\
+  \n\nBy default, this uses the 715-HN phantom at `data/imageDump.mhd`. `--phantom` and `--rsp-file` can\
+  \ be used to change\nthese defaults.\n\nBy specifying shift parameters (e.g., `-s 5`), the script generates\
+  \ features for cases with errors in the form of\nlateral shifts from 1 mm up to the given value in 1\
+  \ mm intervals.\n\nThe resulting feature sets (train, validation, test, and shifts) are publicly available:\n\
+  \n[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8192513.svg)](https://doi.org/10.5281/zenodo.8192513)\n\
+  \n## Range Verification\n\nTo run a full evaluation of the range verification method on the above features,\
+  \ run the `eval.py` script:\n\n    $ cd src\n    $ python eval.py -c config/example.json -w ../data/eval\
+  \ -d cuda:0\n\nThe parameters of the run are defined in the configuration file at `src/config/example.json`.\
+  \ This should be adjusted\nto point to the correct feature files. The rest of the parameters are set\
+  \ to reproduce the paper.\n\n## Timing\n\nTo measure the runtime of different parts of the implementation,\
+  \ use `timing.py`.\n\nThis requires a fully trained model in a given working directory and a number\
+  \ of input simulation metafiles.\n\n    $ cd src\n    $ python timing.py -c config/example.json -w ../data/eval\
+  \ -d cuda:0 ../data/sims/*/*.json\n\n## References\n\nAckerman M. J., Spitzer V. M., Scherzinger A.\
+  \ L., and Whitlock D. G., 1995.\nThe Visible Human data set: an image resource for anatomical visualization\n\
+  Medinfo 8 Pt 2, pp. 1195–1198.\n\nGiacometti, V., Guatelli, S., Bazalova-Carter, M., Rosenfeld, A. B.\
+  \ and Schulte, R. W., 2017.\nDevelopment of a high resolution voxelised head phantom for medical physics\
+  \ applications.\nPhysica Medica, 33, pp.182-188.\n"

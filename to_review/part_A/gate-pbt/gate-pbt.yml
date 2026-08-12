@@ -1,0 +1,58 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: UCLHp/gate-pbt
+url: https://github.com/UCLHp/gate-pbt
+platform: github
+description: Program for simulating proton therapy treatments using GATE/Geant4
+license: GPL-3.0
+language: Python
+keywords: []
+stars: 3
+updated_at: '2025-04-06T08:24:09Z'
+image_source: null
+heuristic_total_score: 24
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 5 particle-therapy term(s).
+- Matched 4 support term(s).
+readme_excerpt: "# gate-pbt\r\n![Current Version](https://img.shields.io/badge/version-0.1.0-green.svg)\r\
+  \n\r\nMonte Carlo simulations of proton therapy treatments using [Gate](https://gate.uca.fr/#/admin)/[GateTools](https://github.com/OpenGATE/GateTools)/[Geant4](https://geant4.web.cern.ch/).\r\
+  \n\r\n## Prerequisites\r\nPython dependencies are listed in requirements.txt.  \r\n\r\nTo run the simulations\
+  \ you'll need Gate and Geant4 installed. \r\nSee the Gate documentation [here](https://gate.uca.fr/documentation#/admin)\
+  \ for more info\r\nand examples. This work has been performed using \r\nthe virtual machines, version\
+  \ 8.1 and 8.2, available [here](https://gate.uca.fr/download/vgate#/admin). \r\nThese are Linux VMs\
+  \ that include a Geant4 install along with various other useful software.\r\nIf you wish to align with\
+  \ the Gate-RTion recommendations, a VM with Gate 8.1 and Geant4 10.3.3\r\nwill be available soon.  \r\
+  \n\r\nDevelopment and testing has so far been done using pencil beam scanning proton plans created in\
+  \ the Eclipse treatment planning system (versions 13.7, 15.5 and 16.1). If you run into issues using\
+  \ another TPS let me know.\r\n\r\nThe physics list and simulation parameters used in the simulation\
+  \ can be set in the mac \r\ntemplate file and will be aligned to the [Gate-RTion recommendations](https://aapm.onlinelibrary.wiley.com/doi/10.1002/mp.14481)\
+  \ as default. More information about the Gate-RTion collaboration can be found [here](https://gate.uca.fr/download/gate-rtion#/admin).\r\
+  \n\r\n\r\n## Usage\r\n\r\n### File preparation\r\nFirst export the relevant dicom files from the TPS\
+  \ to an empty folder.\r\nYou will need the plan file, the structure set, the _field_ dose files and\
+  \ all CT images.  \r\n\r\nIn the simulation directory, ```python run.py``` will prompt for the directory\
+  \ containing\r\nthe exported dicom files and generate a folder containing all files required for \r\n\
+  a Gate simulation (in data/simulationfiles).  \r\n\r\nThe script will automatically split the fields\
+  \ into separate simulations and generate a Slurm job \r\nsubmission script for each field. This process\
+  \ can be optimized depending on your cluster and how you\r\nwant to split the simulations. \r\n\r\n\r\
+  \n### Simulation\r\nOn our cluster, submitting the array of jobs corresponding to a field can be done\
+  \ via the command\r\n```sbatch path/to/script.sh``` from the control node.\r\n\r\n\r\n### Analysis\r\
+  \nThe simulations will generate, for each mac file submitted, mhd files for dose and dose-squared by\
+  \ default. Options for dose-to-water, LET and uncertainty can be set manually in the mac template file.\r\
+  \n\r\nA full analysis of the data generated can be performed from the analysis directory, ```python\
+  \ analysis.py```.\r\nIt will prompt for the directory containing the simulation output and:\r\n\r\n\
+  1. Separate the data for individual fields and merge all data present (dose, dose-squared, LET)\r\n\
+  2. Override the TransformMatrix to \"1 0 0 0 1 0 0 0 1\" in all of the merged mhd files. This is required\
+  \ since Gate preserves any patient rotations performed in the simulation in its output's TransformMatrix.\
+  \ In the file preparation stage we reorientated all images to this directionality so as to avoid some\
+  \ bugs in both Gate and GateTools\r\n3. Calculate the dose uncertainty following [Chetty2006](https://pubmed.ncbi.nlm.nih.gov/16798417/)\r\
+  \n4. Scale the simulation to absolute dose using the N/MU curve provided\r\n5. Convert Gate's dose-to-material\
+  \ to dose-to-water following [Paganetti2009](https://iopscience.iop.org/article/10.1088/0031-9155/54/14/004/pdf),\
+  \ using the HU-density and HU-RSP curves provided. Gate has the option of calculating dose-to-water\
+  \ on the fly but this slows down the simulations by a factor of about 3\r\n6. Convert each field's dicom\
+  \ dose into an mhd image and perform a 3D gamma analysis between this and the dose calculated in the\
+  \ simulation\r\n7. Convert the dose and gamma mhd images into dicom format for easy import and visualization\
+  \ in the treatment planning system\r\n\r\n\r\n## Limitations / known bugs\r\nLikely many - feel free\
+  \ to get in touch if you have any questions.\r\n\r"
