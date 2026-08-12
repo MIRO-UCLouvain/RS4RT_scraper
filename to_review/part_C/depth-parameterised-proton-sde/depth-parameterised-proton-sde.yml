@@ -1,0 +1,61 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ChrisDean15/Depth-Parameterised-Proton-SDE
+url: https://github.com/ChrisDean15/Depth-Parameterised-Proton-SDE
+platform: github
+description: Adaptation of the code found in https://github.com/JereKoskela/proton-beam-sde. The code
+  simulates the path of a proton in proton beam therapy using a time-changed SDE model.
+license: GPL-3.0
+language: C++
+keywords: []
+stars: 0
+updated_at: '2025-12-12T17:47:19Z'
+image_source: null
+heuristic_total_score: 22
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 6 particle-therapy term(s).
+- Matched 2 support term(s).
+- Matched 1 AI/ML term(s) in metadata/content.
+readme_excerpt: "# Depth-Parameterised-Proton-beam-SDE\nThis repository houses an adaptation of the simulator\
+  \ found [here](https://github.com/JereKoskela/proton-beam-sde). The cited code simulates an SDE to describe\
+  \ the path of a proton in proton beam therapy parameterised by the proton's track length. This adaptatation\
+  \ applies a time change to describe the path of the proton parameterised by the proton's depth, where\
+  \ the proton's depth is given by v0·x with v0 the initial direction of the proton and x its current\
+  \ position. It is under active development and **not fit for standalone use**.\n\nThe following information\
+  \ is taken from the [track length parameterisation](https://github.com/JereKoskela/proton-beam-sde),\
+  \ but we also state it here for ease of use.\n\n# Installation\n\nIn Unix-like environments, simply\
+  \ call `make` in the project root. You will need:\n\n- the g++ compiler (tested on version 13.2.0),\n\
+  - the [GNU Scientific Library](https://www.gnu.org/software/gsl/) (tested on version 2.7.1),\n- the\
+  \ [libconfig](https://hyperrealm.github.io/libconfig/) package (tested on version 1.5).\n\n# Usage\n\
+  \nSimulation and output parameters are specified in the config file `sim.cfg`. In particular, you can\n\
+  modify:\n- the number of protons to simulate,\n- the radius of the nozzle from which protons are emitted,\n\
+  - the Gaussian distribution of the initial position of the protons, conditioned to lie in the nozzle,\n\
+  - the Gaussian distribution of the initial energy of the protons,\n- the change points between materials,\n\
+  - the index of the material in each gap between change points, based on the ordering in Materials/materials.txt,\n\
+  - the simulator time-step,\n- the energy at which a proton is absorbed and its path ends,\n- the side\
+  \ length of output voxelation,\n- the path to which a sparse 3d grid of dose deposition is stored.\n\
+  \nAfter compilation, run the simulation by calling `./simulate sim.cfg` at the project root.\nYou can\
+  \ also replace the `sim.cfg` argument with the path to any other appropriate config file.\n**Warning**:\
+  \ The default number of protons in `sim.cfg` is set to one million, and voxel sizes and time\nsteps\
+  \ are also set to a moderate resolution. As a result, the simulation can take 1-2 minutes.\n\n# Post-processing\n\
+  \n## Python scripts\n\nDefault output paths are specified into the `Output` folder, which contains the\
+  \ Python scripts for output\nvisualisation. To use it you will need:\n\n- [Python 3](https://www.python.org/)\
+  \ (tested on version 3.12.3), as well as the following Python modules:\n- numpy (tested on version 1.26.4),\n\
+  - matplotlib (tested on version 3.10.0),\n- itk (tested on version 5.4.4),\n- pymedphys (tested on version\
+  \ 0.40.0),\n- scipy (tested on version 1.14.1)\n\nAll the necessary functions are written in `SDE_vs_G4.py`,\
+  \ whereas the execution scripts to produce the relevant figures \nis written in `SDE_vs_G4_executionScript.py`\
+  \ (if the Geant4 files are available) or `SDE_plots.py` (for exclusively\nplotting SDE output). The\
+  \ scripts include integrated and central-axis depth-dose 1D curves, 2D dose distributions, \nlateral\
+  \ profiles, gamma analysis plots, pass rate calculations and proton range calculations. Simply modify\
+  \ the variables \ndefined at the start of the script according to what you need to plot. More detailed\
+  \ information is found in the comments\nof each script.\n\n## Geant4 output generation\n\nGeant4 is\
+  \ used as reference to assess the accuracy of the SDE. The source code to generate the outputs that\
+  \ are used for \ncomparison are found in the `Geant4-dose-and-secondaries` folder, which has its own\
+  \ README file with a detailed explanation\nof the model and how to run the simulations.\n\n# Nuclear\
+  \ cross sections\n\nThe `Splines` folder contains splines fitted to nuclear cross section data for argon,\
+  \ calcium, carbon, fluorine, hydrogen, nitrogen and oxygen.\nWhen available, the `ENDF/B-VIII.1` nuclear\
+  \ library was used. Otherwise the `JEFF-4.0` library was used. This is sufficient for running simulations\n\
+  in mediums consisting of air, bone and water. The `Splines` folder al"

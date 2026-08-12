@@ -1,0 +1,62 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: adiii717/radsim-toolkit
+url: https://github.com/adiii717/radsim-toolkit
+platform: github
+description: 'FLUKA-inspired radiation physics toolkit in pure Python: Monte Carlo photon transport, detector
+  simulation, dosimetry, shielding design and medical physics'
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-13T11:08:31Z'
+image_source: https://raw.githubusercontent.com/adiii717/radsim-toolkit/HEAD/docs/images/detector_spectrum.png
+heuristic_total_score: 30
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 6 particle-therapy term(s).
+- Matched 5 support term(s).
+- Matched 1 AI/ML term(s) in metadata/content.
+readme_excerpt: "# radsim-toolkit\n\n> **What this is:** a working simulation of what [FLUKA](https://fluka.cern)\
+  \ does, written from scratch in Python to **validate the idea** — that the four things FLUKA is reached\
+  \ for (detection simulation, radiation dose calculation, shielding design, medical physics) can be reproduced\
+  \ from first principles in code you can actually read.\n>\n> It is **not** FLUKA, contains no FLUKA\
+  \ code, and is not a production substitute for it. It is a teaching and first-pass-design tool. For\
+  \ real work, use FLUKA, [Geant4](https://geant4.web.cern.ch), [OpenMC](https://openmc.org) or [TOPAS](https://topasmc.org).\
+  \ See [Scope and honest limitations](#scope-and-honest-limitations).\n>\n> The physics is not asserted,\
+  \ it is **checked**: 68 tests pin the output against NIST attenuation data, the Klein–Nishina cross\
+  \ section, the 478 keV Compton edge, the published Cs-137 gamma constant, the clinical 6 MV depth-of-max-dose\
+  \ and the Bragg–Kleeman proton range.\n\nA **FLUKA-inspired radiation physics toolkit in pure Python.**\
+  \ Monte Carlo photon transport, detector response simulation, dosimetry, shielding design and medical\
+  \ physics — with no Fortran, no `.inp` cards, and no CERN registration.\n\nFull-blown Monte Carlo codes\
+  \ like FLUKA, Geant4 and MCNP are the right tool for production work, but they are heavyweight and their\
+  \ physics is buried under a lot of machinery. `radsim` implements the same core ideas — Klein–Nishina\
+  \ Compton sampling, exponential attenuation, buildup factors, fluence-to-dose conversion — in a few\
+  \ hundred lines of readable Python you can actually step through in a debugger.\n\n## Quickstart\n\n\
+  ```bash\ngit clone https://github.com/adiii717/radsim-toolkit.git\ncd radsim-toolkit\n./install.sh\n\
+  ```\n\nThat one script installs system packages, builds a virtualenv, installs the dependencies, runs\
+  \ the 68-test physics suite and generates every figure below. Nothing else to do.\n\nThen activate the\
+  \ environment and run the demo:\n\n```bash\nsource .venv/bin/activate\nradsim demo\n```\n\n```\n  wrote\
+  \ output/attenuation.png\n  wrote output/transport.png\n  wrote output/detector_spectrum.png\n  wrote\
+  \ output/shielding.png\n  wrote output/medphys.png\n```\n\nTo prove the physics is right rather than\
+  \ merely running, `pytest -q` should report **68 passed** — every one of those tests checks the code\
+  \ against an independent published reference, not against itself.\n\n---\n\n## What it does\n\n| Module\
+  \ | Capability |\n|---|---|\n| `transport` | Monte Carlo photon transport through slabs — Compton scattering,\
+  \ absorption, backscatter, energy deposition |\n| `detector` | Scintillation detector pulse-height spectra\
+  \ with realistic energy resolution |\n| `dose` | Fluence-to-dose conversion, point-source dose rates,\
+  \ gamma-ray constants |\n| `shielding` | HVL/TVL, broad-beam transmission with buildup, shield sizing\
+  \ |\n| `medphys` | Photon depth-dose curves, proton Bragg peaks, linear-quadratic radiobiology |\n|\
+  \ `materials` | NIST XCOM attenuation data for water, air, aluminium, concrete, iron, lead, NaI |\n\n\
+  ---\n\n## Detection simulation\n\n`radsim detector -e 0.662 --plot` simulates a 3″ NaI(Tl) crystal and\
+  \ produces the spectrum a real MCA would show you. Nothing about the photopeak or the Compton edge is\
+  \ hard-coded — they *emerge* from tracking individual photons through the crystal.\n\n![NaI detector\
+  \ spectrum](docs/images/detector_spectrum.png)\n\nThe Compton edge lands at 478 keV, exactly where the\
+  \ kinematics say it must for a 662 keV photon backscattering off a free electron. Below it sits the\
+  \ Compton continuum (photons that scattered once and escaped); the peak at 662 keV is the full-energy\
+  \ deposition.\n\n```\n$ radsim detector -e 0.662 -x 7.62 -n 50000\n\ndetected (any deposit)   : 42,398\
+  \  (84.80% intrinsic efficiency)\nphotopeak efficiency     : 58.54%\npeak-to-total ratio      : 69.04%\n\
+  Compton edge             : 477.7 keV\nbackscatter peak         : 184.3 keV\n```\n\n## Radiation transport\
+  \ and energy deposition\n\n`radsim transport` follows photons one at a time: sample a free path from\
+  \ `exp(-μx)`, de"

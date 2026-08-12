@@ -1,0 +1,50 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: renatobellotti/Juliana.jl
+url: https://github.com/renatobellotti/Juliana.jl
+platform: github
+description: A Julia package for medical physics. The goal is to provide a flexible software package that
+  allows quick prototyping for algorithms in proton therapy. Currently just a mirror of the Zenodo repoitory.
+  https://zenodo.org/doi/10.5281/zenodo.10377184
+license: BSD-3-Clause
+language: Julia
+keywords: []
+stars: 5
+updated_at: '2025-05-28T09:59:37Z'
+image_source: https://raw.githubusercontent.com/renatobellotti/Juliana.jl/HEAD/juliana_logo.svg
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 4 particle-therapy term(s).
+readme_excerpt: "![](juliana_logo.svg)\n\nImplementation of a spot (and later probably beam angle) optimiser\
+  \ in Julia.\n\n## Installation\n\n1. Get access to the repo.\n2. Clone the repo:\n   ```bash\n   git\
+  \ clone git@gitlab.psi.ch:bellotti_r/differentiable-planning.git\n   ```\n3. Install Julia using [the\
+  \ official instructions](https://julialang.org/downloads/). You need to install version 1.8: ``juliaup\
+  \ add 1.8``.\n4. Open a Julia command line from within the JulianA repo by typing ``julia +1.8`` in\
+  \ a terminal. Then type the following and hit enter to setup a development version of the ``Juliana``\
+  \ package (i. e. local edits to the files will be visible when you import the package in a fresh session).\
+  \ The following command will download all dependencies and setup the package for local development.\
+  \ The bracket ``]`` command will switch to the package manager mode of the Julia REPL, which makes it\
+  \ easier to deal with packages and environments. \n   ```julia\n   ] dev .\n   ```\n5. Test your installation\
+  \ in a Julia REPL. The first import will precompile ``Juliana``, so please be a bit patient.\n   ```julia\n\
+  \   using Juliana\n   ```\n6. (Optional) Install a Jupyter kernel for Julia. Open a Julia REPL in the\
+  \ repo directory, then type the following:\n   ```julia\n   using Pkg\n   Pkg.add(\"IJulia\")\n   using\
+  \ IJulia\n   notebook()\n   ```\n   The ``notebook()`` command will start a local Jupyter server and\
+  \ open a browser so you can start editing. The first two lines are needed only once for the installation\
+  \ of Jupyter itself.\n\n\n## Building documentation\n```shell\njulia docs/make.jl\n```\n\n\n## TPS integration\n\
+  \nThis package is built such that it can support any TPS,\nin principle. To add a TPS, you have to create\
+  \ a type,\ne. g. ``TpsType``, that is a subtype to ``Juliana.AbstractTps``\nand implement the following\
+  \ methods for this type:\n\n```julia\nplace_spots(tps::TpsType,\n            ct::ScalarGrid,\n     \
+  \       target_structure::Structure,\n            preabsorber::String,\n            gantry_angles,\n\
+  \            couch_angles,\n            nozzle_extractions)\n\ncalculate_dose(tps::TpsType,\n      \
+  \         resolution::Real,\n               ct::ScalarGrid,\n               plan::TreatmentPlan)\n\n\
+  calculate_Dij_matrix(tps::TpsType,\n                     ct::ScalarGrid,\n                     plan::TreatmentPlan,\n\
+  \                     optimisation_points)\n```\n\nCurrently implemented TPS:\n\n- Fiona standalone<br\
+  \ />\n  Needs proprietary files.\n  A path to these files is given to the constructor.\n  Two paths\
+  \ are needed:\n  To a directory that contains all the machine parameters\n  and to the JAR file that\
+  \ contains the actual code of\n  Fiona standalone.\n\n\n## Test coverage\n\nYou can get an overview\
+  \ over test coverage by running the following command from within the project root directory:\n\n```bash\n\
+  julia --project -E 'using LocalCoverage; coverage = generate_coverage(\"Juliana\"; run_test = true)'\n\
+  ```\n"

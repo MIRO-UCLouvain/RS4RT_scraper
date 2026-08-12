@@ -1,0 +1,60 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: xuqifan897/EndtoEnd
+url: https://github.com/xuqifan897/EndtoEnd
+platform: github
+description: Continuous optimization of photon dose radiotherapy
+license: null
+language: MATLAB
+keywords: []
+stars: 1
+updated_at: '2024-01-04T20:49:34Z'
+image_source: null
+heuristic_total_score: 21
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+- Matched 9 support term(s).
+- Matched 1 AI/ML term(s) in metadata/content.
+readme_excerpt: "# EndtoEnd\nDirect beam angle optimization with simulated annealing based on GPU dose\
+  \ calculation\n\n## Background\n  X-ray radiation therapy aims to treat tumors or other lesions while\
+  \ sparing normal tissue. For this purpose, treatment planning is used to select the optimal beam orientations\
+  \ and the fluence map through optimization. Previous methods used linear and discrete model, in which\
+  \ the fluence map was subdivided into pixels or beamlets, and the dose was calculated as:\n  $$d_i =\
+  \ \\sum_jB_{i,j}w_j,$$\n  where $d_i$ denotes the dose value at the $i^{th}$ voxel, $B_{i,j}$ is the\
+  \ dose value of the $j^{th}$ beamlet at the $i^{th}$ voxel when the weight of the $j^{th}$ beamlet is\
+  \ unity, and $w_j$ the weight of the $j^{th}$ beamlet. Or in matrix form:\n  $$\\vec{d}=B\\vec{w}.$$\n\
+  \  To achieve this, the dose matrix $B$ had to be pre-calculated and stored. Beam selection was achieved\
+  \ by imposing a sparsity term with a tunable weight controlling the number of beams selected.  \n  However,\
+  \ due to the memory constraint and computation burden, the fluence map was subdivided with low granularity,\
+  \ and only a limited number of candidate beams were selected, which potentially resulted in suboptimal\
+  \ results.\n  \n  With the help of the massive parallelism of GPU, it is possible to compute the dose\
+  \ on the fly, without the need for pre-computing and storage. In this project, utilizing the linear\
+  \ relationship between the fluence map and the dose, the gradient to fluence map can be simpliy calculated\
+  \ using the chain rule, and the orientation parameters are updated using simulated annealing.\n\n##\
+  \ Methods overview\n  Following the [FCBB] methods, there are three steps to compute the dose from the\
+  \ fluence map for a single beam:\n  * Fluence map convolution\n  * Beam's eye view (BEV) dose calculation\n\
+  \  * Patient volume coordinate system (PVCS) dose calculation\n\n  Fluence map convolution addresses\
+  \ the dose spread caused by secondary particles. BEV dose calculation calculates the dose in BEV, and\
+  \ PVCS dose calculation transforms the dose in BEV to PVCS. All the three steps are linear operations,\
+  \ which makes gradient computation feasible. The loss function in our setting is $$ L=\\sum_ i w_ {0i}(d_\
+  \ i-t_ {0i})^{2} + \\sum_ {j=1}^{OARs}w_{ji}(d_ i-t_ {ji})_ {+}^{2} + \\eta||Dx_ k||_ {1} $$ where $i$\
+  \ is the index for voxels, $j$ is the index for anatomical structures ($j=0$ for PTV, $j\\geq1$ for\
+  \ OARs), $k$ is the index for beams, $w_ {ji}$ is the weight for the $i^{th}$ voxel of the $j^{th}$\
+  \ anatomical structure, $d_ i$ is the dose at the $i^{th}$ voxel, $t_ {ji}$ is the target dose for the\
+  \ $i^{th}$ voxel of the $j^{th}$ anatomical structure, $(\\sdot)_ +$ clamps the value to non-negative,\
+  \ $\\eta$ is the weight controlling smoothness, $D$ is the gradient operator in both axises of the fluence\
+  \ map, $||\\sdot||_ 1$ takes the 1-norm. The dose and fluence map is related by $d=\\sum_ {k=1}^{beams}A_\
+  \ kx_ k$.\n\n  Intuitively, the first term penalizes the dose deviation from the target, the second\
+  \ term penalizes the dose greater than the target, and the third term encourages smoothness of the fluence\
+  \ map. It should be noted that different anatomical structures may overlap, i.e., $w_{j_1i}>0,w_{j_2i}>0$\
+  \ with $j_1 \\neq j_2$. In fact, if we rearrange the order of summation in the second term, we can rewrite\
+  \ it as a sum of terms, each of which is a quadratic term w.r.t. $d_i$ for all $i$. In other words,\
+  \ we can coallese $w_j$ and $t_j$ for all $j>0$ into a single weight matrix $w$ and a target matrix\
+  \ $t$ in practice.\n\n## Quick start\n### Data preparation\n  To reproduce the results (to appear in\
+  \ our paper), please find the dataset through this [link](https://doi.org/10.5281/zenodo.7236751). This\
+  \ dataset contains the image data and anatomical annotation in dicom format. For each patient, there\
+  \ are two zip files. Take patient1 for example:\n  * patient1_E2E\\\n    ├── beam_angles_annealing.txt\
+  \ ...... *resulting beam angles of the annealing algorithm* \\\n    ├── beam_angles_E2E.txt ...... *result"

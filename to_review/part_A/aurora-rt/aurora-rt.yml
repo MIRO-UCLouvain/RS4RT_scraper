@@ -1,0 +1,60 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: mazenElzeiny/AURORA-RT
+url: https://github.com/mazenElzeiny/AURORA-RT
+platform: github
+description: '"Real-time Cherenkov-based adaptive radiotherapy with hypoxia-targeted dose modulation"'
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-11T16:35:16Z'
+image_source: null
+heuristic_total_score: 26
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 4 particle-therapy term(s).
+- Matched 4 support term(s).
+- Matched 3 AI/ML term(s) in metadata/content.
+readme_excerpt: "<div align=\"center\">\n\n# ☢️ AURORA-RT\n\n### **A**utonomous · **O**xy-Responsive ·\
+  \ **R**adiotherapy · **A**pproach — **R**eal-**T**ime\n\n> \U0001FA7A *Real-Time Oxygen-Guided Adaptive\
+  \ Radiation Therapy*\n\n**A Digital Twin simulation framework for Cherenkov-guided, hypoxia-mediated\
+  \ adaptive radiotherapy**\n\nIntegrating TOPAS Monte Carlo · NIRFAST optical diffusion · Virtual ICCD\
+  \ sensing · Deliverability-constrained dose optimization\n\n![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=for-the-badge&logo=python&logoColor=white)\n\
+  ![TOPAS](https://img.shields.io/badge/TOPAS-v3.7-00897B?style=for-the-badge)\n![Geant4](https://img.shields.io/badge/Geant4-10.7-1565C0?style=for-the-badge)\n\
+  ![NIRFAST](https://img.shields.io/badge/NIRFAST-optical--diffusion-6A1B9A?style=for-the-badge)\n![License](https://img.shields.io/badge/License-Academic-orange?style=for-the-badge)\n\
+  ![Status](https://img.shields.io/badge/Status-Proof--of--Concept-brightgreen?style=for-the-badge)\n\n\
+  </div>\n\n---\n\n## \U0001F4CB Table of Contents\n\n- [Pipeline at a Glance](#️-pipeline-at-a-glance)\n\
+  - [Overview](#-overview)\n- [Key Results](#-key-results)\n- [Results Visualized](#-results-visualized)\n\
+  - [TOPAS Model Configuration](#-topas-model-configuration)\n- [Setup Instructions](#️-setup-instructions)\n\
+  \  - [1. Clone NIRFAST](#1-clone-nirfast)\n  - [2. Place the Demo Notebook](#2-place-the-demo-notebook)\n\
+  \  - [3. Add the Data Files](#3-add-the-data-files)\n- [Running the Demo](#-running-the-demo)\n- [Project\
+  \ Structure](#-project-structure)\n- [Team](#-team)\n\n---\n\n## \U0001F5FA️ Pipeline at a Glance\n\n\
+  > Four sequential phases — from beam delivery to adaptive dose update.\n\n<div align=\"center\">\n\n\
+  ```mermaid\nflowchart LR\n    A[\"⚛️ **Phase I**\\nTOPAS MC\\nGeant4 · 6 MV\"]:::phase1\n    B[\"\U0001F30A\
+  \ **Phase II**\\nNIRFAST\\ndiffusion + ICCD\"]:::phase2\n    C[\"\U0001F9EE **Phase III**\\nRed Ref\
+  \ + NNLS\\nmelanin fix\"]:::phase3\n    D[\"\U0001F3AF **Phase IV**\\nDose boost\\nα = 0.12\"]:::phase4\n\
+  \    R[\"✅ **63.38%**\\nhypoxia reduction\"]:::result\n\n    A -- \"Cherenkov\" --> B\n    B -- \"Raw\
+  \ RGB\" --> C\n    C -- \"StO₂ map\" --> D\n    D -. \"↻ feedback to\\nnext fraction\" .-> A\n    D\
+  \ --> R\n\n    classDef phase1 fill:#EEEDFE,stroke:#534AB7,color:#3C3489\n    classDef phase2 fill:#E1F5EE,stroke:#0F6E56,color:#085041\n\
+  \    classDef phase3 fill:#FAECE7,stroke:#993C1D,color:#712B13\n    classDef phase4 fill:#FAEEDA,stroke:#854F0B,color:#633806\n\
+  \    classDef result  fill:#EAF3DE,stroke:#3B6D11,color:#27500A\n```\n\n</div>\n\n---\n\n## \U0001F52C\
+  \ Overview\n\nThis project implements a four-phase Digital Twin pipeline for in silico prototyping of\
+  \ biologically adaptive radiotherapy driven by real-time Cherenkov emission:\n\n| Phase | Module | Description\
+  \ |\n|-------|--------|-------------|\n| ⚛️ **I — Physics** | TOPAS / Geant4 | Monte Carlo radiation\
+  \ transport, secondary electron tracking & Cherenkov photon generation via Frank–Tamm model |\n| \U0001F30A\
+  \ **II — Sensing** | NIRFAST + ICCD model | Optical diffusion transport to tissue surface; virtual intensified\
+  \ CCD camera with shot & read noise |\n| \U0001F9EE **III — Recovery** | Red Reference + NNLS | Beer-Lambert\
+  \ melanin correction across 100 Fitzpatrick skin phenotypes; affine calibration for low-dose regimes\
+  \ |\n| \U0001F3AF **IV — Adaptation** | Dose optimizer | Hypoxia classification at 70% StO₂ threshold;\
+  \ locked dose-weighted enhancement (α = 0.12) |\n\n---\n\n## \U0001F4CA Key Results\n\nResults on the\
+  \ **TOPAS TumorPhantom** (10⁷ particle histories — low-dose stress-test regime):\n\n| Metric | Value\
+  \ |\n|--------|-------|\n| \U0001F3AF Calibrated StO₂ recovery — MAE | **1.55 pp** |\n| \U0001F4C8 Calibrated\
+  \ StO₂ recovery — R² | **0.964** (N = 1534 voxels) |\n| ✅ Hypoxia classification — Precision | **0.993**\
+  \ |\n| \U0001F501 Hypoxia classification — Recall | **0.979** |\n| \U0001F3C5 Hypoxia classification\
+  \ — F1 | **0.986** |\n| \U0001F7E9 Confusion matrix | TP=139 · FP=1 · FN=3 · TN=1391 |\n| \U0001F489\
+  \ Hypoxic burden reduction (α=0.12) | **63.38%** (142 → 52 voxels) |\n\n> Computational benchmark under\
+  \ idealized conditions (comparative reference): R²=0.97, MAE=0.80 pp, hypoxia reduction 86.7% over 10\
+  \ fractions.\n\n---\n\n## \U0001F4F8 Results Visualized\n\n### \U0001F527 Calibrat"

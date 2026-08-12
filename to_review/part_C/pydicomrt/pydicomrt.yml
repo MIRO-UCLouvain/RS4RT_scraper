@@ -1,0 +1,62 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: higumalu/pydicomRT
+url: https://github.com/higumalu/pydicomRT
+platform: github
+description: Python library for handling Radiation Therapy DICOM files.
+license: MIT
+language: Python
+keywords:
+- dicom
+- registration
+- rt-dose
+- rtstruct
+stars: 2
+updated_at: '2026-07-09T23:41:58Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 8 support term(s).
+readme_excerpt: "# pydicomRT\n\n**pydicomRT** is a Python library for handling Radiation Therapy DICOM\
+  \ files. It provides utilities to create, modify, parse, and validate RTSTRUCT datasets; convert between\
+  \ RTSTRUCT and volumetric masks; and handle spatial/deformable registration and dose. It integrates\
+  \ smoothly with `pydicom`, `numpy`, and `SimpleITK`.\n\n---\n\n## Project Goals\n\n- **Lower the development\
+  \ barrier for RT applications**  \n  Provide intuitive APIs and tools that allow researchers and engineers\
+  \ to work with radiation therapy–related DICOM files more easily, without requiring deep knowledge of\
+  \ the complex DICOM standard.  \n\n- **Enable seamless integration between Python 3D libraries and pydicom**\
+  \  \n  Build a robust bridge so that common Python 3D image processing libraries (e.g., `numpy`, `SimpleITK`)\
+  \ can work seamlessly with `pydicom`, accelerating medical imaging and radiotherapy application development.\
+  \  \n\n---\n\n## Features\n\n- Build RTSTRUCT datasets and manage Regions of Interest (ROIs)  \n- Convert\
+  \ between 3D numpy masks and DICOM contours  \n- Validate RTSTRUCT, Spatial REG, Deformable REG, and\
+  \ RTDOSE datasets  \n- Load and sort DICOM image series with orientation/spacing sanity checks  \n-\
+  \ Generate RTDOSE datasets and convert RTDOSE DICOM files to SimpleITK images  \n- Export Spatial (`REG`)\
+  \ and Deformable Spatial (`REG-DR`) registrations from SimpleITK transforms  \n- Parse deformable registration\
+  \ grids into NumPy displacement fields  \n- SimpleITK helpers for image building, resampling, and registration\
+  \ (`rigid`, `demons`, `bspline`, `soft_demons`)  \n- Rigid registration (`rigid_registration`): tunable\
+  \ Mattes mutual information and gradient-descent settings (histogram bins, learning rate, iterations,\
+  \ convergence); demons multiscale path: stricter resampling validation and clearer multiscale documentation\
+  \  \n- Coordinate transformation utilities between pixel and patient spaces  \n- CT modality IOD helpers,\
+  \ plus **`CTBuilder`** to emit multi-slice CT DICOM datasets from SimpleITK images or numpy volumes\
+  \ (patient/study/series metadata and common orientations)  \n- SimpleITK preprocessing: **bilateral**\
+  \ and **median** denoising, and **N4 bias field correction** (`n4bfc`)  \n- Spatial / deformable REG\
+  \ parsing and transform extraction refined (inverse-matrix handling, cleaner registration dictionaries,\
+  \ displacement-grid extraction)  \n\n---\n\n## Quick Links\n\n- Examples: `example/try_demon_reg.py`,\
+  \ `example/try_sort_dcms.py`  \n- Deformable REG builder demo: `test/reg/df_reg_build_test.py`  \n-\
+  \ RTSTRUCT API: `src/pydicomrt/rs`  \n- Registration API: `src/pydicomrt/reg`  \n- Utilities: `src/pydicomrt/utils`\
+  \  \n- Architecture Doc: `docs/architecture.md`\n\n---\n\n## Installation\n\n### Dependencies\n\n- Python\
+  \ >= 3.10  \n- pydicom >= 2.0.0  \n- numpy >= 1.26.4  \n- opencv-python >= 4.10.0  \n- scipy >= 1.10.3\
+  \  \n- simpleitk >= 2.5.0  \n\n### Install via pip\n\n```bash\npip install pydicomrt\n```\n\n### Install\
+  \ from source\n\n```bash\ngit clone https://github.com/higumalu/pydicomRT.git\ncd pydicomRT\npip install\
+  \ .\n```\n\n---\n\n## Usage Examples\n\n### Create an RTSTRUCT Dataset and Add ROI\n\n```python\nimport\
+  \ numpy as np\nfrom pydicomrt.rs.make_contour_sequence import add_contour_sequence_from_mask3d\nfrom\
+  \ pydicomrt.rs.add_new_roi import create_roi_into_rs_ds\nfrom pydicomrt.rs.builder import create_rtstruct_dataset\n\
+  from pydicomrt.utils.image_series_loader import load_sorted_image_series\n\n# Load DICOM image series\n\
+  ds_list = load_sorted_image_series(\"path/to/dicom/images\")\n\n# Create an empty RTSTRUCT dataset\n\
+  rs_ds = create_rtstruct_dataset(ds_list)\n\n# Create an ROI (Region of Interest)\nrs_ds = create_roi_into_rs_ds(rs_ds,\
+  \ [0, 255, 0], 1, \"CTV\", \"CTV\")\n\n# Create a 3D mask\nmask = np.zeros((len(ds_list), 512, 512))\n\
+  mask[100:200, 100:400, 100:400] = 1\nmask[120:180, 200:300, 200:300] = 0\n\n# Add 3D mask to RTSTRUCT\
+  \ dataset\nrs_ds = add_contour_sequence_from_mask3d(rs_ds, ds_list, 1, mask)\n\n# Save the RTSTRUCT\
+  \ dataset\nrs_ds.save_as(\"path/to/output.dcm\", write_like_original=False)\n```\n\n---\n\n### Spatial"

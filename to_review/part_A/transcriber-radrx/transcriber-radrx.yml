@@ -1,0 +1,69 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: sjswerdloff/transcriber-radrx
+url: https://github.com/sjswerdloff/transcriber-radrx
+platform: github
+description: A proposed framework for validating transcription, in particular for the radiation therapy
+  domain
+license: NOASSERTION
+language: Python
+keywords:
+- asr
+- clinical-validation
+- ensemble
+- locally-hosted
+- radiation-oncology
+- radiation-therapy
+- speech-recognition
+- speech-to-text
+- validation-framework
+stars: 0
+updated_at: '2026-04-21T07:59:38Z'
+image_source: null
+heuristic_total_score: 37
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 4 particle-therapy term(s).
+- Matched 5 support term(s).
+- Matched 3 AI/ML term(s) in metadata/content.
+readme_excerpt: "# transcriber-radrx\n\n[![CI](https://github.com/sjswerdloff/transcriber-radrx/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sjswerdloff/transcriber-radrx/actions/workflows/ci.yml)\n\
+  \n**A validation framework and complementary-ensemble approach for clinical\nautomatic speech recognition\
+  \ (ASR) in radiation oncology dictation.**\n\nThis project provides two things:\n\n1. A **validation\
+  \ framework** for rigorously evaluating whether any ASR\n   backend is safe for clinical dictation —\
+  \ with metrics that go beyond\n   word error rate to catch the safety-critical failures that aggregate\n\
+  \   statistics hide.\n2. A **2-backend ensemble** (Voxtral Mini 3B + Whisper large-v3) that\n   exploits\
+  \ complementary failure profiles between an audio-LLM and a\n   classical ASR to achieve **98.5% automatic\
+  \ resolution** with **zero\n   unrecoverable safety failures** across 72 radiation oncology fixtures,\n\
+  \   leaving only **1.52% of words** for human review.\n\nWe don't have all the answers. We have a framework\
+  \ for asking the questions,\na growing collection of reproducible experiments, and a concrete result\n\
+  that turns two individually unsafe ASR backends into an ensemble that is\ndemonstrably safer than either\
+  \ alone.\n\n---\n\n## What this project is\n\n- A **modular pipeline** for generating synthetic clinical\
+  \ speech, injecting\n  realistic acoustic and noise conditions, running it through multiple ASR\n  backends,\
+  \ and scoring the results with metrics that go beyond word error\n  rate (WER) to include clinical-vocabulary\
+  \ preservation and safety-critical\n  token audit.\n- A **multi-backend bake-off harness** that currently\
+  \ supports six ASR\n  backends (Whisper, MedASR, Cohere Transcribe, Granite-Speech 2B and 8B,\n  Voxtral\
+  \ Mini 3B) and is trivially extensible to any new backend that\n  implements a small Protocol interface.\n\
+  - A **safety-gate metric** with five clinically-derived failure classes\n  (decimal drop, dose value\
+  \ missing, silent unit substitution, dose unit\n  corruption, slashed form loss), each tagged with a\
+  \ correctability rating\n  (UNRECOVERABLE, CONTEXT_RULE, PHONETIC_MAP, ADJACENCY_RULE) and severity\n\
+  \  weight calibrated by a radiation oncology physicist. Produces a formal\n  deployment gate: PASS /\
+  \ CONDITIONAL / FAIL — both for raw ASR output\n  and for predicted post-correction output.\n- A **2-backend\
+  \ ensemble** that aligns Voxtral and Whisper word-by-word,\n  applies 10 prioritized token-class decision\
+  \ rules at disagreement points,\n  and produces a single output with per-word provenance. Introduces\
+  \ **UWR**\n  (Unresolved Word Rate) — the fraction of words the ensemble cannot\n  confidently resolve\
+  \ and must defer to a downstream reviewer.\n- A **72-fixture corpus** across three domains: 24 dense\
+  \ clinical RT\n  fixtures, 28 particle therapy fixtures (proton + carbon ion, including\n  pediatric\
+  \ CSI with junctioned PBS), and 20 anatomy-coverage fixtures\n  (breast, prostate, cervix, rectum, anus,\
+  \ vulva, vagina, endometrium,\n  testes, penis, head & neck, lung).\n- A **Word .docx renderer** with\
+  \ Track Changes that produces two documents\n  from the same ensemble output: an *audit* document (every\
+  \ ensemble\n  decision visible as a tracked change for regulatory traceability) and a\n  *review* document\
+  \ (automated fixes baked in, only UWR items shown as\n  highlighted words with margin comments listing\
+  \ both ASR options).\n- A **reproducible noise-injection stage** using the MUSAN corpus with a\n  prefer-long-first\
+  \ splice strategy so that every transcription is covered\n  by continuous ambient noise at a known signal-to-noise\
+  \ ratio.\n- A **growing set of cycle reports** that document what we tested, what we\n  found, what\
+  \ flipped when we expanded the test scope, and what we decided\n  not to claim yet. The reports are\
+  \ the receipts.\n\n## What this project is not\n\n- It is **not a clinical product.** Nothing in this\
+  \ repository is certified,\n  validated, or approved for clinical use. Any deployment would require\n\
+  \  independent validation against the specific clinical environment,"
