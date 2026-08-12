@@ -15,6 +15,7 @@ from src.providers import (
     get_github_repository,
     get_gitlab_project,
     github_get_file,
+    github_get_readme,
     github_list_repository_paths,
     gitlab_get_file,
     gitlab_list_repository_paths,
@@ -29,6 +30,8 @@ from src.scoring import passes_prefilter, score_text
 
 LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+
+CACHE_PATH = Path("data/repo_cache.json")
 
 README_CANDIDATES = ["README.md", "README.rst", "README.txt", "Readme.md", "readme.md"]
 EXTRA_FILES = [
@@ -66,6 +69,20 @@ def safe_write_json(path: str | Path, payload: Any) -> None:
     file_path = Path(path)
     file_path.parent.mkdir(parents=True, exist_ok=True)
     file_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def load_repo_cache() -> dict[str, dict[str, Any]]:
+    if not CACHE_PATH.exists():
+        return {}
+    try:
+        return json.loads(CACHE_PATH.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def save_repo_cache(cache: dict[str, dict[str, Any]]) -> None:
+    CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    CACHE_PATH.write_text(json.dumps(cache, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
 def normalize_repo_name(full_name: str) -> str:
@@ -120,22 +137,19 @@ def build_blob(
 
 
 def collect_github_text_and_paths(owner: str, repo: str, branch: str | None) -> tuple[str, str, list[str]]:
-    readme = ""
+    paths = github_list_repository_paths(owner, repo, branch=branch)
+    path_set = {p.lower() for p in paths}
+
+    readme = github_get_readme(owner, repo)
+
     extra_chunks: list[str] = []
-
-    for candidate in README_CANDIDATES:
-        readme = github_get_file(owner, repo, candidate)
-        if readme:
-            break
-
     for candidate in EXTRA_FILES:
-        if candidate in README_CANDIDATES and readme:
+        if candidate.lower() not in path_set:
             continue
         text = github_get_file(owner, repo, candidate)
         if text:
             extra_chunks.append(text[:4000])
 
-    paths = github_list_repository_paths(owner, repo, branch=branch)
     return readme[:12000], "\n\n".join(extra_chunks)[:12000], paths
 
 
@@ -459,6 +473,7 @@ def build_manual_seed_record(
     )
     return None
 
+
 def load_json(path: str | Path) -> Any:
     file_path = Path(path)
     if not file_path.exists():
@@ -467,6 +482,7 @@ def load_json(path: str | Path) -> Any:
         return json.loads(file_path.read_text(encoding="utf-8"))
     except Exception:
         return []
+
 
 def derive_gitlab_queries_from_main_queries(main_queries: list[str], taxonomy: dict[str, Any]) -> list[str]:
     strong_terms = taxonomy.get("strong_particle_therapy_terms", [])
@@ -491,30 +507,47 @@ def discover_github_repositories(
     queries: list[str],
     taxonomy: dict[str, Any],
     settings: dict[str, Any],
+    cache: dict[str, dict[str, Any]],
 ) -> list[dict[str, Any]]:
     scraper_cfg = settings.get("scraper", {})
-    github_per_query = int(scraper_cfg.get("github_per_query", 25))
+    github_max_results = int(scraper_cfg.get("github_max_results", 1000))
     sleep_seconds = float(scraper_cfg.get("polite_sleep_seconds", 0.35))
     min_heuristic_score = int(scraper_cfg.get("min_heuristic_score", 4))
 
     seen: dict[str, dict[str, Any]] = {}
+    hits = 0
+    fetched = 0
+
     for query in queries:
         LOGGER.info("GitHub query: %s", query)
         try:
-            github_items = search_github_repositories(query, per_page=github_per_query)
+            github_items = search_github_repositories(query, max_results=github_max_results)
             LOGGER.info("GitHub returned %d items for query %r", len(github_items), query)
 
             for item in github_items:
-                record = build_github_record(item, taxonomy, min_heuristic_score)
-                current = seen.get(record["url"])
-                if current is None or record["heuristic_total_score"] > current["heuristic_total_score"]:
-                    seen[record["url"]] = record
-                polite_sleep(sleep_seconds)
+                url = item.get("html_url")
+                if not url:
+                    continue
 
+                if url in cache:
+                    hits += 1
+                    seen.setdefault(url, cache[url])
+                    continue
+
+                record = build_github_record(item, taxonomy, min_heuristic_score)
+                cache[url] = record
+                fetched += 1
+
+                current = seen.get(url)
+                if current is None or record["heuristic_total_score"] > current["heuristic_total_score"]:
+                    seen[url] = record
+
+            save_repo_cache(cache)
             time.sleep(max(1.5, sleep_seconds))
         except Exception as exc:
             LOGGER.warning("GitHub query failed for %r: %s", query, exc)
 
+    LOGGER.info("GitHub: %d from cache, %d newly fetched", hits, fetched)
     return list(seen.values())
 
 
@@ -522,28 +555,47 @@ def discover_gitlab_repositories(
     queries: list[str],
     taxonomy: dict[str, Any],
     settings: dict[str, Any],
+    cache: dict[str, dict[str, Any]],
 ) -> list[dict[str, Any]]:
     scraper_cfg = settings.get("scraper", {})
-    gitlab_per_query = int(scraper_cfg.get("gitlab_per_query", 25))
+    gitlab_max_results = int(scraper_cfg.get("gitlab_max_results", 1000))
     sleep_seconds = float(scraper_cfg.get("polite_sleep_seconds", 0.35))
     min_heuristic_score = int(scraper_cfg.get("min_heuristic_score", 4))
 
     seen: dict[str, dict[str, Any]] = {}
+    hits = 0
+    fetched = 0
+
     for query in queries:
         LOGGER.info("GitLab query: %s", query)
         try:
-            gitlab_items = search_gitlab_projects(query, per_page=gitlab_per_query)
+            gitlab_items = search_gitlab_projects(query, gitlab_max_results)
             LOGGER.info("GitLab returned %d items for query %r", len(gitlab_items), query)
 
             for item in gitlab_items:
+                url = item.get("web_url")
+                if not url:
+                    continue
+
+                if url in cache:
+                    hits += 1
+                    seen.setdefault(url, cache[url])
+                    continue
+
                 record = build_gitlab_record(item, taxonomy, min_heuristic_score)
-                current = seen.get(record["url"])
+                cache[url] = record
+                fetched += 1
+
+                current = seen.get(url)
                 if current is None or record["heuristic_total_score"] > current["heuristic_total_score"]:
-                    seen[record["url"]] = record
-                polite_sleep(sleep_seconds)
+                    seen[url] = record
+
+            save_repo_cache(cache)
+            time.sleep(max(1.0, sleep_seconds))
         except Exception as exc:
             LOGGER.warning("GitLab query failed for %r: %s", query, exc)
 
+    LOGGER.info("GitLab: %d from cache, %d newly fetched", hits, fetched)
     return list(seen.values())
 
 
@@ -606,11 +658,17 @@ def run() -> int:
     max_llm_repos = int(llm_cfg.get("max_repos_per_run", 25))
     llm_enabled = bool(llm_cfg.get("enabled", False))
     use_gitlab = bool(scraper_cfg.get("use_gitlab", True))
-    cache_classifications = bool(scraper_cfg.get("cache_classifications", True))
+    cache_classifications = bool(llm_cfg.get("cache_classifications", True))
     llm_cfg["cache_classifications"] = cache_classifications
 
-    github_candidates = discover_github_repositories(github_queries, taxonomy, settings)
-    gitlab_candidates = discover_gitlab_repositories(gitlab_queries, taxonomy, settings) if use_gitlab else []
+    cache = load_repo_cache()
+    LOGGER.info("Repo cache loaded: %d known URLs", len(cache))
+
+    github_candidates = discover_github_repositories(github_queries, taxonomy, settings, cache)
+    gitlab_candidates = discover_gitlab_repositories(gitlab_queries, taxonomy, settings, cache) if use_gitlab else []
+
+    save_repo_cache(cache)
+    LOGGER.info("Repo cache saved: %d known URLs", len(cache))
 
     manual_seed_rows = load_manual_seed_repos()
     manual_seed_candidates: list[dict[str, Any]] = []
@@ -678,16 +736,13 @@ def run() -> int:
     prefiltered = sorted(
         prefiltered,
         key=lambda row: (
-            row.get("stars", 0),
             row["heuristic_total_score"],
             row["heuristic_strong_particle_hits"] + row["heuristic_title_strong_particle_hits"],
             row["heuristic_ai_hits"] + row["heuristic_title_ai_hits"],
+            row.get("stars", 0),
         ),
         reverse=True,
     )
-
-    if llm_enabled:
-        prefiltered = prefiltered[:max_llm_repos]
 
     included: list[dict[str, Any]] = []
 
@@ -734,9 +789,9 @@ def run() -> int:
     included = sorted(
         included,
         key=lambda row: (
-            row.get("stars", 0),
-            row["classification"].get("confidence", 0),
             row["heuristic_total_score"],
+            row["classification"].get("confidence", 0),
+            row.get("stars", 0),
         ),
         reverse=True,
     )
@@ -744,8 +799,7 @@ def run() -> int:
     hf_model_tools = load_json("data/hf_model_tools.json")
     if hf_model_tools:
         included.extend(hf_model_tools)
-        # dedupe by URL, keep higher-star item
-        deduped = {}
+        deduped: dict[str, dict[str, Any]] = {}
         for row in included:
             current = deduped.get(row["url"])
             if current is None or row.get("stars", 0) > current.get("stars", 0):
@@ -753,12 +807,13 @@ def run() -> int:
         included = sorted(
             deduped.values(),
             key=lambda row: (
-                row.get("stars", 0),
-                row.get("classification", {}).get("confidence", 0),
                 row.get("heuristic_total_score", 0),
+                row.get("classification", {}).get("confidence", 0),
+                row.get("stars", 0),
             ),
             reverse=True,
         )
+
     safe_write_json("data/catalog.json", included)
     write_readme(included)
     write_site(included)

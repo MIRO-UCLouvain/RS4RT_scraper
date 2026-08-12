@@ -91,20 +91,106 @@ def gitlab_headers() -> dict[str, str]:
 # GitHub
 # =========================
 
-def search_github_repositories(query: str, per_page: int = 25) -> list[dict[str, Any]]:
-    data = _request_json(
-        "GET",
-        "https://api.github.com/search/repositories",
-        headers=github_headers(),
-        params={
-            "q": f"{query} fork:false",
-            "sort": "updated",
-            "order": "desc",
-            "per_page": per_page,
-        },
-    )
-    return data.get("items", [])
 
+def search_github_repositories(query: str, max_results: int = 1000) -> list[dict[str, Any]]:
+    items: list[dict[str, Any]] = []
+    page = 1
+
+    while len(items) < max_results:
+        data = _request_json(
+            "GET",
+            "https://api.github.com/search/repositories",
+            headers=github_headers(),
+            params={
+                "q": f"{query} fork:false",
+                "sort": "updated",
+                "order": "desc",
+                "per_page": 100,
+                "page": page,
+            },
+        )
+
+        batch = data.get("items", [])
+        if not batch:
+            break
+
+        items.extend(batch)
+
+        if len(batch) < 100 or page >= 10:
+            break
+
+        page += 1
+        polite_sleep(0.5)
+
+    return items[:max_results]
+
+
+def search_gitlab_projects(query: str, max_results: int = 1000) -> list[dict[str, Any]]:
+    items: list[dict[str, Any]] = []
+    page = 1
+
+    while len(items) < max_results:
+        data = _request_json(
+            "GET",
+            "https://gitlab.com/api/v4/projects",
+            headers=gitlab_headers(),
+            params={
+                "search": query,
+                "order_by": "last_activity_at",
+                "sort": "desc",
+                "per_page": 100,
+                "page": page,
+                "license": True,
+            },
+        )
+
+        batch = data or []
+        if not batch:
+            break
+
+        items.extend(batch)
+
+        if len(batch) < 100:
+            break
+
+        page += 1
+        polite_sleep(0.3)
+
+    filtered = [item for item in items if not item.get("forked_from_project")]
+    return filtered[:max_results]
+
+
+def get_gitlab_project(project_path: str) -> dict[str, Any]:
+    encoded = requests.utils.quote(project_path, safe="")
+    return _request_json(
+        "GET",
+        f"https://gitlab.com/api/v4/projects/{encoded}",
+        headers=gitlab_headers(),
+        params={"license": True},
+    )
+
+
+def gitlab_get_primary_language(project_id: int) -> str | None:
+    try:
+        data = _request_json(
+            "GET",
+            f"https://gitlab.com/api/v4/projects/{project_id}/languages",
+            headers=gitlab_headers(),
+        )
+    except Exception:
+        return None
+
+    if not data:
+        return None
+    return max(data.items(), key=lambda kv: kv[1])[0]
+
+
+def gitlab_get_license(item: dict[str, Any]) -> str | None:
+    license_info = item.get("license") or {}
+    key = license_info.get("key") or license_info.get("nickname") or license_info.get("name")
+    if not key:
+        return None
+    return str(key).upper()
 
 def get_github_repository(owner: str, repo: str) -> dict[str, Any]:
     return _request_json(
@@ -119,6 +205,25 @@ def github_get_file(owner: str, repo: str, path: str) -> str:
         data = _request_json(
             "GET",
             f"https://api.github.com/repos/{owner}/{repo}/contents/{path}",
+            headers=github_headers(),
+        )
+    except Exception:
+        return ""
+
+    if data.get("encoding") != "base64":
+        return ""
+
+    try:
+        return base64.b64decode(data["content"]).decode("utf-8", errors="ignore")
+    except Exception:
+        return ""
+
+
+def github_get_readme(owner: str, repo: str) -> str:
+    try:
+        data = _request_json(
+            "GET",
+            f"https://api.github.com/repos/{owner}/{repo}/readme",
             headers=github_headers(),
         )
     except Exception:
