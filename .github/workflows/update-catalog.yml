@@ -2,17 +2,17 @@ name: Update catalog
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
   schedule:
-    - cron: "17 3 * * 1"
+    - cron: "17 3 1 */2 *"
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 330
 
     steps:
       - name: Check out repository
@@ -30,18 +30,24 @@ jobs:
 
       - name: Run scraper
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.SCRAPER_GITHUB_TOKEN }}
           GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: gpt-4.1-mini
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          python run_data.py
-          python run_papers.py
           python run.py
-      - name: Commit updated catalog
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add README.md data/ site/
-          git diff --cached --quiet || git commit -m "Update generated catalog"
-          git push
+
+      - name: Open pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          add-paths: |
+            README.md
+            data/
+            site/
+          branch: catalog/run-${{ github.run_number }}
+          title: "Catalog update (run ${{ github.run_number }})"
+          commit-message: "Update generated catalog"
+          body: |
+            Automated scraper run.
+
+            Review new entries in `data/catalog.json` before merging.
+          delete-branch: true
