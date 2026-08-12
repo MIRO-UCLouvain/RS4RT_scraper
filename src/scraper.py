@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import logging
 import re
@@ -599,6 +600,13 @@ def discover_gitlab_repositories(
     return list(seen.values())
 
 
+def readme_hash(text: str) -> str:
+    normalized = re.sub(r"\s+", " ", (text or "").lower()).strip()
+    if len(normalized) < 200:
+        return ""
+    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+
+
 def merge_and_sort_candidates(*candidate_groups: list[dict[str, Any]]) -> list[dict[str, Any]]:
     seen: dict[str, dict[str, Any]] = {}
 
@@ -608,13 +616,38 @@ def merge_and_sort_candidates(*candidate_groups: list[dict[str, Any]]) -> list[d
             if current is None or row["heuristic_total_score"] > current["heuristic_total_score"]:
                 seen[row["url"]] = row
 
-    return sorted(
+    by_popularity = sorted(
         seen.values(),
+        key=lambda row: (row.get("stars", 0), row["heuristic_total_score"]),
+        reverse=True,
+    )
+
+    kept: list[dict[str, Any]] = []
+    seen_hashes: set[str] = set()
+    dropped_duplicates = 0
+
+    for row in by_popularity:
+        digest = readme_hash(row.get("readme_excerpt", ""))
+
+        if digest and digest in seen_hashes and not row.get("forced_include", False):
+            dropped_duplicates += 1
+            LOGGER.info("Duplicate README, dropping %s", row.get("full_name"))
+            continue
+
+        if digest:
+            seen_hashes.add(digest)
+        kept.append(row)
+
+    if dropped_duplicates:
+        LOGGER.info("Dropped %d repositories with duplicate READMEs", dropped_duplicates)
+
+    return sorted(
+        kept,
         key=lambda row: (
-            row.get("stars", 0),
             row["heuristic_total_score"],
             row["heuristic_strong_particle_hits"] + row["heuristic_title_strong_particle_hits"],
             row["heuristic_ai_hits"] + row["heuristic_title_ai_hits"],
+            row.get("stars", 0),
         ),
         reverse=True,
     )
