@@ -5,10 +5,12 @@ import hashlib
 import json
 import logging
 import re
+import shutil
 import time
 from pathlib import Path
 from typing import Any
 
+import requests
 import yaml
 
 from src.classifier import classify_repo
@@ -33,6 +35,8 @@ LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
 CACHE_PATH = Path("data/repo_cache.json")
+REVIEW_ROOT = Path("to_review")
+REVIEW_PARTS = ["part_A", "part_B", "part_C", "part_D"]
 
 README_CANDIDATES = ["README.md", "README.rst", "README.txt", "Readme.md", "readme.md"]
 EXTRA_FILES = [
@@ -668,6 +672,136 @@ def passes_quality_filters(repo: dict[str, Any], settings: dict[str, Any]) -> bo
     return True
 
 
+SKIP_IMAGE_HOSTS = ("shields.io", "badge", "codecov", "travis-ci", "appveyor")
+PREFER_IMAGE = ("logo", "banner", "title", "icon")
+IMAGE_MIME = {
+    "png": "image/png", "jpg": "image/jpeg", "jpeg": "image/jpeg",
+    "gif": "image/gif", "svg": "image/svg+xml", "webp": "image/webp",
+}
+
+MD_IMAGE = re.compile(r"!\[[^\]]*\]\(([^)\s]+)")
+HTML_IMAGE = re.compile(r'<img[^>]+src=["\']([^"\']+)')
+RST_IMAGE = re.compile(r"image::\s*(\S+)")
+
+
+def slugify_name(full_name: str) -> str:
+    name = (full_name or "").split("/")[-1]
+    return re.sub(r"[^A-Za-z0-9]+", "-", name).strip("-").lower()
+
+
+def candidate_images(readme: str) -> list[str]:
+    urls: list[str] = []
+    for pattern in (MD_IMAGE, HTML_IMAGE, RST_IMAGE):
+        urls.extend(pattern.findall(readme or ""))
+
+    clean: list[str] = []
+    for url in urls:
+        low = url.lower()
+        if any(host in low for host in SKIP_IMAGE_HOSTS):
+            continue
+        if not any(low.split("?")[0].endswith("." + ext) for ext in IMAGE_MIME):
+            continue
+        if url not in clean:
+            clean.append(url)
+
+    clean.sort(key=lambda u: 0 if any(p in u.lower() for p in PREFER_IMAGE) else 1)
+    return clean
+
+
+def absolute_image_url(url: str, repo_url: str) -> str:
+    if url.startswith("http"):
+        return url
+    raw = (repo_url or "").replace("github.com", "raw.githubusercontent.com").rstrip("/")
+    return raw + "/HEAD/" + url.lstrip("./")
+
+
+def download_image(readme: str, repo_url: str, target_dir: Path, stem: str) -> str | None:
+    for candidate in candidate_images(readme)[:4]:
+        url = absolute_image_url(candidate, repo_url)
+        try:
+            response = requests.get(url, timeout=30)
+            response.raise_for_status()
+        except Exception:
+            continue
+
+        if len(response.content) > 5_000_000 or len(response.content) < 500:
+            continue
+
+        ext = url.split("?")[0].rsplit(".", 1)[-1].lower()
+        if ext not in IMAGE_MIME:
+            continue
+
+        path = target_dir / (stem + "." + ext)
+        path.write_bytes(response.content)
+        return url
+
+    return None
+
+
+def build_review_entry(repo: dict[str, Any], image_source: str | None) -> dict[str, Any]:
+    return {
+        "review": {
+            "approved": False,
+            "reviewer": "",
+            "note": "",
+        },
+        "name": repo.get("full_name"),
+        "url": repo.get("url"),
+        "platform": repo.get("platform"),
+        "description": repo.get("description") or "",
+        "license": repo.get("license"),
+        "language": repo.get("language"),
+        "keywords": repo.get("topics") or [],
+        "stars": repo.get("stars", 0),
+        "updated_at": repo.get("updated_at"),
+        "image_source": image_source,
+        "heuristic_total_score": repo.get("heuristic_total_score"),
+        "heuristic_reasons": repo.get("heuristic_reasons") or [],
+        "readme_excerpt": (repo.get("readme_excerpt") or "")[:4000],
+    }
+
+
+def write_review_tree(included: list[dict[str, Any]], fetch_images: bool = True) -> None:
+    if REVIEW_ROOT.exists():
+        shutil.rmtree(REVIEW_ROOT)
+
+    for part in REVIEW_PARTS:
+        (REVIEW_ROOT / part).mkdir(parents=True, exist_ok=True)
+
+    written = 0
+    with_image = 0
+
+    LOGGER.info("Writing review tree for %d entries", len(included))
+
+    for index, repo in enumerate(included):
+        stem = slugify_name(repo.get("full_name", "")) or f"entry-{index}"
+        part = REVIEW_PARTS[index % len(REVIEW_PARTS)]
+
+        entry_dir = REVIEW_ROOT / part / stem
+        entry_dir.mkdir(parents=True, exist_ok=True)
+
+        image_source = None
+        if fetch_images:
+            image_source = download_image(
+                repo.get("readme_excerpt") or "",
+                repo.get("url") or "",
+                entry_dir,
+                stem,
+            )
+            if image_source:
+                with_image += 1
+
+        entry = build_review_entry(repo, image_source)
+        (entry_dir / (stem + ".yml")).write_text(
+            yaml.safe_dump(entry, sort_keys=False, allow_unicode=True, width=100),
+            encoding="utf-8",
+        )
+        written += 1
+
+    LOGGER.info("Review tree: %d entries across %d parts, %d with images",
+                written, len(REVIEW_PARTS), with_image)
+
+
 def run() -> int:
     queries_cfg = load_yaml("config/queries.yml")
     gitlab_queries_cfg = load_yaml("config/gitlab_queries.yml")
@@ -850,6 +984,8 @@ def run() -> int:
     safe_write_json("data/catalog.json", included)
     write_readme(included)
     write_site(included)
+
+    write_review_tree(included, fetch_images=bool(scraper_cfg.get("fetch_review_images", True)))
 
     LOGGER.info("GitHub queries used: %d", len(github_queries))
     LOGGER.info("GitLab queries used: %d", len(gitlab_queries))
