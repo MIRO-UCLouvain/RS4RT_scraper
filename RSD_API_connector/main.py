@@ -9,10 +9,10 @@ from pathlib import Path
 
 import requests
 
-TOKEN = "9d9776ab-e9c1-4543-ae54-c04baf60c7db.aaef14b6-d7a4-4d45-a04a-961c8e6fcfe2"
+TOKEN = os.getenv("RSD_TOKEN", "")
 BASE = "http://localhost/api/v2"
 IN_PATH = Path("data/rsd_entries.json")
-COMMUNITY = "2a9e0427-6b8f-40b6-9702-bd635205d012"
+COMMUNITY = "fbf4e7aa-c55c-4722-b4c7-a0c7083cc70f"
 
 IN_PATH = Path(os.getenv("RSD_INPUT", "data/new_elements.json"))
 LOG_PATH = Path("data/published.json")
@@ -106,12 +106,10 @@ def fetch_image(url: str) -> tuple[bytes, str] | None:
  
  
 def upload_image(raw: bytes, mime: str) -> str:
-    digest = hashlib.sha1(raw).hexdigest()
-    if get(f"image?id=eq.{digest}&select=id"):
-        return digest
-    post("image", {"id": digest, "data": base64.b64encode(raw).decode(), "mime_type": mime})
-    return digest
- 
+    post("image", {"data": base64.b64encode(raw).decode(), "mime_type": mime})
+    rows = get("image?select=id&order=created_at.desc&limit=1")
+    return rows[0]["id"]
+
  
 def local_image(entry: dict) -> Path | None:
     name = entry.get("image_file")
