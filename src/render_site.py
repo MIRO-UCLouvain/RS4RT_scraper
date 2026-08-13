@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 from pathlib import Path
 from typing import Any
 
@@ -10,8 +11,8 @@ INDEX_HTML = """<!doctype html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>AI/ML in Particle Therapy Catalog</title>
-  <meta name="description" content="A curated catalog of repositories, datasets, records, and papers at the intersection of particle therapy and AI/ML.">
+  <title>RS4RT Catalog</title>
+  <meta name="description" content="Resource Sharing for RadioTherapy: a curated catalog of open-source software, datasets and papers for radiotherapy research.">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -19,28 +20,23 @@ INDEX_HTML = """<!doctype html>
     <header class="hero">
       <div class="hero-inner">
         <div class="hero-brand">
-          <a href="https://ptcog.online/" target="_blank" rel="noopener noreferrer" aria-label="Visit PTCOG website">
-            <img src="https://ptcog.online/wp-content/uploads/sites/4/2024/12/PTCOG_Logo_191224.svg" alt="PTCOG logo" class="ptcog-logo">
+          <a href="https://uclouvain.be/en/research-institutes/irec/miro" target="_blank" rel="noopener noreferrer" aria-label="Visit MIRO website">
+            <img src="logo.png" alt="RS4RT logo" class="brand-logo">
           </a>
           <div class="brand-copy">
-            <span class="brand-title">PTCOG AI Subcommittee</span>
-            <span class="brand-subtitle">Particle Therapy AI Research Atlas</span>
+            <span class="brand-title">RS4RT</span>
+            <span class="brand-subtitle">Resource Sharing for RadioTherapy &middot; MIRO, UCLouvain</span>
           </div>
         </div>
 
         <div class="hero-copy">
-          <span class="eyebrow">AI + PARTICLE THERAPY</span>
-          <h1>Research Atlas</h1>
+          <span class="eyebrow">OPEN-SOURCE RADIOTHERAPY</span>
+          <h1>RS4RT Catalog</h1>
           <p class="hero-text">
-            A curated, searchable catalog of tools, models, datasets, records, registries, and papers related to
-            particle therapy and machine learning.
-            <span class="affiliation">Maintained as part of the PTCOG AI Subcommittee activities.</span>
+            A curated, searchable catalog of open-source tools, datasets, records and papers for
+            radiotherapy and particle therapy research.
+            <span class="affiliation">Maintained by the RS4RT community with the MIRO laboratory, UCLouvain.</span>
           </p>
-          <div class="hero-actions">
-            <a class="submit-button" href="https://github.com/lenvol/particle-therapy-ai-catalog/issues/new?template=submit-catalog-item.yml" target="_blank" rel="noopener noreferrer">
-              Submit an item
-            </a>
-          </div>
         </div>
 
         <div class="hero-panel">
@@ -117,6 +113,13 @@ INDEX_HTML = """<!doctype html>
       <section class="stats-bar" id="stats"></section>
       <section class="cards-grid" id="results"></section>
     </main>
+
+    <footer class="site-footer">
+      <p>
+        RS4RT &middot; Resource Sharing for RadioTherapy &middot;
+        <a href="https://research-software-directory.org/communities/rs4rt/software" target="_blank" rel="noopener noreferrer">RS4RT on the Research Software Directory</a>
+      </p>
+    </footer>
   </div>
 
   <script src="app.js"></script>
@@ -577,18 +580,19 @@ if (document.readyState === "loading") {
 STYLES_CSS = """* { box-sizing: border-box; }
 
 :root {
-  --bg-0: #f3f9fd;
-  --bg-1: #eaf4fb;
-  --surface: rgba(255, 255, 255, 0.78);
-  --surface-strong: rgba(255, 255, 255, 0.92);
-  --border: rgba(80, 132, 180, 0.18);
-  --text: #10324a;
-  --muted: #56758c;
-  --primary: #1976b8;
-  --primary-2: #2f94d1;
-  --shadow: 0 14px 40px rgba(19, 83, 126, 0.12);
-  --shadow-strong: 0 22px 54px rgba(19, 83, 126, 0.18);
-  --card-bg: linear-gradient(135deg, rgba(22, 118, 184, 0.10), rgba(121, 191, 232, 0.10));
+  --bg-0: #f4f7fb;
+  --bg-1: #eef3f9;
+  --surface: rgba(255, 255, 255, 0.80);
+  --surface-strong: rgba(255, 255, 255, 0.94);
+  --border: rgba(70, 110, 150, 0.16);
+  --text: #16283a;
+  --muted: #5c7186;
+  --primary: #00619a;
+  --primary-2: #2f8fc4;
+  --accent: #7cb342;
+  --shadow: 0 14px 40px rgba(16, 60, 100, 0.10);
+  --shadow-strong: 0 22px 54px rgba(16, 60, 100, 0.16);
+  --card-bg: linear-gradient(135deg, rgba(0, 97, 154, 0.08), rgba(124, 179, 66, 0.07));
 }
 
 html, body {
@@ -597,13 +601,13 @@ html, body {
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text);
   background:
-    radial-gradient(circle at top left, rgba(151, 211, 241, 0.35), transparent 34%),
-    radial-gradient(circle at top right, rgba(92, 171, 219, 0.18), transparent 26%),
-    linear-gradient(180deg, var(--bg-0), var(--bg-1) 48%, #f8fcff);
+    radial-gradient(circle at top left, rgba(140, 195, 230, 0.30), transparent 34%),
+    radial-gradient(circle at top right, rgba(124, 179, 66, 0.14), transparent 26%),
+    linear-gradient(180deg, var(--bg-0), var(--bg-1) 48%, #f9fbfd);
 }
 
 body { line-height: 1.5; }
-.page-shell { min-height: 100vh; }
+.page-shell { min-height: 100vh; display: flex; flex-direction: column; }
 .hero { padding: 3.5rem 1.25rem 1.5rem; }
 
 .hero-inner {
@@ -629,22 +633,22 @@ body { line-height: 1.5; }
   padding: 0.25rem 0.35rem;
 }
 
-.ptcog-logo {
-  height: 46px;
+.brand-logo {
+  height: 52px;
   width: auto;
   display: block;
   opacity: 0.95;
   transition: opacity 180ms ease, transform 180ms ease;
 }
 
-.ptcog-logo:hover { opacity: 1; transform: translateY(-1px); }
+.brand-logo:hover { opacity: 1; transform: translateY(-1px); }
 
 .brand-copy { display: flex; flex-direction: column; gap: 0.1rem; }
-.brand-title { color: var(--text); font-size: 0.95rem; font-weight: 850; }
+.brand-title { color: var(--text); font-size: 1.05rem; font-weight: 850; letter-spacing: 0.02em; }
 .brand-subtitle { color: var(--muted); font-size: 0.82rem; font-weight: 650; }
 
 .hero-copy {
-  background: linear-gradient(135deg, rgba(255,255,255,0.78), rgba(255,255,255,0.62));
+  background: linear-gradient(135deg, rgba(255,255,255,0.80), rgba(255,255,255,0.64));
   border: 1px solid var(--border);
   border-radius: 28px;
   box-shadow: var(--shadow);
@@ -656,7 +660,7 @@ body { line-height: 1.5; }
   margin-bottom: 0.65rem;
   padding: 0.32rem 0.7rem;
   border-radius: 999px;
-  background: rgba(25, 118, 184, 0.10);
+  background: rgba(0, 97, 154, 0.10);
   color: var(--primary);
   font-size: 0.8rem;
   font-weight: 800;
@@ -680,24 +684,8 @@ body { line-height: 1.5; }
   font-weight: 750;
 }
 
-.hero-actions { display: flex; gap: 0.75rem; margin-top: 1.3rem; flex-wrap: wrap; }
-
-.submit-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  border-radius: 999px;
-  padding: 0.85rem 1.15rem;
-  font-weight: 800;
-  color: white;
-  background: linear-gradient(135deg, var(--primary), var(--primary-2));
-  box-shadow: 0 12px 28px rgba(25, 118, 184, 0.22);
-  border: 1px solid rgba(255,255,255,0.22);
-}
-
 .hero-panel {
-  background: linear-gradient(160deg, rgba(25, 118, 184, 0.93), rgba(72, 160, 213, 0.88));
+  background: linear-gradient(160deg, rgba(0, 97, 154, 0.94), rgba(47, 143, 196, 0.88));
   border: 1px solid rgba(255,255,255,0.16);
   border-radius: 28px;
   box-shadow: var(--shadow-strong);
@@ -712,7 +700,7 @@ body { line-height: 1.5; }
 .hero-stat-label { display: block; opacity: 0.85; font-size: 0.85rem; }
 .hero-stat-value { display: block; font-size: 2rem; font-weight: 800; margin-top: 0.18rem; }
 
-.main-content { max-width: 1220px; margin: 0 auto; padding: 0 1.25rem 3rem; }
+.main-content { max-width: 1220px; margin: 0 auto; padding: 0 1.25rem 3rem; width: 100%; flex: 1; }
 
 .tabs {
   display: inline-flex;
@@ -735,7 +723,7 @@ body { line-height: 1.5; }
   cursor: pointer;
 }
 
-.tab-button.active { background: rgba(25, 118, 184, 0.12); color: var(--primary); border-color: rgba(25, 118, 184, 0.16); }
+.tab-button.active { background: rgba(0, 97, 154, 0.12); color: var(--primary); border-color: rgba(0, 97, 154, 0.16); }
 
 .controls {
   background: var(--surface);
@@ -751,7 +739,7 @@ body { line-height: 1.5; }
 
 input[type="search"], select, button {
   appearance: none;
-  border: 1px solid rgba(92, 151, 193, 0.22);
+  border: 1px solid rgba(80, 130, 170, 0.22);
   background: rgba(255,255,255,0.92);
   color: var(--text);
   border-radius: 16px;
@@ -790,9 +778,9 @@ button { cursor: pointer; font-weight: 700; color: var(--primary); }
   white-space: nowrap;
   padding: 0.55rem 0.85rem;
   border-radius: 999px;
-  background: rgba(25, 118, 184, 0.08);
+  background: rgba(0, 97, 154, 0.08);
   color: var(--primary);
-  border: 1px solid rgba(25, 118, 184, 0.14);
+  border: 1px solid rgba(0, 97, 154, 0.14);
   font-size: 0.82rem;
   font-weight: 700;
 }
@@ -821,8 +809,8 @@ button { cursor: pointer; font-weight: 700; color: var(--primary); }
 
 .repo-card::before { content: ""; position: absolute; inset: 0; background: var(--card-bg); z-index: 0; }
 .repo-card > * { position: relative; z-index: 1; }
-.repo-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-strong); border-color: rgba(47, 148, 209, 0.32); }
-.registry-card::before { background: linear-gradient(135deg, rgba(25, 118, 184, 0.15), rgba(105, 190, 220, 0.16)); }
+.repo-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-strong); border-color: rgba(47, 143, 196, 0.32); }
+.registry-card::before { background: linear-gradient(135deg, rgba(0, 97, 154, 0.13), rgba(124, 179, 66, 0.14)); }
 
 .repo-kicker { color: var(--primary); font-size: 0.76rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
 .repo-title { margin: 0.28rem 0 0.35rem; font-size: 1.15rem; line-height: 1.2; letter-spacing: -0.02em; }
@@ -832,12 +820,12 @@ button { cursor: pointer; font-weight: 700; color: var(--primary); }
 .chip-row { display: flex; flex-wrap: wrap; gap: 0.45rem; }
 
 .chip { display: inline-flex; align-items: center; border-radius: 999px; padding: 0.32rem 0.62rem; font-size: 0.79rem; font-weight: 700; }
-.chip-primary { background: rgba(25, 118, 184, 0.12); color: var(--primary); }
-.chip-subtle { background: rgba(255,255,255,0.7); color: #4f6a7d; border: 1px solid rgba(80, 132, 180, 0.12); }
+.chip-primary { background: rgba(0, 97, 154, 0.12); color: var(--primary); }
+.chip-subtle { background: rgba(255,255,255,0.7); color: #4f6a7d; border: 1px solid rgba(70, 110, 150, 0.12); }
 
 .hover-panel {
   margin-top: auto;
-  border-top: 1px solid rgba(80, 132, 180, 0.12);
+  border-top: 1px solid rgba(70, 110, 150, 0.12);
   padding-top: 0.9rem;
   opacity: 0.82;
   transform: translateY(8px);
@@ -861,6 +849,20 @@ button { cursor: pointer; font-weight: 700; color: var(--primary); }
   box-shadow: var(--shadow);
 }
 
+.site-footer {
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2.5rem;
+  width: 100%;
+  color: var(--muted);
+  font-size: 0.88rem;
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+
+.site-footer a { color: var(--primary); font-weight: 700; text-decoration: none; }
+.site-footer a:hover { text-decoration: underline; }
+
 @media (max-width: 980px) {
   .hero-inner { grid-template-columns: 1fr; }
   .controls-grid { grid-template-columns: 1fr 1fr; }
@@ -871,7 +873,7 @@ button { cursor: pointer; font-weight: 700; color: var(--primary); }
   .hero { padding-top: 1.5rem; }
   .hero-copy, .hero-panel, .controls, .tabs { border-radius: 20px; }
   .hero-brand { align-items: flex-start; }
-  .ptcog-logo { height: 38px; }
+  .brand-logo { height: 42px; }
   .controls-grid { grid-template-columns: 1fr; }
   .cards-grid { grid-template-columns: 1fr; }
   .filter-chip { max-width: 220px; }
@@ -926,6 +928,11 @@ def write_site(entries: list[dict[str, Any]]) -> None:
             dst.write_text(src.read_text(encoding="utf-8"), encoding="utf-8")
         else:
             dst.write_text("[]", encoding="utf-8")
+
+    for candidate in [Path("assets/logo.png"), Path("data/logo.png"), Path("logo.png")]:
+        if candidate.exists():
+            shutil.copyfile(candidate, site_dir / "logo.png")
+            break
 
     (site_dir / "index.html").write_text(INDEX_HTML, encoding="utf-8")
     (site_dir / "app.js").write_text(APP_JS, encoding="utf-8")
