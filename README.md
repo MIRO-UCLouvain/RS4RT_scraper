@@ -4,7 +4,7 @@ Automatically discovered repositories relevant to both particle therapy and mach
 
 Included repositories: **7**
 
-Live site: `https://YOUR_USERNAME.github.io/YOUR_REPO_NAME/`
+Live site: [RS4RT catalogue](https://miro-uclouvain.github.io/RS4RT_scraper/)
 
 | Repository | Platform | Stars | Type | Categories | Summary |
 |---|---:|---:|---|---|---|
