@@ -1,0 +1,45 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: MGHPhysicsResearch/moquimc
+url: https://github.com/MGHPhysicsResearch/moquimc
+platform: github
+description: MOnte carlo code for QUIck proton dose calculation
+license: MIT
+language: C++
+keywords: []
+stars: 31
+updated_at: '2026-01-06T02:53:40Z'
+image_source: https://raw.githubusercontent.com/MGHPhysicsResearch/moquimc/HEAD/images/moqui_logo.jpg
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "MOnte carlo code for QUIck proton dose calculation (moqui)\n=======\n\n<img src=\"images/moqui_logo.jpg\"\
+  >\n\n### Installation\n#### Requirements\n* GDCM > 2\n  * Please refer to GDCM v2 [installation guide](https://sourceforge.net/projects/gdcm/)\n\
+  \  * You can also install GDCM v3 using package manager\n* CUDA\n- The code has been tested with GDCM\
+  \ v2 and CUDA v10.2 on Ubuntu 20.04\n- The code has been tested with GDCM v3 and CUDA v11.8 on Ubuntu\
+  \ 22.04\n\n#### Obtaining the code\n```bash\n$ git clone https://github.com/mghro/moquimc.git\n```\n\
+  \n#### Compile the phantom case\n```bash\n$ cd moquimc/tests/mc/phantom\n$ cmake .\n$ make\n```\n- You\
+  \ may need to modify the CUDA configuration on the CMakeList.txt\n- The default is to use CUDA compute\
+  \ capability 7.5\n\n#### Running the phantom example\n```bash\n$ python create_phantom.py # create water\
+  \ phantom\n$ ./phantom_env --lxyz 100 100 350 --pxyz 0.0 0.0 -175 --nxyz 200 200 350 --spot_energy 200.0\
+  \ 0.0 --spot_position 0 0 0.5 --spot_size 30.0 30.0 --histories 100000 --phantom_path ./water_phantom.raw\
+  \ --output_prefix ./ --gpu_id 0 > ./log.out\n```\n\n#### Update Dec/26/2023\n- There have been large\
+  \ updates in moqui and we added new features\n  - Statistical uncertainty based stopping criteria (Please\
+  \ refer to the example input parameter *Statistical stopping criteria*)\n  - Robust options (setup errors\
+  \ and density scaling, Please refer to the example input parameter *Robust options*)\n  - Aperture handling\n\
+  \  - Support multiple calibration curves (You can override machine selection and define multiple calibration\
+  \ curves for a machine)\n  - Unit weights per spot for Dij calculation (This only works for Dij scorer.\
+  \ The *UnitWeight* will be the absolute number of particles simulated)\n\n#### Getting calibration curves\n\
+  - moqui uses fitted functions for calibration curves\n- You need to obtain stopping power ratio to water\
+  \ and radiation length per density and define *compute_rsp_* and *compute_rl_* functions in patient_material_t\n\
+  - To obtain the curves:\n  1. Obtain material information using TOPAS\n  2. Calculate correction factors\
+  \ for desired SPR curve\n  3. Calculate fitting curves and implement them in moqui\n  4. You can refer\
+  \ to the fit_rsp.py for the curve fitting\n- You can find the TOPAS extensions and example parameter\
+  \ file under treatment_machines/TOPAS\n- These are updated version of the HU extension in TOPAS (https://github.com/topasmc/extensions/tree/master/HU)\n\
+  \n### Authors\nHoyeon Lee (leehoy12345@gmail.com)  \nJungwook Shin  \nJoost M. Verburg  \nMislav Bobić\
+  \  \nBrian Winey  \nJan Schuemann  \nHarald Paganetti  \n\n### Acknowledgements\nThis work is supported\
+  \ by NIH/NCI R01 234210 \"Fast Individualized Delivery Adaptation in Proton Therapy\"   \n\n\n"

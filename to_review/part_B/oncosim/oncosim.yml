@@ -1,0 +1,63 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: HassDhia/oncosim
+url: https://github.com/HassDhia/oncosim
+platform: github
+description: Gymnasium environments for reinforcement learning in radiation therapy treatment planning
+license: MIT
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-04-20T09:02:23Z'
+image_source: null
+heuristic_total_score: 33
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 11 support term(s).
+- Matched 5 AI/ML term(s) in metadata/content.
+readme_excerpt: "# oncosim\n\n**Gymnasium environments for reinforcement learning in radiation therapy\
+  \ treatment planning.**\n\n![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)\n[![License:\
+  \ MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n\
+  ![Tests](https://img.shields.io/badge/tests-100%2B%20passing-brightgreen.svg)\n[![PyPI version](https://img.shields.io/pypi/v/oncosim.svg)](https://pypi.org/project/oncosim/)\n\
+  \n---\n\nOncoSim provides three Gymnasium-compatible reinforcement learning environments for radiation\
+  \ therapy treatment planning research. Each environment models a distinct clinical decision problem\
+  \ with physically grounded dynamics based on the linear-quadratic model of cell kill, Poisson TCP, and\
+  \ Lyman-Kutcher-Burman NTCP.\n\nThe package includes analytical dose calculation, radiobiological tissue\
+  \ models, configurable difficulty tiers, baseline agents (random, heuristic, PPO), and a benchmark suite\
+  \ for reproducible evaluation.\n\n## Installation\n\n```bash\npip install oncosim              # Core\
+  \ (numpy, scipy, gymnasium)\npip install oncosim[train]       # + SB3, PyTorch for RL training\npip\
+  \ install oncosim[all]         # Everything\n```\n\nDevelopment install:\n\n```bash\ngit clone https://github.com/HassDhia/oncosim.git\n\
+  cd oncosim\npip install -e \".[all]\"\n```\n\n## Quick Start\n\n```python\nimport gymnasium as gym\n\
+  import oncosim\n\nenv = gym.make(\"oncosim/BeamSelection-v0\")\nobs, info = env.reset(seed=42)\nfor\
+  \ _ in range(100):\n    action = env.action_space.sample()\n    obs, reward, terminated, truncated,\
+  \ info = env.step(action)\n    if terminated or truncated:\n        obs, info = env.reset()\nenv.close()\n\
+  ```\n\n## Environments\n\n| Environment | Paradigm | Observation | Action | Key Challenge |\n|---|---|---|---|---|\n\
+  | `oncosim/BeamSelection-v0` | Beam angle optimization | 64x64 dose grid, tumor/OAR masks, selected\
+  \ beams | Discrete(36): angle index at 10-degree steps | Maximize tumor coverage while sparing organs\
+  \ at risk |\n| `oncosim/DoseFractionation-v0` | Fractionation scheduling | Fraction number, tumor volume,\
+  \ cumulative dose, TCP, NTCP | Box(0.5, 4.0): dose per fraction in Gy | Balance tumor control probability\
+  \ against normal tissue toxicity |\n| `oncosim/AdaptiveRT-v0` | Adaptive replanning | Treatment progress,\
+  \ plan quality, tumor response, dose deviation | MultiDiscrete([2, 5]): replan decision + dose adjustment\
+  \ | Decide when to replan based on anatomical changes during treatment |\n\nAll environments support\
+  \ configurable difficulty tiers and deterministic seeding for reproducibility.\n\n## Architecture\n\n\
+  ```\noncosim/\n  physics/          # Dose calculation, tissue models, beam geometry\n    dose_calc.py\
+  \    # Pencil beam analytical model\n    tissue_models.py # LQ surviving fraction, TCP, NTCP, BED\n\
+  \    beam_geometry.py # 2D beam profiles, structure masks, DVH\n  envs/             # Gymnasium environments\n\
+  \    beam_selection.py\n    dose_fractionation.py\n    adaptive_rt.py\n    wrappers.py     # FlattenObs,\
+  \ NormalizeReward\n  agents/           # Baseline agents\n    random_agent.py\n    heuristic_agent.py\n\
+  \    ppo.py          # Stable-Baselines3 PPO wrapper\n  training/         # Training and evaluation\
+  \ pipeline\n  benchmarks/       # Configurable benchmark suite (5 difficulty tiers)\n```\n\n## Benchmarks\n\
+  \nRun the benchmark suite:\n\n```bash\noncosim-benchmark                          # All tiers\noncosim-benchmark\
+  \ --tiers trivial easy     # Specific tiers\n```\n\n## Training\n\nTrain PPO agents on all environments:\n\
+  \n```bash\npip install oncosim[train]\noncosim-train                              # Default: 100k timesteps\
+  \ each\noncosim-train --timesteps 500000           # Custom timesteps\n```\n\n## Paper\n\nThe accompanying\
+  \ paper is available at:\n- [PDF (GitHub)](https://github.com/HassDhia/oncosim/blob/main/paper/oncosim.pdf)\n\
+  \n## Citation\n\nIf you use oncosim in your research, please cite:\n\n```bibtex\n@software{dhia2026oncosim,\n\
+  \  author = {Dhia, Hass},\n  title = {OncoSim: Gymnasium Environments for Reinforcement Learning in\
+  \ Radiation Therapy Treatment Planning},\n  year = {2026},\n  publisher = {Smart Technology Investments\
+  \ Research Institute},\n  url = {https://github.com/HassDhia/oncosim}\n}\n```\n\n## License\n\nMIT License.\
+  \ See [LICENSE](LICENSE) for details.\n\n## Contact\n\nHass Dhia -- Smart Technology Investments Research\
+  \ Institute\n- Email: partners@smarttechinvest.com\n- Web: [smarttechinvest.com/research](https://smarttechinvest.com/research)\n"

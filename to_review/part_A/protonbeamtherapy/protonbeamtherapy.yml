@@ -1,0 +1,65 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: dmitryhits/ProtonBeamTherapy
+url: https://github.com/dmitryhits/ProtonBeamTherapy
+platform: github
+description: A collection of python helper scripts to run GATE(GEANT4) based simulations for proton beam
+  therapy application
+license: Apache-2.0
+language: Jupyter Notebook
+keywords: []
+stars: 1
+updated_at: '2022-04-14T00:38:17Z'
+image_source: https://raw.githubusercontent.com/dmitryhits/ProtonBeamTherapy/HEAD/nbs/media/gate_simulation.png
+heuristic_total_score: 21
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 5 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Simulation of the proton beam tracker/calorimeter\n> This project will have tools to\
+  \ aid a simulation and optimizatin of the proton beam tracker/calorimeter in application for determining\
+  \ the corrections to the proton stopping powers for treatment planning.\n\n\n![image.png](nbs/media/gate_simulation.png\
+  \ \"Gate Simulation\")\n\n## Prerequisites\n\nTo use this package you need to first install:\n* [root](https://root.cern/install/)\
+  \ \n* [Gate](http://www.opengatecollaboration.org)\n    * I am using a version of Gate I cloned from\
+  \ [their Github](https://github.com/OpenGATE/Gate) page, because the official 9.0 verion has a bug.\n\
+  * [Geant4](https://geant4.web.cern.ch/support/download)\n    * Check the requirements for the correct\
+  \ verion of Geant4 on [OpenGate](http://www.opengatecollaboration.org) page\n* [Cmake](https://cmake.org/download/)\n\
+  \n## Install\n\n**Not working yet**\n\n~~`pip install gate_simulation`~~\n\n## How to use\n\nInitiate\
+  \ a macro writer:\n\n```python\ntest_macro = MacroWriter()\n```\n\n## The error on the mean versus sensor\
+  \ thickness\nSensor material is silicon.\nThe mean is the trimmed mean the upper limit is twice the\
+  \ standard deviation from the untrimmed mean.\n\n```python\nimport numpy as np\nfrom scipy import stats\n\
+  \ntm = []\netm = []\nthicknesses = np.linspace(0.1, 1.0, 10)\nfor t in thicknesses:\n    main_macro,\
+  \ output_root = create_all(sensor_thickness=t)\n    run_macro(main_macro)\n    root_hits_file = output_root['hits'][0]\n\
+  \    edep = get_edep_data(get_df_subentry2(root_hits_file), sensor=0)\n    # check that edep exists\n\
+  \    if edep.any():\n        tm.append(stats.tmean(edep, limits=(edep.min(),np.mean(edep) + 2 * np.std(edep))))\n\
+  \        etm.append(stats.tsem(edep, limits=(edep.min(),np.mean(edep) + 2 * np.std(edep))))\n    else:\n\
+  \        print(f'No result for point {t}')\n        # print(f'Trimmed mean {round(tm, 2)}, Error on\
+  \ trimmed mean: {round(etm, 2)}, SNR: {round(tm/etm, 2)}')\n```\n\n20 phatom layers each 1 cm thick,\
+  \ the two outer layers had skull as their material, the 18 inner ones have water as the material. The\
+  \ beam was 250 MeV proton pencil beam. The sensor thickness was varied between 100 and 1000 $\\mu$m\n\
+  \n```python\nimport matplotlib.pyplot as plt\nplt.scatter(thicknesses, np.array(tm)/np.array(etm))\n\
+  ```\n\n---\n\n### Save the data to and read them back from csv\n\nsave the above example with 20 phantom\
+  \ layers\n\n```python\nimport csv\ncolumns = [\"thickness\", \"trimmed mean\", \"error_on_trimmed_mean\"\
+  ]\nwith open('thickness_20.csv', 'w', encoding='utf-8') as f_out:\n    f_writer = csv.writer(f_out,\
+  \ delimiter=',', lineterminator='\\n')\n    f_writer.writerow(columns)\n    f_writer.writerows(zip(thicknesses,\
+  \ tm, etm))\n```\n\nRead back an earlier result with 5 phatom layers each 1 cm thick, the two outer\
+  \ layers had skull as their material, the 3 inner ones have water as the material. The beam the same\
+  \ as in the above example 250 MeV proton pencil beam. The sensor thickness was varied between 20 and\
+  \ 1000 $\\mu$m in 20 $\\mu$m steps\n\n```python\nimport pandas\nthickness_df = pandas.read_csv('thickness.csv')\n\
+  # thickness_df.head()\nplt.scatter(thickness_df['thickness'], thickness_df['trimmed mean']/thickness_df['error_on_trimmed_mean'])\n\
+  ```\n\n---\n\nStudy of the trimmed mean. I have checked that the error on the trimmed mean is larger\
+  \ than the error arising from uncertainty on the upper trim value. The upper trim value of 2 standard\
+  \ deviation from the untrimmed mean seems to give a reasonable result.\n\n```python\nm = np.mean(edep)\n\
+  em = stats.sem(edep)\ntm = stats.tmean(edep, limits=(edep.min(),np.mean(edep) + 2 * np.std(edep)))\n\
+  tm_p = stats.tmean(edep, limits=(edep.min(),np.mean(edep) + 2 * np.std(edep) + em))\ntm_m = stats.tmean(edep,\
+  \ limits=(edep.min(),np.mean(edep) + 2 * np.std(edep) - em))\netm = stats.tsem(edep, limits=(edep.min(),np.mean(edep)\
+  \ + 2 * np.std(edep)))\nprint(f'Mean:        {round(m,2)},       Error on mean: {round(em,2)}, SNR:\
+  \ {round(m/em, 2)}')\nprint(f'Trimmed mean {round(tm, 2)}, Error on trimmed mean: {round(etm, 2)}, SNR:\
+  \ {round(tm/etm, 2)}')\nprint(f'Trimmed mean upper {round(tm_p, 2)}, Trimmed mean lower {round(tm_m,\
+  \ 2)} difference: {round(tm_p - tm_m, 2)}, SNR: {round(tm/(tm_p - tm_m), 2)}')\n\n#print(stats.mode(np.round(edep,\
+  \ 0)))\n```\n\n---\n\n## Kinetic energy from momentum\n\nRecalculating the kinetic energy $E_k$ of the\
+  \  particle mass  $M$ from its momentum $p$  according to:\n{% raw %}\n$$E_k = \\sqrt{M^2  + p^2} -\
+  \ M$$\n{% endraw %}\n\n```python\nprint(f'The kinetic energy of 2 GeV/c proton is {Ek(938,2000):.0f}\
+  \ MeV')\n```\n\n## Export notebooks\n"

@@ -1,0 +1,104 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: bnsreenu/digitalpathology-spatial-immune-rdf
+url: https://github.com/bnsreenu/digitalpathology-spatial-immune-rdf
+platform: github
+description: Spatial immune analysis from H&E using the radial distribution function. Cellpose nucleus
+  segmentation, rule-based cell classification, Gaussian tumor nest mask, and boundary-based RDF to quantify
+  lymphocyte enrichment at every distance from the tumor nest boundary. No deep learning required.
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-08T22:14:03Z'
+image_source: null
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 4 AI/ML term(s) in metadata/content.
+readme_excerpt: "# Spatial Immune Analysis from H&E\n## Radial Distribution Function for Tumor Microenvironment\
+  \ Characterization\n\n**DigitalSreeni Tutorial**\n\nThis repository contains the Colab/Jupyter notebook\
+  \ and supporting image for the tutorial on quantifying the spatial organization of immune cells relative\
+  \ to tumor nests in H&E stained tissue using the radial distribution function — without deep learning,\
+  \ without training data, and without special staining.\n\n---\n\n## Clinical motivation\n\nCounting\
+  \ lymphocytes in a tumor biopsy is not enough. What matters is where they are relative to the tumor.\
+  \ The same lymphocyte count can correspond to completely different immune phenotypes with completely\
+  \ different clinical implications:\n\n| Phenotype | Description | Immunotherapy response |\n|---|---|---|\n\
+  | **Hot (inflamed)** | Lymphocytes inside and around tumor nests | Generally good |\n| **Excluded**\
+  \ | Lymphocytes at the nest boundary only | Intermediate, may need combination therapy |\n| **Cold (desert)**\
+  \ | Lymphocytes sparse and distant | Poor |\n\nThe TIL score used in routine pathology scoring partially\
+  \ captures this but collapses all spatial information into a single number. The radial distribution\
+  \ function preserves the full spatial gradient at every distance scale.\n\n---\n\n## Method overview\n\
+  \nThe radial distribution function g(r) measures how lymphocyte density varies with distance from the\
+  \ tumor nest boundary, normalized by what you would expect from a random distribution:\n\n$$g(r) = \\\
+  frac{\\rho(r)}{\\rho_0}$$\n\n- **g(r) > 1**: lymphocytes are enriched at this distance (active recruitment)\n\
+  - **g(r) = 1**: random baseline\n- **g(r) < 1**: lymphocytes are depleted (active exclusion or boundary\
+  \ crowding)\n\n**Important methodological note:** this implementation uses the tumor nest boundary as\
+  \ the reference point, not individual tumor cell centroids. Centroid-based RDF gives the wrong result\
+  \ on mixed-population tissue because at short distances from a centroid you are still inside the nest,\
+  \ surrounded by other tumor cells rather than lymphocytes. The notebook demonstrates this explicitly.\n\
+  \n**Pipeline:**\n\n```\nH&E image\n    → Cellpose nucleus segmentation       (diameter = 15px)\n   \
+  \ → Two-feature cell classification     (area + intensity)\n    → Gaussian tumor nest mask         \
+  \   (sigma = 25px, threshold = 8% of peak)\n    → Signed boundary distances           (negative = TIL,\
+  \ positive = stromal)\n    → Normalize by available tissue area  (converts histogram to enrichment ratio)\n\
+  \    → RDF curve g(r) + immune phenotype\n```\n\n---\n\n## Key results on the tutorial image\n\n```\n\
+  Total nuclei detected:     3997\nLymphocytes:               2591  (64.8%)\nTumor cells:            \
+  \    531  (13.3%)\nUnclassified (stromal):     875  (21.9%)\n\nTIL fraction (inside nest):   24.9%\n\
+  Nest area:                    34.0% of image\nStroma area:                  66.0% of image\n\nRDF results:\n\
+  \  Peak g(r):                  3.090  at distance 3px\n  g(r) at 10px:               2.998\n  g(r) at\
+  \ 50px:               1.315\n  g(r) at 150px:              0.285\n  g(r) at 250px:              0.090\n\
+  \nImmune phenotype metrics:\n  Short-range g(r)  (0-50px):    2.422\n  Mid-range g(r)    (50-150px):\
+  \  0.583\n  Long-range g(r)   (>150px):    0.164\n\nClassified phenotype: EXCLUDED\nInterpretation:\
+  \ Lymphocytes strongly enriched at the nest boundary\n                but depleted in the mid and distal\
+  \ stroma.\n                Consistent with active exclusion mechanism.\n```\n\n---\n\n## Running the\
+  \ notebook\n\nOpen directly in Google Colab:\n\n[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bnsreenu/digitalpathology-spatial-immune-rdf/blob/main/RDF_immune_spatial_analysis.ipynb)\n\
+  \n**Note on Cellpose and Colab:** Cellpose has several dependencies that can conflict with Colab's pre-installed\
+  \ PyTorch. If you encounter issues, run this cell before importing:\n\n```python\n!pip install cellpose\
+  \ --no-deps\n!pip install fastremap tifffile fill_voids\n```\nYou may have to install additional dependencies.\
+  \ \n\nIf CUDA is not detected after installation, reinstall PyTorch with CUDA support before Cellpose:\n\
+  \n```python\n!pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118\n!pip\
+  \ install cellpose --no-deps\n!pip install fastremap tifffile fill_voids\n```\n\nFor a smoother experience,\
+  \ running locally in a conda environment with Cellpose pre-installed is recommended.\n\nTo run locally:\n\
+  \n```bash\npip install cellpose numpy scipy scikit-image matplotlib pillow\njupyter notebook RDF_immune_spatial_analysis.ipynb\n\
+  ```\n\n---\n\n## Parameters\n\n| Parameter | Value used | What it controls | How to adjust |\n|---|---|---|---|\n\
+  | `diameter` | 15px | Cellpose nucleus detection size | Match to lymphocyte nucleus size at your magnification\
+  \ |\n| `AREA_THRESH` | 60px | Nucleus area boundary between lymphocytes and tumor cells | Adjust based\
+  \ on your cell size distribution histogram |\n| `INTENSITY_THRESH` | 60 | Mean grayscale intensity boundary\
+  \ | Adjust based on your staining intensity |\n| `NEST_SIGMA` | 25px | Gaussian smoothing for nest mask\
+  \ | Larger = smoother nest boundary |\n| `NEST_THRESHOLD` | 0.08 | Fraction of peak density to define\
+  \ nest edge | Lower = larger nest region |\n| `r_max` | 300px | Maximum distance to evaluate | Set to\
+  \ roughly the image half-width |\n| `n_bins` | 50 | Number of distance bins | More bins = finer resolution,\
+  \ more noise |\n\n---\n\n## About the H&E image\n\nThe image used in this tutorial was generated using\
+  \ ChatGPT image generation with the following prompt:\n\n> A realistic H&E (hematoxylin and eosin) stained\
+  \ histology image at 20x magnification showing invasive carcinoma with immune infiltration. The image\
+  \ should contain two or three irregular tumor nests with pleomorphic cells and prominent nuclei in the\
+  \ upper left and lower center of the field. The surrounding stroma should contain collagen fibers and\
+  \ fibroblasts. Critically, lymphocytes should be distributed non-uniformly: densely clustered immediately\
+  \ adjacent to the tumor nest boundaries forming a partial rim, moderately present in the peri-tumoral\
+  \ stroma within approximately 100 micrometers of the tumor edge, and sparse in the distal stroma further\
+  \ away. A few small capillaries visible in the stroma. Some lymphocytes should also be present within\
+  \ the tumor nests themselves (tumor infiltrating lymphocytes). Overall the immune distribution should\
+  \ look heterogeneous and realistic, not uniform. The color palette should be authentic H&E: blue-purple\
+  \ nuclei for both tumor cells and lymphocytes (lymphocyte nuclei are smaller and rounder and darker\
+  \ than tumor nuclei), pink cytoplasm and collagen, white background. No labels, no annotations, no scale\
+  \ bars, no text of any kind. Flat 2D microscopy view, sharp focus across the entire image, square crop.\
+  \ Include subtle staining variation across the field and occasional tissue processing artifacts such\
+  \ as small tissue folds or slight nuclear overlap to make it realistic.\n\n---\n\n## Note on the implementation\n\
+  \nThe RDF is implemented from scratch for transparency. The same computation is available in:\n- `astropy.stats.RipleysKEstimator`\
+  \ (convert Ripley K to g via differentiation)\n- `pointpats` (spatial point pattern analysis)\n- `squidpy`\
+  \ (spatial omics toolkit with built-in RDF for spatial transcriptomics data)\n\nFor large-scale processing\
+  \ across many whole slide image patches, these libraries are recommended over the pure implementation\
+  \ shown here.\n\n---\n\n## References\n\n- Galon J et al. (2006) Type, density, and location of immune\
+  \ cells within human colorectal tumors predict clinical outcome. *Science* 313(5795):1960-1964.\n\n\
+  - Tumeh PC et al. (2014) PD-1 blockade induces responses by inhibiting adaptive immune resistance. *Nature*\
+  \ 515(7528):568-571.\n\n- Binnewies M et al. (2018) Understanding the tumor immune microenvironment\
+  \ (TIME) for effective therapy. *Nature Medicine* 24(5):541-550.\n\n- Bankhead P et al. (2017) QuPath:\
+  \ Open source software for digital pathology image analysis. *Scientific Reports* 7(1):16878.\n\n---\n\
+  \n## Related videos\n\nThis tutorial is part of the **Digital Pathology** playlist on the DigitalSreeni\
+  \ YouTube channel, which covers both classical and AI-based methods for histology image analysis.\n\n\
+  A related tutorial using the structure tensor coherence map for collagen organization analysis is available\
+  \ at: [github.com/bnsreenu/digitalpathology-structure-tensor-coherence](https://github.com/bnsreenu/digitalpathology-structure-tensor-coherence)\n\
+  \nFull playlist: [DigitalSreeni YouTube channel](https://www.youtube.com/@DigitalSreeni)\n\n---\n\n\
+  ## License\n\nMIT License. See LICENSE file for details.\n"

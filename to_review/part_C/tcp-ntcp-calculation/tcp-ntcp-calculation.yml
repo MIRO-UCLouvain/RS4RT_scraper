@@ -1,0 +1,49 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: radiation-treatment-planning/tcp-ntcp-calculation
+url: https://gitlab.com/radiation-treatment-planning/tcp-ntcp-calculation
+platform: gitlab
+description: Tumor Control Probability calculation with Poisson Model and Normal Tissue Complication Probability
+  calculation with Poisson relative seriality model.
+license: null
+language: null
+keywords: []
+stars: 0
+updated_at: '2026-01-19T16:33:31.561Z'
+image_source: null
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 9 support term(s).
+- Matched 1 AI/ML term(s) in metadata/content.
+readme_excerpt: "# Tcp Ntcp calculation\n\nA .Net Framework 4.7.2 library for Tumor Control Probability\
+  \ (TCP) and Normal Tissue Complication Probability (NTCP) calculations in radiation therapy.\n\nFoundational\
+  \ library is [RadiationTreatmentPlanner.Utils](https://gitlab.com/radiation-treatment-planning/radiation-treatment-planner-utils).\n\
+  \n## Installation\nBuild it from source or install it via [NuGet](https://www.nuget.org/packages/TcpNtcpCalculation/).\n\
+  \n## Available calculators\nAll calculators are based on the Linear-Quadratic (LQ) model. Following\
+  \ calculators are available\n\n### TCP calculators\n- Poisson TCP calculator with normalized volume\
+  \ correction\n- Logistic TCP calculator with normalized volume correction\n- Poisson TCP with cell density\
+  \ and $\\alpha$ calculator\n\n### NTCP calculators\n- Relative Seriality Poisson NTCP calculator\n-\
+  \ Relative Seriality Logistiy NTCP calculator\n- Lyman-Kutcher-Burman (LKB) NTCP calculator\n\n### Other\
+  \ calculators\n- Probability of Cure calculator\n- Probability of Injury calculator\n- Biologically\
+  \ effective uniform dose calculator\n- Complication Free Tumor Control ($P+$) calculator\n- TCP Curve\
+  \ calculator\n- NTCP Curve calculator\n\n## Usage\n1. Create a Dose-Volume Histogram (DVH) as described\
+  \ [here](https://gitlab.com/radiation-treatment-planning/radiation-treatment-planner-utils) in detail.\n\
+  \n```csharp\nvar doseVolumePoints = new List<Tuple<UDose, UVolume>>\n{\n    new Tuple<UDose, UVolume>(new\
+  \ UDose(69, UDose.UDoseUnit.Gy), new UVolume(5, UVolume.VolumeUnit.ccm)),\n    new Tuple<UDose, UVolume>(new\
+  \ UDose(70, UDose.UDoseUnit.Gy), new UVolume(2, UVolume.VolumeUnit.ccm)),\n    new Tuple<UDose, UVolume>(new\
+  \ UDose(70, UDose.UDoseUnit.Gy), new UVolume(0, UVolume.VolumeUnit.ccm))\n};\nvar dvhCurve = new DVHCurve(doseVolumePoints,\
+  \ DVHCurve.Type.CUMULATIVE, DVHCurve.DoseType.PHYSICAL);\n```\n2. Initialize a calculator\n\n```csharp\n\
+  var calculator = new PoissonTcpWithDensityAndAlphaCalculator(new ClonogenicCellDensity(2.8E8),\n   \
+  \ new Alpha(0.1205),\n    new IsoeffectiveDoseIn2GyConverter(new AlphaOverBeta(1.6, UDose.UDoseUnit.Gy)));\n\
+  ```\n3. Calculate the desired properties\n```csharp\nvar numberOfTreatmentFractions = 12u;\nvar result\
+  \ = calculator.Calculate(dvhCurve, numberOfTreatmentFractions);\n```\n\nFor more examples see `TcpNtcpCalculation.Tests`\
+  \ project.\n\n# Literature\n- Allen Li, X., Alber, M., Deasy, J.O., Jackson, A., Ken Jee, K.-W., Marks,\
+  \ L.B., Martel, M.K., Mayo, C., Moiseenko, V., Nahum, A.E., Niemierko, A., Semenenko, V.A. and Yorke,\
+  \ E.D. (2012), The use and QA of biologically related models for treatment planning: Short report of\
+  \ the TG-166 of the therapy physics committee of the AAPM. Med. Phys., 39: 1386-1409. \\\nhttps://doi.org/10.1118/1.3685447\n\
+  - Francesco Tommasino, Alan Nahum, & Laura Cella (2017). Increasing the power of tumour control and\
+  \ normal tissue complication probability modelling in radiotherapy: recent trends and current issues.\
+  \ Translational Cancer Research, 6(Suppl 5). \\\nhttps://doi.org/10.21037/tcr.2017.06.03\n"

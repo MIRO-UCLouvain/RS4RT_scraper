@@ -1,0 +1,125 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: gmbenson/SFRT_MILP_Optimization
+url: https://github.com/gmbenson/SFRT_MILP_Optimization
+platform: github
+description: A suite of scripts used for reading dicom files and, via dependency on PortPy, create optimal
+  treatment plans for Spatially Fractionated Radiation Therapy
+license: null
+language: null
+keywords: []
+stars: 0
+updated_at: '2026-07-14T00:21:22Z'
+image_source: null
+heuristic_total_score: 26
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 4 particle-therapy term(s).
+- Matched 10 support term(s).
+- Matched 1 AI/ML term(s) in metadata/content.
+readme_excerpt: "# Mathematical Optimization for Spatially Fractionated Radiation Therapy (SFRT)\n\n>\
+  \ Master's thesis project combining graph theory, mixed-integer optimization, and radiation treatment\
+  \ planning to optimize Spatially Fractionated Radiation Therapy (SFRT).\n\n---\n\n## Overview\n\nSpatially\
+  \ Fractionated Radiation Therapy (SFRT) delivers radiation through a pattern of high-dose \"peaks\"\
+  \ separated by lower-dose \"valleys\", allowing aggressive treatment of large tumors while reducing\
+  \ damage to healthy tissue.\n\nCurrent treatment planning largely relies on manual sphere placement\
+  \ by clinicians.\n\nThis project formulates the entire planning process as a mathematical optimization\
+  \ problem.\n\nThe optimization pipeline simultaneously determines\n\n- where radiation spheres should\
+  \ be placed,\n- how many spheres should be used,\n- and the optimal beamlet intensities required to\
+  \ deliver the prescribed dose while satisfying clinical dose constraints.\n\nThe resulting framework\
+  \ combines discrete optimization, convex optimization, computational geometry, and medical image processing\
+  \ into a single optimization workflow.\n\n---\n\n# Optimization Pipeline\n\n```text\nCT Scan\n   │\n\
+  \   ▼\nTumor Contours (ROI)\n   │\n   ▼\nCandidate Sphere Generation\n   │\n   ▼\nGraph Construction\n\
+  \   │\n   ▼\nMaximum Independent Set\n   │\n   ▼\nDose Prescription Matrix\n   │\n   ▼\nMixed Integer\
+  \ Fluence Optimization\n   │\n   ▼\nDeliverable Radiation Treatment Plan\n```\n\n---\n\n# Major Components\n\
+  \n## 1. Tumor Discretization\n\nDesigned a computational geometry algorithm that converts physician-defined\
+  \ tumor contours into a discrete set of feasible radiation sphere locations.\n\nFeatures include\n\n\
+  - point-in-polygon detection\n- ray casting\n- boundary interpolation\n- tangent handling\n- support\
+  \ for disconnected tumor regions\n- configurable grid discretization\n- square and triangular sampling\
+  \ strategies\n\n---\n\n## 2. Graph Construction\n\nEach feasible sphere center becomes a graph node.\n\
+  \nEdges connect sphere centers that violate the minimum separation distance required by clinical SFRT\
+  \ guidelines.\n\nFinding the optimal sphere placement becomes a Maximum Independent Set problem.\n\n\
+  Implemented and compared three formulations:\n\n- Arc-based MILP\n- Node-based MILP\n- Quadratic Binary\
+  \ Optimization\n\n---\n\n## 3. Fluence Map Optimization\n\nExtended classical fluence map optimization\
+  \ by coupling beamlet intensity optimization with sphere placement.\n\nInstead of optimizing a fixed\
+  \ prescription matrix, the prescription itself becomes a function of the optimization variables.\n\n\
+  The optimization simultaneously determines\n\n- sphere locations\n- beamlet intensities\n- delivered\
+  \ voxel dose\n\nwhile satisfying\n\n- voxel dose limits\n- mean dose constraints\n- DVH constraints\n\
+  - organ-at-risk constraints\n\n---\n\n## 4. Large Scale Optimization\n\nPatient treatment plans contain\n\
+  \n- hundreds of thousands of voxels\n- tens of thousands of beamlets\n- multi-gigabyte sparse dose matrices\n\
+  \nSeveral techniques were required to keep optimization tractable:\n\n- CSR sparse matrices\n- voxel\
+  \ downsampling\n- warm-started branch-and-bound\n- L1 objective linearization\n- preprocessing pipelines\n\
+  - proportional voxel overlap approximation\n\n---\n\n# Engineering Challenges\n\n| Challenge | Problem\
+  \ | Solution |\n|---|---|---|\n| Irregular 3D tumor geometry | Radiation sphere placement requires identifying\
+  \ all feasible locations inside complex, patient-specific tumor contours. | Developed a custom CT-based\
+  \ discretization pipeline using point-in-polygon methods, ray casting, boundary interpolation, and geometric\
+  \ filtering to generate candidate sphere locations. |\n| Combinatorial explosion of sphere placement\
+  \ | The number of possible sphere configurations grows exponentially as tumor size and discretization\
+  \ resolution increase. | Formulated sphere placement as a Maximum Independent Set (MIS) problem on a\
+  \ conflict graph and solved using mixed-integer optimization techniques. |\n| Large-scale graph optimization\
+  \ | Patient-specific tumor discretization can generate thousands of candidate sphere locations and millions\
+  \ of potential conflicts. | Implemented graph construction algorithms and compared multiple MIS formulations\
+  \ to identify efficient optimization strategies. |\n| Coupling discrete decisions with radiation delivery\
+  \ | Optimal sphere placement alone does not guarantee a clinically deliverable treatment plan. | Integrated\
+  \ MIS-based sphere selection with fluence map optimization to jointly optimize sphere locations and\
+  \ beamlet intensities. |\n| Multi-gigabyte dose matrices | Radiation dose deposition matrices can exceed\
+  \ 10 GB due to the number of voxels and beamlets required for patient-specific planning. | Utilized\
+  \ sparse matrix representations (CSR format), preprocessing, and voxel downsampling to make large-scale\
+  \ optimization computationally feasible. |\n| High-dimensional mixed-integer optimization | Simultaneously\
+  \ optimizing sphere placement, beamlet intensities, and clinical constraints creates a challenging optimization\
+  \ problem. | Applied MILP formulations, L1 objective linearization, branch-and-bound optimization, and\
+  \ warm-start strategies to improve solver performance. |\n| Accurate dose prescription modeling | Traditional\
+  \ fluence optimization assumes a fixed target dose distribution, which does not capture variable SFRT\
+  \ sphere placement. | Developed a dynamic dose prescription matrix where the target dose changes based\
+  \ on optimization-selected sphere locations. |\n| Computational geometry approximation | Exact sphere-voxel\
+  \ intersection calculations are computationally expensive for patient-scale models. | Developed a proportional\
+  \ voxel overlap approximation to estimate dose contribution while maintaining tractable computation\
+  \ times. |\n| Clinical constraint integration | Treatment plans must satisfy safety constraints for\
+  \ healthy organs while maintaining tumor dose requirements. | Incorporated voxel limits, mean dose constraints,\
+  \ and dose-volume histogram (DVH) constraints into the optimization model. |\n\n---\n\n# Technologies\n\
+  \n### Optimization\n\n- Mixed Integer Programming (MILP)\n- Linear Programming\n- Convex Optimization\n\
+  - Maximum Independent Set\n- Branch-and-Bound\n- Multi-objective Optimization\n\n### Scientific Computing\n\
+  \n- Python\n- NumPy\n- SciPy\n- Sparse Linear Algebra\n\n### Medical Computing\n\n- PortPy\n- CT Scan\
+  \ Processing\n- DICOM-derived ROI data\n- Dose-volume histogram (DVH) constraints\n\n### Solvers\n\n\
+  - Gurobi\n\n---\n\n# Research Contributions\n\nThis project introduces several novel components beyond\
+  \ standard radiation treatment planning.\n\n### Graph-based sphere placement\n\nDeveloped a graph representation\
+  \ of feasible SFRT sphere locations generated directly from CT-derived tumor contours.\n\n### Coupled\
+  \ optimization formulation\n\nIntegrated Maximum Independent Set optimization with Fluence Map Optimization,\
+  \ allowing sphere placement and beamlet intensities to be optimized simultaneously.\n\n### Dynamic dose\
+  \ prescription\n\nIntroduced a variable dose prescription matrix whose values depend on optimization\
+  \ decisions rather than remaining fixed throughout optimization.\n\n### Practical optimization improvements\n\
+  \nImplemented\n\n- sparse matrix preprocessing\n- warm starts\n- objective linearization\n- voxel overlap\
+  \ approximation\n\nto solve clinically-sized optimization problems.\n\n---\n\n# Repository Structure\n\
+  \n```\nsrc/\n    preprocessing/\n    graph_generation/\n    optimization/\n    fluence/\n    visualization/\n\
+  \ndata/\n    patient_data/\n\nresults/\n    treatment_plans/\n\nfigures/\n```\n\n---\n\n# Example Workflow\n\
+  \n1. Load CT scan using PortPy\n2. Extract tumor contours\n3. Generate candidate sphere centers\n4.\
+  \ Construct incompatibility graph\n5. Solve Maximum Independent Set\n6. Build dose prescription matrix\n\
+  7. Compute dose deposition matrix\n8. Solve mixed-integer fluence optimization\n9. Export treatment\
+  \ plan\n\n---\n\n# Future Work\n\nPotential extensions include\n\n- VMAT optimization\n- Robust optimization\
+  \ under patient motion\n- GPU acceleration\n- Multi-criteria optimization\n- Adaptive radiation therapy\n\
+  \nDescription goes here...\n\nThis repository supports analysis of dicom structural files\n\n* Note:\
+  \ all path variables must be changed to the relevant CT\\RS\\ file\n\n## Installation\n\nTo run, download\
+  \ poetry with `pip install poetry`.\n\nOnce poetry is downloaded, configure virtual environment with\
+  \ `poetry install`.\n\nAfter virtual environment has been created, activate with `poetry shell`.\n\n\
+  ### Running Ingest\n\nTo run ingest, make sure you are in the root directory `Research/`, and then execute\
+  \ `python ingest.py`.\n\n## Description\n\n### primary pipeline\n\ndicom_reader.py - creates a list\
+  \ of all points within a given ROI, prints to json file - requires grid_placement.py - writes candidate_points.json\
+  \ (slices of node lists)\n\nparameter_writer.py - reads candidate_points.json, calculates nodes and\
+  \ arcs, writes node_data.json, arc_data.json, arc_list.json, adjacency_matrix.json files\n\nGraph_Optimization.py\
+  \ - a preliminary implementation of the Maximum Independent Set problem in Gurobi, reads node_data.json\
+  \ and arc_data.json\n\n**All optimization files require dicom_reader.py and parameter_writer.py\n\n\
+  ## Secondary Models\n\n#### Other Optimization Models:\n\n* Clique_Optimization.py : solves MIS problem\
+  \ using all maximal cliques rather than edges. Needs cliques.json from Clique_Problem.py\n    \n* Node_Optimization.py\
+  \ : solves MIS problem using aggregated constraints, such that there is only one adjacency constraint\
+  \ per node. Needs arc_list.json and node_data.json\nTo initialize env, run `poetry install`\n\n####\
+  \ Heuristics:\n\n* cube_heuristic.py : finds a solution for the MIS problem by assuming that the spheres\
+  \ all sit on a uniform grid, which is optimal for a rectangular shape. Finds every possible grid solution\
+  \ and returns best solution.\n    \n* Greedy_Algorithm.py : Implementation of a Greedy algorithm that\
+  \ performs suspiciously poorly. Needs validation, potentially correction.\n \n    \n\n## Other Files\n\
+  \n* Clique_Problem.py - uses networkX library to find all cliques and create cliques.json. Requires\
+  \ node_data.json and arc_data.json\n\n* grid_placement.py - containes helper funcitons for dicom_reader.py\n\
+  \n* Structure_Visualizer.py - can be used to visualize ROIs in 3D and 2D slices\n\n\n\n## Miscellaneous\
+  \ files\n\n* cube_optimization.py - another implementation of the MIS problem to test computation time,\
+  \ data storage\n* dicom_tester.py - reads dicom files, don't use\n"

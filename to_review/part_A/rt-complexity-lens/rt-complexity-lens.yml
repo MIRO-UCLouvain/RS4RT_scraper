@@ -1,0 +1,141 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: matteomaspero/rt-complexity-lens
+url: https://github.com/matteomaspero/rt-complexity-lens
+platform: github
+description: DICOM RT plan complexity analysis
+license: NOASSERTION
+language: TypeScript
+keywords:
+- radiotherapy
+- radiotherapy-treatment-planning
+stars: 5
+updated_at: '2026-07-26T06:21:06Z'
+image_source: null
+heuristic_total_score: 27
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 5 particle-therapy term(s).
+- Matched 12 support term(s).
+readme_excerpt: "# RTplan Complexity Lens\n\nA browser-based tool for analyzing DICOM-RT Plan complexity\
+  \ using research-inspired metrics.\n\n[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://rt-complexity-lens.lovable.app)\n\
+  [![Python Package](https://img.shields.io/badge/python-rtplan--complexity-blue)](https://github.com/rtplan-complexity/rtplan-complexity)\n\
+  \n## Overview\n\n**RTplan Complexity Lens** (RTp-lens) calculates and visualizes treatment plan complexity\
+  \ metrics directly in your browser. No data is uploaded to servers—all processing happens locally.\n\
+  \nThis tool helps radiation therapy professionals:\n- Evaluate plan complexity to predict delivery accuracy\n\
+  - Identify potential QA challenges before treatment\n- Compare treatment planning approaches across\
+  \ plans\n- Perform cohort-level statistical analysis\n\n## Live Demo\n\n\U0001F449 **[Launch RTp-lens](https://rt-complexity-lens.lovable.app)**\n\
+  \nLoad a demo plan instantly or upload your own DICOM-RT Plan files.\n\n---\n\n## Analysis Modes\n\n\
+  RTp-lens offers four analysis modes for different workflows:\n\n### \U0001F52C Single Plan Analysis\n\
+  \nUpload a single DICOM-RT Plan file for detailed analysis:\n- Interactive control point navigation\
+  \ with playback animation\n- MLC aperture, gantry, and collimator visualization\n- Beam summary with\
+  \ MU, gantry range, dose rate statistics\n- Delivery timeline charts (segment duration, gantry/MLC speeds)\n\
+  - Complexity heatmaps (LSV, AAV, aperture area per CP)\n- CSV export of all metrics at plan, beam, and\
+  \ CP levels\n\n### \U0001F4CA Batch Analysis\n\nProcess multiple plans simultaneously:\n- Upload multiple\
+  \ DICOM files or ZIP archives\n- Nested folder structure support\n- Aggregate statistics (min, max,\
+  \ mean, standard deviation)\n- Distribution histograms for each metric\n- Machine preset selection for\
+  \ threshold alerts\n- Batch CSV/JSON export\n\n### ⚖️ Plan Comparison\n\nSide-by-side comparison of\
+  \ two treatment plans:\n- Automated beam matching algorithm (by name or geometry)\n- Metrics difference\
+  \ table with delta values and % change\n- Synchronized control point scrubber\n- MLC aperture overlay\
+  \ and difference visualization\n- Comparison charts (Cumulative MU, Polar MU distribution, Delivery\
+  \ timeline)\n\n### \U0001F4C8 Cohort Analysis\n\nPopulation-level statistical analysis with clustering:\n\
+  - **Clustering dimensions:**\n  - Technique (VMAT vs IMRT)\n  - Beam Count\n  - Complexity Level (Low/Medium/High/Very\
+  \ High)\n  - MU Level\n  - Treatment Site\n- Extended statistics (quartiles, IQR, percentiles, skewness,\
+  \ kurtosis)\n- Box plots, scatter matrix, correlation heatmap, violin plots\n- Automatic outlier detection\
+  \ (IQR method)\n- Cluster summary grid\n- Cohort CSV/JSON export\n\n---\n\n## ⚠️ Status Notice\n\n**Current\
+  \ Version:** 1.0.1  \n**Known Issues:** Cross-validation testing reveals metric discrepancies with UCoMX\
+  \ v1.1 reference implementation. See [CROSS_VALIDATION_FINDINGS.md](CROSS_VALIDATION_FINDINGS.md) for\
+  \ details.\n\n### Supported Features\n\n| Feature | Status | Description |\n|---------|--------|--------------|\n\
+  | **Single Plan Analysis** | ✅ Working | Load DICOM RT Plans and calculate metrics |\n| **Batch Analysis**\
+  \ |✅ Working | Process  multiple plans with aggregate statistics |\n| **Plan Comparison** | ✅ Working\
+  \ | Side-by-side comparison of two treatment plans |\n| **Cohort Analysis** | ✅ Working | Population-level\
+  \ statistical analysis with clustering |\n| **PAM/BAM Metrics** | ✅ Working | Plan Aperture Modulation\
+  \ with RTSTRUCT support |\n\n### Visualizations\n\n| Feature | Status | Description |\n|---------|--------|-------------|\n\
+  | **MLC Aperture Viewer** | ✅ | SVG display of leaf positions with gap highlighting |\n| **Gantry Schematic**\
+  \ | ✅ | Real-time gantry angle indicator with arc direction |\n| **Collimator Display** | ✅ | Jaw positions\
+  \ and collimator rotation |\n| **Control Point Scrubber** | ✅ | Interactive slider with playback controls\
+  \ |\n| **Delivery Timeline** | ✅ | Segment duration, dose rate, gantry/MLC speed charts |\n| **Complexity\
+  \ Heatmaps** | ⚠️ | Per-CP visualization (values may not match UCoMX exactly) |\n| **MU Distribution**\
+  \ | ✅ | Polar chart showing MU per gantry angle |\n| **Angular Binning** | ✅ | Distribution of complexity\
+  \ metrics by gantry sector |\n\n### Export Options\n\n- **CSV Export**: Download metrics for spreadsheet\
+  \ analysis\n- **Chart PNG Export**: Save any visualization as an image (click \U0001F4F7 icon)\n- **JSON\
+  \ Export**: Machine-readable format for automation\n\n### Target-Based Analysis (PAM/BAM)\n\n- **RTSTRUCT\
+  \ Loading**: Upload anatomical structures after loading a plan\n- **Target Selection**: Choose which\
+  \ structure to analyze (e.g., GTV, PTV, target)\n- **Real-time Recalculation**: Metrics automatically\
+  \ update when structure is loaded\n- **Per-Beam BAM**: View beam-level aperture modulation in beam summary\
+  \ cards\n\n---\n\n## Complexity Metrics\n\nMetrics are inspired by published research including the\
+  \ UCoMX framework.\n\n### Primary Metrics\n\n| Metric | Name | Description | Range |\n|--------|------|-------------|-------|\n\
+  | **MCS** | Modulation Complexity Score | Overall plan modulation complexity | 0–1 (higher = simpler)\
+  \ |\n| **LSV** | Leaf Sequence Variability | MLC leaf position uniformity | 0–1 (higher = more uniform)\
+  \ |\n| **AAV** | Aperture Area Variability | Aperture size consistency between CPs | 0–1+ (lower = more\
+  \ consistent) |\n| **MFA** | Mean Field Area | Average aperture size | cm² |\n\n### Secondary Metrics\n\
+  \n| Metric | Name | Description | Notes |\n|--------|------|-------------|-------|\n| **LT** | Leaf\
+  \ Travel | Total MLC movement (mm) | — |\n| **LTMCS** | Leaf Travel-weighted MCS | LT normalized by\
+  \ MCS | — |\n| **SAS5** | Small Aperture Score (5mm) | Fraction of aperture with gaps <5mm | — |\n|\
+  \ **SAS10** | Small Aperture Score (10mm) | Fraction of aperture with gaps <10mm | — |\n| **EM** | Edge\
+  \ Metric | Aperture edge irregularity | — |\n| **PI** | Plan Irregularity | Deviation from circular\
+  \ apertures | — |\n\n### Target-Based Metrics (Requires RTSTRUCT)\n\n| Metric | Name | Description |\
+  \ Range | Requires |\n|--------|------|-------------|-------|----------|\n| **PAM** | Plan Aperture\
+  \ Modulation | Avg fraction of target blocked across entire plan | 0–1 | RTSTRUCT |\n| **BAM** | Beam\
+  \ Aperture Modulation | Average fraction of target blocked per beam | 0–1 | RTSTRUCT |\n\n> **PAM/BAM\
+  \ Quick Reference:**\n> - **0.0–0.1** = Minimal blocking (excellent conformality)\n> - **0.1–0.3** =\
+  \ Low blocking (simple plans)\n> - **0.3–0.5** = Moderate blocking\n> - **0.5–0.7** = High blocking\
+  \ (complex plans)\n> - **0.7–1.0** = Very high blocking (very complex plans)\n>\n> To calculate PAM/BAM:\
+  \ Load an RTPLAN file, then upload the corresponding RTSTRUCT file with target structure(s). Metrics\
+  \ recalculate automatically.\n\n### Accuracy Metrics\n\n| Metric | Name | Description |\n|--------|------|-------------|\n\
+  | **LG** | Leaf Gap | Mean gap between opposing leaves |\n| **MAD** | Mean Asymmetry Distance | Left-right\
+  \ asymmetry of apertures |\n| **EFS** | Equivalent Field Size | Effective field size |\n| **psmall**\
+  \ | Percentage Small Fields | Fraction of small apertures |\n\n### Deliverability Metrics\n\n| Metric\
+  \ | Name | Description |\n|--------|------|-------------|\n| **MUCA** | MU per Control Arc | MU density\
+  \ for VMAT arcs |\n| **LTMU** | Leaf Travel per MU | MLC activity per unit dose |\n| **LTNLMU** | Leaf\
+  \ Travel per Leaf and MU | Leaf travel normalized by active leaves and MU |\n| **LNA** | Leaf Travel\
+  \ per Leaf and CA | Leaf travel normalized by active leaves and control arcs |\n| **NL** | Number of\
+  \ active Leaves | Mean number of active leaves (2 × active leaf pairs) |\n| **LTAL** | Leaf Travel per\
+  \ Arc Length | MLC activity per degree of arc (VMAT only) |\n| **GT** | Gantry Travel | Total gantry\
+  \ rotation (degrees) |\n| **GS** | Gantry Speed | Average gantry speed (deg/s) |\n| **mGSV** | Mean\
+  \ Gantry Speed Variation | Mean absolute gantry speed change between segments |\n| **LS** | Leaf Speed\
+  \ | Average MLC speed (mm/s) |\n| **mDRV** | Mean Dose Rate Variation | Mean absolute dose rate change\
+  \ between control arcs |\n| **PA** | Plan Area | Mean aperture area in BEV (cm²) |\n| **JA** | Jaw Area\
+  \ | Area defined by jaw collimators (cm²) |\n| **TG** | Tongue-and-Groove Index | Potential T&G effect\
+  \ from leaf staggering |\n| **MD** | Modulation Degree | Coefficient of variation of meterset weights\
+  \ |\n| **MI** | Modulation Index | Normalized leaf travel per leaf per control point |\n| **PM** | Plan\
+  \ Modulation | Area- and MU-weighted modulation (1 - MCS) |\n\n### Delivery Parameters\n\n| Metric |\
+  \ Name | Description |\n|--------|------|-------------|\n| **Total MU** | Monitor Units | Total plan\
+  \ MU |\n| **Est. Time** | Estimated Delivery Time | Based on machine parameters |\n| **MU/°** | MU per\
+  \ Degree | Modulation density for arcs |\n| **Dose Rate** | Average Dose Rate | MU/min during delivery\
+  \ |\n\n### Beam Identification\n\nDICOM metadata fields extracted for each beam:\n\n| Field | Description\
+  \ | Examples |\n|-------|-------------|----------|\n| **Radiation Type** | Type of radiation used |\
+  \ PHOTON, ELECTRON, PROTON |\n| **Nominal Beam Energy** | Energy in MeV | 6.0, 10.0, 15.0, 18.0 |\n\
+  | **Energy Label** | Clinical designation | 6X, 10FFF, 6E, 9E |\n\n**Note:** Electron beams use fixed\
+  \ applicators instead of MLCs, so MLC-based complexity metrics (MCS, LSV, AAV, LT, etc.) are not calculated\
+  \ for electron beams.\n\n---\n\n## Machine Presets\n\n### Built-in Presets\n\n| Preset | Max Dose Rate\
+  \ | Max Gantry Speed | Max MLC Speed | MLC Type |\n|--------|---------------|------------------|---------------|----------|\n\
+  | **Generic (Conservative)** | 600 MU/min | 4.8 °/s | 25 mm/s | MLCX |\n| **Varian TrueBeam** | 600\
+  \ MU/min (1400 FFF) | 6.0 °/s | 25 mm/s | MLCX |\n| **Varian Halcyon** | 800 MU/min | 4.0 °/s | 50 mm/s\
+  \ | Dual-layer |\n| **Elekta Versa HD** | 600 MU/min | 6.0 °/s | 35 mm/s | MLCY |\n\n### Threshold Alerts\n\
+  \nEach preset includes configurable thresholds for metrics:\n\n| Status | Color | Meaning |\n|--------|-------|---------|\n\
+  | **Normal** | — | Value within expected range |\n| **Warning** | \U0001F7E1 Yellow | Approaching concerning\
+  \ levels |\n| **Critical** | \U0001F534 Red | Exceeds recommended thresholds |\n\nThresholds are directional:\n\
+  - Some metrics alert when **low** (e.g., MCS < 0.2)\n- Others alert when **high** (e.g., LT > 50000mm)\n\
+  \n### Custom Presets\n\n- Create new presets from scratch\n- Duplicate and modify built-in presets\n\
+  - Edit threshold values and delivery parameters\n- Import/export presets as JSON for sharing across\
+  \ teams\n\n---\n\n## Python Toolkit\n\nThe **rtplan-complexity** Python package mirrors the web application's\
+  \ metric calculations for offline analysis.\n\n### Installation\n\n```bash\npip install rtplan-complexity\n\
+  ```\n\n### Quick Example\n\n```python\nfrom rtplan_complexity import parse_rtplan, calculate_plan_metrics\n\
+  from rtplan_complexity.parser import parse_rtstruct, get_structure_by_name\n\n# Load plan\nplan = parse_rtplan(\"\
+  RTPLAN.dcm\")\nmetrics = calculate_plan_metrics(plan)\n\nprint(f\"MCS: {metrics.MCS:.4f}\")\nprint(f\"\
+  LSV: {metrics.LSV:.4f}\")\nprint(f\"Total MU: {metrics.total_mu:.1f}\")\n\n# Optional: Calculate PAM\
+  \ with target structure\nstructures = parse_rtstruct(\"RTSTRUCT.dcm\")\ntarget = get_structure_by_name(structures,\
+  \ \"GTV\")\nif target:\n    metrics = calculate_plan_metrics(plan, structure=target)\n    print(f\"\
+  PAM: {metrics.PAM:.4f}\")\n    for beam_metrics in metrics.beam_metrics:\n        print(f\"  Beam {beam_metrics.beam_number}\
+  \ BAM: {beam_metrics.BAM:.4f}\")\n```\n\n### Features\n\n- Identical algorithms to web application\n\
+  - Single-plan, batch, and cohort analysis\n- Matplotlib visualizations (box plots, heatmaps, scatter\
+  \ matrix)\n- CSV/JSON export\n- Cross-validation with TypeScript implementation\n\n\U0001F4D6 **[Full\
+  \ Python Documentation](/python-docs)**\n\n---\n\n## Technology Stack\n\n| Technology | Purpose |\n\
+  |------------|---------|\n| **React 18** | UI framework |\n| **TypeScript** | Type-safe development\
+  \ |\n| **Vite** | Fast build tooling |\n| **Tailwind CSS** | Styling |\n| **shadcn/ui** | Component\
+  \ library |\n| **Recharts** | Data visualization |\n| **dicom-parser** | DICOM file parsing |\n\n---\n\
+  \n## Quick Start\n\n### Single Plan\n\n1. Visit [RTp-lens](https://rt-complexity-lens.lovable.app)\n\
+  2. Drag and drop a DICOM-RT Plan"

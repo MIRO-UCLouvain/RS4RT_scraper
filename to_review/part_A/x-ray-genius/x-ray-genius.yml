@@ -1,0 +1,91 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: KitwareMedical/x-ray-genius
+url: https://github.com/KitwareMedical/x-ray-genius
+platform: github
+description: A web-based application image generation tool that generates synthetic X-rays (DRRs) from
+  CT scans, enabling research and AI development in orthopedics and beyond.
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 9
+updated_at: '2026-07-18T12:53:44Z'
+image_source: https://img.youtube.com/vi/ARvFu7EMO28/maxresdefault.jpg
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in metadata/content.
+readme_excerpt: "\n# X-ray Genius\n\nX-ray Genius is a web-based application that leverages modern simulation\
+  \ pipelines to generate **Digitally Reconstructed Radiographs (DRRs)** from input CT images.  \n\n-\
+  \ \U0001F3E5 **Clinical utility:** generates X-ray images from CT scans for orthopedic, surgical planning,\
+  \ radiation therapy, and other medical applications where X-ray imaging is unavailable or unarchived.\
+  \  \n- \U0001F310 **Web-based:** accessible through a modern web interface with containerized deployment.\
+  \  \n- ⚙️ **Modular & customizable:** designed to support **AI/ML biomedical research pipelines**.\n\
+  \n  \n\n## \U0001F4FA Demo & Resources\n\n### Demo\nSee X-ray Genius in action. Watch a short video\
+  \ showing how it generates X-ray images.\n\n[![X-ray Genius Demo](https://img.youtube.com/vi/ARvFu7EMO28/maxresdefault.jpg)](https://www.youtube.com/watch?v=ARvFu7EMO28)\n\
+  \n[\U0001F3A5 **X-ray demonstration**](https://www.youtube.com/watch?v=ARvFu7EMO28)\n\n\n### Webinar\n\
+  Watch our webinar discussing X-ray Genius and its applications in medical imaging:\n\n[![X-ray Genius\
+  \ Webinar](https://img.youtube.com/vi/tnVnI_sslZs/maxresdefault.jpg)](https://youtu.be/tnVnI_sslZs?si=5rY2p9k0rJ55gZBU)\n\
+  \n[\U0001F3A5 **X-ray Genius Webinar**](https://youtu.be/tnVnI_sslZs?si=5rY2p9k0rJ55gZBU)\n\n\n## \U0001F680\
+  \ Quick Start\n\n### Prepare the repository \n1. `git clone <repo-url>`\n\n2. `cd <repo-folder>`\n\n\
+  3. `git submodule update --init --recursive`\n\n## \U0001F433 Develop with Docker (Recommended)\nThis\
+  \ is the simplest configuration for developers to start with.\n\n### Initial Setup\n1. **Note**: Ensure\
+  \ that you clone the repository with submodules. If you've already cloned it without submodules, run\
+  \ `git submodule update --init --recursive`.\n2. Install Nvidia GPU drivers, cuda (<=11), and the `nvidia-container-toolkit`\
+  \ if they are not already installed.\n   - You can verify that the `nvidia-container-toolkit` is installed\
+  \ by running `nvidia-ctk --version`.\n3. Run `docker compose run --rm django ./manage.py migrate`\n\
+  4. Run `docker compose run --rm django ./manage.py createsuperuser`\n   and follow the prompts to create\
+  \ your own user\n5. Optionally, run `docker compose run --rm django ./manage.py load_test_data` to load\
+  \ some sample data into your system.\n   \n### Run Application\n1. Run `docker compose up`\n2. Access\
+  \ the site, starting at http://localhost:8000/admin/\n3. When finished, use `Ctrl+C`\n\n### Application\
+  \ Maintenance\nOccasionally, new package dependencies or schema changes will necessitate\nmaintenance.\
+  \ To non-destructively update your development stack at any time:\n1. Run `docker compose pull`\n2.\
+  \ Run `docker compose build --pull --no-cache`\n3. Run `docker compose run --rm django ./manage.py migrate`\n\
+  \n## \U0001F4BB Develop Natively (Advanced)\nThis configuration still uses Docker to run attached services\
+  \ in the background,\nbut allows developers to run Python code on their native system.\n\n### Initial\
+  \ Setup\n1. **Note**: Ensure that you clone the repository with submodules. If you've already cloned\
+  \ it without submodules, run `git submodule update --init --recursive`.\n2. Run `docker compose -f ./docker-compose.yml\
+  \ up -d`\n3. Install Python 3.12 and Node.js 18\n4. Install\n   [`psycopg2` build prerequisites](https://www.psycopg.org/docs/install.html#build-prerequisites)\n\
+  5. Install Nvidia GPU drivers and cuda (<=11) if they are not already installed.\n6. Create and activate\
+  \ a new Python virtualenv\n7. Run `pip install -r requirements.dev.txt -r requirements.worker.txt`\n\
+  \   1. If you have multiple versions of CUDA installed, you must ensure that this `pip install` command\
+  \ uses CUDA <= 11 to build `pycuda`. e.g. something like `CUDA_ROOT=/usr/local/cuda-11.5 PATH=/usr/local/cuda-11.5/bin:$PATH\
+  \ pip install pycuda==2025.1`\n8. Run `source ./dev/export-env.sh`\n9. Run `./manage.py migrate`\n10.\
+  \ Run `npm ci`\n11. Run `cd viewer && npm install && npm run build`\n12. Run `cd ..` \n13. Run `./manage.py\
+  \ createsuperuser` and follow the prompts to create your own user\n\n### Run Application\n1.  Ensure\
+  \ `docker compose -f ./docker-compose.yml up -d` is still active\n2. Run:\n   1. `source ./dev/export-env.sh`\n\
+  \   2. `./manage.py runserver`\n3. Run in a separate terminal:\n   1. `source ./dev/export-env.sh`\n\
+  \   2. `celery --app xray_genius.celery worker --loglevel INFO --pool solo`\n4. Run in a separate terminal:\n\
+  \   1. `npm start`\n5. Optionally, run `./manage.py load_test_data` to load some sample data into your\
+  \ system.\n6. When finished, run `docker compose stop`\n7. To destroy the stack and start fresh, run\
+  \ `docker compose down -v`\n\n## \U0001F9EA Testing\n### Initial Setup\ntox is used to execute all tests.\n\
+  tox is installed automatically with the `dev` package extra.\n\nWhen running the \"Develop with Docker\"\
+  \ configuration, all tox commands must be run as\n`docker compose run --rm django tox`; extra arguments\
+  \ may also be appended to this form.\n\n### Running Tests\nRun `tox` to launch the full test suite.\n\
+  \nIndividual test environments may be selectively run.\nThis also allows additional options to be be\
+  \ added.\nUseful sub-commands include:\n* `tox -e lint`: Run only the style checks\n* `tox -e type`:\
+  \ Run only the type checks\n* `tox -e test`: Run only the pytest-driven tests\n\nTo automatically reformat\
+  \ all code to comply with\nsome (but not all) of the style checks, run `tox -e format`.\n\n## \U0001F4CB\
+  \ Requirements\n\n### System Requirements\n- **GPU**: NVIDIA GPU with CUDA support (CUDA ≤ 11)\n- **OS**:\
+  \ Linux, macOS, or Windows with WSL2\n- **Docker**: Docker and Docker Compose\n- **Python**: 3.12+ (for\
+  \ native development)\n- **Node.js**: 18+ (for native development)\n\n### Hardware Recommendations\n\
+  - **GPU Memory**: 8GB+ VRAM recommended for processing large CT volumes\n- **RAM**: 16GB+ system memory\n\
+  - **Storage**: 50GB+ available space for Docker images and data\n\n---\n\n\n## \U0001F680 Production\
+  \ Deployment\n\n> **Note**: While Kitware has deployed X-ray Genius in production using AWS (Heroku\
+  \ + EC2 + S3), the cloud deployment infrastructure and operational procedures are **not included** in\
+  \ this open-source distribution. This repository provides the application code for **local development\
+  \ and testing** using Docker Compose.\n> \n> For production cloud deployment, organizations will need\
+  \ to implement their own infrastructure setup. The containerized architecture makes it suitable for\
+  \ various cloud platforms.\n\n---\n\n## \U0001F91D Contributing\n\nWe welcome contributions! Please\
+  \ feel free to:\n- Submit bug reports and feature requests via [GitHub Issues](https://github.com/KitwareMedical/x-ray-genius/issues)\n\
+  - Fork the repository and submit pull requests\n- Improve documentation and examples\n\n### Development\
+  \ Workflow\n1. Fork the repository\n2. Create a feature branch (`git checkout -b feature/amazing-feature`)\n\
+  3. Commit your changes (`git commit -m 'Add amazing feature'`)\n4. Push to the branch (`git push origin\
+  \ feature/amazing-feature`)\n5. Open a Pull Request\n\n## \U0001F4C4 License\n\nThis project is licensed\
+  \ under the [LICENSE](LICENSE) file in the repository.\n\n## \U0001F3E5 Medical Disclaimer\n\nX-ray\
+  \ Genius is a research tool intended for educational and research purposes. It is not intended for clinical\
+  \ diagnosis or treatment decisions. Always consult with qualified medical professionals for any medical-related\
+  \ applications.\n"

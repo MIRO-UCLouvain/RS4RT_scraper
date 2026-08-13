@@ -1,0 +1,89 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: flash-center/PRaLine
+url: https://github.com/flash-center/PRaLine
+platform: github
+description: 'PRaLine code (Proton Radiography Linear reconstruction, the "reconstruction" is silent) '
+license: MIT
+language: Python
+keywords: []
+stars: 2
+updated_at: '2024-04-22T19:07:59Z'
+image_source: https://raw.githubusercontent.com/flash-center/PRaLine/HEAD/examples/reference_images/B_Reconstructed.png
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 4 particle-therapy term(s).
+readme_excerpt: "# PRaLine code (Proton Radiography Linear reconstruction, the \"reconstruction\" is silent)\n\
+  \nProton radiography is an experimental technique used to reveal the magnetic fields found in high-energy\
+  \ density plasma experiments using beams of protons. The proton beams are either produced by imploding\
+  \ capsules, which release a short pulse of mono-energetic protons at stagnation, or by thermally produced\
+  \ protons accelerated through extreme electric field gradients. The usual proton energies are between\
+  \ 3 and 30MeV and are driven through a magnetic field in a plasma experiment, where the path is shifted\
+  \ by the Lorentz force and then come to stop at the screen. The positions on the screen are recorded\
+  \ along with initial conditions. Under certain experimental conditions, the full structure of the perpendicular\
+  \ magnetic field can be reconstructed by solving a steady- state inhomogeneous two-dimensional diffusion\
+  \ equation. The code presented is a Python package developed at the University of Chicago to analyze\
+  \ proton radiography experimental radiographs in the linear (small-image contrast) regime. This code\
+  \ is based on work by Graziani et al.:\n\nGraziani, C., Tzeferacos, P., Lamb, D. Q. & Li, C. Inferring\
+  \ morphology and strength of magnetic fields from proton radiographs. Review of Scientific Instruments\
+  \ 88, 123507 (2017).\n\nThe published manuscript may be found [here](https://doi.org/10.1063/1.5013029)\
+  \ and an earlier open-access draft may be found [here](https://arxiv.org/abs/1603.08617).\n\n# Setup\n\
+  \n## Dependencies\nThis module requires **Python 2.7** (development branch works with **Python 3.6**).\
+  \ Installation requires **git**.\n\n**OS X users:** Prior to installing dependencies, ensure an adequate\
+  \ Python installation by following [this guide](https://matplotlib.org/faq/installing_faq.html#osx-notes).\
+  \ The Python that ships with OS X may not work well with some required dependencies.\n\nThe following\
+  \ Python packages are required:\n* future (Cross-compatibility between Python2 and Python3)\n* numpy\
+  \ (Scientific computing)\n* scipy (Scientific computing)\n* matplotlib (Plotting)\n* pandas (Parsing\
+  \ Large files)\n* pradreader (https://github.com/flash-center/PRadReader) (Reading various proton radiograph\
+  \ file formats)\n\nOn most systems (see above note for OS X), they can be installed using Python's [PIP\
+  \ package manager](https://packaging.python.org/tutorials/installing-packages/) as follows:\n\n```shell\n\
+  pip install future\npip install numpy scipy matplotlib pandas\npip install git+https://github.com/flash-center/PRadReader\n\
+  ```\n\nDepending on how Python was installed on your system, `pip` may require *Administrative* or `sudo`\
+  \ privileges.\n\n## Installation\nOnce all dependencies are satisfied, install the latest version of\
+  \ **PRaLine** by:\n\n```shell\npip install git+https://github.com/flash-center/PRaLine\n```\n\nThe module\
+  \ can also be installed by:\n\n```shell\ngit clone https://github.com/flash-center/PRaLine\ncd PRaLine\n\
+  python setup.py install\n```\n\n# Usage\n## Requirements\nAn intermediate file is created using the\
+  \ [PRadReader python package](https://github.com/flash-center/PRadReader).\n\nAn intermediate file that\
+  \ contains the variables such as:\n* Distance from proton source to the interaction region(cm), s2r_cm\n\
+  * Distance from proton source to the screen(cm), s2d_cm\n* Proton Kinetic Energies (MeV), Ep_MeV\n*\
+  \ flux image which is a matrix with number of protons per bin of the screen which is dependent on the\
+  \ inputted bin length, flux\n* flux reference which is the flux image if there were no interaction region\n\
+  \n## How it Works\n\nThe user has to run the PRadReader on there proton radiograph data which returns\
+  \ a intermediate file that can be used on both command line tools below.\n## Command Line Tools\n\n\
+  Supported file formats include any that PRadReader supports, including radiographs generated from FLASH\
+  \ simulations and MIT's CR39 proton radiography analysis\n### Tool 1: \"lin-reconstruct\"\n\nA command\
+  \ line tool for reconstructing the magnetic field of the data from a proton radiography experiment given\
+  \ an intermediate file with the requirements above. It outputs streamplots based on the reconstruction\
+  \ algorithim  \n#### Usage\n```shell\nlin-reconstruct [options] [intermediate file] \n```\n##### Options\n\
+  \n| Option | Action |\n|:-------|--------|\n|--tol| The Gauss-Seidel tolerance. DEFAULT:1.0E-04 |\n\
+  |--iter| The number of Gauss-Seidel iterations. DEFAULT:4000|\n\n**The number of Gauss-Seidel iterations**:\
+  \ This number represents the number of iterations that in the Gauss-Seidel method. Changing this number\
+  \ may affect the results if it hasn't reached converegence.\n\n**The Gauss-Seidel tolerance**: This\
+  \ number represents  limit  and a resudial value that is calculated every iteration. If the resudial\
+  \ value reaches this limit the Gauss-Seidel method should stop.\n\nFor more info check out pages 8 and\
+  \ 9: https://arxiv.org/abs/1603.08617\n\n#### Example\n```shell\nlin-reconstruct --tol 1.0E-05 --iter\
+  \ 8000 input.txt\n```\nThis command line script ensures that Gauss-Seidel Tolerance is 1.0E-05 and the\
+  \ number of Gauss-Seidel Iterations 8000 and parses the input.txt constructed by [PRadReader](https://github.com/flash-center/PRadReader).\n\
+  #### Output\nThe tool outputs Log Reconstructed Perpendicular Magnetic Field Projection\n\n### Tool\
+  \ 2: \"lin-analyze\"\n\nA command line tool for analysis of a proton radiography experiment. Analysis\
+  \ is done by plotting a 2D matrices each value is considered a pixel on the graph and the number of\
+  \ pixels is determinded by the bin size that the user inputs. The 2D matrices are the flux and fluence(fluence\
+  \ distribution of protons) plot.\n\n#### Usage\n```shell\nlin-analyze [intermediate file]\n```\n####\
+  \ Example\n```shell\nlin-analyze input.txt\n```\nThis command line parses input.txt that has been constructed\
+  \ by [PRadReader](https://github.com/flash-center/PRadReader).\n#### Output\nThe tool outputs a flux\
+  \ and fluence contrast plot\n\n## Example Problem\nThere is an example intermediate file, test_input.txt,\
+  \ in the `examples/` directory which was generated from the magnetic field configuartion in the paper\
+  \ using [PRadReader](https://github.com/flash-center/PRadReader). \n\n**Instructions**:\n1. The user\
+  \ should follow the instructions for the installation of package above and also clone the repository\
+  \ \n2. Navigate into the `examples/` directory and copy the file,`test_input.txt`, out. \n3. From the\
+  \ same directory run this command\n```shell\nlin-reconstruct test_input.p\n``` \nOutput (after 4000\
+  \ iterations)\n\n<img src=\"examples/reference_images/B_Reconstructed.png\" width=\"425\"/>\n\n```shell\n\
+  lin-analyze test_input.p\n```\nOutput\n<p float=\"left\">\n<img src=\"examples/reference_images/Flux.png\"\
+  \ width=\"400\" height=\"300\"/>\n<img src=\"examples/reference_images/Fluence.png\" width=\"400\" height=\"\
+  300\"/>\n</p>\n\n# Updating/Uninstalling\nWrite up how to update a current installation (and how to\
+  \ update dependencies as well), how to uninstall it\n\nTo update **PRaLine** at a later date\n```shell\n\
+  pip install --upgrade git+https://github.com/flash-center/PRadReader\npip install --upgrade git+https://github.com/flash-center/PRaLine\n\
+  ```\n\nTo uninstall **PRaLine**\n```shell\npip uninstall praline\n```\n"

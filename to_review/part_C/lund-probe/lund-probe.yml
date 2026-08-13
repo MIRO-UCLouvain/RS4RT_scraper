@@ -1,0 +1,152 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: jamtheim/LUND-PROBE
+url: https://github.com/jamtheim/LUND-PROBE
+platform: github
+description: LUND-PROBE – LUND Prostate Radiotherapy Open Benchmarking and Evaluation dataset
+license: null
+language: Python
+keywords:
+- deep-learning
+- delineation
+- dose
+- fiducial
+- mri
+- mri-only
+- multi-observer
+- oar
+- prostate-cancer
+- python
+- radiation-therapy
+- radiotherapy
+- segmentation
+- synthetic-ct
+- target
+- treatment-planning
+- tutorial
+- uncertainty
+- varian
+- visualization
+stars: 17
+updated_at: '2026-06-24T18:44:09Z'
+image_source: https://raw.githubusercontent.com/jamtheim/LUND-PROBE/HEAD/logo/LUND-Probe_Logo_and_Main_Text_and_Subtext_grayMode.png
+heuristic_total_score: 21
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 10 support term(s).
+- Matched 2 AI/ML term(s) in metadata/content.
+readme_excerpt: "<div style=\"background-color: white; padding: 10px; border: 1px solid black; text-align:\
+  \ center;\">\n    <img src=\"logo/LUND-Probe_Logo_and_Main_Text_and_Subtext_grayMode.png\" alt=\"Logo\"\
+  \ style=\"max-width: 50%; height: auto;\">\n</div>\n\n<small>Description:</small>\n<small>LUND-PROBE\
+  \ is a dataset, comprising clinical MRI- and synthetic CT (sCT) images in 3D NIfTI format, target and\
+  \ OARs segmentations, and radiotherapy dose distributions for 432 prostate cancer patients treated with\
+  \ MRI-based radiotherapy treatment planning. An extended part with 35 patients is also included, with\
+  \ the addition of deep learning (DL)-generated segmentations, DL segmentation uncertainty maps, and\
+  \ DL segmentations manually adjusted by four radiation oncologists.</small>\n\n<small>This notebook\
+  \ provides sample code for loading and visualizing the LUND-PROBE data. Follow along and feel free to\
+  \ modify the examples to suit your specific use case! Instructions on how to access the data is found\
+  \ at the AIDA Data Hub:\nhttps://datahub.aida.scilifelab.se/10.23698/aida/lund-probe and data details\
+  \ are found in the file [\"Data_table.pdf\"](https://github.com/jamtheim/LUND-PROBE/blob/main/Data_table.pdf).\
+  \ </small>\n<small> Publication where the LUND-PROBE dataset data is described is found at [https://www.nature.com/articles/s41597-025-04954-5.](https://www.nature.com/articles/s41597-025-04954-5)\
+  \ </small>\n<small> This dataset has also been used in the following publication: [https://aapm.onlinelibrary.wiley.com/doi/10.1002/acm2.70221.](https://aapm.onlinelibrary.wiley.com/doi/10.1002/acm2.70221)\
+  \ </small> \n\n<div style=\"background-color: black; padding: 10px; border: 1px solid black; text-align:\
+  \ center;\">\n    <img src=\"logo/exampleData.png\" alt=\"Logo\" style=\"max-width: 75%; height: auto;\"\
+  >\n</div>\n\n\n```python\n# *********************************************************************************\n\
+  # Author: Christian Jamtheim Gustafsson, PhD, Medical Physcist Expert\n# Author: Rogowski Viktor, Medical\
+  \ Physcist\n# Skåne University Hospital, Lund, Sweden and Lund University, Lund, Sweden\n# Description:\
+  \ Sample code for loading and visualizing the LUND-PROBE data.\n# *********************************************************************************\n\
+  \n# Import necessary libraries\nimport os\nimport numpy as np \nimport matplotlib\nimport matplotlib.pyplot\
+  \ as plt\nimport SimpleITK as sitk\nfrom matplotlib.colors import LinearSegmentedColormap, Normalize,\
+  \ hex2color\nfrom matplotlib.cm import get_cmap\nimport math\n# Import plot functions\nfrom ioPlotFunctions\
+  \ import plotFunctions\n# Initialize plot functions\nplotFunctions = plotFunctions()\n```\n\n\n```python\n\
+  \n############### START CONFIGURATION BLOCK ###############\n# Define the base path\nbasePath = r'YourPathHere'\n\
+  # Define selected patient \npatient = \"YourPatientHere\"\n# Define the full subject directory\nsubjectDir\
+  \ = os.path.join(basePath, patient)\n# Define names of the MRI and sCT sub directories used in the data\
+  \ \nMRIDir = 'MR_StorT2'\nsCTDir = 'sCT'\nnnUNetOutputDir = 'nnUNetOutput'\nobserverDataDir = 'observerData'\n\
+  # Define the paths to the MRI, sCT volumes and dose volumes \nMRIVolumePath = os.path.join(subjectDir,\
+  \ MRIDir, 'image.nii.gz')\nsCTVolumePath = os.path.join(subjectDir, sCTDir, 'image.nii.gz')\nsCTReg2MRIVolumePath\
+  \ = os.path.join(subjectDir, sCTDir, 'image_reg2MRI.nii.gz')\nsCTDosePath = os.path.join(subjectDir,\
+  \ sCTDir, 'dose_original.nii.gz')\nsCTDoseInterpolatedPath = os.path.join(subjectDir, sCTDir, 'dose_interpolated.nii.gz')\n\
+  MRIDoseInterpolatedPath = os.path.join(subjectDir, MRIDir, 'dose_interpolated.nii.gz')\n# Define path\
+  \ to fiducial point text file and segmentation mask\nfiducialTxtPath = os.path.join(subjectDir, MRIDir,\
+  \ 'MRI_T2_DICOM_coords_fiducials.txt')\nfiducialMaskPath = os.path.join(subjectDir, MRIDir, 'mask_MRI_T2_coords_fiducials.nii.gz')\n\
+  # Define path for CTV and rectum uncertainty map\nuncertaintyMapCTVPath = os.path.join(subjectDir, MRIDir,\
+  \ nnUNetOutputDir, 'mask_CTVT_427_nnUNet_uncertaintyMap.nii.gz')\nuncertaintyMapRectumPath = os.path.join(subjectDir,\
+  \ MRIDir, nnUNetOutputDir, 'mask_Rectum_nnUNet_uncertaintyMap.nii.gz')\n# Define paths for DL segmentations\n\
+  DLCTVPath = os.path.join(subjectDir, MRIDir, nnUNetOutputDir, 'mask_CTVT_427_nnUNet.nii.gz') \nDLRectumPath\
+  \ = os.path.join(subjectDir, MRIDir, nnUNetOutputDir, 'mask_Rectum_nnUNet.nii.gz')\n# Define paths for\
+  \ some sample MRI segmentations\nMRICTVPath = os.path.join(subjectDir, MRIDir, 'mask_CTVT_427.nii.gz')\n\
+  MRIPTVPath = os.path.join(subjectDir, MRIDir, 'mask_PTVT_427.nii.gz')\nMRIRectumPath = os.path.join(subjectDir,\
+  \ MRIDir, 'mask_Rectum.nii.gz')\nMRIFemoralHeadLPath = os.path.join(subjectDir, MRIDir, 'mask_FemoralHead_L.nii.gz')\n\
+  MRIFemoralHeadRPath = os.path.join(subjectDir, MRIDir, 'mask_FemoralHead_R.nii.gz')\nMRIBladderPath\
+  \ = os.path.join(subjectDir, MRIDir, 'mask_Bladder.nii.gz')\n# Define paths for some sample sCT segmentations\n\
+  sCTCTVPath = os.path.join(subjectDir, sCTDir, 'mask_CTVT_427.nii.gz')\nsCTPTVPath = os.path.join(subjectDir,\
+  \ sCTDir, 'mask_PTVT_427.nii.gz')\nsCTRectumPath = os.path.join(subjectDir, sCTDir, 'mask_Rectum.nii.gz')\n\
+  sCTFemoralHeadLPath = os.path.join(subjectDir, sCTDir, 'mask_FemoralHead_L.nii.gz')\nsCTFemoralHeadRPath\
+  \ = os.path.join(subjectDir, sCTDir, 'mask_FemoralHead_R.nii.gz')\n# Define paths for two different\
+  \ observer segmentations (total four available, obsB-E)\nMRICTVObsCPath = os.path.join(subjectDir, MRIDir,\
+  \ observerDataDir, 'mask_CTVT_427_step1_obsC.nii.gz') \nMRICTVObsDPath = os.path.join(subjectDir, MRIDir,\
+  \ observerDataDir, 'mask_CTVT_427_step1_obsD.nii.gz')\n############### END CONFIGURATION BLOCK ###############\n\
+  ```\n\n\n```python\n# Load the volumes using SimpleITK\n# Image volumes\nMRIImage = sitk.ReadImage(MRIVolumePath)\n\
+  sCTImage = sitk.ReadImage(sCTVolumePath)\nsCTReg2MRIImage = sitk.ReadImage(sCTReg2MRIVolumePath)\nsCTDoseImage\
+  \ = sitk.ReadImage(sCTDosePath)\nsCTDoseInterpolatedImage = sitk.ReadImage(sCTDoseInterpolatedPath)\n\
+  MRIDoseInterpolatedImage = sitk.ReadImage(MRIDoseInterpolatedPath)\n# Fiducial points\nfiducialImage\
+  \  = sitk.ReadImage(fiducialMaskPath)\n# Uncertainty maps\nuncertaintyMapCTVImage = sitk.ReadImage(uncertaintyMapCTVPath)\n\
+  uncertainyyMapRectumImage = sitk.ReadImage(uncertaintyMapRectumPath)\n# DL segmentations\nDLCTVImage\
+  \ = sitk.ReadImage(DLCTVPath)\nDLRectumImage = sitk.ReadImage(DLRectumPath)\n# Segmentations volumes\
+  \ MRI\nMRICTVImage = sitk.ReadImage(MRICTVPath)\nMRIRectumImage = sitk.ReadImage(MRIRectumPath)\nMRIFemoralHeadLImage\
+  \ = sitk.ReadImage(MRIFemoralHeadLPath)\nMRIFemoralHeadRImage = sitk.ReadImage(MRIFemoralHeadRPath)\n\
+  MRIPTVImage = sitk.ReadImage(MRIPTVPath)\nMRIBladderImage = sitk.ReadImage(MRIBladderPath)\n# Segmentations\
+  \ volumes sCT \nsCTCTVImage = sitk.ReadImage(sCTCTVPath)\nsCTPTVImage = sitk.ReadImage(sCTPTVPath)\n\
+  sCTRectumImage = sitk.ReadImage(sCTRectumPath)\nsCTFemoralHeadLImage = sitk.ReadImage(sCTFemoralHeadLPath)\n\
+  sCTFemoralHeadRImage = sitk.ReadImage(sCTFemoralHeadRPath)\n# Observer segmentations\nMRICTVObsCImage\
+  \ = sitk.ReadImage(MRICTVObsCPath)\nMRICTVObsDImage = sitk.ReadImage(MRICTVObsDPath)\n```\n\n\n```python\n\
+  # Read the fiducial points from the text file. These are DICOM coorinates. \nwith open(fiducialTxtPath,\
+  \ 'r', encoding='utf-8') as file:\n            lines = file.readlines()\n\n# Assert that the file contains\
+  \ exactly 3 lines\nassert len(lines) == 3, f\"Expected 3 lines, but found {len(lines)} lines.\"\n\n\
+  # Parse each line and store in a list\ncoordinates = []\nfor i, line in enumerate(lines, start=1):\n\
+  \    values = line.strip().split(',')\n    # Assert that each line contains exactly 3 values\n    assert\
+  \ len(values) == 3, f\"Line {i} does not contain exactly 3 values: {line.strip()}\"\n    coordinates.append(list(map(float,\
+  \ values)))  # Convert to float and append as a list\n\n# Assign each point to its respective variable\n\
+  point1, point2, point3 = coordinates  # Unpack the list into individual variables\n# Output the results\n\
+  print(\"Point 1:\", point1)\nprint(\"Point 2:\", point2)\nprint(\"Point 3:\", point3)\n```\n\n    Point\
+  \ 1: [-13.36, -26.98, -6.32]\n    Point 2: [3.98, -29.32, -11.32]\n    Point 3: [3.51, -19.47, 6.18]\n\
+  \n\n\n```python\n# Get the numpy arrays of the images from the SimpleITK objects\n# Image volumes\n\
+  MRIArray = sitk.GetArrayFromImage(MRIImage)\nsCTArray = sitk.GetArrayFromImage(sCTImage)\nsCTReg2MRIArray\
+  \ = sitk.GetArrayFromImage(sCTReg2MRIImage)\nsCTDoseArray = sitk.GetArrayFromImage(sCTDoseImage)\nsCTDoseInterpolatedArray\
+  \ = sitk.GetArrayFromImage(sCTDoseInterpolatedImage)\nMRIDoseInterpolatedArray = sitk.GetArrayFromImage(MRIDoseInterpolatedImage)\n\
+  # Uncertainty maps\nuncertaintyMapCTVArray = sitk.GetArrayFromImage(uncertaintyMapCTVImage)\nuncertaintyMapRectumArray\
+  \ = sitk.GetArrayFromImage(uncertainyyMapRectumImage)\n# DL segmentations\nDLCTVArray = sitk.GetArrayFromImage(DLCTVImage)\n\
+  DLRectumArray = sitk.GetArrayFromImage(DLRectumImage)\n# Fiducial points\nfiducialArray = sitk.GetArrayFromImage(fiducialImage)\n\
+  # Segmentation volumes MRI\nMRICTVArray = sitk.GetArrayFromImage(MRICTVImage)\nMRIRectumArray = sitk.GetArrayFromImage(MRIRectumImage)\n\
+  MRIFemoralHeadLArray = sitk.GetArrayFromImage(MRIFemoralHeadLImage)\nMRIFemoralHeadRArray = sitk.GetArrayFromImage(MRIFemoralHeadRImage)\n\
+  MRIPTVArray = sitk.GetArrayFromImage(MRIPTVImage)\nMRIBladderArray = sitk.GetArrayFromImage(MRIBladderImage)\n\
+  # Segmentations volumes sCT\nsCTCTVArray = sitk.GetArrayFromImage(sCTCTVImage)\nsCTPTVArray = sitk.GetArrayFromImage(sCTPTVImage)\n\
+  sCTRectumArray = sitk.GetArrayFromImage(sCTRectumImage)\nsCTFemoralHeadLArray = sitk.GetArrayFromImage(sCTFemoralHeadLImage)\n\
+  sCTFemoralHeadRArray = sitk.GetArrayFromImage(sCTFemoralHeadRImage)\n# Observer segmentations\nMRICTVObsCArray\
+  \ = sitk.GetArrayFromImage(MRICTVObsCImage)\nMRICTVObsDArray = sitk.GetArrayFromImage(MRICTVObsDImage)\n\
+  ```\n\n\n```python\n# Get the image resolutions (spacing in mm) and print it for each image\nMRIImageSpacing\
+  \ = MRIImage.GetSpacing()\nprint(f'MRI image spacing: {MRIImageSpacing}')\nuncertaintyMapCTVSapcing\
+  \ = uncertaintyMapCTVImage.GetSpacing()\nprint(f'CTV uncertainty map spacing: {uncertaintyMapCTVSapcing}')\n\
+  uncertainyyMapRectumSpacing = uncertainyyMapRectumImage.GetSpacing()\nprint(f'Rectum uncertainty map\
+  \ spacing: {uncertainyyMapRectumSpacing}')\nsCTImageSpacing = sCTImage.GetSpacing()\nprint(f'sCT image\
+  \ spacing: {sCTImageSpacing}')\nsCTReg2MRIImageSpacing = sCTReg2MRIImage.GetSpacing()\nprint(f'sCT registered\
+  \ to MRI image spacing: {sCTReg2MRIImageSpacing}')\nsCTDoseImageSpacing = sCTDoseImage.GetSpacing()\n\
+  print(f'sCT dose image spacing: {sCTDoseImageSpacing}')\nsCTDosenterpolatedImageSpacing = sCTDoseInterpolatedImage.GetSpacing()\n\
+  print(f'sCT dose interpolated image spacing: {sCTDosenterpolatedImageSpacing}')\nMRIDoseInterpolatedImageSpacing\
+  \ = MRIDoseInterpolatedImage.GetSpacing()\nprint(f'MRI dose interpolated image spacing: {MRIDoseInterpolatedImageSpacing}')\n\
+  fiducialImageSpacing = fiducialImage.GetSpacing()\nprint(f'fiducial image spacing: {fiducialImageSpacing}')\n\
+  MRICTVImageSpacing = MRICTVImage.GetSpacing()\nprint(f'MRI CTV image spacing: {MRICTVImageSpacing}')\n\
+  MRIRectumImageSpacing = MRIRectumImage.GetSpacing()\nprint(f'MRI rectum image spacing: {MRIRectumImageSpacing}')\n\
+  MRIFemoralHeadLImageSpacing = MRIFemoralHeadLImage.GetSpacing()\nprint(f'MRI femoral head left image\
+  \ spacing: {MRIFemoralHeadLImageSpacing}')\nMRIFemoralHeadRImageSpacing = MRIFemoralHeadRImage.GetSpacing()\n\
+  print(f'MRI femoral head right image spacing: {MRIFemoralHeadRImageSpacing}')\n```\n\n    MRI image\
+  \ spacing: (0.46880000829696655, 0.46880000829696655, 2.5)\n    CTV uncertainty map spacing: (0.46880000829696655,\
+  \ 0.46880000829696655, 2.5)\n    Rectum uncertainty map spacing: (0.46880000829696655, 0.46880000829696655,\
+  \ 2.5)\n    sCT image spacing: (0.46880000829696655, 0.46880000829696655, 2.5)\n    sCT registered to\
+  \ MRI image spacing: (0.46880000829696655, 0.46880000829696655, 2.5)\n    sCT dose image spacing: (2.5,\
+  \ 2.5, 2.5)\n    sCT dose interpolated image spacing: (0.46880000829696655, 0.46880000829696655, 2.5)\n\
+  \    MRI dose interpolated image spacing: (0.46880000829696655, 0.46880000829696655, 2.5)\n    fiducial\
+  \ image spacing"
