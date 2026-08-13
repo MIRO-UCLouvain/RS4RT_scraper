@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import shutil
 from pathlib import Path
 
@@ -9,6 +10,7 @@ import yaml
 REVIEW_ROOT = Path("to_review")
 CATALOG_PATH = Path("data/catalog.json")
 NEW_PATH = Path("data/new_elements.json")
+IMAGE_DIR = Path("data/images")
 
 IMAGE_EXT = {".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp"}
 
@@ -22,6 +24,28 @@ def load_catalog() -> list[dict]:
         return []
 
 
+def slugify(text: str) -> str:
+    return re.sub(r"[^A-Za-z0-9]+", "-", (text or "").split("/")[-1]).strip("-").lower()
+
+
+def pick_image(entry_dir: Path, yaml_name: str) -> Path | None:
+    images = [
+        p for p in entry_dir.iterdir()
+        if p.is_file() and p.suffix.lower() in IMAGE_EXT
+    ]
+    if not images:
+        return None
+    if len(images) == 1:
+        return images[0]
+
+    added = [p for p in images if p.stem != yaml_name]
+    if added:
+        added.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+        return added[0]
+
+    return images[0]
+
+
 def main() -> None:
     if not REVIEW_ROOT.exists():
         raise SystemExit("no to_review/ directory")
@@ -29,10 +53,10 @@ def main() -> None:
     catalog = load_catalog()
     known = {row.get("url") for row in catalog if row.get("url")}
 
+    IMAGE_DIR.mkdir(parents=True, exist_ok=True)
+
     new_entries = []
-    empty = 0
-    unreadable = 0
-    duplicate = 0
+    empty = unreadable = duplicate = images_kept = 0
 
     for part in sorted(REVIEW_ROOT.glob("part_*")):
         for entry_dir in sorted(part.iterdir()):
@@ -62,9 +86,17 @@ def main() -> None:
                 duplicate += 1
                 continue
 
-            images = [p.name for p in entry_dir.iterdir() if p.suffix.lower() in IMAGE_EXT]
-            if images:
-                data["image_file"] = images[0]
+            slug = slugify(data.get("name") or entry_dir.name)
+
+            image = pick_image(entry_dir, files[0].stem)
+            if image:
+                target = IMAGE_DIR / (slug + image.suffix.lower())
+                shutil.copy2(image, target)
+                data["image_file"] = str(target).replace("\\", "/")
+                print(f"image  {entry_dir.name} <- {image.name}")
+                images_kept += 1
+            else:
+                data.pop("image_file", None)
 
             new_entries.append(data)
             known.add(data.get("url"))
@@ -79,6 +111,7 @@ def main() -> None:
         shutil.rmtree(part, ignore_errors=True)
 
     print(f"\n{len(new_entries)} new -> {NEW_PATH}")
+    print(f"{images_kept} images -> {IMAGE_DIR}")
     print(f"catalog now {len(catalog)} entries")
     print(f"{empty} empty, {unreadable} unreadable, {duplicate} already known")
 
