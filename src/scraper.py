@@ -817,6 +817,10 @@ def run() -> int:
     if not gitlab_queries:
         gitlab_queries = derive_gitlab_queries_from_main_queries(github_queries, taxonomy)
 
+    ### For testing purposes only
+    github_queries = github_queries[:2]
+    gitlab_queries = gitlab_queries[:2]
+
     scraper_cfg = settings.get("scraper", {})
     llm_cfg = settings.get("llm", {})
 
