@@ -12,7 +12,7 @@ import requests
 TOKEN = os.getenv("RSD_TOKEN", "")
 BASE = "http://localhost/api/v2"
 IN_PATH = Path("data/rsd_entries.json")
-COMMUNITY = "5ed2176a-967b-4d84-8945-6093cf79655e"
+COMMUNITY = "1b7ce00f-5a2d-4ec2-a75a-8309a60381bc"
 # community id of RS4RT
 
 HEADERS = {
