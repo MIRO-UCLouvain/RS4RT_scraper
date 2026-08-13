@@ -818,8 +818,8 @@ def run() -> int:
         gitlab_queries = derive_gitlab_queries_from_main_queries(github_queries, taxonomy)
 
     ### For testing purposes only
-    github_queries = github_queries[:2]
-    gitlab_queries = gitlab_queries[:2]
+    github_queries = github_queries[18:19]
+    gitlab_queries = gitlab_queries[20:21]
 
     scraper_cfg = settings.get("scraper", {})
     llm_cfg = settings.get("llm", {})
