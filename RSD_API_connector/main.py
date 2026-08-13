@@ -10,10 +10,10 @@ from pathlib import Path
 import requests
 
 TOKEN = os.getenv("RSD_TOKEN", "")
-BASE = os.getenv("RSD_BASE", "https://research-software-directory.org/api/v2")
-COMMUNITY = os.getenv("RSD_COMMUNITY", "fec0f88a-a9a5-48b1-8a49-63ac693dbb2f")
+BASE = os.getenv("RSD_BASE", "http://localhost/api/v2")
+COMMUNITY = "5c591934-dd75-4f72-9784-7bea2e4ef3cf"
 
-IN_PATH = Path(os.getenv("RSD_INPUT", "data/new_elements.json"))
+IN_PATH = Path(os.getenv("RSD_INPUT", "data/rsd_entries.json"))
 LOG_PATH = Path("data/published.json")
 PUBLISH = os.getenv("RSD_PUBLISH", "false").lower() in {"1", "true", "yes"}
 

@@ -24,12 +24,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Format candidates
+        run: python RSD_API_connector/format_candidates.py
+
       - name: Publish to RSD
         env:
           RSD_TOKEN: ${{ secrets.RSD_TOKEN }}
           RSD_PUBLISH: 'false'
-        run: |
-          python RSD_API_connector/main.py
+        run: python RSD_API_connector/main.py
 
       - name: Commit results
         run: |
