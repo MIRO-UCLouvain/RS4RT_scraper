@@ -2,7 +2,7 @@ name: Deploy Pages
 
 on:
   workflow_run:
-    workflows: ["Update catalog"]
+    workflows: ["Publish"]
     types:
       - completed
   workflow_dispatch:
@@ -26,6 +26,21 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Rebuild site from published entries
+        run: python -c "import json;from src.render_site import write_site;from src.render_readme import write_readme;p={r['url'] for r in json.load(open('data/published.json',encoding='utf-8'))};e=[x for x in json.load(open('data/catalog.json',encoding='utf-8')) if x.get('url') in p];write_site(e);write_readme(e);print(len(e))"
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
