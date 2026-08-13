@@ -11,7 +11,9 @@ import requests
 
 TOKEN = os.getenv("RSD_TOKEN", "")
 BASE = os.getenv("RSD_BASE", "http://localhost/api/v2")
-COMMUNITY = "5c591934-dd75-4f72-9784-7bea2e4ef3cf"
+COMMUNITY = "fec0f88a-a9a5-48b1-8a49-63ac693dbb2f"
+### HARDCODED as this should stay permanent, this is the UUID of the RS4RT community
+### Found by requests.get('https://research-software-directory.org/api/v2/community?slug=eq.rs4rt&select=id,name,slug').json()
 
 IN_PATH = Path(os.getenv("RSD_INPUT", "data/rsd_entries.json"))
 LOG_PATH = Path("data/published.json")
