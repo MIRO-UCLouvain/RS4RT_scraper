@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.PNG" alt="RS4RT" height="90">
+  <img src="assets/logo.PNG" alt="RS4RT" width="100%" style="max-height:200px; object-fit:contain">
 </p>
 
 <h1 align="center">RS4RT Catalog</h1>

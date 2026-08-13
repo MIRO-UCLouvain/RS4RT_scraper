@@ -14,7 +14,7 @@ def header(entries: list[dict]) -> list[str]:
 
     return [
         f'<p align="center">',
-        f'  <img src="{LOGO_PATH}" alt="RS4RT" height="90">',
+        f'  <img src="{LOGO_PATH}" alt="RS4RT" width="100%" style="max-height:200px; object-fit:contain">',
         f'</p>',
         "",
         '<h1 align="center">RS4RT Catalog</h1>',
