@@ -5,7 +5,7 @@ from pathlib import Path
 
 SITE_URL = "https://miro-uclouvain.github.io/RS4RT_scraper/"
 COMMUNITY_URL = "https://research-software-directory.org/communities/rs4rt/software"
-LOGO_PATH = "assets/logo.png"
+LOGO_PATH = "assets/logo.PNG"
 
 
 def header(entries: list[dict]) -> list[str]:
