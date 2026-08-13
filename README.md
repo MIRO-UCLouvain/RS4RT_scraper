@@ -1,17 +1,59 @@
-# AI/ML in Particle Therapy Repository Catalog
+<p align="center">
+  <img src="assets/logo.png" alt="RS4RT" height="90">
+</p>
 
-Automatically discovered repositories relevant to both particle therapy and machine learning / AI.
+<h1 align="center">RS4RT Catalog</h1>
 
-Included repositories: **7**
+<p align="center">
+  <em>Resource Sharing for RadioTherapy &mdash; an open catalog of software for radiotherapy research</em>
+</p>
 
-Live site: [RS4RT catalogue](https://miro-uclouvain.github.io/RS4RT_scraper/)
+<p align="center">
+  <a href="https://miro-uclouvain.github.io/RS4RT_scraper/">Browse the catalog</a> &middot;
+  <a href="https://research-software-directory.org/communities/rs4rt/software">RS4RT on the Research Software Directory</a>
+</p>
+
+---
+
+## About
+
+RS4RT is an independent initiative created after the 2024 ESTRO physics workshop
+*Open-Source software and resource sharing in radiotherapy*. Its aim is to make open-source
+radiotherapy software easier to find, cite and reuse.
+
+This repository holds the tooling behind the catalog: a scraper that discovers candidate
+repositories on GitHub and GitLab, a review workflow for curating them by hand, and a
+publisher that pushes approved entries to the
+[RS4RT community](https://research-software-directory.org/communities/rs4rt/software) on the Research Software Directory.
+
+Maintained with the MIRO laboratory, UCLouvain.
+
+## How it works
+
+1. **Discover** &mdash; the scraper queries GitHub and GitLab for radiotherapy and particle
+   therapy software, scoring each candidate against a curated taxonomy of domain terms.
+2. **Review** &mdash; surviving candidates are written to `to_review/` as one folder per
+   repository, split across four parts. Reviewers edit the metadata and mark entries as
+   approved directly in the pull request.
+3. **Publish** &mdash; approved entries are grouped, formatted and posted to the Research
+   Software Directory under the RS4RT community.
+
+Discovery runs on a schedule; review and publication are triggered by hand.
+
+## Contributing
+
+Know a tool that belongs here? Open an issue using the catalog submission template,
+or add it to `config/manual_seed_repos.yml` and open a pull request.
+
+---
+
+## Catalog
+
+**0** repositories &middot; sources:  &middot; last updated 13 August 2026
 
 | Repository | Platform | Stars | Type | Categories | Summary |
-|---|---:|---:|---|---|---|
-| [eminozcann/geant4-bragg-peak](https://github.com/eminozcann/geant4-bragg-peak) | github | 0 | unclear |  | Proton (Bragg Peak) ve Gama ışınlarının su fantomu içindeki enerji depolama profillerini karşılaştıran Geant4 simülasyonu. Geant4 simulation comparing the energy deposition profiles of Protons (Bragg Peak) and Gamma Rays in a water phantom. Demonstrates the physical basis of particle therapy. |
-| [RalphRandle/BraggPeak-Geant4](https://github.com/RalphRandle/BraggPeak-Geant4) | github | 0 | unclear |  | Geant4 simulation of proton Bragg Peak in water phantom |
-| [Renuka2608/Proton_Depthdose-Geant4](https://github.com/Renuka2608/Proton_Depthdose-Geant4) | github | 0 | unclear |  | GEANT4 simulation of proton depth–dose distribution and Bragg peak behavior in a water phantom, with custom energy deposition scoring and dose profile analysis. |
-| [sinansagir/BraggPeak](https://github.com/sinansagir/BraggPeak) | github | 1 | unclear |  | Geant4 Bragg peak simulation |
-| [NiclasLFiedler/BraggPeakSampler](https://github.com/NiclasLFiedler/BraggPeakSampler) | github | 0 | unclear |  | Simulation and data analysis of the Bragg-Peak Sampler |
-| [badawytpu-ux/summer-practice-geant4](https://github.com/badawytpu-ux/summer-practice-geant4) | github | 0 | unclear |  | Geant4 simulations for summer practice: proton Bragg peak and Pb-Al PET converter |
-| [bal81/Interactive-Plot](https://github.com/bal81/Interactive-Plot) | github | 0 | unclear |  | Study of Bragg Peak from Monte Carlo simulations |
+|---|---|---:|---|---|---|
+
+---
+
+<sub>This file is generated automatically. Edit `src/render_readme.py` rather than `README.md`.</sub>
