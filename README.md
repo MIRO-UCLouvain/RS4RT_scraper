@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.png" alt="RS4RT" height="90">
+  <img src="assets/logo.PNG" alt="RS4RT" height="90">
 </p>
 
 <h1 align="center">RS4RT Catalog</h1>
@@ -33,7 +33,8 @@ Maintained by the MIRO laboratory, UCLouvain.
 1. **Discover** &mdash; the scraper queries GitHub and GitLab for radiotherapy and related
    terms, each discovered repo is assessed against a curated taxonomy of domain terms.
    Depending on the final score, the repository is either kept or discarded.
-   The scraper is run every two months and it discards cached repositories.2. **Review** &mdash; surviving candidates are written to `to_review/` as one folder per
+   The scraper is run every two months and it discards cached repositories.
+2. **Review** &mdash; surviving candidates are written to `to_review/` as one folder per
    repository, split across four parts. Reviewers edit the data and metadata of each software
    to ensure relevance and the quality of the information.
 3. **Publish** &mdash; approved entries are grouped, formatted and posted to the Research
