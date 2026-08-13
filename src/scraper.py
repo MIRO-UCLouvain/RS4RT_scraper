@@ -757,7 +757,7 @@ def build_review_entry(repo: dict[str, Any], image_source: str | None) -> dict[s
         "image_source": image_source,
         "heuristic_total_score": repo.get("heuristic_total_score"),
         "heuristic_reasons": repo.get("heuristic_reasons") or [],
-        "readme_excerpt": (repo.get("readme_excerpt") or "")[:4000],
+        "readme_excerpt": repo.get("readme_excerpt") or "",
     }
 
 
