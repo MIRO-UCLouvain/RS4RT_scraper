@@ -48,7 +48,7 @@ def header(entries: list[dict]) -> list[str]:
         "1. **Discover** &mdash; the scraper queries GitHub and GitLab for radiotherapy and related",
         "   terms, each discovered repo is assessed against a curated taxonomy of domain terms.",
         "   Depending on the final score, the repository is either kept or discarded.",\
-        "   The scraper is run every two months and it discards cached repositories."
+        "   The scraper is run every two months and it discards cached repositories.",
         "2. **Review** &mdash; surviving candidates are written to `to_review/` as one folder per",
         "   repository, split across four parts. Reviewers edit the data and metadata of each software",
         "   to ensure relevance and the quality of the information.",
