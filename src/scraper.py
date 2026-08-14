@@ -7,6 +7,7 @@ import logging
 import re
 import shutil
 import time
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -35,6 +36,7 @@ LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
 CACHE_PATH = Path("data/repo_cache.json")
+PUBLISHED_PATH = Path("data/published.json")
 REVIEW_ROOT = Path("to_review")
 REVIEW_PARTS = ["part_A", "part_B", "part_C", "part_D"]
 
@@ -198,6 +200,10 @@ def build_github_record(item: dict[str, Any], taxonomy: dict[str, Any], min_heur
         "stars": item.get("stargazers_count", 0),
         "language": item.get("language"),
         "updated_at": item.get("updated_at"),
+        "pushed_at": item.get("pushed_at"),
+        "created_at": item.get("created_at"),
+        "archived": bool(item.get("archived", False)),
+        "cached_at": datetime.now(timezone.utc).isoformat(),
         "license": (item.get("license") or {}).get("spdx_id"),
         "topics": item.get("topics") or [],
         "readme_excerpt": readme,
@@ -241,6 +247,10 @@ def build_gitlab_record(item: dict[str, Any], taxonomy: dict[str, Any], min_heur
         "stars": item.get("star_count", 0),
         "language": None,
         "updated_at": item.get("last_activity_at"),
+        "pushed_at": item.get("last_activity_at"),
+        "created_at": item.get("created_at"),
+        "archived": bool(item.get("archived", False)),
+        "cached_at": datetime.now(timezone.utc).isoformat(),
         "license": None,
         "topics": item.get("topics") or [],
         "readme_excerpt": readme,
@@ -479,14 +489,72 @@ def build_manual_seed_record(
     return None
 
 
-def load_json(path: str | Path) -> Any:
-    file_path = Path(path)
-    if not file_path.exists():
-        return []
+ACTIVITY_FIELDS = ("pushed_at", "updated_at")
+
+
+def parse_timestamp(value: str | None) -> datetime | None:
+    if not value:
+        return None
+    text = str(value).strip().replace("Z", "+00:00")
     try:
-        return json.loads(file_path.read_text(encoding="utf-8"))
+        parsed = datetime.fromisoformat(text)
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed
+
+
+def last_activity(record: dict[str, Any]) -> datetime | None:
+    for field in ACTIVITY_FIELDS:
+        parsed = parse_timestamp(record.get(field))
+        if parsed:
+            return parsed
+    return None
+
+
+def is_abandoned(record: dict[str, Any], max_age_years: float) -> bool:
+    if max_age_years <= 0:
+        return False
+    moment = last_activity(record)
+    if moment is None:
+        return False
+    age = datetime.now(timezone.utc) - moment
+    return age > timedelta(days=max_age_years * 365.25)
+
+
+def has_documentation(record: dict[str, Any], min_words: int) -> bool:
+    return int(record.get("readme_word_count") or 0) >= min_words
+
+
+def load_published_urls() -> set[str]:
+    if not PUBLISHED_PATH.exists():
+        return set()
+    try:
+        rows = json.loads(PUBLISHED_PATH.read_text(encoding="utf-8"))
     except Exception:
-        return []
+        return set()
+    urls: set[str] = set()
+    for row in rows if isinstance(rows, list) else []:
+        if isinstance(row, dict) and row.get("url"):
+            urls.add(row["url"])
+    return urls
+
+
+def item_activity(item: dict[str, Any], platform: str) -> str | None:
+    if platform == "github":
+        return item.get("pushed_at") or item.get("updated_at")
+    return item.get("last_activity_at")
+
+
+def cache_is_current(cached: dict[str, Any], item: dict[str, Any], platform: str) -> bool:
+    live = parse_timestamp(item_activity(item, platform))
+    stored = last_activity(cached)
+
+    if live is None or stored is None:
+        return True
+
+    return live <= stored
 
 
 def derive_gitlab_queries_from_main_queries(main_queries: list[str], taxonomy: dict[str, Any]) -> list[str]:
@@ -513,6 +581,7 @@ def discover_github_repositories(
     taxonomy: dict[str, Any],
     settings: dict[str, Any],
     cache: dict[str, dict[str, Any]],
+    published_urls: set[str],
 ) -> list[dict[str, Any]]:
     scraper_cfg = settings.get("scraper", {})
     github_max_results = int(scraper_cfg.get("github_max_results", 1000))
@@ -522,6 +591,7 @@ def discover_github_repositories(
     seen: dict[str, dict[str, Any]] = {}
     hits = 0
     fetched = 0
+    refreshed = 0
 
     for query in queries:
         LOGGER.info("GitHub query: %s", query)
@@ -534,10 +604,14 @@ def discover_github_repositories(
                 if not url:
                     continue
 
-                if url in cache:
-                    hits += 1
-                    seen.setdefault(url, cache[url])
-                    continue
+                cached = cache.get(url)
+                if cached is not None:
+                    if url in published_urls or cache_is_current(cached, item, "github"):
+                        hits += 1
+                        seen.setdefault(url, cached)
+                        continue
+                    refreshed += 1
+                    LOGGER.info("Repository changed since last scrape, refetching %s", url)
 
                 record = build_github_record(item, taxonomy, min_heuristic_score)
                 cache[url] = record
@@ -552,7 +626,7 @@ def discover_github_repositories(
         except Exception as exc:
             LOGGER.warning("GitHub query failed for %r: %s", query, exc)
 
-    LOGGER.info("GitHub: %d from cache, %d newly fetched", hits, fetched)
+    LOGGER.info("GitHub: %d from cache, %d newly fetched, %d refreshed", hits, fetched, refreshed)
     return list(seen.values())
 
 
@@ -561,6 +635,7 @@ def discover_gitlab_repositories(
     taxonomy: dict[str, Any],
     settings: dict[str, Any],
     cache: dict[str, dict[str, Any]],
+    published_urls: set[str],
 ) -> list[dict[str, Any]]:
     scraper_cfg = settings.get("scraper", {})
     gitlab_max_results = int(scraper_cfg.get("gitlab_max_results", 1000))
@@ -570,6 +645,7 @@ def discover_gitlab_repositories(
     seen: dict[str, dict[str, Any]] = {}
     hits = 0
     fetched = 0
+    refreshed = 0
 
     for query in queries:
         LOGGER.info("GitLab query: %s", query)
@@ -582,10 +658,14 @@ def discover_gitlab_repositories(
                 if not url:
                     continue
 
-                if url in cache:
-                    hits += 1
-                    seen.setdefault(url, cache[url])
-                    continue
+                cached = cache.get(url)
+                if cached is not None:
+                    if url in published_urls or cache_is_current(cached, item, "gitlab"):
+                        hits += 1
+                        seen.setdefault(url, cached)
+                        continue
+                    refreshed += 1
+                    LOGGER.info("Repository changed since last scrape, refetching %s", url)
 
                 record = build_gitlab_record(item, taxonomy, min_heuristic_score)
                 cache[url] = record
@@ -600,7 +680,7 @@ def discover_gitlab_repositories(
         except Exception as exc:
             LOGGER.warning("GitLab query failed for %r: %s", query, exc)
 
-    LOGGER.info("GitLab: %d from cache, %d newly fetched", hits, fetched)
+    LOGGER.info("GitLab: %d from cache, %d newly fetched, %d refreshed", hits, fetched, refreshed)
     return list(seen.values())
 
 
@@ -657,19 +737,30 @@ def merge_and_sort_candidates(*candidate_groups: list[dict[str, Any]]) -> list[d
     )
 
 
-def passes_quality_filters(repo: dict[str, Any], settings: dict[str, Any]) -> bool:
+def passes_quality_filters(repo: dict[str, Any], settings: dict[str, Any]) -> tuple[bool, str]:
     scraper_cfg = settings.get("scraper", {})
     require_code = bool(scraper_cfg.get("require_code", True))
-    min_readme_words = int(scraper_cfg.get("min_readme_words", 100))
+    min_readme_words = int(scraper_cfg.get("min_readme_words", 50))
+    max_age_years = float(scraper_cfg.get("max_inactive_years", 5))
+    drop_archived = bool(scraper_cfg.get("drop_archived", True))
     bypass = bool(scraper_cfg.get("force_include_bypasses_quality_filters", True))
 
     if repo.get("forced_include", False) and bypass:
-        return True
+        return True, ""
+
+    if drop_archived and repo.get("archived", False):
+        return False, "archived"
+
+    if is_abandoned(repo, max_age_years):
+        return False, f"inactive for more than {max_age_years:g} years"
+
     if require_code and not repo.get("has_code", False):
-        return False
-    if repo.get("readme_word_count", 0) < min_readme_words:
-        return False
-    return True
+        return False, "no code detected"
+
+    if not has_documentation(repo, min_readme_words):
+        return False, f"README under {min_readme_words} words"
+
+    return True, ""
 
 
 SKIP_IMAGE_HOSTS = ("shields.io", "badge", "codecov", "travis-ci", "appveyor")
@@ -829,10 +920,11 @@ def run() -> int:
     llm_cfg["cache_classifications"] = cache_classifications
 
     cache = load_repo_cache()
-    LOGGER.info("Repo cache loaded: %d known URLs", len(cache))
+    published_urls = load_published_urls()
+    LOGGER.info("Repo cache loaded: %d known URLs, %d already published", len(cache), len(published_urls))
 
-    github_candidates = discover_github_repositories(github_queries, taxonomy, settings, cache)
-    gitlab_candidates = discover_gitlab_repositories(gitlab_queries, taxonomy, settings, cache) if use_gitlab else []
+    github_candidates = discover_github_repositories(github_queries, taxonomy, settings, cache, published_urls)
+    gitlab_candidates = discover_gitlab_repositories(gitlab_queries, taxonomy, settings, cache, published_urls) if use_gitlab else []
 
     save_repo_cache(cache)
     LOGGER.info("Repo cache saved: %d known URLs", len(cache))
@@ -861,8 +953,15 @@ def run() -> int:
     dropped_forks = 0
     dropped_quality = 0
     dropped_prefilter = 0
+    dropped_published = 0
+    dropped_inactive = 0
+    dropped_undocumented = 0
 
     for repo in all_candidates:
+        if repo.get("url") in published_urls:
+            dropped_published += 1
+            continue
+
         if repo.get("is_fork") and not repo.get("forced_include", False):
             dropped_forks += 1
             continue
@@ -891,8 +990,14 @@ def run() -> int:
         repo["heuristic_passes"] = heuristic.passes
         repo["heuristic_reasons"] = heuristic.reasons
 
-        if not passes_quality_filters(repo, settings):
+        ok, reason = passes_quality_filters(repo, settings)
+        if not ok:
             dropped_quality += 1
+            if reason.startswith("inactive") or reason == "archived":
+                dropped_inactive += 1
+            elif reason.startswith("README"):
+                dropped_undocumented += 1
+            LOGGER.info("Dropped %s: %s", repo.get("full_name"), reason)
             continue
 
         if passes_prefilter(heuristic) or repo.get("forced_include", False):
@@ -963,24 +1068,6 @@ def run() -> int:
         reverse=True,
     )
 
-    hf_model_tools = load_json("data/hf_model_tools.json")
-    if hf_model_tools:
-        included.extend(hf_model_tools)
-        deduped: dict[str, dict[str, Any]] = {}
-        for row in included:
-            current = deduped.get(row["url"])
-            if current is None or row.get("stars", 0) > current.get("stars", 0):
-                deduped[row["url"]] = row
-        included = sorted(
-            deduped.values(),
-            key=lambda row: (
-                row.get("heuristic_total_score", 0),
-                row.get("classification", {}).get("confidence", 0),
-                row.get("stars", 0),
-            ),
-            reverse=True,
-        )
-
     safe_write_json("data/catalog.json", included)
     write_readme(included)
     write_site(included)
@@ -990,8 +1077,11 @@ def run() -> int:
     LOGGER.info("GitHub queries used: %d", len(github_queries))
     LOGGER.info("GitLab queries used: %d", len(gitlab_queries))
     LOGGER.info("All candidates: %d", len(all_candidates))
+    LOGGER.info("Dropped already published: %d", dropped_published)
     LOGGER.info("Dropped forks: %d", dropped_forks)
     LOGGER.info("Dropped by quality filters: %d", dropped_quality)
+    LOGGER.info("  of which inactive or archived: %d", dropped_inactive)
+    LOGGER.info("  of which undocumented: %d", dropped_undocumented)
     LOGGER.info("Dropped by heuristic prefilter: %d", dropped_prefilter)
     LOGGER.info("Prefiltered candidates: %d", len(prefiltered))
     LOGGER.info("Included repositories: %d", len(included))
