@@ -527,6 +527,22 @@ def has_documentation(record: dict[str, Any], min_words: int) -> bool:
     return int(record.get("readme_word_count") or 0) >= min_words
 
 
+def is_probably_english(record: dict[str, Any], threshold: float) -> bool:
+    if threshold <= 0:
+        return True
+
+    sample = " ".join([
+        record.get("description") or "",
+        (record.get("readme_excerpt") or "")[:3000],
+    ]).strip()
+
+    if len(sample) < 120:
+        return True
+
+    latin = sum(1 for char in sample if ord(char) < 128)
+    return (latin / len(sample)) >= threshold
+
+
 def load_published_urls() -> set[str]:
     if not PUBLISHED_PATH.exists():
         return set()
@@ -743,6 +759,7 @@ def passes_quality_filters(repo: dict[str, Any], settings: dict[str, Any]) -> tu
     min_readme_words = int(scraper_cfg.get("min_readme_words", 50))
     max_age_years = float(scraper_cfg.get("max_inactive_years", 5))
     drop_archived = bool(scraper_cfg.get("drop_archived", True))
+    min_latin_ratio = float(scraper_cfg.get("min_latin_ratio", 0.9))
     bypass = bool(scraper_cfg.get("force_include_bypasses_quality_filters", True))
 
     if repo.get("forced_include", False) and bypass:
@@ -759,6 +776,9 @@ def passes_quality_filters(repo: dict[str, Any], settings: dict[str, Any]) -> tu
 
     if not has_documentation(repo, min_readme_words):
         return False, f"README under {min_readme_words} words"
+
+    if not is_probably_english(repo, min_latin_ratio):
+        return False, "documentation not in a Latin script"
 
     return True, ""
 
@@ -956,6 +976,7 @@ def run() -> int:
     dropped_published = 0
     dropped_inactive = 0
     dropped_undocumented = 0
+    dropped_language = 0
 
     for repo in all_candidates:
         if repo.get("url") in published_urls:
@@ -997,6 +1018,8 @@ def run() -> int:
                 dropped_inactive += 1
             elif reason.startswith("README"):
                 dropped_undocumented += 1
+            elif reason.startswith("documentation not"):
+                dropped_language += 1
             LOGGER.info("Dropped %s: %s", repo.get("full_name"), reason)
             continue
 
@@ -1082,6 +1105,7 @@ def run() -> int:
     LOGGER.info("Dropped by quality filters: %d", dropped_quality)
     LOGGER.info("  of which inactive or archived: %d", dropped_inactive)
     LOGGER.info("  of which undocumented: %d", dropped_undocumented)
+    LOGGER.info("  of which non-Latin script: %d", dropped_language)
     LOGGER.info("Dropped by heuristic prefilter: %d", dropped_prefilter)
     LOGGER.info("Prefiltered candidates: %d", len(prefiltered))
     LOGGER.info("Included repositories: %d", len(included))

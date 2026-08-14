@@ -61,9 +61,9 @@ def score_text(
     total_score += strong_particle_hits * 5
     total_score += particle_hits * 2
     total_score += support_hits * 1
-    total_score += ai_hits * 3
+    # total_score += ai_hits * 3
     total_score += title_strong_particle_hits * 4
-    total_score += title_ai_hits * 2
+    # total_score += title_ai_hits * 2
     total_score -= negative_hits * 4
 
     #if generic_radiotherapy_hits > 0 and not has_strong_particle_anchor:
