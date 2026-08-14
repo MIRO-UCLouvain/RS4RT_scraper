@@ -78,14 +78,10 @@ def score_text(
         reasons.append(f"Matched {particle_hits} particle-therapy term(s).")
     if support_hits:
         reasons.append(f"Matched {support_hits} support term(s).")
-    if ai_hits:
-        reasons.append(f"Matched {ai_hits} AI/ML term(s) in metadata/content.")
     if title_ai_hits:
         reasons.append(f"Matched {title_ai_hits} AI/ML term(s) in repository name.")
-    if negative_hits:
-        reasons.append(f"Matched {negative_hits} negative term(s).")
-    if generic_radiotherapy_hits and not has_strong_particle_anchor:
-        reasons.append("Generic radiotherapy terms found without a strong particle-therapy anchor.")
+    # if negative_hits:
+    #     reasons.append(f"Matched {negative_hits} negative term(s).")
 
     passes = (
         negative_hits == 0 and 
