@@ -1,0 +1,64 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: gargeesuresh/Analyzing-and-Addressing-the-toxicity-prediction-difference-between-different-comments-with-same-sem
+url: https://github.com/gargeesuresh/Analyzing-and-Addressing-the-toxicity-prediction-difference-between-different-comments-with-same-sem
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2022-04-29T04:24:53Z'
+image_source: https://raw.githubusercontent.com/gargeesuresh/Analyzing-and-Addressing-the-toxicity-prediction-difference-between-different-comments-with-same-sem/HEAD/img/pr2.png
+heuristic_total_score: 19
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "\n# Analyzing and Addressing the toxicity prediction difference between different comments\
+  \ with same semantic meaning  in google's Perspective API\n\n<img src=\"./img/pr2.png\" align=\"right\"\
+  \n     alt=\"Perspective API logo by google\" width=\"120\" height=\"120\">\n\nIn this study, we attempt\
+  \ to analyze the gap in toxicity score predictions between different voices(active/passive forms) of\
+  \ the same sentences. Furthermore, we discuss possible solutions to ovecome this gap and provide a more\
+  \ consistent result. The toxicity scores compared across our study refers to google's Perspective API\
+  \ toxicity scores. \n\n## Overview\n\n* We have written a **python script** to scrape data from [Grammar\
+  \ websites](https://englishgrammarhere.com/active-passive-voice/100-examples-of-active-and-passive-voice-in-english/)\
+  \ containing examples of active-passive voice sentences\n* Using the script, we have built our own **Dataset\
+  \ for Active/Passive voice forms of a sentence**, with 365 lines of Active/Passive voice sentences currently\
+  \ (which we plan to expand in the near future)\n* We used Google's **Perspective API** to predict toxicity\
+  \ scores for these sentences. Using these values, we prove the inconsistency of toxic score predictions\
+  \ between Active/Passive voices.\n* Furthermore, we propose **4 different approaches** that can be utitlized\
+  \ to overcome this discrepancy and produce more consistent results. \nNamely, \n  * minimum\n  * maximum\n\
+  \  * average\n  * weighted average\n\n<p align=\"center\">\n  <img src=\"./img/pr1.png\" alt=\"Perspective\
+  \ API\" width=\"738\">\n</p>\n\n## Demonstrating with examples\n* Consider the set of comments under\
+  \ this YouTube [Video](https://www.youtube.com/watch?v=NMHmpB81RTc)\n          <p align=\"center\">\n\
+  \            <img src=\"./img/ss1.PNG\" alt=\"Sample video\" width=\"738\">\n          </p>\n      \
+  \    <p align=\"center\">\n            <img src=\"./img/ss2.PNG\" alt=\"Sample comments\" width=\"738\"\
+  >\n          </p>\n* Fetching these comments, generating their opposite voice forms(active->passive\
+  \ and vice-versa) using a Data-Augmentation library [TextGenie](https://github.com/hetpandya/textgenie),\
+  \ we create a database. \n         <p align=\"center\">\n            <img src=\"./img/ss3.PNG\" alt=\"\
+  Dataframe1\" width=\"738\">\n          </p>\n* Here is what a Sample API call to Perspective API looks\
+  \ like. Using the `attributeScores[TOXICITY[SummaryScore[value]]]` we add the toxicity values to the\
+  \ active/passive voice comments in the database.\n    ```\n    {\n  \"attributeScores\": {\n    \"TOXICITY\"\
+  : {\n      \"spanScores\": [\n        {\n          \"begin\": 0,\n          \"end\": 12,\n         \
+  \ \"score\": {\n            \"value\": 0.0558327,\n            \"type\": \"PROBABILITY\"\n         \
+  \ }\n        }\n      ],\n      \"summaryScore\": {\n        \"value\": 0.0558327,\n        \"type\"\
+  : \"PROBABILITY\"\n      }\n    }\n  },\n  \"languages\": [\n    \"en\"\n  ],\n  \"detectedLanguages\"\
+  : [\n    \"en\"\n  ]\n     }\n     ```\n     <p align=\"center\">\n       <img src=\"./img/ss4.PNG\"\
+  \ alt=\"Perspective API\" width=\"1000\">\n     </p>\nAs shown in the Datatbase, the difference in Toxicity\
+  \ scores for the very same sentences with different voice forms(active/passive) varies upto 30% in just\
+  \ this instance of  examples alone.\n* In order to maintain consistency over toxicity scores for different\
+  \ voices in sentences, we propose the following methods.\n     * **Minimum**\n     * **Maximum**\n \
+  \    * **Average**\n     * **Weighted Average with word count** \n<p align=\"center\">\n  <img src=\"\
+  ./img/ss5.PNG\" alt=\"Perspective API\" width=\"700\">\n</p>\n<p align=\"center\">\n  <img src=\"./img/ss6.PNG\"\
+  \ alt=\"Perspective API\" width=\"700\">\n</p>\n\n <p align=\"center\">\n  <img src=\"./img/ss7.PNG\"\
+  \ alt=\"Perspective API\" width=\"700\">\n</p>\n\n<p align=\"center\">\n  <img src=\"./img/ss8.PNG\"\
+  \ alt=\"Perspective API\" width=\"700\">\n</p>\n\n## References\n\n* [Perspective API](https://perspectiveapi.com/#/home)\n\
+  * [Grammar websites](https://englishgrammarhere.com/active-passive-voice/100-examples-of-active-and-passive-voice-in-english/)\n\
+  * [Deceiving Google’s Perspective API Built for\nDetecting Toxic Comments](https://arxiv.org/pdf/1702.08138.pdf)\n\
+  \n\n ## Contributors\n\n* [Gargee Suresh](https://github.com/gargeesuresh)\n* [Pranav Bhargav Gopinath](https://github.com/pranavb747)\n\
+  * [Shridhar Reddy](https://github.com/shridhar007reddy)\n* [Anand CR](https://github.com/anand-cr) \n\
+  \n"

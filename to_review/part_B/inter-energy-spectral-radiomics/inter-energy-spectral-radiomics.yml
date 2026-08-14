@@ -1,0 +1,65 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: SimonHellbrueck/inter-energy-spectral-radiomics
+url: https://github.com/SimonHellbrueck/inter-energy-spectral-radiomics
+platform: github
+description: ''
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-03T10:25:04Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Inter-Energy Spectral Radiomics — PCD-CT liver tissue classification\n\nAnalysis pipeline\
+  \ for the study *\"Inter-Energy Spectral Radiomics from Photon-Counting\nDetector CT for Multiclass\
+  \ Liver Tissue Classification Without Lesion-Level Annotation:\nA Proof-of-Concept Study\"* (Hellbrück\
+  \ et al., under review).\n\nThe pipeline classifies **whole-liver** PCD-CT into three tissue classes\
+  \ — **normal\nliver**, **simple cysts**, **hypovascular metastases** — from spectral radiomics, and\n\
+  compares single-energy (70 keV), all-energy, and engineered **inter-energy** feature\nsets with an XGBoost\
+  \ classifier.\n\n## Overview\n- Whole-liver radiomics from 10 reconstructions: virtual monoenergetic\
+  \ images at\n  40/50/60/70/80/110/140/180 keV, virtual non-contrast (VNC), and iodine maps.\n- **Inter-energy\
+  \ feature engineering:** pairwise ratios and differences, spectral\n  slopes (Δfeature/ΔkeV), cross-monoenergetic\
+  \ statistics, and slope variability.\n- XGBoost, stratified 5-fold cross-validation, one-vs-rest ROC\
+  \ AUC, pooled\n  out-of-fold DeLong confidence intervals and pairwise tests.\n- Robustness: nested cross-validation\
+  \ with embedded feature selection and a\n  feature-count saturation curve, a 25% hold-out split, per-reconstruction\
+  \ and\n  cross-reconstruction transfer, and a feature-type ablation.\n- Interpretation with SHAP.\n\n\
+  ## Requirements\nPython 3.11 — see `requirements.txt`.\n\n## Repository structure\n| File | Purpose\
+  \ |\n|---|---|\n| `calculate_radiomics.py` | PyRadiomics feature extraction from NIfTI images + whole-liver\
+  \ masks |\n| `liver_classification.py` | Main pipeline: loading, inter-energy features, the three input\
+  \ configurations, 5-fold CV, SHAP |\n| `reference_analyses.py` | Per-reconstruction models and cross-reconstruction\
+  \ transfer |\n| `nested_cv_analysis.py` | Nested CV with feature selection, k-saturation curve, hold-out\
+  \ evaluation |\n| `ablation_inter_energy.py` | \"Only\"-ablation of individual inter-energy feature\
+  \ types |\n| `delong_calibration.py` | Pooled out-of-fold DeLong AUC confidence intervals and pairwise\
+  \ tests |\n| `roc_curves_gen.py` | Per-class ROC curves |\n\n## Feature extraction (PyRadiomics v3.0.1)\n\
+  Original images (no image filters); fixed **bin width 25 HU** for gray-level\ndiscretization; images\
+  \ resampled to a common **1.0 × 1.0 × 0.4 mm** grid (B-spline\nfor images, nearest-neighbour for masks);\
+  \ **3D** texture computation; **GLCM\ndistance 1** (symmetric). This yields **93 non-shape features\
+  \ per reconstruction**\n(18 first-order, 24 GLCM, 16 GLRLM, 16 GLSZM, 14 GLDM, 5 NGTDM). Shape descriptors\n\
+  are excluded from modelling. The complete configuration is recorded in the\n`diagnostics_Configuration_Settings`\
+  \ block of every extracted `radiomics_features.json`.\n\n## Model\nXGBoost: `objective='multi:softprob'`,\
+  \ `n_estimators=300`, `subsample=0.8`,\n`colsample_bytree=0.8`, `tree_method='hist'`, `random_state=42`\
+  \ (`max_depth` and\n`learning_rate` at the XGBoost defaults 6 and 0.3). Balanced per-fold sample weights.\n\
+  Stratified, shuffled 5-fold cross-validation (seed 42).\n\n## Usage\nThe pipeline reads a per-patient\
+  \ radiomics feature tree (one `radiomics_features.json`\nper reconstruction). The tree is selected via\
+  \ the `LIVER_RADIOMICS_DIR` environment\nvariable. Typical run:\n\n```bash\nLIVER_RADIOMICS_DIR=/path/to/radiomics\
+  \ python liver_classification.py   # 3 configs, CV, SHAP\nLIVER_RADIOMICS_DIR=/path/to/radiomics python\
+  \ delong_calibration.py     # DeLong CIs + tests\nLIVER_RADIOMICS_DIR=/path/to/radiomics python reference_analyses.py\
+  \     # per-/cross-reconstruction\nLIVER_RADIOMICS_DIR=/path/to/radiomics python nested_cv_analysis.py\
+  \     # nested CV + hold-out\nLIVER_RADIOMICS_DIR=/path/to/radiomics python ablation_inter_energy.py\
+  \  # feature-type ablation\npython roc_curves_gen.py                                               \
+  \  # ROC figures\n```\n\n`calculate_radiomics.py` extracts features for a single image / liver-mask\
+  \ pair\n(`--image`, `--mask`, `--out`); run it per reconstruction to build the feature tree\nconsumed\
+  \ by `liver_classification.py`. Data locations for the pipeline are set via\nthe `LIVER_RADIOMICS_DIR`,\
+  \ `LIVER_PATIENT_CHARS`, and `LIVER_RESULTS_DIR`\nenvironment variables.\n\n## Data availability\nThe\
+  \ underlying PCD-CT imaging and patient data cannot be shared publicly owing to\npatient-privacy and\
+  \ institutional review board constraints; they are available from\nthe corresponding author on reasonable\
+  \ request. This repository contains the analysis\ncode only.\n\n## Citation\nIf you use this code, please\
+  \ cite the software (Zenodo DOI: *to be added on release*)\nand the accompanying paper (Hellbrück et\
+  \ al., under review; full citation to follow).\n\n## License\nReleased under the MIT License — see `LICENSE`.\n"

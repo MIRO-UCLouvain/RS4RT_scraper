@@ -1,0 +1,148 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: jmyoung299/CBCT-free-fetch
+url: https://github.com/jmyoung299/CBCT-free-fetch
+platform: github
+description: creating a claude agent to autonomously find and import free CBCT data and DICOM data from
+  the web that have proprietary DICOM data suffixes so as to allow a data cache for my decoder app
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-07T20:59:33Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: '# CBCT-free-fetch
+
+
+  A Claude agent that autonomously finds and imports free CBCT and DICOM data from the web — including
+  datasets with proprietary DICOM suffixes (`.ima`, `.nrrd`, `.mhd`, `.vol`, `.cbs`, `.3dv`, `.cub`, …)
+  — to build a local data cache for a downstream decoder app.
+
+
+  ## How it works
+
+
+  The agent runs an agentic loop on Claude (Opus 4.7 with adaptive thinking) and drives four tool groups:
+
+
+  | Tool | Purpose |
+
+  |---|---|
+
+  | `search_tcia` | Queries The Cancer Imaging Archive public NBIA API for CBCT/CT collections and series
+  UIDs |
+
+  | `search_zenodo` | Searches Zenodo for research datasets with direct download links (`.nrrd`, `.mhd`,
+  `.ima`, …) |
+
+  | `download_file` | Streams files into `cache/` with size limits, dedupe, safe filenames, and manifest
+  recording |
+
+  | `validate_dicom` | Parses files with pydicom, extracts scanner metadata, flags proprietary suffixes
+  |
+
+  | `extract_archive` | Unpacks `.zip`/`.tar.gz`, keeps only imaging files, guards against zip-slip |
+
+  | `list_cache` / `scan_cache_for_proprietary` | Cache inventory and proprietary-format reporting |
+
+  | `get_manifest_summary` | Reports the persistent manifest (provenance + validation state) |
+
+
+  All network calls go through a shared `requests` session with exponential-backoff retry on 429/5xx.
+  Every download and validation is recorded in `cache/manifest.json` — the provenance contract for the
+  downstream decoder app.
+
+
+  Tool definitions and the system prompt are prompt-cached (`cache_control: ephemeral`) so repeated loop
+  iterations reuse the prefix at ~10% input cost.
+
+
+  ## Setup
+
+
+  ```bash
+
+  pip install -r requirements.txt
+
+  cp .env.example .env   # add your ANTHROPIC_API_KEY
+
+  ```
+
+
+  ## Run
+
+
+  ```bash
+
+  python agent.py
+
+  # with a custom goal:
+
+  python agent.py --goal "Find Siemens .ima samples only, max 3 downloads"
+
+  # other flags:
+
+  python agent.py --model claude-sonnet-4-6 --max-iterations 20
+
+  python agent.py --dry-run   # print cache + manifest state, no API call
+
+  ```
+
+
+  ## Tests
+
+
+  Offline smoke tests (no network, no API key) cover suffix detection, safe filenames,
+
+  cache scanning, manifest recording, archive extraction, and zip-slip protection:
+
+
+  ```bash
+
+  python test_tools.py
+
+  ```
+
+
+  Downloads land in `cache/`, organised by source (e.g. `cache/tcia/...`, `cache/zenodo/...`). The agent
+  stops when it has samples from at least 3 sources or exhausts reachable datasets, then prints a proprietary-format
+  breakdown.
+
+
+  ## Project layout
+
+
+  ```
+
+  agent.py                  # agentic loop, tool registry, prompt caching
+
+  tools/search.py           # TCIA + Zenodo search
+
+  tools/download.py         # streaming HTTP download into cache/
+
+  tools/dicom_validate.py   # pydicom validation + proprietary suffix map
+
+  tools/cache_manager.py    # cache listing, stats, proprietary scan
+
+  ```
+
+
+  ## Notes
+
+
+  - Files larger than 500 MB are skipped; already-cached files are not re-downloaded.
+
+  - `.ima` files carry a DICOM preamble and are parsed with pydicom; `.nrrd`/`.mhd` are flagged as volume
+  formats for the decoder to handle.
+
+  - Only public, freely licensed datasets are targeted (TCIA public collections, Zenodo open records,
+  OsiriX sample library).
+
+  '

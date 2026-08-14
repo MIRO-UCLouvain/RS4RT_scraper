@@ -1,0 +1,107 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: rl0425/use-dynamic-viewport
+url: https://github.com/rl0425/use-dynamic-viewport
+platform: github
+description: React hook that fixes the gap CSS dvh leaves when the mobile keyboard opens — injects --dvh
+  and --keyboard-height CSS variables via the Visual Viewport API
+license: MIT
+language: TypeScript
+keywords:
+- android
+- css-variables
+- ios-safari
+- keyboard
+- mobile
+- nextjs
+- react
+- react-hook
+- typescript
+- viewport
+- visual-viewport
+stars: 4
+updated_at: '2026-06-12T09:09:42Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# use-dynamic-viewport\n\n[![npm version](https://img.shields.io/npm/v/use-dynamic-viewport)](https://www.npmjs.com/package/use-dynamic-viewport)\n\
+  [![npm downloads](https://img.shields.io/npm/dw/use-dynamic-viewport)](https://www.npmjs.com/package/use-dynamic-viewport)\n\
+  [![bundle size](https://img.shields.io/bundlephobia/minzip/use-dynamic-viewport)](https://bundlephobia.com/package/use-dynamic-viewport)\n\
+  [![license](https://img.shields.io/npm/l/use-dynamic-viewport)](./LICENSE)\n[![TypeScript](https://img.shields.io/badge/TypeScript-ready-blue)](https://www.typescriptlang.org/)\n\
+  \n> React hook that injects `--dvh` and `--keyboard-height` CSS variables using the Visual Viewport\
+  \ API — fixing the gap CSS `dvh` leaves when the mobile keyboard opens.\n\n---\n\n## The problem\n\n\
+  CSS `dvh` (dynamic viewport height) was introduced to replace the infamous `100vh` bug on mobile. It\
+  \ responds to the browser URL bar appearing and disappearing — **but it does not update when the on-screen\
+  \ keyboard opens.**\n\n```css\n/* This still breaks when the keyboard opens */\n.chat-input-bar {\n\
+  \  position: fixed;\n  bottom: 0;\n  height: 60px;\n}\n```\n\nWhen the keyboard appears, `position:\
+  \ fixed` elements get covered. `dvh` won't help you here.\n\nThe reliable fix requires `window.visualViewport`:\n\
+  \n```\nkeyboardHeight = layoutHeight - window.visualViewport.height\n```\n\nThe hook captures `window.innerHeight`\
+  \ **at mount time** as a stable reference before any keyboard interaction. When the keyboard opens,\
+  \ `window.visualViewport.height` shrinks — the difference between the captured reference and the current\
+  \ `vv.height` is the keyboard height.\n\n> Note: the hook applies two guards to protect the baseline\
+  \ from being overwritten by a keyboard event:\n> - **iOS Safari** — when the keyboard opens, `visualViewport.offsetTop`\
+  \ increases (the visual viewport scrolls). The hook skips the update when `offsetTop > 0`.\n> - **Android\
+  \ Chrome** — when the keyboard opens, the layout viewport shrinks but `offsetTop` stays `0`. The hook\
+  \ skips the update when `innerWidth` is unchanged, because the keyboard never changes the viewport width\
+  \ (only orientation changes do).\n\nThis hook wraps that logic and injects two CSS variables automatically.\n\
+  \n---\n\n## Installation\n\n```bash\nnpm install use-dynamic-viewport\n```\n\nRequires **React 17 or\
+  \ later**. Zero runtime dependencies.\n\n---\n\n## Quick start\n\n```tsx\nimport { useDynamicViewport\
+  \ } from 'use-dynamic-viewport'\n\nexport function Layout() {\n  useDynamicViewport() // injects --dvh\
+  \ and --keyboard-height\n\n  return <div className=\"app\">{/* ... */}</div>\n}\n```\n\n```css\n/* Use\
+  \ --dvh instead of 100vh */\n.fullscreen {\n  height: var(--dvh, 100vh);\n}\n\n/* Fixed bottom bar that\
+  \ stays above the keyboard */\n.chat-input {\n  position: fixed;\n  bottom: var(--keyboard-height, 0px);\
+  \ /* moves entire element above the keyboard */\n  left: 0;\n  right: 0;\n}\n```\n\n---\n\n## API\n\n\
+  ### `useDynamicViewport(options?)`\n\n```ts\nconst { viewportHeight, keyboardHeight, isKeyboardOpen\
+  \ } = useDynamicViewport(options?)\n```\n\n#### Options\n\n| Option | Type | Default | Description |\n\
+  |--------|------|---------|-------------|\n| `heightVar` | `string` | `'--dvh'` | CSS custom property\
+  \ name for the visual viewport height |\n| `keyboardVar` | `string` | `'--keyboard-height'` | CSS custom\
+  \ property name for the keyboard height |\n| `enabled` | `boolean` | `true` | Set to `false` to disable\
+  \ the hook entirely |\n\n#### Return value\n\n| Property | Type | Description |\n|----------|------|-------------|\n\
+  | `viewportHeight` | `number` | Current visual viewport height in pixels |\n| `keyboardHeight` | `number`\
+  \ | Current keyboard height in pixels (`0` when closed) |\n| `isKeyboardOpen` | `boolean` | `true` when\
+  \ the on-screen keyboard is open |\n\n---\n\n## Examples\n\n### Basic — just inject the CSS variables\n\
+  \n```tsx\nuseDynamicViewport()\n```\n\n### Read values in JavaScript\n\n```tsx\nconst { viewportHeight,\
+  \ keyboardHeight, isKeyboardOpen } = useDynamicViewport()\n\nreturn (\n  <div>\n    {isKeyboardOpen\
+  \ && <p>Keyboard is open ({keyboardHeight}px)</p>}\n  </div>\n)\n```\n\n### Custom CSS variable names\n\
+  \n```tsx\nuseDynamicViewport({\n  heightVar: '--vh',\n  keyboardVar: '--kb-height',\n})\n```\n\n```css\n\
+  .page { height: var(--vh); }\n.footer { padding-bottom: var(--kb-height); }\n```\n\n### Conditional\
+  \ activation\n\n```tsx\nconst isMobile = useMediaQuery('(max-width: 768px)')\nuseDynamicViewport({ enabled:\
+  \ isMobile })\n```\n\n---\n\n## How it works\n\n### CSS injected on `<html>`\n\n```css\n:root {\n  --dvh:\
+  \ 780px;         /* actual visible height (URL bar + keyboard aware) */\n  --keyboard-height: 0px; /*\
+  \ 0 when closed, ~300px when keyboard is open */\n}\n```\n\nVariables are updated on every `visualViewport`\
+  \ `resize` and `scroll` event (both are needed for iOS Safari compatibility), throttled with `requestAnimationFrame`.\n\
+  \n### Cleanup\n\nVariables are removed from `document.documentElement` when the component unmounts.\
+  \ Event listeners are also cleaned up.\n\n### SSR safety\n\n`window` access is guarded by `typeof window\
+  \ === 'undefined'` — safe for Next.js App Router, Remix, and any SSR environment.\n\n---\n\n## Comparison\n\
+  \n| Feature | use-dynamic-viewport | Manual visualViewport | viewportify |\n|---------|:--------------------:|:---------------------:|:-----------:|\n\
+  | CSS `--dvh` variable | ✅ | ❌ manual | ✅ |\n| CSS `--keyboard-height` variable | ✅ | ❌ manual | ✅ |\n\
+  | React hook (first-class) | ✅ | ❌ | ⚠️ wrapper |\n| Next.js App Router / SSR safe | ✅ | ❌ | ⚠️ |\n\
+  | iOS Safari `scroll` event compat | ✅ | ⚠️ easy to miss | ✅ |\n| Zero dependencies | ✅ | ✅ | ✅ |\n\
+  | Bundle size | ~0.8KB | n/a | larger |\n| Cleanup on unmount | ✅ | ❌ manual | ❌ |\n\n---\n\n## Known\
+  \ limitations\n\n- **Keyboard height detection** uses the `window.innerHeight` captured at mount time\
+  \ as a baseline. When `window.visualViewport.height` shrinks below that baseline, the difference is\
+  \ treated as keyboard height. Two device behaviors are handled:\n  - **iOS Safari** — visual viewport\
+  \ scrolls when keyboard opens (`vv.offsetTop > 0`). The hook detects this and preserves the baseline.\n\
+  \  - **Android Chrome** — layout viewport itself shrinks (`window.innerHeight` decreases, `vv.offsetTop`\
+  \ stays `0`). The hook detects this via a width guard: keyboard open never changes `innerWidth`, so\
+  \ the baseline is only updated when `innerWidth` changes (true orientation change or window resize).\n\
+  \  - Niche Android browsers that behave differently from these two patterns may not be fully supported.\n\
+  - On desktop, `--keyboard-height` is `0px` in normal use. If the browser window height is resized without\
+  \ changing its width (e.g. dragging the bottom edge), the variable may briefly show a non-zero value.\
+  \ This has no practical impact since desktop browsers have no on-screen keyboard.\n- The hook injects\
+  \ variables on `document.documentElement`. If you render multiple instances, the last mounted instance\
+  \ controls the variables.\n- **Pinch-to-zoom** shrinks `visualViewport.height`, which can produce a\
+  \ false positive `--keyboard-height`. Most mobile apps disable zoom via `<meta name=\"viewport\" content=\"\
+  ..., maximum-scale=1\">`, which avoids this.\n- **Dynamic CSS variable names**: if you change `heightVar`\
+  \ or `keyboardVar` at runtime, the old variable name is not automatically removed from `:root`. The\
+  \ old variable lingers until the component unmounts. Prefer stable variable names.\n- **iPhone home\
+  \ indicator (safe-area-inset)**: on devices with a home bar, combine `--keyboard-height` with `env(safe-area-inset-bottom)`\
+  \ to avoid the bottom safe area:\n\n```css\n.input-bar {\n  padding-bottom: calc(var(--keyboard-height,\
+  \ 0px) + env(safe-area-inset-bottom, 0px));\n}\n```\n\n---\n\n## Browser support\n\nRequires `window.visualViewport`\
+  \ ([95%+ global support](https://caniuse.com/visual-viewport)). Falls back to `window.innerHeight` when\
+  \ not available, meaning `--keyboard-height` will always be `0px` in unsupported browsers.\n\n---\n\n\
+  ## License\n\nMIT © [parkgichan](https://github.com/rl0425)\n"

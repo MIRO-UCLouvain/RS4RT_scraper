@@ -1,0 +1,44 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Kashvi05agarwal/gsoc_ml4sci_predict_project2
+url: https://github.com/Kashvi05agarwal/gsoc_ml4sci_predict_project2
+platform: github
+description: GSoC 2026 application — cardiac CT radiomics pipeline using PyRadiomics, UMAP & HDBSCAN for
+  ML4SCI/CERN
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-03-06T13:44:24Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# GSoC 2026 — ML4SCI PrediCT Project 2: Radiomics Feature Extraction and Calcium Phenotype\
+  \ Discovery\n\nEnd-to-end pipeline for coronary calcium characterization from cardiac CT (COCA dataset).\
+  \ Extracts PyRadiomics features from the peak calcium-burden axial slice, computes Agatston scores with\
+  \ native voxel spacing, and applies UMAP + HDBSCAN to discover calcium phenotypes beyond traditional\
+  \ risk stratification.\n\n## Dataset\n\nThe **COCA (Coronary Artery Calcium) dataset** contains anonymized\
+  \ cardiac CT imaging data for coronary artery calcification research. DICOM data is not included in\
+  \ this repository due to size and licensing constraints. \n\nDownload the dataset from: https://stanfordaimi.azurewebsites.net/datasets/e8ca4aa2-3da5-4b26-ae9c-81f65c6cdeb9\n\
+  \nAfter downloading, place the data at:\n```\nC:\\coca_data\\patient\n```\n\n## Setup\n\n```bash\nconda\
+  \ activate gsoc-ml4sci-p2\npip install -r requirements.txt\npytest tests -v\n```\n\n## Quick Start (3-subject\
+  \ demo)\n\nTry the pipeline with only 3 subjects without needing the full dataset:\n\n**Linux / macOS:**\n\
+  ```bash\nDEMO_MODE=true python extract_features.py\n```\n\n**Windows (CMD):**\n```cmd\nset DEMO_MODE=true\
+  \ && python extract_features.py\n```\n\n**Windows (PowerShell):**\n```powershell\n$env:DEMO_MODE = 'true';\
+  \ python extract_features.py\n```\n\n## How to Run\n\n1. **Extract radiomics features and Agatston scores**\
+  \ by running the standalone script:\n   ```bash\n   C:\\Users\\Kashvi Agarwal\\miniconda3\\envs\\gsoc-ml4sci-p2\\\
+  python.exe extract_features.py\n   ```\n   This creates `results/tables/radiomics_features_with_agatston.csv`.\n\
+  \n2. **Analyze and visualize results** by opening `notebooks/Project2_Radiomics_and_Calcium_Phenotypes_.ipynb`\
+  \ and clicking Run All.\n\n## Project Structure\n\n```\nproject_root/\n├── data/\n├── src/\n│   ├──\
+  \ __init__.py\n│   ├── calcium_scoring.py\n│   ├── dicom_utils.py\n│   ├── radiomics_utils.py\n│   └──\
+  \ stats_utils.py\n├── notebooks/\n│   └── Project2_Radiomics_and_Calcium_Phenotypes_.ipynb\n├── results/\n\
+  │   ├── figures/\n│   └── tables/\n├── extract_features.py\n├── config.py\n├── requirements.txt\n└──\
+  \ README.md\n```\n\n## Pipeline Overview\n\n| Step | Method |\n|---|---|\n| DICOM loading | SimpleITK,\
+  \ native voxel spacing preserved |\n| Calcium mask | HU ≥ 130 thresholding + connected-component labeling\
+  \ |\n| Agatston scoring | Per-lesion weighting by area, standard risk categories |\n| Radiomics | 2D\
+  \ peak-slice PyRadiomics (shape, first-order, GLCM, GLRLM, GLSZM) |\n| Statistics | Spearman correlation\
+  \ + Benjamini–Hochberg FDR correction |\n| Clustering | UMAP + t-SNE + HDBSCAN phenotype discovery |\n"

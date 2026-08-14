@@ -1,0 +1,77 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: wenhui0411/MAE-UNet-Breast-Tumor
+url: https://github.com/wenhui0411/MAE-UNet-Breast-Tumor
+platform: github
+description: Multi-scale Attention Explainable U-Net for breast tumor segmentation and classification
+  (BUSI dataset) with Grad-CAM explainability
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-26T15:10:59Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# AI-Automated Breast Tumor Segmentation with U-Net\n**Final Year Project** — Binary\
+  \ segmentation of breast tumours from ultrasound images using the BUSI dataset.\n\n---\n\n## Project\
+  \ structure\n\n```\nbusi_unet/\n├── dataset.py        # BUSI dataset loader + augmentation pipeline\n\
+  ├── model.py          # U-Net & Attention U-Net architectures\n├── losses.py         # Dice, BCE, Focal,\
+  \ Tversky loss functions\n├── metrics.py        # Evaluation metrics + MetricTracker\n├── trainer.py\
+  \        # Training engine (AMP, early stopping, TensorBoard)\n├── evaluate.py       # Test evaluation,\
+  \ visualisation, CSV export\n├── train.py          # Main entry point\n├── predict.py        # Inference\
+  \ on single images or folders\n├── notebook.ipynb    # Exploratory notebook\n└── requirements.txt\n\
+  ```\n\n---\n\n## Dataset setup\n\n1. Download the **BUSI** dataset from Kaggle:\n   `https://www.kaggle.com/datasets/aryashah2k/breast-ultrasound-images-dataset`\n\
+  \n2. Extract to:\n   ```\n   data/\n   └── Dataset_BUSI_with_GT/\n       ├── benign/\n       ├── malignant/\n\
+  \       └── normal/\n   ```\n\n---\n\n## Installation\n\nImages with multiple BUSI masks such as `*_mask.png`\
+  \ and `*_mask_1.png` are merged into one binary training target.\n\n```bash\npip install -r requirements.txt\n\
+  ```\n\nRequires Python ≥ 3.9 and PyTorch ≥ 2.0. A CUDA GPU is strongly recommended.\n\n---\n\n## Training\n\
+  \n```bash\npython train.py \\\n  --data_dir  data/Dataset_BUSI_with_GT \\\n  --classes   benign malignant\
+  \ \\\n  --model     unet \\\n  --loss      dice_bce \\\n  --epochs    100 \\\n  --batch_size 8 \\\n\
+  \  --lr        1e-4 \\\n  --scheduler plateau \\\n  --patience  20\n```\n\n### Key arguments\n\n| Argument\
+  \ | Default | Description |\n|---|---|---|\n| `--data_dir` | required | Path to BUSI dataset root |\n\
+  | `--classes` | benign malignant | Class folders to include |\n| `--model` | unet | `unet`, `attention_unet`,\
+  \ or `attention_unet_multiscale` |\n| `--loss` | dice_bce | `bce` / `dice` / `dice_bce` / `focal` /\
+  \ `tversky` / `focal_tversky` |\n| `--img_size` | 256 | Resize target (square) |\n| `--batch_size` |\
+  \ 8 | Batch size |\n| `--lr` | 1e-4 | Learning rate (AdamW) |\n| `--scheduler` | plateau | `plateau`\
+  \ / `cosine` / `none` |\n| `--epochs` | 100 | Max training epochs |\n| `--patience` | 20 | Early stopping\
+  \ patience |\n| `--features` | 64 | Base feature channels |\n| `--bilinear` / `--no-bilinear` | True\
+  \ | Use bilinear upsampling or ConvTranspose |\n| `--amp` / `--no-amp` | True | Mixed-precision training\
+  \ toggle |\n| `--checkpoint_dir` | checkpoints/<model> | Checkpoint output folder |\n| `--log_dir` |\
+  \ runs/<model> | TensorBoard log folder |\n| `--results_dir` | results/<model> | Metrics, curves, and\
+  \ prediction visualisations |\n\n---\n\n## Inference\n\n```bash\n# Single image\npython predict.py \\\
+  \n  --checkpoint checkpoints/best_model.pth \\\n  --input      data/Dataset_BUSI_with_GT/benign/benign\\\
+  \ \\(1\\).png\n\n# Entire folder\npython predict.py \\\n  --checkpoint checkpoints/best_model.pth \\\
+  \n  --input      data/Dataset_BUSI_with_GT/benign/ \\\n  --output     predictions/\n```\n\nOutputs per\
+  \ image:\n\nNew checkpoints save the model architecture config, so `predict.py` can reload non-default\
+  \ feature sizes and upsampling modes automatically.\n\n- `*_mask.png`    — binary segmentation mask\n\
+  - `*_overlay.png` — tumour region highlighted in red over original\n\n---\n\n## TensorBoard\n\n```bash\n\
+  tensorboard --logdir runs/\n```\n\nTracks: `train/loss`, `val/loss`, `train/dice`, `val/dice`, `train/iou`,\
+  \ `val/iou`, `lr`.\n\n---\n\n## Metrics reported\n\n| Metric | Description |\n|---|---|\n| **Dice (F1)**\
+  \ | Primary segmentation metric |\n| **IoU** | Intersection over Union (Jaccard) |\n| **Pixel accuracy**\
+  \ | Fraction of correct pixels |\n| **Sensitivity** | True positive rate (recall) |\n| **Specificity**\
+  \ | True negative rate |\n| **Precision** | Positive predictive value |\n| **HD95** | 95th-percentile\
+  \ surface Hausdorff distance |\n\n---\n\n## Architecture overview\n\n```\nInput [3×256×256]\n     │\n\
+  \ Enc1 64ch  ──────────────────────── skip ──┐\n     │ MaxPool                               │\n Enc2\
+  \ 128ch ─────────────── skip ──┐        │\n     │ MaxPool                     │        │\n Enc3 256ch\
+  \ ──────── skip ──┐      │        │\n     │ MaxPool               │      │        │\n Enc4 512ch ─ skip\
+  \ ──┐      │      │        │\n     │ MaxPool        │      │      │        │\nBottleneck 1024ch    │\
+  \      │      │        │\n     │ UpSample       │      │      │        │\n Dec4 512ch ←────────┘   \
+  \   │      │        │\n     │ UpSample             │      │        │\n Dec3 256ch ←───────────────┘\
+  \      │        │\n     │ UpSample                    │        │\n Dec2 128ch ←───────────────────────┘\
+  \       │\n     │ UpSample                             │\n Dec1 64ch  ←──────────────────────────────┘\n\
+  \     │\n 1×1 Conv → Sigmoid\n     │\nOutput mask [1×256×256]\n```\n\nAttention U-Net adds soft attention\
+  \ gates on each skip connection. `attention_unet_multiscale` keeps those gates and replaces the plain\
+  \ bottleneck with parallel 3x3, 5x5, and dilated 3x3 branches fused by a 1x1 convolution.\n\n---\n\n\
+  ## Recommended hyperparameters (from literature)\n\n| Setting | Value |\n|---|---|\n| Loss | `dice_bce`\
+  \ (α=0.5) or `focal_tversky` for small tumours |\n| Optimiser | AdamW, lr=1e-4, weight_decay=1e-5 |\n\
+  | Scheduler | ReduceLROnPlateau (factor=0.5, patience=7) |\n| Image size | 256×256 |\n| Batch size |\
+  \ 8 (16 if GPU memory allows) |\n\n---\n\n## Expected results (BUSI — benign + malignant)\n\n| Model\
+  \ | Dice | IoU |\n|---|---|---|\n| U-Net (baseline) | ~0.72–0.78 | ~0.62–0.68 |\n| Attention U-Net |\
+  \ ~0.74–0.80 | ~0.64–0.70 |\n\nResults vary with random seed, augmentation strength, and loss choice.\n"

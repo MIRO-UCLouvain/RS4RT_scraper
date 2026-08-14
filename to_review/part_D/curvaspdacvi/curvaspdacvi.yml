@@ -1,0 +1,58 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: vboussot/CurvasPDACVI
+url: https://github.com/vboussot/CurvasPDACVI
+platform: github
+description: CURVAS2025 Challenge – ABNN UNet weights and inference code for PDAC tumor segmentation in
+  CT.
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-07-05T15:40:01Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "[![Grand Challenge](https://img.shields.io/badge/Grand%20Challenge-CURVAS_PDACVI-blue)](https://curvas-pdacvi.grand-challenge.org/)\
+  \ [![Hugging Face](https://img.shields.io/badge/\U0001F917%20Hugging%20Face-CURVASPDACVI-orange)](https://huggingface.co/VBoussot/CurvasPDACVI)\n\
+  \n# CURVAS2025: Bayesian Modeling of Inter-Annotator Variability in UNet-Based PDAC Tumor Segmentation\
+  \ (3rd place \U0001F949)\n\nThis repository provides the code, configurations, and models used for our\
+  \ submission to the **CURVAS 2025 Challenge**, focused on **uncertainty-aware segmentation** of **Pancreatic\
+  \ Ductal Adenocarcinoma (PDAC)** from CT scans.  \nOur approach extends **pre-trained nnU-Net models**\
+  \ with **Adaptable Bayesian Neural Network (ABNN)** layers to model **inter-annotator variability**\
+  \ and generate **voxel-wise uncertainty maps**.\n\n---\n\n## \U0001F3C1 Official Challenge Results\n\
+  \nOur method ranked **3rd overall** in the CURVAS2025 Challenge \U0001F3C5\n\n| Rank | Team / Algorithm\
+  \             | DSC (↑) | thresh-DSC (↑) | ECE (↓) | CRPS (↓) |\n|------|------------------------------|---------|----------------|---------|----------|\n\
+  | \U0001F3C5 1st | Tryzis    | 0.5576  | 0.5693         | 0.0296  | **5924** |\n| \U0001F947 2nd | SHUGOSHA\
+  \    | 0.5894  | 0.5801         | 0.0305  | 10792    |\n| \U0001F948 3rd | **ours** | **0.7104** | **0.6401**\
+  \ | **0.0257** | 7320     |\n\n✨ Highlights of our approach:\n- \U0001F947 **Best Dice Score (DSC)**\n\
+  - \U0001F947 **Best thresh-DSC**\n- \U0001F947 **Best Calibration (ECE)**\n- Robust and efficient Bayesian\
+  \ uncertainty estimation\n\n\U0001F517 [View the full CURVASPDACVI leaderboard](https://curvas-pdacvi.grand-challenge.org/evaluation/testing-phase/leaderboard/)\n\
+  \n---\n\n## \U0001F680 Inference Instructions\n\nThe pipeline runs on [KonfAI](https://github.com/vboussot/KonfAI);\
+  \ the two models are\n[TorchScript](https://pytorch.org/docs/stable/jit.html) checkpoints exported from\
+  \ KonfAI-trained networks.\n\n### 1. Install KonfAI\n\n```bash\npip install konfai[itk]==1.5.9\n```\n\
+  \nKeep `Model.py`, `Transform.py` and `Uncertainty.py` in the working directory: the prediction configs\n\
+  reference them through the `Model:`, `Transform:` and `Uncertainty:` classpaths.\n\n### 2. Download\
+  \ the models\n\nAutomatically download all required models from Hugging Face:\n\n```bash\npython download.py\n\
+  ```\n\nThis will create the following directory and files:\n\n```\n./resources/Model/\n├── FT_0.pt\n\
+  ├── FT_1.pt\n├── FT_2.pt\n├── FT_3.pt\n├── FT_4.pt\n└── M291.pt\n```\n\n- `FT_0.pt` – `FT_4.pt`: fine-tuned\
+  \ Bayesian checkpoints  \n- `M291.pt`: auxiliary pancreas segmentation model used for ROI extraction\
+  \  \n\n\U0001F517 [Model on Hugging Face](https://huggingface.co/VBoussot/Curvas2025)\n\n---\n\n###\
+  \ 3. Prepare the dataset\n\nExpected structure (one `CT.mha` per case):\n\n```\n./Dataset/\n├── Case_001/\n\
+  │   └── CT.mha   # input CT volume\n├── Case_002/\n│   └── CT.mha\n└── ...\n```\n\n### 4. Run inference\
+  \ with uncertainty estimation\n\nRun pancreas localization (ROI extraction) with the auxiliary model:\n\
+  \n```bash\nkonfai PREDICTION -y \\\n  --gpu 0 \\\n  --config ./resources/Prediction_TS.yml \\\n  --models\
+  \ ./resources/Model/M291.pt\n```\n\nThen run Bayesian inference with the fine-tuned models (ensemble\
+  \ of 5 checkpoints):\n\n```bash\nkonfai PREDICTION -y \\\n  --gpu 0 \\\n  --config ./resources/Prediction.yml\
+  \ \\\n  --models ./resources/Model/FT_0.pt ./resources/Model/FT_1.pt ./resources/Model/FT_2.pt ./resources/Model/FT_3.pt\
+  \ ./resources/Model/FT_4.pt\n```\n\nThe predictions for each case are stored in:\n\n```\n./Predictions/Curvas/Dataset/Case_xxx/\n\
+  ├── Seg.mha   # Final Bayesian segmentation (after STAPLE aggregation)\n└── Prob.mha  # Voxel-wise uncertainty\
+  \ map (values in [0, 1])\n```\n\n\n## \U0001F4DA References\n\n- Franchi, G., Laurent, O., Leguéry,\
+  \ M., Bursuc, A., Pilzer, A., & Yao, A. (2023).  \n  **Make Me a BNN: A Simple Strategy for Estimating\
+  \ Bayesian Uncertainty from Pre-trained Models**.  \n  arXiv preprint [arXiv:2312.15297](https://arxiv.org/abs/2312.15297)\n\
+  \n- Boussot, V., & Dillenseger, J.-L. (2025).  \n  **KonfAI: A Modular and Fully Configurable Framework\
+  \ for Deep Learning in Medical Imaging**.  \n  arXiv preprint [arXiv:2508.09823](https://arxiv.org/abs/2508.09823)\n"

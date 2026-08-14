@@ -1,0 +1,65 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: TanmoyD24/mri-tumor-delineation-pytorch
+url: https://github.com/TanmoyD24/mri-tumor-delineation-pytorch
+platform: github
+description: Ensemble-based brain tumor segmentation for Low-Grade Gliomas (LGG) using Attention-UNet
+  architectures. This pipeline integrates CBAM-boosted EfficientNet and MobileNet backbones with custom
+  transposed-convolutional decoders to achieve high-precision MRI segmentation and clinical diagnostic
+  metrics.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-15T20:37:52Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Attention-Guided Ensemble Networks for Automated Segmentation of Low-Grade Gliomas\
+  \ (LGG) in Brain MRI\n\nThis repository contains an end-to-end deep learning pipeline for the precise\
+  \ automated segmentation of Low-Grade Gliomas (LGG) using multi-sequence structural brain MRI scans.\
+  \ The system features a custom fully convolutional U-Net-style topology enhanced by **Convolutional\
+  \ Block Attention Modules (CBAM)** at the structural bottleneck to dynamically suppress healthy background\
+  \ tissue while accentuating clinical tumor regions.\n\n---\n\n## System Framework & Architecture\n\n\
+  The project is built entirely from scratch using a professional **local-first, production-ready** Python\
+  \ ML framework stack:\n\n* **Core Framework:** `PyTorch 2.x` utilizing CUDA-accelerated backend computations\
+  \ for deep layer gradient updates.\n* **Data Augmentation Engineering:** `Albumentations` multi-threaded\
+  \ processing library executing spatial-geometric adjustments (`ShiftScaleRotate`, `HorizontalFlip`)\
+  \ and pixel-intensity transforms (`RandomBrightnessContrast`) synchronized perfectly across matching\
+  \ structural image-mask matrices.\n* **Feature Extractors (Backbones):** * **EfficientNetV2-M:** Implemented\
+  \ as a high-capacity, deeply parameterized backbone leveraging fused-MBConv layers for fine-grained\
+  \ morphological feature maps.\n  * **MobileNetV3-Large:** Implemented as an efficient, lightweight backbone\
+  \ using hardware-aware inverted residual blocks and hard-swish non-linearities for fast feature extraction.\n\
+  * **Attention Mechanism:** A custom **CBAM (Convolutional Block Attention Module)** is integrated directly\
+  \ at the bottleneck layer. It sequentializes feature map refining via 1D **Channel Attention** (exploiting\
+  \ inter-channel relationships via max and average pooling vectors) and 2D **Spatial Attention** (exploiting\
+  \ inter-spatial relationships via a $7 \\times 7$ kernel convolutional layer).\n* **Upsampling Decoder:**\
+  \ Multi-stage transposed convolutional (`ConvTranspose2d`) decoder pipeline equipped with paired 2D\
+  \ Batch Normalization and rectified linear activation blocks, scaling spatial resolution cleanly back\
+  \ to the native $256 \\times 256$ input scale.\n\n---\n\n## Performance Results & In-Depth Analysis\n\
+  \n### 1. Global Consensus Evaluation Metrics\nEvaluated across the hidden test set partition using a\
+  \ unified multi-model ensemble voting framework ($0.7 \\times \\text{EfficientNetV2-M} + 0.3 \\times\
+  \ \\text{MobileNetV3-Large}$), the system achieves the following research-grade indicators:\n\n| Core\
+  \ Clinical Indicator | Achieved Value | Analytical Interpretation |\n| :--- | :--- | :--- |\n| **Dice\
+  \ Coefficient (F1-Score)** | **0.8186** | Demonstrates excellent global spatial overlap and geometric\
+  \ congruence with manual radiologist annotations. |\n| **Intersection over Union (IoU)** | **0.6928**\
+  \ | Confirms highly precise pixel-level convergence across the absolute intersection-to-union ratio\
+  \ boundary. |\n| **Sensitivity (Recall / TPR)** | **0.9023** | Exceptionally high; minimizes dangerous\
+  \ clinical false negatives, ensuring $90.23\\%$ of the active tumor mass is safely captured. |\n| **Specificity\
+  \ (TNR)** | **0.9968** | Near-perfect; practically eliminates false positives, guaranteeing healthy\
+  \ structural brain matters are safely preserved without over-segmentation. |\n\n### 2. Convergence Dynamics\
+  \ & Training Analysis\nThe training logs across 20 epochs reveal outstanding training stability and\
+  \ performance optimization:\n\n```text\nTraining Highlights:\n* MobileNetV3-Large CBAM: Epoch 20/20\
+  \ - Train Loss: 0.0320 | Val Loss: 0.0305 | Val Dice: 0.7786\n* EfficientNetV2-M CBAM:  Epoch 20/20\
+  \ - Train Loss: 0.0341 | Val Loss: 0.0341 | Val Dice: 0.7554\n\n\ngit clone [https://github.com/TanmoyD24/mri-tumor-delineation-pytorch.git](https://github.com/TanmoyD24/mri-tumor-delineation-pytorch.git)\n\
+  cd mri-tumor-delineation-pytorch\npip install torch torchvision albumentations opencv-python pandas\
+  \ matplotlib scikit-learn\n\nimport torch\n\ndevice = torch.device(\"cuda\" if torch.cuda.is_available()\
+  \ else \"cpu\")\n\neff_model = EfficientNetV2M_Segmentation_CBAM(num_classes=1).to(device)\neff_model.load_state_dict(torch.load(\"\
+  eff_seg_best_model.pth\", map_location=device))\n\nmob_model = MobileNetV3Large_Segmentation_CBAM(num_classes=1).to(device)\n\
+  mob_model.load_state_dict(torch.load(\"mob_seg_best_model.pth\", map_location=device))\n\nvisualize_tumor_predictions(eff_model,\
+  \ mob_model, test_loader, num_images=4)"

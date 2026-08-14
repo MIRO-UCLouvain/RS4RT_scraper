@@ -1,0 +1,110 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: elettralucchesi/Radiomic_Extraction
+url: https://github.com/elettralucchesi/Radiomic_Extraction
+platform: github
+description: 'Extraction of radiomic features from segmented 3D MRI images '
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-03-11T19:08:39Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# Radiomic Analysis of 3D MRI Images: Feature Extraction from Lesion Volumes and Individual\
+  \ Slices\n---\n## Overview\nThis project enables the extraction of radiomic features from 3D MRI images,\
+  \ particularly focusing on segmented lesions. The extraction can be performed both on:\n- **3D segmented\
+  \ lesion volumes**\n- **2D slices of the segmented volumes**\n\nRadiomic features are key in medical\
+  \ imaging for quantifying the texture and patterns in lesions that might be indicative of disease. These\
+  \ features are extracted from NIfTI (.nii) format images, and the results are saved in structured CSV\
+  \ files, allowing for easy downstream analysis.\n### Extraction Modes\n- **3D Mode**: Features are computed\
+  \ from the entire segmented lesion volume.\n- **2D Mode**: Features are computed from each individual\
+  \ slice of the segmented lesion volume.\n\nThis allows users to choose between extracting features for\
+  \ each individual slice or for the entire lesion volume, depending on their specific needs.\n\n#####\
+  \ ⚠️  2D Mode Considerations\nWhen choosing **2D Mode**, keep in mind that in some slices, multiple\
+  \ regions with the same label may appear. In such cases, **only the largest region for that label is\
+  \ retained for feature extraction**. This ensures consistency and avoids potential bias caused by multiple\
+  \ smaller segmented regions within the same slice\n\n---\n## List of Contents\n- [Features](#features)\n\
+  - [Installation](#installation) \n- [Usage](#usage)\n- [Project Structure](#project-structure)\n- [Utilities](#utilities)\n\
+  - [Testing](#testing)\n- [Results](#results) \n- [License](license)\n\n---\n## Features\n\n- **Input**:\
+  \ Accepts 3D MRI images and corresponding segmentation masks in NIfTI (.nii) format.\n- **Radiomic Features**:\
+  \ The extraction process relies on a configuration file (.yaml) to define which features (e.g., texture,\
+  \ shape, intensity) should be computed using Pyradiomics. Users can create their own configuration file\
+  \ by referring to the official Pyradiomics documentation: [Radiomic Features- pyradiomics](https://pyradiomics.readthedocs.io/en/latest/features.html)\n\
+  - Modes: Supports extraction in both **3D** and **2D**:\n    - **3D Extraction**: Extracts features\
+  \ from the full 3D volume of a lesion.\n    - **2D Extraction**: Extracts features from each individual\
+  \ 2D slice of the lesion.\n- **Outputs**:  Results are saved as **CSV datasets**, containing the extracted\
+  \ features for all patients and lesions (per slice in 2D mode), stored in the `output_files/` directory.\n\
+  \n---\n## Installation\n\n### Prerequisites\nEnsure you have **Python 3.11** installed. The project\
+  \ also uses several Python libraries, which are listed in the `requirements.txt` file.\n### Clone the\
+  \ Repository\nTo get started, clone the repository to your local machine. Open a _terminal_ and run\
+  \ the following commands:\n```shell\ngit clone https://github.com/elettralucchesi/Radiomic_Extraction.git\n\
+  cd Radiomic_Extraction\n```\n---\n## Install Dependecies \n\nInstall the required dependencies by running:\n\
+  ```shell\npip install -r requirements.txt\n```\nThis will install all the necessary Python packages,\
+  \ including Pyradiomics, which is used for feature extraction.\n\n---\n## Usage\n\n### Input Data Format\n\
+  For feature extraction to work correctly, the input **MRI images** and **segmentation masks** must be\
+  \ in **NIfTI (.nii)** format. Additionally, the segmentation masks should have `seg` included in their\
+  \ filename to differentiate them from the MRI image files.\n##### Directory Structure\nOrganize you\
+  \ files in the following structure:\n```\n\U0001F4C2 data/\n├── \U0001F4C2 PR1/\n│   ├── PR1.nii   \
+  \       # MRI Image\n│   ├── PR1_seg.nii      # Segmentation Mask\n├── \U0001F4C2 PR2/\n│   ├── PR2.nii\
+  \          # MRI Image\n│   ├── PR2_seg.nii      # Segmentation Mask\n├── pyradiomics_config.yaml  \
+  \   # Pyradiomics configuration file\n```\n- A **YAML configuration file** for feature extraction should\
+  \ be provided in the `data/` folder (e.g., `pyradiomics_config.yaml`).\n\n⚠️ **Important**: Inside each\
+  \ patient folder (e.g., `PR1`, `PR2`), there should be **only one MRI image and one segmentation mask**.\
+  \ The mask file must contain the word `seg` in its name (e.g., `PR1_seg.nii`). This ensures that the\
+  \ image and its corresponding mask are correctly paired for feature extraction.\n\n### Configuration\n\
+  You need to configure the path to the input data and the output directory in the `config.ini` file.\
+  \ It should be modified as follows:\nEdit the  file to specify:\n```shell\n[paths]\ndata_path = ./data/*\
+  \           # Path to patient folders containing MRI images and segmentation masks folders\noutput_path\
+  \ = ./output_files/  # Directory to save extracted features .csv files\n[settings]\nmode = 3D      \
+  \                # Mode for feature extraction: '3D' or '2D'\nradiomic_config_file = ./data/pyradiomics_config.yaml\
+  \  # Path to Pyradiomics configuration YAML file\n```\nThis configuration file will specify:\n- Where\
+  \ the MRI images and segmentation masks are located (`data_path`).\n- Where to save the extracted features\
+  \ (`output_path`).\n- The modality of extraction, either 3D or 2D (`mode`).\n- The configuration file\
+  \ for Pyradiomics (`radiomic_config_file`), which defines which features to extract.\n\n### Run the\
+  \ Feature Extraction\nOnce the configuration is set up, you can execute the main script to start the\
+  \ feature extraction process:\n```bash\npython -m features_extraction.main \n```\n---\n## Project Structure\n\
+  \n```\nRadiomic_Features_Extraction/\n├── \U0001F4C2 data                     #  Input MRI images and\
+  \ masks\n├── \U0001F4C2 features_extraction      #  Python code for feature extraction\n├── \U0001F4C2\
+  \ output files             #  Extracted features in CSV format\n├── \U0001F4C2 tests               \
+  \     #  Unit tests for validation\n├── .gitignore                  #  Git ignore file\n├── LICENSE\
+  \                     #  License file\n├── README.md                   #  Project documentation\n├──\
+  \ config.ini                  #  Configuration file\n├── requirements.txt            #  Python dependencies\n\
+  ```\n\n---\n## Utilities\n\n- **The** `utils.py` **file** contains functions to manage MRI image and\
+  \ mask data, ensuring correct pairing of images and masks, extracting and assigning patient IDs, and\
+  \ maintaining consistency in data preparation for feature extraction.\n- **The** `image_processing.py`\
+  \ **file** defines a set of functions for processing medical image slices and corresponding masks. It\
+  \ includes functions to extract the largest connected region of a specific label from a binary mask\
+  \ slice, process slices to find the largest region for each label, and extract 2D slices or 3D volumes\
+  \ of images and masks. The functions also handle reading images and masks and organizing them into a\
+  \ dictionary, with the ability to process either 2D slices or full 3D volumes, based on the specified\
+  \ mode.\n- **The** `image_feature_extractor.py` **file** extracts radiomic features from 3D and 2D medical\
+  \ images using the radiomics library. It provides functions to initialize the feature extractor and\
+  \ process patient data to extract features from labeled mask regions. The script supports both 2D and\
+  \ 3D image data and handles errors and warnings during feature extraction.\n- **The** `main.py` **file**\
+  \ reads a configuration file to set paths and parameters, extracts radiomic features from 2D or 3D medical\
+  \ images, and saves the results in a CSV file. It integrates functions to load images and masks, process\
+  \ patient data, and extract features using a specified configuration. The output is saved to the specified\
+  \ directory, with the mode (2D or 3D) determining the format of the results.\n\n---\n## Testing\n\n\
+  Unit tests are located in the `tests` directory. To run the tests, use the following command:\n```bash\n\
+  pytest tests/\n```\n---\n## Results\n\nThe extracted radiomic features are stored in `output_files/`\
+  \ directory as CSV files. The structure of the CSV files depends on the extraction mode:\n- **3D Mode**:\
+  \ Each row corresponds to a segmented lesion from a patient.\n- **2D Mode**:  Each row corresponds to\
+  \ a single slice of a segmented lesion from a patient.\n\nThe extracted features can then be used for\
+  \ further analysis or machine learning tasks.\n\nThe files you see in the `output_files/` directory\
+  \ serve as an example result, generated using the segmentation masks and MRI images stored in the `data/`\
+  \ directory. \n**Please note that the example in the output files is based on the default configuration\
+  \ of 3D mode, which is specified in the** `config.ini` **file. Additionally, the radiomic features are\
+  \ extracted using the provided** `pyradiomics_config.yaml` **file included as an example.**\nThis configuration\
+  \ file is set up for a comprehensive radiomic feature extraction, including texture features (GLCM,\
+  \ GLRLM, GLSZM, GLDM, NGTDM), first-order statistics, and shape features. The extraction is performed\
+  \ on the original image and also on transformed images using Wavelet and Laplacian of Gaussian (LoG)\
+  \ filters. \nFor more detailed information on the extracted features, please refer to this website:\
+  \ [Radiomic Features- pyradiomics](https://pyradiomics.readthedocs.io/en/latest/features.html)\n\n---\n\
+  ## License\n\nThis project is licensed under the **MIT License**. See the `LICENSE` file for more details.\n\
+  \n---\n## Author\n\nThis project was developed by Elettra Lucchesi\n"

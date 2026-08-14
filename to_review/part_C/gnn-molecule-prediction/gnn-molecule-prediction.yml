@@ -1,0 +1,88 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: sth-s/gnn-molecule-prediction
+url: https://github.com/sth-s/gnn-molecule-prediction
+platform: github
+description: Molecular toxicity prediction (Tox21) using GCN/GIN and PyTorch Geometric
+license: MIT
+language: Python
+keywords: []
+stars: 3
+updated_at: '2026-03-18T14:24:17Z'
+image_source: https://raw.githubusercontent.com/sth-s/gnn-molecule-prediction/HEAD/img/grid_search_graph.png
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# GNN for Molecular Toxicity Prediction\n\nThis project implements a complete pipeline\
+  \ for predicting molecular toxicity using Graph Neural Networks (GNNs) on the Tox21 dataset. The primary\
+  \ goal is to classify molecules based on their toxicity, leveraging graph-based representations derived\
+  \ from SMILES strings. The implementation uses PyTorch and PyTorch Geometric.\n\n## Table of Contents\n\
+  \n- [Project Overview](#project-overview)\n- [Key Features](#key-features)\n- [Results](#results)\n\
+  - [Project Structure](#project-structure)\n- [Setup and Installation](#setup-and-installation)\n- [Usage](#usage)\n\
+  \  - [Training a Model](#training-a-model)\n  - [Hyperparameter Search](#hyperparameter-search)\n- [Results\
+  \ Visualization](#results-visualization)\n\n## Quick Start with Google Colab\n\nFor a quick, interactive\
+  \ way to run this project without a local setup, you can use the provided Jupyter notebook in Google\
+  \ Colab.\n\n[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sth-s/gnn-molecule-prediction/blob/main/notebooks/train_with_script.ipynb)\n\
+  \nThe notebook `notebooks/train_with_script.ipynb` contains all the necessary steps to clone the repository,\
+  \ install dependencies, and run the training script.\n\n## Project Overview\n\nThis repository provides\
+  \ a framework for training and evaluating Graph Isomorphism Network (GIN) models for a binary classification\
+  \ task on the Tox21 dataset. The pipeline handles data loading, preprocessing of SMILES into molecular\
+  \ graphs, model training with hyperparameter tuning, and evaluation.\n\nThe project was developed as\
+  \ a practical application of GNNs to a real-world bioinformatics problem, demonstrating an end-to-end\
+  \ machine learning workflow.\n\n## Key Features\n\n- **Model Architecture**: Graph Isomorphism Network\
+  \ (GIN) for graph-level classification.\n- **Dataset**: Tox21 dataset, with molecules represented by\
+  \ SMILES strings.\n- **Data Preprocessing**: Automatic conversion of SMILES to graph representations\
+  \ with relevant atomic features.\n- **Data Splitting**: Supports multiple data splitting strategies,\
+  \ including `random` and `scaffold` splits, to ensure robust evaluation.\n- **Hyperparameter Optimization**:\
+  \ A grid search script (`hyp_search.py`) is provided to systematically find the best model configuration.\n\
+  - **Reproducibility**: Experiments are seeded, and configurations are saved to ensure results can be\
+  \ reproduced.\n\n## Results\n\nA comprehensive grid search was performed to find the optimal hyperparameters.\
+  \ The best-performing model was then re-trained for an extended number of epochs. The reported test\
+  \ score was achieved using a scaffold split, which provides a more robust estimate of model performance\
+  \ on new, structurally different molecules.\n\n- **Best Validation ROC AUC**: **0.841**\n- **Test ROC\
+  \ AUC (Scaffold Split)**: **0.8147**\n\nThese results were achieved with the following hyperparameters:\n\
+  - **Hidden Channels**: 128\n- **Number of GIN Layers**: 3\n- **Dropout Rate**: 0.2\n- **Batch Size**:\
+  \ 32\n- **Learning Rate**: 0.001\n\nThese scores are competitive for the Tox21 dataset, demonstrating\
+  \ the effectiveness of the GIN architecture for this task.\n\n## Comparison with Benchmarks\n\nThe performance\
+  \ of this model is competitive with other GNN architectures evaluated on the Tox21 dataset. Below is\
+  \ a comparison with several published results (using scaffold splits where specified):\n\n| Model  \
+  \                        | Test ROC AUC    | Comparison       |\n| ------------------------------ |\
+  \ --------------- | ---------------- |\n| **This Project (GIN)**         | **0.8147**      | -     \
+  \           |\n| DeepChem (GraphConv)           | 0.829 ± 0.006   | Comparable       |\n| MIT GNN (Kearnes\
+  \ et al., 2016) | 0.849 ± 0.006   | Higher           |\n| Uni-Mol                        | 0.796   \
+  \        | Slightly Lower   |\n| D-MPNN                         | 0.759           | Lower          \
+  \  |\n| GMT (Graph Multiset Pooling)   | 0.773           | Lower            |\n\nThe model outperforms\
+  \ several established baselines and is comparable to the standard GraphConv implementation, confirming\
+  \ its effectiveness.\n\n## Project Structure\n\n```\n.\n├── data/                   # Raw and processed\
+  \ dataset\n├── full_grid_search/       # Complete logs from the hyperparameter search\n├── img/    \
+  \                # Images and plots for the README\n├── notebooks/              # Jupyter notebooks\
+  \ for exploration and visualization\n├── scripts/                # Core Python scripts\n│   ├── train.py\
+  \            # Main script for training a single model\n│   ├── hyp_search.py       # Script for running\
+  \ grid search\n│   └── validate_setup.py   # Utility script to validate the environment\n├── src/  \
+  \                  # Source code for data utilities, model, and training logic\n├── .gitignore\n├──\
+  \ LICENSE\n├── README.md\n└── requirements.txt\n```\n\n## Setup and Installation\n\n1.  **Clone the\
+  \ repository:**\n    ```bash\n    git clone https://github.com/sth-s/gnn-molecule-prediction.git\n \
+  \   cd gnn-molecule-prediction\n    ```\n\n2.  **Create a virtual environment (recommended):**\n   \
+  \ ```bash\n    python3 -m venv .venv\n    source .venv/bin/activate\n    ```\n\n3.  **Install dependencies:**\n\
+  \    The project requires specific versions of PyTorch and PyTorch Geometric. Please install them first,\
+  \ following the official instructions for your system. Then, install the remaining packages.\n    ```bash\n\
+  \    pip install -r requirements.txt\n    ```\n\n## Usage\n\nThe core logic is accessible via scripts\
+  \ in the `scripts/` directory.\n\n### Training a Model\n\nTo train a single model with a specific configuration,\
+  \ use `scripts/train.py`. The script accepts various command-line arguments to customize the training\
+  \ run.\n\n**Example: Train the best model configuration**\n```bash\npython scripts/train.py \\\n   \
+  \ --hidden_channels 128 \\\n    --num_layers 3 \\\n    --dropout 0.2 \\\n    --batch_size 32 \\\n  \
+  \  --lr 0.001 \\\n    --epochs 300 \\\n    --early_stop_patience 20 \\\n    --exp_name \"best_model_retrain\"\
+  \n```\n\nTo see all available options, run:\n```bash\npython scripts/train.py --help\n```\n\n### Hyperparameter\
+  \ Search\n\nTo run a grid search over a predefined hyperparameter space, use `scripts/hyp_search.py`.\
+  \ This script will systematically run training experiments for each configuration.\n\n**Example: Run\
+  \ a grid search**\n```bash\npython scripts/hyp_search.py --output_dir \"grid_search_run\"\n```\n\nFor\
+  \ a faster, abbreviated search (fewer epochs, limited combinations), use the `--fast_search` flag:\n\
+  ```bash\npython scripts/hyp_search.py --output_dir \"fast_grid_search\" --fast_search\n```\n\n## Results\
+  \ Visualization\n\nThe results of the grid search are summarized in the plot below, showing the validation\
+  \ ROC AUC for different hyperparameter combinations.\n\n![Grid Search Results](img/grid_search_graph.png)\n\
+  \nFurther analysis, such as plotting training curves, can be performed using the JSON log files generated\
+  \ during the grid search."

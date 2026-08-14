@@ -1,0 +1,68 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: prerakmody/hansegmentation-uncertainty-errordetection
+url: https://github.com/prerakmody/hansegmentation-uncertainty-errordetection
+platform: github
+description: Tensorflow code for the paper "Improving Error Detection in Deep Learning based Radiotherapy
+  Autocontouring using Bayesian Uncertainty", UNSURE Workshop 2022
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2022-07-27T19:34:05Z'
+image_source: https://raw.githubusercontent.com/prerakmody/hansegmentation-uncertainty-errordetection/HEAD/src/assets/paper_overview-v3.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 4 support term(s).
+readme_excerpt: "# Bayesian Uncertainty for Quality Assessment of Deep Learning Contours\nThis repository\
+  \ contains Tensorflow2.9 code for the paper(s)\n - Improving Error Detection in Deep Learning based\
+  \ Radiotherapy Autocontouring using Bayesian Uncertainty, MICCAI-UNSURE Workshop 2022\n\n# Abstract\n\
+  Bayesian Neural Nets (BNN) are increasingly used for robust organ auto-contouring. Uncertainty heatmaps\
+  \ extracted from BNNs have been shown to correspond to inaccurate regions. To help speed up the mandatory\
+  \ quality assessment (QA) of contours in radiotherapy, these heatmaps could be used as stimuli to direct\
+  \ visual attention of clinicians to potential inaccuracies. In practice, this is non-trivial to achieve\
+  \ since many accurate regions also exhibit uncertainty. To influence the output uncertainty of a BNN,\
+  \ we propose a modified accuracyversus-uncertainty (AvU) metric as an additional objective during model\
+  \ training that penalizes both accurate regions exhibiting uncertainty as well as inaccurate regions\
+  \ exhibiting certainty. For evaluation, we use an uncertainty-ROC curve that can help differentiate\
+  \ between Bayesian models by comparing the probability of uncertainty in inaccurate versus accurate\
+  \ regions. We train and evaluate a FlipOut BNN model on the MICCAI2015 Head and Neck Segmentation challenge\
+  \ dataset and on the DeepMind-TCIA dataset, and observed an increase in the AUC of uncertainty-ROC curves\
+  \ by 5.6% and 5.9%, respectively, when using the AvU objective. The AvU objective primarily reduced\
+  \ false positives regions (uncertain and accurate), drawing less visual attention to these regions,\
+  \ thereby potentially improving the speed of error detection.\n\n# Model Workflow\nThe image below shows\
+  \ the the steps involved in a forward pass. \n![Model Forward Pass](/src/assets/paper_overview-v3.png)\n\
+  \n# Results\nThe image below shows some results upon using the AvU (Flipout-A) and p(u|a) (FlipOut-AP)\
+  \ loss\n![Model Forward Pass](/src/assets/MICCAI22-Flips-Ent_norm-thresh05-v3.png)\n\n## Installation\n\
+  1. Install [Anaconda](https://docs.anaconda.com/anaconda/install/)\n2. Install [git](https://git-scm.com/downloads)\n\
+  3. Open a terminal and follow the commands\n    - Clone this repository\n        - `git clone git@github.com:prerakmody/hansegmentation-uncertainty-errordetection.git`\n\
+  \    - Create conda env\n        - (Specifically For Windows): `conda init powershell` (and restart\
+  \ the terminal)\n        - (For all plaforms)\n        ```\n        cd hansegmentation-uncertainty-errordetection\n\
+  \        conda deactivate\n        conda create --name hansegmentation-uncertainty-errordetection python=3.8\n\
+  \        conda activate hansegmentation-uncertainty-errordetection\n        conda develop .  # check\
+  \ for conda.pth file in $ANACONDA_HOME/envs/hansegmentation-uncertainty-errordetection/lib/python3.8/site-packages\n\
+  \        ```\n    - Install packages\n        - Tensorflow (check [here]((https://www.tensorflow.org/install/source#tested_build_configurations))\
+  \ for CUDA/cuDNN requirements)\n            - (stick to the exact commands) \n            - For tensorflow2.9\n\
+  \            ```\n            conda install -c conda-forge cudatoolkit=11.2 cudnn=8.1.0\n          \
+  \  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CONDA_PREFIX/lib/\n            pip install tensorflow==2.9\n\
+  \            ```\n            - Check tensorflow installation\n            ```\n            python -c\
+  \ \"import tensorflow as tf;print('\\n\\n\\n====================== \\n GPU Devices: ',tf.config.list_physical_devices('GPU'),\
+  \ '\\n======================')\"\n            python -c \"import tensorflow as tf;print('\\n\\n\\n======================\
+  \ \\n', tf.reduce_sum(tf.random.normal([1000, 1000])), '\\n======================' )\"\n           \
+  \ ```\n                - [unix] upon running either of the above commands, you will see tensorflow searching\
+  \ for library files like libcudart.so, libcublas.so, libcublasLt.so, libcufft.so, libcurand.so, libcusolver.so,\
+  \ libcusparse.so, libcudnn.so in the location `$ANACONDA_HOME/envs/hansegmentation-uncertainty-errordetection/lib/`\n\
+  \                - [windows] upon running either of the above commands, you will see tensorflow searching\
+  \ for library files like cudart64_110.dll ... and so on in the location `$ANACONDA_HOME\\envs\\hansegmentation-uncertainty-errordetection\\\
+  Library\\bin`\n\n            - Other tensorflow pacakges\n            ```\n            pip install tensorflow-probability==0.17.0\
+  \ tensorflow-addons==0.17.1\n            ```\n        - Other packages\n            ```\n          \
+  \  pip install scipy seaborn tqdm psutil humanize pynrrd pydicom SimpleITK scikit-image itk-elastix\
+  \ scikit-learn\n            pip install psutil humanize pynvml nvitop\n            ```\n\n# Notes\n\
+  \ - Download the data from the releases section on this repo and copy it in to the `_data/` directory\n\
+  \ - All the `src/{}.py` files are the backend code to train/validate/analyze the models.\n - Running\
+  \ any of the `demo/` folder files will train and validate either:\n    - OrganNet2.5 Model (with flipout\
+  \ layers) + CE Loss\n    - OrganNet2.5 Model (with flipout layers) + CE + AvU Loss\n    - OrganNet2.5\
+  \ Model (with flipout layers) + CE + AvU + p(u|a) Loss"

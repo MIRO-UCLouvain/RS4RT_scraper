@@ -1,0 +1,74 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Ayesha136586/brainTumor_detection_segmentation
+url: https://github.com/Ayesha136586/brainTumor_detection_segmentation
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-07T09:48:48Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# Brain Tumor & Alzheimer's MRI — Segmentation, Detection & Classification\n\nThis repository\
+  \ contains three deep learning notebooks applying computer vision to brain MRI scans: two YOLOv8-based\
+  \ brain tumor models (segmentation and object detection) and a multi-task U-Net for Alzheimer's stage\
+  \ segmentation + classification.\n\n## 1. `brain_tumor_seg.ipynb` — Brain Tumor Segmentation (YOLOv8-seg)\n\
+  \nInstance segmentation of brain tumors using **YOLOv8n-seg** (Ultralytics).\n\n- **Classes:** `Tumor`,\
+  \ `no_tumor`\n- **Dataset:** 231 train / 73 validation / 35 test images (YOLO segmentation format, `data.yaml`)\n\
+  - **Training:** 30 epochs, image size 640, batch size 16, seed 42\n- **Final validation metrics (best\
+  \ weights):**\n\n  | | Precision | Recall | mAP50 | mAP50-95 |\n  |---|---|---|---|---|\n  | Box | 0.871\
+  \ | 0.856 | 0.922 | 0.737 |\n  | Mask | 0.869 | 0.864 | 0.928 | 0.730 |\n\n- **Test set metrics:**\n\
+  \n  | | Precision | Recall | mAP50 | mAP50-95 |\n  |---|---|---|---|---|\n  | Box | 0.699 | 0.888 |\
+  \ 0.843 | 0.625 |\n  | Mask | 0.732 | 0.919 | 0.861 | 0.635 |\n\n- Includes inference on a new sample\
+  \ image and backs up trained weights/metrics to Google Drive.\n\n## 2. `brain_tumor_objDetection.ipynb`\
+  \ — Brain Tumor Object Detection (YOLOv8)\n\nBounding-box detection and classification of tumor types\
+  \ using **YOLOv8n**.\n\n- **Classes:** `glioma`, `meningioma`, `pituitary`\n- **Dataset:** 2,144 train\
+  \ / 612 validation / 308 test images\n- **Training:** 30 epochs, image size 640, batch size 16, seed\
+  \ 42\n- **Final validation metrics (best weights), overall:** Precision 0.911, Recall 0.837, mAP50 0.908,\
+  \ mAP50-95 0.698\n  - `glioma`: mAP50 0.798 | `meningioma`: mAP50 0.976 | `pituitary`: mAP50 0.951\n\
+  - **Test set metrics, overall:** Precision 0.898, Recall 0.836, mAP50 0.903, mAP50-95 0.669\n  - `glioma`:\
+  \ mAP50 0.794 | `meningioma`: mAP50 0.951 | `pituitary`: mAP50 0.965\n\n- Glioma is consistently the\
+  \ hardest class to detect (lowest recall/mAP), while meningioma and pituitary tumors are detected very\
+  \ reliably.\n- Includes inference on a new sample image and backs up trained weights/predictions/validation\
+  \ runs to Google Drive.\n\n## 3. `Unet_alz_segClass.ipynb` — Alzheimer's MRI Segmentation + Classification\
+  \ (Multi-Task U-Net)\n\nA custom multi-task **U-Net** built in TensorFlow/Keras that simultaneously\
+  \ performs:\n- **Semantic segmentation** (4 pixel classes via a color map: background + 3 region colors)\n\
+  - **Classification** into Alzheimer's stages: `MildDemented`, `ModerateDemented`, `NonDemented`, `VeryMildDemented`\n\
+  \n### Architecture\n- Standard U-Net encoder-decoder (2 downsampling blocks, bottleneck, 2 upsampling\
+  \ blocks with skip connections) for the segmentation head\n- A classification branch off the bottleneck:\
+  \ `GlobalAveragePooling2D` → `Dense(32, relu)` → `Dense(num_classes, softmax)`\n- Input size: 416×416×3\n\
+  - Losses: sparse categorical cross-entropy for both segmentation and classification outputs\n- Optimizer:\
+  \ Adam\n\n### Dataset\n- Custom `tf.keras.utils.Sequence` data generator loads images + RGB-encoded\
+  \ masks, converting mask colors to class indices via nearest-color matching\n- Dataset balanced to 900\
+  \ samples per class before splitting\n- Split: 70% train / 15% validation / 15% test (via two sequential\
+  \ `train_test_split` calls)\n- Trained for 20 epochs, batch size 8\n\n### Results (test set)\n\n| Metric\
+  \ | Value |\n|---|---|\n| Segmentation accuracy | 0.899 |\n| Segmentation loss | 0.275 |\n| Classification\
+  \ accuracy | 0.739 |\n| Classification loss | 0.583 |\n\n**Classification report (test set):**\n\n|\
+  \ Class | Precision | Recall | F1-score |\n|---|---|---|---|\n| MildDemented | 0.74 | 0.84 | 0.78 |\n\
+  | ModerateDemented | 0.99 | 1.00 | 1.00 |\n| NonDemented | 0.54 | 0.74 | 0.62 |\n| VeryMildDemented\
+  \ | 0.66 | 0.32 | 0.43 |\n\n- Segmentation performance is strong and stable (~90% accuracy) across the\
+  \ board.\n- Classification is very strong for `ModerateDemented` (easiest to distinguish) but weaker\
+  \ for `VeryMildDemented`, which is frequently confused with adjacent stages — expected given how subtle\
+  \ very-mild impairment can be on MRI.\n- The notebook includes a `predict_alzheimer()` helper that runs\
+  \ both segmentation and classification on a single new image, visualizing the original image, predicted\
+  \ segmentation map, and classification probability bar chart side by side, then saves the result.\n\n\
+  ## Requirements\n\n```\ntensorflow>=2.15\nopencv-python\nnumpy\nmatplotlib\nseaborn\nscikit-learn\n\
+  pillow\nultralytics\n```\n\n## How to Run\n\nEach notebook is designed for Google Colab with data mounted\
+  \ from Google Drive:\n\n1. **`brain_tumor_seg.ipynb`** / **`brain_tumor_objDetection.ipynb`**: unzip\
+  \ the respective dataset (with a YOLO-format `data.yaml`), install `ultralytics`, then run all cells\
+  \ to train, validate, and run inference with YOLOv8.\n2. **`Unet_alz_segClass.ipynb`**: unzip the Alzheimer\
+  \ segmentation dataset (images + colored masks organized by class), run all cells to balance the dataset,\
+  \ build the generators, train the multi-task U-Net, and evaluate.\n\n## Notes\n\n- All three notebooks\
+  \ back up trained weights/models to Google Drive — update those paths before running elsewhere.\n- For\
+  \ the YOLO notebooks, `glioma` and `Tumor`-vs-`no_tumor` boundary cases are the main sources of error;\
+  \ more training data or longer training may help close the gap between validation and test mAP.\n- For\
+  \ the U-Net notebook, consider addressing the `VeryMildDemented` vs. `MildDemented`/`NonDemented` confusion\
+  \ with additional data augmentation or class-specific fine-tuning, since that's where most misclassifications\
+  \ occur.\n"

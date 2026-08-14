@@ -1,0 +1,125 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Ojochogwu866/Mavhir
+url: https://github.com/Ojochogwu866/Mavhir
+platform: github
+description: Machine learning model for chemical toxicity prediction API built with FastAPI, RDKit, and
+  scikit-learn. Primary prediction models are for Mutagenecity and Carcinogenecity
+license: NOASSERTION
+language: Python
+keywords:
+- carcinogenicity
+- cheminformatics
+- mutagenesis
+- pubchem
+stars: 0
+updated_at: '2026-07-10T21:11:19Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# Mavhir\n\n> **ML-powered chemical toxicity prediction API built with FastAPI, RDKit,\
+  \ and scikit-learn**\n\n[![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://python.org)\n\
+  [![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)](https://fastapi.tiangolo.com)\n\
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n\
+  \n## Overview\n\nThe Toxicity Predictor API provides machine learning-based predictions for chemical\
+  \ toxicity endpoints including:\n\n- **Ames Mutagenicity**: Bacterial reverse mutation test (OECD 471)\n\
+  - **Carcinogenicity**: Rodent carcinogenicity studies (OECD 451/453)\n\nBuilt for **researchers**, **regulatory\
+  \ scientists**, and **pharmaceutical companies** who need fast, reliable toxicity predictions for chemical\
+  \ risk assessment.\n\n## Key Features\n\n- **Fast Predictions**: Sub-second response times for single\
+  \ compounds\n- **Batch Processing**: Handle up to 1000 compounds per request\n- **File Upload**: Direct\
+  \ SDF file processing\n- **Chemical Lookup**: Integrated PubChem database search\n- **Rich Metadata**:\
+  \ Molecular properties, descriptors, confidence scores\n- **Health Monitoring**: Built-in system diagnostics\n\
+  - **Auto Documentation**: Interactive API docs with Swagger UI\n- **Docker Ready**: One-command deployment\n\
+  \n## Quick Start\n\n### Prerequisites\n- Python 3.9+\n- Git\n\n### 1. Clone & Setup\n```bash\ngit clone\
+  \ https://github.com/Ojochogwu866/Mavhir.git\ncd Mavhir\n\npython -m venv venv\nsource venv/bin/activate\n\
+  \npip install -r requirements.txt\n```\n\n### 2. Train Models\n```bash\npython data/create_example_data.py\n\
+  python app/models/train_models.py\n```\n\n### 3. Configure Environment\n```bash\ncp .env.example .env\n\
+  \n# Edit .env file with your settings (optional)\n```\n\n### 4. Start the API\n```bash\n# Development\
+  \ server\npython -m app.main\n\n# Or with uvicorn directly\nuvicorn app.main:app --reload --host 0.0.0.0\
+  \ --port 8000\n```\n\n### 5. Test the API\n```bash\n# Check health\ncurl http://localhost:8000/health\n\
+  \n# Predict toxicity\ncurl -X POST \"http://localhost:8000/api/v1/predict/smiles\" \\\n  -H \"Content-Type:\
+  \ application/json\" \\\n  -d '{\"smiles\": \"CCO\", \"endpoints\": [\"ames_mutagenicity\"]}'\n```\n\
+  \n## API Documentation\n\nOnce running, visit:\n- **Swagger UI**: http://localhost:8000/docs\n\n###\
+  \ Core Endpoints\n\n| Endpoint | Method | Description |\n|----------|--------|-------------|\n| `/health`\
+  \ | GET | Basic health check |\n| `/api/v1/predict/smiles` | POST | Single compound prediction |\n|\
+  \ `/api/v1/predict/batch` | POST | Batch prediction |\n| `/api/v1/predict/sdf` | POST | SDF file upload\
+  \ |\n| `/api/v1/chemical/lookup/{name}` | GET | PubChem compound lookup |\n| `/api/v1/chemical/validate`\
+  \ | GET | SMILES validation |\n\n## Usage Examples\n\n### Single Compound Prediction\n```python\nimport\
+  \ requests\n\nresponse = requests.post(\n    \"http://localhost:8000/api/v1/predict/smiles\",\n    json={\n\
+  \        \"smiles\": \"CN1C=NC2=C1C(=O)N(C(=O)N2C)C\",  # Caffeine\n        \"endpoints\": [\"ames_mutagenicity\"\
+  , \"carcinogenicity\"],\n        \"include_properties\": True\n    }\n)\n\nresult = response.json()\n\
+  print(f\"Ames prediction: {result['data']['predictions']['ames_mutagenicity']['prediction']}\")\n```\n\
+  \n### Batch Processing\n```python\ncompounds = [\n    \"CCO\",           # Ethanol\n    \"CC(=O)O\"\
+  ,       # Acetic acid\n    \"c1ccccc1\"       # Benzene\n]\n\nresponse = requests.post(\n    \"http://localhost:8000/api/v1/predict/batch\"\
+  ,\n    json={\n        \"smiles_list\": compounds,\n        \"endpoints\": [\"ames_mutagenicity\"]\n\
+  \    }\n)\n\nresults = response.json()\nprint(f\"Processed {results['summary']['successful']} compounds\
+  \ successfully\")\n```\n\n### PubChem Lookup\n```python\nresponse = requests.get(\"http://localhost:8000/api/v1/chemical/lookup/aspirin\"\
+  )\ncompound_info = response.json()\n\nif compound_info[\"found\"]:\n    print(f\"Aspirin SMILES: {compound_info['canonical_smiles']}\"\
+  )\n    print(f\"Molecular weight: {compound_info['molecular_weight']}\")\n```\n\n## Architecture\n\n\
+  ```\nmavhir/\n├── app/\n│   ├── main.py\n│   ├── api/\n│   │   ├── health.py\n│   │   ├── chemical.py\n\
+  │   │   └── predict.py\n│   ├── core/\n│   │   ├── config.py\n│   │   ├── models.py\n│   │   └── exceptions.py\n\
+  │   ├── services/\n│   │   ├── chemical_processor.py\n│   │   ├── descriptor_calculator.py\n│   │  \
+  \ ├── predictor.py\n│   │   └── pubchem_client.py\n│   └── models/\n├── data/\n├── tests/\n├── docs/\n\
+  └── requirements.txt\n```\n\n## Testing\n\n```bash\n\n# Run all tests\npytest\n\n# Run with coverage\n\
+  pytest --cov=app --cov-report=html\n\n# Run specific test categories\npytest -m \"not benchmark\"\n\
+  pytest tests/test_api.py\n```\n\n## Docker Deployment\n\n### Development\n```bash\ndocker-compose up\
+  \ --build\n```\n\n### Production\n```bash\n# Build image\ndocker build -t mavhir .\n\n# Run container\n\
+  docker run -p 8000:8000 mavhir\n```\n\n## \U0001F4CA Model Information\n\n### Ames Mutagenicity Model\n\
+  - **Algorithm**: Random Forest Classifier\n- **Features**: 549 Mordred molecular descriptors (variance/correlation-filtered\
+  \ on the training split only)\n- **Training Data**: 6,506 compounds from the Hansen et al. (2009) benchmark\
+  \ (http://doc.ml.tu-berlin.de/toxbenchmark/), minus 14 organochlorine pesticides deliberately held out\
+  \ (see Probe Set below)\n- **Performance (held-out test — the authors' own predefined fold, not an arbitrary\
+  \ split)**: 81.9% accuracy, 0.883 AUC-ROC, 82.8% precision, 81.1% recall\n- **Endpoint**: Bacterial\
+  \ reverse mutation (Salmonella typhimurium)\n\n### Carcinogenicity Model\n- **Algorithm**: Gradient\
+  \ Boosting Classifier\n- **Features**: 552 Mordred molecular descriptors (variance/correlation-filtered\
+  \ on the training split only)\n- **Training Data**: 1,447 compounds from CPDB (Carcinogenic Potency\
+  \ Database), labeled per the database's own legend across all species sheets, minus 22 organochlorine\
+  \ pesticides deliberately held out — see `data/raw/README.md` for full methodology\n- **Performance\
+  \ (held-out test, fresh stratified split)**: 67.8% accuracy, 0.730 AUC-ROC, 69.3% precision, 69.9% recall\n\
+  - **Endpoint**: 2-year rodent bioassays\n\nThese numbers replace an earlier version of this README that\
+  \ cited different figures (88%/0.91 AUC for Ames, 76%/0.82 AUC for carcinogenicity, on claimed but never-actually-wired-in\
+  \ datasets). The models were retrained from scratch on the real, documented datasets above once that\
+  \ discrepancy was found — see `docs/gnn_extension_design.md` Section 0 for the full account.\n\n###\
+  \ GNN comparison and the organochlorine probe set\n\nA GNN (PyTorch Geometric, `app/gnn/`) was trained\
+  \ on the identical splits above for direct comparison, evaluated across 5 seeds (mean ± std, not a single\
+  \ run):\n\n| Task | Metric | RF / GBM baseline | GNN |\n|---|---|---|---|\n| Ames | Accuracy | 81.9%\
+  \ | 80.1% ± 0.5% |\n| Ames | AUC-ROC | 0.883 | 0.874 ± 0.005 |\n| Carcinogenicity | Accuracy | 67.8%\
+  \ | 66.6% ± 4.2% |\n| Carcinogenicity | AUC-ROC | 0.730 | 0.739 ± 0.027 |\n\n**The 14 (Ames) / 22 (carcinogenicity)\
+  \ organochlorine pesticide compounds above are not a random holdout — they were deliberately excluded\
+  \ from train/val entirely** (`data/processed/organochlorine_probe_set.json`), after an earlier check\
+  \ found that a random split had put 6 of 7 originally spot-checked pesticide compounds into training\
+  \ data by chance, invalidating a naive generalization test. Result on this genuinely unseen compound\
+  \ class:\n\n| Task | Metric | Baseline (RF/GBM) | GNN |\n|---|---|---|---|\n| Ames probe (n=14, 12 neg/2\
+  \ pos) | Accuracy | 85.7% | 85.7% |\n| Ames probe | AUC-ROC | 0.250 | 0.625 |\n| Carcinogenicity probe\
+  \ (n=22, 6 neg/16 pos) | Accuracy | 54.5% | 68.2% |\n| Carcinogenicity probe | AUC-ROC | 0.651 | 0.547\
+  \ |\n\nBoth the Ames RF and Ames GNN predict **non-mutagenic for every one of the 14 held-out organochlorines**,\
+  \ missing both true positives — the 85.7% accuracy is a base-rate artifact, not genuine discrimination.\
+  \ On carcinogenicity, the GNN's higher raw accuracy is similarly misleading (specificity of just 16.7%\
+  \ on a majority-positive set); by AUC-ROC and MCC the GBM baseline is actually more discriminative.\
+  \ **Neither architecture reliably generalizes to this compound class** — moving to a GNN does not clearly\
+  \ close the organochlorine under-prediction gap the original research identified. Given the small probe\
+  \ set sizes (particularly n=14 with only 2 positives for Ames), the specific AUC rankings should be\
+  \ read as suggestive, not conclusive; the robust part of the finding is the identical degenerate binary\
+  \ behavior on Ames.\n\n**From-scratch validation**: a second GNN (`app/gnn/model_scratch.py`) was built\
+  \ without PyTorch Geometric's `MessagePassing`/conv layers — message passing and pooling implemented\
+  \ directly with `index_add_` scatter operations — to confirm the library model's results reflect real\
+  \ understanding of the mechanism. Standard-test performance is close (Ames: 79.2% acc / 0.869 AUC vs\
+  \ library's 80.1% / 0.874; CPDB: 65.0% / 0.734 vs 66.6% / 0.739), and on the Ames probe set it reproduces\
+  \ the **identical** degenerate behavior (non-mutagenic for all 14, MCC 0) — a third independent model\
+  \ landing on the same failure mode is stronger evidence this is a real property of the problem, not\
+  \ an artifact of one implementation.\n\n## \U0001F527 Configuration\n\nKey environment variables:\n\n\
+  ```bash\n# Basic settings\nENVIRONMENT=production\nDEBUG=false\nMAX_BATCH_SIZE=100\n\n# Model settings\n\
+  AMES_MODEL_PATH=app/models/ames_mutagenicity.pkl\nCARCINOGENICITY_MODEL_PATH=app/models/carcinogenicity.pkl\n\
+  \n# Processing settings\nDESCRIPTOR_TIMEOUT=60\nENABLE_DESCRIPTOR_CACHING=true\n\n# PubChem API\nPUBCHEM_RATE_LIMIT_DELAY=0.2\n\
+  PUBCHEM_MAX_RETRIES=3\n```\n\n## \U0001F4C8 Performance\n\n- **Single prediction**: ~150ms average\n\
+  - **Batch processing**: ~100 compounds/minute\n- **Descriptor calculation**: ~50ms per compound\n- **Memory\
+  \ usage**: ~500MB base + ~1MB per cached compound\n\n## \U0001F91D Contributing\n\n1. Fork the repository\n\
+  2. Create feature branch (`git checkout -b feature/amazing-feature`)\n3. Commit changes (`git commit\
+  \ -m 'Add amazing feature'`)\n4. Push to branch (`git push origin feature/amazing-feature`)\n5. Open\
+  \ Pull Request\n\n### Development Setup\n```bash\n# Install development dependencies\npip install -r\
+  \ requirements-dev.txt\n\n# Install pre-commit hooks\npre-commit install\n\n# Run code formatting\n\
+  black app/ tests/\nisort app/ tests/\n\n# Type checking\nmypy app/"

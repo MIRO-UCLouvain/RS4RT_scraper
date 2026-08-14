@@ -1,0 +1,108 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: gokulalgates/NRToxPred-GUI
+url: https://github.com/gokulalgates/NRToxPred-GUI
+platform: github
+description: 'Standalone GUI for nuclear receptor toxicity prediction '
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-04-29T23:29:07Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# NR-ToxPred\n\nA desktop application and command-line tool for predicting the binding\
+  \ of chemical compounds to nine nuclear receptors (NRs) using pre-trained machine learning models.\n\
+  \n![Python](https://img.shields.io/badge/Python-3.8%2B-blue) ![License](https://img.shields.io/badge/License-MIT-green)\
+  \ ![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20macOS%20%7C%20Windows-lightgrey)\n\
+  \n---\n\n## Quick Start (No Python experience needed)\n\n**Step 1 — Download this repository**\nClick\
+  \ the green **Code** button above → **Download ZIP** → Extract the ZIP folder anywhere on your computer\n\
+  \n**Step 2 — Install** (one-time, ~10–20 minutes)\n- **Windows:** Double-click `install.bat`\n- **Mac\
+  \ / Linux:** Open a terminal in the folder and run `bash install.sh`\n\n> The installer automatically\
+  \ downloads Python (Miniconda) and all required packages. No prior setup needed.\n\n**Step 3 — Run the\
+  \ app**\n- **Windows:** Double-click `run.bat`\n- **Mac / Linux:** Run `bash run.sh`\n\nOn first launch,\
+  \ click **Download SVM only** when prompted to fetch the prediction models (~250 MB).\n\n> Steps 1–2\
+  \ are one-time only. After that, just use Step 3 every time.\n\n---\n\n## Overview\n\nNR-ToxPred predicts\
+  \ whether a compound is **Active** or **Inactive** against the following nuclear receptors:\n\n| Receptor\
+  \ | Full Name |\n|----------|-----------|\n| RXR | Retinoid X Receptor |\n| PR | Progesterone Receptor\
+  \ |\n| GR | Glucocorticoid Receptor |\n| AR | Androgen Receptor |\n| ERA | Estrogen Receptor Alpha |\n\
+  | ERB | Estrogen Receptor Beta |\n| FXR | Farnesoid X Receptor |\n| PPARD | Peroxisome Proliferator-Activated\
+  \ Receptor Delta |\n| PPARG | Peroxisome Proliferator-Activated Receptor Gamma |\n\nEach prediction\
+  \ includes an **Applicability Domain (AD)** assessment — **Reliable** or **Unreliable** — based on Tanimoto\
+  \ fingerprint similarity to the training set.\n\n---\n\n## Features\n\n- **GUI and CLI** — interactive\
+  \ desktop app or scriptable command-line interface\n- **Single compound prediction** — enter a SMILES\
+  \ string and get instant results\n- **Batch prediction** — upload a CSV/Excel file with a column of\
+  \ SMILES strings\n- **Phase I metabolite prediction** — generate metabolites via SyGMa and predict their\
+  \ NR activity (single and batch)\n- **Two fingerprint types** — Morgan (ECFP6, 1024 bits) and MACCS\
+  \ Keys (167 bits)\n- **Two algorithms** — SVM (fast, ~250 MB) and SuperLearner (ensemble, ~12 GB)\n\
+  - **Applicability Domain** — Tanimoto-based AD with adjustable similarity cutoff and neighbor count\n\
+  - **2D structure viewer** — renders the molecule and metabolite structures as clickable thumbnails\n\
+  - **Molecular descriptors** — MW, LogP, HBD, HBA, TPSA, RotBonds displayed per compound\n- **Per-compound\
+  \ results** — clicking a metabolite thumbnail switches the results table to that metabolite\n- **Export\
+  \ results** — save batch predictions (including metabolite rows) to Excel or CSV\n- **Auto-download**\
+  \ — fetches models from Hugging Face Hub on first run\n\n---\n\n## Metabolite Prediction\n\nNR-ToxPred\
+  \ can predict Phase I metabolites using [SyGMa](https://github.com/3D-e-Chem/sygma) reaction rules and\
+  \ then assess their nuclear receptor activity — helping you understand whether a parent compound's metabolites\
+  \ may be more or less toxic than the parent.\n\n### Single compound tab\n\n1. Check **Predict Phase\
+  \ I metabolites** in the left panel\n2. Adjust **Max metabolites** (default 20) and **Steps** (1 = direct\
+  \ metabolites, 2–3 = deeper metabolism)\n3. Click **Predict**\n\nAfter prediction, a scrollable thumbnail\
+  \ strip appears below the structure canvas showing the parent and each metabolite. Clicking a thumbnail:\n\
+  - Displays the metabolite's 2D structure\n- Updates the molecular properties panel\n- Switches the results\
+  \ table to show that metabolite's NR activity predictions\n\n### Batch prediction tab\n\n1. Load your\
+  \ CSV file (requires `SMILES` and `NAME` columns)\n2. Check **Predict Phase I metabolites**\n3. Click\
+  \ **Run Batch Prediction**\n\nMetabolite rows are appended after each parent compound's row in the results\
+  \ table, labelled `CompoundName → Met.1 (score%)`. A **Pathway** column shows the biotransformation\
+  \ reaction (e.g., *CYP aliphatic hydroxylation*). All metabolite rows are included in exported Excel/CSV\
+  \ files.\n\n### Notes\n\n- Metabolite prediction requires SyGMa to be installed (`pip install syGMa`).\
+  \ If it is absent the controls are automatically disabled.\n- Fully fluorinated compounds (PFOS, PFOA,\
+  \ and other perfluoroalkyl substances) have no predicted metabolites — this is scientifically correct;\
+  \ their C–F bonds are not substrates for CYP450 enzymes.\n- For large batches, metabolite generation\
+  \ adds significant run time (roughly seconds per compound per metabolite). Reduce **Max** or use **Steps\
+  \ = 1** for speed.\n\n---\n\n## Command-Line Interface\n\nNR-ToxPred can be used without the GUI, which\
+  \ is useful for scripting and headless servers.\n\n**Single compound:**\n```bash\npython pytox_gui.py\
+  \ --no-gui --smiles \"CC(=O)Oc1ccccc1C(=O)O\" --name Aspirin\n```\n\n**Batch from CSV:**\n```bash\n\
+  python pytox_gui.py --no-gui --csv compounds.csv --smiles-col SMILES --output results.xlsx\n```\n\n\
+  **Key options:**\n\n| Option | Default | Description |\n|--------|---------|-------------|\n| `--smiles\
+  \ SMILES` | — | SMILES string (single compound) |\n| `--csv FILE` | — | CSV or Excel file (batch) |\n\
+  | `--smiles-col COL` | `SMILES` | Column name containing SMILES |\n| `--name NAME` | `Compound` | Label\
+  \ for the compound |\n| `--fp {morgan,maccs}` | `morgan` | Fingerprint type |\n| `--algo {svm,superlearner}`\
+  \ | `svm` | Prediction algorithm |\n| `--receptors R [R ...]` | all nine | Subset of receptors to predict\
+  \ |\n| `--scutoff FLOAT` | `0.25` | AD Tanimoto similarity cutoff |\n| `--nsimilar INT` | `1` | AD minimum\
+  \ similar neighbours |\n| `--output FILE` | stdout | Output file (`.csv` or `.xlsx`) |\n\nRun `python\
+  \ pytox_gui.py --help` for the full option list.\n\n---\n\n## Requirements\n\n### System dependencies\
+  \ (install via conda)\n```bash\nconda install -c conda-forge rdkit\n```\n\n### Python packages\n```bash\n\
+  pip install -r requirements.txt\n```\n\n`requirements.txt` includes: `molvs`, `scikit-learn==0.23.2`,\
+  \ `mlens`, `pandas`, `numpy`, `scipy`, `openpyxl`, `Pillow`, `huggingface_hub`, `syGMa`\n\n> **Note:**\
+  \ scikit-learn is pinned to 0.23.2 and mlens is required for SuperLearner models. Both are installed\
+  \ automatically by `requirements.txt`.\n\n> **Metabolite prediction** requires [SyGMa](https://github.com/3D-e-Chem/sygma)\
+  \ (`pip install syGMa`). It is included in `requirements.txt` and `environment_setup.yml`. If SyGMa\
+  \ is not installed the app still works — metabolite controls are greyed out.\n\n---\n\n## Model Files\n\
+  \nThe pre-trained models are **not** included in this repository due to their size. On first launch\
+  \ the app offers to download them automatically from Hugging Face Hub.\n\n| Model set | Size | Recommended\
+  \ for |\n|-----------|------|-----------------|\n| SVM only | ~250 MB | Most users — fast and accurate\
+  \ |\n| SVM + SuperLearner | ~12 GB | Maximum accuracy; large download |\n\n**Download location:**\n\
+  - **Windows:** `%LOCALAPPDATA%\\NRToxPred\\` (never synced by OneDrive)\n- **Mac / Linux:** same folder\
+  \ as `pytox_gui.py`\n\n### Manual placement\n\nIf you prefer to copy model files yourself, place `MODELS/`\
+  \ and `X_train/` next to `pytox_gui.py`:\n\n```\nNRToxPred-GUI/\n├── MODELS/\n│   ├── morgan/\n│   │\
+  \   ├── ARsvm_best.model\n│   │   └── ... (one per receptor)\n│   ├── MACCS/\n│   │   └── ... (one per\
+  \ receptor)\n│   └── ARclasses.npy\n└── X_train/\n    ├── AR.xlsx\n    └── ... (one per receptor)\n\
+  ```\n\n---\n\n## Installation & Running (Python users)\n\n```bash\n# 1. Clone the repository\ngit clone\
+  \ https://github.com/gokulalgates/NRToxPred-GUI.git\ncd NRToxPred-GUI\n\n# 2. Create and activate a\
+  \ conda environment\nconda create -n nrtoxpred python=3.8\nconda activate nrtoxpred\n\n# 3. Install\
+  \ RDKit via conda\nconda install -c conda-forge rdkit\n\n# 4. Install remaining dependencies\npip install\
+  \ -r requirements.txt\n\n# 5. Launch the application\npython pytox_gui.py\n```\n\nThe app will prompt\
+  \ you to download models on first run.\n\n---\n\n## Applicability Domain\n\nEach prediction is tagged\
+  \ as:\n\n- **Reliable** — the compound is similar to at least *N* training set compounds at a Tanimoto\
+  \ similarity ≥ *S*\n- **Unreliable** — the compound falls outside the training set chemical space; predictions\
+  \ should be interpreted with caution\n\nThe **Scutoff** (similarity threshold) and **Nsimilar** (minimum\
+  \ neighbour count) parameters can be adjusted in the AD Parameters panel (GUI) or via `--scutoff` /\
+  \ `--nsimilar` (CLI).\n\n---\n\n## Citation\n\nIf you use NR-ToxPred in your research, please cite:\n\
+  \n> Predicting the binding of small molecules to nuclear receptors using machine learning.\n> *Brief\
+  \ Bioinform.* 2022 May 13;23(3):bbac114.\n> doi: [10.1093/bib/bbac114](https://doi.org/10.1093/bib/bbac114)\n\
+  \n---\n\n## License\n\nMIT License. See [LICENSE](LICENSE) for details.\n"

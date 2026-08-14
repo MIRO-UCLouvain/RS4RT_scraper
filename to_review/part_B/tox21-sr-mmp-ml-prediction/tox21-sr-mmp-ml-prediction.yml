@@ -1,0 +1,141 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: atakmty/tox21-sr-mmp-ml-prediction
+url: https://github.com/atakmty/tox21-sr-mmp-ml-prediction
+platform: github
+description: Machine learning models for predicting mitochondrial membrane potential (SR-MMP)  toxicity
+  using the Tox21 dataset with Morgan ECFP fingerprints.
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2025-12-25T20:56:36Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Comparative Machine Learning Analysis for Mitochondrial Membrane Potential Toxicity\
+  \ Prediction Using Tox21 Dataset\n\n**Developed by:** Ata Kamutay  \n**Date:** December 2025  \n\n---\n\
+  \n## Overview\n\nThis repository contains a comprehensive machine learning project that systematically\
+  \ evaluates **8 different algorithms** for predicting mitochondrial membrane potential (MMP) toxicity\
+  \ using the Tox21 dataset. The project implements core machine learning techniques and achieves competitive\
+  \ performance benchmarks for computational toxicology applications.\n\n**Key Achievement:** RBF SVM\
+  \ achieved **AUROC 0.8682** with excellent balanced accuracy (0.7690), representing a **19.3% improvement**\
+  \ over baseline KNN and demonstrating strong predictive performance for drug toxicity screening.\n\n\
+  ---\n\n## Quick Start\n\n### Installation\n\n```bash\n# Clone repository\ngit clone https://github.com/atakmty/tox21-sr-mmp-ml-prediction.git\n\
+  cd tox21-sr-mmp-ml-prediction\n\n# Install dependencies\npip install -r requirements.txt\n\n# Verify\
+  \ installation\npython -c \"import torch, sklearn, rdkit, pandas; print('✓ All packages installed!')\"\
+  \n```\n\n### Run Models\n\n```bash\ncd notebooks\n\n# Run individual models\npython 02_baseline_knn.py\
+  \                    # K-Nearest Neighbors baseline\npython 03_svm_models.py                      #\
+  \ RBF & Linear SVM\npython 04_decision_trees.py                  # Decision Tree with hyperparameter\
+  \ tuning\npython 05_naive_bayes.py                     # Gaussian Naive Bayes\npython 06_ensemble_methods.py\
+  \                # Random Forest & Gradient Boosting\npython 07_neural_network.py                  #\
+  \ PyTorch Neural Network\npython 08_final_results_summary.py           # Generate final comparison table\n\
+  python 09_auprc_analysis.py                  # AUPRC analysis for imbalanced data\n```\n\n---\n\n##\
+  \ Project Structure\n\n```\ntox21-sr-mmp-ml-prediction/\n├── data/\n│   ├── sr-mmp-train.smiles    \
+  \              # Training SMILES (7,320 compounds)\n│   └── sr-mmp-test.smiles                   # Test\
+  \ SMILES (238 compounds)\n├── notebooks/\n│   ├── 01_data_loading_ecfp.py              # Data loading\
+  \ & PCA preprocessing\n│   ├── 02_baseline_knn.py                   # K-Nearest Neighbors (k=5)\n│ \
+  \  ├── 03_svm_models.py                     # RBF SVM & Linear SVM with GridSearchCV\n│   ├── 04_decision_trees.py\
+  \                 # Decision Tree with hyperparameter tuning\n│   ├── 05_naive_bayes.py            \
+  \        # Gaussian Naive Bayes classifier\n│   ├── 06_ensemble_methods.py               # Random Forest\
+  \ & Gradient Boosting\n│   ├── 07_neural_network.py                 # PyTorch deep neural network\n\
+  │   ├── 08_final_results_summary.py          # Final model comparison & ranking\n│   └── 09_auprc_analysis.py\
+  \                 # Precision-recall analysis\n├── results/\n│   └── final_model_comparison_complete_with_auprc.csv\
+  \  # Final metrics table\n├── README.md                                 # This file\n├── requirements.txt\
+  \                         # Python dependencies\n└── .gitignore                               # Git\
+  \ ignore rules\n```\n\n---\n\n## Dataset\n\n**Source:** Tox21 SR-MMP (Mitochondrial Membrane Potential)\
+  \  \n**Provider:** U.S. EPA, NIH, FDA Tox21 Initiative  \n\n**Dataset Statistics:**\n- **Total Compounds:**\
+  \ 7,558\n- **Training Set:** 7,320 compounds (80%)\n- **Test Set:** 238 compounds (20%)\n- **Class Distribution:**\
+  \ 15.6% toxic (active), 84.4% non-toxic (inactive)\n- **Features:** Morgan ECFP (radius=2, 1024-bit\
+  \ vectors)\n- **After Preprocessing:** 100 PCA components capturing 57.2% variance\n\n**Data Handling:**\n\
+  - Stratified sampling to maintain class proportions\n- Class weighting (`class_weight='balanced'`) for\
+  \ imbalanced classification\n- Evaluation metrics prioritized AUROC, Balanced Accuracy, AUPRC over simple\
+  \ accuracy\n\n---\n\n## Methodology\n\n### Feature Engineering\n\n**Molecular Representation: Morgan\
+  \ ECFP**\n- Radius: 2 (ECFP4 equivalent)\n- Bit vector length: 1024\n- Tool: RDKit chemistry toolkit\n\
+  - Captures circular atom neighborhoods through iterative hashing for structural encoding\n\n**Dimensionality\
+  \ Reduction: Principal Component Analysis**\n- Components: 100\n- Explained variance: 57.2%\n- Purpose:\
+  \ Reduce 1024-dimensional feature space while preserving signal\n\n### Machine Learning Models\n\n####\
+  \ Baseline Models\n- **K-Nearest Neighbors (KNN):** k=5, Euclidean distance metric\n- **Gaussian Naive\
+  \ Bayes:** Probabilistic baseline classifier\n\n#### Single Classifiers\n- **Decision Trees:** GridSearchCV\
+  \ hyperparameter optimization\n  - Tuned parameters: max_depth [5, 10, 15, 20], min_samples_split [2,\
+  \ 5, 10]\n  \n- **Support Vector Machines (SVM):**\n  - RBF Kernel: C=1, gamma='scale' (GridSearchCV\
+  \ optimized) ⭐ WINNER\n  - Linear Kernel: For comparison and sensitivity analysis\n  \n- **Random Forest:**\
+  \ 100 decision trees (Bagging ensemble)\n  - max_depth=10, min_samples_split=5\n\n- **Gradient Boosting:**\
+  \ 100 sequential estimators\n  - max_depth=5, learning_rate=0.1\n\n#### Deep Learning\n- **Neural Network\
+  \ (PyTorch):**\n  - Architecture: 100 → 64 (ReLU, 30% Dropout) → 32 (ReLU, 20% Dropout) → 16 (ReLU,\
+  \ 20% Dropout) → 1 (Sigmoid)\n  - Training: 20 epochs, batch_size=32, Adam optimizer (lr=0.001)\n  -\
+  \ Loss function: Binary Cross-Entropy\n\n### Evaluation Strategy\n\n**Cross-Validation:** 5-fold stratified\
+  \ cross-validation on training data  \n**Test Evaluation:** Hold-out 20% test set for unbiased performance\
+  \ assessment\n\n**Evaluation Metrics:**\n1. **AUROC** - Primary metric for overall discrimination ability\n\
+  2. **AUPRC** - Secondary metric for minority class (toxic) performance\n3. **Balanced Accuracy** - Fair\
+  \ assessment metric for imbalanced data\n4. **Sensitivity** - True positive rate (ability to detect\
+  \ toxic compounds)\n5. **Specificity** - True negative rate (ability to avoid false alarms)\n6. **Precision**\
+  \ - Positive predictive value\n7. **F1-Score** - Harmonic mean emphasizing minority class\n\n---\n\n\
+  ## Results\n\n### Final Model Comparison\n\n| Rank | Model | Test AUROC | AUPRC | Sensitivity | Specificity\
+  \ | Precision | F1-Score | Balanced Accuracy |\n|------|-------|-----------|-------|-------------|-------------|-----------|----------|-------------------|\n\
+  | \U0001F947 1 | **RBF SVM** | **0.8682** | 0.5687 | **0.6579** | **0.8800** | 0.5102 | **0.5747** |\
+  \ **0.7690** |\n| \U0001F948 2 | Gradient Boosting | 0.8513 | 0.5070 | 0.3158 | 0.9700 | 0.6667 | 0.4286\
+  \ | 0.6429 |\n| \U0001F949 3 | Neural Network | 0.8403 | **0.6409** | 0.2895 | 0.9850 | 0.7857 | 0.4231\
+  \ | 0.6372 |\n| 4 | Linear SVM | 0.8348 | 0.5173 | 0.7632 | 0.7700 | 0.3867 | 0.5133 | 0.7666 |\n| 5\
+  \ | Random Forest | 0.7814 | 0.4370 | 0.2105 | 0.9700 | 0.5714 | 0.3077 | 0.5902 |\n| 6 | Naive Bayes\
+  \ | 0.7403 | 0.3155 | 0.6053 | 0.7500 | 0.3151 | 0.4144 | 0.6776 |\n| 7 | KNN | 0.7243 | 0.4355 | 0.2895\
+  \ | 0.9500 | 0.5238 | 0.3729 | 0.6198 |\n| 8 | Decision Tree | 0.6630 | 0.3280 | 0.5263 | 0.6500 | 0.2222\
+  \ | 0.3125 | 0.5881 |\n\n### Key Findings\n\n**\U0001F947 RBF SVM - Optimal Model:**\n- Highest test\
+  \ AUROC: 0.8682 (excellent discrimination)\n- Best balanced accuracy: 0.7690 (optimal sensitivity-specificity\
+  \ balance)\n- Best F1-Score: 0.5747 (best harmonic mean for minority class)\n- **Performance:** Catches\
+  \ 66% of toxic compounds while avoiding 88% of false alarms\n- **Application:** Ideal for practical\
+  \ drug screening where balanced error rates matter\n\n**\U0001F948 Neural Network - Highest AUPRC:**\n\
+  - Highest AUPRC: 0.6409 (best precision-recall balance for toxic compounds)\n- Very high specificity:\
+  \ 0.9850 (fewer false positives)\n- Trade-off: Low sensitivity (0.2895) - misses more toxic compounds\n\
+  - **Application:** Better for precision-focused scenarios where false positives are costly\n\n**Performance\
+  \ Aggregate Statistics:**\n- Mean AUROC: 0.7879 ± 0.0731\n- Mean AUPRC: 0.4687 ± 0.1127\n- Mean Balanced\
+  \ Accuracy: 0.6614 ± 0.0762\n- AUROC Range: 0.6630–0.8682 (19.3% improvement from worst to best)\n\n\
+  ---\n\n## Installation Guide\n\n### System Requirements\n\n- Python 3.9 or higher (tested on Python\
+  \ 3.14)\n- 4+ GB RAM (for RDKit and model training)\n- ~5 minutes for full installation\n\n### Step-by-Step\
+  \ Setup\n\n```bash\n# 1. Clone repository\ngit clone https://github.com/atakmty/tox21-sr-mmp-ml-prediction.git\n\
+  cd tox21-sr-mmp-ml-prediction\n\n# 2. Create virtual environment (recommended)\npython -m venv venv\n\
+  source venv/bin/activate  # On Windows: venv\\Scripts\\activate\n\n# 3. Upgrade pip and install dependencies\n\
+  pip install --upgrade pip\npip install -r requirements.txt\n\n# 4. Verify installation\npython -c \"\
+  \nimport numpy as np\nimport pandas as pd\nimport sklearn\nimport torch\nimport rdkit\nprint('✓ All\
+  \ packages installed successfully!')\nprint(f'  - NumPy: {np.__version__}')\nprint(f'  - Pandas: {pd.__version__}')\n\
+  print(f'  - scikit-learn: {sklearn.__version__}')\nprint(f'  - PyTorch: {torch.__version__}')\nprint(f'\
+  \  - RDKit: {rdkit.__version__}')\n\"\n\n# 5. Run analysis\ncd notebooks\npython 01_data_loading_ecfp.py\n\
+  ```\n\n### Troubleshooting\n\n**RDKit Installation Issues on Windows:**\n```bash\n# If standard pip\
+  \ installation fails, use conda\nconda install -c conda-forge rdkit\n```\n\n**PyTorch GPU Support (Optional):**\n\
+  ```bash\n# For CUDA 11.8\npip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118\n\
+  \n# For CPU-only installation\npip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu\n\
+  ```\n\n**Memory Issues:**\n```bash\n# Reduce batch size in notebook scripts if running on low RAM\n\
+  # Edit batch_size parameter in ensemble_methods.py and neural_network.py\n```\n\n---\n\n## Dependencies\n\
+  \nSee `requirements.txt` for complete list. Critical packages:\n\n| Package | Purpose |\n|---------|---------|\n\
+  | numpy | Numerical computing and array operations |\n| pandas | Data manipulation and DataFrame processing\
+  \ |\n| scikit-learn | Machine learning models and evaluation |\n| torch | Neural network framework (PyTorch)\
+  \ |\n| rdkit | Molecular fingerprints and SMILES parsing |\n| matplotlib | Visualization and plotting\
+  \ (optional) |\n| seaborn | Statistical visualization (optional) |\n\n---\n\n## Project Highlights\n\
+  \n✅ **Comprehensive Algorithm Comparison:** 8 different machine learning approaches systematically evaluated\
+  \  \n✅ **Imbalanced Data Handling:** Proper techniques for 15.6% minority class  \n✅ **Hyperparameter\
+  \ Optimization:** GridSearchCV for kernel-based and tree-based models  \n✅ **Multiple Evaluation Metrics:**\
+  \ AUROC, AUPRC, Balanced Accuracy, F1-Score for comprehensive assessment  \n✅ **Production-Ready Code:**\
+  \ Well-documented, modular, and reproducible implementations  \n✅ **Clinical Relevance:** Results applicable\
+  \ to pharmaceutical drug development pipelines  \n✅ **Deep Learning Integration:** PyTorch neural network\
+  \ alongside classical ML methods\n\n---\n\n## Scientific Applications\n\nThis predictive model can accelerate\
+  \ pharmaceutical and chemical research by:\n\n1. **Early Toxicity Screening:** Computationally identify\
+  \ mitochondrial toxic compounds before expensive laboratory testing\n2. **Cost Reduction:** Computational\
+  \ prediction 10–100× faster than in vitro/in vivo experiments\n3. **Animal Testing Reduction:** Serve\
+  \ as computational filter to reduce animal studies\n4. **Drug Development Efficiency:** Enable screening\
+  \ of larger chemical libraries with limited resources\n\n**Potential Impact:** Drug development costs\
+  \ $2.6B on average; computational filtering could reduce by 10–15% through early elimination of toxic\
+  \ candidates\n\n\n---\n\n## Contact & Support\n\n**Developer:** Ata Kamutay  \n**GitHub:** https://github.com/atakmty\
+  \  \n**Repository Issues:** https://github.com/atakmty/tox21-sr-mmp-ml-prediction/issues\n\nFor questions\
+  \ or suggestions, please open an issue on the GitHub repository.\n\n---\n\n## License\n\nThis project\
+  \ is made available for research and educational purposes.\n\n---\n\n## Data Sources & Acknowledgments\n\
+  \n- **Tox21 Dataset:** U.S. Environmental Protection Agency (EPA), National Institutes of Health (NIH),\
+  \ Food and Drug Administration (FDA)\n- **RDKit:** Open-source cheminformatics toolkit\n- **PyTorch\
+  \ & scikit-learn:** Community-driven open-source machine learning libraries\n- **Tox21 Publications:**\
+  \ \n  - Huang et al. (2016). *Nature Communications*, 7, 10425\n  - Wu et al. (2021). *Chemical Research\
+  \ in To"

@@ -1,0 +1,60 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ruefene/doselo
+url: https://github.com/ruefene/doselo
+platform: github
+description: 'DOSELO (Dose Segmentation Loss Function): Dose Guidance for Radiotherapy-oriented Deep Learning
+  Segmentation'
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 4
+updated_at: '2025-04-25T13:06:19Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "# Dose Guidance for Radiotherapy-oriented Deep Learning Segmentation (DOSELO)\nThis repository\
+  \ contains the code for the paper \"Dose Guidance for Radiotherapy-oriented Deep Learning Segmentation\
+  \ \n(DOSELO)\" which is accepted for the MICCAI 2023 in Vancouver.\n\n## Paper Abstract\nDeep learning-based\
+  \ image segmentation for radiotherapy is intended to speed up the planning process and yield \nconsistent\
+  \ results. However, most of these segmentation methods solely rely on distribution and geometry-associated\
+  \ \ntraining objectives without considering tumor control and the sparing of healthy tissues. To incorporate\
+  \ dosimetric\neffects into segmentation models, we propose a new training loss function that extends\
+  \ current state-of-the-art \nsegmentation model training via a dose-based guidance method. We hypothesized\
+  \ that adding sucha dose-guidance \nmechanism improves the robustness of the segmentation with respect\
+  \ to the dose (i.e., resolves distant outliers and \nfocuses on locations of high dose/dose gradient).\
+  \ We demonstrate the effectiveness of the proposed method on Gross \nTumor Volume segmentation for glioblastoma\
+  \ treatment. The obtained dosimetry-based results show reduced dose errors \nrelative to the ground\
+  \ truth dose map using the proposed dosimetry-segmentation guidance, outperforming state-of-the-art\n\
+  distribution and geometry-based segmentation losses.\n\n## Repository Structure\nThis repository contains\
+  \ the following functionality for reproducing our results:\n- Training procedure for the dose predictor\
+  \ training (see `main_train_dose.py`)\n- Training procedure for the segmentation model training (see\
+  \ `main_train_segment.py`)\n- Evaluation procedure for the dose predictor and the segmentation model\
+  \ (see `main_test.py`)\n- Script for dataset construction (see `doseseg/construction/dataset_construction.py`)\n\
+  \nAll provided code is located in the `./doseseg/` folder and all persistent and temporary data is found\
+  \ in the `./data/` \nfolder. The datasets (i.e., one for training the dose predictor and one for training\
+  \ the segmentation model) are not\nincluded in this repository because no ethical approval for sharing\
+  \ the data was obtained. However, we share with you \nall non-confidential data and code that is necessary\
+  \ to reproduce our results on your own data.\n\n## Training Workflow\nUsing the proposed method with\
+  \ your own data requires the following steps:\n\n1. Acquire a dataset comprising for each patient: \n\
+  \    - A CT image\n    - All necessary MR images (optional)\n    - All OAR segmentations\n    - A target\
+  \ segmentation\n    - A simulated dose map\n2. Convert the clinical data to a discretized file format\
+  \ (e.g., NIfTI) and co-register all images. The images and the segmentations should have the same physical\
+  \ properties (i.e., size, spacing, direction, orientation). Converting and harmonizing the data is best\
+  \ achieved using our [PyRaDiSe](https://pyradise.readthedocs.io/en/latest/) package.\n3. Construct a\
+  \ dataset for training the dose predictor and another one for training the segmentation networks (see\
+  \ `doseseg/construction/dataset_construction.py`)\n4. Train the dose predictor (see `main_train_dose.py`)\
+  \ using the dose predictor dataset\n5. Train the segmentation model (see `main_train_segment.py`) using\
+  \ the segmentation dataset and the previously trained dose predictor\n6. Evaluate the trained dose predictor\
+  \ and segmentation model (see `main_test.py`)\n7. (Optional) Use the trained dose predictor and segmentation\
+  \ model for dose prediction and segmentation of new patients\n8. Congratulations, you have successfully\
+  \ trained a dose aware segmentation model on your own data :)\n\n## Citation\nIf you use our code for\
+  \ your own work, please cite our paper:\n```\n@InProceedings{Ruefenacht2023a,\n  author    = {Rüfenacht,\
+  \ Elias and Poel, Robert and Kamath, Amith and Ermis, Ekin and Scheib, Stefan and Fix, Michael K. and\
+  \ Reyes, Mauricio},\n  booktitle = {Medical Image Computing and Computer Assisted Intervention – MICCAI\
+  \ 2023},\n  title     = {{Dose Guidance for Radiotherapy-oriented Deep Learning Segmentation}},\n  year\
+  \      = {2023},\n  publisher = {Springer},\n}\n```\n"

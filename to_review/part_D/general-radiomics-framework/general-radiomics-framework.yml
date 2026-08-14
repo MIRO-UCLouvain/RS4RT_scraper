@@ -1,0 +1,136 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: BIMCV-CSUSP/general-radiomics-framework
+url: https://github.com/BIMCV-CSUSP/general-radiomics-framework
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-04-27T12:30:12Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# General Radiomics Framework\n\nThis repository provides a reusable radiomics framework\
+  \ for arbitrary medical\nor biomedical imaging datasets. It covers the full classical radiomics path:\n\
+  \n1. image and ROI manifest definition\n2. PyRadiomics feature extraction\n3. multi-modal and multi-ROI\
+  \ feature concatenation\n4. leakage-safe feature selection inside cross-validation folds\n5. classical\
+  \ ML model training and comparison\n6. out-of-fold aggregation, bootstrap confidence intervals, and\
+  \ model export\n\nThe framework is configured through YAML files and CSV manifests, so new\nprojects\
+  \ can reuse the same extraction and modeling code without changing the\nPython package.\n\n## Repository\
+  \ structure\n\n```text\n├── configs/\n│   ├── example_project.yaml          # Template project configuration\n\
+  │   └── pyradiomics_default.yaml      # Generic PyRadiomics settings\n├── docs/\n│   ├── manifest_schema.md\
+  \            # Input CSV schema\n│   └── workflow.md                   # End-to-end usage guide\n├──\
+  \ examples/\n│   └── manifest_example.csv          # Minimal manifest example\n├── radiomics_framework/\n\
+  │   ├── extract.py                    # Generic feature extraction\n│   ├── concatenate.py         \
+  \       # Feature-table merging\n│   ├── train.py                      # Classical ML training/evaluation\n\
+  │   ├── features.py                   # Feature selection utilities\n│   ├── preprocessing.py      \
+  \        # SimpleITK preprocessing\n│   └── config.py                     # YAML config loader\n└──\
+  \ pyproject.toml                    # Package metadata and console script\n```\n\n## Quick start\n\n\
+  Install dependencies:\n\n```bash\npip install -r requirements.txt\n```\n\nCreate a project config automatically\
+  \ from your manifest:\n\n```bash\npython -m radiomics_framework.generate_config \\\n  --manifest examples/manifest_example.csv\
+  \ \\\n  --output configs/project.yaml \\\n  --label-column label\n```\n\nYou can also use the installed\
+  \ CLI:\n\n```bash\nradiomics-framework init-config \\\n  --manifest examples/manifest_example.csv \\\
+  \n  --output configs/project.yaml \\\n  --label-column label\n```\n\nReview the generated YAML before\
+  \ running extraction. If the automatic inference\ndoes not detect the right columns, pass them explicitly\
+  \ with `--image-column`,\n`--mask-column`, `--sample-id-column`, `--group-id-column`, and\n`--label-column`.\n\
+  \nIf your manifest does not have an outcome column yet, the generated config uses\n`label: null`. Extraction\
+  \ and concatenation still work; training requires adding\na label column later.\n\nExtract features:\n\
+  \n```bash\npython -m radiomics_framework.extract --config configs/project.yaml\n```\n\nConcatenate extracted\
+  \ tables:\n\n```bash\npython -m radiomics_framework.concatenate \\\n  --config configs/project.yaml\
+  \ \\\n  --output artifacts/radiomics/concatenated/features_all.csv\n```\n\nTrain and evaluate models:\n\
+  \n```bash\npython -m radiomics_framework.train \\\n  --config configs/project.yaml \\\n  --features\
+  \ artifacts/radiomics/concatenated/features_all.csv \\\n  --output_dir results/radiomics_framework \\\
+  \n  --feature_strategy most_discriminant \\\n  --fixed_feature_count 30 \\\n  --n_splits 5 \\\n  --n_repeats\
+  \ 10 \\\n  --calibration_method sigmoid \\\n  --calibration_cv_splits 3 \\\n  --bootstrap_iterations\
+  \ 1000 \\\n  --export_best_model \\\n  --explain_best_model\n```\n\nCreate visual image QC panels before/after\
+  \ preprocessing:\n\n```bash\npython -m radiomics_framework.qc \\\n  --config configs/project.yaml \\\
+  \n  --max_cases 24\n```\n\nor with the installed CLI:\n\n```bash\nradiomics-framework qc-images \\\n\
+  \  --config configs/project.yaml \\\n  --max_cases 24\n```\n\n## Manifest format\n\nThe manifest is\
+  \ a CSV with one row per sample. The default example expects:\n\n```csv\nsample_id,patient_id,label,image_path,mask_path\n\
+  case_001,patient_001,0,data/images/case_001.nii.gz,data/masks/case_001_mask.nii.gz\ncase_002,patient_002,1,data/images/case_002.nii.gz,data/masks/case_002_mask.nii.gz\n\
+  ```\n\nFor multi-modal imaging, add more image columns and define them in YAML:\n\n```yaml\nmodalities:\n\
+  \  - name: ct\n    image_column: ct_path\n  - name: pet\n    image_column: pet_path\n```\n\nFor multiple\
+  \ ROIs, add more mask columns and define them in YAML:\n\n```yaml\nrois:\n  - name: lesion\n    mask_column:\
+  \ lesion_mask_path\n    label: 1\n  - name: organ\n    mask_column: organ_mask_path\n    label: 1\n\
+  ```\n\nUse `mode: full` for whole-image extraction without a mask.\n\n## Automatic YAML generation\n\
+  \nThe command below reads the manifest header and a small preview of rows, then\ninfers image columns,\
+  \ mask columns, the label column, and the grouping column:\n\n```bash\npython -m radiomics_framework.generate_config\
+  \ \\\n  --manifest /path/to/manifest.csv \\\n  --output configs/project.yaml\n```\n\nCommon names such\
+  \ as `sample_id`, `patient_id`, `label`, `image_path`,\n`ct_path`, `t2_path`, `mask_path`, `segmentation_path`,\
+  \ or `roi_path` are\ndetected automatically. For ambiguous datasets, use explicit overrides:\n\n```bash\n\
+  python -m radiomics_framework.generate_config \\\n  --manifest /path/to/manifest.csv \\\n  --output\
+  \ configs/project.yaml \\\n  --project-name my_project \\\n  --sample-id-column sample_id \\\n  --group-id-column\
+  \ patient_id \\\n  --label-column outcome \\\n  --image-column ct_path \\\n  --image-column pet_path\
+  \ \\\n  --mask-column tumor_mask_path \\\n  --include-full-roi\n```\n\nFor an unlabeled multi-modal\
+  \ manifest such as `patient_id,study_id,T1,T2,mask`,\nrun:\n\n```bash\npython -m radiomics_framework.generate_config\
+  \ \\\n  --manifest /path/to/manifest.csv \\\n  --output configs/pituitary.yaml \\\n  --project-name\
+  \ pituitary_radiomics\n```\n\nThis will infer `study_id` as `sample_id`, `patient_id` as `group_id`,\
+  \ `T1` and\n`T2` as modalities, `mask` as ROI, and `label: null`.\n\n## Modality-aware PyRadiomics params\n\
+  \nThe framework can build a PyRadiomics parameter YAML per modality from a\ndataset *fingerprint* instead\
+  \ of reusing the generic\n`configs/pyradiomics_default.yaml`. Each modality is sampled, its voxel\n\
+  spacing, image size and intensity distribution are summarised, and the\nfollowing settings are derived\
+  \ automatically:\n\n- `normalize` / `normalizeScale` / `voxelArrayShift` — enabled for MR-like\n  modalities\
+  \ (T1, T2, FLAIR, DWI, ...); disabled for CT, PET and\n  quantitative maps (ADC, T1/T2 maps).\n- `resampledPixelSpacing`\
+  \ — median spacing across the sample. For\n  anisotropic volumes the slice axis is set to `0` so PyRadiomics\
+  \ resamples\n  only in-plane.\n- `force2D` / `force2Ddimension` — enabled when the slice spacing is\
+  \ at\n  least 2x larger than the in-plane spacing, using the axis with the\n  largest spacing.\n- `binWidth`\
+  \ — derived from the observed `p99 - p01` intensity range and\n  the target number of gray-level bins\
+  \ (default 32). For normalized MR\n  images the bin width is computed after applying the normalization\
+  \ gain\n  so that the number of bins stays consistent across scanners.\n- `resegmentRange` — set to\
+  \ `[-1000, 3000]` HU for CT.\n- `imageType` — `Original`, `LoG` and `Wavelet` are always enabled;\n\
+  \  `Square`, `SquareRoot`, `Logarithm` and `Exponential` are added for\n  MR-like modalities where monotonic\
+  \ intensity transforms are meaningful.\n\nGenerate the YAMLs standalone:\n\n```bash\npython -m radiomics_framework.pyradiomics_params\
+  \ \\\n  --manifest examples/dataset_igtpT1T2.csv \\\n  --modality t1:T1 \\\n  --modality t2:T2 \\\n\
+  \  --mask-column mask \\\n  --output-dir configs\n```\n\nOr, more commonly, have `init-config` generate\
+  \ them alongside the project\nYAML and wire them into each modality automatically:\n\n```bash\npython\
+  \ -m radiomics_framework.generate_config \\\n  --manifest examples/dataset_igtpT1T2.csv \\\n  --output\
+  \ configs/pituitary.yaml \\\n  --project-name pituitary_radiomics \\\n  --auto-params\n```\n\nThe generated\
+  \ files are named `pyradiomics_<modality>.yaml` and carry a\nheader comment with the fingerprint used\
+  \ to derive their values\n(sample size, median spacing, intensity percentiles, detected kind).\n\n##\
+  \ Methodological safeguards\n\nThe training pipeline includes reliability-oriented defaults:\n\n- Cross-validation\
+  \ can be grouped by patient, subject, acquisition, or any\n  user-defined `group_id`.\n- The fold plan\
+  \ is created once and reused across all classifiers.\n- Feature selection is performed inside each training\
+  \ fold only.\n- Discriminant feature selection combines univariate statistics, FDR correction,\n  and\
+  \ correlation pruning.\n- Repeated out-of-fold predictions are aggregated per sample.\n- Confidence\
+  \ intervals are estimated by stratified bootstrap at group level.\n\n## Training outputs\n\nThe main\
+  \ outputs are written to `results/radiomics_framework/` by default:\n\n```text\nfold_metrics.csv\noof_predictions_flat.csv\n\
+  oof_predictions_aggregated.csv\nsummary_metrics.csv\nbootstrap_group_level_ci.csv\nplots/evaluation/all_models/roc_curves.png\n\
+  plots/evaluation/all_models/precision_recall_curves.png\nplots/evaluation/all_models/calibration_curves.png\n\
+  plots/evaluation/all_models/model_comparison_oof_metrics.png\nplots/evaluation/all_models/fold_metric_distributions.png\n\
+  plots/evaluation/all_models/confusion_matrices/*.png\nplots/evaluation/best_model/roc_curve.png\nplots/evaluation/best_model/precision_recall_curve.png\n\
+  plots/evaluation/best_model/calibration_curve.png\nplots/evaluation/best_model/confusion_matrix.png\n\
+  plots/evaluation/best_model/threshold_sweep.png\nplots/evaluation/best_model/decision_curve.png\nplots/evaluation/best_model/fold_metric_distributions.png\n\
+  threshold_metrics.csv\ndecision_curve.csv\ncalibration_summary.csv\nplots/feature_distributions/*.png\n\
+  feature_distribution_summary.csv\nselected_feature_spearman_correlation.csv\nplots/feature_correlation/selected_feature_correlation_heatmap.png\n\
+  feature_importance/model_native_feature_importance.csv\nfeature_importance/model_native_feature_importance.png\n\
+  feature_importance/model_native_group_importance.csv\nfeature_importance/permutation_importance_auc.csv\n\
+  feature_importance/permutation_importance_auc.png\nfeature_importance/permutation_group_importance_auc.csv\n\
+  feature_selection/selected_features_by_fold.csv\nfeature_selection/feature_selection_stability.csv\n\
+  feature_selection/feature_selection_stability.png\nfeature_selection/feature_selection_group_stability.csv\n\
+  best_model.joblib\nbest_model_oof_predictions_calibrated_flat.csv\nbest_model_oof_predictions_calibrated_aggregated.csv\n\
+  best_model_reports/classification_report_before_calibration.csv\nbest_model_reports/classification_report_after_calibration.csv\n\
+  ```\n\n`best_model.joblib` contains the fitted sklearn pipeline, the selected feature\nnames, and model\
+  \ metadata.\n\nWhen `--explain_best_model` is enabled, the training command also writes:\n\n```text\n\
+  interpretability/shap_values_class1.csv\ninterpretability/shap_explained_feature_values.csv\ninterpretability/shap_base_values.csv\n\
+  interpretability/shap_feature_importance.csv\ninterpretability/shap_bar_class1.png\ninterpretability/shap_beeswarm_class1.png\n\
+  interpretability/lime_local_explanations_class1.csv\ninterpretability/lime_aggregate_importance_class1.csv\n\
+  interpretability/lime_aggregate_importance_class1.png\n```\n\nThe SHAP and LIME values explain the final\
+  \ exported best model's class-1\nprobability using the selected feature subset. Use `--shap_max_samples`,\n\
+  `--shap_background_samples`, `--shap_max_display`, `--lime_max_samples`, and\n`--lime_num_features`\
+  \ to control runtime and plot size.\n\nUse `--fixed_feature_count` when you want to force a larger number\
+  \ of selected\nvariables than the default adaptive rule would keep. If you leave it unset, the\nframework\
+  \ still uses the conservative sample-aware cap.\n\nFeature-importance outputs include native model coefficients/importances\
+  \ when\nthe estimator exposes them, permutation importance measured as AUC decrease,\nfeature-selection\
+  \ stability across folds/repeats, grouped summaries by\nROI/modality/image type/feature family, and\
+  \ a selected-feature correlation\nheatmap. Use `--importance_top_n`, `--permutation_repeats`, and\n\
+  `--correlation_top_n` to tune these reports.\n\nImage QC outputs are written under `artifacts/radiomics/qc/`\
+  \ by default:\n\n```text\nimage_qc_stats.csv\nimage_qc_failures.csv\nimages/<sample>__<modality>__<roi>.png\n\
+  ```\n\nEach PNG shows the raw image slice, the preprocessed slice, and the ROI mask\noverlay. The "

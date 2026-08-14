@@ -1,0 +1,95 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: JianYang-Lab/GAMMA
+url: https://github.com/JianYang-Lab/GAMMA
+platform: github
+description: Genetic Associations to Mechanisms and Medicine Analysis.
+license: MIT
+language: R
+keywords: []
+stars: 10
+updated_at: '2026-03-02T08:55:46Z'
+image_source: https://raw.githubusercontent.com/JianYang-Lab/GAMMA/HEAD/figure/GAMMA.png
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Genetic Associations to Mechanisms and Medicine Analysis\n**GAMMA Portal** is a comprehensive\
+  \ web-based platform designed for post-GWAS gene prioritization, drug target discovery, and predict\
+  \ their clinical success rates through systematic analysis of genome-wide association study (GWAS) summary\
+  \ statistics. **GAMMA** (Genetic Associations to Mechanisms and Medicine Analysis) implements a comprehensive\
+  \ suite of gene prioritization methods spanning four levels of genetic evidence: variant-level, gene-level,\
+  \ locus-level, and gene network-level analyses. The machine learning extension **GAMMA-ML** integrates\
+  \ multiple lines of genetic evidence from GAMMA and comprehensive gene-self characteristics to identify\
+  \ genes most likely to be valid therapeutic targets and predicts their probability of success in clinical\
+  \ development.\n\n![GAMMA_figure](figure/GAMMA.png)\n\n\n# Online GAMMA Analysis\n**[GAMMA Portal](https://gamma.westlakefuturegene.com/)**\
+  \ (https://gamma.westlakefuturegene.com/) streamlines the gene prioritization process so that users\
+  \ only need to provide GWAS summary statistics for their trait of interest. Please see the tutorial\
+  \ for GWAS summary statistics input format (https://gamma.westlakefuturegene.com/doc/tutorial).\n\n\
+  ```\nTest account: `gamma@test.com`\nTest account password: `Test1234`\n```\n\n#### The platform implements\
+  \ the following methodological components:\n\n1. `Gene-based association testing (GWAS)`: MAGMA and\
+  \ mBAT-combo methods that aggregate GWAS signals at the gene level while accounting for linkage disequilibrium\
+  \ structure.\n\n2. `Variant-to-gene mapping (V2G)`: Fine-mapping approaches identify likely causal variants,\
+  \ which are then linked to target genes through functional annotations including gene proximity,exons,\
+  \ PCHi-C interactions, and enhancer-gene interactions predicted from ABC, EpiMap, RoadMap.\n\n3. `Locus-to-gene\
+  \ prioritization (L2G)`: Integration of GWAS with xQTL data through summary-data-based Mendelian Randomization\
+  \ (SMR), colocalization (COLOC), transcriptome-wide association studies (FUSION), generalized summary-data-based\
+  \ Mendelian randomization (GSMR) and xMAGIC (https://github.com/jianyanglab/MAGIC).\n\n4. `Network-based\
+  \ methods (Network)`: DEPICT and PoPS leverage protein-protein interaction networks and gene co-expression\
+  \ patterns to identify functionally related genes. GAMMA-RWR (Random Walk with Restart) and GAMMA-PPR\
+  \ (Personalized PageRank) scores that leverage protein-protein interaction network structure to identify\
+  \ functionally related genes.\n\nFor each gene-trait pair, GAMMA generates a score by counting the number\
+  \ of methods that prioritize the gene based on their respective statistical thresholds. A higher GAMMA\
+  \ score indicates stronger genetic evidence supporting the gene as a potential candidate gene and therapeutic\
+  \ target. \n\n\n# GAMMA-ML: Machine Learning Model for Clinical Success Prediction\nGAMMA-ML is a machine\
+  \ learning model that extends beyond GWAS-based gene prioritization to incorporate comprehensive gene\
+  \ characteristics that influence clinical success. GAMMA-ML uses a multi-label regression framework\
+  \ to predict the success rate for gene-disease pairs across each clinical trial phase (preclinical,\
+  \ Phase I, Phase II, Phase III, and approval).\n\nGAMMA-ML integrates 4,077 features across multiple\
+  \ categories:\n\n1. `GWAS-based gene prioritization features`: \n    - All methods and scores from the\
+  \ GAMMA framework\n\n2. `Disease database annotations`:\n    - Mendelian disease annotations from OMIM\n\
+  \    - Pathogenic variant data from ClinVar\n    - Mouse model disease associations from MGI\n    -\
+  \ Cancer-specific features from COSMIC CGC, Intogen, and NCG\n    \n3. `Pathway and functional annotations`:\n\
+  \    - KEGG and Reactome pathways\n    - UniProt protein family features (reduced to 500 principal components)\n\
+  \    - Gene Ontology annotations including 68 drug development-related terms and 256 pre-trained GO\
+  \ embeddings\n\n4. `Gene expression data`:\n    - Tissue-specific expression from GTEx and HPA\n   \
+  \ - Single-cell expression data and subcellular localization\n    - 256 pre-trained FRoGS (Functional\
+  \ Representation of Gene Signature) features\n\nThe model was trained on 4,096,610 gene-disease pairs\
+  \ using clinical trial data from Citeline Pharmaprojects, covering drugs added between 2000 and 2024.\
+  \ Our benchmark analysis demonstrates that GAMMA-ML is highly predictive: the top 1% of gene-disease\
+  \ pairs ranked by GAMMA-ML are 10.4-fold more likely to advance from Phase I to final approval, while\
+  \ the top 5% still show a nearly 5.0-fold increased likelihood of success.\n\n# Data Security Statement\n\
+  To ensure the security of your data, you must log in to submit your GWAS summary statistics for online\
+  \ GAMMA analysis. Uploaded user data will be accessible only to the users who uploaded it and can be\
+  \ removed by them at any time. If you have not yet registered, you can do so [here](https://gamma.westlakefuturegene.com/signup).\
+  \ For those interested, a demo is available on the \"Create a Task\" interface.\n\n# Contact\nShould\
+  \ you have any questions, suggestions, or encounter any issues, please reach out to us at Yang Lab (statgenlab@westlake.edu.cn)\
+  \ or Jian Yang (jian.yang@westlake.edu.cn).\n\nWe have provided the detail script for each analysis,\
+  \ please see [scripts](scripts/). And for the GAMMA pipeline, we provided the slurm cluster [sbatch\
+  \ script](deploy/GAMMA_sbatch.sh)  and dependent files in the [yaml files](deploy/GAMMA.yaml).\n\nBut\
+  \ we would like to recommend you to utilize our online [GAMMA portal](https://gamma.westlakefuturegene.com/),\
+  \ which has already fix the dependent data, packages, and environment. You just need to prepare a GWAS\
+  \ summary statistics there.\n\n\n# Tutorial\nWe provide scripts for each analysis in the [scripts](scripts/)\
+  \ directory for researcher reference. For the full GAMMA pipeline on a Slurm cluster, see the sbatch\
+  \ script at [deploy/GAMMA_sbatch.sh](deploy/GAMMA_sbatch.sh) and its YAML config at [deploy/GAMMA.yaml](deploy/GAMMA.yaml).\n\
+  \n\n> <font color=\"red\"><strong>Recommendation:</strong></font> The easiest way to run GAMMA is via\
+  \ the online **[GAMMA Portal](https://gamma.westlakefuturegene.com/)** (https://gamma.westlakefuturegene.com/),\
+  \ which has already fix all the dependent data, packages, and environment. You only need to upload your\
+  \ GWAS summary statistics.\n\n**Setup environments**\n```\nconda env create -f /environments/depict.yml\
+  \ && \\\n    conda env create -f /environments/pops.yml && \\\n    conda env create -f /environments/ldsc.yml\
+  \ && \\\n    conda env create -f /environments/NetworkX.yml && \\\n    conda env create -f /environments/py37.yml\
+  \ && \\\n    conda env create -f /environments/py39.yml\n\nconda env create -f /environments/r.yml &&\
+  \ \\\n    /bin/bash -c \"source activate r && R -e 'devtools::install_github(\\\"ZikunY/CARMA\\\")'\
+  \ && \\\n    R -e 'remotes::install_github(\\\"gabraham/plink2R\\\", subdir=\\\"plink2R\\\", ref=\\\"\
+  master\\\")' && \\\n    R -e 'remotes::install_github(\\\"cotsapaslab/jlim\\\", subdir=\\\"jlimR\\\"\
+  , ref=\\\"master\\\")'\"\n```\n\n**Run pipeline**\n```bash\n## Input\nGAMMA_HOME=/your/local/path\n\n\
+  CONFIG_template=$1\ntrait_name=$2\nGWAS_DATA=$3\nWORK_DIR=${4:-\"${GAMMA_HOME}/guoyazhou/GAMMA_git\"\
+  }\nOUTPUT=${5:-\"${GAMMA_HOME}/guoyazhou/GAMMA_git_data\"}\nSCRIPT_DIR=${6:-\"${GAMMA_HOME}/guoyazhou/GAMMA_github/gamma-script/scripts\"\
+  }\n\n## Config yaml file for each GWAS summary data\n./scripts/config.sh \\\n    ./deploy/GAMMA.yaml\
+  \ \\\n    ${trait_name} \\\n    ${GWAS_DATA} \\\n    ${WORK_DIR} \\\n    ${OUTPUT} \\\n    ${SCRIPT_DIR}\n\
+  \n## Validate/format GWAS data\n./scripts/gwas_format.sh ${CONFIG}\n\n## Launch the GAMMA pipeline via\
+  \ Slurm\nCONFIG=${WORK_DIR}/yaml_file/${trait_name}.yaml \n./deploy/GAMMA_sbatch.sh ${CONFIG}\n```\n\
+  \n\n\n"

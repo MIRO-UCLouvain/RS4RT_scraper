@@ -1,0 +1,195 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: CaioBBrasil/RlHandoverNtn-SBRT2026
+url: https://github.com/CaioBBrasil/RlHandoverNtn-SBRT2026
+platform: github
+description: ''
+license: null
+language: HTML
+keywords: []
+stars: 0
+updated_at: '2026-08-04T18:07:39Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: '# RL Handover NTN — Automated Reproduction
+
+
+  ## Dados utilizados
+
+
+  - `Dataset/train_dataset_merged`: treinamento do DQN;
+
+  - `Dataset/test2_dataset_merged`: avaliação do DQN e dos baselines.
+
+
+  ## Requisitos
+
+
+  - Python 3.10 ou superior;
+
+  - acesso à internet durante `./setup.sh` para instalar as dependências;
+
+  - Chrome/Chromium para exportação PDF com Kaleido. Quando não houver navegador instalado, `setup.sh`
+  tenta instalar uma versão compatível automaticamente.
+
+
+  ## Execução mais rápida
+
+
+  Para obter imediatamente os resultados e gráficos mais próximos dos que já estavam no backup:
+
+
+  ```bash
+
+  ./run_pipeline.sh
+
+  ```
+
+
+  Esse modo copia para `outputs/` as métricas e figuras de referência fornecidas no backup. Ele não realiza
+  um novo treinamento e, portanto, evita variações aleatórias.
+
+
+  ## Recriar os gráficos a partir das métricas de referência
+
+
+  ```bash
+
+  ./setup.sh
+
+  ./run_pipeline.sh --mode replot
+
+  ```
+
+
+  Os gráficos são salvos em HTML e PDF em `outputs/plots/`.
+
+
+  ## Executar o pipeline completo
+
+
+  ```bash
+
+  ./setup.sh
+
+  ./run_pipeline.sh --mode full
+
+  ```
+
+
+  O fluxo completo executa, nesta ordem:
+
+
+  1. treinamento do DQN em `train_dataset_merged`;
+
+  2. avaliação no `test2_dataset_merged`;
+
+  3. execução dos baselines Max-ES e Holder;
+
+  4. geração dos CSVs de avaliação;
+
+  5. geração de todos os gráficos.
+
+
+  O treinamento completo mantém o valor de `10_000_000` passos. Para um teste rápido da automação:
+
+
+  ```bash
+
+  ./run_pipeline.sh --mode full --timesteps 10000
+
+  ```
+
+
+  ## Outros modos
+
+
+  ```bash
+
+  # Avaliar apenas os baselines
+
+  ./run_pipeline.sh --mode baselines
+
+
+  # Avaliar um modelo já treinado em models/
+
+  ./run_pipeline.sh --mode evaluate
+
+
+  # Reproduzir novamente os arquivos originais de referência
+
+  ./run_pipeline.sh --mode reference
+
+  ```
+
+
+  O modelo esperado pelo modo `evaluate` é:
+
+
+  ```text
+
+  models/dqn_multi_ue_satellite_selection.zip
+
+  ```
+
+
+  ## Estrutura
+
+
+  ```text
+
+  .
+
+  ├── Dataset/
+
+  │   ├── train_dataset_merged/
+
+  │   └── test2_dataset_merged/
+
+  ├── env.py
+
+  ├── model_train.py
+
+  ├── compare_models.py
+
+  ├── plot_training.py
+
+  ├── optimal_baseline.py
+
+  ├── run_pipeline.sh
+
+  ├── setup.sh
+
+  ├── requirements.txt
+
+  ├── models/
+
+  ├── outputs/
+
+  ├── reference_results/
+
+  ├── legacy/original_scripts/
+
+  └── VALIDATION.md
+
+  ```
+
+
+  ## Resultados
+
+
+  - métricas detalhadas: `outputs/eval_results/step_metrics.csv`;
+
+  - resumo: `outputs/eval_results/summary_metrics.csv`;
+
+  - gráficos: `outputs/plots/`;
+
+  - logs do treinamento completo: `outputs/training/`;
+
+  '

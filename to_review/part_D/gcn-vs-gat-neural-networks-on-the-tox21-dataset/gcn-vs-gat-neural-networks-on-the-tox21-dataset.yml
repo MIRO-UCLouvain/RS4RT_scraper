@@ -1,0 +1,68 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: RishabhDutt1/GCN-vs.-GAT-Neural-Networks-on-the-Tox21-Dataset
+url: https://github.com/RishabhDutt1/GCN-vs.-GAT-Neural-Networks-on-the-Tox21-Dataset
+platform: github
+description: Compares Graph Convolutional Networks and Graph Attention Networks on the Tox21 dataset for
+  molecular toxicity prediction. Molecules are modeled as graphs where atoms are nodes and bonds are edges.
+  The study evaluates how attention mechanisms improve prediction accuracy over standard graph convolutions.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-03-05T20:34:58Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# GCN vs GAT for Molecular Toxicity Prediction\n\nThis project compares two Graph Neural\
+  \ Network (GNN) architectures — **Graph Convolutional Networks (GCN)** and **Graph Attention Networks\
+  \ (GAT)** — on the **Tox21 molecular toxicity dataset**.\n\nMolecules are naturally represented as graphs\
+  \ where:\n\n- **Nodes = atoms**\n- **Edges = chemical bonds**\n\nThe goal of this study is to evaluate\
+  \ whether **attention mechanisms improve predictive performance and interpretability** compared to traditional\
+  \ graph convolution methods.\n\n---\n\n# Overview\n\nGraph Neural Networks have become the standard\
+  \ for modeling molecular data in drug discovery and computational chemistry.\n\nThis project evaluates\
+  \ two foundational GNN architectures:\n\n**Graph Convolutional Network (GCN)**  \nUses fixed neighborhood\
+  \ aggregation weights.\n\n**Graph Attention Network (GAT)**  \nUses learned attention weights to determine\
+  \ how much influence neighboring atoms have during message passing.\n\nThe study investigates whether\
+  \ attention-based aggregation improves prediction performance on toxicity tasks.\n\n---\n\n# Dataset\n\
+  \nThe models are trained on the **Tox21 dataset**, a benchmark dataset from **MoleculeNet**.\n\nKey\
+  \ characteristics:\n\n- **7,823 molecular graphs**\n- **12 toxicity prediction tasks**\n- **9 atom-level\
+  \ features**\n- Average **18.6 atoms per molecule**\n- Average **38.6 bonds per molecule**\n- Approximately\
+  \ **17% missing labels**\n\nEach molecule is represented as a graph where node features encode atomic\
+  \ properties such as atom type, degree, charge, and hybridization. :contentReference[oaicite:1]{index=1}\n\
+  \n---\n\n# Graph Structure\n\nIn molecular graphs:\n\n- Atoms form nodes\n- Bonds form edges\n- Node\
+  \ degree corresponds to the number of chemical bonds\n\nTypical degrees:\n\n- Hydrogen: 1\n- Oxygen:\
+  \ 2\n- Carbon: 3–4\n\nThis structure is important because both GCN and GAT aggregate information from\
+  \ neighboring nodes during training.\n\n---\n\n# Methodology\n\nBoth models are trained under identical\
+  \ conditions to ensure a fair comparison.\n\n### Training Setup\n\n- Optimizer: **Adam**\n- Learning\
+  \ rate: **0.001**\n- Batch size: **64**\n- Epochs: **50**\n- Loss function: **Binary Cross Entropy with\
+  \ NaN masking**\n- Evaluation metric: **AUROC**\n\nAUROC is calculated for each toxicity task and then\
+  \ averaged across all tasks.\n\n---\n\n# Model Architectures\n\n### Graph Convolutional Network (GCN)\n\
+  \nArchitecture:\n\n```\nGCNConv → ReLU  \nGCNConv → ReLU  \nGlobal Mean Pooling  \nLinear Classification\
+  \ Layer\n```\n\nHidden dimension: **64**\n\nParameter count:\n\n```\n5,580 parameters\n```\n\n---\n\n\
+  ### Graph Attention Network (GAT)\n\nArchitecture:\n\n```\nGATConv (4 attention heads) → ReLU  \nGATConv\
+  \ → ReLU  \nGlobal Mean Pooling  \nLinear Classification Layer\n```\n\nHidden dimension: **64**\n\n\
+  Parameter count:\n\n```\n20,428 parameters\n```\n\nThe attention mechanism allows the network to assign\
+  \ different importance to neighboring atoms during aggregation.\n\n---\n\n# Training Results\n\nBoth\
+  \ models were trained for **50 epochs**.\n\nFinal results:\n\n| Model | Best AUROC | Final AUROC | Parameters\
+  \ |\n|------|------------|------------|-----------|\n| GCN | 0.7494 | 0.7492 | 5,580 |\n| GAT | 0.7933\
+  \ | 0.7897 | 20,428 |\n\nKey finding:\n\n**GAT consistently outperformed GCN**, suggesting that attention-based\
+  \ aggregation improves predictive performance on molecular toxicity tasks.\n\n---\n\n# Attention Analysis\n\
+  \nThe project also analyzes the distribution of attention weights in the GAT model.\n\nKey observations:\n\
+  \n- **Hierarchical attention patterns**\n- Early layers aggregate broadly across neighbors\n- Deeper\
+  \ layers focus on a smaller subset of important atoms\n\nThe attention distribution in deeper layers\
+  \ becomes **bimodal**, indicating that the network assigns near-binary importance to certain neighbors.\n\
+  \nThis behavior suggests that the model learns chemically meaningful patterns in molecular graphs.\n\
+  \n---\n\n# Limitations\n\nSome limitations of the study include:\n\n- Single train/test split (no cross-validation)\n\
+  - Relatively shallow architectures (2 layers)\n- No hyperparameter tuning\n- Attention weights do not\
+  \ necessarily represent causal explanations\n\nDespite these limitations, the results demonstrate the\
+  \ advantages of attention-based message passing for molecular prediction tasks.\n\n---\n\n# References\n\
+  \nKipf & Welling (2017) — *Semi-Supervised Classification with Graph Convolutional Networks*\n\nVeličković\
+  \ et al. (2018) — *Graph Attention Networks*\n\nWu et al. (2018) — *MoleculeNet: A Benchmark for Molecular\
+  \ Machine Learning*\n"

@@ -1,0 +1,76 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: b0o0da/Brain-Tumor-Segmentation-UNet
+url: https://github.com/b0o0da/Brain-Tumor-Segmentation-UNet
+platform: github
+description: 'U-Net-based semantic segmentation of brain tumors from MRI scans (LGG dataset), achieving
+  a Dice coefficient of ~0.88. Includes full pipeline: EDA, tf.data augmentation, custom Dice/BCE loss,
+  training callbacks, and error analysis.'
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-30T16:13:02Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# \U0001F9E0 Brain Tumor Segmentation — U-Net\n\n[![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/)\n\
+  [![TensorFlow](https://img.shields.io/badge/TensorFlow-Keras-FF6F00.svg?logo=tensorflow&logoColor=white)](https://www.tensorflow.org/)\n\
+  [![OpenCV](https://img.shields.io/badge/OpenCV-Image%20Processing-5C3EE8.svg?logo=opencv&logoColor=white)](https://opencv.org/)\n\
+  [![License](https://img.shields.io/badge/License-MIT-green.svg)](#license)\n\nA U-Net-based semantic\
+  \ segmentation model that detects and segments brain tumors from MRI scans, achieving a **Dice coefficient\
+  \ of ~0.88** on the test set. Covers the full deep learning workflow: EDA, `tf.data` pipeline with augmentation,\
+  \ custom U-Net architecture, combined Dice + BCE loss, training, evaluation, and per-sample error analysis.\n\
+  \n---\n\n## \U0001F4DA Table of Contents\n\n- [Overview](#overview)\n- [Dataset](#dataset)\n- [Tech\
+  \ Stack](#tech-stack)\n- [Pipeline Steps](#pipeline-steps)\n- [Model Architecture](#model-architecture)\n\
+  - [Loss & Metrics](#loss--metrics)\n- [Training Configuration](#training-configuration)\n- [Results](#results)\n\
+  - [How to Run](#how-to-run)\n- [Notes](#notes)\n- [License](#license)\n\n---\n\n## \U0001F50D Overview\n\
+  \nThis project trains a **U-Net** to perform pixel-level segmentation of brain tumors in MRI images,\
+  \ predicting a binary mask that highlights tumor regions. It includes data exploration (tumor area distribution,\
+  \ empty vs. tumor masks), a stratified train/val/test split, an augmented `tf.data` input pipeline,\
+  \ and both quantitative and visual evaluation — including analysis of the model's worst-performing predictions.\n\
+  \n---\n\n## \U0001F4CA Dataset\n\n- **Source:** [LGG MRI Segmentation dataset](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)\
+  \ (Kaggle)\n- **Format:** Paired `.tif` MRI slices and binary tumor masks (`*_mask.tif`)\n- **Split:**\
+  \ Stratified by tumor presence — 70% train / 15% validation / 15% test\n- **Image size:** Resized to\
+  \ 256×256\n\n---\n\n## \U0001F6E0️ Tech Stack\n\n- **Framework:** TensorFlow / Keras\n- **Image processing:**\
+  \ OpenCV\n- **Core Libraries:** `numpy`, `matplotlib`, `scikit-learn` (`train_test_split`)\n\n---\n\n\
+  ## \U0001F9E9 Pipeline Steps\n\n1. **Imports & reproducibility** — fixed random seed across NumPy, Python,\
+  \ and TensorFlow\n2. **Data loading & EDA**\n   - Walk the dataset directory to pair each MRI image\
+  \ with its mask\n   - Visualize sample MRI / mask / overlay\n   - Analyze tumor area distribution (mean,\
+  \ median pixel area)\n   - Count empty vs. tumor-present masks\n3. **Train / Val / Test split** — stratified\
+  \ by tumor presence to preserve class balance across splits\n4. **Data pipeline (`tf.data`) + augmentation**\
+  \ — image/mask loading, resizing, normalization, and random flips/rotations applied identically to image-mask\
+  \ pairs\n5. **Model — U-Net** — custom encoder-decoder with skip connections\n6. **Loss functions &\
+  \ metrics** — combined Dice + Binary Cross-Entropy loss\n7. **Training** — with checkpointing, early\
+  \ stopping, and LR scheduling\n8. **Evaluation** — quantitative test-set metrics + visual predictions\
+  \ vs. ground truth\n9. **Error analysis** — per-sample Dice scores, inspection of worst-performing predictions\n\
+  \n---\n\n## \U0001F3D7️ Model Architecture\n\n**U-Net** encoder-decoder with skip connections:\n\n-\
+  \ **Encoder:** conv blocks with filter sizes `64 → 128 → 256 → 512`, each followed by max pooling (dropout\
+  \ added at 256 and 512 stages)\n- **Bottleneck:** 1024 filters, dropout 0.3\n- **Decoder:** `Conv2DTranspose`\
+  \ upsampling at each stage, concatenated with the corresponding encoder skip connection, mirrored back\
+  \ down to 64 filters\n- Each conv block: `Conv2D → BatchNorm → ReLU` (×2), with L2 kernel regularization\n\
+  \n---\n\n## ⚙️ Loss & Metrics\n\n- **Loss:** `Binary Cross-Entropy + Dice Loss` (combined)\n- **Metrics:**\
+  \ Dice coefficient, Binary IoU, Precision, Recall\n- **Optimizer:** Adam (`lr=1e-4`)\n\n---\n\n## \U0001F3AF\
+  \ Training Configuration\n\n| Parameter | Value |\n|---|---|\n| Image size | 256×256 |\n| Batch size\
+  \ | 16 |\n| Epochs | 50 (with early stopping) |\n| Optimizer | Adam (lr=1e-4) |\n| Early stopping patience\
+  \ | 8 (monitored on `val_dice_coefficient`) |\n| LR reduction | `ReduceLROnPlateau` (factor 0.5, patience\
+  \ 4) |\n| Checkpointing | Best model saved on `val_dice_coefficient` |\n| Seed | 42 |\n\n---\n\n## \U0001F4C8\
+  \ Results\n\nEvaluated on the held-out test set using:\n\n- **Dice Coefficient** (~0.88 on average)\n\
+  - **IoU**\n- **Precision / Recall**\n\nIncludes per-sample Dice score analysis to identify and visually\
+  \ inspect the model's worst-performing predictions, alongside training curves (loss, Dice, IoU) for\
+  \ train vs. validation.\n\n---\n\n## \U0001F680 How to Run\n\n1. **Install dependencies**\n   ```bash\n\
+  \   pip install tensorflow opencv-python numpy matplotlib scikit-learn\n   ```\n\n2. **Set the dataset\
+  \ path** — update `DATASET_PATH` to point to your local copy of the LGG MRI segmentation dataset:\n\
+  \   ```python\n   DATASET_PATH = \"path/to/lgg-mri-segmentation\"\n   ```\n\n3. **Run the notebook cells\
+  \ in order**:\n   EDA → Split → Data pipeline → Model → Training → Evaluation → Error analysis\n\n4.\
+  \ **Best model checkpoint** is saved as:\n   ```\n   best_unet_model.keras\n   ```\n\n---\n\n## \U0001F4DD\
+  \ Notes\n\n- Originally built to run on Kaggle (`/kaggle/input/...` paths) — update paths if running\
+  \ locally.\n- The train/val/test split is stratified by tumor presence (not just random), which matters\
+  \ since a large portion of MRI slices contain no tumor.\n- Evaluation includes a dedicated pass on non-empty\
+  \ masks only, to better assess segmentation quality specifically on tumor-containing slices.\n\n---\n\
+  \n## \U0001F4C4 License\n\nThis project is open-source. Add your preferred license (e.g., MIT) here.\n"

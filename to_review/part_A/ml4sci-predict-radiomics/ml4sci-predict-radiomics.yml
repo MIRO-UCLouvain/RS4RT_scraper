@@ -1,0 +1,61 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Quant-Quasar/ML4SCI-PrediCT-Radiomics
+url: https://github.com/Quant-Quasar/ML4SCI-PrediCT-Radiomics
+platform: github
+description: ML4SCI CERN PrediCT Evaluation | Cardiac CT Radiomics Pipeline on COCA Dataset
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-03-28T03:01:52Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# ML4SCI CERN PrediCT | Cardiac CT Radiomics Pipeline\n**Evaluation Test Submission**\
+  \  \n**Author:** Aditya Parashar\n\n---\n\n## Project Overview\n\nThis project implements a complete\
+  \ cardiac CT radiomics pipeline on the \n[COCA dataset](https://doi.org/10.71718/ge5g-ds80) (Coronary\
+  \ Calcium and Chest CTs, \nStanford AIMI). It covers preprocessing, Agatston calcium scoring, PyRadiomics\
+  \ \nfeature extraction, and statistical phenotyping across 30 patients.\n\n### Key Results\n| Metric\
+  \ | Value |\n|--------|-------|\n| Patients processed | 30 (IDs 0–30, excluding 12) |\n| Agatston range\
+  \ | 1.6 – 3010.2 |\n| Category distribution | 1-99: 14, 100-399: 9, 400+: 7 |\n| Top feature (Spearman\
+  \ ρ) | total_calcium_volume_mm3 (ρ=0.986, p<0.0001) |\n| Significant features (p<0.05) | See notebook2_radiomics.ipynb\
+  \ |\n| KMeans ARI | 0.200 |\n\n---\n\n## Repository Structure\n\n```\n├── notebook1_preprocessing.ipynb\
+  \   # Common Task: preprocessing pipeline\n├── notebook2_radiomics.ipynb       # Project 2: feature\
+  \ extraction & analysis\n├── params.yaml                     # PyRadiomics extractor configuration\n\
+  ├── requirements.txt                # Pinned dependencies for Python 3.8\n├── outputs/\n│   ├── agatston_scores.csv\n\
+  │   ├── radiomics_features.csv\n│   ├── agatston_distribution.png\n│   ├── category_distribution.png\n\
+  │   ├── sample_slice_overlay.png\n│   ├── correlation_heatmap.png\n│   ├── top_features_bar.png\n│ \
+  \  ├── top3_scatter.png\n│   ├── tsne.png\n│   └── tsne_clusters.png\n└── data/                    \
+  \       # Not committed — see Data Setup below\n    └── .gitkeep\n```\n\n---\n\n## Data Setup\n\n1.\
+  \ Access the COCA dataset via Azure Blob Storage:\n   `cocacoronarycalciumandchestcts-2`\n\n2. Download\
+  \ from:\n   - `Gated_release_final/patient/0–30` → `data/raw/`\n   - `Gated_release_final/calcium_xml/0–30`\
+  \ → `data/calcium_xml/`\n\n3. Set `DATA_ROOT` at the top of each notebook to your local path.\n\n---\n\
+  \n## Environment Setup\n\n```bash\n# Step 1: Create environment (Python 3.8 required for PyRadiomics)\n\
+  conda create -n predict_env python=3.8 -y\nconda activate predict_env\n\n# Step 2: Install PyRadiomics\n\
+  conda install -c radiomics -c conda-forge pyradiomics -y\n\n# Step 3: Install all dependencies\npip\
+  \ install -r requirements.txt\n\n# Step 4: Register Jupyter kernel\npython -m ipykernel install --user\
+  \ --name predict_env --display-name \"PrediCT Python 3.8\"\n\n# Step 5: Launch Jupyter\njupyter lab\n\
+  ```\n\n---\n\n## Execution Order\n\n1. Open `notebook1_preprocessing.ipynb` with kernel **\"PrediCT\
+  \ Python 3.8\"**\n2. Set `DATA_ROOT` to your data path\n3. Run all cells — generates `outputs/agatston_scores.csv`\
+  \ and preprocessed `.npy` files\n4. Open `notebook2_radiomics.ipynb` with same kernel\n5. Run all cells\
+  \ — generates `outputs/radiomics_features.csv` and all plots\n\n---\n\n## Methodology\n\n- **Preprocessing:**\
+  \ HU windowing (WC=150, WW=700), resampling to 1mm³ isotropic\n- **Masks:** Reconstructed from expert\
+  \ radiologist XML contours (not thresholding)\n- **Agatston:** Computed from original 3.0mm spacing\
+  \ per Agatston et al. 1990\n- **Features:** PyRadiomics v3.x, IBSI Chapter 1 compliant, 15 features\
+  \ across Shape/GLCM/GLSZM/GLRLM\n- **Statistics:** Spearman correlation, Kruskal-Wallis, Benjamini-Hochberg\
+  \ FDR correction\n\n> **Note on model weights:** Project 2 is a radiomics feature extraction and \n\
+  > statistical analysis task. It produces no trainable neural network and therefore \n> has no model\
+  \ weights to submit. All outputs are the CSV feature matrices and \n> statistical analysis results in\
+  \ the `outputs/` folder.\n\n- **Clinical context:** Radiomic phenotyping of coronary calcium is supported\
+  \ \n  by recent literature demonstrating prognostic value of CT-derived plaque \n  texture features\
+  \ (Kolossváry et al. JACC Imaging 2025, Abaid et al. 2024).\n---\n\n## AI Assistance Disclosure\n\n\
+  AI tools were used for code review, documentation formatting, and literature \ncitation verification.\
+  \ All experiments, model architectures, training runs, \nand results are the author's own original work.\n\
+  \n---"

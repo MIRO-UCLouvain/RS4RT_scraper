@@ -1,0 +1,92 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: sgtm-sougata/RTSSH
+url: https://github.com/sgtm-sougata/RTSSH
+platform: github
+description: Radiotherapy structure set harmonization
+license: null
+language: JavaScript
+keywords: []
+stars: 0
+updated_at: '2026-04-13T10:03:25Z'
+image_source: null
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 5 support term(s).
+readme_excerpt: "# RTSSH - Radiotherapy Structure Set Harmonization\n\nAn open-source Django application\
+  \ designed to ensure easy harmonization of DICOM RT structure set names. The software allows users to\
+  \ upload DICOM data of single or multiple patients at once so that the names can be harmonized according\
+  \ to the AAPM TG-263 standard.\n\n## Background\n\nThis is an open-source Django application that allows\
+  \ harmonization of the DICOM RT Structure set names. The American Association of Physicists in Medicine\
+  \ (AAPM) Task Group 263 report was setup to harmonize the naming of structures, organs, volumes in Radiation\
+  \ Oncology. Standardization of nomenclature is important as:\n\n- **Data Sharing**: It allows users\
+  \ to share data and the data to be readable by computer scripts\n- **Data Pooling**: Pooling of data\
+  \ from various institutes becomes much more simpler\n- **Federated Learning**: Extraction of data by\
+  \ using federated learning software also becomes simpler\n- **Automated Planning**: Facilitates safe\
+  \ automatic planning and plan evaluation\n\nGiven these advantages, the TG 263 came up with a standard\
+  \ set of recommendations for nomenclature as well as guidelines were defined for nearly 700 structures\
+  \ with identification codes corresponding to the Foundational Model of Anatomy structures.\n\nUnfortunately\
+  \ despite the publication of the TG263 report in 2018, awareness and adoption remains patchy. Vendors\
+  \ like Varian have implemented these recommendations in their default structure set labels but users\
+  \ often modify these labels to suit their needs.\n\n## How the Software Works\n\nThe software follows\
+  \ a systematic process to harmonize DICOM RT structure set names:\n\n1. **File Upload**: The software\
+  \ allows the user to upload a zip folder containing DICOM RT data\n2. **File Extraction**: Once the\
+  \ folder is unzipped, the RT structure set file is identified\n3. **Label Extraction**: All structure\
+  \ labels are extracted from the DICOM RT structure set\n4. **Mapping Process**: A mapping is performed\
+  \ against a database which has items derived from the TG263 defined structure set labels\n5. **Label\
+  \ Harmonization**: If matching labels are identified, these are altered to adhere to the TG-263 defined\
+  \ standard nomenclature\n6. **Preservation**: Rest of the labels are left intact if no matching TG-263\
+  \ standard is found\n\n## Features\n\n- **User Authentication**: Complete user registration and login\
+  \ system with email verification\n- **File Upload**: Upload DICOM RT structure sets as ZIP files\n-\
+  \ **Label Harmonization**: Automatic normalization of ROI labels according to TG-263 standard\n- **Label\
+  \ Mapping**: Custom mapping between original labels and TG-263 standardized labels\n- **File Processing**:\
+  \ Batch processing of uploaded files with download capabilities\n- **REST API**: RESTful API for TG-263\
+  \ data and label mapping operations\n- **Documentation**: Integrated documentation system\n\n## Technology\
+  \ Stack\n\n- **Backend**: Django 4.2 with Django REST Framework\n- **Database**: SQLite (with PostgreSQL\
+  \ migration support)\n- **Authentication**: Django-allauth with custom signup forms\n- **File Processing**:\
+  \ pydicom for DICOM file handling\n- **Data Processing**: NumPy and Pandas for data manipulation\n-\
+  \ **Deployment**: Docker support with Gunicorn\n\n## Project Structure\n\n```\nRTSSH/\n|-- app/    \
+  \                 # Main application\n|   |-- models.py           # Database models (TG263Data, LabelMapping,\
+  \ etc.)\n|   |-- views.py            # Django views and business logic\n|   |-- preprocess/        \
+  \ # Data processing modules\n|   |   |-- harmonization.py # ROI label harmonization\n|   |   |-- normalization.py\
+  \ # Label cleaning functions\n|   |-- templates/          # HTML templates\n|   |-- static/        \
+  \    # Static files (CSS, JS)\n|-- harmonization/          # Django project configuration\n|   |-- settings.py\
+  \         # Django settings\n|   |-- urls.py            # URL routing\n|-- requirements.txt        #\
+  \ Python dependencies\n|-- Dockerfile            # Docker configuration\n|-- manage.py             #\
+  \ Django management script\n```\n\n## Key Models\n\n### TG263Data\nStores TG-263 standard terminology\
+  \ including:\n- Target Type, Major/Minor Categories\n- Anatomic Groups\n- Primary and Reverse Order\
+  \ Names\n- Descriptions and FMA IDs\n\n### LabelMapping\nMaps original ROI labels to TG-263 standardized\
+  \ labels for harmonization.\n\n### UploadedFile / ProcessedFile\nTrack file uploads and processed downloads\
+  \ with user association.\n\n## Installation\n\n### Prerequisites\n- Python 3.8+\n- pip and virtualenv\n\
+  \n### Setup\n\n1. **Clone and Navigate**\n   ```bash\n   cd RTSSH\n   ```\n\n2. **Create Virtual Environment**\n\
+  \   ```bash\n   python -m venv venv\n   source venv/bin/activate  # On Windows: venv\\Scripts\\activate\n\
+  \   ```\n\n3. **Install Dependencies**\n   ```bash\n   pip install -r requirements.txt\n   ```\n\n4.\
+  \ **Environment Configuration**\n   Create a `.env` file with:\n   ```\n   EMAIL_HOST=your_smtp_host\n\
+  \   EMAIL_PORT=587\n   EMAIL_USE_TLS=True\n   EMAIL_HOST_USER=your_email\n   EMAIL_HOST_PASSWORD=your_password\n\
+  \   ```\n\n5. **Database Setup**\n   ```bash\n   python manage.py makemigrations\n   python manage.py\
+  \ migrate\n   ```\n\n6. **Create Superuser**\n   ```bash\n   python manage.py createsuperuser\n   ```\n\
+  \n7. **Collect Static Files**\n   ```bash\n   python manage.py collectstatic\n   ```\n\n8. **Run Development\
+  \ Server**\n   ```bash\n   python manage.py runserver\n   ```\n\n## Docker Deployment\n\nBuild and run\
+  \ with Docker:\n```bash\ndocker build -t rtssh .\ndocker run -p 8000:8000 rtssh\n```\n\n## Using the\
+  \ Software\n\n1. **Upload File**: Upload the zip file containing the DICOM data that you wish to be\
+  \ processed\n2. **Wait for Processing**: Wait for the file to be uploaded and processed\n3. **Download\
+  \ Results**: Following this, the preprocessed file can be downloaded\n\n## Local Development Usage\n\
+  \nFor local development and testing:\n\n1. **Register/Login**: Create an account with email verification\n\
+  2. **Upload Files**: Upload DICOM RT structure sets as ZIP files\n3. **View Processing**: Monitor file\
+  \ processing status\n4. **Download Results**: Download harmonized structure sets\n5. **Manage Labels**:\
+  \ View and manage TG-263 label mappings\n\n## API Endpoints\n\nThe application provides REST API endpoints\
+  \ for:\n- TG-263 Data (`/api/tg263/`)\n- Label Mappings (`/api/label-mapping/`)\n\n## Database Migration\n\
+  \nFor production deployment, migrate from SQLite to PostgreSQL:\n\n1. Dump SQLite data:\n   ```bash\n\
+  \   python manage.py dumpdata > datadump.json\n   ```\n\n2. Configure PostgreSQL settings in `settings.py`\n\
+  3. Load data into PostgreSQL:\n   ```bash\n   python manage.py loaddata datadump.json\n   ```\n\n##\
+  \ Configuration\n\nKey settings in `harmonization/settings.py`:\n- `DEBUG`: Set to False for production\n\
+  - `ALLOWED_HOSTS`: Configure allowed domains\n- `CSRF_TRUSTED_ORIGINS`: Set trusted origins\n- `EMAIL_*`:\
+  \ Configure email settings for user verification\n\n## Contributing\n\n1. Fork the repository\n2. Create\
+  \ a feature branch\n3. Make your changes\n4. Add tests if applicable\n5. Submit a pull request\n\n##\
+  \ License\n\nThis project is licensed under the MIT License.\n\n## Support\n\nFor issues and questions,\
+  \ please create an issue in the project repository.\n\n\n[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19552137.svg)](https://doi.org/10.5281/zenodo.19552137)\n\
+  \n"

@@ -1,0 +1,137 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: RibaDiba/tumor-segmentation
+url: https://github.com/RibaDiba/tumor-segmentation
+platform: github
+description: Detectron2 instance segmentation pipeline for subcutaneous mouse tumors, RGB, depth map,
+  and RGD channel-fusion model variants trained on structured-light scanner data.
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-08T08:32:58Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Mouse Tumor Segmentation with Detectron2\n\n![Python](https://img.shields.io/badge/Python-3.9+-3776AB?logo=python&logoColor=white)\n\
+  ![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-EE4C2C?logo=pytorch&logoColor=white)\n![Detectron2](https://img.shields.io/badge/Detectron2-Mask_R--CNN-0064FF)\n\
+  ![OpenCV](https://img.shields.io/badge/OpenCV-4.x-5C3EE8?logo=opencv&logoColor=white)\n![Platform](https://img.shields.io/badge/Platform-Linux-FCC624?logo=linux&logoColor=black)\n\
+  ![HPC](https://img.shields.io/badge/HPC-SLURM%20%7C%20A100-76B900)\n\nThis repository contains the full\
+  \ pipeline for automated instance segmentation of subcutaneous mouse tumors using Detectron2 (Mask R-CNN).\
+  \ Data is sourced from Biopticon's TI-2 structured-light scanner. Three model variants are trained and\
+  \ evaluated: **RGB**, **Depth**, and **RGD** (Red-Green-Depth).\n\nThe RGD model replaces the blue channel\
+  \ of the texture image with a normalized depth map derived from the scanner's point cloud, producing\
+  \ the strongest overall segmentation results.\n\n---\n\n## Repository Structure\n\n| Path | Description\
+  \ |\n|------|-------------|\n| `configs/base.yaml` | Shared Detectron2 hyperparameters (LR schedule,\
+  \ ROI heads, dataloader) |\n| `configs/{rgb,depth,rgd}.yaml` | Per-modality overrides, inherit from\
+  \ `base.yaml` via `_BASE_` |\n| `requirements.txt` | Python dependencies |\n| `data/huggingface-repo/useable_data/`\
+  \ | Cleaned raw data (scanner triplets) |\n| `data/processed_data/{rgb,depth,rgd}/` | Preprocessed,\
+  \ split, and cached images + COCO JSON |\n| `data/testing/` | pytest suite validating data integrity\
+  \ before training |\n| `src/util/preprocessing/PreprocessingFunctions/functions.py` | Aggregates all\
+  \ preprocessing functions (`_io`, `_masks`, `_depth`, `_transforms`, `_splitting`, `_subset`) |\n| `src/util/preprocessing/TumorDataset/tumor_dataset.py`\
+  \ | `Dataset` class — wraps preprocessing and Detectron2 dataset registration |\n| `src/util/preprocessing/process_coco_json.py`\
+  \ | Converts binary masks to COCO-format JSON annotations |\n| `src/pipeline/trainer/trainer.py` | Custom\
+  \ `Trainer` subclass with hooks injected |\n| `src/pipeline/training_scripts/train.py` | Main training\
+  \ entry point |\n| `src/pipeline/training_scripts/train.sh` | Shell wrapper: runs pytest suite then\
+  \ `train.py` |\n| `src/pipeline/training_scripts/slurm/sbatch_scripts/` | SLURM job scripts for the\
+  \ Princeton Della cluster |\n| `src/pipeline/hooks/loss_hook.py` | Train + validation loss curves |\n\
+  | `src/pipeline/hooks/ap_hook.py` | AP / AP50 / AP75 tracked over training (validation set) |\n| `src/pipeline/hooks/iou_hook.py`\
+  \ | Per-image IoU counts tracked over training (validation set) |\n| `src/pipeline/hooks/iou_evaluator.py`\
+  \ | Custom `DatasetEvaluator` for per-image IoU |\n| `src/pipeline/hooks/ap_final_hook.py` | Final AP\
+  \ + IoU results on the test set after training |\n| `src/pipeline/hooks/outputs_hook.py` | Saves all\
+  \ model predictions as JSON (RLE-encoded masks) |\n| `src/pipeline/evaluation/cross_comparison/` | Cross-model\
+  \ failure analysis (RGB vs. Depth vs. RGD) |\n\n---\n\n## Installation & Setup\n\n```bash\ngit clone\
+  \ https://github.com/your-repository.git\ncd tumor-segmentation\npip install -e .            # installs\
+  \ deps + makes `Detectron2` and `preprocessing` importable\npip install -e \".[dev]\"     # plus pytest\
+  \ / black / ipykernel\n```\n\nThe editable install is required: it adds `src/pipeline/` and `src/util/preprocessing/`\
+  \ to your import path so the training scripts run from anywhere without `sys.path` hacks.\n\nDetectron2\
+  \ (and SAM, if needed) are not on PyPI and must be installed from source separately:\n\n```bash\npip\
+  \ install git+https://github.com/facebookresearch/detectron2.git\npip install git+https://github.com/facebookresearch/segment-anything.git\n\
+  ```\n\nAfter `pip install -e .`, the training entry point is available as a console script:\n\n```bash\n\
+  tumor-segmentation-train --model-name <name> --model-type <group> --modality rgb\n```\n\n…which is equivalent\
+  \ to `python3 src/pipeline/training_scripts/train.py …`.\n\nTraining was run on the **Princeton Della\
+  \ cluster** using NVIDIA A100 GPUs. The SLURM scripts under `src/pipeline/training_scripts/slurm/sbatch_scripts/`\
+  \ are configured for that environment — adjust `--account` and `--partition` as needed.\n\n---\n\n##\
+  \ Running the Pipeline\n\nThe pipeline has a few prerequisites that must be satisfied before training.\
+  \ In particular, the `processed_data/` directory — where cached, split data lives — is produced by the\
+  \ first training run with `--split-cache true`.\n\n### Initial Setup\n\nThe dataset is hosted as a HuggingFace\
+  \ dataset repository and is included here as a git submodule. On initial clone of this repository it\
+  \ will not be populated. The guide below sets up the HuggingFace submodule.\n\n> **Note on data access.**\
+  \ The dataset is currently gated behind HuggingFace authentication. If you do not have access, contact\
+  \ the maintainers. A public release with an open license is planned — see the [Data](#data) section.\n\
+  \n#### 1. Install `git lfs`\n\n```bash\ngit lfs install\n```\n\n#### 2. Authenticate with HuggingFace\n\
+  \nGenerate a private access token from your HuggingFace account ([instructions](https://huggingface.co/docs/hub/en/security-tokens)),\
+  \ install the CLI, and log in:\n\n```bash\npip install -U \"huggingface_hub[cli]\"\nhuggingface-cli\
+  \ login\n```\n\n#### 3. Initialize the submodule\n\n```bash\ngit submodule update --init --recursive\n\
+  ```\n\n### Launch Training\n\nThe recommended entry point is the `train.sh` wrapper, which runs the\
+  \ pytest data-validation suite and then calls `train.py`:\n\n```bash\ncd src/pipeline/training_scripts\n\
+  \n./train.sh \\\n  --name <model-name> \\\n  --model_type <output-subdir> \\\n  --iter <num-iterations>\
+  \ \\\n  --modality rgb \\      # one of: rgb | depth | rgd\n  --split-cache         # pass on first\
+  \ run to preprocess and cache data\n```\n\n#### `train.sh` arguments\n\n| Argument | Description |\n\
+  |----------|-------------|\n| `--name` | Model name, used for output directories |\n| `--model_type`\
+  \ | Subdirectory label for saved outputs (e.g. `rgb`, `depth`, `rgd`) |\n| `--iter` | Number of training\
+  \ iterations |\n| `--modality` | Image modality to train on (`rgb`, `depth`, or `rgd`) — required |\n\
+  | `--split-cache` | Preprocess, split (70/10/20), and cache data before training (first run only) |\n\
+  | `--augmentations` | Enable augmentation pipeline |\n| `--flip_prob` | Probability of horizontal flip\
+  \ |\n| `--rotate-prob` | Probability of rotation |\n| `--rotate-degrees` | Maximum +/- rotation angle\
+  \ in degrees |\n| `--target` | Target image count post-augmentation |\n| `--root-path` | Path prefix\
+  \ prepended to `train.py` and the pytest suite (default: `./`) |\n| `--skip-tests` | Skip the pytest\
+  \ validation suite |\n\nAll boolean flags are bare switches — pass `--split-cache` to enable, omit it\
+  \ to disable. (The legacy `--rgb true` / `--depth true` / `--rgd true` triplet has been replaced by\
+  \ a single `--modality` choice.)\n\n#### `train.py` CLI (direct invocation)\n\n`train.sh` is a thin\
+  \ wrapper that translates its named flags into the keyword arguments expected by `train.py`. If you\
+  \ want to call the Python entry point directly, the signature is:\n\n```bash\npython3 train.py --model-name\
+  \ <name> --model-type <group> --modality {rgb,depth,rgd} [options] [-- KEY VALUE ...]\n```\n\n| Option\
+  \ | Description |\n|--------|-------------|\n| `--model-name` | Required. Written into `cfg.MODELNAME`\
+  \ and used in output paths. |\n| `--model-type` | Required. Experiment group / output subdirectory (`cfg.MODELTYPE`).\
+  \ |\n| `--modality` | Required. One of `rgb`, `depth`, `rgd`. |\n| `--config-dir` | Directory containing\
+  \ `base.yaml` and `<modality>.yaml`. Defaults to `configs/`. |\n| `--split-cache` | Run preprocess →\
+  \ split → cache before training |\n| `--augmentations` | Enable augmentations during preprocessing |\n\
+  | `--flip_prob`, `--rotate_prob`, `--rotate_degrees`, `--target` | Augmentation parameters |\n\nAny\
+  \ positional arguments after `--` are passed straight to `cfg.merge_from_list`, so e.g. `-- SOLVER.MAX_ITER\
+  \ 10000 SOLVER.BASE_LR 0.0001` overrides those fields. CLI overrides win over the YAML hierarchy.\n\n\
+  ## Configuration\n\nConfigs are layered (later wins):\n\n1. Detectron2 model zoo defaults — Mask R-CNN\
+  \ R-101 FPN 3x\n2. `configs/base.yaml` — project-wide overrides (LR schedule, ROI heads, dataloader)\n\
+  3. `configs/{rgb,depth,rgd}.yaml` — per-modality overrides, chain via `_BASE_: base.yaml`\n4. CLI: `./train.sh\
+  \ ... -- SOLVER.BASE_LR 0.001`\n\nEvery run snapshots its fully merged config to `models/<model_type>/<model_name>/run_*/config_used.yaml`\
+  \ — so a reviewer reading a checkpoint never has to guess what hyperparameters produced it.\n\n## Output\
+  \ layout\n\n```\nmodels/<model_type>/<model_name>/\n  run_YYYYMMDD-HHMM/\n    config_used.yaml     \
+  \    # fully merged config (every key)\n    model_final.pth          # weights\n    metrics.json   \
+  \          # Detectron2 default\n    events.out.tfevents.*    # TensorBoard scalars\n  latest -> run_YYYYMMDD-HHMM/\
+  \   # symlink to the most recent run\n\nsrc/pipeline/slurm_output/<model_type>/<model_name>/run_YYYYMMDD-HHMM/\n\
+  \  loss_plots/  AP_Fig/  IoU_fig/  outputs/  IoU_AP_Final/\n```\n\nEach invocation creates a fresh `run_<timestamp>/`\
+  \ directory, so reruns never silently overwrite earlier weights.\n\n## Experiment tracking\n\nTensorBoard\
+  \ is wired in by default — `total_loss`, `loss_mask`, `AP`, `AP50`, `AP75`, and the IoU buckets are\
+  \ written by Detectron2's event storage:\n\n```bash\ntensorboard --logdir models/\n```\n\nWeights &\
+  \ Biases is opt-in. Set `WANDB_PROJECT` before launching and a `WandbWriter` is appended to the writer\
+  \ list automatically:\n\n```bash\npip install wandb && wandb login\nWANDB_PROJECT=tumor-seg ./train.sh\
+  \ --name foo --model_type rgb --iter 5000 --modality rgb\n```\n\n---\n\n## Reproducing the Paper\n\n\
+  > **Status:** results in this README are produced by the commands below. Update the seed, model checkpoints,\
+  \ and runtime numbers if you change the recipe.\n\nThe published numbers were produced with:\n\n| Artifact\
+  \ | Command | Notes |\n|----------|---------|-------|\n| Table 1 (RGB / Depth / RGD AP, AP50, AP75,\
+  \ IoU) | `./train.sh --name rgb_final --model_type rgb --iter <N> --modality rgb --split-cache` (and\
+  \ analogously `--modality depth` / `--modality rgd`) | Final metrics are logged by `ap_final_hook` under\
+  \ `src/pipeline/slurm_output/<model_type>/<model_name>/run_*/IoU_AP_Final/`. |\n| Figure 3 (training\
+  \ curves) | Loss / AP / IoU curves are written by `LossHook`, `APHook`, `IoUHook` during the same runs\
+  \ above. | Plots are produced by the notebooks under `src/util/plotting/` (or equivalent) — see commit\
+  \ history (`ef7bbf7`, `de2dc51`) for the most recent plot recipe. |\n| Cross-model failure analysis\
+  \ | `src/pipeline/evaluation/cross_comparison/` | Run after all three models are trained. |\n\n**Compute.**\
+  \ All training runs were performed on a single NVIDIA A100 (40 GB) on the Princeton Della cluster.\n\
+  \n**Seed.** Seeds are currently inherited from Detectron2's defaults — exact reproduction of paper numbers\
+  \ requires fixing the seed in `cfg` before broad release (tracked as TODO).\n\n**Expected runtime.**\
+  \ _TBD — fill in once a clean run has been timed end-to-end._\n\n---\n\n## Results\n\n> _Numbers below\
+  \ are placeholders. Replace with the final published values and link to the paper / preprint once available._\n\
+  \n| Model | AP | AP50 | AP75 | Mean per-image IoU |\n|-------|----|------|------|--------------------|\n\
+  | RGB   | —  | —    | —    | —                  |\n| Depth | —  | —    | —    | —                  |\n\
+  | RGD   | —  | —    | —    | —                  |\n\nPaper / preprint: _TBD_.\n\n---\n\n## Data\n\n\
+  The dataset is hosted on HuggingFace at `data/huggingface-repo/` (added as a git submodule). See [`data/README.md`](data/README.md)\
+  \ for the per-directory breakdown.\n\n| Field | Value |\n|-------|-------|\n| Subjects | Mice (subcutaneous\
+  \ tumor model) |\n| Acquisition device | Biopticon TI-2 structured-light scanner (RGB texture + depth\
+  \ from point cloud) |\n| Modalities | RGB, depth, RGD (red+green from texture, blue replaced by normalized\
+  \ depth) |\n| Splits | 70 / 10 / 20 train / val / test, produced by `Dataset.split_train_val_te"

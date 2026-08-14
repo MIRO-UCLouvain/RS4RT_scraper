@@ -1,0 +1,94 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: NuistSMS/SDPT
+url: https://github.com/NuistSMS/SDPT
+platform: github
+description: Sequential Directional Prior Transfer for Multi-View 2.5D Brain Tumor Segmentation in Multimodal
+  MRI
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-15T11:41:10Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# BraTS Multi-View GMM-Guided Segmentation Project\n\nThis project is based on `MISSFormer`\
+  \ and is designed for BraTS brain tumor segmentation experiments. It mainly predicts the following three\
+  \ regions:\n\n- **WT (Whole Tumor)**: the complete tumor region\n- **TC (Tumor Core)**: the tumor core\
+  \ region\n- **ET (Enhancing Tumor)**: the enhancing tumor region\n\nThe project contains three progressive\
+  \ research directions:\n\n1. **Direction 1: `trainfirst.py`** — Baseline direction / Phase 1 multi-view\
+  \ adapter fine-tuning\n2. **Direction 2: `trianGMM.py`** — Single-view GMM-guided training, referred\
+  \ to as `trainGMM` in this document\n3. **Direction 3: `trainSAGGMM.py`** — Sagittal training guided\
+  \ by dual Axial and Coronal GMM priors\n\n> **Note:** The actual filename of the second training script\
+  \ is `trianGMM.py`. The word `trian` reflects the current spelling in the source code. Please use the\
+  \ actual filename when running the script.\n\n---\n\n## 1. Research Directions\n\n### Direction 1: `trainfirst.py`\n\
+  \nThis is the first research direction of the project. It is mainly used to establish a stable multi-view\
+  \ segmentation baseline and fine-tune the Adapter, segmentation head, and selected Decoder layers for\
+  \ a specified view.\n\nMain features:\n\n- Supports the `axial`, `coronal`, and `sagittal` views;\n\
+  - Uses a region-decoupled loss combining BCE and Dice losses;\n- Applies balanced weights to the WT,\
+  \ TC, and ET regions;\n- Freezes most of the backbone network by default and trains only the Adapter\
+  \ of the current view, the segmentation head, and the top Decoder layers;\n- Optionally enables single-branch\
+  \ GMM feature guidance with `--use_gmm 1`;\n- Uses gradient accumulation, making it suitable for GPU\
+  \ environments with limited memory;\n- Saves the best model according to the mean Dice score on the\
+  \ validation set.\n\nThe mapping between views and model direction indices is shown below:\n\n| View\
+  \ | `direction` Index |\n|---|---:|\n| Axial | 0 |\n| Coronal | 1 |\n| Sagittal | 2 |\n\nThis direction\
+  \ can be used as an initialization model or baseline experiment for subsequent GMM-based experiments.\n\
+  \n---\n\n### Direction 2: `trianGMM.py`\n\nThis is the second research direction. It introduces GMM\
+  \ priors on top of existing model weights and further trains a single target view.\n\nMain features:\n\
+  \n- Pre-caches GMM-generated features in a GPU feature pool to reduce repeated sampling overhead during\
+  \ training;\n- Supports two sets of GMM dictionaries, such as the `0.5` and `0.8` versions;\n- Switches\
+  \ between different GMM dictionaries before and after `switch_epoch`;\n- Jointly optimizes the main\
+  \ segmentation loss, auxiliary-head loss, and GMM alignment loss;\n- Freezes the backbone network and\
+  \ mainly trains the Adapter, Decoder, GMM Fusion module, View Translator, and segmentation head;\n-\
+  \ Saves the Top-15 models according to the mean Dice score of WT, TC, and ET.\n\nIn the default configuration,\
+  \ `plant='coronal'`, but the script ends with the following function call:\n\n```python\ntrainer_brats19(args,\
+  \ net, current_dir=2)\n````\n\nAccording to the direction indices used in this project, Coronal should\
+  \ correspond to `current_dir=1`, while Sagittal corresponds to `current_dir=2`.\n\nTherefore, before\
+  \ running the second research direction, please check and modify this value according to the actual\
+  \ target view of the experiment.\n\n---\n\n### Direction 3: `trainSAGGMM.py`\n\nThis is the third research\
+  \ direction, specifically designed for Sagittal-view training. It simultaneously uses GMM priors from\
+  \ the Axial and Coronal views to provide cross-view knowledge for Sagittal segmentation.\n\nMain features:\n\
+  \n* Fixes the target view to Sagittal and uses `current_dir=2`;\n* Loads the Axial and Coronal GMM dictionaries\
+  \ separately;\n* Randomly selects either the Axial or Coronal GMM as the teacher prior for each batch;\n\
+  * Supports both the `0.5` and `0.8` GMM groups and switches between them using `switch_epoch`;\n* Jointly\
+  \ optimizes the main segmentation loss, auxiliary-head loss, and GMM alignment loss;\n* Saves the Top-15\
+  \ models with the best validation mean Dice scores.\n\nThis direction can be interpreted as using the\
+  \ learned feature distributions from the Axial and Coronal views to assist cross-view transfer for the\
+  \ relatively more challenging Sagittal view.\n\n---\n\n## 2. Recommended Experimental Workflow\n\nIt\
+  \ is recommended to conduct the experiments in the following order:\n\n```text\nDirection 1: trainfirst.py\n\
+  \        ↓\nTrain baseline view-specific models or obtain initial weights for fine-tuning\n        ↓\n\
+  Direction 2: trianGMM.py\n        ↓\nIntroduce GMM priors into a single view and strengthen feature\
+  \ alignment\n        ↓\nDirection 3: trainSAGGMM.py\n        ↓\nUse dual Axial and Coronal GMM priors\
+  \ to guide Sagittal training\n        ↓\ntest.py\n        ↓\nLoad the three view-specific models for\
+  \ volumetric inference and evaluation\n```\n\n---\n\n## 3. Project Structure\n\n```text\ncode/\n├──\
+  \ README.md\n├── trainfirst.py              # Direction 1: baseline multi-view training with optional\
+  \ single-branch GMM\n├── trianGMM.py                # Direction 2: single-view GMM-guided training\n\
+  ├── trainSAGGMM.py             # Direction 3: Sagittal training with dual GMM guidance\n├── test.py\
+  \                    # Three-view model inference and evaluation\n├── networks/\n│   └── YXSformer.py\
+  \           # MISSFormer, Adapter, and GMM Fusion networks\n└── datasets/\n    ├── dataset_brats19.py\
+  \     # BraTS data loading and augmentation\n    ├── dataset_synapse.py\n    ├── Jdataset.py\n    └──\
+  \ README.md\n```\n\n---\n\n## 4. Environment Setup\n\nIt is recommended to first install a PyTorch version\
+  \ compatible with the CUDA version available on your system, and then install the remaining dependencies.\n\
+  \nMain dependencies include:\n\n```text\nPython\nPyTorch\nTorchVision\nNumPy\nSciPy\nscikit-image\n\
+  MedPy\nMONAI\neinops\njoblib\nPyYAML\ntensorboardX\ntqdm\nh5py\nimgaug\n```\n\nExample command for installing\
+  \ the remaining Python packages:\n\n```bash\npip install numpy scipy scikit-image medpy monai einops\
+  \ joblib pyyaml tensorboardX tqdm h5py imgaug\n```\n\n---\n\n## 5. Data Preparation\n\nThe `dataset_brats19.py`\
+  \ script expects each case file to follow this naming convention:\n\n```text\n<case_directory>/<case_name>_pkl_ui8f32b0.pkl\n\
+  ```\n\nFor example:\n\n```text\nBraTS_DATA/\n└── HGG/\n    └── BraTS19_2013_0_1/\n        └── BraTS19_2013_0_1_pkl_ui8f32b0.pkl\n\
+  ```\n\nEach `.pkl` file must be readable using the following code:\n\n```python\nimage, label = pickle.load(file)\n\
+  ```\n\nExpected data:\n\n* `image`: four-channel MRI volume, usually with the shape `[H, W, D, 4]`;\n\
+  * `label`: three-dimensional segmentation label with the shape `[H, W, D]`;\n* The data-processing pipeline\
+  \ performs padding, center cropping, random flipping, random rotation, Gamma augmentation, and multi-view\
+  \ slicing;\n* The BraTS label value `4` is remapped to `3`;\n* The center-crop size is `192 × 192 ×\
+  \ 192`.\n\nEach line of the data list file should contain a relative path to one case, for example:\n\
+  \n```text\nHGG/BraTS19_2013_0_1\nHGG/BraTS19_2013_1_1\nLGG/BraTS19_2013_6_1\n```\n\n---\n\n## 6. Notes\n\
+  \nThis README was prepared based on the training, data-loading, and testing scripts included in the\
+  \ current code package.\n\nBefore running the experiments, please:\n\n* Replace all hard-coded Windows\
+  \ or Linux absolute paths in the scripts with valid local paths;\n* Add any missing network files;\n\
+  * Prepare the required data list files;\n* Provide the pretrained model weights;\n* Provide the required\
+  \ GMM dictionaries.\n\n```\n```\n"

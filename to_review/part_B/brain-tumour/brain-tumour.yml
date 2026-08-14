@@ -1,0 +1,100 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: aryaanswain-13/Brain-Tumour
+url: https://github.com/aryaanswain-13/Brain-Tumour
+platform: github
+description: 3D Brain Tumor segmentation (SwinUNETR) and multi-task molecular/clinical marker classification
+  (IDH, WHO CNS Grade, MGMT) using confidence-gated morphological feature fusion on the UCSF-PDGM dataset.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-23T19:45:38Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+readme_excerpt: "# 3D Brain Tumor Segmentation and Gated-Fusion Multi-Task Classification\n\nThis repository\
+  \ contains a clean, modular refactoring of the medical imaging pipeline developed for the **UCSF-PDGM-v5\
+  \ dataset**. The system utilizes a fine-tuned **3D SwinUNETR** model as a feature extractor to feed\
+  \ a multi-task classifier that predicts molecular and histopathological markers of brain tumors (IDH\
+  \ Mutation Status, WHO CNS Grade, and MGMT Promoter Methylation).\n\n---\n\n## \U0001F680 Pipeline Overview\n\
+  \n```\n                          +-----------------------------------+\n                          |\
+  \      Raw 3D Modal NIfTI Scans      |\n                          |  (T1, T1c, T2, FLAIR) + Segmentation|\n\
+  \                          +-----------------+-----------------+\n                                 \
+  \           |\n                                            v\n                          +-----------------------------------+\n\
+  \                          |   MONAI Normalize & Preprocessing  |\n                          +-----------------+-----------------+\n\
+  \                                            |\n                                            v\n    \
+  \                      +-----------------------------------+\n                          |     3D SwinUNETR\
+  \ Segmentation     |\n                          +--------+-----------------+--------+\n            \
+  \                       |                 |\n                                   |                 v\n\
+  \                                   |      +---------------------+\n                               \
+  \    |      | Test-Time Augment   |\n                                   |      | (TTA) Predictions \
+  \  |\n                                   |      +----------+----------+\n                          \
+  \         v                 |\n                         +-------------------+       v\n            \
+  \             | Stage 4 Bottleneck| +-----------+\n                         | Encoder Features  | |Confidence\
+  \ |\n                         |   (GAP) [768]     | | Map [1]   |\n                         +---------+---------+\
+  \ +-----+-----+\n                                   |                 |\n                          \
+  \         |    +------------+\n                                   v    v\n                    +-----------------------------+\n\
+  \                    |   Confidence-Gated Fusion   | <----+ Clamped Morphology\n                   \
+  \ |  (Ablation Modes A/B/C/D)   |      |  Features [8]\n                    +--------------+--------------+\
+  \      |\n                                   |                     |\n                             \
+  \      v                     |\n                         +-------------------+           |\n       \
+  \                  |   Joint Fused     |           |\n                         | Representation    |\
+  \           |\n                         +---------+---------+           |\n                        \
+  \           |                     |\n                                   v                     |\n  \
+  \                       +-------------------+           |\n                         | Multi-Task Head\
+  \   |-----------+\n                         | (IDH/Grade/MGMT)  |\n                         +-------------------+\n\
+  ```\n\n1. **3D Modal Image Pipeline**: Re-orient scans to RAS coordinate space, interpolate voxels to\
+  \ isotropic spacing ($1.0 \\text{ mm}^3$), normalize intensities, crop background regions, and pad/crop\
+  \ to $128 \\times 128 \\times 128$ dimensions.\n2. **SwinUNETR Segmentation**: Segments tumors into\
+  \ three tumor sub-regions: Whole Tumor (WT), Tumor Core (TC), and Enhancing Tumor (ET).\n3. **Bottleneck\
+  \ Feature Extraction**: Extracts a $768$-dimensional latent vector from the Stage 4 encoder bottleneck\
+  \ of SwinUNETR via global average pooling.\n4. **Morphological Characterization**: Computes 3D shape\
+  \ descriptors: volume sizes, boundary surface areas, compactness, sphericity, and edema-to-core ratios.\n\
+  5. **Confidence Gated Fusion**: A gating module modulates joint features based on prediction confidence\
+  \ scoring maps and spatial morphological parameters.\n6. **Task Classification Head**: Maps the fused\
+  \ representations through feed-forward heads predicting IDH mutation, WHO grade, and MGMT promoter status.\n\
+  \n---\n\n## \U0001F4C1 Repository Structure\n\n```\n├── README.md                 # Project details\
+  \ & setup documentation\n├── requirements.txt          # Python dependencies\n├── .gitignore       \
+  \         # Ignoring dataset directories, caches, and weights\n├── configs/\n│   └── config.py     \
+  \        # Hyper-parameters and path variables\n├── src/\n│   ├── data/\n│   │   ├── dataset.py    \
+  \    # Custom datasets (SegDataset, CachedDataset) & splits\n│   │   └── transforms.py     # 3D MONAI\
+  \ preprocess / augmentation pipelines\n│   ├── models/\n│   │   ├── backbone.py       # SwinUNETR loaders,\
+  \ feature extraction, and TTA functions\n│   │   ├── fusion.py         # ConfidenceGatedFusion module\
+  \ supporting gating ablation\n│   │   └── classifier.py     # Multi-task BrainTumorClassifier head\n\
+  │   ├── training/\n│   │   ├── losses.py         # Dice Loss & Class-weighted classification losses\n\
+  │   │   ├── finetune.py       # SwinUNETR segmentation fine-tuning script\n│   │   └── train_clf.py\
+  \      # Classifier head training script with early stopping\n│   ├── evaluation/\n│   │   ├── metrics.py\
+  \        # Segmentation (Dice, IoU, HD95) & classification metrics\n│   │   └── evaluator.py      #\
+  \ Evaluators, Gating Ablations, and 5-Fold Cross Validation\n│   └── utils/\n│       └── helpers.py\
+  \        # Seed controls & morphology calculation utilities\n├── scripts/\n│   ├── run_finetune.py \
+  \      # CLI segmentation fine-tuning script\n│   ├── run_precompute.py     # CLI feature cache generation\
+  \ script\n│   └── run_pipeline.py       # CLI classification training, ablation & evaluation pipeline\n\
+  └── notebooks/\n    └── brain_tumor_pipeline.ipynb # Visual walkthrough notebook replicating the pipeline\n\
+  ```\n\n---\n\n## ⚙️ Setup and Installation\n\n1. **Clone the repository**:\n   ```bash\n   git clone\
+  \ <repository_url>\n   cd brain-tumor-gated-fusion\n   ```\n\n2. **Install dependencies**:\n   ```bash\n\
+  \   pip install -r requirements.txt\n   ```\n\n3. **Data Requirements**:\n   Place the UCSF-PDGM dataset\
+  \ folder and metadata CSV inside the project directories (or configure paths inside `configs/config.py`):\n\
+  \   * Default metadata file: `configs/config.py` targets `data/UCSF-PDGM-metadata_v5.csv`\n   * Default\
+  \ NIfTI directory: `configs/config.py` targets `data/UCSF-PDGM-v5/`\n\n---\n\n## \U0001F3C3 Running\
+  \ the Code\n\n### 1. Fine-tuning the Segmentation Backbone\nTo run fine-tuning on the SwinUNETR late\
+  \ encoder/decoder stages:\n```bash\npython scripts/run_finetune.py --epochs 100 --lr 1e-4\n```\n\n###\
+  \ 2. Precomputing Feature Cache (Recommended)\nPrecomputing latent representations and shape metrics\
+  \ reduces classifier training time to seconds by avoiding redundant 3D network execution.\n```bash\n\
+  python scripts/run_precompute.py --tta_runs 5\n```\nThis builds:\n* `feature_cache_3d_ucsf_finetuned/`\
+  \ (full cache including 3D maps)\n* `feature_cache_slim_ucsf/` (lightweight feature descriptors ~1.5\
+  \ MB total for 487 patients)\n\n### 3. Training & Evaluating Classifier\nTo train classifier variants\
+  \ across multiple seeds, evaluate gating ablations, run 5-Fold Cross Validation, and execute McNemar's\
+  \ tests:\n```bash\npython scripts/run_pipeline.py --epochs 60 --seeds \"0,1,2,3,4\"\n```\n\n---\n\n\
+  ## \U0001F4CA Summary of Baseline Results\n\n### 3D Segmentation Metrics (Test Set)\n* **Whole Tumor\
+  \ (WT)**: Dice = $0.859 \\pm 0.183$ | IoU = $0.783 \\pm 0.196$ | HD95 = $9.0 \\pm 13.5 \\text{ mm}$\n\
+  * **Tumor Core (TC)**: Dice = $0.758 \\pm 0.348$ | IoU = $0.707 \\pm 0.345$ | HD95 = $6.3 \\pm 10.6\
+  \ \\text{ mm}$\n* **Enhancing Tumor (ET)**: Dice = $0.727 \\pm 0.335$ | IoU = $0.654 \\pm 0.317$ | HD95\
+  \ = $5.7 \\pm 10.2 \\text{ mm}$\n\n### Classification Performance (Aggregate Mean Across 5 Seeds)\n\
+  * **IDH Status Mutation**: AUC = **$0.917 \\pm 0.006$** (Accuracy = $0.889$)\n* **WHO CNS Grade**: AUC\
+  \ = **$0.976 \\pm 0.001$** (Accuracy = $0.922$)\n* **MGMT Promoter Methylation**: AUC = **$0.427 \\\
+  pm 0.006$** (Accuracy = $0.532$)\n"

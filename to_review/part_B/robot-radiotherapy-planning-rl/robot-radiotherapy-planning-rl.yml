@@ -1,0 +1,42 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: lorocks/Robot-Radiotherapy-Planning-RL
+url: https://github.com/lorocks/Robot-Radiotherapy-Planning-RL
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2025-02-07T02:10:54Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# RL Training for a Unified Framework for Robotic Radiotherapy Planning\n\nThis is a\
+  \ repo that trains an Reinforcement Learning agent using a robot in RViz where the enviornment is a\
+  \ rendering of a point cloud.\nThe observation is the 2D view of the point cloud taken from a camera\
+  \ attached on the robot end-effector.\n\n```bash\n  ros2 launch lab_simulation_gazebo lab_sim_moveit.launch.py\
+  \ ur_type:=ur3e description_package:=lab_description description_file:=lab.urdf.xacro moveit_config_package:=lab_moveit_config\
+  \ moveit_config_file:=lab.srdf.xacro runtime_config_package:=lab_simulation_gazebo launch_rviz:=false\n\
+  \n  ros2 launch launch_robot lab_sim_moveit.launch.py ur_type:=ur3e description_package:=launch_robot\
+  \ description_file:=lab.urdf.xacro moveit_config_package:=robot_moveit_config moveit_config_file:=lab.srdf.xacro\n\
+  ```\n\n\n## Rewards\nThe reward for actions performed is given based on the distance of the centroid\
+  \ of the green object from the center of the image. There is a special condition where if the green\
+  \ object disappears from the image, a negative reward is given.\n\nReward tiers are as follows,\n\n\
+  $$R(s) = \\begin{cases}  \n  \\frac{1}{D(g) + \\epsilon}, & \\text{when green is present in the image}\\\
+  \\\n  \\frac{1}{\\epsilon} + 1, & \\text{when $D(g) = 0$ }\\\\\n  -1, & \\text{when green disappears\
+  \ from the image}\n\\end{cases}$$\n\nHere, D(g) is the distance between the centroid of the green object\
+  \ and the center of the camera image and E is a small number where 0 < E < 1.\n\nCurently the rewards\
+  \ do not take into account the depth from the required target.\nFor depth, the camera needs to be outside\
+  \ the workspace, and thus the distance metric for this varies based on the random configuration of items\
+  \ generated in the environment.\n\n\n## Question to be answered\nHow many features and depth of convolution\
+  \ is required for the network to learn depth and color at the same time\n\nTraining types\n - train\
+  \ purely using Gazebo\n - train purely using RViZ\n\nMoveit should work for both, just take image and\
+  \ output change in position values and change in orientation then reward it.\n\n\n## Current Problems\n\
+  Need to edit launch file to work so that RViz can launch by itself with controller working properly.\
+  \ Works only if gazebo is launched right now. (or just use gazebo for training)\n"

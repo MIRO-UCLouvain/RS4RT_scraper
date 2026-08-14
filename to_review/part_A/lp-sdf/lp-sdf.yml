@@ -1,0 +1,60 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: yunqiu-wang/LP-SDF
+url: https://github.com/yunqiu-wang/LP-SDF
+platform: github
+description: Label-preserving signed-distance-guided component filtering for multi-structure dental CBCT
+  segmentation
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-14T15:55:05Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# LP-SDF: Label-Preserving SDF-Guided Component Filtering\n\nThis repository provides\
+  \ the PyTorch implementation and reproducibility code\nfor LP-SDF on the ToothFairy2 dental CBCT dataset.\
+  \ A deterministic 3-D network\npredicts a binary foreground signed distance field (SDF), which is used\
+  \ to\nretain or remove complete class-wise components from an nnU-Net segmentation.\nRetained voxels\
+  \ keep their original nnU-Net labels and boundaries.\n\n## Environment\n\nPython 3.10 or newer is required.\
+  \ Install the PyTorch build appropriate for the\nlocal CUDA driver, followed by the remaining dependencies:\n\
+  \n```bash\nconda create -n lpsdf python=3.10 -y\nconda activate lpsdf\npython -m pip install -r requirements.txt\n\
+  python -m pip install -e . --no-deps\npytest -q\n```\n\nThe exact environment used for the reported\
+  \ experiments is listed in\n`reference_results/software_versions.json`.\n\n## Dataset\n\nDownload ToothFairy2\
+  \ from an official distribution page. The dataset is not\nredistributed in this repository.\n\n- <https://ditto.ing.unimore.it/toothfairy2/>\n\
+  - <https://toothfairy2.grand-challenge.org/dataset/>\n\nSet a writable workspace and point `TOOTHFAIRY2_DIR`\
+  \ to the directory that\ndirectly contains `dataset.json`, `imagesTr`, and `labelsTr`:\n\n```bash\n\
+  export PAPER804_ROOT=/path/to/lpsdf_workspace\nexport TOOTHFAIRY2_DIR=/path/to/ToothFairy2_Dataset/Dataset112_ToothFairy2\n\
+  ```\n\nExpected source-data layout:\n\n```text\n$TOOTHFAIRY2_DIR/\n  dataset.json\n  imagesTr/<case_id>_0000.mha\n\
+  \  labelsTr/<case_id>.mha\n```\n\nLP-SDF is a second-stage method and also requires one out-of-fold\
+  \ nnU-Net\nmulticlass prediction per case. Predictions must share the image/label voxel\ngrid and should\
+  \ be arranged as:\n\n```text\n$PAPER804_ROOT/coarse_predictions/\n  fold0/<case_id>.mha\n  fold1/<case_id>.mha\n\
+  \  fold2/<case_id>.mha\n  fold3/<case_id>.mha\n  fold4/<case_id>.mha\n```\n\nCreate `$PAPER804_ROOT/case_index.csv`\
+  \ with one row per case:\n\n```csv\ncase_id,fold,image,coarse,ground_truth\nToothFairy2F_001,0,/path/to/imagesTr/ToothFairy2F_001_0000.mha,/path/to/coarse_predictions/fold0/ToothFairy2F_001.mha,/path/to/labelsTr/ToothFairy2F_001.mha\n\
+  ```\n\nPaths may also point to `.npy`, `.npz`, `.nii`, or `.nii.gz`. See\n`configs/cache_index.example.csv`\
+  \ and `docs/data_schema.md` for details.\n\n## Reproduction\n\nPrepare and validate the fold-separated\
+  \ cache:\n\n```bash\npaper804 prepare-cache \\\n  --manifest \"$PAPER804_ROOT/case_index.csv\" \\\n\
+  \  --dataset-json \"$TOOTHFAIRY2_DIR/dataset.json\" \\\n  --output-dir \"$PAPER804_ROOT/coarse_cache\"\
+  \npaper804 validate-cache --cache-root \"$PAPER804_ROOT/coarse_cache\"\n```\n\nTrain, predict, and evaluate\
+  \ one fold:\n\n```bash\npaper804 train-refiner \\\n  --cache-root \"$PAPER804_ROOT/coarse_cache\" \\\
+  \n  --output-dir \"$PAPER804_ROOT/checkpoints/fold0\" \\\n  --fold 0 --seed 42 --config configs/lpsdf_refiner.json\n\
+  \npaper804 predict-refiner \\\n  --cache-root \"$PAPER804_ROOT/coarse_cache\" \\\n  --checkpoint \"\
+  $PAPER804_ROOT/checkpoints/fold0/checkpoint.pt\" \\\n  --output-dir \"$PAPER804_ROOT/predictions\" \\\
+  \n  --fold 0 --seed 804\n\npaper804 evaluate-label-preserving \\\n  --cache-root \"$PAPER804_ROOT/coarse_cache\"\
+  \ \\\n  --prediction-dir \"$PAPER804_ROOT/predictions/fold0\" \\\n  --output-dir \"$PAPER804_ROOT/evaluation/fold0\"\
+  \ \\\n  --fold 0 --sdf-threshold 1.0 --component-threshold 0.50\n```\n\nThe reported thresholds were\
+  \ selected on fold 0 and then applied unchanged to\nfolds 1--4. Select thresholds again when changing\
+  \ the split or first-stage\nmodel. Method and evaluation details are provided in `docs/method.md` and\n\
+  `docs/evaluation_protocol.md`; reusable Slurm templates are under\n`slurm_templates/`.\n\n## Reference\
+  \ Results\n\n`reference_results/` contains aggregate and fold-level tables used in the\nmanuscript.\
+  \ It does not contain CBCT volumes, labels, caches, checkpoints,\ncase identifiers, or case-level predictions.\n\
+  \nLP-SDF improves the unfiltered nnU-Net output in the reported setting, while\ntuned class-wise component-size\
+  \ filtering gives stronger aggregate results.\nThe code is intended for research reproducibility and\
+  \ is not a clinical\ndevice.\n\n## License\n\nThe project is released under the Apache-2.0 license.\
+  \ Third-party software and\ndatasets remain subject to their original licenses and terms.\n"

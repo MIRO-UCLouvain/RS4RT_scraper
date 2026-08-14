@@ -1,0 +1,134 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ahmedhassayoune/tumor-analysis
+url: https://github.com/ahmedhassayoune/tumor-analysis
+platform: github
+description: Tracking changes in a tumor using ITK/VTK libraries
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2024-10-15T21:00:47Z'
+image_source: https://raw.githubusercontent.com/ahmedhassayoune/tumor-analysis/HEAD/images/versor_rigid_3d_1.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# ITK VTK PROJECT\n\n## AUTHORS\n\nValentine Tcheou\n\nDiane Bellarbi Salah\n\nAhmed\
+  \ Hassayoune\n\n## ABOUT\n\nThe aim of this project is to carry out an analysis of changes in a tumor.\n\
+  \nThe project is divided into 3 parts: registration, segmentation and visualization.\n\n## SETUP\n\n\
+  ### Clone the repository\n\n```\n$ git clone https://github.com/ahmedhassayoune/itk-vtk.git\n$ cd itk-vtk\n\
+  ```\n\n### Create a Python Virtual Environment and activate it\n\n```\n$ python -m venv ./venv\n$ source\
+  \ ./venv/bin/activate\n```\n\n### Install requirements\n\n`requirements.txt` specify the dependencies\
+  \ required for the project and their versions.\n\nWith the virtual environment activated, install the\
+  \ project dependencies using `pip`.\n\n```\n$ pip install -r requirements.txt\n```\n\n_If you have issues\
+  \ with certain package's version use the following command instead :_\n\n```\n$ pip install itk vtk\
+  \ numpy\n```\n\n### Run the project\n\n```\n$ python main.py\n```\n\n## REGISTRATION\n\n[Registration](https://itk.org/ITKSoftwareGuide/html/Book2/ITKSoftwareGuide-Book2ch3.html)\
+  \ is treated as an optimization problem with the goal of finding the spatial mapping that will bring\
+  \ the moving image into alignment with the fixed image.\n\nWe used [mean squares](https://itk.org/Doxygen/html/classitk_1_1MeanSquaresImageToImageMetricv4.html)\
+  \ as metric. It computes the mean squared pixel-wise difference in intensity between two images. This\
+  \ metric is relevant when intensity representing the same homologous point are the same in both images,\
+  \ which is our case. Therefore, this metric is suitable for our registration task.\n\nWe tested 3 differents\
+  \ registration methods :\n\n- [VersorRigid3D](https://itk.org/Doxygen/html/classitk_1_1VersorRigid3DTransform.html)\n\
+  - [Affine](https://itk.org/Doxygen/html/classitk_1_1AffineTransform.html)\n- [BSpline](https://itk.org/Doxygen/html/classitk_1_1BSplineTransform.html)\n\
+  \nFor each method, we explain their specificities and we analyze their result.\n\nBy comparing our images,\
+  \ we concluded that rotations were needed. Hence, we did not test [TranslationTransform](https://itk.org/Doxygen/html/classitk_1_1TranslationTransform.html).\n\
+  \nFinally, we select a final method for the registration.\n\n### VersorRigid3D\n\n#### Method\n\nThe\
+  \ VersorRigid3DTransform only applies a rotation and translation to the space.\n\nThe serialization\
+  \ of the optimizable parameters is an array of 6 elements.\n\n- The first 3 elements are the components\
+  \ of the versor representation of 3D rotation.\n- The last 3 parameters defines the translation in each\
+  \ dimension.\n\nThe transform is applying the rotation around the center found by the CenteredTransformInitializer\n\
+  and then adding the translation vector.\n\nWe used :\n\n- the optimizer [RegularStepGradientDescentOptimizerv4](https://itk.org/Doxygen/html/classitk_1_1RegularStepGradientDescentOptimizerv4.html)\
+  \ with\n  - translation scale : 1.0e-3\n  - learning reate : 0.2\n  - minimum step length : 0.001\n\
+  - [CenteredTransformInitializer](https://itk.org/Doxygen/html/classitk_1_1CenteredTransformInitializer.html)\
+  \ to align the center of the volumes\n\n#### Result\n\nIn 77 iterations (30 seconds), we got :\n\n-\
+  \ the versor X : 0.0011745151874394972\n- the versor Y : -0.001594469370522691\n- the versor Z : 0.024874057225214716\n\
+  - the translation X : -1.089027469817355\n- the translation Y : -3.6573098370123556\n- the translation\
+  \ Z : -59.786869283781094\n- the optimizer's best metric value : 9305.189586725846\n\nWhich correspond\
+  \ to :\n\n- the rotation matrix : [[0.9987574778891665, -0.04973636989940434, -0.003129515889220262],\
+  \ [0.04972887898543799, 0.9987598035824624, -0.0024276208049695096], [0.0032463757211572773, 0.0022689771155045757,\
+  \ 0.9999921563630019]]\n- the offset : [-0.401975, -3.31805, -59.7976]\n\nHere are some qualitative\
+  \ results :\n\n![versor_rigid_3d_1](images/versor_rigid_3d_1.png)\n![versor_rigid_3d_2](images/versor_rigid_3d_2.png)\n\
+  ![versor_rigid_3d_3](images/versor_rigid_3d_3.png)\n![versor_rigid_3d_4](images/versor_rigid_3d_4.png)\n\
+  \nThe volumes are mostly aligned, however we can see that some regions do not fit perfectly.\n\n###\
+  \ Affine\n\n#### Method\n\nThe AffineTransform applies a rotation, translation, scaling, and shearing\
+  \ operations.\n\nThe serialization of the optimizable parameters is an array of 12 elements.\n\n- The\
+  \ first 3x3 elements correspond to the rotation matrix factors.\n- The last 3 parameters defines the\
+  \ translation applied after the multiplication with the rotation matrix.\n- We used :\n\n- the optimizer\
+  \ [RegularStepGradientDescentOptimizer](https://itk.org/Doxygen/html/classitk_1_1RegularStepGradientDescentOptimizer.html)\
+  \ with\n  - rotation matrix factors : 1.0\n  - translation scale : 1.0e-3\n  - maximum step length :\
+  \ 0.07\n  - minimum step length : 1.0e-4\n- the interpolator [LinearInterpolateImageFunction](https://itk.org/Doxygen/html/classitk_1_1LinearInterpolateImageFunction.html)\n\
+  \n#### Result\n\nIn 1114 iterations (5 minutes), we got :\n\n- the rotation matrix : [[1.0034078832836824,\
+  \ -0.0521164500104256, -0.0022650832680119024], [0.05082855102478259, 0.9945341090233035, -0.004249260973594543],\
+  \ [-0.0014057175612012004, 0.009367004286175975, 1.0217203731804303]]\n- the translation X : -0.37068284427732734\n\
+  - the translation Y : -0.37068284427732734\n- the translation Z : -0.37068284427732734\n- the optimizer's\
+  \ best metric value : 6666.25103637017\n\nHere are some qualitative results :\n\n![affine_1](images/affine_1.png)\n\
+  ![affine_2](images/affine_2.png)\n![affine_3](images/affine_3.png)\n![affine_4](images/affine_4.png)\n\
+  \nAccording to the MeanSquaresImageToImageMetric, the volumes are more aligned\ncompared to the result\
+  \ of the VersorRigid3DTransform.\n\nWe can see a small improvement on the third figure.\n\n### B-Spline\n\
+  \n#### Method\n\nThe BSplineTransform is a deformable image registration method using local deformations\
+  \ and a large parameter space.\n\nHowever it requires a significant amount of computation time.\n\n\
+  We used :\n\n- the optimizer [LBFGSBOptimizerv4](https://itk.org/Doxygen/html/classitk_1_1LBFGSBOptimizerv4.html)\
+  \ with\n  - UNBOUNDED mode\n  - cost function convergence factor : 1.0e+12\n  - gradient convergence\
+  \ tolerance : 1.0e-35\n  - maximum number of function evaluation : 500\n  - maximum number of corrections\
+  \ : 5\n\n#### Result\n\nIn 210 iterations (1 hour and 32 minutes), we got :\n\n- the optimizer's best\
+  \ metric value : 6249.509112153517\n\nHere are some qualitative results :\n\n![bspline_1](images/bspline_1.png)\n\
+  ![bspline_2](images/bspline_2.png)\n![bspline_3](images/bspline_3.png)\n![bspline_4](images/bspline_4.png)\n\
+  \nAccording to the MeanSquaresImageToImageMetric, the volumes are more aligned compared to the result\
+  \ of the AffineTransform.\n\nWe can see a small improvement on the third figure.\n\n### Method selected\n\
+  \nWe selected the BSpline method as it has the best MeanSquare metric score.\n\nHowever, it takes a\
+  \ large amount of computation time so we saved the registered image beforehand.\n\nThe `register.py`\
+  \ script can be run with a parameter to compute the registration with a specific method.\n\n## SEGMENTATION\n\
+  \n[Segmentation](https://itk.org/ITKSoftwareGuide/html/Book2/ITKSoftwareGuide-Book2ch4.html) consists\
+  \ of classifying every voxel of an image as either belonging to the background or a region of interest.\
+  \ In our case, we segmented the brain tumors of a patient at two different points in time.\n\nBy looking\
+  \ at the images, we have selected three components that we believe to be tumors.\n\nWe tested 4 different\
+  \ semi-automatic segmentation methods :\n\n- [ConfidenceConnected](https://itk.org/Doxygen/html/classitk_1_1ConfidenceConnectedImageFilter.html)\n\
+  - [ConnectedThreshold](https://itk.org/Doxygen/html/classitk_1_1ConnectedThresholdImageFilter.html)\n\
+  - [IsolatedThreshold](https://itk.org/Doxygen/html/classitk_1_1IsolatedConnectedImageFilter.html)\n\
+  - [ThresholdLevelSet](https://itk.org/Doxygen/html/classitk_1_1ThresholdSegmentationLevelSetImageFilter.html)\n\
+  \nAnd one automatic one :\n\n- [Watershed](https://itk.org/Doxygen/html/classitk_1_1WatershedImageFilter.html)\n\
+  \nFor each method, we explain their specificities and we analyze their result.\n\nFinally, we select\
+  \ a final method for the segmentation.\n\n### ConfidenceConnected\n\n#### Method\n\nThe ConfidenceConnected\
+  \ method uses region growing to segment an image based on pixel intensity.\n\nStarting from seed points,\
+  \ it iteratively includes neighboring pixels that fall within a specified confidence interval around\
+  \ the mean intensity of the region.\n\nThis interval is adjusted by a multiplier and the process repeats\
+  \ for a set number of iterations.\n\nWe used:\n\n![](images/confidence_connected_seg.jpg)\n\n- **Smoothing\
+  \ method:** Curvature flow.\n- **Parameters:** 4 iterations, multiplier of 2.5, neighborhood radius\
+  \ of 1.\n- **Seeds:** (125, 64, 79), (99, 79, 83), (87, 67, 51) for GRE1 and (119, 81, 81), (98, 94,\
+  \ 81), (83, 68, 55) for GRE2.\n\n#### Result\n\nThe ConfidenceConnected method successfully segmented\
+  \ the tumors but showed some limitations in defining clear boundaries.\n\nThe regions grew as expected\
+  \ around the seed points, but the method's dependency on the intensity range and iterations resulted\
+  \ in some under-segmentation.\n\nHere are some qualitative results:\n\n### ConnectedThreshold\n\n####\
+  \ Method\n\nThe ConnectedThreshold method segments an image by including all connected pixels that fall\
+  \ within a specified intensity range.\n\nStarting from a seed point, it grows the region by adding neighboring\
+  \ pixels that have intensities within the lower and upper threshold values.\n\nWe used:\n\n- **Smoothing\
+  \ method:** Gradient anisotropic diffusion.\n- **Parameters:** Lower threshold and upper threshold values\
+  \ (provided during segmentation).\n- **Seed:** (provided during segmentation).\n\n#### Result\n\nThe\
+  \ ConnectedThreshold method provided reasonable segmentation results for regions with distinct intensity\
+  \ values within the specified thresholds.\n\nHowever, it struggled with accurately segmenting regions\
+  \ with overlapping intensity ranges, leading to some parts of the tumors being missed or incorrectly\
+  \ included.\n\nHere are some qualitative results:\n\n![](images/connected_seg.jpg)\n\n### IsolatedThreshold\n\
+  \n#### Method\n\nThe IsolatedThreshold method segments an image by growing regions from two seed points.\n\
+  \nIt ensures that the regions do not touch or merge by maintaining a specified intensity range. This\
+  \ method is useful for separating closely situated structures.\n\nWe used:\n\n- **Smoothing method:**\
+  \ Curvature flow.\n- **Parameters:** Lower threshold of 395.\n- **Seeds:** (125, 64, 79) and (126, 55,\
+  \ 79) for GRE1; (120, 77, 83) and (154, 89, 83) for GRE2.\n\n#### Result\n\nThe IsolatedThreshold method\
+  \ performed well in separating closely situated structures.\n\nBy using two seed points and maintaining\
+  \ a lower intensity threshold, it effectively segmented the tumors with minimal over-segmentation.\n\
+  \nThe boundaries were generally well-defined, but the method was sensitive to the selection of seed\
+  \ points and the intensity threshold.\n\nHere are some qualitative results:\n\n![](images/isolated_seg.jpg)\n\
+  \n### ThresholdLevelSet\n\n#### Method\n\nThe ThresholdSegmentationLevelSetFunction function is a subclass\
+  \ of the [LevelSetFunction](https://itk.org/Doxygen/html/classitk_1_1LevelSetFunction.html). It is useful\
+  \ for segmentations based on intensity values in an images.\n\nIt constructs a feature image with positive\
+  \ values inside an intensity window and negative values outside.\n\nThen, the evolving level set locks\
+  \ onto regions close to the boundaries of the intensity window.\n\nFinally, seeds are given as input\
+  \ to the filter and are converted into a level set embeddding. They are then propagated according to\
+  \ the features calculated from the image.\n\nWe used :\n\n- [BinaryThresholdImageFilter](https://itk.org/Doxygen/html/classitk_1_1BinaryThresholdImageFilter.html)\
+  \ with\n  - lower threshold : -4.0\n  - upper threshold : 0.0\n  - outside value : 0\n  - inside value\
+  \ : 255\n- [ThresholdSegmentationLevelSetImageFilter](https://itk.org/Doxygen/html/classitk_1_1ThresholdSegmentationLevelSetImageFilter.html)\
+  \ with\n  - propagation scaling : 1.0\n  - maximum root mean squared error : 0.02\n  - number of iterations\
+  \ : 1500\n  - upp"

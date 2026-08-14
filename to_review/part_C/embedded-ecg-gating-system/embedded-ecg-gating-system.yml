@@ -1,0 +1,114 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: AVargas-C/embedded-ecg-gating-system
+url: https://github.com/AVargas-C/embedded-ecg-gating-system
+platform: github
+description: Embedded ECG Gating System for Radiotherapy - Real-time Arduino-based cardiac peak detection
+  for synchronizing medical imaging with heartbeat activity. Detects R-peaks, T-waves, and P-waves through
+  adaptive threshold algorithms and outputs synchronized triggers for radiotherapy beam timing.
+license: null
+language: C++
+keywords:
+- arduino
+- cardiac-gating
+- dsp
+- ecg
+stars: 0
+updated_at: '2026-04-07T23:47:28Z'
+image_source: https://raw.githubusercontent.com/AVargas-C/embedded-ecg-gating-system/HEAD/pictures/08_cardiac_cycle.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# embedded-ecg-gating-system\n\n**Title:** ECG Gating System for Radiotherapy - Arduino-Based\
+  \ Cardiac Peak Detection\n\n**University:** Tecnológico de Monterrey, Campus Ciudad de México  \n**Lecture:**\
+  \ TE2010B - Digital Signal Processing Systems\n\n**Authors:**\n- Angel Aldana Contreras (A01658854@tec.mx)\n\
+  - Arturo Vargas Cuevas (A01652564@tec.mx)\n\n**Date:** March 18, 2023\n\n---\n\n## Table of Contents\n\
+  \n1. [Overview](#overview)\n2. [Key Features](#key-features)\n3. [Hardware](#hardware)\n4. [Algorithm\
+  \ Phases](#algorithm-phases)\n5. [Development Process](#development-process)\n6. [Technical Specifications](#technical-specifications)\n\
+  \n---\n\n## Overview\n\nThis project implements an Arduino-based ECG gating system for synchronizing\
+  \ radiotherapy procedures with cardiac activity. The system detects R-peaks and T-waves from ECG signals\
+  \ in real-time and outputs triggers for medical imaging synchronization. The development progressed\
+  \ through 8 phases, each adding critical functionality from basic threshold calibration to complete\
+  \ multi-wave cardiac gating.\n\n---\n\n## Key Features\n\n- **Adaptive R-peak Detection:** Dynamic threshold\
+  \ calculation at 60% of signal maximum\n- **T-wave Peak Detection:** Empiric voltage thresholds (1.8V-2.56V)\
+  \ with dynamic timing windows\n- **P-wave Detection:** Complete cardiac cycle monitoring (0.5V-1.3V\
+  \ thresholds)\n- **Real-time Processing:** Arduino-based signal acquisition and processing\n- **Analog\
+  \ Signal Conditioning:** 0.61V-4.47V input range conditioning circuit\n- **Synchronized Outputs:** LOW\
+  \ on R-peak, HIGH on T-peak detection\n\n---\n\n## Hardware\n\n- Arduino microcontroller\n- Analog-to-Digital\
+  \ Converter (10-bit, 0-1023 bits)\n- Signal conditioning circuit with filtering and amplification stages\n\
+  - Power supply unit\n- ECG sensor interface\n\n### File Structure\n\n```\nembedded-ecg-gating-system/\n\
+  ├── src/                    # Arduino source code\n│   └── sketch.ino         # Main firmware\n├── pictures/\
+  \              # Development and hardware images\n├── documentation/         # Project report and documentation\n\
+  ├── PCB/                   # PCB design files\n│   ├── PCB_ECG_design/\n│   ├── PCB_analog_filters_desgin/\n\
+  │   └── PCB_power_supply_design/\n└── README.md              # This file\n```\n\n---\n\n## Development\
+  \ Process\n\n### Fundamental Concepts\n\n#### Cardiac Cycle\n\n![Cardiac Cycle](pictures/08_cardiac_cycle.png)\n\
+  \nUnderstanding the cardiac cycle is essential for ECG signal processing. The system monitors three\
+  \ key waves:\n- **P-wave:** Atrial depolarization (0.5V-1.3V range)\n- **QRS Complex (R-peak):** Ventricular\
+  \ depolarization (60% of maximum)\n- **T-wave:** Ventricular repolarization (1.8V-2.56V range)\n\n####\
+  \ Signal Processing Architecture\n\n![Signal Processing Stages](pictures/10_signal_processing_stages.png)\n\
+  \nThe ECG signal undergoes several processing stages:\n1. Analog acquisition from ECG sensor\n2. Analog\
+  \ signal conditioning (filtering, amplification)\n3. ADC conversion to digital values (10-bit, 0-1023)\n\
+  4. Threshold-based peak detection\n5. Digital output triggering\n\n---\n\n## Algorithm Phases\n\n###\
+  \ Phase 1: Threshold Calibration\n\n**Objective:** Convert ECG voltage thresholds to ADC bit domain\n\
+  \nThe signal conditioning circuit constrains input to 0.61V-4.47V range, which maps to 0-1023 ADC bits.\
+  \ This phase establishes the voltage-to-bit conversion formula:\n\n```\nbit_value = (voltage_threshold\
+  \ / adc_voltage_range) * 1023\n```\n\n---\n\n### Phase 2-3: R-peak Detection Algorithm\n\n#### Maximum\
+  \ Value Tracking\n\n![Peak Identification](pictures/11_peak_identification.png)\n\nThe algorithm continuously\
+  \ tracks the running maximum value of incoming samples. When a new maximum is detected, it updates the\
+  \ absolute maximum used for threshold calculation.\n\n#### R-wave Threshold Detection\n\n![R-wave Threshold\
+  \ Detection](pictures/12_r_wave_threshold_detection.png)\n\nThe R-peak detection threshold is calculated\
+  \ as 60% of the observed maximum during the adaptation phase. The system detects R-peaks when the signal\
+  \ exceeds this threshold.\n\n#### Sample Counting\n\n![Sample Counting Between Peaks](pictures/13_sample_counting_between_peaks.png)\n\
+  \nBetween detected R-peaks, the system counts ADC samples. This counter is reset upon R-peak detection\
+  \ and used to establish dynamic timing windows for subsequent wave detection.\n\n---\n\n### Phase 4-5:\
+  \ Adaptive Threshold System\n\nThe system implements an **adaptation phase** of 30,000 samples where\
+  \ it:\n1. Measures the maximum ECG signal amplitude\n2. Calculates dynamic R-peak threshold (60% of\
+  \ max)\n3. Stores empiric voltage thresholds for T and P waves\n4. Enters detection phase once adaptation\
+  \ complete\n\nThis adaptive approach allows the system to self-calibrate for different patients and\
+  \ signal conditions.\n\n---\n\n### Phase 6-8: Multi-wave Detection\n\n#### T-wave and P-wave Thresholds\n\
+  \n![P and T-wave Thresholds](pictures/14_p_and_t_wave_thresholds.png)\n\nThe system uses empiric voltage\
+  \ ranges for wave identification:\n- **P-wave:** 0.5V - 1.3V (magenta lines)\n- **T-wave:** 1.8V - 2.56V\
+  \ (orange lines)\n\n#### Peak Detection\n\n![P and T-wave Peak Detection](pictures/15_p_and_t_wave_detection.png)\n\
+  \nWithin the dynamic detection windows:\n- P-waves detected 50-300 samples before R-peak\n- T-waves\
+  \ detected 200-1000 samples after R-peak\n\nThe system identifies local peaks as points where the signal\
+  \ value exceeds a threshold but the next sample falls below it.\n\n#### Gating Output\n\n![Gating Output](pictures/16_gating_output.png)\n\
+  \nThe final output (blue line) fires based on detected peaks:\n- **LOW pulse** on R-peak detection\n\
+  - **HIGH pulse** on T-peak detection\n\nThis synchronized output controls radiotherapy beam timing.\n\
+  \n---\n\n## Hardware Implementation\n\n### Signal Conditioning Circuit\n\n![Filter and Amplifier PCB](pictures/17_filter_amplifier_pcb.png)\n\
+  \nThe analog signal conditioning stage includes:\n- High-pass filtering to remove DC offset\n- Low-pass\
+  \ filtering to remove noise\n- Amplification to optimize ADC utilization\n\n### Power Supply\n\n![Power\
+  \ Supply PCB](pictures/18_power_supply_pcb.png)\n\nA dedicated linear power supply provides clean, regulated\
+  \ power for both analog and digital components.\n\n### Complete System Design\n\n![Complete PCB Design](pictures/19_complete_pcb_design.png)\n\
+  \nThe full system integrates all three PCB stages into a unified design in Proteus CAD software.\n\n\
+  ---\n\n## Prototype Development\n\n### Analog Acquisition Prototype - First Version\n\n![First Prototype\
+  \ Protoboard](pictures/31_first_prototype_protoboard.png)\n\nInitial implementation of the analog ECG\
+  \ acquisition and conditioning stages using breadboard prototyping.\n\n### Analog Acquisition Prototype\
+  \ - Second Version\n\n![Second Prototype Protoboard](pictures/32_second_prototype_protoboard.png)\n\n\
+  Refined prototype with improved signal quality and more stable component placement.\n\n### Electrodes\n\
+  \n![Electrodes First Derivation](pictures/28_electrodes_first_derivation.png)\n\nStandard bipolar lead\
+  \ configuration for ECG signal acquisition from patient.\n\n---\n\n## Final Hardware Build\n\n### Oscilloscope\
+  \ Verification\n\n![Oscilloscope Signal](pictures/26_oscilloscope_signal.png)\n\nReal ECG signal acquisition\
+  \ verified with oscilloscope, showing proper signal conditioning and amplitude levels within 0.61V-4.47V\
+  \ range.\n\n### Personal Signal Acquisition\n\n![Signal Acquisition of Myself](pictures/33_signal_acquisition_myself.png)\n\
+  \nReal-time ECG signal acquisition from a subject, demonstrating the system's capability to capture\
+  \ live cardiac signals.\n\n### Final Build - Front View\n\n![Final Build](pictures/30_final_build.png)\n\
+  \nFinal hardware implementation ready for deployment in radiotherapy synchronization.\n\n---\n\n## Algorithm\
+  \ Validation\n\n### Gating on Real ECG Signal\n\n![Gating on Real ECG Signal](pictures/34_gating_on_real_ecg_signal.png)\n\
+  \nThe system's gating output (blue line) synchronized with real patient ECG signals, showing proper\
+  \ R-peak and T-wave detection triggering.\n\n### Gating on Simulated Signal\n\n![Gating on Simulated\
+  \ Signal](pictures/35_gating_on_simulated_signal.png)\n\nValidation of gating output on simulated ECG\
+  \ signals, confirming algorithm correctness under controlled conditions.\n\n### In Vivo Detection\n\n\
+  ![Algorithm Detection In Vivo](pictures/37_algorithm_detection_invivo.png)\n\nThe complete system correctly\
+  \ identifies R-peaks and T-waves in real patient ECG signals, demonstrating successful cardiac gating\
+  \ capability.\n\n---\n\n## Technical Specifications\n\n| Parameter | Value |\n|-----------|-------|\n\
+  | ADC Resolution | 10-bit (0-1023) |\n| Input Voltage Range | 0.61V - 4.47V |\n| R-peak Threshold |\
+  \ 60% of maximum |\n| P-wave Range | 0.5V - 1.3V |\n| T-wave Range | 1.8V - 2.56V |\n| Adaptation Phase\
+  \ | 30,000 samples |\n| Output Pin | Pin 11 (Arduino) |\n| Input Pin | A3 (Arduino) |\n\n---\n\n## Key\
+  \ Achievements\n\n✓ Adaptive R-peak detection with dynamic threshold  \n✓ Multi-wave cardiac signal\
+  \ processing (P, R, T)  \n✓ Real-time Arduino implementation  \n✓ Synchronized gating output for radiotherapy\
+  \  \n✓ Hardware prototype validation with real ECG signals  \n✓ Complete signal conditioning and power\
+  \ supply design  \n\n---\n\n## License\n\nEducational project - Tecnológico de Monterrey\n"

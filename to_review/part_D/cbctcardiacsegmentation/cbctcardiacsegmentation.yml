@@ -1,0 +1,69 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Image-X-Institute/CBCTCardiacSegmentation
+url: https://github.com/Image-X-Institute/CBCTCardiacSegmentation
+platform: github
+description: Code for generating cardiac segmentations in CBCT images
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 2
+updated_at: '2026-06-11T23:20:53Z'
+image_source: https://github.com/Image-X-Institute/CBCTCardiacSegmentation/blob/main/docs/_images/GTHeartSegs.png?raw=true
+heuristic_total_score: 33
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 particle-therapy term(s).
+- Matched 5 support term(s).
+readme_excerpt: "# CBCTCardiacSegmentation\n\n[![test](https://github.com/Image-X-Institute/CBCTCardiacSegmentation/actions/workflows/python-app.yml/badge.svg?branch=main)](https://github.com/Image-X-Institute/CBCTCardiacSegmentation/actions/workflows/python-app.yml)\n\
+  [![codecov](https://codecov.io/github/Image-X-Institute/CBCTCardiacSegmentation/graph/badge.svg?token=YKpvfVsa5X)](https://codecov.io/github/Image-X-Institute/CBCTCardiacSegmentation)\n\
+  \n**Author:** *Mark Gardner*\n\n![CBCTExampleImage](https://github.com/Image-X-Institute/CBCTCardiacSegmentation/blob/main/docs/_images/GTHeartSegs.png?raw=true)\n\
+  \nThis code will generate cardiac segmentations in CBCT images. The input is dicom or volume files of\
+  \ a CBCT image and an optional planning CT and will output dicom and nifti segmentations of cardiac\
+  \ segmentations that are compatible with the input CBCT image. **Currently this works in Linux only**\n\
+  \n\n## Setup/Build/Install\n\nThe module can installed using pip:\n\n```\npip install CBCTCardiacSegmentation\n\
+  ```\n\nThis code uses the platipy repo (https://github.com/pyplati/platipy). If the platipy module is\
+  \ not automatically installed when installing the CTHeadDeformation code, the platipy library can be\
+  \ installed separately using the installation instructions (https://pyplati.github.io/platipy/getting_started.html).\
+  \ Make sure to also include the cardiac module for platipy (platipy[cardiac])\n\nInstall elastix (https://elastix.lumc.nl/index.php)\
+  \ (https://github.com/SuperElastix/elastix/wiki)\n\n## Usage\n\nSample Data can be downloaded from the\
+  \ cancer imaging archive. For this example we will be using data from the 4d-lung dataset.  (https://www.cancerimagingarchive.net/collection/4d-lung/)\n\
+  \n### Download example data\n\nDownload the dicom data for one phase of the 4D-CBCT scan, and one phase\
+  \ of the 4D-CT. For example for patientID 100_HM10395, download the <P4^P100^S100^I0, Gated, 0.0%> CBCT\
+  \ dicom data from the Sep 14, 1997, and the <P4^P100^S300^I00003, Gated, 0.0%A> CT dicom data from the\
+  \ Jul 01, 2003.\n\nThe CBCT and CT directories can then be set to:\n\n```\nCBCTDicomDir = \"<Directory\
+  \ where data was downloaded to>/4D-Lung/100_HM10395/09-15-1997-NA-p4-69351/500.000000-P4P100S100I0 Gated\
+  \ 0.0-90726\"\nCTDicomDir = \"<Directory where data was downloaded to>/4D-Lung/100_HM10395/07-02-2003-NA-p4-14571/1.000000-P4P100S300I00003\
+  \ Gated 0.0A-29193\"\n```\nThe directory where the created segmentations can also be set\n```\nOutputDir\
+  \ = \"<Directory where data was downloaded to>/4D-Lung/100_HM10395/CardiacSegmentations\n```\n\n###\
+  \ Run in python script\nSee [DemonstrateCBCTSegmentation.py](https://github.com/Image-X-Institute/CBCTCardiacSegmentation/blob/master/CBCTCardiacSegmentation/DemonstrateCBCTSegmentation.py)\
+  \ for an example python script. \n```\nfrom  CBCTCardiacSegmentation import CreateCBCTSegmentations\n\
+  CreateCBCTSegmentations(CBCTDicomDir,OutputDir=OutputDir,PlanningCTDir=CTDicomDir)\n```\n\n### Run in\
+  \ a command line\n\nIn a command line (such as anaconda command prompt) navigate to the directory that\
+  \ the CTHeadDeformation repo was cloned to and run \n```python CreateCBCTSegmentations.py <CBCTDicomDir>\
+  \ --OutputDir <OutputDir> --PlanningCTDir <CTDicomDir>```  \n\n### Function Options\n A summary of the\
+  \ input options are shown below\n ```\n  --CBCTDir CBCTDIR     Location of the Cone-beam CT that is\
+  \ to be segmented. Can be a Dicom Series or Volume file.\n  --OutputDir OUTPUTDIR\n                \
+  \        Directory where the created segmentations will be created. Default is ./CBCTSegmentations.\
+  \ (Optional)\n  --SegmentationMethod SEGMENTATIONMETHOD\n                        The method used to\
+  \ segment the CBCT image {Synthetic|Transform|Direct}. Default is Synthetic. (Optional)\n  --PlanningCTDir\
+  \ PLANNINGCTDIR\n                        Location of the Planning CT that is to be segmented. Can be\
+  \ a Dicom Series or Volume file.\n                        Default is None. (Optional)\n  --ElastixParamDir\
+  \ ELASTIXPARAMDIR\n                        Location of the elastix parameter files used for the registrations.\
+  \ Default is the parameters\n                        in the provided ElastixParameterFiles folder. (Optional)\n\
+  \  --StructFile STRUCTFILE\n                        Location of the structures contoured from the planning\
+  \ CT File. Default is None\n  --ElastixRunDir ElastixRunDir\n\t\t\t\t\t\tLocation of the bin and lib\
+  \ directories from the installed/downaloded version of elastix to be used. Needed for linux implementations\n\
+  \  --KeepTempFiles       If true the temporary files and directories created will not be deleted. If\
+  \ False these files\n                        will be deleted. (Optional)\n ```\n \n The different segmentation\
+  \ methods are:\n - Synthetic: A synthetic CT is created by deforming a planning CT to match the CBCT.\
+  \ CT cardiac segmentation is then applied to this image.\n - Transform: The Planning CT is first segmented.\
+  \ The planning CT and CBCT are deformably registered and the output transformation is used to map the\
+  \ planning CT segmentations to the CBCT.\n - Direct: The CT segmentation method is directly applied\
+  \ to the CBCT image. May perform unreliably, particularly for noisy CBCT images. \n \n \n## Directory\
+  \ Structure\nCBCTCardiacSegmentation - Main code directory.\nElastixParameterFiles - Contains parameter\
+  \ files required for elastix.\ndocs - Files and info for the wiki. \nexamples - Files and data for examples\
+  \ of how to run the code.\ntests - Files for testing the code. \n"

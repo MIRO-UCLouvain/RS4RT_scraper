@@ -1,0 +1,41 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Lai-KK/PGDiff
+url: https://github.com/Lai-KK/PGDiff
+platform: github
+description: We propose PGDiff, a Pseudo-label Guided Diffusion framework for unpaired CBCT artifact correction.
+  PGDiff couples two complementary components under a joint objective.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-04-27T08:24:32Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# PGDiff\n\n\n\n\n\n## Dependencies\n\n```\npython>=3.6.9\ntorch>=1.7.1\ntorchvision>=0.8.2\n\
+  cuda=>11.2\nninja\npython3.x-dev (apt install, x should match your python3 version, ex: 3.8)\n```\n\n\
+  ## Installation\n- Clone this repo:\n```bash\ngit clone https://github.com/icon-lab/SynDiff\ncd SynDiff\n\
+  ```\n\n## Dataset\nYou should structure your aligned dataset in the following way:\n\n\n\n```\ninput_path/\n\
+  \  ├── data_train_contrast1.mat\n  ├── data_train_contrast2.mat\n  ├── data_val_contrast1.mat\n  ├──\
+  \ data_val_contrast2.mat\n  ├── data_test_contrast1.mat\n  ├── data_test_contrast2.mat\n```\n\nwhere\
+  \ .mat files has shape of (#images, width, height) and image values are between 0 and 1.0. \n### Sample\
+  \ Data\nSample toy data can also found under 'SynDiff_sample_data' folder of the repository. \n\n\n\n\
+  ## Train\n\n<br />\n\n```\npython3 train.py --image_size 256 --exp exp_syndiff --num_channels 2 --num_channels_dae\
+  \ 64 --ch_mult 1 1 2 2 4 4 --num_timesteps 4 --num_res_blocks 2 --batch_size 1 --contrast1 T1 --contrast2\
+  \ T2 --num_epoch 500 --ngf 64 --embedding_type positional --use_ema --ema_decay 0.999 --r1_gamma 1.\
+  \ --z_emb_dim 256 --lr_d 1e-4 --lr_g 1.6e-4 --lazy_reg 10 --num_process_per_node 1 --save_content --local_rank\
+  \ 0 --input_path /input/path/for/data --output_path /output/for/results\n```\n\n<br />\n\n## Pretrained\
+  \ Models\nWe have released pretrained diffusive generators for [T1->PD and PD->T1](https://drive.google.com/file/d/1Hfvnz29NaTFqPMX6RGaEv4Qnt8HeoxZz/view?usp=sharing)\
+  \ tasks in IXI and [T1->T2 and T2->T1](https://drive.google.com/file/d/1Hfvnz29NaTFqPMX6RGaEv4Qnt8HeoxZz/view?usp=sharing)\
+  \ tasks in BRATS datasets. You can save these weights in relevant checkpoints folder and perform inference.\n\
+  \n## Test\n\n<br />\n\n```\npython test.py --image_size 256 --exp exp_syndiff --num_channels 2 --num_channels_dae\
+  \ 64 --ch_mult 1 1 2 2 4 4 --num_timesteps 4 --num_res_blocks 2 --batch_size 1 --embedding_type positional\
+  \  --z_emb_dim 256 --contrast1 T1  --contrast2 T2 --which_epoch 50 --gpu_chose 0 --input_path /input/path/for/data\
+  \ --output_path /output/for/results\n```\n\n<br />\n<br />\n\n\n# Citation\n\n```\n\n\n# Acknowledgements\n\
+  \nThis code uses libraries from, [pGAN](https://github.com/icon-lab/pGAN-cGAN), [StyleGAN-2](https://github.com/NVlabs/stylegan2),\
+  \ and [DD-GAN](https://github.com/NVlabs/denoising-diffusion-gan) repositories.\n"

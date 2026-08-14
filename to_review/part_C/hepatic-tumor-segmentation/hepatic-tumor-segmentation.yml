@@ -1,0 +1,141 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: TasnimShamim/Hepatic_tumor_segmentation
+url: https://github.com/TasnimShamim/Hepatic_tumor_segmentation
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-29T04:47:45Z'
+image_source: https://raw.githubusercontent.com/TasnimShamim/Hepatic_tumor_segmentation/HEAD/u-net-architecture.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# Hepatic Vessel and Tumor Segmentation\n\nA deep learning project for automatically\
+  \ segmenting **hepatic blood vessels** and **liver tumors** from abdominal CT scans.\n\nThe project\
+  \ uses the **Medical Segmentation Decathlon Task08 – Hepatic Vessel** dataset. The original 3D NIfTI\
+  \ medical volumes are converted into 2D axial slices and used to train a multi-class semantic segmentation\
+  \ model.\n\n## Project Overview\n\nAccurate segmentation of hepatic vessels and tumors can support:\n\
+  \n* Liver disease assessment\n* Tumor localization\n* Surgical planning\n* Treatment monitoring\n* Computer-assisted\
+  \ medical image analysis\n\nThis project performs pixel-wise classification of CT images into three\
+  \ classes:\n\n| Class          | Label | Description                    |\n| -------------- | ----:\
+  \ | ------------------------------ |\n| Background     |     0 | Non-target regions             |\n\
+  | Hepatic Vessel |     1 | Blood vessels inside the liver |\n| Tumor          |     2 | Hepatic tumor\
+  \ regions          |\n\n> **Disclaimer:** This project is intended for academic and research purposes\
+  \ only. It must not be used as a substitute for professional medical diagnosis.\n ## Model Architectures\n\
+  \nThis project explores two deep learning architectures for semantic segmentation of hepatic vessels\
+  \ and liver tumors.\n\n### U-Net Architecture\n\n<p align=\"center\">\n  <img src=\"u-net-architecture.png\"\
+  \ width=\"850\">\n</p>\n\n**Figure 1.** U-Net encoder–decoder architecture with skip connections.\n\n\
+  ---\n\n### Swin-UMamba Architecture\n\n<p align=\"center\">\n  <img src=\"The-overall-architecture-of-Swin-UMamba-Swin-UMamba-can-leverage-the-power-of-vision.png\"\
+  \ width=\"900\">\n</p>\n\n**Figure 2.** Swin-UMamba architecture integrating Swin Transformer blocks\
+  \ with Mamba-based state-space modeling for enhanced global feature extraction.\n\n---\n\n## Features\n\
+  \n* Preprocessing of 3D `.nii.gz` CT volumes\n* Conversion of 3D medical images into 2D axial slices\n\
+  * Image normalization and resizing\n* Filtering of slices based on available segmentation classes\n\
+  * Multi-class semantic segmentation\n* Data augmentation using flips, rotations, and brightness adjustment\n\
+  * Training, validation, and testing workflow\n* Dice coefficient calculation\n* Intersection over Union\
+  \ calculation\n* Per-class accuracy calculation\n* Confusion matrix and prediction analysis\n* Visualization\
+  \ of:\n\n  * CT scans\n  * Ground-truth masks\n  * Predicted segmentation masks\n  * Training and validation\
+  \ curves\n\n---\n\n## Dataset\n\nThis project uses:\n\n**Medical Segmentation Decathlon – Task08 Hepatic\
+  \ Vessel**\n\nThe dataset contains abdominal CT scans and corresponding segmentation masks in NIfTI\
+  \ format.\n\nThe segmentation labels are:\n\n```text\n0 → Background\n1 → Hepatic Vessel\n2 → Tumor\n\
+  ```\n\nThe expected dataset structure is:\n\n```text\nTask08_HepaticVessel/\n├── imagesTr/\n│   ├──\
+  \ hepaticvessel_001.nii.gz\n│   ├── hepaticvessel_002.nii.gz\n│   └── ...\n│\n├── labelsTr/\n│   ├──\
+  \ hepaticvessel_001.nii.gz\n│   ├── hepaticvessel_002.nii.gz\n│   └── ...\n│\n├── imagesTs/\n├── dataset.json\n\
+  └── dataset_description.json\n```\n\nThe dataset is not included in this repository because of its size.\
+  \ Download it separately from the official Medical Segmentation Decathlon source.\n\n---\n\n## Project\
+  \ Structure\n\n```text\nHepatic_tumor_segmentation/\n├── Task08_HepaticVessel/     # Dataset directory\n\
+  ├── logs/                     # Training logs and generated outputs\n├── Slice.py                  #\
+  \ Converts 3D NIfTI volumes into 2D slices\n├── Traintest.py              # Model training, validation\
+  \ and evaluation\n├── Test_2D.py                # Testing and prediction script\n├── analyze_predictions.py\
+  \    # Detailed prediction analysis\n├── test.py                   # Experimental testing script\n├──\
+  \ test1.py                  # Additional testing experiments\n├── new.ipynb                 # Model\
+  \ experimentation notebook\n├── random_test.ipynb         # Random sample testing notebook\n├── test.ipynb\
+  \                # Training/testing notebook\n├── training_log.csv          # Saved training history\n\
+  ├── test_results.txt          # Recorded evaluation results\n└── .gitignore\n```\n\nThe following directories\
+  \ are generated after preprocessing:\n\n```text\n2D_Sliced_Images/\n2D_Sliced_Masks/\n```\n\n---\n\n\
+  ## Preprocessing Pipeline\n\nThe preprocessing logic is implemented in `Slice.py`.\n\nFor every CT volume:\n\
+  \n1. The CT scan and corresponding mask are loaded using `nibabel`.\n2. The script iterates through\
+  \ the volume along the axial dimension.\n3. Each image and mask slice is resized to `256 × 256`.\n4.\
+  \ CT slices are normalized to the range `0–255`.\n5. Masks are resized using nearest-neighbour interpolation.\n\
+  6. Only slices containing the required segmentation classes are retained.\n7. Images and masks are saved\
+  \ as PNG files.\n\nThe visualization-friendly mask values are:\n\n```text\nBackground      → 0\nHepatic\
+  \ Vessel  → 127\nTumor           → 255\n```\n\nDuring model training, these values are converted back\
+  \ to class labels `0`, `1`, and `2`.\n\n---\n\n## Data Split\n\nThe processed dataset is divided into:\n\
+  \n```text\n60% Training\n20% Validation\n20% Testing\n```\n\nA fixed random state is used to make the\
+  \ split reproducible.\n\n---\n\n## Data Augmentation\n\nThe training pipeline applies random augmentation\
+  \ to improve model generalization:\n\n* Horizontal flipping\n* Vertical flipping\n* Rotation by multiples\
+  \ of 90 degrees\n* Random brightness adjustment\n\nThe same geometric transformations are applied to\
+  \ both the CT image and its corresponding mask.\n\n---\n\n## Model Configuration\n\nThe current training\
+  \ configuration uses:\n\n```text\nInput size:     256 × 256\nInput channels: 1\nNumber classes: 3\n\
+  Batch size:     8\nEpochs:         50\nFramework:      TensorFlow / Keras\n```\n\nThe model receives\
+  \ a grayscale CT slice and produces a three-channel probability map representing:\n\n```text\nBackground,\
+  \ Vessel, Tumor\n```\n\nThe final segmentation mask is obtained by selecting the class with the highest\
+  \ predicted probability for every pixel.\n\n---\n\n## Evaluation Metrics\n\nThe model is evaluated using\
+  \ the following metrics.\n\n### Dice Coefficient\n\nThe Dice coefficient measures the overlap between\
+  \ the predicted mask and the ground-truth mask:\n\n```text\nDice = 2 × Intersection / (Predicted Area\
+  \ + Ground Truth Area)\n```\n\nA Dice score of `1` represents perfect overlap.\n\n### Intersection over\
+  \ Union\n\n```text\nIoU = Intersection / Union\n```\n\nIoU measures how much the predicted and ground-truth\
+  \ regions overlap relative to their combined area.\n\n### Per-Class Accuracy\n\nAccuracy is calculated\
+  \ separately for:\n\n* Background\n* Hepatic vessel\n* Tumor\n\nBecause medical segmentation datasets\
+  \ usually contain significantly more background pixels than target pixels, Dice and IoU are more informative\
+  \ than overall accuracy alone.\n\n---\n\n## Recorded Results\n\nThe results currently stored in `test_results.txt`\
+  \ are:\n\n| Class          |   Dice |    IoU | Accuracy |\n| -------------- | -----: | -----: | -------:\
+  \ |\n| Background     | 0.9952 | 0.9929 |   0.9984 |\n| Hepatic Vessel | 0.0000 | 0.0000 |   0.0000\
+  \ |\n| Tumor          | 0.5847 | 0.5087 |   0.5958 |\n\nOverall test performance:\n\n```text\nTest Loss:\
+  \     0.0095\nTest Accuracy: 0.9930\n```\n\nThe high overall accuracy is strongly influenced by the\
+  \ large number of background pixels. The class-wise results show that the model performs reasonably\
+  \ on tumor segmentation but requires further improvement for hepatic vessel segmentation.\n\n---\n\n\
+  ## Installation\n\n### 1. Clone the repository\n\n```bash\ngit clone https://github.com/TasnimShamim/Hepatic_tumor_segmentation.git\n\
+  cd Hepatic_tumor_segmentation\n```\n\n### 2. Create a virtual environment\n\nUsing `venv`:\n\n```bash\n\
+  python -m venv venv\n```\n\nActivate it on Linux or macOS:\n\n```bash\nsource venv/bin/activate\n```\n\
+  \nActivate it on Windows:\n\n```bash\nvenv\\Scripts\\activate\n```\n\n### 3. Install the dependencies\n\
+  \n```bash\npip install tensorflow numpy opencv-python nibabel matplotlib scikit-learn pandas\n```\n\n\
+  For GPU training, install a TensorFlow version compatible with your CUDA and cuDNN configuration.\n\n\
+  ---\n\n## Usage\n\n### Step 1: Download and arrange the dataset\n\nPlace the dataset in the project\
+  \ root:\n\n```text\nHepatic_tumor_segmentation/\n└── Task08_HepaticVessel/\n    ├── imagesTr/\n    └──\
+  \ labelsTr/\n```\n\nMake sure that the image and mask filenames correspond correctly.\n\nFor example:\n\
+  \n```text\nimagesTr/hepaticvessel_001.nii.gz\nlabelsTr/hepaticvessel_001.nii.gz\n```\n\n### Step 2:\
+  \ Generate 2D slices\n\nRun:\n\n```bash\npython Slice.py\n```\n\nThis creates:\n\n```text\n2D_Sliced_Images/\n\
+  2D_Sliced_Masks/\n```\n\n### Step 3: Train the model\n\nRun:\n\n```bash\npython Traintest.py\n```\n\n\
+  The training script:\n\n* Loads the processed images and masks\n* Splits the dataset\n* Applies data\
+  \ augmentation\n* Trains the segmentation model\n* Evaluates it on the test dataset\n* Displays training\
+  \ curves\n* Visualizes sample predictions\n* Saves predicted and ground-truth masks\n\n### Step 4: Test\
+  \ the trained model\n\nRun:\n\n```bash\npython Test_2D.py\n```\n\nMake sure the model path inside the\
+  \ testing script matches the location of your saved model.\n\n### Step 5: Analyze predictions\n\nRun:\n\
+  \n```bash\npython analyze_predictions.py\n```\n\nThis script can be used to perform further class-wise\
+  \ prediction analysis.\n\n---\n\n## Segmentation Results\n\n### U-Net Prediction\n\n<p align=\"center\"\
+  >\n  <img src=\"unet.png\" width=\"900\">\n</p>\n\n<p align=\"center\">\n  <img src=\"unet_result.jpeg\"\
+  \ width=\"900\">\n</p>\n\n**Figure 3.** Segmentation results produced by the U-Net model.\n\nThe figure\
+  \ shows:\n\n- Original CT Slice\n- Ground Truth Mask\n- Predicted Mask\n\n---\n\n### Swin-UMamba Prediction\n\
+  \n<p align=\"center\">\n  <img src=\"swin_result.png\" width=\"900\">\n</p>\n<p align=\"center\">\n\
+  \  <img src=\"swin_umamba.jpeg\" width=\"900\">\n</p>\n\n**Figure 4.** Segmentation results produced\
+  \ by the Swin-UMamba model.\n\nCompared to the baseline U-Net, Swin-UMamba captures richer contextual\
+  \ information through hierarchical Swin Transformer blocks and Mamba state-space modeling, leading to\
+  \ improved representation of complex anatomical structures.\n## Challenges\n\n### Class Imbalance\n\n\
+  The background occupies most pixels in each CT slice, while vessel and tumor regions are comparatively\
+  \ small. This can cause a model to achieve high accuracy while failing to segment minority classes.\n\
+  \n### Small Vessel Structures\n\nHepatic vessels are narrow and structurally complex. Downsampling operations\
+  \ may remove important vessel details.\n\n### Limited Training Samples\n\nFiltering slices and training\
+  \ a 2D model reduces the available three-dimensional contextual information.\n\n### Medical Image Variability\n\
+  \nCT scans may differ in:\n\n* Contrast\n* Resolution\n* Scanner configuration\n* Patient anatomy\n\
+  * Tumor size and location\n\n---\n\n## Possible Improvements\n\nFuture improvements may include:\n\n\
+  * Weighted categorical cross-entropy\n* Focal loss\n* Generalized Dice loss\n* Tversky loss\n* Combined\
+  \ Dice and cross-entropy loss\n* Oversampling slices containing vessels\n* Patch-based training\n* Attention\
+  \ U-Net\n* U-Net++\n* ResUNet\n* Swin-Unet\n* Swin-UMamba\n* 3D U-Net\n* Multi-scale feature extraction\n\
+  * Connected-component post-processing\n* Learning-rate scheduling\n* Early stopping\n* K-fold cross-validation\n\
+  * Mixed-precision training\n* Better CT windowing and intensity normalization\n\nA major priority is\
+  \ improving vessel segmentation without reducing tumor performance.\n\n---\n\n## Recommended `requirements.txt`\n\
+  \nCreate a `requirements.txt` file containing:\n\n```text\ntensorflow\nnumpy\nopencv-python\nnibabel\n\
+  matplotlib\nscikit-learn\npandas\n```\n\nInstall all dependencies using:\n\n```bash\npip install -r\
+  \ requirements.txt\n```\n\n---\n\n## Reproducibility Notes\n\nResults may vary depending on:\n\n* TensorFlow\
+  \ version\n* Random initialization\n* GPU hardware\n* CUDA and cuDNN versions\n* Dataset preprocessing\n\
+  * Number of retained slices\n* Batch size\n* Augmentation settings\n\nFor better reproducibility, set\
+  \ fixed seeds for NumPy, Python, and TensorFlow before training.\n\nExample:\n\n```python\nimport random\n\
+  import numpy as np\nimport tensorflow as tf\n\nSEED = 42\n\nrandom.seed(SEED)\nnp.random.seed(SEED)\n\
+  tf.random.set_seed(SEED)\n```\n\n---\n\n## Technologies Used\n\n* Python\n* TensorFlow\n* Keras\n* NumPy\n\
+  * Ope"

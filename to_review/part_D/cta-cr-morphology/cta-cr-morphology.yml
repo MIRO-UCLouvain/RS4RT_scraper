@@ -1,0 +1,99 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: yaochengchen/cta_cr_morphology
+url: https://github.com/yaochengchen/cta_cr_morphology
+platform: github
+description: Synthetic CTA template-fitting framework to test cosmic-ray transport scenarios in galaxy
+  clusters.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-03-09T16:50:58Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Synthetic CTA Template-Fitting Framework for Cluster CR Transport Studies\n\nThis notebook\
+  \ implements a **synthetic observation and instrument-facing validation module** for testing whether\
+  \ different cosmic-ray (CR) transport scenarios in galaxy clusters remain distinguishable at the level\
+  \ of realistic CTA observations.\n\nRather than serving as a separate side project, this work is intended\
+  \ as the **observational interface** of a broader research program on magnetic fields, turbulence, and\
+  \ CR transport in the intracluster/intergalactic medium (ICM/IGM).\n\n## Why this notebook exists\n\n\
+  The main scientific motivation is not only to model CR transport in clusters, but also to answer a more\
+  \ practical observational question:\n\n> If different physical transport scenarios produce different\
+  \ CR distributions and gamma-ray emissivities, can those differences still be recognized after instrument\
+  \ response, background, PSF smearing, and likelihood fitting?\n\nThis notebook is designed to address\
+  \ exactly that step.\n\n## Role within the larger research pipeline\n\nThe broader project follows a\
+  \ multi-scale chain:\n\n**magnetic fields / turbulence / plasma physics**  \n→ **CR transport in clusters\
+  \ and the IGM**  \n→ **hadronic gamma-ray production**  \n→ **projected gamma-ray morphology**  \n→\
+  \ **CTA / ASTRI synthetic observation and likelihood analysis**\n\nThis notebook focuses on the **last\
+  \ two stages** of that chain.\n\nIt takes physically motivated cluster emission models and translates\
+  \ them into **CTA-observable spatial templates**, then uses **real CTA IRFs and Gammapy likelihood fitting**\
+  \ to test whether competing scenarios are distinguishable at the instrument level.\n\n## What this notebook\
+  \ currently does\n\nAt its current stage, the notebook provides a **methodological feasibility framework**\
+  \ built on a simplified cluster setup. It includes:\n\n- simplified cluster modeling with an analytic\
+  \ β-model background\n- toy CR transport scenarios, including diffusion-dominated and streaming-dominated\
+  \ cases\n- hadronic gamma-ray emissivity construction\n- projected 2D surface-brightness maps\n- spatial\
+  \ template generation for CTA analysis\n- real CTA IRF ingestion through Gammapy\n- MapDataset construction\
+  \ and truth injection\n- template likelihood fitting with competing transport hypotheses\n- exposure\
+  \ scans and distinguishability tests using TS / ΔTS\n- a scaffold for Monte Carlo realizations and nuisance\
+  \ tests\n\nIn other words, this notebook is not just plotting idealized morphologies. It is already\
+  \ implementing the core synthetic-analysis chain needed to ask whether morphology differences survive\
+  \ realistic CTA observation conditions.\n\n## Scientific purpose\n\nThe main question explored here\
+  \ is:\n\n> Can CTA distinguish diffusion-dominated and streaming-dominated CR transport scenarios in\
+  \ clusters using gamma-ray morphology?\n\nMore specifically, the notebook is meant to test:\n\n1. what\
+  \ different CR transport scenarios would look like after projection onto the sky,\n2. whether those\
+  \ differences survive CTA PSF and background,\n3. how much observing time is needed before the scenarios\
+  \ become statistically distinguishable,\n4. which cases are physically different but observationally\
+  \ degenerate.\n\nThis is the key step that turns **theoretical differences** into **observationally\
+  \ testable differences**.\n\n## Current interpretation\n\nThe current notebook should be understood\
+  \ as a **prototype for synthetic observables**, not yet as a final cluster-specific forecast.\n\nAt\
+  \ the moment, the inputs are intentionally simplified:\n\n- analytic β-model gas structure\n- simplified\
+  \ transport prescriptions\n- morphology-first comparison\n- simplified emissivity construction\n\nThis\
+  \ level is useful because it isolates the logic of the analysis pipeline:\n\n- build templates\n- fold\
+  \ through the instrument response\n- inject truth\n- fit competing models\n- quantify detectability\
+  \ and distinguishability\n\nSo the present version is best interpreted as a **toy / feasibility-level\
+  \ framework** whose main value is to establish the pipeline and identify promising observable regimes.\n\
+  \n## How it connects to the main project\n\nThis notebook is meant to act as a **bridge layer** between\
+  \ upstream physical modeling and downstream CTA/ASTRI data analysis.\n\nIts role can be summarized in\
+  \ three steps:\n\n1. **Upstream input**  \n   Physically motivated CR distributions or emissivity fields\
+  \ coming from cluster/ICM models, MHD simulations, collisionless-MHD calculations, or CRPropa outputs.\n\
+  \n2. **Intermediate conversion**  \n   Projection into gamma-ray surface-brightness maps and construction\
+  \ of spatial templates.\n\n3. **Downstream output**  \n   CTA/ASTRI IRF folding and Gammapy likelihood\
+  \ analysis to assess detectability and distinguishability.\n\nThis is why the notebook should not be\
+  \ described as an independent mini-project. It is better understood as the **observational mapping layer**\
+  \ of the main research program.\n\n## What comes next\n\nThe next development stage is to replace the\
+  \ current toy inputs with **physically informed templates**.\n\n### Planned next steps\n\n#### 1. Replace\
+  \ the toy cluster setup with upstream physical outputs\n\nThe current analytic β-model can be upgraded\
+  \ by reading in:\n\n- gas density fields from MHD or cosmological simulations\n- magnetic-field structure\
+  \ and turbulence information\n- CR source proxies or CR distributions from CR transport calculations\n\
+  - 3D emissivity cubes to be projected into observable maps\n\n#### 2. Move from morphology classification\
+  \ to parameter inference\n\nThe current comparison mainly asks whether diffusion and streaming can be\
+  \ distinguished as separate scenarios.\n\nA more advanced version should scan physical parameters such\
+  \ as:\n\n- diffusion coefficient normalization\n- energy dependence of transport\n- magnetic-field scaling\n\
+  - injection radius or source history\n- cluster mass and environment\n\nThis would allow CTA distinguishability\
+  \ to constrain the underlying physical parameter space directly.\n\n#### 3. Extend from CTA-only tests\
+  \ to CTA / ASTRI comparative forecasts\n\nSince the broader research program is framed around both **CTAO**\
+  \ and the **ASTRI Mini-Array**, the pipeline should eventually support comparative forecasts for:\n\n\
+  - CTA South\n- ASTRI Mini-Array\n- different exposure times\n- different energy ranges\n- different\
+  \ angular resolutions\n\n## Why this matters\n\nMany theoretical studies stop at the level of CR distributions\
+  \ or intrinsic gamma-ray emissivity. However, physical differences do not automatically imply observational\
+  \ differences.\n\nThis framework is meant to answer the more useful question:\n\n> Which physical transport\
+  \ scenarios remain distinguishable after realistic instrument response and likelihood analysis?\n\n\
+  That makes this notebook valuable not only as a science prototype, but also as a foundation for:\n\n\
+  - synthetic observables directly comparable with CTAO/ASTRI sensitivities\n- high-throughput parameter-scan\
+  \ pipelines\n- future GPU/parallel acceleration of synthetic analysis workloads\n- instrument-facing\
+  \ validation of upstream MHD / CR transport models\n\n## Recommended project description\n\nA concise\
+  \ way to describe this repository is:\n\n> This project provides a synthetic CTA template-fitting framework\
+  \ for testing cosmic-ray transport scenarios in galaxy clusters. It translates physically motivated\
+  \ CR/gamma-ray models into CTA-observable spatial templates and uses realistic CTA IRFs with Gammapy\
+  \ likelihood fitting to quantify detectability and distinguishability at the instrument level.\n\n##\
+  \ Short version\n\nThis notebook is the **bridge between physics and observation**:\n\n**MHD / CR transport\
+  \ outputs**  \n→ **gamma-ray emissivity and projected maps**  \n→ **CTA / ASTRI instrument folding**\
+  \  \n→ **template likelihood analysis**  \n→ **detectability / distinguishability constraints**\n\n\
+  That is its main purpose, and that is how it is intended to connect to the larger research program.\n"

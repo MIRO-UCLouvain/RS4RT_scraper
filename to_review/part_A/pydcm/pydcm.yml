@@ -1,0 +1,153 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: dcmkit/pydcm
+url: https://github.com/dcmkit/pydcm
+platform: github
+description: The complete DICOM toolkit for Python — every transfer syntax built in, no plugins, NumPy/PyTorch
+  native, one wheel.
+license: Apache-2.0
+language: Python
+keywords:
+- dicom
+- dicom-seg
+- dicomweb
+- dimse
+- jpeg2000
+- jph
+- medical-image-processing
+- medical-imaging
+- nifti
+- numpy
+- python
+- pytorch
+- radiomics
+stars: 1
+updated_at: '2026-06-28T04:06:23Z'
+image_source: null
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 5 support term(s).
+readme_excerpt: "# pydcm\n\n**The complete DICOM toolkit for Python.** A native reader/writer with a\n\
+  built-in decoder for **every transfer syntax** (no codec plugins), plus\nzero-copy **NumPy / PyTorch**\
+  \ pixel access — a compiled extension does the work\nin-process.\n\n- Decodes **JPEG, JPEG-2000, JPEG-LS,\
+  \ RLE, JPEG-XL and HTJ2K** out of the box,\n  no plugins, and returns Hounsfield units and 3-D volumes.\n\
+  - **Reads text from any vendor or locale** — full **Japanese / Korean / Chinese**\n  multibyte and every\
+  \ ISO 2022 escape, decoded adaptively to correct UTF-8 where\n  a strict reader would error or garble\
+  \ it.\n- **One wheel replaces a whole stack of single-purpose tools:** read / decode /\n  write every\
+  \ transfer syntax; DIMSE (`pydcm.dimse`) and DICOMweb\n  (`pydcm.dicomweb`) networking; NIfTI / NRRD\
+  \ / MetaImage / BIDS / DWI volume\n  export; segmentations, parametric maps and structured reports;\
+  \ **PS3.15\n  de-identification** and **IOD / SR conformance validation**; **nnU-Net / MONAI\n  preprocessing**\
+  \ (`pydcm.transforms`, bit-exact); radiomics (`pydcm.radiomics`);\n  whole-slide imaging (`pydcm.wsi`);\
+  \ RT dose & DVH (`pydcm.rt`); waveforms;\n  FHIR / HL7 bridges; and an **in-process MCP server** (`pydcm.mcp`)\
+  \ for agents.\n  See the [capability map](#beyond-the-core--capability-map).\n- The API is clean and\
+  \ Pythonic, and most existing Python DICOM code runs\n  against it unchanged. SimpleITK images are accepted\
+  \ / returned where natural\n  (`radiomics`, `seg` masks) without being a dependency.\n\n> **Not a medical\
+  \ device.** pydcm is **not** intended or cleared for clinical or\n> diagnostic use. Decoded pixels and\
+  \ HU are for research/engineering only;\n> validate any output for your intended use.\n\n## Install\n\
+  \n```bash\npip install pydcm\n```\n\nA platform wheel ships the compiled extension — no build step,\
+  \ no DICOM library\non your side. Wheels are published for macOS (arm64, x86_64) and Linux\n(aarch64,\
+  \ x86_64; manylinux_2_28, i.e. glibc 2.28+ — RHEL 8+, Ubuntu 20.04+,\nDebian 11+). One wheel per platform\
+  \ covers CPython 3.12+ (stable ABI).\n\n## Use\n\n```python\nimport pydcm\n\narr = pydcm.decode(\"scan.dcm\"\
+  )             # ndarray [frames, rows, cols(, samples)]\nframe = pydcm.decode(\"ct.dcm\", frame=2) \
+  \   # 1-based; 0 (default) = all frames\narr, meta = pydcm.decode(\"scan.dcm\", with_meta=True)\n```\n\
+  \n## Read & edit\n\n`dcmread` returns a familiar `Dataset`. Attribute, item and sequence access,\n`PersonName`,\
+  \ `file_meta`, and a lazy `pixel_array` all behave the way Python\nDICOM users expect — so much that\
+  \ `import pydcm as pydicom` is usually enough:\n\n```python\nds = pydcm.dcmread(\"scan.dcm\")\nds.PatientName\
+  \              # PersonName — .family_name / .given_name / .ideographic\nds.Rows, ds.PixelSpacing  \
+  \  # 64, [0.3125, 0.3125]   (MultiValue)\nds[0x0010, 0x0010].value    # element access by tag / keyword\
+  \ / (group, element)\nds.file_meta.TransferSyntaxUID\nfor elem in ds: ...         # iterate in tag order\n\
+  px = ds.pixel_array         # NumPy (any transfer syntax, no plugins)\n```\n\n**Editing preserves everything.**\
+  \ `save_as` patches the *original* file bytes via\nthe native editor, so the Transfer Syntax, **PixelData**\
+  \ (including compressed\nJ2K / RLE), private tags and every untouched element survive byte-for-byte:\n\
+  \n```python\nds = pydcm.dcmread(\"ct.dcm\")\nds.PatientName = \"Anon^Patient\"\ndel ds.PatientBirthDate\n\
+  ds.save_as(\"ct_anon.dcm\")   # pixels + TS intact; only the named tags change\n```\n\nVerified for\
+  \ near-total element-value fidelity over a large real-world corpus\n(the lone difference is a private\
+  \ sequence pydcm parses where others leave it\nopaque — pydcm exposes *more*). The keyword↔tag↔VR dictionary\
+  \ holds 17,699\nentries — a strict superset of the standard dictionaries — so attribute names\nresolve\
+  \ broadly. *Known limits:* `file_meta` surfaces the three\nmandatory UIDs (not optional group-0002 elements);\
+  \ a from-scratch (no source\nfile) `save_as` uses a metadata-only path that omits pixels.\n\n### HU\
+  \ / real-world values\n\n`rescale=False` (default) returns the **stored** integers (lossless). `rescale=True`\n\
+  returns the modality-LUT output — real-world values, i.e. **HU for CT** — as\nfloat32 (per-frame rescale\
+  \ applied for Enhanced multi-frame):\n\n```python\nhu = pydcm.decode(\"ct.dcm\", rescale=True)     \
+  \    # float32 Hounsfield Units\nds = pydcm.DICOMDataset(\"ct_series/\", rescale=True)\n```\n\n### Geometry\
+  \ sidecar\n\n`with_meta=True` also returns the geometry the engine parsed — no extra read:\n\n```python\n\
+  _, m = pydcm.decode(\"ct.dcm\", with_meta=True)\nm[\"rescale_slope\"], m[\"rescale_intercept\"]\nm[\"\
+  pixel_spacing\"]                  # [row, col] mm\nm[\"image_position_patient\"]         # (0020,0032)\
+  \ [x, y, z]\nm[\"image_orientation_patient\"]      # (0020,0037) 6-vector\nm[\"slice_thickness\"], m[\"\
+  window_center\"], m[\"window_width\"]\nm[\"modality\"], m[\"series_instance_uid\"], m[\"sop_instance_uid\"\
+  ]\n```\n\n### A directory → PyTorch\n\n`DICOMDataset` walks a directory and decodes one image per item.\
+  \ It is\nDataLoader-compatible **without importing torch** (torch stays optional):\n\n```python\nfrom\
+  \ torch.utils.data import DataLoader\n\nds = pydcm.DICOMDataset(\"study_dir/\", to_torch=True)   # finds\
+  \ .dcm + extension-less DICOM\nfor batch in DataLoader(ds, batch_size=8, num_workers=4, shuffle=True):\n\
+  \    ...   # [B, H, W] or [B, H, W, C]\n```\n\n- One sample = one file. Single-frame files yield `[H,\
+  \ W]` / `[H, W, C]`;\n  multi-frame files yield `[frames, H, W(, C)]`.\n- `transform=fn` reshapes each\
+  \ sample (e.g. `[C, H, W]`, windowing, scaling).\n- `pattern=\"*.dcm\"` selects by name; the default\
+  \ also detects DICOM by the\n  `DICM` preamble (catching extension-less clinical exports).\n\n### A\
+  \ directory → one 3D volume\n\n`load_series` assembles a directory of slices into a single **spatially-ordered\n\
+  3D HU volume** (IOP clustering + IPP-projection sort, all in the native engine):\n\n```python\nvol =\
+  \ pydcm.load_series(\"ct_series/\")\nvol.pixels          # ndarray [depth, rows, cols], float32 HU,\
+  \ sorted by position\nvol.spacing         # (z, y, x) mm — slice spacing computed from IPP deltas\n\
+  vol.affine          # 4×4 voxel→world\nvol.series_instance_uid\n```\n\nThe largest coherent volume in\
+  \ the directory is returned, so a stray localizer\nor second series does not corrupt the stack.\n\n\
+  ## Beyond the core — capability map\n\nEverything below ships in the same wheel, over the same native\
+  \ engine, with\nPython kept to thin marshalling — each area verified for correctness against\nreference\
+  \ data.\n\n| Area | Import | What it does |\n|---|---|---|\n| DIMSE networking | `pydcm.dimse` | SCU\
+  \ + full SCP, persistent associations |\n| DICOMweb client | `pydcm.dicomweb` | QIDO / WADO / STOW /\
+  \ DELETE, streaming, TS negotiation |\n| DICOM ↔ NIfTI | `Volume.to_nifti` / `from_nifti` | gantry-tilt-correct\
+  \ affine, vendor quirks handled; NIfTI → DICOM too |\n| DICOM → NRRD / MetaImage | `Volume.to_nrrd`\
+  \ / `Volume.to_metaimage` | 3D Slicer (`.nrrd`) + ITK / nnU-Net (`.mha`) on-ramps; double-faithful LPS\
+  \ geometry |\n| DWI / diffusion | `load_dwi` / `save_dwi` / `diffusion_table` | **FSL** `.bval`/`.bvec`\
+  \ (feeds FSL / MRtrix / dipy); Siemens CSA + mosaic, enhanced-MF, GE / Philips / UIH private |\n| BIDS\
+  \ sidecar | `bids_sidecar` | BIDS `.json` (PhaseEncodingDirection, SliceTiming, EffectiveEchoSpacing…)\
+  \ |\n| Preprocessing transforms | `pydcm.transforms` | resample / normalize / sliding-window; Tier 1\
+  \ bit-exact (B-spline convention), Tier 2 ≤ 1 ULP (deep-learning convention) |\n| Whole-slide imaging\
+  \ | `pydcm.wsi` | tile / region reads on the DICOM WSI pyramid + viewer tiles / total pixel matrix;\
+  \ bit-exact multi-vendor |\n| RT dose &amp; structures | `pydcm.rt` | `read_rtdose` / `write_rtdose`\
+  \ / `dvhcalc` (full ROI DVH coverage) + `write_rtstruct` — author RT Structure Sets (ROI contours over\
+  \ a reference series) |\n| Tractography | `write_mktract` | author Tractography Results (66.6) from\
+  \ track sets — points + per-track measurements / statistics |\n| Radiomics | `pydcm.radiomics` | the\
+  \ full IBSI set — 135 features / 10 classes; both aggregation conventions; register custom Python features\
+  \ |\n| SEG | `write_seg` / `write_seg_fractional` / `read_seg` | coded SEG, binary + fractional, SEG\
+  \ → labelmap |\n| Parametric Map | `write_paramap` / `read_paramap` | author / read float parametric\
+  \ maps |\n| Constructor-style object classes | `pydcm.sc` / `seg` / `pm` / `ko` / `pr` / `ann` / `sr`\
+  \ | `SCImage`, `Segmentation`, `ParametricMap`, KO, GSPS, the `MeasurementReport` content-tree classes,\
+  \ `MicroscopyBulkSimpleAnnotations` |\n| SR / TID 1500 | `write_sr` / `write_report` / `read_report`\
+  \ / `sr_validate` | a full SR object model (Comprehensive / Enhanced / 3D SR, ROI measurement groups,\
+  \ every content-item type) — author from a content tree or as TID 1500 reports, read them back, validate\
+  \ structure + PS3.16 coded concepts, render SR → HTML / JSON |\n| KO / PR / annotations | `write_ko`\
+  \ / `write_pr` / `read_ann` | Key Object Selection, Presentation State, Bulk Annotations |\n| Encapsulated\
+  \ documents | `write_encapsulated` / `read_encapsulated` | PDF / CDA / STL / OBJ / MTL (PS3.3 A.104)\
+  \ |\n| Surface meshes | `read_surface` | read Surface Segmentation (66.5) — points + every mesh primitive\
+  \ (triangle / strip / fan / facet) as `(N,3)` / `(M,3)` arrays |\n| Waveforms (ECG / EEG) | `pydcm.waveforms`\
+  \ | 12-lead ECG / EEG read & write; arrays ready for analysis tools (MNE / neurokit2) |\n| FHIR / HL7\
+  \ | `pydcm.fhir` / `pydcm.hl7` | DICOM → FHIR R4 `ImagingStudy`; HL7 v2.x parse (2.3 – 2.8) + ORU^R01\
+  \ build |\n| De-identification | `deident` / `deidentify` / `deidentify_series` | PS3.15 Table E.1-1\
+  \ Basic Profile (617 attributes) **+ every option profile** (clean graphics / descriptors / structured\
+  \ content, retain longitudinal / patient-characteristics / device / UIDs / institution); consistent\
+  \ UID remap, dates shifted, CID 7050 method codes stamped in (0012,0064) |\n| Validation | `validate`\
+  \ / `iod_validate` / `sr_validate` | `validate` is the full report — element-level layers (VR, VM, enumerated\
+  \ values, per-VR format, SpecificCharacterSet, pixel geometry, LUT) **plus** per-SOP-Class IOD conformance\
+  \ (Type 1/2 mandatory modules, top-level **and** nested), SR structural / coded / TID content-template\
+  \ checks, and RT cross-reference integrity; `iod_validate` is the narrower IOD-only view |\n| Rendering\
+  \ / overlays | `render_overlay` | render a frame to 8-bit RGB and burn GSPS / SR / SEG / RTSTRUCT markup\
+  \ onto it — the frame an agent \"sees\" |\n| Agent / MCP | `pydcm.mcp` | in-process MCP server over\
+  \ live pydcm objects |\n| File sets | `pydcm.fileset` | read a DICOMDIR / File-set, iterate instances\
+  \ |\n\n### DIMSE networking\n\n```python\nimport pydcm.dimse as dimse               # drop-in for pynetdicom\n\
+  \nae = dimse.AE(ae_title=\"PYDCM\")\nassoc = ae.associate(\"localhost\", 4242, ae_title=\"ORTHANC\"\
+  )   # dcm4chee: 11112, \"DCM4CHEE\"\nassoc.send_c_echo()\nassoc.send_c_store(pydcm.dcmread(\"ct.dcm\"\
+  ))   # persistent: many ops, one association\nassoc.release()\n```\n\n`AE.start_server` runs the SCP\
+  \ side — `EVT_C_STORE` / `ECHO` / `FIND` / `GET` /\n`MOVE` handlers plus the DIMSE-N set.\n\n### DICOMweb\
+  \ client\n\nAddress a server by an **origin** plus a **base path** — the prefix differs per product\n\
+  (Orthanc `/dicom-web`, dcm4chee-arc `/dcm4chee-arc/aets/DCM4CHEE/rs`, a root-mounted server `\"\"`):\n\
+  \n```python\nfrom pydcm import dicomweb\n\nS, BP = \"http://localhost:8042\", \"/dicom-web\"      #\
+  \ Orthanc\nstudies = dicomweb.search_studies(S, base_path=BP, matches={\"PatientID\": \"42\"})\nfor\
+  \ part10 in dicomweb.iter_study(S, study_uid, base_path=BP):\n    ...                              \
+  \      # streaming retrieve, bounded memory\ndicomweb.store_instances(S, [open(\"ct.dcm\", \"rb\").read()],\
+  \ base_path=BP)\n```\n\nSee the DICOMweb and DIMSE how-tos for per-server connection tables, C-FIND/GET/MOVE\
+  \ and TLS.\n\n### DICOM ↔ NIfTI, BIDS, DWI\n\n```python\nvol = pydcm.load_series(\"ct_series/\")\nvol.to_nifti(\"\
+  ct.nii.gz\")                  # validated affine (incl. gantry tilt)\nvol.to_nrrd(\"ct.nrrd\", gzip=True)\
+  \          # 3D Slicer (double-faithful LPS space)\nvol.to_metaimage(\"ct.mha\", compress=True)  # single-file\
+  \ MetaImage for ITK / nnU-Net\nmeta = pydcm.bids_sidecar(\"ep2d_di"

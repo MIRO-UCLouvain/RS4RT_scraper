@@ -1,0 +1,143 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: bielvicens/Brain-Tumor-3D-Segmentation
+url: https://github.com/bielvicens/Brain-Tumor-3D-Segmentation
+platform: github
+description: Project DescriptionA system will be developed capable of:Receiving a brain magnetic resonance
+  imaging (3D MRI).Automatically detecting and segmenting the tumor.Generating a clear visualization of
+  the segmentation.Calculating tumor statistics.Generating an AI-assisted preliminary clinical report.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-13T17:57:11Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+readme_excerpt: "#  Brain Tumor 3D Segmentation using Deep Learning (BraTS)\n\nA modular, fully tested\
+  \ and production-ready deep learning framework for automatic brain tumor segmentation from multi-modal\
+  \ MRI volumes using a **3D U-Net** architecture.\n\nThe project is built around the **BraTS (Brain Tumor\
+  \ Segmentation Challenge)** dataset and has been designed following modern software engineering principles,\
+  \ including modular architecture, comprehensive unit testing, reproducible preprocessing pipelines and\
+  \ reusable training/inference workflows.\n\nRather than being a simple research prototype, the project\
+  \ aims to provide a maintainable and extensible codebase suitable for experimentation, education and\
+  \ future research.\n\n---\n\n##  Features\n\n-  3D U-Net implementation for volumetric medical image\
+  \ segmentation\n-  Native support for the BraTS dataset\n-  Fully modular preprocessing pipeline\n-\
+  \  Configurable preprocessing transforms\n    - Z-score normalization\n    - Isotropic resampling\n\
+  -  Training-only data augmentation\n    - Random flips\n    - Random 90° rotations\n    - Random Gaussian\
+  \ noise\n    - Random gamma correction\n    - Random intensity shifting\n-  PyTorch Dataset and DataLoader\
+  \ integration\n-  Dice + Cross Entropy hybrid loss\n-  GPU/CPU compatible training\n-  Automatic checkpoint\
+  \ saving\n-  Early stopping support\n-  Modular inference pipeline\n-  Extensive automated test suite\
+  \ (520+ passing tests)\n-  Factory builders for reproducible component construction\n-  Clean architecture\
+  \ with clear separation of responsibilities\n\n---\n\n## Project Goals\n\nThis repository was developed\
+  \ with three primary objectives:\n\n1. Build a complete medical image segmentation framework following\
+  \ modern software engineering practices.\n\n2. Provide a reusable and extensible codebase for future\
+  \ experimentation with novel architectures, preprocessing techniques and loss functions.\n\n3. Demonstrate\
+  \ professional Python development skills through clean architecture, testing and documentation.\n\n\
+  ---\n\n## Main Technologies\n\n| Category | Technology |\n|-----------|------------|\n| Language | Python\
+  \ 3.11 |\n| Deep Learning | PyTorch |\n| Medical Imaging | NiBabel |\n| Numerical Computing | NumPy\
+  \ |\n| Testing | PyTest |\n| MRI Dataset | BraTS |\n| Model | 3D U-Net |\n\n---\n\n## Repository Highlights\n\
+  \n✔ Modular architecture\n\n✔ Strong separation of concerns\n\n✔ Extensive documentation\n\n✔ Comprehensive\
+  \ automated tests\n\n✔ Production-style project organization\n\n✔ Easily extensible for future research\n\
+  \n---\n#  Project Architecture\n\nThe project follows a modular architecture where each component has\
+  \ a single responsibility. Data loading, preprocessing, model definition, training and inference are\
+  \ completely decoupled, making the framework easy to extend and maintain.\n\n```\n                 \
+  \          BraTS Dataset\n                                 │\n                                 ▼\n \
+  \                       ┌─────────────────┐\n                        │   BraTSReader   │\n         \
+  \               └─────────────────┘\n                                 │\n                          \
+  \       ▼\n                        ┌─────────────────┐\n                        │ BraTSDataset    │\n\
+  \                        └─────────────────┘\n                                 │\n                 \
+  \                ▼\n                 ┌────────────────────────────────┐\n                 │   PreprocessingPipeline\
+  \        │\n                 ├────────────────────────────────┤\n                 │ • ZScoreNormalization\
+  \          │\n                 │ • ResamplingTransform          │\n                 │ • Data Augmentation\
+  \ (train)    │\n                 └────────────────────────────────┘\n                              \
+  \   │\n                                 ▼\n                          PyTorch DataLoader\n          \
+  \                       │\n                                 ▼\n                          ┌──────────────┐\n\
+  \                          │    UNet3D    │\n                          └──────────────┘\n          \
+  \                       │\n                ┌────────────────┴────────────────┐\n                ▼  \
+  \                               ▼\n      DiceCrossEntropyLoss                 Predictor\n          \
+  \      │                                 │\n                ▼                                 ▼\n  \
+  \          Trainer                      Segmentation Mask\n                │\n                ▼\n  \
+  \      Checkpoints (.pt)\n```\n\nThe project is intentionally organized so that each module performs\
+  \ one well-defined task:\n\n- **Reader** loads MRI volumes from disk.\n- **Dataset** converts patient\
+  \ data into PyTorch tensors.\n- **Preprocessing Pipeline** applies deterministic preprocessing.\n- **Augmentation**\
+  \ performs stochastic training-only transformations.\n- **Model** defines the neural network.\n- **Trainer**\
+  \ handles optimization and checkpointing.\n- **Predictor** performs inference on unseen data.\n\nNo\
+  \ module contains responsibilities belonging to another module, resulting in a clean and maintainable\
+  \ architecture.\n\n---\n\n#  Project Structure\n\n```\nproject/\n│\n├── data/\n│   ├── raw/\n│   │ \
+  \  └── TrainingData/\n│   └── processed/\n│\n├── checkpoints/\n│\n├── predictions/\n│\n├── src/\n│ \
+  \  │\n│   ├── analysis/\n│   ├── builders/\n│   ├── data/\n│   ├── inference/\n│   ├── models/\n│  \
+  \ ├── preprocessing/\n│   ├── utils/\n│   └── visualization/\n│\n├── tests/\n├── scripts/\n│   ├── train.py\n\
+  │   └── predict.py\n├── requirements.txt\n└── README.md\n```\n\n---\n\n## Web Application\n\nThe project\
+  \ includes an interactive **Streamlit web application** for exploring the dataset, running model inference,\
+  \ evaluating trained checkpoints, and inspecting training results.\n\nThe application is designed as\
+  \ a complete interface around the 3D U-Net segmentation pipeline, allowing the user to interact with\
+  \ the trained model without manually running the underlying Python scripts.\n\n### Running the application\n\
+  \nFrom the project root, run:\n\n```bash\nstreamlit run app/Home.py\n```\n\nThe application will open\
+  \ in the browser.\n\n> **Note:** Make sure the required dataset and trained checkpoints are available\
+  \ in the directories configured by `ProjectConfig`.\n\n---\n\n### Application structure\n\nThe application\
+  \ is divided into several pages, each with a specific purpose:\n\n```text\nHome\n ├── Predict\n ├──\
+  \ Evaluate\n ├── Explore\n └── Training Results\n```\n\n### \U0001F3E0 Home\n\nThe Home page provides\
+  \ an overview of the project and its main functionalities.\n\nIt gives access to the different sections\
+  \ of the application:\n\n* **Predict** — run the trained 3D U-Net on a patient.\n* **Evaluate** — evaluate\
+  \ a trained checkpoint using quantitative metrics.\n* **Explore** — inspect patients, MRI modalities\
+  \ and dataset information.\n* **Training Results** — visualize the evolution of training and validation\
+  \ metrics.\n\n---\n\n### \U0001F50D Predict\n\nThe **Predict** page is the main inference interface.\n\
+  \nIt allows the user to:\n\n1. Select a patient from the BraTS dataset.\n2. Select a trained model checkpoint.\n\
+  3. Run inference using the 3D U-Net.\n4. Visualize the predicted segmentation.\n5. Navigate through\
+  \ the MRI volume slice by slice.\n6. Select the MRI modality to display.\n7. Inspect the probability\
+  \ map for individual tumor classes.\n\nThe supported BraTS tumor regions are:\n\n| Label | Region  \
+  \   | Description       |\n| ----- | ---------- | ----------------- |\n| 0     | Background | Non-tumor\
+  \ tissue  |\n| 1     | NCR        | Necrotic core     |\n| 2     | ED         | Peritumoral edema |\n\
+  | 3     | ET         | Enhancing tumor   |\n\nThe segmentation is displayed as an overlay on top of\
+  \ the MRI volume, allowing the predicted tumor regions to be visually inspected.\n\nThe page also displays\
+  \ basic information such as:\n\n* Prediction shape\n* Probability-map shape\n* Number of predicted tumor\
+  \ voxels\n* Selected MRI modality\n* Current slice\n\nThe checkpoint selector automatically detects\
+  \ available `.pt` checkpoints and prioritizes `best.pt` when it is available.\n\n---\n\n### \U0001F4CA\
+  \ Evaluate\n\nThe **Evaluate** page is used to quantitatively assess trained model checkpoints.\n\n\
+  It provides an evaluation interface for measuring the quality of the segmentation predictions against\
+  \ ground-truth masks.\n\nThe evaluation is useful for:\n\n* Comparing different checkpoints.\n* Measuring\
+  \ segmentation performance.\n* Identifying the best-performing model.\n* Inspecting Dice and IoU metrics.\n\
+  * Analysing model performance independently from the training process.\n\nFor a final scientific evaluation,\
+  \ the model should ideally be evaluated on a **held-out test set** that was not used during training\
+  \ or model selection.\n\n---\n\n### \U0001F5C2️ Explore\n\nThe **Explore** page provides an interface\
+  \ for inspecting the BraTS dataset.\n\nIt allows the user to:\n\n* Browse available patients.\n* Inspect\
+  \ which MRI modalities are available.\n* Inspect segmentation masks.\n* Examine volume dimensions.\n\
+  * Examine voxel spacing and other metadata.\n* Visualize MRI volumes and segmentation information.\n\
+  \nThe page uses the project's `BraTSReader` and `PatientRecord` abstractions rather than accessing the\
+  \ dataset files directly.\n\nThis ensures that dataset discovery and validation remain consistent with\
+  \ the rest of the project.\n\n---\n\n### \U0001F4C8 Training Results\n\nThe **Training Results** page\
+  \ is used to inspect the results of model training.\n\nIt displays the metrics stored during training,\
+  \ including:\n\n* Training loss\n* Validation loss\n* Training Dice\n* Validation Dice\n\nThe training\
+  \ history is stored as:\n\n```text\nhistory.json\n```\n\nand the corresponding plots are generated as:\n\
+  \n```text\nloss.png\ndice.png\n```\n\nThese results make it possible to identify:\n\n* Whether the model\
+  \ is learning.\n* Whether validation performance is improving.\n* Potential overfitting.\n* The epoch\
+  \ corresponding to the best validation performance.\n* Differences between training and validation performance.\n\
+  \n---\n\n## Recommended workflow\n\nThe recommended workflow for using the application is:\n\n```text\n\
+  1. Train the model\n       ↓\n2. Generate best.pt\n       ↓\n3. Open the Streamlit application\n   \
+  \    ↓\n4. Explore the dataset\n       ↓\n5. Run predictions\n       ↓\n6. Evaluate the checkpoint\n\
+  \       ↓\n7. Inspect training curves\n       ↓\n8. Analyse segmentation quality\n```\n\nFor visual\
+  \ inspection, the **Predict** page should generally be used together with the **Evaluate** page.\n\n\
+  A high Dice score alone does not guarantee that every individual segmentation is visually correct, so\
+  \ quantitative evaluation and qualitative inspection should be considered together.\n\n---\n\n## Training\
+  \ the 3D U-Net on Google Colab\n\nThe model can be trained on **Google Colab** using a GPU, which is\
+  \ particularly useful because 3D U-Net training is computationally expensive and requires significant\
+  \ GPU memory.\n\nThe training pipeline supports:\n\n* GPU acceleration.\n* Training and validation datasets.\n\
+  * Data augmentation.\n* Dice + Cross Entropy loss.\n* Learning-rate scheduling.\n* Early stopping.\n\
+  * Checkpoint saving.\n* Training-history saving.\n* **Resume training from an existing checkpoint.**\n\
+  \n---\n\n### 1. Upload or clone the project\n\nFirst, make the project available in the Colab environment.\n\
+  \nFor example, if the project is hosted on GitHub:\n\n```bash\n!git clone <YOUR_REPOSITORY_URL>\n%cd\
+  \ <YOUR_PROJECT_DIRECTORY>\n```\n\nInstall the required dependencies:\n\n```bash\n!pip install -r requirements.txt\n\
+  ```\n\nMake sure that the BraTS dataset is also accessible from Colab.\n\nFor large datasets, Google\
+  \ Drive can be used instead of uploading the dataset directly to the Colab runtime.\n\n---\n\n### 2.\
+  \ Enable the GPU\n\nIn Colab, enable GPU acceleration through:\n\n```text\nRuntime\n→ Change runtime\
+  \ type\n→ Hardware accelerator\n→ GPU\n```\n\nThen verify that PyTorch can access the GPU:\n\n```python\n\
+  import torch\n\nprint(torch.cuda.is_available())\nprint(torch.cuda.get_device_name(0) if torch.cuda.is_available()\
+  \ else \"CPU\")\n```\n\nThe expected output should indicate that CUDA is available and show the selected\
+  \ NVIDIA GPU.\n\n---\n\n### 3. Configure the training\n\nThe training configuration is controlled through\
+  \ `ProjectConfig`.\n\nThe main training parameters include:\n\n```python\nepochs: int = 100\nbatch_size:\
+  \ int = 2\nlearning_rate: float = 1e-4\nweight_decay: float = 1e"

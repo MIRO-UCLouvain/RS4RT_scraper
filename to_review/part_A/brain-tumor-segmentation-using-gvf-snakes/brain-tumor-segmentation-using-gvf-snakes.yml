@@ -1,0 +1,69 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: bplpriya/Brain-Tumor-Segmentation-using-GVF-Snakes
+url: https://github.com/bplpriya/Brain-Tumor-Segmentation-using-GVF-Snakes
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-03T03:27:37Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+readme_excerpt: "# Brain Tumour Segmentation — Active Contour Models (v2)\n### CV Project — GVF vs Traditional\
+  \ Snake Comparison\n\n---\n\n## What's New in v2\n\n| Feature | v1 | v2 |\n|---|---|---|\n| Narrative\
+  \ | Traditional (close) vs GVF (far) — wrong | **Both start SAME far distance** — correct |\n| Contour\
+  \ art | Plain circle line | **Real snake** with head, eyes, tongue, scales |\n| GUI | None | **Full\
+  \ interactive GUI** — upload images, live results |\n| Dataset | Synthetic only | **Real LGG Kaggle\
+  \ MRI dataset** supported |\n| Evaluation | Single image | **Batch evaluation** with train/test split\
+  \ by patient |\n\n---\n\n## Quick Start\n\n```bash\ncd brain_tumor_v2/\npip install numpy scipy matplotlib\
+  \ scikit-image pillow\n\n# 1. Run artistic comparison (GVF vs Traditional, same far init)\npython comparison_fixed.py\n\
+  \n# 2. Launch interactive GUI (requires desktop / display)\npython gui_app.py\n\n# 3. GUI with real\
+  \ dataset\npython gui_app.py --dataset_path /path/to/lgg-mri-segmentation\n\n# 4. Batch evaluate on\
+  \ real LGG dataset\npython evaluate_dataset.py --dataset_path /path/to/dataset --n_eval 30\n```\n\n\
+  ---\n\n## Getting the Real Dataset\n\n```python\nimport kagglehub\npath = kagglehub.dataset_download(\"\
+  mateuszbuda/lgg-mri-segmentation\")\nprint(\"Path to dataset files:\", path)\n# Then run:\n# python\
+  \ gui_app.py --dataset_path <path>\n# python evaluate_dataset.py --dataset_path <path>\n```\n\n---\n\
+  \n## File Structure\n\n```\nbrain_tumor_v2/\n├── synthetic_mri.py      # Synthetic brain MRI generator\n\
+  ├── snake_traditional.py  # Traditional snake (matrix + scikit-image)\n├── gvf.py                # GVF\
+  \ diffusion field + GVF snake\n├── metrics.py            # Dice, Hausdorff, Precision/Recall\n├── snake_art.py\
+  \          # \U0001F195 Artistic snake rendering (head/scales/tongue)\n├── dataset.py            # \U0001F195\
+  \ LGG Kaggle dataset loader + train/test split\n├── comparison_fixed.py   # \U0001F195 Correct GVF vs\
+  \ Trad (SAME far init)\n├── evaluate_dataset.py   # \U0001F195 Batch evaluation on real dataset\n├──\
+  \ gui_app.py            # \U0001F195 Full interactive GUI\n└── visualization.py      # GVF field, energy\
+  \ plots, etc.\n```\n\n---\n\n## The Correct Narrative (Why GVF is Better)\n\n**Wrong approach (v1):**\n\
+  - Traditional: starts 8px away from tumour → Dice = 0.98 ✓\n- GVF: starts 22px away from tumour → Dice\
+  \ = 0.53 ✗\n- Conclusion: \"Traditional is better\" ← WRONG\n\n**Correct approach (v2):**\n- Traditional:\
+  \ starts **38px away** → gets stuck at oedema boundary (Dice ~0.3)\n- GVF: starts **same 38px away**\
+  \ → diffused forces reach tumour (Dice ~0.7+)\n- Conclusion: \"GVF has LARGER CAPTURE RANGE\" ← Correct\n\
+  \nThis matches Xu & Prince (1998): the key advantage of GVF is that it propagates\nedge information\
+  \ across the image via diffusion, allowing convergence from\ninitialisation points that traditional\
+  \ snakes cannot handle.\n\n---\n\n## Mathematical Summary\n\n### Traditional Snake Energy (Kass 1988)\n\
+  ```\nE_snake = ∫ [α|v'(s)|² + β|v''(s)|²] ds  +  ∫ E_ext(v(s)) ds\n(A + γI) · x^{t+1} = γ · x^t + f_x(x^t,\
+  \ y^t)\n```\n\n### GVF Diffusion (Xu & Prince 1998)\n```\nu^{n+1} = (1 − b·Δt) · u^n  +  μ·Δt · ∇²u^n\
+  \  +  b·Δt · f_x\nv^{n+1} = (1 − b·Δt) · v^n  +  μ·Δt · ∇²v^n  +  b·Δt · f_y\n\nwhere b = |∇f|²  (edge\
+  \ strength weighting)\n      μ = regularisation (diffusion strength)\n```\n**Key:** Large μ → forces\
+  \ diffuse far from edges → large capture range\n\n### Dice Coefficient\n```\nDSC = 2|A ∩ B| / (|A| +\
+  \ |B|)    ∈ [0,1]\n```\n\n---\n\n## GUI Guide\n\n```\n┌─────────────────────────────────────────────┬──────────────────┐\n\
+  │  Input MRI  |  GVF Result  |  Trad Result   │  \U0001F40D GVF Brain    │\n│  (GT=red)   |  (snake\
+  \ art) |  (snake art)   │    Tumour GUI    │\n├─────────────┬──────────────┬────────────────│  [\U0001F4C1\
+  \ Load Image] │\n│  GVF Force  │   Metrics    │   Status       │  [\U0001F9E0 Synthetic]  │\n│   Field\
+  \     │   Bar Chart  │   Messages     │  [◀ Prev Slice]  │\n└─────────────┴──────────────┴────────────────│\
+  \  [▶ Next Slice]  │\n                                              │  [▶ Run Seg.]    │\n         \
+  \                                     │  [\U0001F3AC Save Anim]  │\n                               \
+  \               │  [\U0001F4BE Save Res.]  │\n                                              │  ─── Sliders\
+  \ ─── │\n                                              │  α (elasticity)  │\n                      \
+  \                        │  μ (GVF diff.)   │\n                                              │  Iterations\
+  \      │\n                                              └──────────────────┘\n```\n\n---\n\n## References\n\
+  \n1. Kass, M., Witkin, A., & Terzopoulos, D. (1988). Snakes: Active contour models. *IJCV*, 1(4), 321–331.\n\
+  2. Xu, C., & Prince, J. L. (1998). Snakes, shapes, and gradient vector flow. *IEEE TIP*, 7(3), 359–369.\n\
+  3. Buda, M., Saha, A., & Mazurowski, M. A. (2019). Association of genomic subtypes of lower-grade gliomas\
+  \ with shape features automatically extracted by a deep learning algorithm. *Computers in Biology and\
+  \ Medicine*.\n"

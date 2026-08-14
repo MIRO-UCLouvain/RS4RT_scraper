@@ -1,0 +1,62 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: long-boss/Sparse-Deconv-Brain-Tumor-Segmentation
+url: https://github.com/long-boss/Sparse-Deconv-Brain-Tumor-Segmentation
+platform: github
+description: Code, data splits, and reproducibility materials for sparse-deconvolution-enhanced brain
+  tumor image segmentation.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-02T03:54:58Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# Physics-Informed Sparse Deconvolution for Brain Tumor Segmentation\n\n[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21123745.svg)](https://doi.org/10.5281/zenodo.21123745)\n\
+  \nThis repository contains a cleaned release package for the code workflow associated with **Physics-Informed\
+  \ Sparse Deconvolution for Robust Brain Tumor Segmentation in Limited-Data Regimes**.\n\nIncluded model\
+  \ families:\n\n- U-Net\n- MK-UNet\n- E-SegNet\n\n## Contents\n\n- `src/sparse_deconvolution/`: non-UI\
+  \ MATLAB batch Sparse-SIM reconstruction with Hessian, deblur, TIFF IO, and GPU paths.\n- `src/unet_mkunet/`:\
+  \ U-Net and MK-UNet training and prediction code.\n- `src/esegnet_2d/`: E-SegNet 2D model code and reusable\
+  \ configuration templates.\n- `src/baseline/`: baseline preprocessing script.\n- `matlab/`: geometry\
+  \ and contour metric scripts.\n- `examples/simulation/`: small non-patient TIFF examples.\n- `results/`:\
+  \ selected summary tables.\n\n## Sparse Deconvolution\n\n```matlab\ncd src/sparse_deconvolution\nbatch_sparse_sim_recon\n\
+  ```\n\nEdit the parameter block in `batch_sparse_sim_recon.m` before running on your own data. `GPUcompute\
+  \ = 'auto'` enables the original Sparse-SIM `gpuArray` path when MATLAB detects a supported GPU.\n\n\
+  ## Data\n\nRaw medical images, masks, generated predictions, and checkpoints are not redistributed.\
+  \ Download source datasets from official providers and keep local data under ignored folders such as\
+  \ `raw/`, `preprocessed/`, `predictions/`, and `checkpoints/`.\n\n## Environment\n\n```bash\nconda create\
+  \ -n sparse-deconv-seg python=3.8\nconda activate sparse-deconv-seg\npip install -r requirements.txt\n\
+  ```\n\nSparse deconvolution requires MATLAB. GPU acceleration additionally requires Parallel Computing\
+  \ Toolbox and a supported GPU.\n\n## Reproducibility\n\nRaw medical images are not redistributed. After\
+  \ obtaining the source datasets\nfrom their official providers, prepare a local folder such as:\n\n\
+  ```text\ndata/dataset_name/\n├─ train/\n│  ├─ images/\n│  ├─ images_con2/\n│  └─ masks/\n├─ val/\n│\
+  \  ├─ images/\n│  └─ masks/\n└─ test/\n   ├─ images/\n   ├─ images_con2/\n   └─ masks/\n```\n\n`images_con2/`\
+  \ is used for sparse-deconvolution-preprocessed inputs in the\nreleased U-Net and MK-UNet scripts. You\
+  \ can either create it with the MATLAB\nbatch sparse deconvolution workflow or point the scripts to\
+  \ your own local\npreprocessed image folder.\n\n### U-Net and MK-UNet\n\nEdit `data_root`, image extensions,\
+  \ and checkpoint paths inside the scripts\nbefore running:\n\n```bash\ncd src/unet_mkunet\npython trainresnet_fast.py\n\
+  python predictresnet.py\npython trainresnet_fast_mkunet.py\npython predictresnet_mkunet.py\n```\n\n\
+  ### E-SegNet\n\nThe E-SegNet model code and reusable configuration templates are under\n`src/esegnet_2d/`.\
+  \ Start from `configs/brain_tumor_base.yaml` and edit the\nlocal dataset paths, image size, class count,\
+  \ and training settings before\nrunning your own training or inference pipeline.\n\n### Results\n\n\
+  `results/esegnet/metrics_dice_iou_sens_spec.csv` contains a selected summary\ntable from E-SegNet experiments.\
+  \ Full raw images, masks, model checkpoints,\nprediction masks, and local run logs are not distributed.\
+  \ To reproduce or\nextend the table, run the corresponding prediction scripts on your local test\nset\
+  \ and export Dice, IoU, sensitivity, and specificity into the same CSV\nschema.\n\n## Citation\n\nIf\
+  \ you use this repository, please cite the associated manuscript:\n\n**Physics-Informed Sparse Deconvolution\
+  \ for Robust Brain Tumor Segmentation in\nLimited-Data Regimes**  \nYunfei Zhang, Yunlong Fan, Yuxiang\
+  \ Yan, and Dan Gui, 2026.\n\nThe repository citation metadata is also provided in `CITATION.cff`.\n\n\
+  ## Archived release\n\nThe v1.0.0 manuscript release of this repository is archived on Zenodo:\n\nDOI:\
+  \ [10.5281/zenodo.21123745](https://doi.org/10.5281/zenodo.21123745)\n\n## Notes on Third-Party Templates\n\
+  \nSelected original E-SegNet benchmark templates are kept under\n`src/esegnet_2d/original_templates/`\
+  \ for reference only. They are separated from\nthe main release path because they refer to non-brain-tumor\
+  \ public benchmark\ndatasets and were not used as reported brain tumor experiments.\n\n## License\n\n\
+  The project release files are provided under the MIT License unless a file or\nsubdirectory states otherwise.\
+  \ The bundled Sparse-SIM components under\n`src/sparse_deconvolution/SparseSIM/` retain their upstream\
+  \ ODbL v1.0 license\nand non-commercial-use notice; see\n`src/sparse_deconvolution/SparseSIM/THIRD_PARTY_NOTICE.md`.\n"

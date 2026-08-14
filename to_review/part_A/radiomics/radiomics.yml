@@ -1,0 +1,83 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: lojainmurad/radiomics
+url: https://github.com/lojainmurad/radiomics
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-04-27T08:33:43Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Dermoscopy Feature Extraction\n\nComplete pipeline for extracting ABCDE clinical features\
+  \ + PyRadiomics features from dermoscopy lesion images (ISIC 2017 dataset).\n\n---\n\n## Project Structure\n\
+  \n    radiomics/\n    dermoscopy_features/\n        feature_extraction.py          Main extraction script\n\
+  \        requirements.txt               Python dependencies\n        README.md                     \
+  \ This file\n        data/masked_images/            Input: original x binary mask images\n         \
+  \   train/                     2000 images\n            val/                       150 images\n    \
+  \        test/                      600 images\n        data/predicted_masks_clean/    Input: binary\
+  \ segmentation masks\n            train/, val/, test/\n        outputs/\n            features.csv  \
+  \             All 2750 images, 234 features\n            features_train.csv         Train split (2000\
+  \ rows)\n            features_val.csv           Val split (150 rows)\n            features_test.csv\
+  \          Test split (600 rows)\n        venv310/                       Python 3.10 virtual environment\n\
+  \n---\n\n## Features Extracted (234 total columns)\n\n| Group | Prefix | Count | Description |\n|-------|--------|-------|-------------|\n\
+  | Asymmetry | asym_ | 5 | Axis-aligned, PCA, compactness, elongation |\n| Border | border_ | 6 | Irregularity,\
+  \ fractal dim, convexity, solidity |\n| Color | color_, col_ | 48 | RGB/HSV/LAB stats + ABCDE 6-colour\
+  \ fractions |\n| Texture | glcm_, lbp_, gabor_ | 23 | GLCM x4, LBP, 12 Gabor filters |\n| Evolution\
+  \ | lesion_, extent | 6 | Size ratios, bounding box, eccentricity |\n| Histogram | hist_ | 16 | Energy,\
+  \ entropy, percentiles, IQR, MAD |\n| Shape | shape_, hu_, fourier_ | 24 | Sphericity, Hu moments, Fourier\
+  \ descriptors |\n| GLRLM | glrlm_ | 7 | SRE, LRE, GLN, RLN, RP, LGRE, HGRE |\n| PyRadiomics | rx_ |\
+  \ 88 | firstorder(18), shape2D(9), glcm(24), glrlm(16), glszm(16), ngtdm(5) |\n| Identity | image_id,\
+  \ split | 2 | Image name and train/val/test label |\n\n---\n\n## Environment\n\n- Python: 3.10.20 inside\
+  \ venv310/\n- numpy: 1.26.4\n- opencv-python-headless: 4.8.1\n- SimpleITK: 2.5.3\n- pyradiomics: 3.0.1\n\
+  \n---\n\n## START OF EVERY CODESPACE SESSION\n\nOpen terminal and run these 3 commands:\n\n    source\
+  \ /workspaces/radiomics/dermoscopy_features/venv310/bin/activate\n    python -c \"from radiomics import\
+  \ featureextractor; import cv2; print('All ready')\"\n    cd /workspaces/radiomics/dermoscopy_features\n\
+  \nIf bashrc was set up, venv activates automatically and you will see:\n    venv310 activated\n\n---\n\
+  \n## END OF EVERY CODESPACE SESSION\n\nRun these 4 steps before closing:\n\n    # Step 1 - save command\
+  \ history\n    cd /workspaces/radiomics/dermoscopy_features\n    history > outputs/terminal_history_$(date\
+  \ +%Y%m%d).txt\n\n    # Step 2 - commit and push to GitHub\n    git add -A\n    git commit -m \"Session\
+  \ $(date +%Y-%m-%d): save work\"\n    git push origin main\n\n    # Step 3 - confirm push worked\n \
+  \   git log --oneline -3\n\n    # Step 4 - download CSVs to your computer\n    Right-click in VS Code\
+  \ Explorer and Download:\n    outputs/features.csv\n    outputs/features_train.csv\n    outputs/features_val.csv\n\
+  \    outputs/features_test.csv\n\n---\n\n## Running Feature Extraction\n\n    source /workspaces/radiomics/dermoscopy_features/venv310/bin/activate\n\
+  \n    cd /workspaces/radiomics/dermoscopy_features\n\n    python feature_extraction.py \\\n      --masked_root\
+  \ data/masked_images \\\n      --mask_root   data/predicted_masks_clean \\\n      --output      outputs/features.csv\
+  \ \\\n      --max_dim     512 \\\n      --workers     4\n\n---\n\n## Verifying Output\n\n    python\
+  \ -c \"\n    import pandas as pd\n    df = pd.read_csv('outputs/features.csv')\n    print('Rows    :',\
+  \ len(df))\n    print('Columns :', len(df.columns))\n    print('Splits  :', df['split'].value_counts().to_dict())\n\
+  \    rx = [c for c in df.columns if c.startswith('rx_')]\n    print('rx_ cols:', len(rx))\n    print('Missing\
+  \ :', df.isnull().sum().sum())\n    \"\n\nExpected output:\n    Rows    : 2750\n    Columns : 234\n\
+  \    Splits  : {'train': 2000, 'test': 600, 'val': 150}\n    rx_ cols: 88\n    Missing : 0\n\n---\n\n\
+  ## If Codespace Gets Deleted (30 plus days inactive)\n\nReinstall everything IN THIS EXACT ORDER:\n\n\
+  \    sudo add-apt-repository ppa:deadsnakes/ppa -y\n    sudo apt-get update -y --allow-insecure-repositories\n\
+  \    sudo apt-get install -y python3.10 python3.10-dev python3.10-venv python3.10-distutils\n    sudo\
+  \ apt-get install -y libgl1 libglib2.0-0\n\n    cd /workspaces/radiomics/dermoscopy_features\n    python3.10\
+  \ -m venv venv310\n    source venv310/bin/activate\n    pip install --upgrade pip setuptools wheel\n\
+  \    pip install numpy==1.26.4\n    pip install SimpleITK\n    pip install pyradiomics==3.0.1 --no-build-isolation\n\
+  \    pip install opencv-python-headless==4.8.1.78 tqdm matplotlib pandas scipy\n\n    echo 'source /workspaces/radiomics/dermoscopy_features/venv310/bin/activate'\
+  \ >> ~/.bashrc\n\n    python -c \"\n    from radiomics import featureextractor\n    import cv2, numpy,\
+  \ SimpleITK as sitk\n    print('numpy    :', numpy.__version__)\n    print('cv2      :', cv2.__version__)\n\
+  \    print('SimpleITK:', sitk.__version__)\n    print('All ready')\n    \"\n\n---\n\n## Re-downloading\
+  \ Data (if needed)\n\n    pip install gdown\n    mkdir -p data/masked_images/{train,val,test}\n    cd\
+  \ data/masked_images\n    gdown 1T_TlE5BY27j5uu7OL_bTzQovBcFTaPVJ -O test/test.zip\n    gdown 1c6RMof-xb4P1dRxCWuX8GSfb_PYzQO9X\
+  \ -O train/train.zip\n    gdown 1lKbUvDul-17WS8OvQW50P-sgO2GlA76T -O val/val.zip\n    unzip test/test.zip\
+  \ -d test/\n    unzip train/train.zip -d train/\n    unzip val/val.zip -d val/\n    rm test/test.zip\
+  \ train/train.zip val/val.zip\n\n    mkdir -p /workspaces/radiomics/dermoscopy_features/data/predicted_masks_clean/{train,val,test}\n\
+  \    cd /workspaces/radiomics/dermoscopy_features/data/predicted_masks_clean\n    gdown 1oZz2hfx_zXhLdwMCC_IlBhzygcUeaiW1\
+  \ -O test/test.zip\n    gdown 1KW-hGFUCe4auIfdV6dgRQkJLM0lBMEI3 -O train/train.zip\n    gdown 1IOybjxrDCTCGtCSIJ1IUTCMmQ5EbUqEi\
+  \ -O val/val.zip\n    unzip test/test.zip -d test/\n    unzip train/train.zip -d train/\n    unzip val/val.zip\
+  \ -d val/\n    rm test/test.zip train/train.zip val/val.zip\n\n---\n\n## Important Notes\n\n- PyRadiomics\
+  \ requires Python 3.10 — does NOT work on Python 3.12 (Codespace default)\n- numpy must be pinned to\
+  \ 1.26.4 — pyradiomics was compiled against numpy 1.x\n- opencv must be headless version — no display\
+  \ needed in Codespaces\n- Always use --workers 1 when debugging to see errors clearly\n- data/ folder\
+  \ is NOT committed to git (too large) — only CSVs and scripts are committed\n- Codespace persists for\
+  \ 30 days of inactivity before deletion\n"

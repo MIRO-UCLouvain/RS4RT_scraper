@@ -1,0 +1,88 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: chloejin318/Hybrid-TotalSegmentator-and-nnU-Net-for-Craniofacial-Segmentation
+url: https://github.com/chloejin318/Hybrid-TotalSegmentator-and-nnU-Net-for-Craniofacial-Segmentation
+platform: github
+description: Develop a DL framework based on nnU-Net v2, together with TotalSegmentator, to automatically
+  segment the mandible and cranial base in CBCT images. This non-manual labeling and segmentation method
+  will be the essential foundation for future automatic diagnosis of dentofacial deformities.
+license: null
+language: null
+keywords: []
+stars: 0
+updated_at: '2026-07-02T01:07:37Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Hybrid-TotalSegmentator-and-nnU-Net-for-Craniofacial-Segmentation\n<p align=\"center\"\
+  > \n  <img width=\"468\" height=\"269\" alt=\"image\" src=\"https://github.com/user-attachments/assets/af85e08c-86d7-4f13-925b-9940a145cb88\"\
+  \ /> \n</p> \nDevelop a DL framework based on nnU-Net v2, together with TotalSegmentator, to automatically\
+  \ segment the mandible and cranial base in CBCT images. This non-manual labeling and segmentation method\
+  \ will be the essential foundation for future automatic diagnosis of dentofacial deformities.\n\n####\
+  \ OVERVIEW\nThis repository contains the methodology for developing and validating an AI-based framework\
+  \ for automatic mandibular segmentation from CBCT images. The pipeline combines automated ground truth\
+  \ generation (via TotalSegmentator), a fully self-configuring nnU-Net v2 architecture, and a Tversky-loss-driven\
+  \ training scheme optimized for the class imbalance typical of craniofacial CBCT data.\n#### Key highlights:\n\
+  - 270 subjects, 150,000+ CBCT slices (16-bit grayscale)\n- Automated GT labeling pipeline using TotalSegmentator\
+  \ with manual QC\n- 3D nnU-Net v2 architecture with 6-stage encoder/5-stage decoder\n- Tversky loss\
+  \ (α = 0.3, β = 0.7) tuned to favor recall for complete mandibular coverage\n- Evaluated with Dice Coefficient,\
+  \ Precision/Recall, and Hausdorff Distance (HD95)\n#### Dataset\n- Acquisition\nCBCT scans were acquired\
+  \ from patients referred to the Department of Oral and Maxillofacial Surgery for orthognathic surgery\
+  \ between 2013–2025, using one of three scanner units: Carestream 9300; Carestream 9600; i-CAT FLX.\
+  \ All scans followed standardized imaging protocols with patients positioned upright to preserve natural\
+  \ anatomical relationships.\n- Inclusion & Exclusion Criteria\nInclusion: Males/females, ages 18–45;\
+  \ diagnosis of maxillary/mandibular excess or deficiency, anterior open bite, deep bite, or unilateral/bilateral\
+  \ transverse maxillary deficiency; complete mandible visualization (condyle to symphysis).\nExclusion:\
+  \ Significant motion artifacts; extensive uncorrectable metal artifacts (implants/orthodontic hardware);\
+  \ prior maxillofacial surgery altering cranial base/mandibular anatomy; craniofacial developmental syndromes\
+  \ or severe systemic bone disease.\nAfter filtering, 270 subjects were retained for model development\
+  \ and validation.\n- Dataset Composition & Splits\nSubject identifiers (name, acquisition date, medical\
+  \ record number, etc.) were removed prior to data handoff to preserve anonymity.\nSplit Subjects Percentage:\
+  \ Training 74.1%(200) / Validation 13.0%(35) / Test 13.0%(35).\n#### Preprocessing Pipeline\nA six-step\
+  \ preprocessing pipeline standardized all CBCT volumes prior to training:\n1. Normalization: Z-score\
+  \ standardization: $I_norm = (I - μ) / σ$\n2. Gaussian Filtering: σ = 0.5 mm, balances noise suppression\
+  \ vs. boundary preservation\n3. Resampling: Trilinear interpolation to isotropic 0.4 × 0.4 × 0.4 mm³\
+  \ voxel spacing\n4. Registration: Rigid transformation to a common coordinate frame via mutual information\
+  \ maximization\n5. Windowing: HU-equivalent window center = 400, width = 1800 (bone emphasis)\n6. Data\
+  \ Augmentation: Random rotation (±15°, all axes), horizontal/sagittal flipping, random scaling (0.9–1.1×),\
+  \ elastic deformation\n#### Ground Truth Generation\nManual annotation of 270 volumes was impractical\
+  \ given clinician time constraints and inter-observer variability. Ground truth labels were instead\
+  \ generated automatically using TotalSegmentator, an open-source nnU-Net-based segmentation tool trained\
+  \ on 1,204 clinical CT exams and capable of segmenting 104 anatomical structures (27 organs, 59 bones,\
+  \ 10 muscles, 8 vessels) with a reported Dice Score of 0.943.\n- Label Inference Process: \n1. Format\
+  \ conversion: DICOM → NIfTI (better compatibility with Python tooling, e.g., SimpleITK)\n2. Weight acquisition:\
+  \ Pre-trained TotalSegmentator weights loaded for structure identification\n3. Automated labeling: Region\
+  \ of interest restricted to mandible and cranial base\n- 0 = Background;\n  1 = Mandible;\n  2 = Cranial\
+  \ base;\n  Teeth (maxillary and mandibular) excluded from segmentation\n#### Quality Control\nAll auto-generated\
+  \ labels were reviewed in ITK-SNAP for anatomical accuracy and boundary correctness. Cases with visible\
+  \ errors were manually corrected before being finalized as training labels.\n#### Model Architecture\n\
+  ##### nnU-Net v2\nnnU-Net is a self-configuring segmentation framework that automatically adapts preprocessing,\
+  \ network architecture, and training parameters to dataset-specific properties (voxel spacing, intensity\
+  \ distribution, class imbalance).\n##### Network Details\nType: 3D U-shaped encoder-decoder with skip\
+  \ connections \\\nEncoder: 6 resolution stages, each with two 3×3×3 convolutions + normalization + Leaky\
+  \ ReLU; Channel progression: [32, 64, 128, 256, 320, 320] \\\nDownsampling via strided convolution (no\
+  \ max-pooling): [2,2,2] at intermediate stages, anisotropic [1,2,2] at the deepest level \\\nBottleneck:\
+  \ 320 channels, same conv structure as encoder blocks \\\nDecoder: 5 upsampling stages using transposed\
+  \ convolutions + skip-connection concatenation, followed by two 3×3×3 conv layers (Instance Norm + Leaky\
+  \ ReLU) per stage \\\nInput patch size: 112 × 160 × 128 voxels \\\nVoxel spacing: 0.3 mm isotropic \\\
+  \nBatch size: 2\n##### Loss Function\nGiven severe class imbalance in craniofacial CBCT (small target\
+  \ structure relative to volume), Tversky loss was used instead of standard Dice/cross-entropy loss:\n\
+  $L_Tversky = 1 − TP / (TP + α·FP + β·FN)$ \\\nWith α = 0.3, β = 0.7 — prioritizing recall to minimize\
+  \ under-segmentation of the mandible.\n##### Training Configuration\n- Optimizer: Adam (β₁ = 0.9, β₂\
+  \ = 0.999)\n- Initial learning rate: 0.01, polynomial decay: $lr = lr₀ × (1 − epoch/epoch_total)^0.9$\n\
+  - Batch size: 2\n- Epochs: 700\n- Weight decay: $3 × 10^-5$\n- Patch size: 112 × 160 × 128 (auto-configured)\n\
+  ##### Training strategy\n- 1-fold cross-validation (fold 0) for preliminary hyperparameter tuning\n\
+  - Mixed precision training via PyTorch native AMP\n- Early stopping monitored on validation Dice (patience\
+  \ = 50 epochs); full 700 epochs completed in this study.\n#### Citation\n##### If you use Hybrid TotalSegmentator\
+  \ and nnU-Net in your research for non-manual labeling and segmentation, please cite:\n```bibtex\n@ARTICLE{\n\
+  \  author={Jin, Congjun and Issa, Raja Raymond A, and Widmer, Charles G},\n  title={Hybrid TotalSegmentator\
+  \ and nnU-Net Framework for Craniofacial Segmentation},\n  year={2026},\n  volume={},\n  number={},\n\
+  \  pages={1-21},\n  keywords={Deep learning, nnU-Net v2, TotalSegmentator, Craniofacial Bone},\n}\n\
+  ```\n#### Acknowledgements\n### This research was supported by a University of Florida University Research\
+  \ Investment (URI) Award. We acknowledge the University of Florida Integrated Data Repository (IDR)\
+  \ and the UF Health Office of the Chief Data Officer for providing the analytic data set for this project.\n"

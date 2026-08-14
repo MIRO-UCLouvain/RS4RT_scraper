@@ -1,0 +1,82 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ankesh-kumar-singh/Molecular-Toxicity-Prediction-Using-Graph-Neural-Networks-GNNs-
+url: https://github.com/ankesh-kumar-singh/Molecular-Toxicity-Prediction-Using-Graph-Neural-Networks-GNNs-
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-06-07T08:25:06Z'
+image_source: null
+heuristic_total_score: 20
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+- Matched 2 AI/ML term(s) in repository name.
+readme_excerpt: "# \U0001F9EA Tox21 GNN — Molecular Toxicity Classifier\n\nEnd-to-end project: **GNN training**\
+  \ + **FastAPI backend** + **React frontend**, all in one folder.\n\n---\n\n## \U0001F4C1 Project Structure\n\
+  \n```\ntox21/\n│\n├── README.md                        ← you are here\n├── requirements.txt        \
+  \         ← Python deps (training + backend)\n├── render.yaml                      ← Render.com backend\
+  \ deploy config\n├── vercel.json                      ← Vercel frontend deploy config\n├── .gitignore\n\
+  │\n├── configs/\n│   └── config.yaml                  ← all hyperparameters & paths\n│\n├── data/\n\
+  │   ├── download_data.py             ← downloads Tox21 via DeepChem → CSV splits\n│   ├── dataset.py\
+  \                   ← MoleculeDataset: SMILES → PyG graphs\n│   └── tox21/                       ← generated\
+  \ (train.csv, val.csv, test.csv)\n│       ├── train.csv\n│       ├── val.csv\n│       └── test.csv\n\
+  │\n├── models/\n│   ├── gnn.py                       ← GCN, GAT, GIN model definitions + build_model()\n\
+  │   └── layers.py                    ← MLPLayer, AttentionReadout\n│\n├── utils/\n│   ├── train.py \
+  \                    ← masked BCE loss, training loop, early stopping\n│   ├── evaluate.py         \
+  \         ← ROC-AUC, PR-AUC, F1 per task\n│   └── visualize.py                 ← training curves, task\
+  \ AUC bars, ROC curves\n│\n├── scripts/\n│   ├── train.py                     ← main training entrypoint\
+  \ (CLI)\n│   ├── predict.py                   ← single/batch SMILES → toxicity prediction\n│   └── hyperparameter_search.py\
+  \     ← Optuna HPO\n│\n├── notebooks/\n│   └── exploration.ipynb            ← EDA + results visualization\n\
+  │\n├── results/\n│   ├── checkpoints/                 ← saved .pt files (best_GIN.pt etc.)\n│   ├──\
+  \ plots/                       ← training curves, AUC charts\n│   └── logs/                        ←\
+  \ tensorboard logs\n│\n├── backend/\n│   ├── main.py                      ← FastAPI app (5 endpoints)\n\
+  │   └── requirements.txt             ← backend-only deps for Render\n│\n└── frontend/\n    ├── package.json\n\
+  \    ├── .env.example                 ← copy to .env.local, set API URL\n    ├── public/\n    │   └──\
+  \ index.html\n    └── src/\n        ├── index.js\n        ├── App.jsx                  ← main app: tabs,\
+  \ SMILES input, model selector\n        ├── App.css                  ← dark lab aesthetic\n        ├──\
+  \ components/\n        │   ├── MoleculeViewer.jsx   ← 2D structure via RDKit.js (WASM)\n        │  \
+  \ ├── ToxicityResults.jsx  ← animated task bars + verdict\n        │   └── BatchUpload.jsx      ← drag-drop\
+  \ CSV + results table\n        └── utils/\n            └── api.js               ← API client (reads\
+  \ REACT_APP_API_URL)\n```\n\n---\n\n## \U0001F680 Quick Start\n\n### 1 — Install Python dependencies\n\
+  ```bash\npip install -r requirements.txt\n```\n\n> **PyTorch Geometric** extra step (choose your CUDA\
+  \ version):\n> ```bash\n> # CPU only\n> pip install torch-scatter torch-sparse torch-geometric \\\n\
+  >   -f https://data.pyg.org/whl/torch-2.1.0+cpu.html\n> ```\n\n### 2 — Download & prepare data\n```bash\n\
+  python data/download_data.py\n# Creates data/tox21/train.csv, val.csv, test.csv\n```\n\n### 3 — Train\
+  \ a model\n```bash\n# GIN (recommended — best AUC ~0.82)\npython scripts/train.py --model gin --epochs\
+  \ 100\n\n# GCN (fast baseline)\npython scripts/train.py --model gcn\n\n# GAT with custom params\npython\
+  \ scripts/train.py --model gat --hidden_dim 256 --epochs 150\n```\nCheckpoints saved to `results/checkpoints/best_GIN.pt`\
+  \ etc.\n\n### 4 — Predict a molecule\n```bash\n# Aspirin\npython scripts/predict.py --smiles \"CC(=O)Oc1ccccc1C(=O)O\"\
+  \n\n# With molecule drawing\npython scripts/predict.py --smiles \"c1ccc2cc3ccccc3cc2c1\" --visualize\n\
+  \n# Batch from file (one SMILES per line)\npython scripts/predict.py --smiles_file molecules.txt\n```\n\
+  \n### 5 — Hyperparameter search\n```bash\npython scripts/hyperparameter_search.py --n_trials 50\n```\n\
+  \n---\n\n## \U0001F5A5 Running Locally (API + Frontend)\n\n### Backend (FastAPI)\n```bash\ncd backend\n\
+  uvicorn main:app --reload --port 8000\n# → http://localhost:8000/docs   (Swagger UI)\n```\n\n### Frontend\
+  \ (React)\n```bash\ncd frontend\ncp .env.example .env.local\n# .env.local already has REACT_APP_API_URL=http://localhost:8000\n\
+  \nnpm install\nnpm start\n# → http://localhost:3000\n```\n\n---\n\n## \U0001F6A2 Deployment\n\n### Backend\
+  \ → Render.com\n1. Push repo to GitHub\n2. Render → **New → Blueprint** → connect repo (reads `render.yaml`)\n\
+  3. Set env vars if needed:\n   - `CHECKPOINT_DIR` → path to your `.pt` files\n   - `CONFIG_PATH`   \
+  \ → path to `configs/config.yaml`\n\n### Frontend → Vercel\n1. Vercel → **New Project** → import repo\n\
+  2. **Root Directory**: `frontend`\n3. Add env var: `REACT_APP_API_URL = https://tox21-api.onrender.com`\n\
+  4. Deploy\n\n---\n\n## \U0001F9E0 Models\n\n| Model | Description | Mean ROC-AUC |\n|-------|-------------|:------------:|\n\
+  | **GIN** ★ | Graph Isomorphism Network, jumping-knowledge readout | ~0.82 |\n| **GAT**   | Graph Attention\
+  \ Network, 4-head attention | ~0.81 |\n| **GCN**   | Graph Convolutional Network, residual connections\
+  \ | ~0.78 |\n\n---\n\n## \U0001F4CA Tox21 Tasks (12 assays)\n\n| ID | Assay |\n|----|-------|\n| NR-AR\
+  \ | Androgen Receptor |\n| NR-AR-LBD | Androgen Receptor Ligand Binding Domain |\n| NR-AhR | Aryl Hydrocarbon\
+  \ Receptor |\n| NR-Aromatase | Aromatase |\n| NR-ER | Estrogen Receptor Alpha |\n| NR-ER-LBD | Estrogen\
+  \ Receptor Alpha LBD |\n| NR-PPAR-gamma | PPAR-gamma |\n| SR-ARE | Antioxidant Response Element |\n\
+  | SR-ATAD5 | ATAD5 / DNA damage |\n| SR-HSE | Heat Shock Factor Response Element |\n| SR-MMP | Mitochondrial\
+  \ Membrane Potential |\n| SR-p53 | p53 tumor suppressor |\n\n---\n\n## \U0001F50C API Reference\n\n\
+  | Method | Endpoint | Description |\n|--------|----------|-------------|\n| `GET`  | `/health` | Liveness\
+  \ + loaded models |\n| `GET`  | `/models` | Available checkpoints |\n| `GET`  | `/tasks`  | Task names\
+  \ + descriptions |\n| `POST` | `/predict` | Single SMILES |\n| `POST` | `/predict/batch` | Up to 500\
+  \ SMILES (JSON) |\n| `POST` | `/predict/csv` | CSV upload → CSV download |\n\n```bash\ncurl -X POST\
+  \ http://localhost:8000/predict \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"smiles\": \"\
+  CC(=O)Oc1ccccc1C(=O)O\", \"model\": \"gin\"}'\n```\n\n---\n\n> **Research use only.** Not for clinical\
+  \ or regulatory decisions.\n"

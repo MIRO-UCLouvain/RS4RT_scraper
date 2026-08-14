@@ -1,0 +1,50 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Avijitma123/nurotrack
+url: https://github.com/Avijitma123/nurotrack
+platform: github
+description: Brain tumor segmentation experiments using MONAI and PyTorch on BraTS MRI data.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-22T18:31:15Z'
+image_source: https://raw.githubusercontent.com/Avijitma123/nurotrack/HEAD/docs/figures/whole_tumor_volume_distribution.png
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+readme_excerpt: "# NuroTrack\n\nNuroTrack is a medical-imaging project for brain tumor segmentation experiments\
+  \ on the MSD/BraTS `Task01_BrainTumour` dataset. The repository contains training, evaluation, visualization,\
+  \ and dataset-analysis scripts for 3D MRI tumor segmentation with MONAI and PyTorch.\n\n## Repository\
+  \ Layout\n\n```text\nnurotrack/                 Shared project paths and utilities\nscripts/\n  analysis/\
+  \                Dataset statistics, duplicate checks, split creation\n  training/                3D\
+  \ U-Net, SegResNet training, and checkpoint evaluation\n  visualization/           MRI and tumor-mask\
+  \ visualization helpers\ndata/raw/                  Local dataset location, ignored by git\nmodels/\
+  \                    Local checkpoints, ignored by git\nreports/\n  tables/                  Generated\
+  \ CSV reports, ignored by git\n  figures/                 Generated plots and visualizations, ignored\
+  \ by git\n.github/                   GitHub workflow and templates\n```\n\n## Setup\n\nCreate a Python\
+  \ environment, then install dependencies:\n\n```bash\npython -m venv .venv\nsource .venv/bin/activate\n\
+  pip install -r requirements.txt\n```\n\nFor CUDA training, install the PyTorch build that matches your\
+  \ CUDA version before running the training scripts.\n\n## Data\n\nPlace the dataset here:\n\n```text\n\
+  data/raw/Task01_BrainTumour/\n  dataset.json\n  imagesTr/\n  imagesTs/\n  labelsTr/\n```\n\nThe raw\
+  \ dataset is intentionally ignored by git because it is large and should not be committed to GitHub.\n\
+  \n## Common Commands\n\nRun dataset volume analysis:\n\n```bash\npython scripts/analysis/volume_analysis_all.py\n\
+  python scripts/analysis/tumor_phenotype_analysis.py\npython scripts/analysis/duplicate_hash_analysis.py\n\
+  python scripts/analysis/create_leakage_safe_split.py\n```\n\nTrain models:\n\n```bash\npython scripts/training/train_3d_unet.py\n\
+  python scripts/training/train_SegResNet.py\n```\n\nEvaluate a SegResNet checkpoint:\n\n```bash\npython\
+  \ scripts/training/test_model.py --checkpoint models/best_segresnet_a100.pth\n```\n\nGenerate sample\
+  \ visualizations:\n\n```bash\npython scripts/visualization/visualize_sample.py\npython scripts/visualization/visualize_each_class.py\n\
+  ```\n\n## Analysis Figures\n\n`scripts/analysis/volume_analysis_all.py` computes tumor volumes from\
+  \ every training label mask and writes the numeric report to `reports/tables/tumor_volume_report.csv`.\n\
+  \nIt also creates two dataset-level figures:\n\n- `whole_tumor_volume_distribution.png`: histogram of\
+  \ whole-tumor volume across all cases. This helps show whether the dataset is dominated by small, medium,\
+  \ or very large tumors.\n- `tumor_subregion_volume_boxplot.png`: boxplot comparing edema, non-enhancing/core,\
+  \ enhancing tumor, and whole-tumor volumes. This helps compare class imbalance across tumor sub-regions.\n\
+  \nPreview of the whole-tumor volume distribution:\n\n![Whole tumor volume distribution](docs/figures/whole_tumor_volume_distribution.png)\n\
+  \nGenerated analysis outputs under `reports/` are ignored by git. The image above is a lightweight README\
+  \ preview copied into `docs/figures/`.\n\n## GitHub Notes\n\n- `data/raw/`, `models/*.pth`, training\
+  \ runs, generated tables, and generated figures are ignored.\n- Keep small source files, documentation,\
+  \ and workflow files in git.\n- Add a `LICENSE` file before publishing publicly if you want others to\
+  \ reuse the code under a specific license.\n"

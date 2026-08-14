@@ -1,0 +1,134 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: kaiwooodger/Adaptive_Digital_Phantom-
+url: https://github.com/kaiwooodger/Adaptive_Digital_Phantom-
+platform: github
+description: Research toolkit for building patient-adaptive digital anthropomorphic phantoms with CT-derived
+  anatomy, vascular flow modeling, radiotherapy QA, BMI/waist morphing, and reproducible CLI workflows.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-29T02:19:14Z'
+image_source: null
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 5 support term(s).
+readme_excerpt: "# Phantom Digital Twin\n\nResearch scaffold for a modular, lifelike anthropomorphic torso\
+  \ phantom with a\nmatched computational twin. Phase 1 targets CT realism, radiotherapy QA, and\nlarge-vessel\
+  \ vascular flow.\n\nThis project is for research and engineering development only. It is not a\nclinical\
+  \ device, treatment-planning system, diagnostic tool, or regulatory\nsubmission package.\n\n## Phase\
+  \ 1 Scope\n\nThe first build is a thorax/upper-abdomen MVP rather than a full body. The goal\nis to\
+  \ prove the full loop:\n\n```text\npublic CT/CTA reference data\n  -> segmentation and labels\n  ->\
+  \ density/material map\n  -> mesh/CAD assets\n  -> physical phantom modules\n  -> CT/radiotherapy/flow\
+  \ validation\n  -> update the digital twin\n```\n\nInitial tracks:\n\n- CT: anatomy, HU targets, tissue-equivalent\
+  \ material coupons, scan validation.\n- Radiotherapy: relative electron-density targets, dose-grid comparison,\
+  \ gamma\n  analysis using PyMedPhys once dose data exists.\n- Vascular flow: aorta/major-vessel geometry,\
+  \ pump-loop targets, CFD boundary\n  conditions, flow QA.\n\n## Dataset Starting Point\n\nWe will use\
+  \ a two-stream data strategy:\n\n- Immediate anatomy stream: CT-ORG, because it provides CT volumes\
+  \ and organ\n  masks in NIfTI format under an open license.\n- Vascular stream: public CTA/aortic datasets\
+  \ such as ImageTBAD or the type-B\n  aortic dissection Figshare collection for large-vessel geometry.\n\
+  - Whole-body upgrade path: Healthy-Total-Body-CTs, XCAT, or ICRP-style reference\n  models once licensing/access\
+  \ is sorted.\n\nSee [docs/data_sources.md](docs/data_sources.md).\n\n## Repository Layout\n\n```text\n\
+  configs/\n  datasets.yaml              dataset manifest and source choices\n  materials.yaml       \
+  \      seed HU/density/RED material targets\n  phase1_torso_mvp.yaml      build scope, modules, milestones\n\
+  \  labelmaps/                 dataset label conventions\ndata/\n  raw/                       downloaded\
+  \ source data, ignored by git\n  interim/                   converted/reoriented data\n  processed/\
+  \                 digital-twin working products\noutputs/\n  meshes/                    STL/OBJ/PLY\
+  \ exports\n  cad/                       CAD-ready exchange files\n  reports/                   validation\
+  \ summaries\nsrc/phantom_twin/            lightweight pipeline helpers\ntests/                     \
+  \  config and manifest checks\n```\n\n## Quick Start\n\nClone the repository and create a Python 3.10+\
+  \ environment:\n\n```bash\ngit clone <repo-url>\ncd phantom-digital-twin\npython3.12 -m venv .venv\n\
+  .venv/bin/python -m pip install --upgrade pip\n.venv/bin/pip install -e \".[dev]\"\n```\n\nRun the CLI\
+  \ smoke test:\n\n```bash\nscripts/smoke_test_cli.sh .venv/bin/python\n```\n\nThen try the core source-only\
+  \ commands:\n\n```bash\nphantom-twin phase1-summary\nphantom-twin materials-check\nphantom-twin datasets-list\n\
+  ```\n\nOptional medical-imaging tools are only needed once data has been downloaded:\n\n```bash\n.venv/bin/pip\
+  \ install -e \".[dev,medical]\"\n```\n\nSee [docs/cli_quickstart.md](docs/cli_quickstart.md) and\n[docs/reproducibility.md](docs/reproducibility.md).\n\
+  \nExample mesh export after CT-ORG files are available:\n\n```bash\nphantom-twin export-label-mesh \\\
+  \n  --labels data/raw/ct_org/labels/labels-0.nii.gz \\\n  --label-id 3 \\\n  --output outputs/meshes/ct_org_case0_lungs.stl\n\
+  ```\n\n## First Engineering Milestone\n\nBefore printing an organ, build and scan material coupons.\
+  \ A beautiful phantom\nwith wrong HU/RED values is a sculpture; a calibrated material coupon library\
+  \ is\nthe start of a test instrument.\n\n## Current Staged Data\n\nPhase 1 data stage 001 has been completed.\
+  \ One CT-ORG anatomy case and one\nImageTBAD vascular CTA case are staged locally, inspected, and exported\
+  \ to STL.\n\nSee [docs/data_stage_001.md](docs/data_stage_001.md).\n\nRun mesh QA with:\n\n```bash\n\
+  phantom-twin mesh-qa \\\n  outputs/meshes/*.stl \\\n  --output outputs/reports/mesh_qa_stage001.md\n\
+  ```\n\nClean meshes for CAD preparation with:\n\n```bash\nphantom-twin clean-meshes \\\n  outputs/meshes/*.stl\
+  \ \\\n  --output-dir outputs/cad/cleaned_meshes \\\n  --report outputs/reports/mesh_cleaning_stage001.md\
+  \ \\\n  --qa-report outputs/reports/mesh_qa_cleaned_stage001.md\n```\n\nPrepare the first vascular flow-module\
+  \ geometry with:\n\n```bash\nphantom-twin prepare-vascular-module \\\n  --labels data/raw/imagetbad/case125/125_label.nii.gz\
+  \ \\\n  --label-id 1 \\\n  --case-id imagetbad_case125_true_lumen \\\n  --output-dir outputs/cad/vascular_module\
+  \ \\\n  --centerline-method skeleton \\\n  --report outputs/reports/vascular_module_stage001.md \\\n\
+  \  --qa-report outputs/reports/vascular_module_mesh_qa_stage001.md\n```\n\nCreate the first port-adapter\
+  \ flow-loop reference assembly with:\n\n```bash\nphantom-twin design-flow-loop \\\n  --ports outputs/cad/vascular_module/imagetbad_case125_true_lumen_ports_v001.yaml\
+  \ \\\n  --lumen-mesh outputs/cad/vascular_module/imagetbad_case125_true_lumen_smoothed_lumen_v001.stl\
+  \ \\\n  --output-dir outputs/cad/vascular_flow_loop \\\n  --report outputs/reports/vascular_flow_loop_stage001.md\
+  \ \\\n  --qa-report outputs/reports/vascular_flow_loop_mesh_qa_stage001.md\n```\n\nBuild the first watertight\
+  \ printable vascular flow cartridge with:\n\n```bash\nphantom-twin build-printable-cartridge \\\n  --labels\
+  \ data/raw/imagetbad/case125/125_label.nii.gz \\\n  --label-id 1 \\\n  --flow-loop-spec outputs/cad/vascular_flow_loop/imagetbad_case125_true_lumen_flow_loop_spec_v001.yaml\
+  \ \\\n  --centerline-csv outputs/cad/vascular_module/imagetbad_case125_true_lumen_centerline_v001.csv\
+  \ \\\n  --output-dir outputs/cad/vascular_cartridge \\\n  --report outputs/reports/vascular_printable_cartridge_stage001.md\
+  \ \\\n  --qa-report outputs/reports/vascular_printable_cartridge_mesh_qa_stage001.md\n```\n\nBuild the\
+  \ first digital-only torso material/density phantom volume with:\n\n```bash\nphantom-twin build-digital-torso\
+  \ \\\n  --ct data/raw/ct_org/volumes/volume-0.nii.gz \\\n  --labels data/raw/ct_org/labels/labels-0.nii.gz\
+  \ \\\n  --labelmap configs/labelmaps/ct_org.yaml \\\n  --materials configs/materials.yaml \\\n  --case-id\
+  \ ct_org_case0 \\\n  --output-dir outputs/digital/torso \\\n  --report outputs/reports/digital_torso_stage001.md\n\
+  ```\n\nBuild the combined digital torso + vascular phantom package with:\n\n```bash\nphantom-twin build-combined-digital-phantom\
+  \ \\\n  --torso-material-labels outputs/digital/torso/ct_org_case0_torso_material_labels_v001.nii.gz\
+  \ \\\n  --torso-body-mask outputs/digital/torso/ct_org_case0_torso_body_mask_v001.nii.gz \\\n  --source-ct\
+  \ data/raw/ct_org/volumes/volume-0.nii.gz \\\n  --vascular-labels data/raw/imagetbad/case125/125_label.nii.gz\
+  \ \\\n  --vascular-label-id 1 \\\n  --flow-loop-spec outputs/cad/vascular_flow_loop/imagetbad_case125_true_lumen_flow_loop_spec_v001.yaml\
+  \ \\\n  --materials configs/materials.yaml \\\n  --case-id ct_org_case0_imagetbad_case125 \\\n  --output-dir\
+  \ outputs/digital/combined \\\n  --report outputs/reports/combined_digital_phantom_stage001.md\n```\n\
+  \nCreate a BMI/waist/height-adapted anthropometric torso variant:\n\n```bash\nphantom-twin build-anthropometric-torso-morph\
+  \ \\\n  --combined-spec outputs/digital/combined/ct_org_case0_imagetbad_case125_combined_spec_v001.yaml\
+  \ \\\n  --case-id ct_org_case0_imagetbad_case125_bmi32_waist110 \\\n  --output-dir outputs/digital/anthropometric_morph\
+  \ \\\n  --target-height-cm 175.0 \\\n  --target-bmi 32.0 \\\n  --target-waist-cm 110.0 \\\n  --baseline-height-cm\
+  \ 170.0 \\\n  --baseline-bmi 24.0 \\\n  --report outputs/reports/anthropometric_torso_morph_stage001.md\n\
+  ```\n\nBuild a registration/PCA-based anatomy variant from staged population material-label segmentations:\n\
+  \n```bash\nphantom-twin build-statistical-anatomy-morph \\\n  --combined-spec outputs/digital/combined/ct_org_case0_imagetbad_case125_combined_spec_v001.yaml\
+  \ \\\n  --population-labels \\\n    outputs/digital/torso/ct_org_case0_torso_material_labels_v001.nii.gz\
+  \ \\\n  --population-case-ids ct_org_case0 \\\n  --case-id ct_org_case0_statistical_bootstrap_bmi29_waist104\
+  \ \\\n  --output-dir outputs/digital/statistical_anatomy_morph \\\n  --target-height-cm 176.0 \\\n \
+  \ --target-bmi 29.0 \\\n  --target-waist-cm 104.0 \\\n  --baseline-height-cm 170.0 \\\n  --baseline-bmi\
+  \ 24.0 \\\n  --report outputs/reports/statistical_anatomy_morph_stage001.md\n```\n\nFor real population\
+  \ statistics, process each additional CT segmentation through `build-digital-torso` first, then pass\
+  \ all resulting material-label NIfTIs to `--population-labels`. PCA modes become meaningful once several\
+  \ independent cases are staged.\n\nBuild a population cohort manifest, registration QA, per-case previews,\
+  \ and PCA-ready inputs with:\n\n```bash\nphantom-twin stage-ct-org-label-cohort \\\n  --case-indices\
+  \ 0 1 2 3 4 5 6 7 8 9 \\\n  --output-dir data/processed/ct_org_label_population \\\n  --report outputs/reports/ct_org_label_population_stage001.md\n\
+  \nphantom-twin build-population-cohort \\\n  --combined-spec outputs/digital/combined/ct_org_case0_imagetbad_case125_combined_spec_v001.yaml\
+  \ \\\n  --population-labels \\\n    data/processed/ct_org_label_population/ct_org_case0_label_only_material_labels_v001.nii.gz\
+  \ \\\n    data/processed/ct_org_label_population/ct_org_case1_label_only_material_labels_v001.nii.gz\
+  \ \\\n    data/processed/ct_org_label_population/ct_org_case2_label_only_material_labels_v001.nii.gz\
+  \ \\\n    data/processed/ct_org_label_population/ct_org_case3_label_only_material_labels_v001.nii.gz\
+  \ \\\n    data/processed/ct_org_label_population/ct_org_case4_label_only_material_labels_v001.nii.gz\
+  \ \\\n    data/processed/ct_org_label_population/ct_org_case5_label_only_material_labels_v001.nii.gz\
+  \ \\\n    data/processed/ct_org_label_population/ct_org_case6_label_only_material_labels_v001.nii.gz\
+  \ \\\n    data/processed/ct_org_label_population/ct_org_case7_label_only_material_labels_v001.nii.gz\
+  \ \\\n    data/processed/ct_org_label_population/ct_org_case8_label_only_material_labels_v001.nii.gz\
+  \ \\\n    data/processed/ct_org_label_population/ct_org_case9_label_only_material_labels_v001.nii.gz\
+  \ \\\n  --population-case-ids ct_org_case0 ct_org_case1 ct_org_case2 ct_org_case3 ct_org_case4 ct_org_case5\
+  \ ct_org_case6 ct_org_case7 ct_org_case8 ct_org_case9 \\\n  --cohort-id ct_org_population_stage001 \\\
+  \n  --output-dir outputs/digital/population_cohort \\\n  --report outputs/reports/population_cohort_stage001.md\n\
+  ```\n\nGenerate a PCA anatomy mode comparison atlas from a cohort spec with:\n\n```bash\nphantom-twin\
+  \ generate-pca-mode-variants \\\n  --combined-spec outputs/digital/combined/ct_org_case0_imagetbad_case125_combined_spec_v001.yaml\
+  \ \\\n  --cohort-spec outputs/digital/population_cohort_ctorg_labels/ct_org_label_population8_stage001_population_cohort_spec_v001.yaml\
+  \ \\\n  --case-id ct_org_label_population8_pca_modes_stage001 \\\n  --output-dir outputs/digital/pca_mode_variants\
+  \ \\\n  --mode-count 3 \\\n  --amplitude 1.0 \\\n  --target-height-cm 176.0 \\\n  --target-bmi 29.0\
+  \ \\\n  --target-waist-cm 104.0 \\\n  --baseline-height-cm 170.0 \\\n  --baseline-bmi 24.0 \\\n  --max-modes\
+  \ 6 \\\n  --report outputs/reports/pca_mode_variant_atlas_stage001.md\n```\n\nRank and approve/reject\
+  \ the PCA modes from the atlas metrics with:\n\n```bash\nphantom-twin qa-pca-modes \\\n  --metrics-csv\
+  \ outputs/digital/pca_mode_variants/ct_org_label_population8_pca_modes_stage001_pca_mode_variant_metrics_v001.csv\
+  \ \\\n  --atlas-spec outputs/digital/pca_mode_variants/ct_org_label_population8_pca_modes_stage001_pca_mode_variant_atlas_spec_v001.yaml\
+  \ \\\n  --case-id ct_org_label_population8_pca_modes_stage001 \\\n  --output-dir outputs/digital/pca_mode_qa\
+  \ \\\n  --report outputs/reports/pca_mode_qa_stage001.md\n```\n\nAssemble a disk-light approved PCA\
+  \ phantom release set with:\n\n```bash\nphantom-twin build-approved-pca-phantom-set \\\n  --qa-decisions\
+  \ outputs/digital/pca_mode_qa/ct_org_label_population8_pca_modes_stage001_pca_mode_qa_decisions_v001.yaml\
+  \ \\\n  --atlas-spec outputs/digital/pca_mode_variants/ct_org_label_population8_pca_modes_stage001_pca_mode_variant_atlas_spec_v001.yaml\
+  \ \\\n  --case-id ct_org_label_population8_pca_modes_stage001 \\\n  --output-dir outputs/digital/approved_pca_phantom_set\
+  \ \\\n  --report outputs/reports/approved_pca_phantom_set_stage001.md\n```\n\nRun a disk-light anatomy\
+  \ + RT + flow experiment comparison across the approved set with:\n\n```bash\nphantom-twin run-phantom-experiment-set\
+  \ \\\n  --approved-set-manifest outpu"

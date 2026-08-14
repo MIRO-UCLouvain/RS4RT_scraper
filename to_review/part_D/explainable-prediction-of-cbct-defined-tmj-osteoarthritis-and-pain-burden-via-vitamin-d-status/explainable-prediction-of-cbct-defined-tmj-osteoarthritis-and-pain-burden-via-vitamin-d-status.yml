@@ -1,0 +1,91 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: seongwoojang1123/Explainable-Prediction-of-CBCT-Defined-TMJ-Osteoarthritis-and-Pain-Burden-via-Vitamin-D-Status
+url: https://github.com/seongwoojang1123/Explainable-Prediction-of-CBCT-Defined-TMJ-Osteoarthritis-and-Pain-Burden-via-Vitamin-D-Status
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-22T07:57:29Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Serum Vitamin D Status as a Candidate Biomarker for CBCT-Defined Temporomandibular\
+  \ Joint Osteoarthritis, Pain Burden, and Explainable Prediction \n\nThis repository contains the official\
+  \ analysis code for the study  \n**\"Association of Vitamin D Deficiency with TMJ Osteoarthritis and\
+  \ Pain Intensity\"**  \nby Yeon-Hee Lee, Seongwoo Jang, and colleagues.\n\nThe repository includes data\
+  \ preprocessing, statistical analysis, visualization, and machine learning evaluation modules for investigating\
+  \ the role of vitamin D in temporomandibular joint osteoarthritis (TMJ OA) presence, severity, and pain\
+  \ intensity.\n\nThis work primarily leverages multivariable regression approaches (binary logistic,\
+  \ ordinal logistic, and robust OLS) alongside machine learning models (Elastic Net, XGBoost) with SHAP-based\
+  \ interpretability, applied to clinical, laboratory, and psychological assessment data.\n\n## Project\
+  \ Overview\n\nVitamin D deficiency has been implicated in various musculoskeletal and inflammatory conditions,\
+  \ yet its specific role in TMJ osteoarthritis remains underexplored.  \nThis project investigates:\n\
+  \n- The association between vitamin D levels and TMJ OA **presence** (binary logistic regression)\n\
+  - The association between vitamin D levels and TMJ OA **severity** (ordinal logistic regression)\n-\
+  \ The relationship between vitamin D and **pain intensity** (VAS) with robust standard errors\n- Predictive\
+  \ model performance comparing feature sets with and without vitamin D\n- SHAP-based feature importance\
+  \ for model interpretability\n\nKey aspects include:\n- Comprehensive baseline comparison (Mann–Whitney\
+  \ U, Chi-squared, Fisher's exact) with Bonferroni correction\n- Adjusted regression analyses controlling\
+  \ for age, sex, symptom duration, ESR, RF, zinc, GSI, and clinical symptoms\n- Spearman correlation-based\
+  \ screening with significance-filtered heat maps\n- Cross-validated Elastic Net and XGBoost model performance\
+  \ (AUROC, AUPRC, Brier score, calibration metrics)\n\n## Repository Structure\n\n- **config.py**\n \
+  \ - Centralized configuration: file paths, variable mappings, display labels\n  - Shared utility functions\
+  \ (descriptive statistics, statistical tests, plotting helpers)\n  - Data loading and preprocessing\
+  \ pipeline (`load_and_prepare_data`)\n\n- **1_data_preprocessing.py**\n  - Entry point for data loading\
+  \ and preprocessing\n  - Psychological variable renaming (SCL-90-R subscales)\n  - Sex recoding (1/2\
+  \ → 0/1), binary variable enforcement\n  - GSI fallback derivation, log-transformed symptom duration\n\
+  \  - Exports cleaned dataset to `outputs/preprocessed_data.csv`\n\n- **2_table1_baseline_characteristics.py**\n\
+  \  - Table 1: baseline characteristics stratified by TMJ OA status\n  - Continuous variables compared\
+  \ via Mann–Whitney U test\n  - Categorical variables compared via Chi-squared or Fisher's exact test\n\
+  \  - Bonferroni-adjusted p-values for multiple comparison correction\n\n- **3_table2_table3_regression_analysis.py**\n\
+  \  - Table 2: adjusted binary logistic regression (TMJ OA presence) and ordinal logistic regression\
+  \ (TMJ OA severity) for vitamin D (per 10 ng/mL) and vitamin D deficiency\n  - Table 3: adjusted OLS\
+  \ regression with HC3-robust standard errors for VAS ~ vitamin D association\n  - Both models include\
+  \ full covariate adjustment (age, sex, ESR, RF, zinc, GSI, clinical symptoms)\n\n- **4_figure2_boxplots.py**\n\
+  \  - Figure 2: 3 × 2 box-and-scatter panel (Vitamin D, ESR, GSI)\n  - Left column: Non-TMJ OA vs TMJ\
+  \ OA (Mann–Whitney U p-values)\n  - Right column: Grade 0 vs 1 vs 2 (Kruskal–Wallis p-values)\n  - Panel\
+  \ labels (a–f) with publication-quality formatting\n\n- **5_figure5_vitaminD_VAS.py**\n  - Figure 5:\
+  \ three-panel analysis of vitamin D and pain intensity\n  - Panel A: VAS by vitamin D deficiency status\
+  \ (box-scatter)\n  - Panel B: Vitamin D level by VAS group (≤5 vs ≥6)\n  - Panel C: Scatter plot with\
+  \ linear fit and Spearman correlation\n\n- **6_heatmap_correlation.py**\n  - Spearman correlation screening\
+  \ (p < 0.05 threshold)\n  - Heat map 1: factors significantly associated with VAS\n  - Heat map 2: factors\
+  \ significantly associated with TMJ OA severity\n  - Companion CSVs: screening results, full correlation\
+  \ matrices, p-value matrices\n\n- **7_model_performance_and_SHAP.py**\n  - Table 4: cross-validated\
+  \ model performance summary (Elastic Net, XGBoost)\n  - Four incremental feature sets: Clinical only\
+  \ → +Labs → +Vitamin D → +GSI\n  - Metrics: AUROC, AUPRC, Brier score, calibration intercept/slope,\
+  \ sensitivity, specificity\n  - SHAP placeholder with instructions for reproducing Figure 4 when raw\
+  \ data becomes available\n\n- **README.md**\n  - Project overview, setup guide, and usage instructions\n\
+  \n## Models Used\n\n- **Statistical Models**\n  - Binary logistic regression (TMJ OA presence)\n  -\
+  \ Ordinal logistic regression (TMJ OA severity grading)\n  - OLS regression with HC3-robust standard\
+  \ errors (VAS pain intensity)\n\n- **Machine Learning Models**\n  - Elastic Net: L1/L2 regularized logistic\
+  \ regression for sparse feature selection\n  - XGBoost: gradient-boosted decision trees for nonlinear\
+  \ classification\n  - Both models evaluated via stratified repeated k-fold cross-validation\n\n- **Interpretability**\n\
+  \  - SHAP (SHapley Additive exPlanations) for feature importance and interaction analysis\n  - Calibration\
+  \ assessment (intercept, slope) for clinical reliability\n\n## Evaluation\n\n- Performance Metrics\n\
+  \  - AUROC (with 95% CI)\n  - AUPRC (area under precision–recall curve)\n  - Brier score (calibration)\n\
+  \  - Calibration intercept and slope\n  - Sensitivity and specificity\n\n- Statistical Comparisons\n\
+  \  - Mann–Whitney U test for continuous variables\n  - Chi-squared / Fisher's exact test for categorical\
+  \ variables\n  - Kruskal–Wallis test for multi-group comparisons\n  - Bonferroni correction for multiple\
+  \ testing\n  - Spearman rank correlation with significance screening\n\n## Requirements\n\n```\nnumpy\n\
+  pandas\nscipy\nstatsmodels\nmatplotlib\n```\n\nOptional (for extended ML pipeline):\n```\nscikit-learn\n\
+  xgboost\nshap\n```\n\n## Usage\n\n```bash\n# Step 1: Preprocess data\npython 1_data_preprocessing.py\n\
+  \n# Step 2: Generate Table 1\npython 2_table1_baseline_characteristics.py\n\n# Step 3: Regression analyses\
+  \ (Tables 2 & 3)\npython 3_table2_table3_regression_analysis.py\n\n# Step 4: Figure 2 (box-scatter plots)\n\
+  python 4_figure2_boxplots.py\n\n# Step 5: Figure 5 (Vitamin D vs VAS)\npython 5_figure5_vitaminD_VAS.py\n\
+  \n# Step 6: Correlation heat maps\npython 6_heatmap_correlation.py\n\n# Step 7: Model performance summary\
+  \ & SHAP placeholder\npython 7_model_performance_and_SHAP.py\n```\n\n## Contact\n\nFor any inquiries\
+  \ or collaboration opportunities:\n\n- Yeon-Hee Lee: omod0209@gmail.com\n- Seongwoo Jang: mook8105@koreacu.ac.kr\n\
+  - Seonggwang Jeon: qq22512@hanyang.ac.kr\n- Tae-Seok Kim: taiseok11@naver.com\n- Sang-woo Lee: goodman23@snu.ac.kr\n\
+  \n## Acknowledgments\n\n- This work was supported by the Department of Orofacial Pain and Oral Medicine,\
+  \ Kyung Hee University Dental Hospital, and the Department of Convergence Information Studies, Korea\
+  \ Cyber University.\n"

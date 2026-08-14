@@ -1,0 +1,93 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ChapelFob80930/Segmentation-and-Classification-of-Brain-Tumor-MRI-Images
+url: https://github.com/ChapelFob80930/Segmentation-and-Classification-of-Brain-Tumor-MRI-Images
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-18T16:06:08Z'
+image_source: null
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Lab of Future — Multi-Task Brain Tumor Segmentation & Classification\n\nA from-scratch\
+  \ PyTorch implementation of a multi-task U-Net that simultaneously performs **pixel-level tumor segmentation**\
+  \ and **4-class tumor classification** on brain MRI scans, using a single shared encoder-decoder backbone.\n\
+  \n## Overview\n\nThis project trains one U-Net-based model to solve two tasks at once from a single\
+  \ MRI slice:\n\n1. **Segmentation** — predict a binary mask localizing the tumor region, pixel by pixel.\n\
+  2. **Classification** — predict which of 4 categories the scan belongs to: `glioma`, `meningioma`, `pituitary`,\
+  \ or `notumor`.\n\nRather than training two separate single-task models, this implementation shares\
+  \ a single encoder/bottleneck across both heads — the bottleneck feature map feeds both the decoder\
+  \ (for segmentation) and a lightweight classification head (via global average pooling + MLP), so the\
+  \ model learns one shared representation useful for both tasks.\n\n## Architecture\n\n- **Encoder**:\
+  \ 4 downsampling stages, each a double-conv block (`Conv2d → ReLU → Conv2d → ReLU`) followed by 2×2\
+  \ max pooling. Channel widths: 64 → 128 → 256 → 512.\n- **Bottleneck**: double-conv block at the lowest\
+  \ spatial resolution, expanding to 1024 channels.\n- **Segmentation decoder**: 4 upsampling stages using\
+  \ transposed convolutions, with skip connections concatenating corresponding encoder feature maps at\
+  \ each resolution (standard U-Net skip-connection design), followed by a final 1×1 conv producing a\
+  \ single-channel raw logit mask.\n- **Classification head**: global average pooling over the bottleneck\
+  \ feature map → flatten → 2-layer MLP (`Linear → ReLU → Linear`) producing 4-class logits.\n- **Input**:\
+  \ single-channel (grayscale) 256×256 MRI slices.\n- **Output**: `(mask_logits, class_logits)` — a tuple\
+  \ of raw, unnormalized outputs. Sigmoid/argmax are applied downstream during inference and evaluation,\
+  \ not inside the model.\n\n## Dataset\n\nSourced from the [Brain Tumor Dataset: Segmentation & Classification](https://www.kaggle.com/datasets/indk214/brain-tumor-dataset-segmentation-and-classification)\
+  \ on Kaggle, which ships as two independent folder structures:\n\n- **`Segmentation/`** — tumor-positive\
+  \ scans only, organized by class (`Glioma`, `Meningioma`, `Pituitary tumor`), each image paired with\
+  \ a binary mask (`<name>.png` / `<name>_mask.png`).\n- **`classification/{Training,Testing}/notumor/`**\
+  \ — tumor-negative scans, image-only (no masks, since there's no tumor to localize).\n\nSince these\
+  \ two folder structures don't share overlapping images or a consistent 4-class labeling scheme, this\
+  \ project builds one unified dataset by:\n\n- Pulling all 3 tumor classes from `Segmentation/` with\
+  \ their real masks.\n- Pulling all `notumor` images from **both** the `Training` and `Testing` classification\
+  \ folders, assigning each an all-zero mask (correct ground truth for \"no tumor present\").\n\n**Class\
+  \ distribution** (unified dataset):\n\n| Class | Samples |\n|---|---|\n| Glioma | 554 |\n| Meningioma\
+  \ | 708 |\n| Pituitary | 930 |\n| No Tumor | 2,000 |\n| **Total** | **4,192** |\n\nNote the class imbalance\
+  \ — `notumor` outnumbers the smallest tumor class (`glioma`) by roughly 3.6×. This is handled by stratified\
+  \ splitting and macro-averaged classification metrics (see below).\n\n## Data Pipeline\n\n- **Stratified\
+  \ 70/15/15 train/val/test split**, stratified by class label, ensuring all splits preserve the same\
+  \ class ratios as the full dataset — important given the imbalance above. Split is index-based with\
+  \ a fixed random seed for full reproducibility.\n- **Augmentation** (training only, via `albumentations`,\
+  \ applied jointly to image + mask so spatial transforms stay aligned):\n  - Resize to 256×256\n  - Horizontal\
+  \ flip (p=0.5)\n  - Rotation (±15°, p=0.5)\n  - Random brightness/contrast (p=0.3)\n  - Normalization\
+  \ (mean=0.5, std=0.5 for single-channel input)\n- **Validation/test** use resize + normalization only\
+  \ — no augmentation, to reflect real, unmodified model performance.\n\n## Training\n\n- **Loss**: weighted\
+  \ sum of `BCEWithLogitsLoss` (segmentation) + `CrossEntropyLoss` (classification), unweighted (1:1)\
+  \ since both losses trained at comparable scale without one task starving the other.\n- **Optimizer**:\
+  \ Adam, learning rate `1e-4`.\n- **Epochs**: 20.\n- **Checkpointing**: best model selected by highest\
+  \ validation Dice score (segmentation is the primary task), saved via `state_dict()`.\n- **Metrics tracked\
+  \ per epoch**: train loss, validation loss, validation Dice, validation IoU, validation classification\
+  \ accuracy, validation F1 (macro-averaged across classes to account for class imbalance).\n\n## Results\n\
+  \nFinal test-set evaluation (best checkpoint, selected by validation Dice):\n\n| Metric | Score |\n\
+  |---|---|\n| Test Dice Score | **0.6787** |\n| Test IoU (Jaccard Index) | **0.5137** |\n| Test Classification\
+  \ Accuracy | **0.9253** |\n| Test Classification F1 (macro) | **0.8809** |\n\n**Honest read on these\
+  \ numbers**: classification performance is strong and consistent between validation and test (no overfitting\
+  \ gap), suggesting the shared backbone learns a solid representation for distinguishing tumor types.\
+  \ Segmentation Dice (~0.68) is a reasonable result for a from-scratch U-Net trained for 20 epochs without\
+  \ extensive hyperparameter tuning, but had not fully converged — validation Dice was still improving/fluctuating\
+  \ at the final epoch. Likely next steps for improvement: more training epochs, `pos_weight` adjustment\
+  \ in the segmentation loss to better handle pixel-level foreground/background imbalance, and exploring\
+  \ uncertainty-based loss weighting (e.g., Kendall et al.) if one task is found to dominate gradient\
+  \ updates.\n\n## Project Structure\n\n```\n.\n├── UNet_PyTorch_Implementation.ipynb   # Model definition,\
+  \ dataset/dataloader, training loop\n├── DATASET/\n│   ├── Segmentation/\n│   │   ├── Glioma/\n│   │\
+  \   ├── Meningioma/\n│   │   └── Pituitary tumor/\n│   └── classification/\n│       ├── Training/\n\
+  │       └── Testing/\n└── README.md\n```\n\n## Setup\n\n```bash\npip install -r requirements.txt\n```\n\
+  \n`requirements.txt` pins CUDA 12.6 PyTorch wheels (`torch`, `torchvision`, `torchaudio`) via the PyTorch\
+  \ extra index, plus the core data/ML stack (`albumentations`, `opencv-python`, `scikit-learn`, `numpy`,\
+  \ `pandas`) and Jupyter (`jupyter`, `ipykernel`, `ipywidgets`) for running the notebook. If you're on\
+  \ CPU-only or a different CUDA version, replace the `--extra-index-url` line and the three pinned `torch*`\
+  \ versions with the build matching your setup — see [pytorch.org/get-started](https://pytorch.org/get-started/locally/).\n\
+  \nDownload the dataset from Kaggle and place it under `DATASET/` matching the structure above.\n\n##\
+  \ Usage\n\nOpen `UNet_PyTorch_Implementation.ipynb` and run cells top to bottom:\n\n1. Dataset/DataLoader\
+  \ construction with stratified split\n2. Model instantiation\n3. Training loop (20 epochs, checkpoints\
+  \ best model to `best_model.pth`)\n4. Test-set evaluation using the saved best checkpoint\n\n## Tech\
+  \ Stack\n\n**Core**: `PyTorch` (CUDA 12.6) · `torchvision` · `albumentations` · `OpenCV` · `scikit-learn`\
+  \ · `NumPy` · `pandas`\n\n**Tooling**: `Jupyter` / `ipykernel` for development, `torchinfo` for model\
+  \ summaries, `matplotlib` for visualizing samples/masks\n\n## Future Improvements\n\n- Extend training\
+  \ beyond 20 epochs with learning rate scheduling to reach full convergence\n- Address pixel-level class\
+  \ imbalance in segmentation via `pos_weight` or a Dice/Focal loss variant\n- Explore learned (uncertainty-based)\
+  \ task loss weighting if fixed 1:1 weighting shows one task lagging\n- Add train-set metric tracking\
+  \ alongside validation to monitor for overfitting over longer training runs\n"

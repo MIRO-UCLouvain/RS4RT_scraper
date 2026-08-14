@@ -1,0 +1,103 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Jules-GP/sadt-tools
+url: https://github.com/Jules-GP/sadt-tools
+platform: github
+description: 'Isolated Python packages for the SlicerAutomatedDentalTools remote server : one venv per
+  tool'
+license: null
+language: Python
+keywords:
+- 3d-slicer
+- cbct
+- dental
+- medical-imaging
+- python
+- sadt
+- uv
+stars: 0
+updated_at: '2026-08-14T15:01:31Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# sadt-tools\n\nOne isolated Python project per SlicerAutomatedDentalTools tool. Each\
+  \ has its\nown interpreter, its own virtualenv and its own lockfile, and they never import\neach other.\n\
+  \nThis repository contains **no server code**: no HTTP, no FastAPI, no\nauthentication, no data store.\
+  \ A tool here does not know it is being served.\n\n## Why the tools are isolated\n\nBecause the shared\
+  \ environment they came from does not resolve. In the upstream\nextension every module installs into\
+  \ 3D Slicer's Python interpreter and into\nad-hoc conda environments, which produces conflicts that\
+  \ are reproducible today:\n\n- `SurgMovPred` runs `pip_install(\"numpy==2.4.0\")`; `AREG`, `MedX` and\
+  \ `CLIC`\n  pin `numpy<2.0.0`. Whichever module runs last breaks the others.\n- Two different conda\
+  \ environments are both called `shapeaxi`: Python 3.9 in\n  `ALI`/`ASO`/`AREG`/`FlexReg`, Python 3.12\
+  \ in `DOCShapeAXI`. Creating the\n  second silently overwrites the first.\n- `monai` resolves to 1.3.2\
+  \ or 0.7.0 depending on the interpreter's Python.\n- `torch` is pinned to 2.2.0 in AMASSS/ASO/AREG/MRI2CBCT/CLIC,\
+  \ unpinned\n  elsewhere, and `MRI2CBCT` forces the cu118 build.\n\nNone of that is fixable by picking\
+  \ better versions, because the versions are\npart of the science: the same weights on a different torch\
+  \ can produce different\nmasks. So each tool keeps the pins its results were produced with, and disk\
+  \ cost\nis handled by deduplication at build time rather than by convergence.\n\n## Where things live\n\
+  \n| Repository | What is in it | Open it to |\n|---|---|---|\n| [slicer-remote-tool-server](https://github.com/Jules-GP/slicer-remote-tool-server)\
+  \ | The generic HTTP server: routes, auth, dispatch, the runner, the `/DATA` store. Knows nothing about\
+  \ dental tools. | Change the API, authentication, job handling or deployment. What it has to do to serve\
+  \ these tools is written down in [docs/SERVER_CONTRACT.md](docs/SERVER_CONTRACT.md) |\n| **sadt-tools**\
+  \ (this one) | One isolated project per tool. Knows nothing about the server. | Change what a tool computes,\
+  \ or the versions it computes it with |\n| [SlicerAutomatedDentalToolsCloud](https://github.com/Jules-GP/SlicerAutomatedDentalToolsCloud)\
+  \ | The thin 3D Slicer client. Discovers everything through `GET /tools`. | Change the user interface\
+  \ |\n| [SlicerAutomatedDentalTools](https://github.com/DCBIA-OrthoLab/SlicerAutomatedDentalTools) |\
+  \ Upstream. The origin of every algorithm here. | Check what a port was ported from |\n\n## The interface\n\
+  \nA tool package exposes exactly one public callable, `run`. There is no base\nclass to subclass, no\
+  \ registry to edit and nothing to import from the server:\n\n```python\nfrom pathlib import Path\n\n\
+  def run(\n    scan: Path,\n    model: Path,\n    output_dir: Path,\n    structures: list[str] = [\"\
+  Mandible\", \"Maxilla\"],\n    crop: bool = False,\n) -> Path:\n    \"\"\"Segment craniofacial structures\
+  \ on a CBCT scan.\"\"\"\n    import torch          # heavy imports go INSIDE run(), never at module\
+  \ level\n    ...\n    return output_path\n```\n\nThe server runs it out of process, one interpreter\
+  \ per tool:\n\n```\n/tools/<name>/.venv/bin/python /opt/sadt/runner.py --job /jobs/<uuid>/job.json\n\
+  ```\n\n`runner.py` ships with the server, so runner and server are always the same\nversion and there\
+  \ is no cross-repo skew to manage. That is also why there is no\nshared `sadt-core` package: adding\
+  \ one would put a version of *ours* inside\nevery tool venv, and it would solve a problem that does\
+  \ not exist.\n\nThe full set of rules — annotations, defaults, batch inputs, where output may be\nwritten\
+  \ — is in [CONTRIBUTING.md](CONTRIBUTING.md). `tools/_template/` is a\nworking example of all of them.\n\
+  \n## Layout\n\n```\ntools/<name>/\n├── pyproject.toml        # name, requires-python, dependencies,\
+  \ uv index\n├── uv.lock               # committed\n├── README.md             # provenance, inputs, outputs,\
+  \ model files, validation\n├── src/sadt_<name>/\n│   ├── __init__.py       # defines run()\n│   └──\
+  \ ...               # the ported implementation\n├── tests/\n│   ├── test_run.py       # calls run()\
+  \ end to end\n│   └── test_integration.py   # runs it out of process, and any tool it chains with\n\
+  └── ...\n```\n\n`testkit/` holds `sadt-testkit`, a **development-only** package that lets one\ntool's\
+  \ tests run another through that tool's own venv, as a subprocess. It is\nhow a tool whose input is\
+  \ another tool's output gets tested against the real\nthing without importing it. See [testkit/README.md](testkit/README.md).\n\
+  \n## Scripts\n\n`scripts/describe.py` emits the JSON schema the server publishes for a tool,\nread from\
+  \ `run()`'s signature — so the schema cannot drift from the code. It\nruns with the tool's own interpreter,\
+  \ because importing a tool needs the tool's\ndependencies:\n\n```console\n$ tools/_template/.venv/bin/python\
+  \ scripts/describe.py tools/_template\n{\n  \"name\": \"_template\",\n  \"description\": \"Summarise\
+  \ the intensity distribution of a scan or a folder of scans.\",\n  \"arguments\": {\n    \"scans\":\
+  \      {\"type\": \"path\", \"required\": true},\n    \"output_dir\": {\"type\": \"path\", \"required\"\
+  : true},\n    \"metrics\":    {\"type\": \"list[str]\", \"required\": false, \"default\": [\"mean\"\
+  , \"max\"],\n                   \"choices\": [\"mean\", \"max\", \"min\", \"std\"]},\n    ...\n  },\n\
+  \  \"returns\": \"path\",\n  \"source_hash\": \"96ab3611...\"\n}\n```\n\nAn argument annotated `Literal[...]`\
+  \ publishes its options as `choices`, so the\nclient can render a picker without a second declaration\
+  \ to keep in step —\n`list[Literal[...]]` for several-of, a bare `Literal[...]` for exactly-one.\n\n\
+  It exits 2 on anything it cannot represent rather than emitting a schema that is\nalmost right; `source_hash`\
+  \ is what lets the server notice a cached schema has\ngone stale.\n\n`scripts/audit.py` reports the\
+  \ distinct torch and Python versions across the\ntools and what each costs on disk:\n\n```console\n\
+  $ uv run scripts/audit.py\ntorch  2.2.0 (5 tools) | 2.4.1 (2) | unpinned (3)\npython >=3.11 (4) | >=3.9,<3.10\
+  \ (6)\n```\n\nIt is a diagnostic and only ever reads. Aligning a pin is a human decision that\nrequires\
+  \ revalidating the model's outputs first.\n\n`scripts/run_tool.py` runs a tool from the command line,\
+  \ in its own venv, and\nchains to other tools when one asks for it. The parser is built from `run()`'s\n\
+  signature, so there is no per-tool CLI to keep in step with anything:\n\n```console\n$ python scripts/run_tool.py\
+  \ ALI --input scan.nii.gz --model bundle/ \\\n      --output-dir out/ --landmarks Ba S N\nout/\n\n$\
+  \ python scripts/run_tool.py ASO --input cohort/ --reference gold/ \\\n      --output-dir out/ --automation\
+  \ Fully-Automated --landmark-models bundle/\n[sup] 20% predicting landmarks with ALI\n[sup] running\
+  \ ALI\nout/\n```\n\nThe second command is the whole point: ASO needs landmarks mid-run, so it is\ngiven\
+  \ a **supervisor**, and `sup.run(\"ALI\", ...)` re-enters this same script with\nALI's interpreter.\
+  \ Chaining and nesting are the same recursion — `AREG → ASO →\nALI` would be three levels of it with\
+  \ no special case.\n\n**Developer convenience, not the deployment path.** In production the server's\n\
+  runner does this. It is also the shortest readable reference for what a\nsupervisor has to be: five\
+  \ members, duck-typed, nothing shared.\n\n## Getting started\n\n```bash\ncurl -LsSf https://astral.sh/uv/install.sh\
+  \ | sh   # if you do not have uv\n\ncd tools/_template\nuv sync          # build .venv from uv.lock\n\
+  uv run pytest    # runs run() end to end\n```\n\n## Provenance\n\n[PROVENANCE.md](PROVENANCE.md) records,\
+  \ for every tool, the upstream path and\ncommit it was ported from and whether the algorithm was modified.\
+  \ That table —\nnot this repository's commit history — is what tells you six months from now\nwhether\
+  \ a result came from upstream code or from something we changed.\n"

@@ -1,0 +1,126 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ZeyadArafa/Brain-Tumor-Segmentation-U-Net
+url: https://github.com/ZeyadArafa/Brain-Tumor-Segmentation-U-Net
+platform: github
+description: Deep learning–based brain tumor segmentation from MRI scans using U-Net architecture with
+  IoU evaluation and visualized predictions.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-05T16:45:56Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# \U0001F9E0 Brain Tumor Segmentation using U-Net\n\n<div align=\"center\">\n\n![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)\n\
+  ![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)\n\
+  ![Keras](https://img.shields.io/badge/Keras-Deep%20Learning-D00000?style=for-the-badge&logo=keras&logoColor=white)\n\
+  ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)\n![Colab](https://img.shields.io/badge/Google%20Colab-Ready-F9AB00?style=for-the-badge&logo=googlecolab&logoColor=white)\n\
+  \n**A deep learning solution for automated brain tumor detection and segmentation using semantic segmentation\
+  \ with U-Net architecture**\n\n[\U0001F4D6 Overview](#-overview) •\n[\U0001F3D7️ Architecture](#️-model-architecture)\
+  \ •\n[\U0001F4CA Results](#-results) •\n[\U0001F680 Quick Start](#-quick-start) •\n[\U0001F4C1 Dataset](#-dataset-structure)\n\
+  \n---\n\n</div>\n\n## \U0001F4D6 Overview\n\nThis project implements a **U-Net convolutional neural\
+  \ network** for binary semantic segmentation of brain tumors from MRI scans. The model accurately identifies\
+  \ and segments tumor regions, providing pixel-level precision that is crucial for medical diagnosis\
+  \ and treatment planning.\n\n### ✨ Key Features\n\n| Feature | Description |\n|---------|-------------|\n\
+  | \U0001F3AF **Binary Segmentation** | Precise tumor vs. healthy tissue classification |\n| \U0001F4C8\
+  \ **IoU Metric** | Intersection over Union for accurate evaluation |\n| \U0001F504 **Data Pipeline**\
+  \ | Efficient TensorFlow data loading with prefetching |\n| \U0001F39B️ **Dropout Regularization** |\
+  \ Prevents overfitting with 30% dropout |\n| ⚡ **GPU Accelerated** | Optimized for NVIDIA T4 GPU on\
+  \ Google Colab |\n\n---\n\n## \U0001F3D7️ Model Architecture\n\nThe implementation follows the classic\
+  \ **U-Net encoder-decoder architecture** with skip connections, specifically designed for biomedical\
+  \ image segmentation.\n\n```\n                           U-Net Architecture\n    ┌─────────────────────────────────────────────────────────────┐\n\
+  \    │                                                             │\n    │   INPUT (128×128×3)    \
+  \                OUTPUT (128×128×1)   │\n    │         │                                      ▲    \
+  \        │\n    │         ▼                                      │            │\n    │   ┌─────────┐\
+  \                            ┌─────────┐        │\n    │   │ Conv 64 │ ─────────────────────────► │\
+  \ Conv 64 │        │\n    │   └────┬────┘      Skip Connection       └────▲────┘        │\n    │   \
+  \     │ MaxPool                              │ UpSample    │\n    │        ▼                       \
+  \               │             │\n    │   ┌──────────┐                          ┌──────────┐        │\n\
+  \    │   │ Conv 128 │ ────────────────────────►│ Conv 128 │        │\n    │   └────┬─────┘     Skip\
+  \ Connection      └────▲─────┘        │\n    │        │ MaxPool                              │ UpSample\
+  \    │\n    │        ▼                                      │             │\n    │   ┌──────────┐  \
+  \                        ┌──────────┐        │\n    │   │ Conv 256 │ ────────────────────────►│ Conv\
+  \ 256 │        │\n    │   └────┬─────┘     Skip Connection      └────▲─────┘        │\n    │       \
+  \ │ MaxPool                              │ UpSample    │\n    │        ▼                           \
+  \           │             │\n    │   ┌──────────┐                          ┌──────────┐        │\n \
+  \   │   │ Conv 512 │ ────────────────────────►│ Conv 512 │        │\n    │   └────┬─────┘     Skip Connection\
+  \      └────▲─────┘        │\n    │        │ MaxPool                              │ UpSample    │\n\
+  \    │        ▼                                      │             │\n    │   ┌────────────────────────────────────────────┐\
+  \            │\n    │   │            BOTTLENECK (Conv 1024)          │            │\n    │   └────────────────────────────────────────────┘\
+  \            │\n    │                                                             │\n    └─────────────────────────────────────────────────────────────┘\n\
+  ```\n\n### \U0001F527 Architecture Details\n\n| Component | Configuration |\n|-----------|--------------|\n\
+  | **Input Shape** | 128 × 128 × 3 (RGB) |\n| **Encoder Blocks** | 4 (64 → 128 → 256 → 512 filters) |\n\
+  | **Bottleneck** | 1024 filters |\n| **Decoder Blocks** | 4 (512 → 256 → 128 → 64 filters) |\n| **Convolution**\
+  \ | 3×3 kernels, 'same' padding, ReLU activation |\n| **Pooling** | 2×2 MaxPooling |\n| **Upsampling**\
+  \ | Conv2DTranspose (3×3, stride 2) |\n| **Output** | Sigmoid activation (binary mask) |\n| **Total\
+  \ Parameters** | ~31 Million |\n\n---\n\n## \U0001F4CA Results\n\n### Training Performance (15 Epochs)\n\
+  \n<table>\n<tr>\n<td>\n\n| Metric | Training | Validation |\n|--------|----------|------------|\n| **Accuracy**\
+  \ | 99.36% | 99.10% |\n| **IoU Score** | 0.607 | 0.564 |\n| **Loss** | 0.018 | 0.029 |\n\n</td>\n<td>\n\
+  \n```\nTraining Progress:\n━━━━━━━━━━━━━━━━━ 99.36% Accuracy\n━━━━━━━━━━━━━━━━━ 60.7% IoU\n━━━━━━━━━━━━━━━━━\
+  \ 0.018 Loss\n```\n\n</td>\n</tr>\n</table>\n\n### \U0001F4C8 Training Curves\n\nThe model shows consistent\
+  \ improvement across all metrics with minimal overfitting:\n\n- **IoU**: Progressive improvement from\
+  \ 0.006 → 0.607\n- **Accuracy**: Stable high accuracy from 96.32% → 99.36%\n- **Loss**: Smooth convergence\
+  \ from 0.438 → 0.018\n\n---\n\n## \U0001F3AF Why IoU over Accuracy?\n\n> **Critical Insight**: In medical\
+  \ imaging, accuracy can be misleading!\n\n```\n┌──────────────────────────────────────────────────────────────────┐\n\
+  │                     THE CLASS IMBALANCE PROBLEM                  │\n├──────────────────────────────────────────────────────────────────┤\n\
+  │                                                                  │\n│   Brain MRI Image:    ████████████████████████████████████████\
+  \   │\n│   (98% Background)    ████████████████████████████████████████   │\n│                     \
+  \  ██████████████████████  ← 2% Tumor        │\n│                                                  \
+  \                │\n│   ❌ A model predicting \"all background\" = 98% Accuracy          │\n│   ✅ IoU\
+  \ catches this: IoU = 0 (no tumor overlap!)               │\n│                                     \
+  \                             │\n└──────────────────────────────────────────────────────────────────┘\n\
+  ```\n\n### IoU Formula\n\n$$IoU = \\frac{|P \\cap G|}{|P \\cup G|} = \\frac{\\text{True Positives}}{\\\
+  text{True Positives} + \\text{False Positives} + \\text{False Negatives}}$$\n\nWhere:\n- **P** = Predicted\
+  \ mask\n- **G** = Ground truth mask\n\n---\n\n## \U0001F680 Quick Start\n\n### Prerequisites\n\n```bash\n\
+  pip install tensorflow numpy matplotlib\n```\n\n### Option 1: Run on Google Colab (Recommended)\n\n\
+  [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/)\n\
+  \n1. Upload the notebook to Google Colab\n2. Enable GPU: `Runtime → Change runtime type → T4 GPU`\n\
+  3. Mount Google Drive and update data paths\n4. Run all cells!\n\n### Option 2: Local Installation\n\
+  \n```bash\n# Clone the repository\ngit clone https://github.com/ZeyadArafa/Brain-Tumor-Segmentation-UNet.git\n\
+  cd Brain-Tumor-Segmentation-UNet\n\n# Create virtual environment\npython -m venv venv\nsource venv/bin/activate\
+  \  # On Windows: venv\\Scripts\\activate\n\n# Install dependencies\npip install -r requirements.txt\n\
+  \n# Run the notebook\njupyter notebook UNET_Brain_Tumor_Quiz.ipynb\n```\n\n---\n\n## \U0001F4C1 Dataset\
+  \ Structure\n\n```\nBrainTumor/\n├── images/\n│   ├── brain_001.png\n│   ├── brain_002.png\n│   ├──\
+  \ brain_003.png\n│   └── ... (3064 total images)\n│\n└── masks/\n    ├── brain_001_mask.png\n    ├──\
+  \ brain_002_mask.png\n    ├── brain_003_mask.png\n    └── ... (3064 corresponding masks)\n```\n\n###\
+  \ Dataset Statistics\n\n| Property | Value |\n|----------|-------|\n| **Total Samples** | 3,064 |\n\
+  | **Training Set** | 2,452 (80%) |\n| **Validation Set** | 612 (20%) |\n| **Image Size** | 128 × 128\
+  \ pixels |\n| **Image Channels** | RGB (3 channels) |\n| **Mask Type** | Binary (0 = background, 1 =\
+  \ tumor) |\n\n---\n\n## \U0001F527 Configuration\n\n```python\n# Hyperparameters\nIMG_WIDTH = 128\n\
+  IMG_HEIGHT = 128\nCHANNELS = 3\nBATCH_SIZE = 16\nEPOCHS = 15\nLEARNING_RATE = 0.001\nDROPOUT_RATE =\
+  \ 0.3\nVAL_SPLIT = 0.2\n\n# Optimizer & Loss\noptimizer = tf.keras.optimizers.Adam(learning_rate=0.001)\n\
+  loss = 'binary_crossentropy'\nmetrics = ['accuracy', BinaryIoU(target_class_ids=[1])]\n```\n\n---\n\n\
+  ## \U0001F4C2 Project Structure\n\n```\nBrain-Tumor-Segmentation-UNet/\n│\n├── \U0001F4D3 UNET_Brain_Tumor_Quiz.ipynb\
+  \    # Main training notebook\n├── \U0001F4C4 README.md                       # Project documentation\n\
+  ├── \U0001F4CB requirements.txt                # Python dependencies\n├── \U0001F4DC LICENSE       \
+  \                  # MIT License\n│\n├── \U0001F4C1 data/                           # Dataset directory\n\
+  │   ├── images/                        # MRI scan images\n│   └── masks/                         # Segmentation\
+  \ masks\n│\n└── \U0001F4C1 models/                         # Saved models\n    └── unet_brain_tumor.h5\
+  \            # Trained model weights\n```\n\n---\n\n## \U0001F6E0️ Tech Stack\n\n<div align=\"center\"\
+  >\n\n| Technology | Purpose |\n|------------|---------|\n| ![TensorFlow](https://img.shields.io/badge/TensorFlow-FF6F00?style=flat&logo=tensorflow&logoColor=white)\
+  \ | Deep Learning Framework |\n| ![Keras](https://img.shields.io/badge/Keras-D00000?style=flat&logo=keras&logoColor=white)\
+  \ | High-level Neural Network API |\n| ![NumPy](https://img.shields.io/badge/NumPy-013243?style=flat&logo=numpy&logoColor=white)\
+  \ | Numerical Computing |\n| ![Matplotlib](https://img.shields.io/badge/Matplotlib-11557c?style=flat)\
+  \ | Visualization |\n| ![Google Colab](https://img.shields.io/badge/Colab-F9AB00?style=flat&logo=googlecolab&logoColor=white)\
+  \ | Cloud Computing |\n\n</div>\n\n---\n\n## \U0001F52E Future Improvements\n\n- [ ] \U0001F3A8 **Data\
+  \ Augmentation** — Rotation, flipping, elastic deformations\n- [ ] \U0001F4D0 **Higher Resolution**\
+  \ — 256×256 or 512×512 input images\n- [ ] \U0001F3CB️ **Transfer Learning** — Pre-trained encoder (ResNet,\
+  \ EfficientNet)\n- [ ] \U0001F4C9 **Dice Loss** — Combined BCE + Dice loss function\n- [ ] \U0001F504\
+  \ **Attention U-Net** — Add attention gates for better localization\n- [ ] \U0001F4F1 **Model Deployment**\
+  \ — TensorFlow Lite / ONNX export\n- [ ] \U0001F310 **Web Interface** — Streamlit or Gradio demo\n\n\
+  ---\n\n## \U0001F4DA References\n\n- [U-Net: Convolutional Networks for Biomedical Image Segmentation](https://arxiv.org/abs/1505.04597)\
+  \ — Ronneberger et al., 2015\n- [TensorFlow Image Segmentation Tutorial](https://www.tensorflow.org/tutorials/images/segmentation)\n\
+  - [Keras Documentation](https://keras.io/api/)\n\n---\n\n## \U0001F468‍\U0001F4BB Author\n\n<div align=\"\
+  center\">\n\n### **Zeyad Ayman**\n\n[![GitHub](https://img.shields.io/badge/GitHub-ZeyadArafa-181717?style=for-the-badge&logo=github)](https://github.com/ZeyadArafa)\n\
+  \n</div>\n\n---\n\n## \U0001F4C4 License\n\nThis project is licensed under the **MIT License** — see\
+  \ the [LICENSE](LICENSE) file for details.\n\n---\n\n<div align=\"center\">\n\n### ⭐ Star this repository\
+  \ if you found it helpful!\n\nMade with ❤️ and \U0001F9E0 for medical AI research\n\n</div>\n"

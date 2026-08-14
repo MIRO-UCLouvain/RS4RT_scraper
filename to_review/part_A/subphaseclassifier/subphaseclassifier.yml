@@ -1,0 +1,63 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: norael-zein/SubPhaseClassifier
+url: https://github.com/norael-zein/SubPhaseClassifier
+platform: github
+description: Automatic identification of CT contrast subphases. The final pipeline was developed during
+  the master thesis project "Two-Stage CT Subphase Classification Using OrganLevel Features" (El-Zein,
+  Nora, 2026)
+license: null
+language: Python
+keywords:
+- ct
+- ct-scans
+- deep-learning
+- machine-learning
+- radiology
+- radiomics
+- totalsegmentator
+stars: 0
+updated_at: '2026-06-26T08:07:51Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# CT Subphase Classifier\n\nThis project provides a pipeline for automatic CT phase and\
+  \ subphase classification using organ segmentation, radiomics feature extraction, and trained machine\
+  \ learning models.\n\n![Pipeline overview](<Pipeline Arbete 2.png>)\n\nThe pipeline first predicts one\
+  \ of the main CT contrast phases:\n\n- **NP**: Non-Contrast Phase\n- **AP**: Arterial Phase\n- **VP**:\
+  \ Portal-Venous Phase\n- **DP**: Delayed Phase\n\nIf the scan is predicted as **AP**, an additional\
+  \ submodel is used to classify the scan as:\n\n- **EAP**: Early Arterial Phase\n- **LAP**: Late Arterial\
+  \ Phase\n\nIf the scan is predicted as **VP**, another submodel is used to classify the scan as:\n\n\
+  - **VP**: Portal-Venous Phase\n- **NEP**: Nephrographic Phase\n\nScans predicted as **NP** or **DP**\
+  \ are returned directly without further subphase classification.\n\n---\n\n## Pipeline Overview\n\n\
+  The pipeline consists of the following steps:\n\n1. Read a CT image from a DICOM folder or a NIfTI file.\n\
+  2. Segment selected anatomical structures using TotalSegmentator.\n3. Extract radiomic features from\
+  \ the segmentation masks using PyRadiomics.\n4. Prepare the extracted features so they match the selected\
+  \ features used during training.\n5. Predict the main CT phase using the main classification model.\n\
+  6. Apply a subphase classifier if the main phase is predicted as AP or VP.\n\nThe following anatomical\
+  \ structures are used for feature extraction:\n\n- Aorta\n- Portal vein and splenic vein\n- Urinary\
+  \ bladder\n- Kidneys\n- Spleen\n- Liver\n\n---\n\n## Project Files\n\n- `feature_extractor.py`  \n \
+  \ Runs TotalSegmentator and extracts radiomic features from the selected anatomical structures.\n\n\
+  - `phase_pipeline.py`  \n  Runs the full hierarchical prediction pipeline and returns the final CT phase\
+  \ prediction.\n\n- `requirements.txt`  \n  Contains the Python packages needed to run the project.\n\
+  \n- `final_models/`  \n  Folder containing the trained models, selected feature lists, and label encoders.\n\
+  \n---\n\n## Requirements\n\nThis project requires Python 3.10 or 3.11.\n\nInstall the required packages\
+  \ using:\n\n```bash\npip install -r requirements.txt\n```\n\nThe main packages used in this project\
+  \ are:\n\n- TotalSegmentator\n- PyRadiomics\n- SimpleITK\n- pandas\n- scikit-learn\n- XGBoost\n- joblib\n\
+  \n---\n\n## How to Run\n\nRun the pipeline from the command line:\n\n```bash\npython phase_pipeline.py\
+  \ \"input_path\"\n```\n\nThe `input_path` can be either:\n\n- a DICOM folder\n- a NIfTI file, for example\
+  \ `.nii.gz`\n\nExample:\n\n```bash\npython phase_pipeline.py \"path/to/ct_scan.nii.gz\"\n```\n\nor:\n\
+  \n```bash\npython phase_pipeline.py \"path/to/dicom_folder\"\n```\n\n---\n\n## Optional Arguments\n\n\
+  Use the fast TotalSegmentator option:\n\n```bash\npython phase_pipeline.py \"input_path\" --fast\n```\n\
+  \nUse a local TotalSegmentator model directory:\n\n```bash\npython phase_pipeline.py \"input_path\"\
+  \ --totalseg-model-dir \"path/to/totalseg_models\"\n```\n\nSave the extracted features to a CSV file:\n\
+  \n```bash\npython phase_pipeline.py \"input_path\" --save-features extracted_features.csv\n```\n\nUse\
+  \ a custom model directory:\n\n```bash\npython phase_pipeline.py \"input_path\" --model-dir \"path/to/final_models\"\
+  \n```\n\n---\n\n## Output\n\nThe pipeline prints:\n\n- the main phase prediction\n- the final predicted\
+  \ phase\n- the submodel used, if applicable\n- class probabilities when available\n\nIf `--save-features`\
+  \ is used, the extracted features are also saved as a CSV file.\n\n---\n\n## References\n\n- TotalSegmentator:\
+  \ https://github.com/wasserth/TotalSegmentator\n- PyRadiomics: https://pyradiomics.readthedocs.io/\n"

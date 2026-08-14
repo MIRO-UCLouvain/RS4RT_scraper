@@ -1,0 +1,70 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Yeon-Choi-git/whyModelBasedApproach_radiotherapy
+url: https://github.com/Yeon-Choi-git/whyModelBasedApproach_radiotherapy
+platform: github
+description: ''
+license: null
+language: R
+keywords: []
+stars: 0
+updated_at: '2026-03-19T17:01:54Z'
+image_source: null
+heuristic_total_score: 30
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 4 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "### \"Missing confounding information in counterfactual prediction models: a simulation\
+  \ study on model-based treatment effect evaluation in radiotherapy techniques\"\n\nThis repository contains\
+  \ the R scripts used to generate the simulation results presented in the manuscript:\n\nChoi J, et al.\
+  \ \"Missing confounding information in counterfactual prediction models: a simulation study on model-based\
+  \ treatment effect evaluation in radiotherapy techniques.\" (Link to be added)\n\nThe scripts reproduce\
+  \ analyses and figures presented in the manuscript.\n\n## Note\n\nPlease note that the numerical values\
+  \ of the outputs obtained from running the scripts may not exactly match the numerical values presented\
+  \ in the manuscript. This is because the original scripts used for the manuscript included a step extracting\
+  \ data generating coefficients from individual-level patient data. The script is slightly modified to\
+  \ skip using the patient data but instead read hard-coded coefficients extracted in the original scripts.\n\
+  \n## Repo structure\n\n1.  `common fucntionality` contains loading of dependent R packages and functions.\n\
+  2.  `setting` contains scenario-specific parameters and data generating coefficients.\n    1.  `scenario_parameters.R`\
+  \ specify setting/scenario-specific parameters used for data generation. (see manuscript section: *Simulation\
+  \ scenarios* and *Modified simulation settings*)\n    2.  `data_generating_coefficients.R` contains\
+  \ all coefficients used for data generation. Coefficients are hard-coded using the values extracted\
+  \ from patient data. The script depends on the setting/ scenario-specific parameters specified in the\
+  \ above script.\n3.  `simulation scripts` contains scripts for running simulations.\n    1.  `generate_data.R`\
+  \ generates simulated data sets based on scripts 2.1 and 2.2.\n    2.  `simulation_step1.R` runs step\
+  \ 1; NTCP model development (see manuscript section: *Step 1. Model development*)\n    3.  `simulation_step2.R`\
+  \ runs step2; model-based selection and evaluation (see manuscript section: *Model-based patient selection\
+  \ and model-based clinical evaluation)*\n    4.  `combine_results.R` summarize the results across all\
+  \ settings and scenarios and summarize into tables. Results are saved under `results`.\n    5.  `plot_treatment_effect.R`\
+  \ generates box plots for treatment effect estimates summarized over all iteration per setting. Results\
+  \ are saved under `results`.\n\n## How to run the script\n\n1.  Set parameters in the scripts under\
+  \ `setting`. For the parameters to replicate the manuscript, see the section below.\n2.  Go to `to_run.R`\
+  \ and source the script.\n\n## Parameters settings\n\n#### Global setting\n\n-   `n_step1`: number of\
+  \ observations for step 1\n\n-   `n_step2`: number of observations for step 2\n\n-   `cutoff_per`: cutoff\
+  \ values for predicted ∆NTCP for selection proton-receiving patients\n\n-   `nsim`: number of iterations\
+  \ for step 2\n\n-   `seep_step1` and `seed_step2`:\n\n-   `setting_list`: names of simulation settings\
+  \ to run (main, A1, A2, A3)\n\n-   `scenario_list`: scenario numbers to run (1, 2, 3.1, 3.2, 4.1, 4.2)\n\
+  \nSetting used in the manuscript\n\n```         \nn_step1 <- 50000\nn_step2 <- 5000\ncutoff_per <- c(0,\
+  \ 0.1, 0.2)\nnsim <- 1000\nseed_step1 <- \"\" # see \"Notes\" in this README.\nseed_step2 <- \"\" #\
+  \ see \"Notes\" in this README.\nsetting_list <- c(\"main\", \"A1\", \"A2\", \"A3\")\nscenario_list\
+  \ <- c(\"1\", \"2\", \"3.1\", \"3.2\", \"4.1\", \"4.2\")\n```\n\n#### Scenario paramteres\n\n-   `multiplier_tstage_to_does`:\
+  \ multiplier for regression coefficients from T-stage to doses to organs at risks (exposure)\n\n-  \
+  \ `multiplier_tstage_to_outcome`: multiplier for regression coefficients from T-stage to dysphagia at\
+  \ 6 months (outcome)\n\n-   `tstate_to_dosediff`: whether dose reduction from photon to proton therapy\
+  \ is depended to T-stage.\n\n-   `tstage_to_dose`: whether doses organs at risks is dependent to T-stage.\n\
+  \nSettings used in the manuscript\n\n|   | Main | A1 | A2 | A3 |\n|---------------|---------------|---------------|---------------|---------------|\n\
+  | Is **T-stage** **confounding** doses to OARs and NTCP (dose-outcome relationship)? `tstate_to_dose`\
+  \ | `TRUE` | `TRUE` | `TRUE` | `FALSE` |\n| Is **T-stage** an **effect modifier** of the treatment effect?\
+  \ `tstage_to_dosediff` | `FALSE` | `FALSE` | `TRUE` | `TRUE` |\n| Which model was used for the model-based\
+  \ selection? (specified in `simulation scripts/simulation_step2.R` line 70-76) | Current model | Extended\
+  \ model | Current model | Current model |\n\n|   | Coefficients of T-stage on doses to OAR (exposure)\
+  \ multiplied with `multiplier_tstage_to_does` | Coefficients of T-stage on dysphagia at 6m (outcome)\
+  \ multiplied with `multiplier_tstage_to_outcome` |\n|------------------------|------------------------|------------------------|\n\
+  | scenario 1 | `0` (no effect) | `0` |\n| scenario 2 | `1` (as extracted from the patient-level data)\
+  \ | `1` |\n| scenario 3.1 | `1.5` | `1.5` |\n| scenario 3.2 | `3` | `3` |\n| scenario 4.1 | `1` | `1.5`\
+  \ |\n| scenario 4.2 | `1` | `3` |\n"

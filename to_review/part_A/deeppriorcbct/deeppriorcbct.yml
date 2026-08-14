@@ -1,0 +1,42 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Mors20/DeepPriorCBCT
+url: https://github.com/Mors20/DeepPriorCBCT
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-10-07T08:43:09Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# \U0001F680 DeepPriorCBCT\n\nThis repository contains the official implementation of\
+  \ **DeepSparseCBCT**.\n\n---\n\n\n---\n\n## \U0001F6E0️ Environment Setup (with Conda)\n\nWe recommend\
+  \ using [Anaconda](https://www.anaconda.com/) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html)\
+  \ for managing Python environments.\n* Python >= 3.11.13\n* PyTorch >= 2.2.0+cu12.1\n\n\n### ✅ Create\
+  \ Conda Environment\n\n```bash\ngit clone https://github.com/NVlabs/Sana.git\ncd DeepSparseCBCT\n\n\
+  conda env create -f environment.yml\n# or you can install each components step by step following environment_setup.sh\n\
+  ```\n\n\n## \U0001F9EA Prepare Dataset\n\n\n### 1️⃣ For Stage 1:\n``` \nroot_dir/ \n├── img001_highdose.nii.gz\
+  \ \n├── ... \n\n```\nUpdate the path to `root_dir` in [`DeepSparseCBCT/config/DeepSparseCBCT_s1.yaml`](config/DeepSparseCBCT_s1.yaml)\n\
+  \n### 2️⃣ For Stage 2 and 3: \n\n``` \ninput_dir/ \n├── img001_lowdose.nii.gz \n├── ... \n\ngt_dir/\n\
+  ├── img001_highdose.nii.gz \n├── ... \n```\nUpdate the paths to input_dir and gt_dir in:\n* [`DeepSparseCBCT/config/DeepSparseCBCT_s2.yaml`](config/DeepSparseCBCT_s2.yaml)\n\
+  * [`DeepSparseCBCT/config/DeepSparseCBCT_s3.yaml`](config/DeepSparseCBCT_s3.yaml)\n\n\n## \U0001F9EA\
+  \ Training Pipeline\n\U0001F4A1 Note: The following examples use torchrun for multi-GPU training. Adapt\
+  \ CUDA_VISIBLE_DEVICES, --nproc_per_node, and --master_port according to your setup.\n\n### 1️⃣ Training\
+  \ Stage 1:\n```bash\n# Example (4 GPUs)\nCUDA_VISIBLE_DEVICES=0,1,2,3 torchrun \\\n  --nnodes=1 \\\n\
+  \  --nproc_per_node=4 \\\n  --master_port=29513 \\\n  DeepSparseCBCT/train/train_DeepSparseCBCT_s1.py\
+  \ \\\n  --config DeepSparseCBCT/config/DeepSparseCBCT_s1.yaml\n```\n\n### 2️⃣ Training Stage 2:\n\n\
+  ```bash\n# Example (4 GPUs)\nCUDA_VISIBLE_DEVICES=0,1,2,3 torchrun \\\n  --nnodes=1 \\\n  --nproc_per_node=4\
+  \ \\\n  --master_port=29513 \\\n  DeepSparseCBCT/train/train_DeepSparseCBCT_s2.py \\\n  --config DeepSparseCBCT/config/DeepSparseCBCT_s2.yaml\n\
+  ```\n\n### 3️⃣ Training Stage 3:\n```bash\n# Example (4 GPUs)\nCUDA_VISIBLE_DEVICES=0,1,2,3 torchrun\
+  \ \\\n  --nnodes=1 \\\n  --nproc_per_node=4 \\\n  --master_port=29513 \\\n  DeepSparseCBCT/train/train_DeepSparseCBCT_s3.py\
+  \ \\\n  --config DeepSparseCBCT/config/DeepSparseCBCT_s3.yaml\n```\n\n## \U0001F50D Inference\n```bash\n\
+  python DeepSparseCBCT/inference/inference.py --input-dir your_input --output-dir your_output --ckpt-path\
+  \ Your_DeepSparseCBCT_s3.ckpt\n```\n\n"

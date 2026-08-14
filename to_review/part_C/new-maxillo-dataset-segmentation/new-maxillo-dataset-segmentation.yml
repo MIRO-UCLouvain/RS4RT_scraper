@@ -1,0 +1,52 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: potpov/New-Maxillo-Dataset-Segmentation
+url: https://github.com/potpov/New-Maxillo-Dataset-Segmentation
+platform: github
+description: 'Source code for the paper: "Deep Segmentation of the Mandibular Canal: a New 3D Annotated
+  Dataset of CBCT Volumes.", IEEE Access'
+license: null
+language: Python
+keywords: []
+stars: 24
+updated_at: '2026-04-08T04:37:26Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# Alveolar canal 3D\n\n3D neural network for the alveolar canal segmentation.\nModel\
+  \ and set-up is implemented from [Jaskari et al.](https://www.nature.com/articles/s41598-020-62321-3.pdf)\
+  \  \nThis project is related to our [recent work](#): our new 3D dense dataset can be downloaded [here](https://ditto.ing.unimore.it/maxillo/dataset/).\n\
+  \n## Usage\nOnce you have generated all the subsamples from our dataset you can run the experiments\
+  \ as follow:\n```\nusage: main.py [--base_config path]\n\noptional arguments:\n  --base_config     \
+  \    path to your config.yaml for this experiment\n  --verbose             redirect stream to std out\
+  \ instead of using a log file in the yaml directory\n  --competitor          load training data as circle\
+  \ expansion instead of dense annotations\n  --additional_dataset  load the additional patients\n  --test\
+  \                skip the training and load best weights for the experiment (no needs to update your\
+  \ yaml file)\n  --skip_dump           if this flag is set the network does not dump prediction volumes\
+  \ on the final test\n  --reload              load the last weights and continue the training (no needs\
+  \ to update your yaml file)\n  --skip_primary        skip primary training test when loading data\n\
+  ```\nRefer to the next sections for creating the circle expansion dataset and the subsamples needed\
+  \ for this repo.\n## Path dataset\n\nTo generate the patch dataset:\n```python\nfrom utils import create_dataset\n\
+  create_dataset(['train', 'syntetic', 'val', 'test'], is_competitor=True, saving_dir=\"/savedir/sparse\"\
+  )\ncreate_dataset(['train', 'val', 'test'], is_competitor=False, saving_dir=\"/savedir/dense\")\n```\n\
+  \n## Alpha shape\nTo create the alpha shape version of your patients refers to \"alpha_shape.py\" in\
+  \ this repo.\n\n## Synthetic\nto create the cyrcle-expanded dataset:\n```python\nfrom utils import create_syntetic\n\
+  create_syntetic()\n```\n\n\n## YAML config example\nHere is an example of a yaml file to use as base_config\n\
+  \n```yaml\ndata-loader:\n  augmentations_file: \"path/to/augmentation.yaml\"\n  batch_size: 24\n  file_path:\
+  \ \"path/to/your/datadir\"\n  labels:\n    BACKGROUND: 0\n    INSIDE: 1\n  num_workers: 4\nloss:\n \
+  \ name: Jaccard\nlr_scheduler:\n  name: null\nmodel:\n  name: Competitor\noptimizer:\n  learning_rate:\
+  \ 0.0001\n  name: Adam\nseed: 47\ntb_dir: \"/path/to/tensorboard/dir\"\ntitle: ExperimentTitle\ntrainer:\n\
+  \  checkpoint_path: \"pathToWeights.pth or None\"\n  do_train: true\n  epochs: 100\n```\n\nIn addiction\
+  \ we created a factory for Augmentation which allows you to load augmentations from a yaml file.\nthe\
+  \ following example can help you to make your own file. In our experiments we just used RandomFlip on\
+  \ all axes.\n\n```yaml\nRandomAffine:\n  scales: !!python/tuple [0.8, 1.2]\n  degrees: !!python/tuple\
+  \ [15, 15]\n  isotropic: false\n  image_interpolation: linear\n  p: 0.35\nRandomElasticDeformation:\n\
+  \    num_control_points: 7\n    p: 0.35\nRandomFlip:\n  axes: 2\n  flip_probability: 0.7\nRandomBlur:\n\
+  \  p: 0.25\n```\n\n## Directories\nEach experiment is expected to be placed into a result dir:\n\n```\n\
+  results/\n├─ experiment_name/\n│  ├─ checkpoints/\n│  ├─ logs/\n│  │  ├─ config.yaml\n│  ├─ numpy/\n\
+  \n```\nIf experiment_name does not exist, python will look for a *config.yaml* file in a *config* folder\
+  \ in your project directory.\n"

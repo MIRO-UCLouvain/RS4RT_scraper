@@ -1,0 +1,82 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: tanzeelajvd/Brats20_NeuroApp
+url: https://github.com/tanzeelajvd/Brats20_NeuroApp
+platform: github
+description: Automatic brain tumor segmentation (BraTS 2020) — 3D U-Net, FastAPI backend, web UI, and
+  native desktop app
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-08T12:54:13Z'
+image_source: null
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+readme_excerpt: "# NeuroScan — Automatic Brain Tumor Segmentation (BraTS 2020)\n\nNeuroScan is a research\
+  \ demonstration application for automatic brain\ntumor segmentation from multi-modal MRI, built on the\
+  \ BraTS 2020 dataset.\nA 3D U-Net segments each scan into three clinically meaningful\nsub-regions —\
+  \ **Whole Tumor (WT)**, **Tumor Core (TC)**, and **Enhancing\nTumor (ET)** — and a FastAPI backend +\
+  \ browser UI let you upload a scan,\nrun inference, and inspect the results interactively.\n\n> **Research\
+  \ use only.** This is not a medical device and must not be\n> used for clinical diagnosis or treatment\
+  \ decisions.\n\n## What's in this repository\n\n| | |\n|---|---|\n| **Model** | 3D U-Net (22.6M params),\
+  \ 4 input channels (T1, T1ce, T2, FLAIR), 4 output classes |\n| **Official checkpoint** | [`checkpoints/final_experiment/`](checkpoints/final_experiment/MODEL_CARD.md)\
+  \ — immutable, see the model card for provenance and metrics |\n| **Backend** | FastAPI ([`backend/`](backend/))\
+  \ — loads the checkpoint, exposes `/analyze`, `/health`, `/model-info` |\n| **Frontend** | Single-page\
+  \ app ([`frontend/NeuroScan_App.html`](frontend/NeuroScan_App.html)), served by the backend |\n| **Desktop\
+  \ app** | Native shell ([`desktop/`](desktop/README.md), Tauri) — double-click to launch, auto-starts/stops\
+  \ the Docker backend, no terminal needed |\n| **Training code** | [`scripts/`](scripts/), [`models/`](models/),\
+  \ [`datasets/`](datasets/), [`losses/`](losses/), [`metrics/`](metrics/), [`configs/`](configs/) — kept\
+  \ for reproducibility, not required to run the app |\n\nSee [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)\
+  \ for how the pieces fit\ntogether.\n\n## Quickstart (Docker)\n\n```bash\ngit clone <this-repo-url>\n\
+  cd Brats20_NeuroApp\ngit lfs pull          # fetches the ~270MB model checkpoint\n\ndocker compose up\
+  \ --build\n```\n\nOpen **http://localhost:8000** in a browser. See\n[`docs/DOCKER.md`](docs/DOCKER.md)\
+  \ for details, GPU notes, and\ntroubleshooting.\n\n## Quickstart (local Python)\n\n```bash\npython -m\
+  \ venv .venv && source .venv/bin/activate   # Windows: .venv\\Scripts\\activate\npip install -r requirements.txt\n\
+  \ngit lfs pull   # fetches checkpoints/final_experiment/best_model_exp_05.pt\n\nuvicorn backend.app.main:app\
+  \ --host 0.0.0.0 --port 8000\n```\n\nOpen **http://localhost:8000**. Full details, including how to\
+  \ run\nwithout Docker or Git LFS, are in [`docs/INSTALL.md`](docs/INSTALL.md).\n\n## Quickstart (Desktop\
+  \ app)\n\nFor a non-technical, no-terminal experience: install the native desktop\napp (built with Tauri),\
+  \ which auto-starts and stops the Docker backend\nfor you and opens the same UI in its own window.\n\
+  \n```bash\ncd desktop\nnpm install\nnpm run tauri build   # produces a .deb/.rpm/.AppImage under src-tauri/target/release/bundle/\n\
+  ```\n\nRequires Docker installed on the machine (the app still uses it under\nthe hood — see [`desktop/README.md`](desktop/README.md)\
+  \ for the full\npicture, known limitations, and Windows/macOS build notes).\n\n## Using the app\n\n\
+  1. Upload all four MRI modalities (`.nii` or `.nii.gz`): **T1, T1ce, T2,\n   FLAIR**.\n2. Optionally\
+  \ upload a ground-truth segmentation mask to get region-level\n   Dice scores instead of voxel fractions.\n\
+  3. Click **Analyze Scan**. The backend tiles the whole volume into\n   overlapping 96³ windows, runs\
+  \ the 3D U-Net over each, stitches the\n   result into a full-volume segmentation, and returns overlays\
+  \ plus\n   WT/TC/ET metrics.\n\nSee [`docs/USAGE.md`](docs/USAGE.md) for a walkthrough of the UI and\
+  \ the\n`/analyze` API response format.\n\n## Model\n\nThe official model is documented in\n[`checkpoints/final_experiment/MODEL_CARD.md`](checkpoints/final_experiment/MODEL_CARD.md):\n\
+  architecture, training config, checksum, and recorded validation\nmetrics. **The trained weights are\
+  \ immutable** — this repository only\nadds software engineering around them; no retraining, fine-tuning,\
+  \ or\narchitecture changes are made here.\n\nTo reproduce evaluation (not required to run the app):\n\
+  \n```bash\npip install -r requirements-dev.txt\npython -m scripts.evaluate_region_dice        # validation-split\
+  \ region Dice\npython -m scripts.evaluate_region_dice_test   # held-out test-split region Dice (run\
+  \ once)\n```\n\nThese require the full BraTS 2020 dataset under `data/processed/` (not\nincluded in\
+  \ this repository — see [`docs/INSTALL.md`](docs/INSTALL.md)).\n\n## Documentation\n\n- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)\
+  \ — system design, request flow, module layout\n- [`docs/INSTALL.md`](docs/INSTALL.md) — local setup,\
+  \ dataset, environment configuration\n- [`docs/USAGE.md`](docs/USAGE.md) — UI walkthrough, API reference\n\
+  - [`docs/DOCKER.md`](docs/DOCKER.md) — container build/run, GPU vs CPU, troubleshooting\n- [`desktop/README.md`](desktop/README.md)\
+  \ — native desktop app: how it works, building, known limitations\n- [`checkpoints/final_experiment/MODEL_CARD.md`](checkpoints/final_experiment/MODEL_CARD.md)\
+  \ — model provenance\n\n## Repository layout\n\n```\nbackend/            FastAPI application (config,\
+  \ routers, inference pipeline)\nfrontend/            Single-page web UI, served by the backend\ndesktop/\
+  \              Native desktop app (Tauri) — see desktop/README.md\n.github/workflows/     CI, including\
+  \ cross-OS desktop app builds\ncheckpoints/final_experiment/   The official, immutable trained model\n\
+  models/               Model architecture (3D U-Net)\ndatasets/             PyTorch Dataset for BraTS-format\
+  \ volumes (training only)\nlosses/                Loss functions used during training\nmetrics/    \
+  \           Evaluation metrics (region Dice)\nscripts/                Training and evaluation entrypoints\n\
+  configs/                 Experiment configs consumed by scripts/train.py\ndocs/                    \
+  \ Documentation\noutputs/                  Training run artifacts (curves, logs) — historical\ndata/\
+  \                     Dataset directory (gitignored, not included)\n```\n\n## Disclaimer\n\nThis project\
+  \ is a research and educational demonstration built on the\npublicly available BraTS 2020 dataset. It\
+  \ is **not validated for\nclinical use**. Predictions and Dice scores are computed via full-volume\n\
+  sliding-window inference, but the model itself is a single research\ncheckpoint that has not undergone\
+  \ clinical validation, and results must\nnot inform diagnosis or treatment.\n\n## License\n\nCode is\
+  \ licensed under the [MIT License](LICENSE). This covers the\napplication, training, and inference code\
+  \ in this repository only — it\ndoes **not** relicense the BraTS 2020 dataset (obtained separately,\n\
+  under its own usage terms) or override any data-use restrictions that\napply to models trained on it.\
+  \ See\n[`checkpoints/final_experiment/MODEL_CARD.md`](checkpoints/final_experiment/MODEL_CARD.md)\n\
+  for the checkpoint's provenance.\n"

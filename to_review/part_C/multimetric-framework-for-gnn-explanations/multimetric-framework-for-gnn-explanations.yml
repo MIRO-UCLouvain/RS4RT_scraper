@@ -1,0 +1,87 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: albertovalerio/multimetric-framework-for-gnn-explanations
+url: https://github.com/albertovalerio/multimetric-framework-for-gnn-explanations
+platform: github
+description: Multi-metric framework for quantitatively validating GNN explanations in brain tumor segmentation.
+  It evaluates GraphSAGE, GAT, and ChebNet with Integrated Gradients, GraphLIME, and GNNExplainer on BraTS
+  2023 supervoxel graphs.
+license: MIT
+language: Jupyter Notebook
+keywords:
+- brain-tumor-segmentation
+- brats
+- brats2023
+- explainable-ai
+- gnn-explainability
+- gnnexplainer
+- graph-neural-networks
+- graphlime
+- integrated-gradients
+- medical-imaging
+- supervoxel
+- supervoxel-graphs
+- supervoxels
+- xai-evaluation
+stars: 0
+updated_at: '2026-07-31T15:26:37Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+readme_excerpt: "# A Multi-Metric Framework for Validating GNN Explanations in Brain Tumor Segmentation\n\
+  \nReference implementation of the paper:\n\n> **A Multi-Metric Framework for Validating GNN Explanations\
+  \ in Brain Tumor Segmentation**\n\nThe framework provides a quantitative and reproducible evaluation\
+  \ of local post-hoc explanations for graph-based brain tumor segmentation. It compares three GNN backbones—GraphSAGE,\
+  \ GAT, and ChebNet—with Integrated Gradients, GraphLIME, and GNNExplainer on supervoxel graphs derived\
+  \ from the BraTS-GLI 2023 dataset.\n\nPublication metadata and the complete BibTeX entry will be added\
+  \ upon publication.\n\n## Overview\n\nEach MRI examination is represented as a graph of approximately\
+  \ 5,000 SLIC supervoxels. Nodes contain intensity descriptors extracted from the four BraTS MRI modalities,\
+  \ while edges connect spatially neighbouring supervoxels.\n\nExplanations are generated independently\
+  \ for the three BraTS tumor classes:\n\n1. NCR — non-enhancing/necrotic tumor core;\n2. ED — peritumoral\
+  \ edema;\n3. ET — enhancing tumor.\n\nAll explainers return a common node-feature attribution matrix\
+  \ with shape `[N, F]`. Node importance is obtained by aggregating absolute feature attributions and\
+  \ is used consistently by the evaluation metrics.\n\nThe framework evaluates complementary explanation\
+  \ properties:\n\n- insertion and deletion AUC;\n- Fidelity+ and Fidelity−;\n- KL-based distributional\
+  \ unfaithfulness;\n- voxel-level Dice spatial alignment;\n- consistency under controlled feature perturbations.\n\
+  \nThe primary protocol uses a node-wise median baseline, a top-10% attribution budget, and Gaussian\
+  \ feature perturbations scaled by 5% of each feature’s empirical standard deviation.\n\n## Installation\n\
+  \nThe project requires Python 3.11 or later. Dependencies are managed with [uv](https://docs.astral.sh/uv/).\n\
+  \n```bash\ngit clone https://github.com/albertovalerio/multimetric-framework-for-gnn-explanations.git\n\
+  cd multimetric-framework-for-gnn-explanations\n\nuv sync\ncp .env.example .env\n```\n\nAdd a valid Synapse\
+  \ authentication token to `.env` to access the BraTS data:\n\n```text\nAUTH_TOKEN='your-synapse-token'\n\
+  ```\n\nAccess to the dataset remains subject to the BraTS and Synapse data-use conditions.\n\n## Reproducing\
+  \ the experiments\n\nThe notebooks document the main stages of the pipeline:\n\n```text\nnotebooks/\n\
+  ├── 1-data-exploration.ipynb\n├── 2-pre-processing.ipynb\n├── 3-training.ipynb\n├── 4-explainability.ipynb\n\
+  └── 4a-explainability-analysis.ipynb\n```\n\nThe complete XAI experiment comprises 27 independent configurations:\n\
+  \n```text\n3 backbones × 3 explainers × 3 target classes\n```\n\nA single configuration can be executed\
+  \ with:\n\n```bash\nuv run python src/scripts/run_xai.py \\\n    --model ChebNet \\\n    --explainer\
+  \ IntegratedGradients \\\n    --target-class 3 \\\n    --mode full\n```\n\nThe corresponding metrics\
+  \ can then be computed with:\n\n```bash\nuv run python src/scripts/run_xai_metrics.py \\\n    --model\
+  \ ChebNet \\\n    --explainer IntegratedGradients \\\n    --target-class 3 \\\n    --mode full \\\n\
+  \    --baseline median \\\n    --topk-fraction 0.10 \\\n    --curve-steps 20 \\\n    --localization-fractions\
+  \ 0.01,0.02,0.05,0.10,0.20 \\\n    --eval-on gt\n```\n\n\n## Analysis and outputs\n\n`notebooks/4a-explainability-analysis.ipynb`\
+  \ reads the consolidated reports returned by the previous scripts and reproduces the aggregate tables,\
+  \ insertion/deletion curves, multi-metric heatmaps, case studies, and spatial explanation overlays.\n\
+  \nThe analysis includes an aggregate evaluation over the independent test set and two cases selected\
+  \ independently of explanation quality:\n\n- a favourable subject containing all tumor classes;\n- a\
+  \ critical subject in which pathological nodes represent less than 1% of the graph.\n\nMetrics requiring\
+  \ target-class graph nodes are reported as unavailable when the selected class is absent from the supervoxel-level\
+  \ ground truth. Such values are preserved as `NaN` and must not be interpreted as zero performance.\n\
+  \n## Repository structure\n\n```text\n├── notebooks/                 # Data, training, XAI, and analysis\
+  \ notebooks\n├── src/\n│   ├── helpers/               # Configuration, graph, and utility functions\n\
+  │   ├── models/                # GNN backbone implementations\n│   ├── modules/               # Preprocessing,\
+  \ training, metrics, and plotting\n│   ├── scripts/               # XAI generation and metric computation\n\
+  │   └── xai/                   # Unified explainers, protocol, persistence, analysis\n├── reports/ \
+  \                  # Consolidated metrics, explanations, and figures\n├── saved/                   \
+  \  # Trained model checkpoints\n├── launch_mm_xai.sbatch\n├── launch_mm_xai_metrics.sbatch\n├── pyproject.toml\n\
+  └── uv.lock\n```\n\n## Citation\n\nIf you use this framework, please cite the accompanying paper:\n\n\
+  <!-- > A. Valerio *et al.*, “A Multi-Metric Framework for Validating GNN Explanations in Brain Tumor\
+  \ Segmentation,” 2026. -->\n\nThe final venue, DOI, and BibTeX record will be added after publication.\n\
+  \n## Dataset\n\nThe experiments use the [BraTS-GLI 2023 dataset](https://www.synapse.org/Synapse:syn51156910),\
+  \ comprising multimodal MRI examinations and expert voxel-level tumor annotations. The dataset is not\
+  \ redistributed by this repository.\n\n## License\n\nThis project is distributed under the terms of\
+  \ the [MIT License](LICENSE)."

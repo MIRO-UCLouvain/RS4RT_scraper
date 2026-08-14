@@ -1,0 +1,58 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: kssrikar4/KidneySeg-UNet
+url: https://github.com/kssrikar4/KidneySeg-UNet
+platform: github
+description: Two-stage pipeline for kidney and tumor segmentation in abdominal CT scans
+license: MPL-2.0
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-01T13:39:31Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# KiTS Kidney Tumor Segmentation\n\n[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org/)\n\
+  [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-red.svg)](https://pytorch.org/)\n[![MONAI](https://img.shields.io/badge/MONAI-1.0+-green.svg)](https://monai.io/)\n\
+  [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-FF4B4B.svg)](https://streamlit.io/)\n[![Hugging\
+  \ Face](https://img.shields.io/badge/\U0001F917_Models-HF-yellow.svg)](https://huggingface.co/kssrikar4/KidneySeg-UNet)\n\
+  [![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)\n\
+  \nTwo-stage cascade pipeline for kidney and tumor segmentation in abdominal CT scans. Pre-trained models\
+  \ hosted on Hugging Face; inference via interactive Streamlit app.\n\n## Architecture\n\n| Stage | Purpose\
+  \ | Input | Output |\n|-------|---------|-------|--------|\n| **1 (Localization)** | Coarse kidney ROI\
+  \ extraction | 128³ downsampled dual-window CT | Binary kidney mask |\n| **2 (Refinement)** | Fine-grained\
+  \ kidney + tumor segmentation | Native-res crop + Stage 1 mask (3 channels) | Multi-class mask (kidney=1,\
+  \ tumor=2) |\n\n> Models: `SegResNet` (MONAI). Loss: `DiceFocalLoss` (γ=2.0). Pre-trained weights: [\U0001F917\
+  \ kssrikar4/KidneySeg-UNet](https://huggingface.co/kssrikar4/KidneySeg-UNet)\n\n## Run Inference\n\n\
+  ### 1. Install dependencies\n```bash\npip install torch monai streamlit simpleitk scipy huggingface_hub\n\
+  ```\n\n### 2. Launch the Streamlit app\n```bash\nstreamlit run app.py\n```\n\n\n### 3. Use the interface\n\
+  - Upload DICOM series (folder) or NIfTI file (`.nii`/`.nii.gz`)\n- Click **Run Segmentation**\n- View\
+  \ side-by-side: original CT slice / fused segmentation overlay\n- Toggle **Play Video** to scroll through\
+  \ volume\n- Visualize kidney parenchyma (green) + tumor (red)\n- Volume estimates displayed: Kidney\
+  \ / Tumor in mL *(voxel spacing: 1.5×1.5×3.0 mm)*\n\n<img width=\"800\" height=\"405\" alt=\"tumor\"\
+  \ src=\"https://github.com/user-attachments/assets/7cc847bd-5983-4674-a623-8ef9babdfc29\" />\n\nExample\
+  \ Patient – Only Tumor (Red)\n<img width=\"800\" height=\"405\" alt=\"tumor+kidney\" src=\"https://github.com/user-attachments/assets/9e956c59-bf2c-4bd5-a86b-9c4f939231f3\"\
+  \ />\n\nExample Patient – Kidney (Green) + Tumor (Red)\n\n> Models auto-download from Hugging Face on\
+  \ first run. Requires internet access.\n\n## Performance (Held-out Test Set)\n\n| Stage | Metric | Score\
+  \ |\n|-------|--------|-------|\n| 1 (Localization) | Dice (kidney) | **0.87** |\n| 2 (Refinement) |\
+  \ Dice (tumor) | **0.66** |\n\n## Results on Test Set\n\n<img width=\"1773\" height=\"574\" alt=\"eval_plot_KiTS-00209\"\
+  \ src=\"https://github.com/user-attachments/assets/4c123195-06cd-4938-b694-af5d44bfe555\" />\n<img width=\"\
+  1773\" height=\"574\" alt=\"eval_plot_KiTS-00116\" src=\"https://github.com/user-attachments/assets/7d6d68bb-1b03-41e8-b444-35859e1e92d1\"\
+  \ />\n<img width=\"1773\" height=\"574\" alt=\"eval_plot_KiTS-00102\" src=\"https://github.com/user-attachments/assets/2ba4a9f7-506b-4a56-a6fb-0eafc8a7d6a7\"\
+  \ />\n<img width=\"1773\" height=\"574\" alt=\"eval_plot_KiTS-00071\" src=\"https://github.com/user-attachments/assets/adb57bca-05c7-4add-be17-9ff5eca702ef\"\
+  \ />\n<img width=\"1773\" height=\"574\" alt=\"eval_plot_KiTS-00058\" src=\"https://github.com/user-attachments/assets/78645ce0-c5cc-4c4f-9c08-347a989fff6f\"\
+  \ />\n<img width=\"1773\" height=\"574\" alt=\"eval_plot_KiTS-00057\" src=\"https://github.com/user-attachments/assets/283d6fd6-fcb7-41f3-a02b-6ed54d8a95a7\"\
+  \ />\n\n*Note: Stage 2 operates on high-resolution, tumor-sparse crops; lower Dice reflects boundary-level\
+  \ difficulty, not failure.*\n\n## Acknowledgements\n\n- [KiTS](https://www.cancerimagingarchive.net/collection/c4kc-kits/)\
+  \ for dataset\n>Please cite the original dataset when using this model:\n>Heller, N., Sathianathen,\
+  \ N., Kalapara, A., Walczak, E., Moore, K., Kaluzniak, H., Rosenberg, J., Blake, P., Rengel, Z., Oestreich,\
+  \ M., Dean, J., Tradewell, M., Shah, A., Tejpaul, R., Edgerton, Z., Peterson, M., Raza, S., Regmi, S.,\
+  \ Papanikolopoulos, N., & Weight, C. (2019). C4KC KiTS Challenge Kidney Tumor Segmentation Dataset (Version\
+  \ 3) [Data set]. The Cancer Imaging Archive. https://doi.org/10.7937/TCIA.2019.IX49E8NX\n  \n- [MONAI](https://monai.io/)\
+  \ for medical imaging tools\n- [Hugging Face](https://huggingface.co/) for model hosting\n\n# License\n\
+  \n[Mozilla Public License Version 2.0](LICENSE) - Feel free to use and modify\n"

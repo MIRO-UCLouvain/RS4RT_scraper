@@ -1,0 +1,60 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: noviaditya/PrediCT-GSoC2026
+url: https://github.com/noviaditya/PrediCT-GSoC2026
+platform: github
+description: This repository is used for Google Summer of Code 2026 submission on project Radiomics Feature
+  Extraction and Calcium Phenotype Discovery from Machine Learning for Science (ML4Sci)
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-03-31T04:39:27Z'
+image_source: https://raw.githubusercontent.com/noviaditya/PrediCT-GSoC2026/HEAD/outputs/images/tsne_plot.png
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# OVERVIEW\nThis repository is used for my submission to PrediCT Projects on Google Summer\
+  \ of Code 2026\n\n# INTRODUCTION\nAs a backend engineer, I am more familiar with backend technologies\
+  \ such as databases, APIs, and system architecture. However, I am also interested in machine learning\
+  \ and data science, and also medical topic which help treat disease. I believe that this project is\
+  \ a great opportunity to learn more about these topics.\n\n# GUIDELINE\n1. Insert all dataset inside\
+  \ `data_raw` directory\n2. *IF USING LINUX* : I am using Linux Ubuntu which blocking to run `pip` directly\
+  \ on host machine. You could use this command to install `venv` (virtual environment) first to run pip\
+  \ on your linux/ubuntu machine if its blocked. \n    ```\n    sudo apt update\n    sudo apt install\
+  \ python3.12-venv\n    ```\n3. Then activate venv inside your project folder    \n    ```\n    python3\
+  \ -m venv venv\n    source venv/bin/activate\n    ```\n4. Install required library using command `pip\
+  \ install -r requirements.txt`\n5. For COMMON TASK commands, Run scripts provided in order\n    ```\n\
+  \    python scripts/unnester.py\n    python scripts/COCA_processor.py\n    python scripts/COCA_resampler.py\n\
+  \    python run_pipeline.py\n    ``` \n6. After all common task commands done, to run Project 2 pipeline,\
+  \ run `python run_project2.py`\n\n# COMMON TASK : COCA DATASET PREPROCESSING\nI have adjust the predefined\
+  \ pipeline scripts tailored to the current repository. HU windowing is applied inside the dataloader\
+  \ to intensify calcium. Stratified splitting was used to maintain class balance across train, validation,\
+  \ and test sets. Here is the flow : \n```\nRAW DATA (DICOM + XML)\n        ↓\nunnester.py\n        ↓\n\
+  COCA_processor.py\n        ↓\ndata_canonical (NIfTI + mask + metadata)\n        ↓\nCOCA_resampler.py\n\
+  \        ↓\ndata_resampled\n        ↓\nstats.py (dataset-level)\n        ↓\nstratified_split.py\n  \
+  \      ↓\ntrain / val / test CSV\n        ↓\ncoca_dataset.py (DataLoader)\n        ↓\n    - HU windowing\
+  \ (inside)\n```\n\n# DATASET STATISTICS\nAfter running `python run_pipeline.py`, you can find the dataset\
+  \ statistics in `outputs/stats.json`. Here is the result from Standford COCA Dataset : \n*(ROI filter\
+  \ using mask > 0 and HU >= 130)*\n```\n{\n  \"total_samples\": 787,\n  \"positive_cases\": 447,\n  \"\
+  negative_cases\": 340,\n  \"ratio_normal_to_disease\": \"340:447\",\n  \"mean_hu\": 291.761564935583,\n\
+  \  \"std_hu\": 166.5802189973302,\n  \"min_hu\": 131.0,\n  \"max_hu\": 2000.0\n}\n```\nFrom the statistic\
+  \ result, we could see that the dataset is balanced, with ratio 340:447 (normal:disease). Furthermore,\
+  \ since dataset is small, I did not apply balancing technique such as oversampling or undersampling.\
+  \ The average HU around ~292 with a wide range up to 2000 shows that the dataset includes both low-density\
+  \ and very dense calcium, which is useful for further analysis. I did not do augmentation since its\
+  \ sensitive for radiomics and could impact on feature extraction that related with Project 2.\n\n\n\
+  # PROJECT 2 : RADIOMICS FEATURE EXTRACTION\nI have created pipeline for specific Project 2 task including\
+  \ `agatston` score calculation and `pyradiomics` feature extraction. Here is the flow :\n```\ndata_canonical\n\
+  \        ↓\nrun_project2.py\n        ↓\n    - compute_dataset_agatston()\n    - extract_radiomics()\n\
+  \        ↓\noutputs/agatston_scores.csv\noutputs/radiomics_features.csv\n```\nusing Jupyter notebook\
+  \ from `radiomics_analysis.ipynb`, we can visualize the features and also perform statistical analysis.\
+  \ Here is the result from Standford COCA Dataset :\n\n## Kruskal-Wallis H-test\nKruskal-Wallis Variance\
+  \ (original_shape_Sphericity): H-statistic=14.852, p-value=0.00195\n\n**Significant! Phenotype is clinically\
+  \ intertwined with Agatston Severity**\n\n## t-SNE Plot\n![t-SNE Plot](outputs/images/tsne_plot.png)\n\
+  \nFrom the t-SNE plot, we can see that some patients with high risk (≥400) tend to group together, while\
+  \ low-risk patients (1–99) are more spread out. This means the radiomics features are able to capture\
+  \ some pattern related to disease severity, even though the groups are not perfectly separated.\n"

@@ -1,0 +1,143 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Govardhan-018/Robust-Toxicity-Prediction-Using-Ensemble-Graph-and-SMILES-Based-Deep-Learning-Models
+url: https://github.com/Govardhan-018/Robust-Toxicity-Prediction-Using-Ensemble-Graph-and-SMILES-Based-Deep-Learning-Models
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-12-20T15:01:57Z'
+image_source: null
+heuristic_total_score: 21
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+- Matched 3 AI/ML term(s) in repository name.
+readme_excerpt: "# \U0001F9EA Tox21 Benchmark: From Single Models to Task-Aware Ensembles\n\n> A progressive\
+  \ exploration of molecular representation learning for chemical toxicity prediction using the [Tox21\
+  \ dataset](https://www.kaggle.com/datasets/epicskills/tox21-dataset). [web:1]  \n> This repository documents\
+  \ the full experimental journey — from classical graph networks to multi-view ensemble systems — along\
+  \ with reproducible code, results, and interpretations.\n\n---\n\n## \U0001F4CC Project Overview\n\n\
+  Predicting chemical toxicity is central to drug discovery and environmental risk assessment, where incorrect\
+  \ decisions can lead to costly or unsafe outcomes. [web:10][web:14] The **Tox21 benchmark** provides\
+  \ a standardized multi-task setting with multiple toxicity endpoints, making it a widely used testbed\
+  \ for machine learning methods in cheminformatics. [web:7][web:13]\n\nThis project investigates whether\
+  \ integrating multiple molecular learning paradigms (graph-based, sequence-based, and fingerprint-based)\
+  \ can outperform any single model family on Tox21. The focus is on systematically progressing from simple\
+  \ baselines to advanced, task-aware ensembles and carefully comparing their ROC-AUC performance across\
+  \ all tasks. [web:7][web:13]\n\n**Core question:**  \n> Can combining semantic (SMILES-level) and structural\
+  \ (graph-level) views yield better toxicity predictions than any standalone model?\n\n---\n\n## \U0001F4C2\
+  \ Dataset\n\n- **File in this repo:** `kaggle_dataset/archive/tox21.csv`\n- **Original source:** [Tox21\
+  \ dataset on Kaggle](https://www.kaggle.com/datasets/epicskills/tox21-dataset) [web:1]  \n- **Description:**\
+  \  \n  - Molecules represented as **SMILES strings**  \n  - Binary toxicity labels for **12 assays**,\
+  \ grouped into:\n    - **Nuclear Receptor (NR)** signaling pathways  \n    - **Stress Response (SR)**\
+  \ pathways [web:10][web:13]\n- **Typical scale in Tox21:** around ten thousand compounds across 12 NR\
+  \ and SR assays in the original challenge; Kaggle variants may use filtered or reshaped subsets. [web:10][web:13]\
+  \  \n- **Input:** SMILES strings  \n- **Output:** Binary labels with missing values for some molecule–assay\
+  \ pairs  \n- **Metric:** ROC-AUC per task, averaged across 12 tasks for an overall score\n\n---\n\n\
+  ## \U0001F9E0 Experimental Phases & Key Insights\n\n### Phase 1 — Classical Graph Neural Networks (GNNs)\n\
+  \n**What was tried**\n\nMolecules were converted to atom–bond graphs and trained with several GNN architectures\
+  \ that are standard for molecular property prediction:\n\n- GIN (2-layer and 3-layer variants)\n- MPNN\n\
+  - GATv2\n- GPS-GNN\n\nThese architectures align with the view of molecules as graphs, an approach widely\
+  \ explored in molecular benchmarks and property prediction. [web:13]\n\n**Average ROC-AUC (summary)**\n\
+  \n| Model   | Avg ROC-AUC |\n|:--------|------------:|\n| GIN-3   | 0.8044      |\n| GIN-2   | 0.8010\
+  \      |\n| MPNN    | 0.8257      |\n| GATv2   | 0.7073      |\n| GPS-GNN | 0.6848      |\n\n**Key observations**\n\
+  \n- Deeper or attention-heavy GNNs did not consistently outperform simpler variants on toxicity tasks.\
+  \  \n- Performance dropped under scaffold-based splits, indicating challenges in generalizing to unseen\
+  \ chemotypes.  \n\n**Conclusion**\n\nGraph structure alone was insufficient to capture long-range chemical\
+  \ semantics and subtle toxicity signals, especially under more realistic scaffold splits.\n\n---\n\n\
+  ### Phase 2 — Directed Message Passing Neural Network (D-MPNN)\n\n**Motivation**\n\nD-MPNN passes messages\
+  \ along directed bonds and encodes richer local chemical environments, extending earlier message-passing\
+  \ schemes proposed for quantum chemistry and molecular property prediction. [web:13]\n\n**Changes**\n\
+  \n- Explicit atom and bond feature engineering  \n- Scaffold-based data splits  \n- Validation-based\
+  \ early stopping using ROC-AUC  \n\n**Result**\n\n- **Average ROC-AUC:** 0.7108  \n\n**Insight**\n\n\
+  Even with chemically informed directed message passing, performance gains were limited and varied across\
+  \ endpoints, reinforcing that a single inductive bias does not suit all toxicity tasks.\n\n---\n\n###\
+  \ Phase 3 — Chemical Language Models (ChemBERTa)\n\n**Why switch paradigms**\n\nInstead of viewing molecules\
+  \ only as graphs, SMILES treat them as sequences, enabling the use of language models. Pretrained ChemBERTa\
+  \ models have shown strong performance on downstream molecular tasks by learning contextual substructure\
+  \ patterns. [web:6][web:12]\n\n**Model**\n\n- Pretrained checkpoint: `seyonec/ChemBERTa-zinc-base-v1`\
+  \ [web:6][web:15]  \n- Fine-tuned as a multi-label classifier on Tox21 with label masking for missing\
+  \ endpoints  \n\n**Result**\n\n- **Average ROC-AUC:** **0.8321**  \n\n**Breakthrough**\n\nChemBERTa\
+  \ significantly outperformed most GNN-based models and was especially strong on several NR receptor\
+  \ tasks, suggesting that toxicity is better captured as learned chemical language patterns rather than\
+  \ purely as graph connectivity. [web:6][web:12]\n\n---\n\n### Phase 4 — SMILES Augmentation (Random\
+  \ SMILES)\n\n**Idea**\n\nA single molecule admits many valid SMILES due to traversal choices, which\
+  \ can be exploited as textual augmentation for language models. [web:12]\n\n**Method**\n\n- Generated\
+  \ multiple random SMILES per molecule  \n- Expanded training set by roughly 4× in terms of unique token\
+  \ sequences  \n- Fine-tuned ChemBERTa on augmented SMILES views  \n\n**Outcome**\n\n- Better training\
+  \ stability and robustness  \n- Improved performance on some individual tasks  \n- **Average ROC-AUC:**\
+  \ 0.8165 (slightly below the base ChemBERTa run)  \n\n**Takeaway**\n\nAugmentation improved robustness\
+  \ and task-specific metrics but did not universally raise the overall average beyond the strong ChemBERTa\
+  \ baseline.\n\n---\n\n### Phase 5 — Simple Ensemble (ChemBERTa + D-MPNN)\n\n**Motivation**\n\nChemBERTa\
+  \ provides a semantic SMILES-level view, while D-MPNN provides a structural, bond-level view. Their\
+  \ prediction errors are not perfectly correlated, enabling ensemble gains. [web:13]\n\n**Method**\n\n\
+  - Compute probabilities from ChemBERTa and D-MPNN  \n- Combine via weighted averaging:  \n  \\[\n  P\
+  \ = \\alpha \\cdot P_{\\text{ChemBERTa}} + (1 - \\alpha) \\cdot P_{\\text{D-MPNN}}\n  \\]\n- Tune a\
+  \ global α over validation data  \n\n**Result**\n\n- **Average ROC-AUC:** ~0.832–0.840  \n\n**Observation**\n\
+  \nA simple two-model ensemble already matched or slightly exceeded the best single-model performance,\
+  \ validating the multi-view strategy.\n\n---\n\n### Phase 6 — Task-Wise Weighted Ensemble (Major Win\
+  \ \U0001F3C6)\n\n**Motivation**\n\nDifferent Tox21 endpoints emphasize different biological mechanisms;\
+  \ each assay may depend more on certain structural or semantic patterns. [web:10][web:16]\n\n**Method**\n\
+  \n- Learn a separate weight \\(\\alpha_t\\) for each task \\(t\\) in the same linear blending scheme\
+  \  \n- Optimize per-task weight on validation ROC-AUC  \n\n**Result**\n\n- **Average ROC-AUC:** **0.8533**\
+  \ (best overall)  \n\n**Key insight**\n\n- Some tasks relied almost entirely on ChemBERTa predictions\
+  \  \n- Others gained significantly from D-MPNN contributions  \n- The ensemble became interpretable\
+  \ by examining per-task weights and understanding which representation dominated each assay  \n\n---\n\
+  \n### Phase 7 — Stacked Meta-Ensemble\n\n**Goal**\n\nMove beyond linear weighting and learn a nonlinear\
+  \ combination of model predictions.\n\n**Method**\n\n- Base inputs:\n  - ChemBERTa probabilities\n \
+  \ - D-MPNN probabilities\n  - XGBoost-ECFP probabilities\n- Meta-learner:\n  - Gradient-boosted trees\
+  \ (XGBoost) trained on validation outputs  \n\n**Result**\n\n- **Average ROC-AUC:** 0.8425  \n\n**Insight**\n\
+  \nStacking produced strong and robust results but still fell slightly short of the carefully tuned task-wise\
+  \ linear ensemble.\n\n---\n\n### Phase 8 — Classical ML (XGBoost + ECFP)\n\n**Rationale**\n\nExtended\
+  \ connectivity fingerprints (ECFP) are long-established molecular descriptors, and tree-based models\
+  \ like XGBoost handle sparse, high-dimensional inputs effectively. [web:13][web:20]\n\n**Setup**\n\n\
+  - Generated ECFP fingerprints for each molecule  \n- Trained separate XGBoost models per task  \n- Stored\
+  \ test prediction probabilities (`xgb_test_probs.npy`) and ground truth (`y_true.npy`) for later analysis\
+  \  \n\n**Result**\n\n- **Average ROC-AUC:** ~0.812  \n\n**Role**\n\nAlthough not the top single model,\
+  \ XGBoost-ECFP added complementary signal that improved the stacked meta-ensemble.\n\n---\n\n## \U0001F3C6\
+  \ Final Model Ranking (Average ROC-AUC)\n\n| Rank | Model                                   | Avg ROC-AUC\
+  \ |\n|:----:|:----------------------------------------|:-----------:|\n| \U0001F947   | **Task-wise\
+  \ Ensemble (ChemBERTa + D-MPNN)** | **0.8533** |\n| \U0001F948   | Stacked Meta-Ensemble           \
+  \        | 0.8425      |\n| \U0001F949   | ChemBERTa                               | 0.8321      |\n\
+  | 4    | MPNN                                    | 0.8257      |\n| 5    | ChemBERTa + SMILES Augmentation\
+  \         | 0.8165      |\n| 6    | GIN-3                                   | 0.8044      |\n| 7   \
+  \ | GIN-2                                   | 0.8010      |\n| 8    | XGBoost + ECFP               \
+  \           | ~0.812      |\n| 9    | D-MPNN                                  | 0.7108      |\n| 10\
+  \   | MPNN (scaffold split)                   | 0.7102      |\n| 11   | GATv2                      \
+  \             | 0.7073      |\n| 12   | GPS-GNN                                 | 0.6848      |\n\n\
+  ---\n\n## \U0001F4CA Best Model per Tox21 Task\n\n> Highest ROC-AUC observed across all runs for each\
+  \ toxicity endpoint.\n\n| Task        | Best Model               | ROC-AUC |\n|:------------|:-------------------------|--------:|\n\
+  | NR-AR       | ensemble-taskwise        | 0.83513 |\n| NR-AR-LBD   | ensemble-chemberta-dmpnn | 0.90484\
+  \ |\n| NR-AhR      | ensemble-stacked         | 0.89502 |\n| NR-Aromatase| ensemble-taskwise       \
+  \ | 0.86902 |\n| NR-ER       | ensemble-taskwise        | 0.78748 |\n| NR-ER-LBD   | ensemble-stacked\
+  \         | 0.86562 |\n| NR-PPAR-gamma | mpnn                   | 0.88144 |\n| SR-ARE      | ensemble-stacked\
+  \         | 0.81960 |\n| SR-ATAD5    | gin-3layer               | 0.86501 |\n| SR-HSE      | ensemble-taskwise\
+  \        | 0.83382 |\n| SR-MMP      | ensemble-stacked         | 0.90339 |\n| SR-p53      | ensemble-stacked\
+  \         | 0.89509 |\n\nThese results align with the broader literature that different toxicity pathways\
+  \ can require distinct modeling emphases and features. [web:10][web:19]\n\n---\n\n## \U0001F4E6 Repository\
+  \ Structure\n\ntox21-benchmark/\n│\n├── kaggle_dataset/\n│ └── archive/\n│ └── tox21.csv # Main dataset\
+  \ (from Kaggle)\n│\n├── models/\n│ ├── chemberta/ # ChemBERTa fine-tuning (baseline)\n│ ├── chemberta-aug/\
+  \ # ChemBERTa with SMILES augmentation\n│ ├── dmpnn/ # Directed Message Passing Neural Network\n│ ├──\
+  \ mpnn/ # Standard MPNN\n│ ├── mpnn-scaffold/ # MPNN with scaffold split\n│ ├── gin-2layer/ # 2-layer\
+  \ GIN\n│ ├── gin-3layer/ # 3-layer GIN\n│ ├── gatv2/ # Graph attention network v2\n│ ├── gps-gnn/ #\
+  \ GPS-GNN architecture\n│ ├── xgboost-ecfp/ # XGBoost on ECFP fingerprints\n│ ├── ensemble-chemberta-dmpnn/\
+  \ # Simple ChemBERTa + D-MPNN ensemble\n│ ├── ensemble-taskwise/ # Task-wise weighted ensemble\n│ └──\
+  \ ensemble-stacked/ # Stacked meta-ensemble\n│\n├── results/ # Aggregated CSVs and evaluation metrics\n\
+  └── README.md # This file\n\n\nEach model directory typically contains:\n\n- Training script (e.g.,\
+  \ `*_train_*.py`)  \n- Evaluation script or notebook  \n- Result CSVs (per-task ROC-AUC)  \n- Checkpoints\
+  \ (`.pt`, `checkpoint-*`) where applicable  \n\n---\n\n## ⚙️ Setup & Usage\n\n### 1. Environment Setup\n\
+  \nCreate and activate a Python environment and install dependencies:\n\nkaggle_dataset/archive/tox21.csv\n\
+  \n\nIf downloaded separately from Kaggle, ensure the filename and column structure match the training\
+  \ scripts. [web:1]\n\n### 3. Train Individual Models\n\nExamples:\n\nChemBERTa baseline\ncd models/chemberta\n\
+  python chemberta_train_cpu.py # add CLI args or config flags as needed\n\nMPNN\ncd ../mpnn\npython mpnn_train_cpu.py\n\
+  \nD-MPNN (scaffold split)\ncd ../dmpnn\npython dmpnn_train_scaffold.py\n\nXGBoost + ECFP\ncd ../xgboost-ecfp\n\
+  python xgboost_train_ecfp.py\n\n\nEach script defines its own hyperparameters, splits (random or scaffold),\
+  \ and logging settings.\n\n### 4. Run Ensembles\n\nSimple ChemBERTa + D-MPNN ensemble\ncd ../ensemble-chemberta-dmpnn\n\
+  python ensemble_chemberta_dmpnn.py"

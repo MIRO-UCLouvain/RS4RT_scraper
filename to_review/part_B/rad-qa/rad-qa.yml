@@ -1,0 +1,82 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Matthew-Jennings/rad-qa
+url: https://github.com/Matthew-Jennings/rad-qa
+platform: github
+description: A Python script designed to process and analyze DICOM RTImages for the Dose Rate - Collimator
+  Speed (DR-CS) quality control test for Varian TrueBeam radiotherapy systems. Predicted and acquired
+  images are supported.
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 4
+updated_at: '2026-06-07T20:18:51Z'
+image_source: null
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 5 support term(s).
+readme_excerpt: "# Analyse DR-CS\n\nAnalyse DR-CS is a Python script designed to process and analyze DICOM\
+  \ RTImages for the *Dose Rate - Collimator Speed* (DR-CS) quality control test for Varian TrueBeam radiotherapy\
+  \ systems. Predicted and acquired images are supported.\n\n> [!WARNING]\n> Licensed under the *Apache\
+  \ License, Version 2.0* (the \"License\");\n> you may not use this software except in compliance with\
+  \ the License.\n> You may obtain a copy of the License [here](http://www.apache.org/licenses/LICENSE-2.0).\n\
+  >\n> Unless agreed to in writing, software distributed under the License is\n> distributed on an \"\
+  AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF\n> ANY KIND, either express or implied. See the License\
+  \ for the specific\n> language governing permissions and limitations under the License.\n>\n> Further\
+  \ to this, please note that this application has only undergone relatively rudimentary testing with\
+  \ a small sample of test images. It is strongly recommended that users perform comprehensive independent\
+  \ validation before use. \n\n## Table of Contents\n\n- [Features](#features)\n- [Installation](#installation)\n\
+  - [Usage](#usage)\n  - [Command-Line Arguments](#command-line-arguments)\n  - [Example Commands](#example-commands)\n\
+  - [Configuration](#configuration)\n- [Output Files](#output-files)\n- [Testing](#testing)\n- [Continuous\
+  \ Integration](#continuous-integration)\n- [Contributing](#contributing)\n- [License](#license)\n\n\
+  ## Features\n\n- **Automated Analysis**: Processes DICOM images to calculate statistics for predefined\
+  \ Regions of Interest (ROIs).\n- **Normalization**: Optionally normalizes DR-CS ROI statistics by corresponding\
+  \ open field images based on `AcquisitionDate`.\n  - Open field images and DR-CS field images are differentiated\
+  \ by _RTImageLabel_. Users can edit `config.json` to configure supported open and DR-CS _RTImageLabel_\
+  \ values.\n- **Visualization**: Supports live display or saving of images with ROIs overlaid for visual\
+  \ inspection.\n- **Flexible Configuration**: Uses a JSON configuration file to define ROI parameters\
+  \ and matching criteria.\n\n## Installation\n\n### Prerequisites\n\n- Python 3.7 or higher\n- Pip package\
+  \ manager\n\n### Clone the Repository\n\n```bash\ngit clone https://github.com/Matthew-Jennings/rad-qa\n\
+  cd analyse-drcs\n```\n\n### Install Dependencies\n\n```bash\npip install -r requirements.txt\n```\n\n\
+  ## Usage\n\n### Command Line Arguments\n\n```bash\npython analyse_drcs.py input_directory [options]\n\
+  ```\n\n`input_directory`: Path to the directory containing DICOM files and `config.json`\n\n#### Optional\
+  \ Arguments:\n\n- `--inspect-live`: Display images with ROIs overlaid during processing.\n- `--inspect-save`:\
+  \ Save images with ROIs overlaid to the `output_images` directory.\n- `--normalize`: Normalize DR-CS\
+  \ ROI stats by the normalization field stats.\n- `--open-csv`: Automatically open the output CSV file\
+  \ after processing.\n- `--open-excel`: Automatically open the output Excel file after processing.\n\n\
+  \n### Example Commands\n\n- **Basic Analysis:**\n\n```bash\npython analyse_drcs.py path_to_input_directory\n\
+  ```\n\n- **Analysis with Normalization:**\n\n```bash\npython analyse_drcs.py path_to_input_directory\
+  \ --normalize\n```\n\n- **Save Images with ROIs Overlaid:**\n\n```bash\npython analyse_drcs.py path_to_input_directory\
+  \ --inspect-save\n```\n\n- **Display Images with ROIs Overlaid:**\n\n```bash\npython analyse_drcs.py\
+  \ path_to_input_directory --inspect-live\n```\n\n- **Open Output Files After Processing:**\n\n```bash\n\
+  python analyse_drcs.py path_to_input_directory --open-csv --open-excel\n```\n\n## Configuration\n\n\
+  The script requires a `config.json` file in the input directory to define ROI configurations and image\
+  \ matching criteria.\n\n**Sample** `config.json`:\n\n```json\n{\n  \"roi_center_offset_from_image_centre_mm\"\
+  : 56,\n  \"roi_width_mm\": 102,\n  \"roi_height_mm\": 25,\n  \"roi_angles\": [0, 90, 180, 270, 30],\n\
+  \  \"roi_colors\": [\"red\", \"blue\", \"orange\", \"purple\", \"green\"],\n  \"open_rtimage_labels\"\
+  : [\"mv_0_1a\", \"open\"],\n  \"drcs_rtimage_labels\": [\"mv_182_1a\", \"rad_qa_hdmlc\", \"ra2\"]\n\
+  }\n```\n\n### Configration Parameters\n\n#### Shared Parameters:\n\n  - `roi_center_offset_from_image_centre_mm`:\
+  \ Offset from the image center to the ROI center.\n  - `roi_width_mm`: Width of the ROI.\n  - `roi_height_mm`:\
+  \ Height of the ROI.\n\n#### ROI-Specific Parameters:\n\n- `roi_angles`: List of rotation angles for\
+  \ each ROI.\n- `roi_colors`: List of colors for each ROI when overlaid on images.\n\n#### Image Matching:\n\
+  \n- `open_rtimage_labels`: List of `RTImageLabel`s identifying open field images.\n- `drcs_rtimage_labels`:\
+  \ List of `RTImageLabel`s identifying DR-CS images.\n\n**Note:** Ensure that `roi_angles` and `roi_colors`\
+  \ lists have the same length and ROI correspondence.\n\n\n## Output Files\n\nThe script generates the\
+  \ following output files in the input directory:\n\n- `roi_stats_{timestamp}.csv`: A CSV file containing\
+  \ the ROI statistics.\n- `roi_stats_{timestamp}.xlsx`: An Excel file containing the ROI statistics.\n\
+  \n### Columns in Output Files:\n\n- `File`: Name of the DICOM file.\n- `RTImageLabel`: The RTImageLabel\
+  \ from the DICOM metadata.\n- `ImageType`: Type of the image (DRCS, OPEN, or NORMALIZED).\n- `AcquisitionDate`:\
+  \ The date the image was acquired.\n- `A`, `B`, `C`, `D`, `E`: Mean pixel values within each ROI.\n\
+  - `Average`: Average of the ROI values.\n- `Max vs Min`: Ratio of the maximum to minimum ROI values\
+  \ minus one.\n\n**Note**: When normalization is performed, additional rows with `ImageType` set to `NORMALIZED`\
+  \ are added, representing the normalized ROI statistics.\n\n\n## Testing\n\n### Running Tests Locally\n\
+  \nThe project includes a test suite using pytest. To run the tests:\n\n```bash\npytest test_analyse_drcs.py\
+  \ -v\n```\n\n### Test Data\n\nThe tests rely on sample DICOM files and a `config.json` file located\
+  \ in the `test/data` directory.\nEnsure that the `config.json` file in `test/data` matches the expected\
+  \ configuration for the tests.\n\n### Continuous Integration\n\nThis project uses GitHub Actions for\
+  \ continuous integration. The tests are automatically run on GitHub whenever changes are pushed to the\
+  \ repository or a pull request is opened.\n"

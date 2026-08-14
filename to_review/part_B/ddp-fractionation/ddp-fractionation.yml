@@ -1,0 +1,65 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: pierrelux/ddp-fractionation
+url: https://github.com/pierrelux/ddp-fractionation
+platform: github
+description: Differential Dynamic Programming (DDP) / iterative Linear Quadratic Regulator (iLQR) for
+  radiotherapy fractionation optimization.
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-01-04T23:41:27Z'
+image_source: https://raw.githubusercontent.com/pierrelux/ddp-fractionation/HEAD/assets/ilqr_beams.png
+heuristic_total_score: 20
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+- Matched 6 support term(s).
+readme_excerpt: "# DDP-Fractionation\n\nDifferential Dynamic Programming (DDP) / iterative Linear Quadratic\
+  \ Regulator (iLQR) for radiotherapy fractionation optimization.\n\n![Beam Intensities](assets/ilqr_beams.png)\n\
+  \n## Problem Setup\n\nRadiotherapy treatment delivers ionizing radiation to tumors (PTV) while minimizing\
+  \ damage to surrounding organs at risk (OARs). Treatment is fractionated over multiple sessions to allow\
+  \ healthy tissue recovery.\n\nWe consider K anatomical structures and n radiation beams over T treatment\
+  \ sessions. The state is the health status of each structure, and the control is the intensity of each\
+  \ beam.\n\n### State and Control\n\n- State: $h_t \\in \\mathbb{R}^K$ (health status of K structures)\n\
+  - Control: $b_t \\in \\mathbb{R}^n$ (beam intensities, box-constrained)\n- Dose: $d_t = A b_t$ where\
+  \ $A \\in \\mathbb{R}^{K \\times n}$ is the dose deposition matrix\n\n### Dynamics\n\nThe health evolves\
+  \ according to a linear-quadratic dose-response model:\n\n$$h_{t+1} = h_t - \\alpha \\odot d_t - \\\
+  beta \\odot d_t^2 + \\gamma$$\n\nwhere:\n- $\\alpha \\in \\mathbb{R}^K$: linear dose-damage coefficients\n\
+  - $\\beta \\in \\mathbb{R}^K$: quadratic dose-damage coefficients  \n- $\\gamma \\in \\mathbb{R}^K$:\
+  \ natural recovery rates\n- $\\odot$: elementwise (Hadamard) product\n\nFor the PTV, health starts positive\
+  \ and should decrease to zero (tumor killed). For OARs, health starts at zero and becomes negative under\
+  \ radiation (damage accumulates).\n\n### Objective\n\nThe cost function penalizes deviation from prescribed\
+  \ dose and health goals:\n\n$$J = \\sum_{t=0}^{T-1} \\ell(h_{t+1}, d_t) + \\phi(h_T)$$\n\nStage cost:\n\
+  \n$$\\ell(h, d) = \\|W_d (d - d_{\\text{goal}})\\|^2 + w_{\\text{under}}^\\top [h_{\\text{goal}} - h]_+\
+  \ + w_{\\text{over}}^\\top [h - h_{\\text{goal}}]_+$$\n\nwhere $[\\cdot]_+$ denotes the positive part.\
+  \ The asymmetric hinge penalty allows different weights for underdosing versus overdosing.\n\n### Constraints\n\
+  \n- Beam bounds: $b_{\\min} \\leq b_t \\leq b_{\\max}$\n- Health bounds: structure-specific upper/lower\
+  \ limits on $h_t$\n- Dose bounds: per-structure dose limits\n\n## Solution Method\n\nThe solver uses\
+  \ box-constrained iLQR, also known as Control-Limited DDP. At each iteration:\n\n1. **Forward pass**:\
+  \ Roll out the trajectory under current controls\n2. **Backward pass**: Compute the Q-function quadratic\
+  \ approximation at each time step and solve a box-constrained QP for the optimal feedforward correction\n\
+  3. **Line search**: Apply the new controls with backtracking to ensure cost decrease\n\nThe hinge penalties\
+  \ are smoothed using the softplus function:\n\n$$\\text{softplus}(x) = \\frac{1}{k} \\log(1 + e^{kx})$$\n\
+  \nwhich approaches $\\max(0, x)$ as $k \\to \\infty$.\n\nHealth and dose constraints are enforced via\
+  \ soft penalties with large weights. The backward pass solves box-constrained QPs using projected Newton\
+  \ iterations.\n\n## Installation\n\nRequires [adarad](https://github.com/anqif/adarad) for case loading\
+  \ and visualization:\n\n```bash\npip install git+https://github.com/anqif/adarad.git\npip install git+https://github.com/pierrelux/ddp-fractionation.git\n\
+  ```\n\nFor development:\n\n```bash\ngit clone git@github.com:pierrelux/ddp-fractionation.git\ncd ddp-fractionation\n\
+  pip install -e .\n```\n\n## Usage\n\n```python\nfrom adarad import Case, BeamSet\nfrom ddp_fractionation\
+  \ import ddp_quad_treat\n\n# Load clinical case\ncase = Case(\"path/to/case.yml\")\ncase.physics.dose_matrix\
+  \ = np.load(\"path/to/dose_matrix.npy\")\n\n# Extract problem data\nT = case.prescription.T_treat\n\
+  A_list = T * [case.physics.dose_matrix]\nmodel = case.anatomy.model_parms_to_mat(T=T)\nh_init = case.anatomy.health_init\n\
+  rx = case._Case__gather_rx()\n\n# Solve\nresult = ddp_quad_treat(\n    A_list, model[\"alpha\"], model[\"\
+  beta\"], model[\"gamma\"],\n    h_init, rx, verbose=True\n)\n\nprint(f\"Objective: {result['obj']:.4f}\"\
+  )\nprint(f\"Iterations: {result['num_iters']}\")\n```\n\n## Example Output\n\nThe example on the cardioid\
+  \ phantom (5 structures, 1000 beams, 20 sessions) converges in about 50 iterations:\n\n```\nObjective:\
+  \ 3643.49\nSolve time: 13.4s\nTotal PTV dose: 125.4 Gy\nFinal PTV health: -0.10\n```\n\nHealth trajectories\
+  \ show the PTV driven to zero while OARs remain within bounds:\n\n![Health Trajectories](assets/ilqr_trajectories.png)\n\
+  \n## References\n\n- Tassa, Y., Erez, T., and Todorov, E. (2012). Synthesis and stabilization of complex\
+  \ behaviors through online trajectory optimization. IROS.\n- Fu, A., Ungun, B., Xing, L., and Boyd,\
+  \ S. (2019). A convex optimization approach to radiation treatment planning with dose constraints. Optimization\
+  \ and Engineering.\n"

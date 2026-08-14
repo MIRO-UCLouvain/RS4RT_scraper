@@ -1,0 +1,380 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: fatemeh183183/Brain_Tumor_Segmentation_Using_UNET
+url: https://github.com/fatemeh183183/Brain_Tumor_Segmentation_Using_UNET
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-01T21:20:24Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: '
+
+  # Brain Tumor Segmentation using U-Net and Multi-Modal MRI (BraTS 2020)
+
+
+  ## Overview
+
+
+  This project presents a deep learning pipeline for automatic brain tumor segmentation using the BraTS
+  2020 dataset. A custom U-Net architecture was trained to identify and segment different tumor sub-regions
+  from multi-modal MRI scans.
+
+
+  The model leverages FLAIR and T1CE MRI modalities to learn spatial and structural information about
+  brain tumors and generate pixel-wise segmentation masks.
+
+
+  The project covers the complete machine learning workflow, including:
+
+
+  * Medical image preprocessing
+
+  * MRI data visualization
+
+  * Data generation and augmentation
+
+  * U-Net model development
+
+  * Model training and validation
+
+  * Quantitative evaluation
+
+  * Qualitative visualization of segmentation results
+
+
+  ---
+
+
+  ## Dataset
+
+
+  **BraTS 2020 (Brain Tumor Segmentation Challenge)**
+
+
+  The dataset contains multi-modal MRI scans of glioma patients:
+
+
+  * T1
+
+  * T1-contrast enhanced (T1CE)
+
+  * T2
+
+  * FLAIR
+
+
+  Ground truth annotations are provided by expert neuroradiologists.
+
+
+  Tumor regions are divided into:
+
+
+  | Label | Region                              |
+
+  | ----- | ----------------------------------- |
+
+  | 0     | Background                          |
+
+  | 1     | Necrotic / Non-enhancing Tumor Core |
+
+  | 2     | Peritumoral Edema                   |
+
+  | 4     | Enhancing Tumor                     |
+
+
+  For training purposes, label 4 was remapped to class 3.
+
+
+  ---
+
+
+  ## Project Pipeline
+
+
+  ### 1. Data Loading
+
+
+  MRI volumes were loaded from NIfTI (.nii) files using NiBabel.
+
+
+  ### 2. Preprocessing
+
+
+  * Intensity normalization using MinMaxScaler
+
+  * Slice extraction from 3D MRI volumes
+
+  * Resizing from 240×240 to 128×128
+
+  * Multi-modal input generation (FLAIR + T1CE)
+
+
+  ### 3. Data Generator
+
+
+  A custom TensorFlow/Keras DataGenerator was implemented to:
+
+
+  * Load data on demand
+
+  * Reduce memory usage
+
+  * Generate mini-batches during training
+
+
+  ### 4. Model Architecture
+
+
+  A custom U-Net architecture was developed with:
+
+
+  * Encoder-decoder structure
+
+  * Skip connections
+
+  * Multi-scale feature extraction
+
+  * Softmax output layer for multi-class segmentation
+
+
+  Input shape:
+
+
+  ```text
+
+  128 × 128 × 2
+
+  ```
+
+
+  Output shape:
+
+
+  ```text
+
+  128 × 128 × 4
+
+  ```
+
+
+  ---
+
+
+  ## Technologies Used
+
+
+  ### Deep Learning
+
+
+  * TensorFlow
+
+  * Keras
+
+
+  ### Data Processing
+
+
+  * NumPy
+
+  * Pandas
+
+  * OpenCV
+
+
+  ### Medical Imaging
+
+
+  * NiBabel
+
+
+  ### Visualization
+
+
+  * Matplotlib
+
+  * Scikit-Image
+
+
+  ### Machine Learning Utilities
+
+
+  * Scikit-Learn
+
+
+  ---
+
+
+  ## Evaluation Metrics
+
+
+  The model was evaluated using:
+
+
+  * Accuracy
+
+  * Mean Intersection over Union (Mean IoU)
+
+  * Dice Coefficient
+
+  * Precision
+
+  * Sensitivity (Recall)
+
+  * Specificity
+
+  * Class-wise Dice Scores
+
+
+  ---
+
+
+  ## Test Set Results
+
+
+  | Metric           | Score  |
+
+  | ---------------- | ------ |
+
+  | Accuracy         | 99.31% |
+
+  | Mean IoU         | 84.26% |
+
+  | Precision        | 99.35% |
+
+  | Sensitivity      | 99.16% |
+
+  | Specificity      | 99.78% |
+
+  | Dice (Necrotic)  | 59.16% |
+
+  | Dice (Edema)     | 76.67% |
+
+  | Dice (Enhancing) | 73.95% |
+
+
+  ---
+
+
+  ## Results
+
+
+  The model successfully learned to localize and segment tumor regions from unseen MRI scans.
+
+
+  Qualitative evaluation demonstrated:
+
+
+  * Accurate tumor localization
+
+  * Strong overlap with expert annotations
+
+  * Robust edema segmentation
+
+  * Good performance on enhancing tumor regions
+
+  * Reasonable generalization to unseen patients
+
+
+  Example outputs include:
+
+
+  * Ground truth segmentation masks
+
+  * Predicted tumor masks
+
+  * Class-wise visualization of tumor sub-regions
+
+  * Comparative analysis between predictions and expert annotations
+
+
+  ---
+
+
+  ## Key Challenges
+
+
+  Medical image segmentation presents several challenges:
+
+
+  * Severe class imbalance
+
+  * Small tumor sub-regions
+
+  * Irregular tumor boundaries
+
+  * High anatomical variability across patients
+
+
+  Special attention was given to class-wise evaluation to better understand model behavior across different
+  tumor structures.
+
+
+  ---
+
+
+  ## Future Improvements
+
+
+  Potential improvements include:
+
+
+  * Attention U-Net
+
+  * U-Net++
+
+  * 3D U-Net architectures
+
+  * Advanced data augmentation
+
+  * Dice + Focal Loss
+
+  * Hyperparameter optimization
+
+  * Cross-validation
+
+  * Deployment using FastAPI or Streamlit
+
+
+  ---
+
+
+  ## Project Structure
+
+
+  ```text
+
+  ├── Data_Preprocessing.ipynb
+
+  ├── Data_Generator.ipynb
+
+  ├── U_Net_Model.ipynb
+
+  ├── Training.ipynb
+
+  ├── Evaluation.ipynb
+
+  ├── Prediction.ipynb
+
+  ├── README.md
+
+  └── Results/
+
+  ```
+
+
+  ---
+
+
+
+
+  '

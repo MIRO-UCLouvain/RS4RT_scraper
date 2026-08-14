@@ -1,0 +1,251 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: naveed1011/BrainTumor-Segmentation-Swin-UNETR
+url: https://github.com/naveed1011/BrainTumor-Segmentation-Swin-UNETR
+platform: github
+description: Fine-tuning a Swin UNETR hybrid CNN-Transformer model with custom Modality Attention Fusion
+  for multi-modal brain tumor segmentation on the MSD BrainTumour dataset. Complete MONAI pipeline with
+  BraTS evaluation protocol.
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-08-12T09:15:14Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: '# 3D Brain Tumor Segmentation with Swin UNETR
+
+
+  This project is an end-to-end 3D brain tumor segmentation experiment using PyTorch and MONAI. I trained
+  a Swin UNETR model on the Medical Segmentation Decathlon BrainTumour dataset and evaluated the output
+  with the BraTS tumor-region Dice scores.
+
+
+  The notebook included in this repository is the Kaggle run I completed for 25 epochs. I kept the run
+  short so the full pipeline could finish on a Kaggle Tesla T4 GPU, but the workflow is complete: data
+  download, preprocessing, model setup, training, validation, test evaluation, visual checks, and output
+  packaging.
+
+
+  ## Notebook
+
+
+  The main notebook is:
+
+
+  ```text
+
+  brain_tumor_swin_unetr_25_epoch_kaggle_run.ipynb
+
+  ```
+
+
+  It contains the executed Kaggle outputs from the 25-epoch run.
+
+
+  ## What I did
+
+
+  - Used the MSD Task01 BrainTumour dataset with four MRI modalities: FLAIR, T1w, T1gd, and T2w.
+
+  - Built the preprocessing pipeline with MONAI transforms for orientation, spacing, intensity normalization,
+  cropping, and patch sampling.
+
+  - Fine-tuned MONAI''s Swin UNETR model from available pre-trained weights.
+
+  - Added a small modality-attention fusion block before the segmentation model so the network can weight
+  the four MRI inputs.
+
+  - Trained with a combined Dice and cross-entropy loss.
+
+  - Used AdamW with warmup followed by cosine annealing.
+
+  - Evaluated the final checkpoint using BraTS-style regions: Whole Tumor, Tumor Core, and Enhancing Tumor.
+
+  - Saved metrics, training history, visualizations, and the trained checkpoint from the Kaggle run.
+
+
+  ## Dataset
+
+
+  The dataset is Medical Segmentation Decathlon Task01 BrainTumour. The run used 388 labeled cases and
+  split them inside the notebook:
+
+
+  ```text
+
+  Train: 310
+
+  Validation: 39
+
+  Test: 39
+
+  ```
+
+
+  The dataset itself is not included in this repository because it is large. The notebook downloads it
+  through MONAI.
+
+
+  ## Model
+
+
+  The main model is MONAI''s `SwinUNETR`.
+
+
+  I also used a small `ModalityAttentionFusion` module. It applies global pooling and 1x1x1 convolutions
+  to produce channel-wise weights for the MRI modalities. The weighted input is added back to the original
+  input before passing it to Swin UNETR.
+
+
+  A 3D U-Net baseline class is also defined in the notebook for future comparison, but it is not the model
+  trained in this run.
+
+
+  ## Training setup
+
+
+  The completed run used:
+
+
+  ```text
+
+  Environment: Kaggle GPU
+
+  GPU: Tesla T4, 15.6 GB
+
+  Patch size: 64 x 64 x 64
+
+  Epochs: 25
+
+  Batch size: 1
+
+  Gradient accumulation: 4
+
+  Effective batch size: 4
+
+  Optimizer: AdamW
+
+  Scheduler: warmup + cosine annealing
+
+  Frameworks: PyTorch 2.10.0, MONAI 1.5.2
+
+  ```
+
+
+  The best checkpoint was saved at epoch 17 with a validation mean Dice of 0.4414.
+
+
+  ## Results
+
+
+  Final test-set results from the executed notebook:
+
+
+  | Region | Dice mean | Standard deviation | Median |
+
+  | --- | ---: | ---: | ---: |
+
+  | Whole Tumor (WT) | 0.1422 | 0.0760 | 0.1289 |
+
+  | Tumor Core (TC) | 0.5020 | 0.2585 | 0.5101 |
+
+  | Enhancing Tumor (ET) | 0.5622 | 0.2835 | 0.6548 |
+
+  | Overall mean | 0.4021 | - | - |
+
+
+  These results are from a completed fast run, not a clinical benchmark. The low Whole Tumor score shows
+  that the model still needs longer training, tuning, and stronger validation before making any serious
+  performance claim.
+
+
+  ## Outputs from the Kaggle run
+
+
+  The notebook creates the following output structure under `/kaggle/working/brain_tumor_seg/`:
+
+
+  ```text
+
+  models/best_model.pth
+
+  models/model_swinvit.pt
+
+  results/training_history.json
+
+  results/test_results.json
+
+  results/project_summary.json
+
+  figures/training_curves.png
+
+  figures/sample_1_comparison.png
+
+  figures/sample_2_comparison.png
+
+  figures/sample_3_comparison.png
+
+  ```
+
+
+  The generated Kaggle archive was about 1050 MB, mostly because it includes model weights. I am not committing
+  those large files directly here.
+
+
+  ## How to run
+
+
+  The easiest way to reproduce the experiment is on Kaggle:
+
+
+  1. Open the notebook `brain_tumor_swin_unetr_25_epoch_kaggle_run.ipynb`.
+
+  2. Enable a GPU accelerator.
+
+  3. Run the cells in order.
+
+  4. Download the generated archive from the Kaggle output panel.
+
+
+  For local use:
+
+
+  ```bash
+
+  pip install -r requirements.txt
+
+  jupyter notebook
+
+  ```
+
+
+  A local run needs enough disk space for the MSD dataset and a CUDA-capable GPU is strongly recommended.
+
+
+  ## Limitations
+
+
+  This project is for learning and research practice. It helped me in understanding the medical image
+  segmentation workflow, MONAI transforms, transfer learning with Swin UNETR, 3D patch-based training,
+  and BraTS-style evaluation. It is not intended for any clinical use.
+
+
+  The next improvements I would make are longer training, stronger augmentation checks, baseline comparison
+  with the included 3D U-Net, and repeated validation splits.
+
+
+  - MONAI documentation: <https://docs.monai.io/>
+
+
+  ## Author
+
+  Naveed Ahmad
+
+  '

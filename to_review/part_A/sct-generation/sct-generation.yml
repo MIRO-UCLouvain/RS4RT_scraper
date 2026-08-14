@@ -1,0 +1,53 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: axel971/sCT_generation
+url: https://github.com/axel971/sCT_generation
+platform: github
+description: Pytorch codes to perform synthetic CT generation for radiotherapy treatment planning.
+license: null
+language: Python
+keywords:
+- deep-learning
+- generative-adversarial-network
+- image-to-image-translation
+stars: 2
+updated_at: '2026-03-29T17:03:01Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "\nThis GitHub repository regroups the implementation of several image-to-image translation\
+  \ methods (U-Net, GAN, etc) for synthetic-CT generation in radiotherapy treatment planning. These methods\
+  \ were described on the following scientific papers: https://www.sciencedirect.com/science/article/abs/pii/S0360301619337356\
+  \ https://www.sciencedirect.com/science/article/pii/S1120179721002714 \n\n\n# Instructions to Download\
+  \ the Image Dataset\n## Download the dataset\n\nPYTHON_SCRIPT_PATH = \"HOME_DIR/sources/data_acquisition/data_downloading.py\"\
+  \ <br />\nDATA_URL = \"https://zenodo.org/records/7260705/files/Task1.zip?download=1\" <br />\nDATA_FILE_NAME\
+  \ = \"Task1.zip\" <br />\nDATA_DIR = \"HOME_DIR/data/raw_data\"\n\npython PYTHON_SCRIPT_PATH -url DATA_URL\
+  \ -data_file_name DATA_FILE_NAME -data_dir DATA_DIR\n\n## Unzip the downloaded image dataset\n\nPYTHON_SCRIPT_PATH\
+  \ = \"HOME_DIR/sources/data_acquisition/unzip_file.zip\" \n\npython PYTHON_SCRIPT_PATH -zipped_file_path\
+  \ DATA_DIR/DATA_FILE_NAME -unzipped_file_dir DATA_DIR\n\n## Get the patients list\n\nPYTHON_SCRIPT_PATH\
+  \ = \"HOME_DIR/sources/data_acquisition/get_patients_list.py\" <br />\nPATIENTS_LIST_PATH = \"HOME_DIR/data/patients_list.xlsx\"\
+  \n\npython PYTHON_SCRIPT_PATH -data_dir DATA_DIR/Task1/pelvis -patients_list_path PATIENTS_LIST_PATH\n\
+  \n## Reorganize the data folders\nPYTHON_SCRIPT_PATH = \"HOME_DIR/sources/data_acquisition/reorganize_data_folders.py\"\
+  \ \n\npython PYTHON_SCRIPT_PATH -original_data_dir DATA_DIR/Task1/pelvis -reorganize_data_dir DATA_DIR/pelvis\
+  \ -patients_list_path PATIENTS_LIST_PATH\n\n# Instructions to preprocess the data\n\n## Compile the\
+  \ cxx executables\ncd HOME_DIR/sources/preprocessing/lib/n4_bias_field_correction <br />\ncmake . -G\
+  \ \"MinGW Makefiles\" -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++ -Bbuild -DITK_DIR=\"PATH_TOWARD/itk/bin/CMakeFiles\"\
+  \ <br />\ncd build <br />\nmingw32-make\n\ncd HOME_DIR/sources/preprocessing/lib/resampling<br />\n\
+  cmake . -G \"MinGW Makefiles\" -D CMAKE_C_COMPILER=gcc -D CMAKE_CXX_COMPILER=g++ -Bbuild -DITK_DIR=\"\
+  PATH_TOWARD/itk/bin/CMakeFiles\"<br />\ncd build <br />\nmingw32-make\n\n## Run the preprocessing script\n\
+  \nPYTHON_SCRIPT_PATH = HOME_DIR/sources/preprocessing/preprocessing.py <br />\nPREPROCESSED_DATA_DIR\
+  \ = HOME_DIR/data/preprocessing/\n\npython PYTHON_SCRIPT_PATH -output_dir PREPROCESSED_DATA_DIR/pelvis\
+  \ -CT_dir DATA_DIR/pelvis/CT -MRI_dir DATA_DIR/pelvis/MRI -mask_dir DATA_DIR/pelvis/mask -patients_list_path\
+  \ PATIENTS_LIST_PATH -img_ext \".nii.gz\" -resampling_cxx HOME_DIR/sources/preprocessing/lib/resampling/build/bin/resampling.exe\
+  \ -bias_field_correction_cxx HOME_DIR/sources/preprocessing/lib/n4_bias_field_correction/build/bin/n4_bias_field_correction.exe\n\
+  \n# Instructions to train the deep learning models\n## Run U-Net 2D model\n\nPYTHON_SCRIPT_PATH = HOME_DIR/sources/main/main_UNet_2d.py\
+  \ <br />\nPREDICTED_DATA_DIR = HOME_DIR/data/predictions/\n\npython PYTHON_SCRIPT_PATH -patients_list_path\
+  \ PATIENTS_LIST_PATH -mri_dir PREPROCESSED_DATA_DIR/pelvis/MRI/bias_field_correction -ct_dir PREPROCESSED_DATA_DIR/CT/resampling\
+  \ -sct_dir PREDICTED_DATA_DIR/pelvis/UNet_2d\" -img_ext \".nii.gz\"\n\n## Run GAN 2D model\n\nPYTHON_SCRIPT_PATH\
+  \ = HOME_DIR/sources/main/main_vanillaGAN_2d.py\n\npython PYTHON_SCRIPT_PATH -patients_list_path PATIENTS_LIST_PATH\
+  \ -mri_dir PREPROCESSED_DATA_DIR/pelvis/MRI/bias_field_correction -ct_dir PREPROCESSED_DATA_DIR/pelvis/CT/resampling\
+  \ -sct_dir PREDICTED_DATA_DIR/pelvis/vanillaGAN_2d\" -img_ext \".nii.gz\"\n\n"

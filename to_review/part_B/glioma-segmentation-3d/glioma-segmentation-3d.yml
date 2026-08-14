@@ -1,0 +1,93 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: erfanzarenia/glioma-segmentation-3d
+url: https://github.com/erfanzarenia/glioma-segmentation-3d
+platform: github
+description: 3D U-Net with residual and SE blocks for multi-modal MRI brain tumor segmentation on BraTS
+  2021
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-26T18:10:37Z'
+image_source: https://raw.githubusercontent.com/erfanzarenia/glioma-segmentation-3d/HEAD/assets/qualitative_results.png
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# Brain Glioma Segmentation — Residual-SE U-Net (3D, Multi-Modal MRI)\n\n[![License:\
+  \ MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)\n[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)\n\
+  [![PyTorch 2.1+](https://img.shields.io/badge/pytorch-2.1+-ee4c2c.svg)](https://pytorch.org/)\n\nFully\
+  \ automated 3D segmentation of brain gliomas from multi-modal MRI, using a\nU-Net augmented with residual\
+  \ connections and Squeeze-and-Excitation blocks.\nTrained on BraTS 2021 with FLAIR and T1ce modalities\
+  \ under single-GPU memory\nconstraints.\n\n![Qualitative results](assets/qualitative_results.png)\n\n\
+  ## Overview\n\nGliomas are the most common primary brain tumour. The BraTS dataset annotates\nthree\
+  \ nested sub-regions: **enhancing tumour (ET)**, **tumour core (TC)**, and\n**whole tumour (WT)**. Manual\
+  \ delineation is slow and subject to inter-rater\nvariability. This project implements an end-to-end\
+  \ 3D deep-learning pipeline\nthat segments gliomas from preprocessed MRI volumes, with a focus on the\n\
+  engineering trade-offs required to train a 3D U-Net on a single consumer GPU.\n\n## Motivation\n\n-\
+  \ Reproduce a competitive BraTS segmentation pipeline end-to-end in PyTorch.\n- Explore the engineering\
+  \ trade-offs (mixed precision, gradient checkpointing,\n  gradient accumulation) required to train 3D\
+  \ U-Nets on a single consumer GPU.\n- Quantify the cost of restricting input to two modalities (FLAIR\
+  \ + T1ce)\n  versus the full four-modality BraTS protocol.\n\n## Architecture\n\nA 3D U-Net with:\n\n\
+  - **Residual + Squeeze-and-Excitation blocks** at every encoder/decoder stage\n  for stable gradient\
+  \ flow and channel-wise feature recalibration.\n- **Instance normalization** (preferred over BatchNorm\
+  \ for batch size 1).\n- **MaxPool** for downsampling and **transposed convolution** for upsampling\n\
+  \  via skip connections.\n- **Adaptive dropout** that scales with network depth.\n- **Gradient checkpointing**\
+  \ on deeper encoder, bottleneck, and decoder\n  stages to bound peak VRAM.\n\nSee [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md)\
+  \ for the long-form description.\n\n![Architecture](assets/architecture.png)\n\n| | Value |\n|---|---|\n\
+  | Input | 2 channels (FLAIR, T1ce), full cropped volume |\n| Output | 3 classes (background, merged\
+  \ non-enhancing+edema, enhancing) |\n| Encoder depth | 3 stages + bottleneck (32 → 64 → 128 → 256) |\n\
+  | Loss | Generalized Dice + Focal |\n| Normalization | Instance |\n\n## Preprocessing pipeline\n\n1.\
+  \ Load BraTS 2021 NIfTI volumes (FLAIR, T1ce, segmentation).\n2. Compute global non-zero crop bounds\
+  \ across the dataset; round to a multiple\n   of 8 to match the U-Net's three pooling stages.\n3. Per-modality\
+  \ **z-score normalization** using statistics computed from\n   non-zero voxels across the whole dataset.\n\
+  4. Refine BraTS labels: `{1, 2} → 1` (non-enhancing + edema merged),\n   `{4} → 2` (enhancing tumour).\n\
+  5. Augmentation (training only, via MONAI): random flips, 90° rotations, slight\n   affine, intensity\
+  \ scale/shift, Gaussian noise, bias-field simulation.\n\n## Training setup\n\n| | |\n|---|---|\n| Hardware\
+  \ | 1× NVIDIA RTX A4000 (16 GB VRAM) |\n| Framework | PyTorch 2.1 + MONAI 1.3 |\n| Optimizer | AdamW,\
+  \ lr 1e-4 |\n| Scheduler | `ReduceLROnPlateau` (patience 12, factor 0.5) |\n| Loss | Generalized Dice\
+  \ + Focal |\n| Batch | 1 (effective 8 via gradient accumulation) |\n| Precision | Mixed (`torch.amp.autocast`\
+  \ + `GradScaler`) |\n| Memory | Gradient checkpointing on encoder stages 2–3, bottleneck, decoder stages\
+  \ 2–3 |\n| Dropout | 0.15, scaled ×1.25 per depth level |\n| Epochs | 150 |\n| Split | 80 / 10 / 10\
+  \ train / val / test (by sorted subject index) |\n\n## Results\n\nHeld-out test set (10% of BraTS 2021).\n\
+  \n| Class | Dice ↑ | HD95 (mm) ↓ |\n|---|---|---|\n| Non-enhancing + edema (merged) | **0.89** | **4.16**\
+  \ |\n| Enhancing tumour | **0.83** | **4.33** |\n\n**Important caveats.**\n\n- Class definitions differ\
+  \ from the standard BraTS ET / TC / WT regions; the\n  numbers above are **not directly comparable**\
+  \ to BraTS leaderboard entries.\n- Evaluation is on a local 10% hold-out split, not the official BraTS\n\
+  \  validation server.\n- Only two modalities (FLAIR + T1ce) were used; the full four-modality protocol\n\
+  \  is expected to improve enhancing-tumour Dice in particular.\n\n![Training and validation loss](assets/training_loss.png)\n\
+  ![Validation Dice score](assets/training_dice.png)\n\n## Qualitative results\n\nAxial mid-slice of three\
+  \ test subjects, FLAIR vs. ground truth vs. prediction.\n\n![Sample predictions](assets/sample_predictions.png)\n\
+  \n## Installation\n\n```bash\ngit clone https://github.com/erfanzarenia/glioma-segmentation-3d.git\n\
+  cd glioma-segmentation-3d\npython -m venv .venv && source .venv/bin/activate\npip install -e \".[dev]\"\
+  \n```\n\n## Usage\n\n**Data.** BraTS 2021 must be requested from the\n[official source](http://www.braintumorsegmentation.org/);\
+  \ it cannot be\nredistributed. Place it at `data/raw/BraTS2021/`.\n\n**Preprocess**\n\n```bash\npython\
+  \ scripts/preprocess.py \\\n    raw_dir=data/raw/BraTS2021 \\\n    processed_dir=data/processed\n```\n\
+  \n**Train**\n\n```bash\npython scripts/train.py\n# override any config from CLI\npython scripts/train.py\
+  \ training.epochs=200 model.dropout_rate=0.1\n```\n\n**Evaluate the bundled checkpoint**\n\nThe reference\
+  \ checkpoint (`checkpoints/model_epoch150.pt`, ~30 MB) is included\nin the repo and used by default.\n\
+  \n```bash\npython scripts/evaluate.py\n# or point at a different checkpoint\npython scripts/evaluate.py\
+  \ inference.checkpoint=path/to/your.pt\n```\n\n## Repository layout\n\n```\nglioma-segmentation-3d/\n\
+  ├── configs/              # Hydra configs (model, data, training, inference)\n├── src/glioma_seg/  \
+  \     # Importable package\n│   ├── data/             # Dataset, transforms, preprocessing, I/O\n│ \
+  \  ├── models/           # ReSE-UNet3D and building blocks\n│   ├── training/         # Trainer, data\
+  \ manager\n│   ├── inference/        # Evaluator\n│   └── utils/            # Visualization, seeding,\
+  \ logging\n├── scripts/              # Thin CLI entry points (preprocess, train, evaluate)\n├── tests/\
+  \                # Unit tests (shape / forward-pass)\n├── assets/               # Figures used in README\n\
+  ├── checkpoints/          # Reference trained model\n└── docs/                 # Methodology, experiment\
+  \ notes\n```\n\n## Future improvements\n\n- Re-evaluate against the standard BraTS ET / TC / WT regions\
+  \ for comparability.\n- Comparison against the **nnU-Net** baseline.\n- Sliding-window inference and\
+  \ test-time augmentation.\n- Train with all four modalities (T1, T1ce, T2, FLAIR).\n- Connected-component\
+  \ post-processing for fragmented enhancing-tumour predictions.\n- Lightweight Gradio demo + Hugging\
+  \ Face Space.\n\n## Citation\n\nIf you reference this code, please cite:\n\n```bibtex\n@misc{zarenia2025glioma,\n\
+  \  author = {Zarenia, Erfan},\n  title  = {Residual-SE U-Net for 3D Brain Glioma Segmentation},\n  year\
+  \   = {2025},\n  howpublished = {\\url{https://github.com/erfanzarenia/glioma-segmentation-3d}}\n}\n\
+  ```\n\nUnderlying dataset:\n\n```bibtex\n@misc{baid2021rsna,\n  author = {Baid, Ujjwal and others},\n\
+  \  title  = {The RSNA-ASNR-MICCAI BraTS 2021 Benchmark on Brain Tumor\n            Segmentation and\
+  \ Radiogenomic Classification},\n  year   = {2021},\n  eprint = {2107.02314},\n  archivePrefix = {arXiv}\n\
+  }\n```\n\n## Acknowledgements\n\n- The [MONAI](https://monai.io/) project for medical-imaging primitives.\n\
+  - BraTS 2021 organizers and data contributors.\n- Supervisor: Dr. J. Bruce Morton, Western University.\n\
+  \n## License\n\nMIT — see [LICENSE](LICENSE).\n"

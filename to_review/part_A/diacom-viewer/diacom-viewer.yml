@@ -1,0 +1,39 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: nabilsarwar/diacom-viewer
+url: https://github.com/nabilsarwar/diacom-viewer
+platform: github
+description: this is a diacom viewer for viewing dental cbct files on mobile platform
+license: null
+language: C++
+keywords: []
+stars: 0
+updated_at: '2026-04-19T09:04:27Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# Dental CBCT DICOM Viewer\n\n## Architecture\n\n```\nFlutter UI (Dart)\n    │  FFI (dart:ffi\
+  \ + ffigen)\n    ▼\nlibdicom_native (.so / .a)\n    ├── DICOM I/O      — GDCM: loads DICOM series →\
+  \ int16 HU voxel buffer\n    ├── Volume         — ITK: Gaussian smooth + HU clamp before GPU upload\n\
+  \    ├── Rendering      — VTK GPU ray-cast + ANGLE EGL (OpenGL ES 3 → Metal on iOS)\n    └── Clinical\
+  \       — distance (mm) + HU sampling via trilinear interpolation\n\nNative surface embed\n    Android:\
+  \ SurfaceView → ANativeWindow* → EGL window surface\n    iOS:     CAEAGLLayer* → ANGLE EGL window surface\
+  \ (translates to Metal)\n```\n\n## Dependencies to build natively (cross-compiled for arm64)\n\n| Library\
+  \ | Version | Notes |\n|---------|---------|-------|\n| GDCM    | 3.0.x   | `-DGDCM_BUILD_SHARED_LIBS=OFF`\
+  \ |\n| ITK     | 5.3.x   | Minimal modules: Common, IOGDCM, Smoothing, ImageIntensity |\n| VTK     |\
+  \ 9.3.x   | `-DVTK_GROUP_ENABLE_Rendering=YES`, OpenGL ES backend |\n| ANGLE   | chromium | Pre-built\
+  \ from [ANGLE releases](https://chromium.googlesource.com/angle/angle) |\n\n## Build\n\n```bash\n# Set\
+  \ env vars pointing to pre-built arm64 installs of GDCM/ITK/VTK/ANGLE\nexport GDCM_DIR=/opt/gdcm-android/lib/cmake/gdcm-3.0\n\
+  export ITK_DIR=/opt/itk-android/lib/cmake/ITK-5.3\nexport VTK_DIR=/opt/vtk-android/lib/cmake/vtk-9.3\n\
+  export ANGLE_ROOT=/opt/angle-android\n\n# Android\n./scripts/build_android.sh\n\n# iOS (macOS only)\n\
+  ./scripts/build_ios.sh\n\n# Generate Dart FFI bindings (run once after header changes)\ncd flutter_app\
+  \ && dart run ffigen\n\n# Run Flutter app\nflutter run\n```\n\n## Key files\n\n| File | Purpose |\n\
+  |------|---------|\n| `native/include/dicom_bridge.h` | C ABI — single contract between Dart FFI and\
+  \ C++ |\n| `native/src/rendering/renderer.cpp` | EGL init + VTK volume ray-cast pipeline |\n| `flutter_app/lib/ffi/dicom_controller.dart`\
+  \ | Dart wrapper around C handles |\n| `flutter_app/lib/widgets/native_render_surface.dart` | AndroidView\
+  \ / UiKitView embed |\n| `flutter_app/android/.../DicomViewerPlugin.java` | Returns ANativeWindow* to\
+  \ Dart |\n| `flutter_app/ios/Classes/DicomViewerPlugin.m` | Returns CAEAGLLayer* to Dart |\n"

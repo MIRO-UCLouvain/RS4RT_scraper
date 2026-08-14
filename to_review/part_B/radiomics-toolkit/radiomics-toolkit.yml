@@ -1,0 +1,69 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: redgoonda/radiomics-toolkit
+url: https://github.com/redgoonda/radiomics-toolkit
+platform: github
+description: From-scratch Python radiomics feature extraction toolkit with web UI and auto-segmentation
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-02-23T03:53:36Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 4 support term(s).
+readme_excerpt: "# Radiomics Toolkit\n\nA from-scratch Python library for quantitative imaging feature\
+  \ extraction, with a web UI, interactive DICOM viewer, and one-click auto-segmentation via TotalSegmentator.\n\
+  \n## Features\n\n- **83 radiomic features** across 6 classes: first-order statistics, shape, GLCM, GLRLM,\
+  \ GLSZM, NGTDM\n- **DICOM viewer** — upload a DICOM series folder and browse axial slices with clinical\
+  \ windowing presets, interactive W/L adjustment, and scroll/keyboard navigation\n- **Auto-segmentation**\
+  \ — click \"Auto Segment\" to generate an ROI mask with TotalSegmentator (117 anatomical structures\
+  \ for CT, 50 for MR) or Otsu thresholding for 2D images\n- **Web UI** — drag-and-drop file or folder\
+  \ upload, mask overlay preview, interactive feature explorer, CSV/JSON export\n- **CLI** — batch extraction\
+  \ to CSV or JSON\n- **Python API** — use `RadiomicsExtractor` directly in your own scripts\n- **Format\
+  \ support** — PNG, JPEG, TIFF, DICOM (single file or series folder), NIfTI (.nii / .nii.gz), NumPy .npy\n\
+  \n## Install\n\n```bash\ngit clone https://github.com/redgoonda/radiomics-toolkit.git\ncd radiomics-toolkit\n\
+  pip install -e \".[web]\"\n\n# Optional: 3D auto-segmentation support (downloads ~2 GB of model weights\
+  \ on first run)\npip install -e \".[segmentation]\"\n```\n\n## Web UI\n\n```bash\nradiomics serve\n\
+  # → http://127.0.0.1:8000\n```\n\n### DICOM Series Viewer\n\nDrag a DICOM folder onto the image drop\
+  \ zone (or click **Upload DICOM Folder**). The top panel switches to a full-height viewer:\n\n- **Slice\
+  \ navigation** — scrub the slider, click ◀▶, scroll the mouse wheel, or use arrow keys / Home / End\n\
+  - **Windowing presets** — Abdomen (C:40 W:400), Lung (C:−600 W:1500), Bone (C:400 W:1800), Brain (C:40\
+  \ W:80), Soft Tissue (C:50 W:350)\n- **Interactive W/L** — click-drag on the image to adjust window\
+  \ centre (up/down) and window width (left/right), or type values directly into the C/W inputs\n- **Corner\
+  \ overlays** — series name, current W/L, voxel spacing, and slice position\n\n### Auto-Segmentation\n\
+  \nUpload an image (any format), click **Auto Segment ⚡**, and a binary ROI mask is generated automatically.\
+  \ The mask is overlaid as a blue tint on the preview and stored in a server session — no re-upload needed\
+  \ when you click **Extract Features**.\n\n## CLI\n\n```bash\n# Extract all features, output to CSV\n\
+  radiomics extract --image scan.png --output features.csv\n\n# With a mask, specific classes, custom\
+  \ bins\nradiomics extract --image scan.nii.gz --mask mask.nii.gz \\\n  --features first_order,shape,glcm\
+  \ --bins 128 --output out.json\n\n# Launch the web UI\nradiomics serve --port 8000\n```\n\n## Python\
+  \ API\n\n```python\nfrom radiomics_toolkit import RadiomicsExtractor\n\nextractor = RadiomicsExtractor(bin_count=64,\
+  \ normalize=False)\n\n# From file (single image or DICOM directory)\nresults = extractor.extract_from_file(\"\
+  scan.png\", mask_path=\"mask.png\")\nresults = extractor.extract_from_file(\"dicom_series/\")   # directory\
+  \ → 3D volume\n\n# From numpy arrays\nimport numpy as np\nimage = np.load(\"image.npy\")\nmask  = np.load(\"\
+  mask.npy\")\nresults = extractor.extract(image, mask)\n\nprint(f\"{len(results)} features extracted\"\
+  )\n# {'firstorder_mean': 142.3, 'shape_area': 576.0, 'glcm_contrast': 0.81, ...}\n```\n\n## Auto-Segmentation\
+  \ API\n\n```python\nfrom radiomics_toolkit.segmentation import segment_with_totalseg, segment_2d_fallback\n\
+  \n# 3D — NIfTI file or DICOM directory\nmask_3d = segment_with_totalseg(\"scan.nii.gz\", fast=True,\
+  \ device=\"cpu\")\nmask_3d = segment_with_totalseg(\"dicom_series/\")\n\n# 2D — any numpy array (Otsu\
+  \ threshold + fill holes + remove small objects)\nimport numpy as np\nmask_2d = segment_2d_fallback(np.array(...))\n\
+  ```\n\n## Web API\n\nThe server exposes a REST API (docs at `/api/docs`):\n\n| Endpoint | Method | Description\
+  \ |\n|----------|--------|-------------|\n| `/extract` | POST | Extract features from image (+ optional\
+  \ mask or `session_id`) |\n| `/segment` | POST | Auto-segment image, return `session_id` + preview PNG\
+  \ |\n| `/preview` | POST | Return normalised PNG for display |\n| `/dicom/session` | POST | Upload DICOM\
+  \ series, return viewer session metadata |\n| `/dicom/{sid}/{index}` | GET | Fetch one windowed slice\
+  \ as PNG (`?wc=&ww=`) |\n\n## Feature Classes\n\n| Class | Features | Description |\n|-------|----------|-------------|\n\
+  | `first_order` | 18 | Mean, median, entropy, skewness, kurtosis, energy, … |\n| `shape` | 8 | Area,\
+  \ perimeter, compactness, elongation, … |\n| `glcm` | 24 | Contrast, correlation, homogeneity, ASM,\
+  \ … |\n| `glrlm` | 11 | Run-length non-uniformity, grey-level variance, … |\n| `glszm` | 13 | Zone entropy,\
+  \ size-zone non-uniformity, … |\n| `ngtdm` | 5 | Coarseness, contrast, busyness, complexity, strength\
+  \ |\n\n## Supported Formats\n\n| Format | Image | Mask |\n|--------|-------|------|\n| PNG / JPEG /\
+  \ TIFF | ✓ | ✓ |\n| DICOM (.dcm single file) | ✓ | ✓ |\n| DICOM series (folder) | ✓ | ✓ |\n| NIfTI (.nii,\
+  \ .nii.gz) | ✓ | ✓ |\n| NumPy (.npy) | ✓ | ✓ |\n\n## Development\n\n```bash\npip install -e \".[dev]\"\
+  \npytest tests/\n```\n\n## License\n\nMIT\n"

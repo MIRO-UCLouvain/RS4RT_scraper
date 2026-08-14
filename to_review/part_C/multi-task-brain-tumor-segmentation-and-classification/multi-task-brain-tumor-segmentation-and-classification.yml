@@ -1,0 +1,138 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hao8359/Multi-Task-Brain-Tumor-Segmentation-and-Classification
+url: https://github.com/hao8359/Multi-Task-Brain-Tumor-Segmentation-and-Classification
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-05-19T11:30:40Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# GP-8 – Self-Supervised Multi-Task Learning for Brain Tumor Segmentation and Classification\n\
+  \nThis repository contains the deep learning pipeline developed for **CM2026 Advanced Machine Learning\
+  \ in Healthcare** (Group 8). The code trains two multi-task models — one with a standard U-Net encoder\
+  \ and one with a ResNet18 backbone — using self-supervised pre-training via a Masked Autoencoder (MAE),\
+  \ followed by joint fine-tuning for brain tumor segmentation and classification from T1-weighted MRI.\n\
+  \n**Group members:** Qusai Al Haj Ali, Mansour Arefi, De Chi Hao, Shreyas Balakarthikeyan\n\n---\n\n\
+  ## Table of Contents\n\n1. [Project Overview](#project-overview)\n2. [Prerequisites](#prerequisites)\n\
+  3. [Installation](#installation)\n4. [Project Structure](#project-structure)\n5. [Input Data](#input-data)\n\
+  6. [Configuration](#configuration)\n7. [Running the Notebook](#running-the-notebook)\n8. [Model Architecture](#model-architecture)\n\
+  9. [Training Pipeline](#training-pipeline)\n10. [Evaluation](#evaluation)\n11. [Outputs](#outputs)\n\
+  12. [Troubleshooting](#troubleshooting)\n\n---\n\n## Project Overview\n\nThe pipeline processes T1-weighted\
+  \ MRI brain scans from the BRISC2025 dataset and performs the following steps automatically:\n\n1. **Explore\
+  \ data** – parses filenames, verifies image and mask integrity, and plots the class distribution.\n\
+  2. **Preprocess data** – computes z-score normalisation statistics, applies a stratified train/validation\
+  \ split, and constructs PyTorch datasets with augmentation.\n3. **Stage 1 – SSL pre-training** – wraps\
+  \ each encoder in a Masked Autoencoder (MAE), masks 60% of image patches, and trains the encoder to\
+  \ reconstruct missing regions via MSE loss.\n4. **Stage 2 – Multi-task fine-tuning** – loads the pre-trained\
+  \ encoder into the full model and fine-tunes jointly for segmentation (binary tumor mask) and classification\
+  \ (four tumor classes), using differential learning rates and early stopping.\n5. **Evaluate** – loads\
+  \ the best checkpoint for each architecture and reports Dice, IoU, Hausdorff Distance, and macro F1-score\
+  \ on the held-out test set.\n6. **Visualise** – generates learning curves, confusion matrices, side-by-side\
+  \ predictions, and an architecture cost comparison.\n\n---\n\n## Prerequisites\n\nBefore running the\
+  \ notebook, install the following software. All of it is free.\n\n### 1 – Python (via Anaconda – recommended)\n\
+  \n- Download Anaconda from: https://www.anaconda.com/download\n- Choose the installer for your operating\
+  \ system and follow the on-screen instructions.\n- After installation, open **Anaconda Navigator** or\
+  \ **Anaconda Prompt** (Windows) / **Terminal** (macOS and Linux).\n\n### 2 – Kaggle (recommended execution\
+  \ environment)\n\nThe notebook is designed to run on **Kaggle** (free GPU tier). The data paths and\
+  \ working directory defaults assume the Kaggle filesystem. If running locally, adjust the `DATA_ROOT`\
+  \ and `WORK_DIR` constants accordingly (see [Configuration](#configuration)).\n\n### 3 – Visual Studio\
+  \ Code (optional)\n\nVS Code integrates well with Jupyter notebooks. Download it from: https://code.visualstudio.com/\n\
+  \nInstall the **Python** and **Jupyter** extensions from the Extensions panel.\n\n---\n\n## Installation\n\
+  \nFollow these steps in order. Commands in code blocks are typed into your **Terminal** (macOS/Linux)\
+  \ or **Anaconda Prompt** (Windows).\n\n### Step 1 – Clone the repository\n\n```bash\ncd path/to/your/chosen/directory\n\
+  git clone <repository-url>\ncd GP_8_SSL\n```\n\nIf you do not have Git, download the ZIP from GitHub\
+  \ and unzip it.\n\n### Step 2 – Create a Python environment\n\n```bash\nconda create -n gp8_ssl python=3.10\n\
+  conda activate gp8_ssl\n```\n\nRun `conda activate gp8_ssl` at the start of every new terminal session.\n\
+  \n### Step 3 – Install required packages\n\n```bash\npip install -r requirements.txt\n```\n\nThe required\
+  \ libraries are:\n\n| Package | Purpose |\n|---------|---------|\n| `torch` / `torchvision` | Deep learning\
+  \ framework and pretrained model weights |\n| `numpy` | Numerical array operations |\n| `pandas` | Tabular\
+  \ data management and CSV export |\n| `matplotlib` | Plotting and figure generation |\n| `Pillow` |\
+  \ Image loading and resizing |\n| `scikit-learn` | Train/validation splitting, metrics, and confusion\
+  \ matrices |\n| `scipy` | Hausdorff distance computation |\n\n### Step 4 – Install Jupyter\n\n```bash\n\
+  pip install notebook ipykernel\n```\n\n---\n\n## Project Structure\n\n```\nGP_8_SSL/\n│\n├── GP_8_SSL.ipynb\
+  \              ← Main notebook – start here\n├── requirements.txt            ← List of required Python\
+  \ packages\n├── README.md                   ← This file\n│\n├── data/\n│   └── brisc2025/          \
+  \    ← BRISC2025 dataset root\n│       ├── segmentation_task/  ← Paired image (.jpg) and mask (.png)\
+  \ files\n│       └── classification_task/← Image files with class label encoded in filename\n│\n└──\
+  \ outputs/                    ← All results are saved here (created automatically)\n    ├── best_ssl_encoder_unet.pth\
+  \       ← Best U-Net SSL encoder checkpoint\n    ├── best_ssl_encoder_resnet.pth     ← Best ResNet18\
+  \ SSL encoder checkpoint\n    ├── best_mtl_model_unet.pth         ← Best U-Net fine-tuned model checkpoint\n\
+  \    ├── best_mtl_model_resnet.pth       ← Best ResNet18 fine-tuned model checkpoint\n    ├── zscore_stats.npy\
+  \                ← Pre-computed normalisation statistics\n    ├── train_split.csv                 ←\
+  \ Training split index\n    ├── val_split.csv                   ← Validation split index\n    ├── test_split.csv\
+  \                  ← Test split index\n    ├── learning_curves_compare.png     ← Training and validation\
+  \ curves\n    ├── confusion_matrices_compare.png  ← Side-by-side confusion matrices\n    └── test_predictions_compare.png\
+  \    ← Example segmentation predictions\n```\n\n---\n\n## Input Data\n\nThe pipeline expects the **BRISC2025**\
+  \ dataset placed under `DATA_ROOT`. The dataset is organised into two parallel folders: `segmentation_task`\
+  \ (paired image and mask) and `classification_task` (image with class label in filename). The segmentation\
+  \ folder is used as the primary data source since the class label can be parsed from the filename.\n\
+  \n### Filename format\n\nFilenames follow the pattern `brisc2025_train_00001_gl_ax_t1.jpg`, where the\
+  \ two-letter code encodes the tumor class:\n\n| Code | Class |\n|------|-------|\n| `gl` | Glioma |\n\
+  | `me` | Meningioma |\n| `pi` | Pituitary tumor |\n| `no` | No tumor |\n\n### Segmentation masks\n\n\
+  Masks are stored as `.png` files in `segmentation_task/` and are matched to images by filename (excluding\
+  \ extension). Binary masks are thresholded at pixel value 127.\n\n### Sampling frequency\n\nImages are\
+  \ resampled to `224 × 224` pixels. The pipeline accepts single-channel (grayscale) T1-weighted MRI only.\n\
+  \n---\n\n## Configuration\n\nAll tunable settings are defined at the top of **cell 2** of `GP_8_SSL.ipynb`.\
+  \ You do not need to edit any other cell unless changing the model architecture.\n\n### Paths\n\n```python\n\
+  DATA_ROOT = \"/kaggle/input/datasets/briscdataset/brisc2025/brisc2025\"\nWORK_DIR  = \"/kaggle/working\"\
+  \n```\n\nChange these to local paths if not running on Kaggle.\n\n### Image and class settings\n\n```python\n\
+  IMG_SIZE    = 224\nN_CLASSES   = 4\nCLASS_NAMES = [\"Glioma\", \"Meningioma\", \"Pituitary\", \"No Tumor\"\
+  ]\n```\n\n### Stage 1 – SSL pre-training hyperparameters\n\n```python\nSSL_EPOCHS     = 100\nSSL_LR\
+  \         = 1e-4\nSSL_BATCH_SIZE = 32\nPATCH_SIZE     = 16\nMASK_RATIO     = 0.60   # fraction of patches\
+  \ masked during MAE training\n```\n\n### Stage 2 – Multi-task fine-tuning hyperparameters\n\n```python\n\
+  MTL_EPOCHS     = 80\nMTL_BATCH_SIZE = 16\nENC_LR         = 1e-5   # encoder (pre-trained) learning rate\n\
+  DEC_LR         = 1e-4   # decoder and classifier learning rate\nALPHA          = 0.5    # weight between\
+  \ BCE and Dice in segmentation loss\nW_SEG          = 2.0    # segmentation loss weight in multi-task\
+  \ objective\nW_CLS          = 1.0    # classification loss weight in multi-task objective\nPATIENCE\
+  \       = 15     # early stopping patience (epochs)\n```\n\n### Architecture switches\n\n```python\n\
+  RUN_UNET   = True    # run the U-Net encoder experiment\nRUN_RESNET = True    # run the ResNet18 encoder\
+  \ experiment\n```\n\nSet either to `False` to skip that architecture.\n\n---\n\n## Running the Notebook\n\
+  \n### Option A – Kaggle (recommended for GPU access)\n\n1. Upload `GP_8_SSL.ipynb` to a Kaggle notebook.\n\
+  2. Attach the BRISC2025 dataset under **Add data**.\n3. Enable GPU under **Session options → Accelerator**.\n\
+  4. Click **Run All**.\n\n### Option B – Visual Studio Code\n\n1. Open VS Code and select **File → Open\
+  \ Folder**, then choose the project folder.\n2. Open `GP_8_SSL.ipynb` in the Explorer panel.\n3. Click\
+  \ **Select Kernel** (top-right) and choose the `gp8_ssl` conda environment.\n4. Click **Run All** (▶▶)\
+  \ to execute the notebook from top to bottom.\n5. To run a single cell, click inside it and press **Shift\
+  \ + Enter**.\n\n### Option C – Jupyter in the browser\n\n```bash\nconda activate gp8_ssl\ncd /path/to/GP_8_SSL\n\
+  jupyter notebook\n```\n\nOpen `GP_8_SSL.ipynb` in the browser and run all cells via **Cell → Run All**.\n\
+  \n### Recommended execution order\n\nCells must be run in order from top to bottom. The notebook is\
+  \ structured as follows:\n\n| # | Section | Description |\n|---|---------|-------------|\n| 1 | **Introduction**\
+  \ | Project description and abstract (no code) |\n| 2 | **Configuration and imports** | All hyperparameters,\
+  \ library imports, and device setup |\n| 3 | **Data exploration** | Filename parser, dataset splits,\
+  \ class distribution plots |\n| 4 | **Data preprocessing** | Z-score statistics, train/val split, datasets,\
+  \ dataloaders, MAE patch masking |\n| 5 | **Model architecture** | All model class definitions (encoder,\
+  \ decoder, classification head, MAE wrapper) |\n| 6 | **Model training** | Stage 1 SSL pre-training,\
+  \ then Stage 2 multi-task fine-tuning |\n| 7 | **Model evaluation** | Load best checkpoints, evaluate\
+  \ on test set, side-by-side comparison table |\n| 8 | **Final visualisations** | Learning curves, confusion\
+  \ matrices, prediction overlays, parameter counts |\n\n---\n\n## Model Architecture\n\nTwo encoder architectures\
+  \ are compared within the same multi-task pipeline. Both share the same decoder design, classification\
+  \ head, SSL pre-training procedure, and evaluation protocol.\n\n### U-Net Encoder (baseline)\n\nFive\
+  \ `DoubleConv → MaxPool` stages. Channel sizes progress as `64 → 128 → 256 → 512 → 1024`; spatial resolution\
+  \ decreases from `224 × 224` down to `14 × 14`. The bottleneck feature map has shape `(1024, 14, 14)`.\
+  \ Skip connections are taken at `224`, `112`, `56`, and `28` spatial resolutions.\n\n### ResNet18 Encoder\n\
+  \nA ResNet18 backbone with the first convolution layer adapted to accept single-channel input. Feature\
+  \ channel sizes progress as `64 → 64 → 128 → 256 → 512`; spatial resolution decreases from `112 × 112`\
+  \ down to `7 × 7`. The bottleneck feature map has shape `(512, 7, 7)`. Skip connections are taken at\
+  \ `112`, `56`, `28`, and `14` spatial resolutions.\n\n### Shared Components\n\n**Decoder** – U-Net-style\
+  \ upsampling path with transposed convolutions and skip connections matched to each encoder's spatial\
+  \ resolution schedule.\n\n**Classification head** – Global average pooling collapses spatial dimensions\
+  \ to a single vector, followed by dropout and a fully connected layer producing four class logits.\n\
+  \n**MAE wrapper** – A lightweight reconstruction decoder (discarded after pre-training) is attached\
+  \ to each encoder for Stage 1. Only the encoder weights transfer to Stage 2.\n\n---\n\n## Training Pipeline\n\
+  \n### Stage 1 – Self-Supervised Pre-training (MAE)\n\n60% of image patches (`patch_size = 16`) are randomly\
+  \ masked per image. The MAE is trained to reconstruct the missing patches using MSE loss computed only\
+  \ on masked locations. Per-patch normalisation is applied to the reconstruction target to reduce intensity\
+  \ variation. A cosine annealing learning rate schedule is used throughout. The best encoder checkpoint\
+  \ (lowest validation MSE) is saved to disk.\n\n### Stage 2 – Multi-Task Fine-tuning\n\nThe pre-trained\
+  \ encoder is loaded into the full multi-task model. Differential learning rates are applied: `1e-5`\
+  \ for the encoder (to preserve learned SSL features) and `1e-4`"

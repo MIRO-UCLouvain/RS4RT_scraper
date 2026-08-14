@@ -1,0 +1,39 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: YadiHe/LDM-CBCT2SCT
+url: https://github.com/YadiHe/LDM-CBCT2SCT
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-04T07:02:03Z'
+image_source: null
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# LDM-CBCT2SCT\n\n基于潜在扩散模型将 CBCT 转换为 synthetic CT，用于 synthRAD CBCT-to-sCT 任务。\n\n当前主线已经迁移到：\n\
+  \n- MONAI + SimpleITK 预处理\n- MHA volume + `data/manifest.csv`\n- CT-only VAE\n- 冻结 VAE 后训练 ConcatPACA\
+  \ Phase 1\n- WandB project：`cbct2sct_IBA`\n\n完整设计和实验记录见：\n\n- `SPEC_preprocessing.md`：预处理 SPEC\n- `SPEC_pipeline.md`：数据、VAE、Phase\
+  \ 1 训练和调试记录\n- `SPEC_experiments.md`：主实验矩阵、训练轮数和验收指标\n- `scripts/README.md`：当前脚本入口说明\n\n## 当前主入口\n\n\
+  ```text\nscripts/preprocess_synthrad_dataset.py  # synthRAD2023/2025 预处理\nscripts/train_ct_vae.py  \
+  \               # CT-only VAE 训练和 eval-only 验证\nscripts/train_concat_paca.py            # ConcatPACA\
+  \ Phase 1 训练\n```\n\n旧实验、旧推理、旧评估和论文制图脚本已归档到：\n\n```text\nscripts/legacy/\n```\n\n这些 legacy 脚本未随当前 MONAI\
+  \ + MHA pipeline 重新验证。\n\n## 数据预处理\n\n```bash\npython scripts/preprocess_synthrad_dataset.py \\\n  --raw-dir\
+  \ rawdata \\\n  --out-dir data/preprocessed \\\n  --manifest data/manifest.csv\n```\n\n输出：\n\n```text\n\
+  data/preprocessed/{patient_id}/\n  ct_preprocessed.mha\n  cbct_preprocessed.mha\n  mask_preprocessed.mha\n\
+  \  cbct_global.mha\n  preprocess_metadata.json\n\ndata/manifest.csv\n```\n\n## VAE 训练\n\n```bash\npython\
+  \ scripts/train_ct_vae.py \\\n  --manifest data/manifest.csv \\\n  --save-dir checkpoints/vae \\\n \
+  \ --batch-size 16 \\\n  --num-workers 4 \\\n  --wandb-project cbct2sct_IBA\n```\n\n验证已训练好的 VAE：\n\n\
+  ```bash\npython scripts/train_ct_vae.py \\\n  --manifest data/manifest.csv \\\n  --save-dir checkpoints/vae_eval_best\
+  \ \\\n  --resume checkpoints/vae/vae_best.pth \\\n  --eval-only \\\n  --no-amp \\\n  --wandb-project\
+  \ cbct2sct_IBA \\\n  --wandb-name vae-best-val-eval\n```\n\n## Phase 1 训练\n\n```bash\npython scripts/train_concat_paca.py\
+  \ \\\n  --manifest data/manifest.csv \\\n  --vae-path checkpoints/vae/vae_best.pth \\\n  --save-dir\
+  \ checkpoints/concat_paca \\\n  --base-channels 64 \\\n  --batch-size 4 \\\n  --grad-accum-steps 2 \\\
+  \n  --lr 5e-6 \\\n  --wandb-project cbct2sct_IBA\n```\n\n当前建议先用 `base_channels=64` 建立稳定 baseline；`base_channels=128/256`\
+  \ 在单卡 4090 上需要另行测显存和稳定性。\n"

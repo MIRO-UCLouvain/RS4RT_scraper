@@ -1,0 +1,70 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: zhujiarui42/CFP-Loss
+url: https://github.com/zhujiarui42/CFP-Loss
+platform: github
+description: Codes for paper "Feature-oriented Deep Learning Framework for Pulmonary Cone-beam CT (CBCT)
+  Enhancement with Multi-task Customized Perceptual Loss"
+license: MIT
+language: Python
+keywords: []
+stars: 7
+updated_at: '2025-05-19T02:47:15Z'
+image_source: https://raw.githubusercontent.com/zhujiarui42/CFP-Loss/HEAD/figure1.jpg
+heuristic_total_score: 21
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 4 support term(s).
+readme_excerpt: "# CFP-Loss\nCodes for the paper \"Feature-targeted deep learning framework for pulmonary\
+  \ tumorous Cone-beam CT (CBCT) enhancement with multi-task customized perceptual loss and feature-guided\
+  \ CycleGAN\"\n\n# Paper info\nPlease cite our paper if you're using our code: \n\nJiarui Zhu, Hongfei\
+  \ Sun, Weixing Chen, Shaohua Zhi, Chenyang Liu, Mayang Zhao, Yuanpeng Zhang, Ta Zhou, Yu Lap Lam, Tao\
+  \ Peng, Jing Qin, Lina Zhao, Jing Cai, Ge Ren,\nFeature-targeted deep learning framework for pulmonary\
+  \ tumorous Cone-beam CT (CBCT) enhancement with multi-task customized perceptual loss and feature-guided\
+  \ CycleGAN,\nComputerized Medical Imaging and Graphics,Volume 121,2025,102487,ISSN 0895-6111,https://doi.org/10.1016/j.compmedimag.2024.102487\n\
+  \n(https://www.sciencedirect.com/science/article/pii/S0895611124001642)\n\nPlease feel free to contact\
+  \ me by the following email if you have trouble replicating our work: jiarui.zhu@connect.polyu.hk\n\n\
+  ### \U0001F6E0 Requirements\n- Python 3.7+\n- PyTorch 1.11.0+\n- 1 GPU: NVIDIA GeForce GTX 3090 (24GB)\
+  \ at least\n\n![](figure1.jpg)\n> Fig. 1.  The overall architecture of our proposed framework.(a)indicates\
+  \ our multi-task feature-selection network (b)indicates our feature extraction network (c)indicates\
+  \ our CBCT-to-PlanCT translation network.\n\n## Dataset\n\nIn this study, we utilized four-dimensional\
+  \ thoracic CBCT and Planning CT image pairs of 268 lung cancer patients who underwent stereotactic radiotherapy\
+  \ from three different hospitals, including 100 patients from Queen Mary’s Hospital in Hong Kong, 80\
+  \ patients from Jinshazhou Hospital of Guangzhou University of Chinese Medicine, in Guangzhou, China,\
+  \ and 88 patients from Xijing Hospital, Fourth Military Medical University in Xian, China. These 268\
+  \ patients were randomly split 188/80 into AI-training and AI-testing groups, with the training dataset\
+  \ further split 132/56 for training and validation.\n\nDue to the hospital's confidential agreement,\
+  \ we cannot share real patient data at this moment. Yet we can provide a few demo patients in a later\
+  \ time, for convenient reproduction of our work.\n\n## Preprocess \n1.Run [data/lungseg.py](https://github.com/zhujiarui42/CPF-Loss/data/lungseg.py)\
+  \ to operate lung segmentation & cropping on CT/CBCT images.  \n2.Run [data/lnii2array.py](https://github.com/zhujiarui42/CPF-Loss/data/nii2array.py)\
+  \ to do data resizing and nomarlization and transform preprocessed nii files to npy files, before feeding\
+  \ them into the network.  \n\n## Training\nRead the training tutorial for details.\n1. Train MTFS-Net:\
+  \ Our method requires a pretraining our the Multitask Feature-selection Network(MTFS-Net) and getting\
+  \ a parameters-fixed encoder first.  \n(You may check for more details about the MTFS-Net here: [MTFS-Net\
+  \ model](https://github.com/zhujiarui42/CPF-Loss/models/MultitaskModels/MTFSnet.py))\nTo train the MTFS-Net\
+  \ you can change args in [main.py](https://github.com/zhujiarui42/CPF-Loss/main.py) and then run it.\
+  \ Remember to change the \"--model\" arg to \"mtfsnet\",\"-loss_fn\" to \"gradnorm\" and the \"--trainer\"\
+  \ to \"mtfsnet\".  \nWe've also provided a simpler way to run it on Linux system through bashing [task/mtfsnet.sh](https://github.com/zhujiarui42/CPF-Loss/task/mtfsnet.sh).\
+  \ Please remember to change our default conda environment path to your own path.  \n\n2. Train CBCT-CT\
+  \ transaltion Net : The pre-trained Encoder from MTFS-Net can be further used for building up a perceptual\
+  \ loss function. For building up a perceptual loss function, we've combined content and style loss and\
+  \ the final loss function is free to be further customized in line 269 of  [utils/loss.py](https://github.com/zhujiarui42/CPF-Loss/utils/loss.py).\
+  \  \nIn our case, we've ultized the first two size-level (256 & 128)layers outputs of the pre-trained\
+  \ Encoder for content loss calculation and layer outputs of all the four size-levels for style loss\
+  \ calculation. And we set the weigh factors to be  0.5 and 0.5.  \nTo train the CBCT-CT transaltion\
+  \ Net you can change args in [main.py](https://github.com/zhujiarui42/CPF-Loss/main.py)and then run\
+  \ it. Remember to change the \"--model\" arg to \"carunet\" and \"-loss_fn\" to \"CFP\".  \n[task/unetCFP.sh](https://github.com/zhujiarui42/CPF-Loss/task/mtfsnet.sh)\
+  \ was also provided for you convience.\n\n3.  Comparison experiments. Unet/Resunet/CARUnet(channel attention\
+  \ resunet), gan/cyclegan models, and dual-pyramid registration network were also provided for comparison\
+  \ experiments. Secially for the SOTA method \"CycleGAN\", you may train a cyclegan model by changing\
+  \ the \"--model\"arg to \"cyclegan\" and the \"--trainer\" arg to \"cyclegan\". You can also compare\
+  \ a pixel-to-pixel loss version and a CFP loss version by changing the \"--loss_fn\" args to \"mse\"\
+  /\"mix\" or \"CFP\". \n\nNotes: You may also change the \"--lr_scheduler\",\"--batch_size\",\"epochs\"\
+  ,...etc accordling to your own research insterets. We've also proved more kinds of loss functions for\
+  \ comparasion.\n\n## Evaluation\nFor evalution of trained models, you simply need to make some modifications\
+  \ in [main.py](https://github.com/zhujiarui42/CPF-Loss/main.py):   \n1.uncomment line 85(\"model.load_state_dict(torch.load(f\"\
+  output/{args.version}/model.npy\")['state_dict'])\").     \n2.uncomment line 144(\"trainer.eval(True)\"\
+  ). \n3.comment line 143(\"trainer.train()\").  \n"

@@ -1,0 +1,76 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: rajatvajpayee/Cancer-Detection-PyRadiomics
+url: https://github.com/rajatvajpayee/Cancer-Detection-PyRadiomics
+platform: github
+description: Repository for cancer detection using PyRadiomics Features
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-05T09:45:27Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Cancer-Detection-PyRadiomics\n\n## Overview\n\nThis repository provides a modular experimentation\
+  \ framework for predicting chemotherapy response from CT-derived radiomics features.\n\nIt supports\
+  \ multiple feature selection techniques and modern tabular learning models, enabling reproducible benchmarking\
+  \ under a unified evaluation pipeline.\n\nImplemented models include:\n\n- XGBoost\n- TabICLv2\n- Google\
+  \ TabFM\n\n---\n\n## Project Structure\n\n```\nCancer-Detection-PyRadiomics/\n├── data/\n│   └── data.csv\
+  \                    ← your extracted radiomics CSV\n├── configs/\n│   ├── base_config.yaml        \
+  \    ← shared defaults (inherited by all)\n│   ├── phase1_covariance.yaml      ← Phase 1: covariance\
+  \ filter only\n│   ├── phase1_mi.yaml              ← Phase 1: MI only\n│   ├── phase1_hsic.yaml    \
+  \        ← Phase 1: HSIC only\n│   ├── phase2_covar_mi.yaml        ← Phase 2: covariance → MI (sequential)\n\
+  │   └── phase2_covar_hsic.yaml      ← Phase 2: covariance → HSIC (sequential)\n│   └── .....<MORE CONFIGS>\n\
+  |   \n├── src/\n│   ├── features/\n│   │   ├── covariance_filter.py    ← Pearson correlation filter\n\
+  │   │   ├── mutual_information.py   ← MI-based top-k selector\n│   │   ├── hsic.py                 ←\
+  \ HSIC-based top-k selector\n│   │   └── feature_pipeline.py     ← orchestrates sequential selection\n\
+  │   ├── models/\n│   │   ├── xgboost_wrapper.py      ← CPU XGBoost (hist, scale_pos_weight)\n│   │ \
+  \  ├── tabicl_wrapper.py       ← TabICL with VRAM cleanup\n│   │   ├── tabfm_wrapper.py        ← TabFM\
+  \ with VRAM cleanup\n│   │   └── model_factory.py        ← get_model(name, cfg)\n│   ├── evaluation/\n\
+  │   │   ├── cv_runner.py            ← stratified 5-fold CV loop\n│   │   ├── metrics.py            \
+  \  ← AUC, F1, CM, ROC plots\n│   │   └── threshold_sweep.py      ← global OOF threshold sweep\n│   └──\
+  \ utils/\n│       ├── data_loader.py          ← load_data() → (X, y)\n│       ├── logger.py        \
+  \       ← file + console logging\n│       └── seed.py                 ← global reproducibility seed\n\
+  ├── outputs/\n│   ├── phase1/{covariance,mi,hsic}/{tabicl,tabfm, xgboost}/\n│   └── phase2/{covar_mi,covar_hsic}/{tabicl,tabfm,\
+  \ xgboost}/\n│       Each folder gets: *_metrics.csv, *_roc.png, *_cm.png\n├── logs/               \
+  \            ← timestamped .log files\n└── run_experiment.py               ← unified argparse entry\
+  \ point\n```\n\n---\n## Models\n\n### 1. XGBoost\n- Gradient boosting algorithm that builds an ensemble\
+  \ of decision trees for **classification and regression** on structured/tabular data.\n- Known for **high\
+  \ accuracy, fast training, regularization, and efficient handling of missing values**, making it an\
+  \ industry standard for tabular ML.\n- Requires **model training and hyperparameter tuning**, but remains\
+  \ one of the strongest baselines for tabular prediction tasks.\n\n### 2. TabICL\n- A **Transformer-based\
+  \ tabular foundation model** that performs prediction using **in-context learning**, without retraining\
+  \ for each new dataset.\n- Learns from a few labeled examples provided in the input context, reducing\
+  \ the need for task-specific optimization.\n- Enables **zero-shot and few-shot learning** for tabular\
+  \ prediction, reducing dependence on extensive hyperparameter tuning.\n\n**Paper:**  \n- *TabICLv2:\
+  \ A Better, Faster, Scalable, and Open Tabular Foundation Model*  \n  https://arxiv.org/abs/2602.11139\n\
+  \n### 3. TabFM (Google Research, v1.0.0)\n- Google's **latest tabular foundation model** for classification\
+  \ and regression, released in **2026** with publicly available pretrained checkpoints.\n- Uses **zero-shot\
+  \ in-context learning**, eliminating the need for dataset-specific training, feature engineering, or\
+  \ hyperparameter tuning.\n- Employs a **hybrid attention architecture** to achieve competitive performance\
+  \ across diverse tabular tasks.\n\n**Resources:**\n- Google Research Blog: https://research.google/blog/introducing-tabfm-a-zero-shot-foundation-model-for-tabular-data/\n\
+  - GitHub: https://github.com/google-research/tabfm\n\n\n| Model | Year | Approach |\n|-------|------|----------|\n\
+  | XGBoost | 2016 | Gradient Boosted Decision Trees |\n| TabICLv2 | 2025/2026 | Transformer + In-Context\
+  \ Learning |\n| TabFM | 2026 | Foundation Model for Tabular Data |\n\n---\n## Usage\n### Environment\
+  \ Setup\n\n```bash\n# Create a new Conda environment\nconda create -n cancer-detection python=3.11 -y\n\
+  \n# Activate the environment\nconda activate cancer-detection\n\n# Install dependencies\npip install\
+  \ -r requirements.txt\n```\n\n### Run Experiments\nExperiments are configured using YAML configuration\
+  \ files in the `configs/` directory. You can run a specific experiment by selecting a configuration\
+  \ file and model, or execute all predefined experiments in a single command.\n\n```bash\n# Run a single\
+  \ experiment\npython run_experiment.py --config configs/phase1_mi.yaml --model tabicl\n\n# Run all experiments\n\
+  python run_experiment.py --all\n```\n\n- `--config`: Specifies the experiment configuration (feature\
+  \ selection pipeline, preprocessing, and evaluation settings).\n- `--model`: Selects the model to evaluate\
+  \ (`xgboost`, `tabicl`, or `tabfm`).\n- `--all`: Runs every predefined configuration across all supported\
+  \ models and saves the results under the `outputs/` directory.\n\n---\n\n## Architecture \n```\nCT Images\n\
+  \      │\n      ▼\nPyRadiomics\n      │\n      ▼\nFeature Selection\n(Covariance / MI / HSIC)\n    \
+  \  │\n      ▼\nModel\n(XGBoost / TabICL / TabFM)\n      │\n      ▼\n5-Fold CV\n      │\n      ▼\nMetrics\n\
+  ```\n\n\n## Feature Selection\n\nThree feature selection strategies are implemented:\n\n- **Covariance\
+  \ Filter:** Removes highly correlated features to reduce redundancy.\n- **Mutual Information:** Selects\
+  \ features with the highest dependency on the target variable.\n- **HSIC:** Captures nonlinear dependence\
+  \ between features and labels."

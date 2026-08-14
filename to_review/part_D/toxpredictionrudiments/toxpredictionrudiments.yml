@@ -1,0 +1,46 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ChristopherSNelson/ToxPredictionRudiments
+url: https://github.com/ChristopherSNelson/ToxPredictionRudiments
+platform: github
+description: Drug toxicity (LD50) prediction using Graph Neural Networks
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-05T07:42:21Z'
+image_source: https://raw.githubusercontent.com/ChristopherSNelson/ToxPredictionRudiments/HEAD/actual_vs_predicted.png
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Drug Toxicity Prediction (LD50)\n\nPredicts acute oral toxicity (LD50) of drug compounds\
+  \ from SMILES strings using Graph Neural Networks. Uses the [TDC LD50_Zhu dataset](https://tdcommons.ai/single_pred_tasks/tox/#acute-toxicity-ld50)\
+  \ (~7,400 compounds).\n\n## Models\n\n- **GAT** (Graph Attention Network) - best results so far (R^2\
+  \ ~0.52, RMSE ~0.66)\n- **GCN** (Graph Convolutional Network) - simpler baseline\n\nHyperparameter tuning\
+  \ via [Optuna](https://optuna.org/).\n\n## Setup\n\n```bash\npip install -e .\n```\n\nData is automatically\
+  \ downloaded from TDC on first run.\n\n## CLI Usage\n\n### Train a model\n\n```bash\ntox-train\ntox-train\
+  \ --n-trials 50 --output-dir runs/experiment1\ntox-train --device cuda --max-epochs 300 --patience 20\n\
+  ```\n\n### Predict on new compounds\n\n```bash\ntox-predict --model-path toxicity_model.pt --smiles\
+  \ \"CC(=O)OC1=CC=CC=C1C(=O)O\" \"C1=CC=CC=C1\"\ntox-predict --model-path toxicity_model.pt --input-file\
+  \ compounds.csv --smiles-col SMILES --output-file results.csv\n```\n\n### Run TDC benchmark\n\n```bash\n\
+  tox-evaluate\ntox-evaluate --seeds 1 2 3 4 5 --n-trials 30\n```\n\n## Project Structure\n\n```\ntox_prediction/\
+  \                    # Installable Python package\n  features.py                      # SMILES to graph\
+  \ conversion (56-dim node features)\n  models.py                        # GCNNet, GATNet, save/load\n\
+  \  data.py                          # TDC data loading, DataLoader creation\n  training.py         \
+  \             # Training loop, Optuna HPO\n  predict.py                       # Inference on new SMILES\n\
+  \  evaluate_tdc.py                  # TDC ADMET benchmark runner\n  plotting.py                    \
+  \  # Learning curves, actual-vs-predicted scatter\n  cli/                             # CLI entrypoints\n\
+  \    train_cmd.py                   # tox-train\n    predict_cmd.py                 # tox-predict\n\
+  \    evaluate_cmd.py                # tox-evaluate\npyproject.toml                     # Package config\n\
+  \n# Legacy scripts (kept for reference)\ndrug_toxicity_prediction_v3.py     # Previous main script\n\
+  toxicity-predictor.py              # Random Forest baseline\ndrug_pred_v1/                      # Earlier\
+  \ GNN iteration\ngoodGATrun/                        # Best GAT run (v2)\nold_GNN/                  \
+  \         # Initial GNN attempt\ntdc_eval/                          # Previous TDC eval script\n```\n\
+  \n## Results\n\n![Actual vs Predicted LD50](actual_vs_predicted.png)\n\n![Learning Curves](learning_curves.png)\n\
+  \n## Best Hyperparameters Found\n\n| Parameter | Value |\n|-----------|-------|\n| Model | GAT |\n|\
+  \ Hidden channels | 64 |\n| Layers | 3 |\n| Attention heads | 8 |\n| Dropout | 0.2 |\n| Learning rate\
+  \ | 0.002 |\n| Batch size | 128 |\n"

@@ -1,0 +1,41 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: YaxiiC/RadiomicsTopM
+url: https://github.com/YaxiiC/RadiomicsTopM
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-12-15T18:09:28Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Radiomics Top-M Gated Pipeline\n\nThis repository trains a radiomics + gating + logistic\
+  \ regression pipeline. The gating network produces per-feature logits that are filtered through a 3-stage\
+  \ curriculum to enforce **exactly M radiomics features** per sample at inference.\n\n## Top-M gating\
+  \ schedule\n- **Stage 1 (warm-up):** soft sigmoid weights with L1 sparsity.\n- **Stage 2 (exploration):**\
+  \ Gumbel-TopM + straight-through estimator (STE), with temperature and noise annealing.\n- **Stage 3\
+  \ (hard):** deterministic TopM with STE gradients; no Gumbel noise.\n\nThe classifier remains a linear\
+  \ logistic regression head applied on masked radiomics features. During evaluation/inference the mask\
+  \ is always a deterministic Top-M selector (optionally scaled by the sigmoid outputs when `use_continuous_weight_on_selected`\
+  \ is enabled).\n\n## How to run\n1. Configure `gating_config` in `classifier_training_acl.py` to set:\n\
+  \   - `enabled`: turn the Top-M curriculum on/off (keeps backward compatibility when `False`).\n   -\
+  \ `top_m`: number of radiomics features to keep per sample.\n   - `weight_mode`: `\"binary\"` (mask\
+  \ only) or `\"continuous\"` (mask times one sigmoid scale per selected feature). The legacy\n     `use_continuous_weight_on_selected`\
+  \ flag is still honored for backwards compatibility.\n   - `alpha_l1` / `sparsity_enabled`: sparsity\
+  \ regularization strength and toggle.\n   - `stage_ratios`, `tau_schedule`, `lam_schedule`: stage durations\
+  \ plus temperature/noise annealing.\n   - `tau_infer`: temperature used during validation/test inference\
+  \ when `stage=\"inference\"`.\n2. Instantiate the model with `CNNWithGlobalMasking(..., gating_config=gating_config)`.\n\
+  3. Train with `train_cnn_with_masking(..., gating_config=gating_config)`. The loop prints the current\
+  \ stage, temperature, noise level, and average selected features each epoch.\n4. Evaluate with `evaluate_model(...,\
+  \ gating_config=gating_config)`, which enforces deterministic Top-M masking.\n\n## Radiomics normalization\n\
+  Radiomics features are z-scored with mean/std computed on the training fold before splitting into train/validation\
+  \ subsets. Reuse the saved stats for validation/test to keep gating decisions scale-invariant.\n"

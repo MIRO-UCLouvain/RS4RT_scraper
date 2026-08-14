@@ -1,0 +1,141 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Beno1tP/Brain-Tumor-Segmentation-With-Low-Ressource
+url: https://github.com/Beno1tP/Brain-Tumor-Segmentation-With-Low-Ressource
+platform: github
+description: Pediatric brain tumor segmentation from multi-parametric MRI remains challenging due to morphological
+  differences between pediatric and adult tumors and limited training data. This project applies deep
+  learning-based segmentation on the BraTS-PED dataset, exploiting all four co-registered mpMRI sequences
+  (T1, T1CE, T2, FLAIR) as multi-channel input
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-24T17:09:01Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# BraTS-PED 2023 — Pediatric Brain Tumor Segmentation\n**Platform:** Google Colab (T4,\
+  \ 15GB VRAM)  \n**Deadline:** 30/06/2026  \n**Dataset:** BraTS-PED 2023 (Synapse Release) — 99 annotated\
+  \ (79/10/10 split) + 45 no-seg (inference/visualization only). Note: the original challenge had 98 train/24\
+  \ test, but the Synapse release only provides 99 total annotated cases.\n\n---\n\n## Quick Start (Colab)\n\
+  \n1. Upload this folder to Google Drive at `MyDrive/brats_peds/`\n2. Upload BraTS-PED dataset to `MyDrive/brats_peds/data/raw/`\n\
+  3. Open notebooks in this order:\n\n| Step | Notebook | Purpose |\n|------|----------|---------|\n|\
+  \ 1 | `notebooks/phase1_setup.ipynb` | Preprocess + generate splits (run once) |\n| 2A | `notebooks/nnunet_2d.ipynb`\
+  \ | nnU-Net 2D — train → infer → eval |\n| 2B | `notebooks/nnunet_3d.ipynb` | nnU-Net 3D fullres — train\
+  \ → infer → eval |\n| 3A | `notebooks/segresnet.ipynb` | SegResNet — train → infer → eval |\n| 3B |\
+  \ `notebooks/dynunet.ipynb` | DynUNet — train → infer → eval |\n| Viz | `notebooks/visualization_3d.ipynb`\
+  \ | 2D/3D viz, GT vs pred, no-seg cases |\n\nEach notebook is **self-contained**: mount Drive → install\
+  \ → ask epochs → train → infer → post-process → eval.\n\n### Analysis / proof notebooks (for the report\
+  \ and defense)\n\nThese run *after* the pipeline above and produce evidence for the written report and\
+  \ demo. They are\nnot part of the train/infer loop.\n\n| Notebook | Purpose | Requires |\n|----------|---------|----------|\n\
+  | `notebooks/brats_ped_vs_cli_comparison.ipynb` | Quantifies PED-2023 vs adult BraTS-2023 (ET-presence\
+  \ rate, ET/WT ratio, volume distributions, label-encoding diff) — justifies why a pediatric-specific\
+  \ model is needed | PED preprocessed data + BraTS-2021 data downloaded separately (degrades gracefully\
+  \ if absent) |\n| `notebooks/modality_ablation.ipynb` | Input-channel masking on nnU-Net 3D (zero T2/FLAIR,\
+  \ zero T1CE) → Dice drop + ED→ET confusion; shows which modalities the network relies on | Completed\
+  \ `nnunet_3d.ipynb` predictions |\n| `notebooks/modality_visualization.ipynb` | 4-modality panels, T1CE−T1\
+  \ enhancement map, per-label intensity boxplots, per-class softmax maps — explains the medical role\
+  \ of each MRI channel | `nnunet_3d.ipynb` predictions (+ SegResNet ckpt for the probability-map cell)\
+  \ |\n\n---\n\n## Dataset Structure\n\nUpload your downloaded BraTS-PED data to:\n```\nMyDrive/brats_peds/data/raw/\n\
+  ├── training/                        # 99 annotated cases\n│   ├── BraTS-PED-00001-000/\n│   │   ├──\
+  \ BraTS-PED-00001-000-t1c.nii(.gz)\n│   │   ├── BraTS-PED-00001-000-t1n.nii(.gz)\n│   │   ├── BraTS-PED-00001-000-t2f.nii(.gz)\n\
+  │   │   ├── BraTS-PED-00001-000-t2w.nii(.gz)\n│   │   └── BraTS-PED-00001-000-seg.nii(.gz)\n│   └──\
+  \ ...\n└── validation/                      # 45 no-seg cases (inference/visual only)\n    ├── BraTS-PED-00209-000/\n\
+  \    │   ├── BraTS-PED-00209-000-t1c.nii(.gz)\n    │   └── ...  (no seg file)\n    └── ...\n```\n\n\
+  **Labels:** `0`=BG, `1`=NC (NET+CC+necrosis), `2`=ED, `3`=ET  \n**Regions:** ET=label 3 · TC=labels\
+  \ 1+3 · WT=labels 1+2+3\n\n---\n\n## Models (4 total)\n\n| Model | Notebook | Type | T4 VRAM | Est.\
+  \ Time (500 ep) |\n|-------|----------|------|---------|--------------------|\n| nnU-Net 2D | `nnunet_2d.ipynb`\
+  \ | Baseline A | ~6GB | ~8h |\n| nnU-Net 3D fullres | `nnunet_3d.ipynb` | Baseline B ⭐ | ~12GB | ~18-20h\
+  \ |\n| SegResNet | `segresnet.ipynb` | Custom MONAI | ~8GB | ~8h |\n| DynUNet | `dynunet.ipynb` | Custom\
+  \ MONAI | ~10GB | ~12h |\n\n⭐ Most important: all top-3 BraTS-PED 2023 teams used nnU-Net 3D fullres.\n\
+  \n---\n\n## Hardware used (per model)\n\n| Setting | Local (RTX 4050) | Colab T4 | Colab L4 |\n|---------|-----------------|----------|----------|\n\
+  | VRAM | 6 GB | 15 GB | ≈24 GB |\n| Used for | dev / debug only | nnU-Net 2D, nnU-Net 3D fullres | **SegResNet,\
+  \ DynUNet (final runs)** |\n| Patch size | 96³ or 128³ (tight) | nnU-Net auto: 96×160×160 | MONAI 128³\
+  \ |\n| Batch size | 1 | 2 | 1 (cache_rate=0.4) |\n| Gradient accum. | ×4 | ×1 | ×1 |\n| init_filters\
+  \ (SegResNet) | 16 | — | 32 |\n| Session limit | unlimited | ~12h free | ~12h free |\n\n**Important:**\
+  \ the nnU-Net 3D `nnUNetPlans.json` auto-planner chose **patch 96×160×160** (not 128³). We accepted\
+  \ the auto-plan because it reflects the BraTS-PED axial-anisotropic image shape and is what nnU-Net's\
+  \ preprocessing was fingerprinted for. See `pipeline_and_versions.md` for the rationale.\n\n---\n\n\
+  ## Session Management (Colab Free Tier)\n\nColab free sessions reset after ~12h. All checkpoints and\
+  \ data live on **Google Drive**, so training resumes safely:\n\n- **nnU-Net:** add `--c` flag to resume:\
+  \ `nnUNetv2_train 001 3d_fullres 0 -tr nnUNetTrainer_500epochs --c`\n- **SegResNet/DynUNet:** use `--resume\
+  \ outputs/checkpoints/<arch>/checkpoint_epoch_XXX.pth`\n- Each notebook has a **\"RESUME\" cell** (commented\
+  \ out) — just edit the checkpoint path and run it.\n\n---\n\n## Post-Processing (ET/WT Threshold)\n\n\
+  All model notebooks include the Capellán-Martín post-processing:\n1. **Threshold search** on val set:\
+  \ grid over ET/WT ratio threshold (0.01–0.10) × `min_voxels` (50/80/100/130/200)\n2. **Apply best (threshold,\
+  \ min_voxels)** to the test predictions\n3. **Remove small components** below `min_voxels`\n\nDynUNet's\
+  \ val grid lifted mean (ET+TC)/2 Dice from 0.408 to 0.551 at (t=0.03, min_voxels=130) — i.e. post-processing\
+  \ is meaningfully helping for DynUNet. SegResNet's val plateau was flat across t∈[0.01, 0.04] because\
+  \ all val cases retained ET/WT > 0.04, so post-processing is a no-op for SegResNet on this val set —\
+  \ this is data-dependent, not a code bug.\n\n---\n\n## Evaluation Metrics\n\n**Important Note:** The\
+  \ metrics computed in this project are **approximate**.\n- **Approximate Lesion-wise Dice**: Computes\
+  \ Dice using only prediction voxels inside the GT lesion (under-penalizes over-segmentation near the\
+  \ lesion). FP/FN penalized with 0, 50-voxel cutoff.\n- **Approximate Lesion-wise HD95**: Computes a\
+  \ global binary HD95 rather than a true lesion-wise matched HD95 (max = 374mm penalty for missing regions).\n\
+  - **Voxel-wise Sensitivity** (TP rate per region)\n\nPer region: ET · TC · WT\n\n---\n\n## 3D Visualization\
+  \ (How It Works)\n\nSee `notebooks/visualization_3d.ipynb`. The pipeline:\n```\nNIfTI seg array (3D\
+  \ int)\n    │\n    ├── binary mask per label (seg == 3 for ET, etc.)\n    │\n    ▼\nmarching_cubes (skimage)\
+  \   ← converts voxel mask to triangle mesh\n    │    vertices (N×3) + faces (M×3)\n    │\n    ▼\nplotly.graph_objects.Mesh3d\
+  \  ← renders interactive 3D in Colab\n    │\n    ├── fig.show()          → inline in notebook\n    ├──\
+  \ fig.write_html()    → download + open in browser (for thesis)\n    └── fig.write_image()   → direct\
+  \ PNG (requires kaleido)\n```\n\n---\n\n## Project Structure\n\n```\nbrats_peds/\n├── src/         \
+  \            # Python library — importable by all notebooks\n│   ├── preprocess.py        # z-score\
+  \ norm, optional skull-strip\n│   ├── make_splits.py       # 79/10/10 random split (stratified-by-type\
+  \ supported but no meta CSV used)\n│   ├── convert_to_nnunet.py # format data for nnU-Net + inject custom\
+  \ splits\n│   ├── dataset.py           # MONAI dataloader (4-channel mpMRI, 128³ patches)\n│   ├── model.py\
+  \             # DynUNet + SegResNet builders\n│   ├── train.py             # Training loop (AMP, grad\
+  \ ckpt, deep supervision)\n│   ├── inference.py         # Sliding-window inference\n│   ├── postprocess.py\
+  \       # ET/WT threshold search + application\n│   ├── metrics.py           # Approx lesion-wise Dice\
+  \ + HD95 + sensitivity\n│   └── nnunet_colab.py      # 500-epoch nnUNetTrainer subclass for Colab\n\
+  ├── notebooks/\n│   ├── phase1_setup.ipynb      # Phase 1: preprocess + splits (run once)\n│   ├── nnunet_2d.ipynb\
+  \         # Phase 2A: nnU-Net 2D full pipeline\n│   ├── nnunet_3d.ipynb         # Phase 2B: nnU-Net\
+  \ 3D full pipeline\n│   ├── segresnet.ipynb         # Phase 3A: SegResNet full pipeline\n│   ├── dynunet.ipynb\
+  \           # Phase 3B: DynUNet full pipeline\n│   ├── visualization_3d.ipynb  # 2D/3D visualization\
+  \ + model comparison\n│   ├── brats_ped_vs_cli_comparison.ipynb  # PED vs adult dataset comparison (report\
+  \ proof)\n│   ├── modality_ablation.ipynb            # channel-masking ablation (report proof)\n│  \
+  \ └── modality_visualization.ipynb       # MRI modality roles + softmax maps (demo)\n├── configs/\n\
+  │   ├── train_config_segresnet.yaml\n│   └── train_config_dynunet.yaml\n├── data/\n│   ├── raw/    \
+  \        ← upload BraTS-PED NIfTI here\n│   ├── preprocessed/   ← generated by phase1_setup.ipynb\n\
+  │   └── splits/         ← train/val/test/val_inference JSON\n├── outputs/\n│   ├── predictions/    ←\
+  \ per-model subdirs\n│   ├── metrics/        ← CSV + PNG + HTML outputs\n│   └── checkpoints/    ← segresnet/\
+  \ + dynunet/ saved .pth\n├── nnunet_workspace/   ← nnU-Net auto-managed (raw/preprocessed/results)\n\
+  ├── README.md\n└── project_report.md\n```\n\n---\n\n## SOTA Comparison\n\n| Method | WT Dice | TC Dice\
+  \ | ET Dice |\n|--------|---------|---------|---------|\n| CNMCPMI2023 (1st place BraTS-PED 2023) |\
+  \ 0.83 | 0.81 | 0.65 |\n| NVAUTO (2nd place)                      | 0.84 | 0.78 | 0.55 |\n| SherlockZyb\
+  \ (3rd place)                 | 0.83 | 0.77 | 0.63 |\n| **This project — nnU-Net 3D**           | **0.82**\
+  \ | **0.77** | 0.54 |\n| This project — SegResNet                | 0.76 | 0.70 | **0.60** |\n| This\
+  \ project — DynUNet                  | 0.76 | 0.72 | 0.54 |\n| This project — nnU-Net 2D           \
+  \    | 0.76 | 0.71 | 0.56 |\n\nOur nnU-Net 3D is within 2 Dice points of the leaderboard on WT/TC, trained\
+  \ from scratch on 79 cases on free Google Colab. ET stays the hard region — top teams used aggressive\
+  \ post-processing ensembles to push ET past 0.6. ET Dice is also highly variable per case (3/10 test\
+  \ cases have ET=0 because of DMG/DIPG biology).\n\n---\n\n## Final Results (Local Test Split, n=10)\n\
+  \nMean (median) on the held-out 10-case test split. Metrics are the **approximate** lesion-wise variants\
+  \ described above. HD95 mean is dominated by the 374 mm FN penalty in DMG/DIPG cases with empty ET,\
+  \ so the median in parentheses gives a fairer picture.\n\n| Model | ET Dice | TC Dice | WT Dice | ET\
+  \ HD95 (mm) | TC HD95 (mm) | WT HD95 (mm) |\n|-------|---------|---------|---------|--------------|--------------|--------------|\n\
+  | nnU-Net 2D | 0.564 (0.744) | 0.711 (0.680) | 0.755 (0.901) | 115.3 (5.4) | 12.6 (3.6) | 11.5 (3.6)\
+  \ |\n| **nnU-Net 3D** | 0.535 (0.664) | **0.771** (0.934) | **0.821** (0.958) | 115.3 (6.1) | **3.0**\
+  \ (2.1) | **4.5** (1.7) |\n| **SegResNet** | **0.602** (0.841) | 0.700 (0.683) | 0.759 (0.922) | **80.5**\
+  \ (6.2) | 7.0 (3.7) | 7.3 (2.2) |\n| DynUNet | 0.544 (0.680) | 0.717 (0.707) | 0.765 (0.945) | 95.1\
+  \ (8.0) | 17.6 (6.4) | 18.4 (2.1) |\n\nBold = best mean per column. Raw per-case CSVs in `outputs/metrics/<model>_test_results.csv`;\
+  \ the side-by-side comparison table is `outputs/metrics/comparison/summary_table.csv`.\n\n### Statistical\
+  \ significance (paired Wilcoxon, n=10)\n\nOnly the pairs with p < 0.05 are listed below. All ET-Dice\
+  \ comparisons are non-significant at n=10 — i.e. the four models are statistically indistinguishable\
+  \ on ET. Full pairwise table in `outputs/metrics/wilcoxon_pairwise.csv`.\n\n| Metric | Pair | p |\n\
+  |--------|------|---|\n| TC Dice | nnU-Net 3D > nnU-Net 2D / SegResNet / DynUNet | 0.002 / 0.002 / 0.004\
+  \ |\n| WT Dice | nnU-Net 3D > nnU-Net 2D / SegResNet / DynUNet | 0.002 / 0.002 / 0.010 |\n| TC HD95\
+  \ | nnU-Net 3D < nnU-Net 2D / SegResNet / DynUNet | 0.008 / 0.008 / 0.011 |\n| WT HD95 | nnU-Net 3D\
+  \ < nnU-Net 2D / SegResNet / DynUNet | 0.018 / 0.008 / 0.011 |\n\n**Reading:** nnU-Net 3D is the strongest\
+  \ TC / WT model with statistical significance. On ET, no model is significantly better than any other\
+  \ at this sample size — SegResNet leads numerically but the difference is within noise.\n\n### Approximate\
+  \ vs Hungarian-matched metric (sanity check)\n\nWe rerun a proper lesion-wise Dice / HD95 (Hungarian\
+  \ one-to-one component matching, per Kofler et al. 2023) and compare against our fast approximate metric.\
+  \ Full table in `outputs/metrics/approx_vs_official_summary.csv`.\n\n| Model | Region | Approx Dice\
+  \ | Official Dice | Gap |\n|-------|--------|-------------|---------------|-----|\n| nnU-Net 3D | ET\
+  \ | 0.535 | 0.728 | +0.194 |\n| nnU-"

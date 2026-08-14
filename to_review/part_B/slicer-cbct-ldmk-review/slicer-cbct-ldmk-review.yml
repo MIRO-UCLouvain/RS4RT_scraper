@@ -1,0 +1,68 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: farrell236/slicer-cbct-ldmk-review
+url: https://github.com/farrell236/slicer-cbct-ldmk-review
+platform: github
+description: 3D Slicer module for reviewing machine-predicted CBCT landmarks
+license: BSD-3-Clause
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-14T17:01:35Z'
+image_source: https://raw.githubusercontent.com/farrell236/slicer-cbct-ldmk-review/HEAD/docs/images/cbct-landmark-review-slicer-v1.1.png
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# CBCT Landmark Review\n\nCBCT Landmark Review is a 3D Slicer module for reviewing and\
+  \ correcting machine-predicted craniofacial landmarks on CBCT volumes.\n\nThe module is intended to\
+  \ streamline the clinical review workflow by combining case selection, volume rendering, landmark navigation,\
+  \ point correction, and corrected landmark export in one Slicer panel.\n\n![CBCT Landmark Review running\
+  \ in 3D Slicer](docs/images/cbct-landmark-review-slicer-v1.1.png)\n\n## Functionality\n\n- Scans image\
+  \ and prediction folders for matching CBCT/landmark pairs.\n- Supports `CARSH_XXXXX` and `CX_XXXXX`\
+  \ case prefixes.\n- Loads matched CBCT volumes and prediction markups together.\n- Uses Slicer's Four-up\
+  \ view layout for axial, sagittal, coronal, and 3D review.\n- Centers slice views on a landmark when\
+  \ it is selected from the table.\n- Keeps slice views static while landmarks are being dragged.\n- Activates\
+  \ landmark interaction so selected points can be dragged directly in slice or 3D views.\n- Allows native\
+  \ Slicer Markups interaction, including dragging landmarks in 2D slice views or 3D.\n- Displays a landmark\
+  \ table with index, name, status, coordinates, and displacement from the original prediction.\n- Marks\
+  \ moved landmarks as `Modified`.\n- Resets selected landmarks back to their original predicted positions.\n\
+  - Provides CT-Bone volume rendering with an adjustable `Shift` control.\n- Saves corrected landmarks\
+  \ as a new `.mrk.json` file.\n\n## Expected Input\n\nThe module expects separate folders for CBCT images\
+  \ and prediction markups.\n\nImage examples:\n\n```text\nCARSH_00077_0000.nii.gz\nCX_00077_0000.nii.gz\n\
+  ```\n\nPrediction examples:\n\n```text\nCARSH_00077_c2f_pred.mrk.json\nCX_00077_c2f_pred.mrk.json\n\
+  ```\n\nCases are paired by prefix and numeric ID when possible:\n\n```text\nCARSH_00077_0000.nii.gz\
+  \ -> CARSH_00077_c2f_pred.mrk.json\nCX_00077_0000.nii.gz    -> CX_00077_c2f_pred.mrk.json\n```\n\nIf\
+  \ only one volume and one prediction exist for a numeric ID, the module can pair them even if the prefixes\
+  \ differ. Unmatched image-only or prediction-only cases are ignored and reported in the status message.\n\
+  \n## Review Workflow\n\n1. Open the `CBCT Landmark Review` module in 3D Slicer.\n2. Select the `Case\
+  \ Folder`.\n3. Select the `Prediction Folder`.\n4. Select the `Output Folder`.\n5. Choose a case from\
+  \ the case dropdown.\n6. Review landmarks using the landmark table and slice/3D views.\n7. Drag landmarks\
+  \ directly in Slicer if correction is needed.\n8. Use `Reset Landmark` to restore the selected landmark\
+  \ to its original predicted position.\n9. Use `Previous Landmark` and `Next Landmark` for navigation.\n\
+  10. Use `Previous Case` and `Next Case` to move through the case list.\n11. Click `Save Case` to export\
+  \ corrected landmarks.\n\nChanging cases with unsaved edits prompts the user to save, discard, or cancel.\n\
+  \n## Landmark Table\n\nThe landmark table contains:\n\n```text\n# | Name | Status | X | Y | Z | Delta\
+  \ mm\n```\n\n- Blank status means the landmark remains at the original predicted position.\n- `Modified`\
+  \ means the landmark has moved from the original predicted position.\n- `Cleared` means the landmark\
+  \ position has been unset.\n- `New` means the landmark was added after the prediction file was loaded.\n\
+  - `Delta mm` is the displacement from the original prediction.\n\nSelecting a row centers the slice\
+  \ views on that landmark. Crosshairs are not enabled by default.\n\nRight-click options include:\n\n\
+  - Jump to Landmark\n- Reset to Prediction\n- Set Landmark at Crosshair\n- Clear Landmark\n\n## Output\n\
+  \nCorrected landmarks are saved to the selected output folder.\n\nThe output filename is based on the\
+  \ prediction filename:\n\n```text\nCARSH_00077_c2f_pred.mrk.json\n```\n\nis saved as:\n\n```text\nCARSH_00077_c2f_pred_corrected.mrk.json\n\
+  ```\n\nThe output file is a Slicer Markups JSON file and can be reloaded in Slicer.\n\n## Loading the\
+  \ Module\n\nThe module can be loaded directly from its source folder during evaluation or local deployment.\n\
+  \nIn Slicer, add the `CBCTLandmarkReview` module folder to `Additional module paths`, restart Slicer,\
+  \ and open `CBCT Landmark Review` from the module selector.\n\nExample module path:\n\n```text\n/path/to/ldmk_slicer_ext/CBCTLandmarkReview\n\
+  ```\n\nThe module can also be launched from the command line:\n\n```bash\n/path/to/Slicer.app/Contents/MacOS/Slicer\
+  \ \\\n  --additional-module-paths /path/to/ldmk_slicer_ext/CBCTLandmarkReview \\\n  --python-code \"\
+  slicer.util.selectModule('CBCTLandmarkReview')\"\n```\n\n## Development Test\n\nThe repository includes\
+  \ a smoke test that creates a synthetic CBCT/landmark pair, verifies case matching, loads the case,\
+  \ modifies a landmark, and saves corrected output:\n\n```bash\ncd /path/to/ldmk_slicer_ext\nscripts/run_slicer_smoke_test.sh\n\
+  ```\n\nIf needed, set the Slicer executable path before running the test:\n\n```bash\nSLICER_BIN=/path/to/Slicer.app/Contents/MacOS/Slicer\
+  \ scripts/run_slicer_smoke_test.sh\n```\n\n## Acknowledgment\n\nThis module was developed with assistance\
+  \ from ChatGPT Codex (GPT-5.5) and validated against 3D Slicer 5.10.0.\n"

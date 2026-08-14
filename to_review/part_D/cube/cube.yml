@@ -1,0 +1,106 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: maxas10/cube
+url: https://github.com/maxas10/cube
+platform: github
+description: unofficial dvhs cubing club website
+license: null
+language: TypeScript
+keywords: []
+stars: 0
+updated_at: '2026-08-01T05:15:43Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: '# DVHS Cubing Club
+
+
+  unofficial dvhs cubing club website
+
+
+  ## Running it
+
+
+  ```sh
+
+  bun install
+
+  bun dev      # http://localhost:3000
+
+  ```
+
+
+  ## Pages
+
+
+  | Route       | What''s on it                                                        |
+
+  | ----------- | ------------------------------------------------------------------- |
+
+  | `/`         | Landing page — what the club is, next meeting, next competition      |
+
+  | `/about`    | What the club does, a typical meeting, officers, FAQ                 |
+
+  | `/schedule` | Meeting dates and upcoming WCA competitions                          |
+
+  | `/contact`  | Contact form; submissions email `support@mseung.dev`                 |
+
+
+  Routing is a small history-based router in `src/router.tsx` — no router dependency. The
+
+  server serves `index.html` for every unmatched path, so deep links and refreshes work.
+
+
+  ## Editing the schedule
+
+
+  All meeting and competition data lives in `src/data/schedule.ts`. Edit that one file to
+
+  update the site; both the schedule page and the "next up" cards on the home page read
+
+  from it. Dates are ISO (`YYYY-MM-DD`).
+
+
+  ## Images
+
+
+  Photos aren''t in yet, so every image slot renders a blank dashed placeholder
+
+  (`src/components/image-placeholder.tsx`). Replace a `<ImagePlaceholder />` with a real
+
+  `<img>` when you have the photo — the placeholder carries the intended aspect ratio.
+
+
+  ## Contact form email
+
+
+  `POST /api/contact` validates the submission, rate-limits it (3 per IP per 10 minutes),
+
+  drops bot submissions via a honeypot field, and sends the message to
+
+  `support@mseung.dev`.
+
+
+  Delivery goes through [Resend](https://resend.com)''s HTTP API. Set these in `.env`:
+
+
+  ```sh
+
+  RESEND_API_KEY=re_xxxxxxxx
+
+  CONTACT_FROM="DVHS Cubing Club <club@yourdomain.com>"   # domain must be verified in Resend
+
+  CONTACT_TO=support@mseung.dev                            # optional, this is the default
+
+  ```
+
+
+  **Without `RESEND_API_KEY` no email is actually sent** — the message is logged to the
+
+  server console instead, so the form still works end to end in local development.
+
+  '

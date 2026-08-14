@@ -1,0 +1,101 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: jukieCheung/LM-CartSeg
+url: https://github.com/jukieCheung/LM-CartSeg
+platform: github
+description: 'Offical codes of LM-CartSeg: Automated Segmentation of Lateral and Medial Cartilage and
+  Subchondral Bone for Radiomics Analysis'
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-06-05T03:50:55Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# LM-CartSeg\n\nAn automated knee MRI segmentation and radiomics analysis toolkit. It\
+  \ fuses dual-resolution (224 + 256) nnUNet segmentation outputs, automatically generates cartilage and\
+  \ subchondral bone band ROIs, splits them into lateral/medial compartments, and extracts morphological\
+  \ and radiomics features.\n\n---\n\n## Overview\n\n| Step | Script | Description |\n|------|--------|-------------|\n\
+  | 1 | GUI / `knee_pipeline_studio_qt_v4.py` | Main Qt interface that orchestrates the entire pipeline\
+  \ |\n| 2 | — | Resample to 256×256×160 |\n| 3 | nnUNet | Dual-resolution (224 xyz + 256 zxy) segmentation\
+  \ inference |\n| 4 | `clear_seg_224.py` / `clear_seg_256.py` | Post-processing (connected-component\
+  \ cleaning, label remapping) |\n| 5 | `merged_clear.py` | Fuse 224 and 256 segmentation results |\n\
+  | 6 | `batch_make_rois.py` | Extract cartilage and subchondral bone band ROIs |\n| 7 | `split_lm_real1.py`\
+  \ | Split ROIs into lateral/medial (LM) compartments |\n| 8 | `run_batch_cases.py` + `lm_knee_radiomics.py`\
+  \ | Batch radiomics feature extraction and morphological metrics |\n\n---\n\n## Input Orientation Convention\n\
+  \nBefore running the pipeline, all input knee MRI volumes should be standardized to a **right-knee orientation**.\
+  \ If the original scan is from a left knee, it should be mirrored to match the right-knee anatomical\
+  \ convention before segmentation, ROI generation, lateral/medial splitting, and radiomics extraction.\n\
+  \nIn this repository, the NIfTI array axes are interpreted as follows:\n\n| NIfTI axis | Anatomical\
+  \ plane |\n| ---------- | ---------------- |\n| x          | coronal          |\n| y          | axial\
+  \            |\n| z          | sagittal         |\n\nTherefore, `xyz` in this pipeline refers to the\
+  \ NIfTI array-axis order:\n\n```text\nx = coronal\ny = axial\nz = sagittal\n```\n\nThis convention is\
+  \ important because the downstream lateral/medial compartment splitting assumes a consistent left-right\
+  \ anatomical orientation across cases. Mixing native left-knee and right-knee scans without mirroring\
+  \ may lead to incorrect lateral/medial labels.\n\n---\n\n## File List\n\n```\nLM_CartSeg/\n├── knee_pipeline_studio_qt_v4.py\
+  \   # PySide6 GUI main program\n├── batch_make_rois.py              # Batch ROI generation (cartilage\
+  \ + subchondral bone)\n├── split_lm_real1.py               # Lateral/Medial compartment splitting\n\
+  ├── clear_seg_224.py                # Post-processing for 224-resolution predictions\n├── clear_seg_256.py\
+  \                # Post-processing for 256-resolution predictions\n├── merged_clear.py             \
+  \    # Fusion of 224/256 segmentation results\n├── run_batch_cases.py              # Batch radiomics\
+  \ analysis entry point\n├── lm_knee_radiomics.py            # Morphology metrics + PyRadiomics feature\
+  \ extraction\n└── logo.png                        # GUI logo\n```\n\n---\n\n## Dependencies\n\n- Python\
+  \ >= 3.9\n- [nnUNetv2](https://github.com/MIC-DKFZ/nnUNet) (requires `nnUNetv2_predict` to be available)\n\
+  - nibabel\n- numpy\n- scipy\n- scikit-learn\n- scikit-image\n- pandas\n- matplotlib\n- [PyRadiomics](https://pypi.org/project/pyradiomics/)\n\
+  - PySide6 (required only for the GUI)\n- SimpleITK (optional, for high-quality resampling)\n\n### Quick\
+  \ Install\n\n```bash\npip install nibabel numpy scipy scikit-learn scikit-image pandas matplotlib pyradiomics\
+  \ pyside6 simpleitk\n```\n\n> nnUNetv2 should be installed separately following its official documentation,\
+  \ and environment variables (`nnUNet_raw`, `nnUNet_preprocessed`, `nnUNet_results`) must be configured.\n\
+  \n---\n\n## Usage\n\n### Method 1: GUI (Recommended)\n\n```bash\npython knee_pipeline_studio_qt_v4.py\n\
+  ```\n\nFeatures:\n- Select raw NIfTI folder and working directory\n- Configure subchondral band thickness\
+  \ (mm) and radiomics bin width\n- Toggle individual pipeline steps on/off\n- Save/load presets (JSON),\
+  \ Dry-run mode\n- Real-time log, progress bar, one-click open results folder\n\nSettings are automatically\
+  \ saved to `~/.knee_pipeline_qt.json`.\n\n### Method 2: Command Line (Step by Step)\n\n#### 1. Post-process\
+  \ 224 predictions\n```bash\npython clear_seg_224.py --indir /path/to/pred224 --outdir /path/to/cleared224\n\
+  ```\n\n#### 2. Post-process 256 predictions\n```bash\npython clear_seg_256.py --indir /path/to/pred256\
+  \ --outdir /path/to/cleared256\n```\n\n#### 3. Fuse dual-resolution results\n```bash\npython merged_clear.py\
+  \ \\\n  --indir224 /path/to/cleared224 \\\n  --indir256 /path/to/cleared256 \\\n  --outdir /path/to/cleared_final\n\
+  ```\n\n#### 4. Generate ROIs (cartilage + subchondral bone band)\n```bash\npython batch_make_rois.py\
+  \ \\\n  --indir /path/to/cleared_final \\\n  --outdir /path/to/rois \\\n  --band_mm 10\n```\n\n####\
+  \ 5. Split into lateral/medial compartments\n```bash\npython split_lm_real1.py \\\n  --indir /path/to/rois\
+  \ \\\n  --outdir /path/to/lm_rois \\\n  --lr auto\n```\n\n#### 6. Batch radiomics analysis\n```bash\n\
+  python run_batch_cases.py \\\n  --images_root /path/to/resampled_images \\\n  --rois_root /path/to/lm_rois\
+  \ \\\n  --out_root /path/to/radiomics_output \\\n  --bin_width 5 \\\n  --heat_axis sag\n```\n\n---\n\
+  \n## Label System\n\n### Input Labels (nnUNet Raw Output)\n\n| Value | Region |\n|-------|--------|\n\
+  | 1 | Femur Bone |\n| 2 | Femur Cartilage |\n| 3 | Tibia Bone |\n| 4 | Tibia Cartilage |\n| 5 | Patella\
+  \ Cartilage |\n\n### Intermediate Labels (ROI Stage)\n\n| Value | Region |\n|-------|--------|\n| 10\
+  \ | Subchondral Femur |\n| 11 | Subchondral Tibia |\n| 20 | Femur Cartilage ROI |\n| 21 | Tibia Cartilage\
+  \ ROI |\n| 22 | Patella Cartilage ROI |\n\n### Final Labels (After LM Splitting)\n\n| Value | Region\
+  \ |\n|-------|--------|\n| 201 | Lateral Femur Cartilage |\n| 202 | Medial Femur Cartilage |\n| 203\
+  \ | Lateral Tibia Cartilage |\n| 204 | Medial Tibia Cartilage |\n| 205 | Lateral Patella Cartilage |\n\
+  | 206 | Medial Patella Cartilage |\n| 211 | Lateral Femur Subchondral |\n| 212 | Medial Femur Subchondral\
+  \ |\n| 213 | Lateral Tibia Subchondral |\n| 214 | Medial Tibia Subchondral |\n\n---\n\n## Output Files\n\
+  \nFor each case, `run_batch_cases.py` generates the following in `out_root/<case_id>/`:\n\n| File |\
+  \ Description |\n|------|-------------|\n| `<case_id>_morphology.json` | Volume, mean thickness, and\
+  \ P95 thickness for each ROI |\n| `<case_id>_radiomics.json` | First-order, texture, and shape features\
+  \ from PyRadiomics |\n| `<case_id>_features.xlsx` / `.csv` | Combined table (one row per ROI, morphology\
+  \ + radiomics) |\n| `<case_id>_<roi>_mask.nii.gz` | Individual ROI masks (intermediate files) |\n| `t2_heatmap_<axis>.png`\
+  \ | T2 heatmap slice visualization |\n\n---\n\n## Lateral/Medial Splitting Algorithm (`split_lm_real1.py`)\n\
+  \n1. Use tibial cartilage (or subchondral tibia) as the reference region.\n2. Apply PCA to the world\
+  \ coordinates of the reference voxels to estimate the approximate SI axis.\n3. Project onto the perpendicular\
+  \ plane and perform K-Means clustering (k=2) to obtain lateral and medial groups.\n4. The algorithm\
+  \ assumes that all cases have been standardized to a right-knee orientation before splitting. Filename-based\
+  \ L/R inference is only retained for compatibility or manual checking.\n5. 5. Apply the clustering model\
+  \ to all ROIs (cartilage + subchondral bone bands) to complete the lateral/medial split.\n\n---\n\n\
+  ## Packaging as Executable\n\nUse PyInstaller (run inside a virtual environment with all dependencies\
+  \ installed):\n\n```bash\npyinstaller -F -n KneePipelineStudioQt --clean \\\n  --add-data \"clear_seg_224.py;.\"\
+  \ \\\n  --add-data \"clear_seg_256.py;.\" \\\n  --add-data \"merged_clear.py;.\" \\\n  --add-data \"\
+  batch_make_rois.py;.\" \\\n  --add-data \"split_lm_real1.py;.\" \\\n  --add-data \"run_batch_cases.py;.\"\
+  \ \\\n  --add-data \"lm_knee_radiomics.py;.\" \\\n  --add-data \"logo.png;.\" \\\n  knee_pipeline_studio_qt_v4.py\n\
+  ```\n\n---\n\n## License\n\n- PySide6 is licensed under LGPL-3.0.\n- The business logic code in this\
+  \ project is free to use.\n\n---\n\n## Citation\n\nIf you use this toolkit for academic research, please\
+  \ cite nnUNet and PyRadiomics:\n\n- Isensee F, Jaeger P F, Kohl S A A, et al. **nnU-Net: a self-configuring\
+  \ method for deep learning-based biomedical image segmentation.** *Nature Methods*, 2021.\n- van Griethuysen\
+  \ J J M, Fedorov A, Parmar C, et al. **Computational Radiomics System to Decode the Radiographic Phenotype.**\
+  \ *Cancer Research*, 2017.\n- Zhang T, Li Z, Leung K L, FU S N. **LM-CartSeg: Automated Segmentation\
+  \ of Lateral and Medial Cartilage and Subchondral Bone for Radiomics Analysis.** *Arxiv*, 2026.\n"

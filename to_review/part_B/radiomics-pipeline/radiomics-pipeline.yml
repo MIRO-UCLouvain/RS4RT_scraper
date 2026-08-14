@@ -1,0 +1,50 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: camillascapicchio/Radiomics-Pipeline
+url: https://github.com/camillascapicchio/Radiomics-Pipeline
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-04-20T07:20:07Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Radiomics-Pipeline\n\n## Radiomics Extraction Pipeline\n\nQuesto repository contiene\
+  \ il codice per l'estrazione di feature radiomiche da qualsiasi immagine medica in formato NIfTI (.nii.gz),\
+  \ utilizzando la libreria [PyRadiomics](https://pyradiomics.readthedocs.io/en/latest/).\n\nLa pipeline\
+  \ processa coppie di file (Immagine CT + Maschera Binaria dei polmoni), calcola le caratteristiche morfologiche,\
+  \ statistiche e di texture, e salva i risultati in file CSV individuali e in un CSV riassuntivo contenente\
+  \ le features di tutti i pazienti.\n\n**Prerequisiti**: Il progetto è sviluppato in Python. Per garantire\
+  \ la compatibilità delle dipendenze (specialmente per pyradiomics), si consiglia l'uso di Conda. \n\n\
+  *Configurazione Ambiente*: \n```bash\nconda create --name radiomics_env python=3.9\nconda activate radiomics_env\n\
+  ```\n\n*Installare le dipendenze*:\n```bash\nconda install numpy\npip install -r requirements.txt\n\
+  ```\n\n**Struttura del Progetto**:\n\n```extract_radiiomics_features.ipynb```: Versione Jupyter Notebook\
+  \ per analisi interattiva.\n\n```extract_radiiomics_features.py```: Versione in Python per l'esecuzione\
+  \ da riga di comando.\n\n```Params_tol_0_0001.yml```: File di configurazione con i parametri di estrazione\
+  \ (es. binWidth, resampledPixelSpacing, filtri).\n\n```Data/```: Cartella con i dati di input.\n\n```requirements.txt```:\
+  \ Elenco dei pacchetti Python necessari.\n\n**Come usare lo script**\n\nLo script ```extract_radiiomics_features.py```\
+  \ accetta diversi argomenti per gestire i percorsi dei dati e i parametri.\n\n*Esempio di utilizzo*:\n\
+  ```bash\npython3 extract_radiomics_features.py \\\n    --data_path Data/CT \\\n    --mask_path Data/Masks_Lung\
+  \ \\\n    --param_file Params_tol_0_0001.yaml \\\n    --output_dir Features \\\n    --total_csv Total_features.csv\
+  \ \\\n    --verbose\n\n```\nArgomenti disponibili:\n\n```--data_path```(Obbligatorio): Percorso alla\
+  \ cartella con le immagini CT.\n\n```--mask_path```(Obbligatorio): Percorso alla cartella con le maschere\
+  \ (_Lung.nii.gz).\n\n```--param_file```(Obbligatorio): File YAML con i parametri per l'estrazione usati\
+  \ da PyRadiomics.\n\n```--output_dir```: Cartella dove verranno salvati i CSV dei singoli soggetti (Default:\
+  \ Features).\n\n```--total_csv```: Nome del file CSV finale che aggrega tutti i soggetti.\n\n```--verbose```:\
+  \ Flag per visualizzare i dettagli dei filtri e delle feature abilitate.\n\n**Funzionamento**: \n\n\
+  1. Lo script ordina e accoppia automaticamente immagini e maschere basandosi sulla numerazione presente\
+  \ nel nome del file.\n\n2. Utilizza SimpleITK per leggere i volumi NIfTI.\n\n*Importante* Assicurati\
+  \ che l'immagine e la maschera abbiano la stessa geometria (origine, spaziatura e orientamento), altrimenti\
+  \ PyRadiomics solleverà un errore di Mismatch.\n\n3. Output: - Genera un file .csv per ogni paziente\
+  \ nella cartella di output scelta.\n\n4. Genera un file CSV globale (Total_features.csv) che conterrà\
+  \ colonne relative a: Shape features (Volume, Superficie, Sfericità...), First Order statistics (Media,\
+  \ Deviazione Standard, Entropia...), Texture features (GLCM, GLRLM, GLSZM, NgTDM), dati quantitativi\
+  \ ideali per analisi statistiche o Machine Learning.\n"

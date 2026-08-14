@@ -1,0 +1,41 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: simiparthan/BrainTumorSegmentation
+url: https://github.com/simiparthan/BrainTumorSegmentation
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-27T07:04:14Z'
+image_source: null
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+readme_excerpt: "# Brain Tumor Segmentation using N-1 Net\n\nThis repository contains a PyTorch implementation\
+  \ of a custom deep learning architecture, **NMinusOneNet**, designed for the semantic segmentation of\
+  \ brain tumors from medical images.\n\n## \U0001F9E0 Project Overview\nThe project trains a segmentation\
+  \ model to accurately identify and mask brain tumors. The custom `NMinusOneNet` architecture is inspired\
+  \ by U-Net but introduces unique N-1 downsampling routing in the decoder and an attention mechanism\
+  \ at the bottleneck to improve spatial feature reconstruction.\n\n## \U0001F4CA Dataset\nThe dataset\
+  \ consists of `.jpg` image and mask pairs split into training, validation, and testing sets:\n* **Training:**\
+  \ 485 samples\n* **Validation:** 40 samples\n* **Testing:** 41 samples\n\n**Data Augmentation:** To\
+  \ prevent overfitting, the training pipeline applies random horizontal flips (50%), vertical flips (50%),\
+  \ and random rotations (-20 to +20 degrees).\n\n## \U0001F3D7️ Model Architecture (`NMinusOneNet`)\n\
+  * **Encoder:** 5 blocks of Convolution + BatchNorm + ReLU with MaxPooling. \n* **Bottleneck:** Fully\
+  \ connected convolutions coupled with a Softmax-based attention mechanism.\n* **Decoder:** Utilizes\
+  \ **N-1 routing**, meaning upsampled features are concatenated not only with their symmetric encoder\
+  \ counterpart but also with pooled diagonal features from the previous encoder level.\n* **Output:**\
+  \ A 1x1 convolution with a Sigmoid activation to produce a binary tumor mask.\n\n## ⚙️ Training Details\n\
+  * **Loss Function:** A custom weighted loss combining Binary Cross-Entropy (20%) and Jaccard/IoU Loss\
+  \ (80%).\n* **Optimizer:** Adam optimizer (`lr=0.001`, `weight_decay=1e-4`).\n* **Scheduler:** `ReduceLROnPlateau`\
+  \ to reduce the learning rate when validation loss plateaus.\n* **Epochs:** Trained for 200 epochs.\n\
+  \n## \U0001F4C8 Results\nThe model achieves strong performance, reaching an **Average Intersection over\
+  \ Union (IoU) of ~86.6%** on the hold-out test set. \n\nThe notebook also includes visualization code\
+  \ using OpenCV to overlay the predicted segmentation masks directly onto the original MRI images for\
+  \ qualitative assessment, as well as code to generate ROC (Receiver Operating Characteristic) and PR\
+  \ (Precision-Recall) curves.\n\n## \U0001F6E0️ Requirements\n* `torch`, `torchvision`\n* `numpy`, `pandas`\n\
+  * `opencv-python` (`cv2`)\n* `Pillow`\n* `matplotlib`\n* `scikit-learn`\n* `tqdm`"

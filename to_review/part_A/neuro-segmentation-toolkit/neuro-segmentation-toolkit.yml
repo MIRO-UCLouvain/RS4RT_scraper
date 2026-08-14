@@ -1,0 +1,90 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: bradleybeatz1313/neuro-segmentation-toolkit
+url: https://github.com/bradleybeatz1313/neuro-segmentation-toolkit
+platform: github
+description: Automated brain tumor segmentation pipeline using 3D Slicer + ITK-SNAP. Multi-sequence MRI
+  preprocessing, threshold segmentation, volumetric analysis, and batch processing.
+license: MIT
+language: Python
+keywords:
+- 3d-slicer
+- brain-tumor
+- dicom
+- itk-snap
+- medical-imaging
+- mri
+- neuroscience
+- python
+- segmentation
+- simpleitk
+stars: 1
+updated_at: '2026-06-09T03:42:55Z'
+image_source: https://raw.githubusercontent.com/bradleybeatz1313/neuro-segmentation-toolkit/HEAD/assets/hero_banner.png
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# \U0001F9E0 Neuro Segmentation Toolkit\n\n**Automated brain tumor segmentation pipeline\
+  \ using 3D Slicer + ITK-SNAP**\n\n![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)\n\
+  ![3D Slicer](https://img.shields.io/badge/3D_Slicer-5.6+-F46800?logo=data:image/svg+xml;base64,...)\n\
+  ![ITK-SNAP](https://img.shields.io/badge/ITK--SNAP-4.0+-00A86B)\n![License](https://img.shields.io/badge/License-MIT-blue)\n\
+  \n![Hero Banner](assets/hero_banner.png)\n\nAn end-to-end pipeline for brain tumor segmentation from\
+  \ multi-sequence MRI studies (T1, T1c, T2, FLAIR). Built for researchers and clinicians working with\
+  \ glioma and meningioma cases, integrating 3D Slicer for visualization and ITK-SNAP for active contour\
+  \ refinement.\n\n---\n\n## ✨ Features\n\n- **Multi-sequence DICOM loading** — Auto-classifies T1, T1c,\
+  \ T2, and FLAIR series from study metadata\n- **N4 bias field correction** — Corrects intensity inhomogeneity\
+  \ common in MRI\n- **Automated skull stripping** — Morphological approach with largest-component extraction\n\
+  - **Multi-sequence co-registration** — Rigid registration to T1c reference using Mattes MI\n- **Threshold\
+  \ + morphology segmentation** — Multi-label segmentation (necrotic core, edema, enhancing tumor)\n-\
+  \ **Volumetric analysis** — Compartment volumes, enhancement ratio, surface area\n- **3D Slicer module**\
+  \ — Scripted extension with full GUI for interactive use\n- **ITK-SNAP integration** — Label file generation,\
+  \ workspace management, active contour CLI\n- **Batch processing** — Parallel execution with resume\
+  \ support and incremental JSON results\n- **BraTS-compatible labels** — Standard color scheme matching\
+  \ the Brain Tumor Segmentation challenge\n\n## \U0001F3D7️ Pipeline Architecture\n\n![Pipeline Workflow](assets/pipeline_workflow.png)\n\
+  \n```\nDICOM Study\n    │\n    ├─ DicomLoader ─── Series discovery + sequence classification\n    │\n\
+  \    ├─ Preprocessor\n    │   ├── N4 Bias Field Correction\n    │   ├── Skull Stripping (morphological)\n\
+  \    │   ├── Rigid Registration → T1c reference\n    │   └── Intensity Normalization (z-score / min-max)\n\
+  \    │\n    ├─ TumorSegmenter\n    │   ├── Multi-sequence thresholding (T1c + FLAIR)\n    │   └── Morphological\
+  \ refinement (component filtering)\n    │\n    ├─ VolumetricAnalyzer\n    │   ├── Compartment volumes\
+  \ (cc)\n    │   ├── Enhancement ratio\n    │   └── JSON report generation\n    │\n    └─ Output\n  \
+  \      ├── NIfTI segmentation (.nii.gz)\n        ├── JSON analysis report\n        └── ITK-SNAP workspace\
+  \ / 3D Slicer scene\n```\n\n## \U0001F680 Quick Start\n\n### Prerequisites\n\n- Python 3.10+\n- [3D\
+  \ Slicer 5.6+](https://download.slicer.org/) (optional — for GUI module)\n- [ITK-SNAP 4.0+](http://www.itksnap.org/)\
+  \ (optional — for active contour refinement)\n\n### Installation\n\n```bash\ngit clone https://github.com/bradleybeatz1313/neuro-segmentation-toolkit.git\n\
+  cd neuro-segmentation-toolkit\npip install -r requirements.txt\n```\n\n### Command-Line Usage\n\n```bash\n\
+  # Single study\npython src/segmentation_pipeline.py /path/to/dicom/study ./output \\\n    --patient-id\
+  \ PAT001 \\\n    --study-date 2025-06-15 \\\n    --verbose\n\n# Batch processing\npython scripts/batch_process.py\
+  \ /path/to/dataset ./batch_output \\\n    --workers 4 \\\n    --resume\n```\n\n### 3D Slicer Module\n\
+  \n1. Open 3D Slicer\n2. Go to **Edit → Application Settings → Modules**\n3. Add `src/` to the module\
+  \ paths\n4. Restart Slicer — find \"Neuro Segmentation Toolkit\" under **Segmentation**\n\n### ITK-SNAP\
+  \ Integration\n\n```python\nfrom src.itksnap_utils import generate_label_file, create_workspace, GLIOMA_LABELS\n\
+  \n# Generate BraTS-compatible label file\ngenerate_label_file(GLIOMA_LABELS, \"glioma.label\")\n\n#\
+  \ Create workspace with pre-loaded data\ncreate_workspace(\n    main_image_path=\"patient_T1c.nii.gz\"\
+  ,\n    overlay_paths={\"FLAIR\": \"patient_FLAIR.nii.gz\"},\n    segmentation_path=\"patient_seg.nii.gz\"\
+  ,\n    label_file_path=\"glioma.label\",\n    output_path=\"patient.itksnap\"\n)\n```\n\n## \U0001F4C1\
+  \ Project Structure\n\n```\nneuro-segmentation-toolkit/\n├── src/\n│   ├── segmentation_pipeline.py\
+  \  # Core pipeline (loader, preprocessor, segmenter, analyzer)\n│   ├── itksnap_utils.py          #\
+  \ ITK-SNAP label files, workspaces, CLI automation\n│   ├── slicer_module.py          # 3D Slicer scripted\
+  \ module with GUI\n│   └── visualization.py          # Slice overlays, volume charts, multiplanar views\n\
+  ├── scripts/\n│   └── batch_process.py          # Parallel batch processing with resume\n├── configs/\n\
+  │   ├── default_config.json       # Pipeline configuration\n│   ├── glioma_labels.label       # BraTS\
+  \ glioma label descriptions\n│   └── meningioma_labels.label   # Meningioma label descriptions\n├──\
+  \ tests/\n│   └── test_pipeline.py          # Unit tests with synthetic phantoms\n├── assets/      \
+  \                 # Generated figures and screenshots\n├── requirements.txt\n└── README.md\n```\n\n\
+  ## \U0001F9EA Testing\n\nTests use synthetic brain phantoms — no real patient data required:\n\n```bash\n\
+  cd neuro-segmentation-toolkit\npython -m pytest tests/ -v\n```\n\n## \U0001F4CB Configuration\n\nEdit\
+  \ `configs/default_config.json` to customize:\n\n| Parameter | Default | Description |\n|---|---|---|\n\
+  | `target_spacing` | `[1.0, 1.0, 1.0]` | Isotropic resampling resolution (mm) |\n| `intensity_normalization`\
+  \ | `z-score` | Normalization method (`z-score` or `min-max`) |\n| `skull_strip` | `true` | Enable skull\
+  \ stripping |\n| `bias_field_correction` | `true` | Enable N4 correction |\n| `registration_target`\
+  \ | `T1c` | Reference sequence for co-registration |\n| `min_tumor_volume_cc` | `0.5` | Minimum volume\
+  \ threshold for quality flag |\n| `enhancing_threshold_std` | `2.0` | Std devs above mean for enhancing\
+  \ detection |\n\n## \U0001F91D Acknowledgments\n\n- [SimpleITK](https://simpleitk.org/) — Image processing\
+  \ backbone\n- [3D Slicer](https://www.slicer.org/) — Visualization and interactive editing\n- [ITK-SNAP](http://www.itksnap.org/)\
+  \ — Active contour segmentation and label management\n- [BraTS Challenge](https://www.med.upenn.edu/cbica/brats/)\
+  \ — Label convention and evaluation methodology\n\n## \U0001F4C4 License\n\nMIT License — see [LICENSE](LICENSE)\
+  \ for details.\n\n> ⚠️ **Disclaimer:** This tool is for research and educational purposes only. It is\
+  \ not a certified medical device and should not be used for clinical diagnosis.\n"

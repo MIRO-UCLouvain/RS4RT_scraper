@@ -1,0 +1,72 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: BraveDistribution/liver-motion-predictor
+url: https://github.com/BraveDistribution/liver-motion-predictor
+platform: github
+description: Training-free, short-horizon liver landmark motion prediction for MR-guided radiotherapy.
+  Deliverable D3.2 of project 09I03-03-V04-00394 (EU NextGenerationEU).
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-08T15:39:22Z'
+image_source: https://raw.githubusercontent.com/BraveDistribution/liver-motion-predictor/HEAD/docs/assets/logos/eu-nextgenerationeu.svg
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# Liver Motion Predictor\n\nTraining-free, short-horizon liver landmark motion prediction\
+  \ for latency compensation\nin MR-guided radiotherapy.\n\n[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)\n\
+  [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue)](#)\n[![CI](https://github.com/BraveDistribution/liver-motion-predictor/actions/workflows/tests.yml/badge.svg)](https://github.com/BraveDistribution/liver-motion-predictor/actions/workflows/tests.yml)\n\
+  \n## Demo\n\n![Liver landmark tracking animation (sagittal view, real 4D MRI)](docs/demo_sagittal.gif)\n\
+  \n*Real CoMoDo 4D liver MRI (subject CoMoDo01b, sagittal midslice). Left: the observed landmark (translucent\
+  \ green ring) with the harmonic h=1 prediction (translucent orange diamond), both drawn see-through\
+  \ so the vessel underneath stays visible, plus a fading trail and TRE. Right: coordinate traces (z,\
+  \ y, x in mm) with vertical cursor and shaded prediction horizon.*\n\n![Liver landmark motion prediction\
+  \ demo](docs/assets/demo.gif)\n\nFrame-by-frame illustration of the harmonic predictor on an illustrative\
+  \ synthetic respiratory trajectory. Left: the landmark trace in the sagittal plane with ground truth\
+  \ (hollow marker) and harmonic prediction (filled marker). Right: coordinate traces with the current\
+  \ frame cursor and shaded one-frame horizon.\n\n## Scope\n\n**Research software, not a medical device.\
+  \ Not validated for clinical decision-making.**\n\nThis package implements four predictors for 2D in-plane\
+  \ liver vessel landmark motion,\ngiven a short observed trajectory:\n\n| Method | Description |\n|---|---|\n\
+  | `persistence` | Copy the last observed position (baseline). |\n| `linear` | Constant-velocity extrapolation.\
+  \ |\n| `quadratic` | Constant-acceleration extrapolation. |\n| `harmonic` | **Cycle-aware**: fits a\
+  \ single breathing frequency (period grid search, 6 to 16 frame range) plus per-coordinate amplitude,\
+  \ phase and offset by least squares over the observed history, then evaluates at the future frame. |\n\
+  \nThe harmonic predictor is **training-free**: parameters are fitted online per trajectory.\nNo pretraining,\
+  \ no GPU required.\n\n## Validation results (CoMoDo, 25 subjects, 74 vessel trajectories)\n\nThe harmonic\
+  \ predictor significantly reduces TRE at short horizons:\n\n| h | Persistence (mm) | Harmonic (mm) |\
+  \ Improvement | p-value | Wins on |\n|---|---|---|---|---|---|\n| 1 | 5.18 | **4.41** | **-14.9%** |\
+  \ <0.0001 | 88% of subjects |\n| 2 | 8.62 | **7.73** | **-10.3%** | 0.005 | 76% of subjects |\n| 3 |\
+  \ 11.01 | 12.05 | +9.4% | 0.013 | n/a |\n| 5 | 11.17 | 25.27 | +126% | <0.0001 | n/a |\n\nBeyond two\
+  \ frames persistence is safer, because trajectories are too short (median 10 frames)\nfor reliable extrapolation.\n\
+  \nTwo control analyses confirm the short-horizon gain reflects genuine motion\nanticipation, not noise\
+  \ smoothing (see [validation protocol](docs/validation.md)).\n\n## Installation\n\n```bash\npip install\
+  \ git+https://github.com/BraveDistribution/liver-motion-predictor.git\n```\n\nFor CoMoDo loading and\
+  \ validation:\n\n```bash\npip install \"liver-motion-predictor[validation,comodo] @ git+https://github.com/BraveDistribution/liver-motion-predictor.git\"\
+  \n```\n\n## Usage\n\n### Python API\n\n```python\nimport numpy as np\nfrom liver_motion_predictor import\
+  \ LiverMotionPredictor\n\n# Past positions: (T, 3) array in (z, y, x) voxel coordinates\nhistory = np.loadtxt(\"\
+  examples/synthetic_trajectory.csv\", delimiter=\",\")\nmodel = LiverMotionPredictor(method=\"harmonic\"\
+  )\nprediction = model.predict(history, horizon=1)\n# -> array([z_pred, y_pred, x_pred])\n```\n\n###\
+  \ CLI: predict from CSV\n\n```bash\nliver-motion-predict --csv examples/synthetic_trajectory.csv --method\
+  \ harmonic --horizon 1\n```\n\n### CLI: reproduce the validation\n\nRequires [authorized access to CoMoDo](docs/data.md).\n\
+  \n```bash\nexport COMODO_ROOT=/path/to/CoMoDo/Nav_dataset\nliver-motion-validate --output results/validation_summary.json\n\
+  ```\n\n## Input conventions\n\n- **Shape:** `(T, 3)`, one row per observed frame\n- **Coordinate order:**\
+  \ `(z=slice, y, x)`, matching the NIfTI volume convention\n- **Units:** voxel coordinates (multiplied\
+  \ by spacing in mm for TRE)\n- **Horizon:** integer, frames ahead (not milliseconds, since the frame\
+  \ interval is not\n  recorded in CoMoDo)\n\n## Dataset availability\n\nValidation was performed on the\
+  \ **CoMoDo** dataset, which is **private**. No patient\ndata is included in this repository. See [docs/data.md](docs/data.md)\
+  \ for the expected\nlayout and instructions.\n\n## Citation\n\nIf you use this code in a publication,\
+  \ please cite:\n\n> M. Gazda. \"Liver Motion Predictor: Training-free, short-horizon liver landmark\n\
+  > motion prediction for MR-guided radiotherapy.\" Deliverable D3.2 of project\n> 09I03-03-V04-00394\
+  \ (SSL-DSE), 2026.\n\nSee [CITATION.cff](CITATION.cff) for the machine-readable reference.\n\n## License\n\
+  \nMIT, see [LICENSE](LICENSE).\n\n## Financovanie / Funding\n\n<p>\n  <img src=\"docs/assets/logos/eu-nextgenerationeu.svg\"\
+  \ alt=\"Financované Európskou úniou – NextGenerationEU\" height=\"64\">\n  &nbsp;&nbsp;\n  <img src=\"\
+  docs/assets/logos/plan-obnovy.svg\" alt=\"Plán obnovy a odolnosti SR\" height=\"64\">\n</p>\n\n**SK:**\
+  \ Tento projekt je financovaný Európskou úniou – NextGenerationEU prostredníctvom Plánu obnovy a odolnosti\
+  \ Slovenskej republiky.\n\n**EN:** This project is funded by the European Union – NextGenerationEU through\
+  \ the Recovery and Resilience Plan of the Slovak Republic.\n\n## Related repositories\n\n- [echoGAN](https://github.com/BraveDistribution/echogan):\
+  \ extending the field of view\n  in transthoracic echocardiography\n- [UMBRA](https://github.com/BraveDistribution/UMBRA):\
+  \ modality-invariant pretraining\n  for brain MRI"

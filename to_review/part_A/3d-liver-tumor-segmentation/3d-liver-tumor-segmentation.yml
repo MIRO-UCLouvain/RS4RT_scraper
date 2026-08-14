@@ -1,0 +1,64 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: gopisai123/3D-Liver-Tumor-Segmentation
+url: https://github.com/gopisai123/3D-Liver-Tumor-Segmentation
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-12T08:11:00Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# 3D Liver Tumor Segmentation using 3D U-Net\n\n## Overview\n\nThis project presents\
+  \ an automated liver and liver tumor segmentation system using deep learning on 3D Computed Tomography\
+  \ (CT) scans. The system employs a 3D U-Net architecture to perform voxel-wise segmentation of liver\
+  \ and tumor regions from volumetric medical images.\n\nThe project is based on the Medical Segmentation\
+  \ Decathlon (Task03 Liver) dataset and demonstrates the complete workflow from data preprocessing and\
+  \ patch extraction to model training, evaluation, and inference.\n\n---\n\n## Problem Statement\n\n\
+  Manual liver and tumor segmentation is a time-consuming process that requires expert radiologists and\
+  \ is prone to inter-observer variability. Automated segmentation can significantly improve efficiency\
+  \ in diagnosis, treatment planning, and disease monitoring.\n\nThis project aims to automatically identify\
+  \ and segment liver and tumor regions from abdominal CT scans using a deep learning-based approach.\n\
+  \n---\n\n## Dataset\n\n**Medical Segmentation Decathlon – Task03 Liver**\n\nDataset Characteristics:\n\
+  \n* 131 abdominal CT volumes\n* Corresponding liver and tumor masks\n* NIfTI (`.nii.gz`) format\n* Multi-class\
+  \ segmentation\n\nClasses:\n\n| Label | Class      |\n| ----- | ---------- |\n| 0     | Background |\n\
+  | 1     | Liver      |\n| 2     | Tumor      |\n\n---\n\n## Methodology\n\n### Data Preprocessing\n\n\
+  The CT scans undergo preprocessing steps including:\n\n* Loading volumetric medical images\n* Resampling\
+  \ to a uniform spacing\n* Patch extraction for memory-efficient training\n* Dataset preparation using\
+  \ TorchIO\n\n### Patch-Based Training\n\nLarge 3D volumes are divided into smaller patches:\n\n```text\n\
+  96 × 96 × 96\n```\n\nThis enables efficient GPU memory utilization while preserving local anatomical\
+  \ information.\n\n### Label Sampling\n\nTo address class imbalance, patches are sampled using weighted\
+  \ probabilities:\n\n| Class      | Sampling Probability |\n| ---------- | -------------------- |\n|\
+  \ Background | 0.2                  |\n| Liver      | 0.3                  |\n| Tumor      | 0.5   \
+  \               |\n\nThis ensures that tumor regions are observed more frequently during training.\n\
+  \n---\n\n## Model Architecture\n\nThe project utilizes a 3D U-Net architecture consisting of:\n\n* Encoder\n\
+  * Bottleneck\n* Decoder\n* Skip Connections\n\nThe encoder extracts hierarchical features while the\
+  \ decoder reconstructs the segmentation mask. Skip connections preserve spatial information and improve\
+  \ boundary localization.\n\n---\n\n## Training Configuration\n\n| Parameter     | Value            \
+  \      |\n| ------------- | ---------------------- |\n| Model         | 3D U-Net               |\n|\
+  \ Optimizer     | Adam                   |\n| Learning Rate | 1e-4                   |\n| Loss Function\
+  \ | Weighted Cross Entropy |\n| Epochs        | 100                    |\n| Framework     | PyTorch\
+  \ Lightning      |\n| Patch Size    | 96×96×96               |\n\n---\n\n## Project Workflow\n\n```text\n\
+  CT Scan\n    ↓\nPreprocessing\n    ↓\nPatch Extraction\n    ↓\nLabelSampler\n    ↓\nPatch Queue\n  \
+  \  ↓\n3D U-Net\n    ↓\nTraining\n    ↓\nCheckpoint Generation\n    ↓\nInference\n    ↓\nSegmentation\
+  \ Mask\n```\n\n---\n\n## Technologies Used\n\n* Python\n* PyTorch\n* PyTorch Lightning\n* TorchIO\n\
+  * NumPy\n* Matplotlib\n* SimpleITK\n* Nibabel\n* Jupyter Notebook\n\n---\n\n## Repository Structure\n\
+  \n```text\n.\n├── 01-Data.ipynb\n├── 02-Model.ipynb\n├── 03-Train.ipynb\n├── model.py\n├── README.md\n\
+  ├── .gitignore\n└── weights/\n    └── epoch=97-step=25773.ckpt\n```\n\n---\n\n## Model Checkpoint\n\n\
+  The repository includes the final trained checkpoint:\n\n```text\nweights/epoch=97-step=25773.ckpt\n\
+  ```\n\nThis checkpoint can be loaded directly for inference and evaluation.\n\nExample:\n\n```python\n\
+  model = Segmenter.load_from_checkpoint(\n    \"weights/epoch=97-step=25773.ckpt\"\n)\n```\n\n---\n\n\
+  ## Results\n\nThe model successfully performs automated segmentation of:\n\n* Liver regions\n* Tumor\
+  \ regions\n\nEvaluation can be performed using:\n\n* Precision\n* Recall\n* F1-Score\n* Dice Score\n\
+  * Accuracy\n\nVisualization of predicted masks demonstrates the capability of the model to identify\
+  \ liver and tumor structures from unseen CT volumes.\n\n---\n\n## Future Improvements\n\n* Dice Loss\
+  \ based optimization\n* Multi-organ segmentation\n* Improved tumor boundary localization\n* Clinical\
+  \ deployment and validation\n\n---\n\n\n\n"

@@ -1,0 +1,107 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: rajul-kk/Drug_Toxicity
+url: https://github.com/rajul-kk/Drug_Toxicity
+platform: github
+description: GNN + DMPNN ensemble with MC Dropout for multi-task molecular toxicity and activity prediction
+  across 9 datasets · Random Forest fingerprint models · FastAPI web UI with 3D viewer
+license: null
+language: Python
+keywords:
+- bbbp
+- cheminformatics
+- cyp450
+- dmpnn
+- drug-discovery
+- fastapi
+- gnn-model
+- hiv
+- multi-task-learning
+- pytorch-geometric
+- rdkit
+- smiles
+- tox21
+- toxicity-prediction
+stars: 0
+updated_at: '2026-07-04T16:17:56Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# ToxicGraph\n\nMulti-dataset molecular safety prediction — GNN/DMPNN ensemble across\
+  \ 49 tasks covering toxicity, mutagenicity, cardiac risk, liver injury, and CYP450 inhibition. Interactive\
+  \ web UI for single-molecule prediction, batch CSV processing, test-set browsing, and similarity search.\n\
+  \n---\n\n## Datasets\n\n| Dataset | Tasks | Domain |\n|---------|-------|--------|\n| Tox21 | 12 | Nuclear\
+  \ receptor & stress-response assays |\n| ClinTox | 2 | FDA approval / clinical toxicity |\n| SIDER |\
+  \ 27 | Drug side-effect organ-system categories |\n| AMES | 1 | Mutagenicity |\n| CYP450 | 5 | CYP1A2\
+  \ / 2C9 / 2D6 / 3A4 / 2C19 inhibition |\n| hERG | 1 | Cardiac ion-channel blockade |\n| DILI | 1 | Drug-induced\
+  \ liver injury |\n| BBBP* | 1 | Blood-brain barrier permeability |\n| HIV* | 1 | HIV replication inhibition\
+  \ |\n\n*BBBP and HIV use a separate Random Forest + fingerprint model (`train_activity.py`), not the\
+  \ GNN ensemble.\n\n---\n\n## Models\n\n**GNN** — 4-layer GATv2 with residual connections, BatchNorm,\
+  \ and Set2Set pooling. Multi-head graph attention over atom neighbourhoods using both node and edge\
+  \ features.\n\n**D-MPNN** — Directed Message Passing Neural Network ([Chemprop](https://github.com/chemprop/chemprop),\
+  \ Yang et al. 2019). Messages travel along directed bonds; when updating bond u→v, all bonds entering\
+  \ u are aggregated except the reverse v→u, preventing message echo.\n\nBoth models:\n- Ensemble of 2\
+  \ independently-seeded models, predictions averaged\n- Post-hoc temperature scaling calibration fitted\
+  \ on val set\n- MC Dropout uncertainty: 20 stochastic forward passes at inference → mean ± std per task\n\
+  \n**Activity model (BBBP / HIV)** — Random Forest on Morgan ECFP4 (512-bit) + MACCS (167-bit) fingerprints\
+  \ (679-dim total).\n\n---\n\n## Molecular Features\n\n**Node features (44-dim):** atom type, degree,\
+  \ hybridisation, aromaticity, formal charge, H count, ring membership, chirality, bond-angle statistics\
+  \ (SE(3)-invariant), Gasteiger partial charge\n\n**Edge features (8-dim):** bond type, conjugation,\
+  \ ring membership, 3D interatomic distance (SE(3)-invariant)\n\n---\n\n## Results\n\nScaffold split\
+  \ (80/10/10), ensemble of 2 models, calibrated with temperature scaling.\n\n| Model | Mean AUC | Mean\
+  \ AUPRC | Mean Brier | Mean ECE |\n|-------|----------|------------|------------|----------|\n| GNN\
+  \ (GATv2 + Set2Set) | 0.678 | 0.566 | 0.176 | 0.152 |\n| D-MPNN | 0.693 | 0.573 | 0.178 | 0.155 |\n\n\
+  CYP450 tasks are the strongest performers (AUC 0.80–0.86). Some SIDER endpoints are difficult (AUC 0.48–0.53)\
+  \ due to sparse labels and class imbalance. Full per-task metrics are in [metrics.md](metrics.md).\n\
+  \n---\n\n## Web UI\n\nFastAPI backend + Vite-bundled frontend. Run locally:\n\n```bash\npip install\
+  \ -r requirements.txt\npython app.py\n# → http://localhost:8000\n```\n\nOr with Docker:\n\n```bash\n\
+  docker build -t toxicgraph .\ndocker run -p 8000:8000 \\\n  -v $(pwd)/checkpoints:/app/checkpoints:ro\
+  \ \\\n  -v $(pwd)/data:/app/data:ro \\\n  toxicgraph\n```\n\n**Views:**\n\n- **Predict** — paste a SMILES\
+  \ string; get calibrated probabilities with MC Dropout uncertainty badges, dataset filter chips, GNNExplainer\
+  \ atom attribution, bookmark, and PDF/print report\n- **Browse** — paginated test-set table with SMARTS\
+  \ substructure search and dataset filter\n- **Batch** — CSV upload or paste, runs all SMILES in chunks\
+  \ with live progress\n- **Similar** — Tanimoto nearest-neighbour search across the test set (Morgan\
+  \ FP)\n- **History** — last 50 predictions grouped by dataset, with ★ bookmarks\n\n---\n\n## API\n\n\
+  | Endpoint | Method | Description |\n|----------|--------|-------------|\n| `/health` | GET | Model\
+  \ load status and task count |\n| `/api/info` | GET | Task names, groups, available models |\n| `/api/predict`\
+  \ | POST | GNN/DMPNN ensemble prediction for a SMILES |\n| `/api/explain` | GET | GNNExplainer atom-importance\
+  \ SVG |\n| `/api/similar` | GET | Tanimoto nearest neighbours from test set |\n| `/api/testset` | GET\
+  \ | Paginated test-set rows with probabilities and labels |\n| `/api/testset/{idx}` | GET | Single test-set\
+  \ molecule |\n| `/api/search` | GET | SMARTS substructure search over test set |\n| `/api/properties/{smiles}`\
+  \ | GET | RDKit descriptors (MW, logP, TPSA, QED, Lipinski) |\n| `/api/activity` | GET | RF model prediction\
+  \ for BBBP / HIV |\n\nRate-limited: 60 req/min for predict, 30/min for similar, 10/min for explain.\n\
+  \n---\n\n## Training\n\n```bash\n# GNN/DMPNN multi-dataset ensemble\npython train.py\n\n# Random Forest\
+  \ activity model (BBBP + HIV)\npython train_activity.py\n\n# Evaluate on test set, print per-task metrics\n\
+  python evaluate.py\n```\n\nSwitch architecture by editing `config.yaml` → `model.type: gnn` or `dmpnn`.\n\
+  \n```yaml\ndataset:\n  names: [tox21, clintox, sider, ames, cyp450, herg, dili]\n  activity_names: [bbbp,\
+  \ hiv]\n\nmodel:\n  type: dmpnn          # gnn | dmpnn\n  hidden_channels: 256\n  ensemble_size: 2\n\
+  \  depth: 4\n\ntraining:\n  batch_size: 64\n  learning_rate: 0.0003\n  epochs: 60\n  early_stopping_patience:\
+  \ 12\n  dataset_weights:     # upweight rare/hard datasets\n    tox21: 1.0\n    clintox: 4.0\n    sider:\
+  \ 5.0\n    ames: 2.0\n    cyp450: 1.5\n    herg: 3.0\n    dili: 4.0\n```\n\n---\n\n## Project Structure\n\
+  \n```\nToxicGraph/\n├── app.py                  # FastAPI server — all routes, cache, rate limiting\n\
+  ├── train.py                # GNN/DMPNN multi-dataset training pipeline\n├── train_activity.py     \
+  \  # RF fingerprint model for BBBP/HIV\n├── inference.py            # Ensemble prediction with MC Dropout\n\
+  ├── evaluate.py             # Per-task AUC/AUPRC/Brier/ECE on test set\n├── explain.py             \
+  \ # GNNExplainer atom attribution → SVG\n├── baseline.py             # XGBoost + ECFP4 benchmark\n├──\
+  \ precompute_cache.py     # Warm inference cache at startup\n├── config.yaml\n├── metrics.md       \
+  \       # Full per-task results table\n├── src/\n│   ├── models.py           # GNN, DMPNN, EnsembleGNN\n\
+  │   ├── featurizer.py       # SMILES → PyG graph (3D geometry, Gasteiger)\n│   ├── dataset.py      \
+  \    # ToxicDataset (multi-dataset InMemoryDataset)\n│   ├── splitter.py         # Scaffold-based train/val/test\
+  \ split\n│   ├── calibration.py      # Temperature scaling, MC Dropout, ECE, Brier\n│   ├── fp_model.py\
+  \         # Random Forest wrapper with per-tree uncertainty\n│   ├── activity_model.py   # RF activity\
+  \ model loader for BBBP/HIV\n│   └── utils.py            # Fingerprint utilities\n└── web/\n    ├──\
+  \ templates/index.html\n    ├── static/\n    │   ├── app.css\n    │   ├── components.css\n    │   ├──\
+  \ landing.css\n    │   └── dist/bundle.js  # Vite build output\n    └── src/\n        ├── main.js  \
+  \       # Entry point, window bindings, error boundary\n        ├── app.js          # Boot, routing,\
+  \ model selection\n        ├── predict.js      # Single-molecule predict view + chart\n        ├── activity.js\
+  \     # RF activity page (BBBP/HIV gauges + Plotly chart)\n        ├── browse.js       # Test-set browse\
+  \ and search\n        ├── multi.js        # Batch prediction + CSV upload\n        ├── similar.js  \
+  \    # Similarity search\n        ├── history.js      # Prediction history + bookmarks\n        └──\
+  \ viewer.js       # 3Dmol.js conformer viewer\n```\n\n---\n\n## Tests\n\n```bash\npython -m pytest tests/\
+  \ -v\n```\n\n60 tests covering health, predict, browse, search, properties, `/api/similar`, SMILES validation,\
+  \ inference cache, output shape, and probability bounds.\n"

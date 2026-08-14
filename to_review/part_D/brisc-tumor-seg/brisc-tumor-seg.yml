@@ -1,0 +1,104 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: JahanFab/brisc-tumor-seg
+url: https://github.com/JahanFab/brisc-tumor-seg
+platform: github
+description: PyTorch pipeline for brain tumor MRI segmentation and classification on BRISC2025 — comparing
+  U-Net, a shared-encoder U-Net with classification head, and an Attention U-Net, with a learning-rate
+  ablation study.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-20T08:23:00Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+readme_excerpt: "# Brain Tumor Segmentation & Classification — BRISC2025\n\nA PyTorch pipeline that both\
+  \ **segments** brain tumors from MRI scans and **classifies** their type, built on the [BRISC2025](https://www.kaggle.com/datasets/briscdataset/brisc2025)\
+  \ dataset. Three U-Net variants are implemented and compared: a plain **U-Net**, a **U-Net with a classification\
+  \ head** sharing the segmentation encoder, and an **Attention U-Net**.\n\n## Table of Contents\n\n-\
+  \ [Overview](#overview)\n- [Dataset](#dataset)\n- [Models](#models)\n- [Pipeline](#pipeline)\n- [Evaluation\
+  \ Metrics](#evaluation-metrics)\n- [Results](#results)\n- [Tech Stack](#tech-stack)\n- [Requirements](#requirements)\n\
+  - [Usage](#usage)\n- [Repository Structure](#repository-structure)\n- [Notes & Known Limitations](#notes--known-limitations)\n\
+  \n## Overview\n\nBrain tumor MRI analysis typically requires two separate tasks: drawing the tumor boundary\
+  \ (**segmentation**) and identifying the tumor type (**classification**). This project tackles both\
+  \ with a shared architecture, then goes further with an attention-augmented variant and a learning-rate\
+  \ ablation study.\n\n| Task | Output |\n|---|---|\n| Segmentation | Binary tumor mask (128×128) |\n\
+  | Classification | One of 4 tumor classes |\n\n## Dataset\n\n**[BRISC2025](https://www.kaggle.com/datasets/briscdataset/brisc2025)**,\
+  \ downloaded automatically via `kagglehub`.\n\n```\nbrisc2025/\n├── segmentation_task/\n│   ├── train/\n\
+  │   │   ├── images/\n│   │   └── masks/\n│   └── test/\n│       ├── images/\n│       └── masks/\n└──\
+  \ classification_task/\n    ├── train/\n    │   ├── glioma/\n    │   ├── meningioma/\n    │   ├── notumor/\n\
+  \    │   └── pituitary/\n    └── test/\n        └── (same 4 class folders)\n```\n\n**Classes (classification\
+  \ task):** `glioma`, `meningioma`, `notumor`, `pituitary`\n\n**Preprocessing:** images converted to\
+  \ grayscale, resized to 128×128, normalized to a tensor; masks binarized (any non-zero RGB channel →\
+  \ foreground) and resized to match.\n\n## Models\n\n### 1. `UNet` — baseline segmentation\nA 5-level\
+  \ U-Net (64 → 1024 channel bottleneck), each block using 4 stacked conv layers (Conv→BatchNorm→ReLU\
+  \ ×4), with skip connections at every level. Outputs a single-channel sigmoid mask.\n\n### 2. `UNetWithClassifier`\
+  \ — shared-encoder multi-task model\nSame 5-level encoder as above, but with two output heads:\n- **Segmentation\
+  \ head** — the standard U-Net decoder path\n- **Classification head** — global average pooling on the\
+  \ 1024-channel bottleneck → fully connected layers → 4-class softmax\n\nThe encoder is initialized from\
+  \ the pretrained segmentation `UNet` weights and **frozen** during classification training, so only\
+  \ the classification head learns from scratch.\n\n### 3. `AttU_Net` — Attention U-Net\nA deeper, 6-level\
+  \ U-Net (64 → 2048 channel bottleneck) where each skip connection passes through an **attention gate**\
+  \ before being concatenated with the decoder features, letting the model weight relevant spatial regions\
+  \ more heavily. Used for both the main training run and a learning-rate ablation study.\n\n## Pipeline\n\
+  \n1. **Download data** — `kagglehub.dataset_download(\"briscdataset/brisc2025\")`\n2. **Build segmentation\
+  \ dataset & split** — train/validation split created *before* training (80/20) to avoid data leakage;\
+  \ a held-out test set is kept separate\n3. **Train `UNet`** — Adam optimizer, combined BCE + Dice loss,\
+  \ with per-epoch train/validation loss tracking\n4. **Evaluate segmentation** — mIoU, Dice coefficient,\
+  \ and pixel accuracy on train, validation, and test sets\n5. **Save encoder weights** — `unet_v1_req1.pth`\n\
+  6. **Train classification head** — `UNetWithClassifier` loads the pretrained encoder (frozen), trains\
+  \ only the classification head with cross-entropy loss, tracked across train/validation splits\n7. **Evaluate\
+  \ classification** — accuracy, precision, recall, macro-F1, confusion matrix\n8. **Visualize predictions**\
+  \ — unified prediction interface that overlays predicted masks on input images, runnable on arbitrary\
+  \ images or on labeled test samples per class\n9. **Train Attention U-Net** — deeper architecture, trained\
+  \ and validated the same way as step 3\n10. **Learning-rate ablation** — `AttU_Net` retrained from scratch\
+  \ at a high (`1e-3`) and low (`1e-5`) learning rate to compare convergence behavior against the baseline\
+  \ `1e-4` run\n\n## Evaluation Metrics\n\n| Task | Metrics |\n|---|---|\n| Segmentation | mIoU, Dice\
+  \ coefficient, pixel accuracy (per train/val/test split) |\n| Classification | Accuracy, precision,\
+  \ recall, macro-F1, confusion matrix |\n\n## Results\n\n### Segmentation — `UNet` (5-level, 30 epochs)\n\
+  \nFinal training loss (BCE + Dice) reached **0.1931** (train) / **0.2294** (val) at epoch 30.\n\n| Split\
+  \ | mIoU | Dice | Pixel Accuracy |\n|---|---|---|---|\n| Train | 0.7456 | 0.8453 | 0.9846 |\n| Validation\
+  \ | 0.7022 | 0.8039 | 0.9833 |\n| Test | 0.7034 | 0.8046 | 0.9828 |\n\nValidation and test scores track\
+  \ each other closely, which is a good sign the validation split is representative and that the earlier\
+  \ train/val leakage issue is resolved.\n\n### Classification — `UNetWithClassifier` (frozen pretrained\
+  \ encoder, 30 epochs)\n\nOnly the classification head was trainable (**18.7M / 62.7M parameters, ~29.9%**).\n\
+  \n| Split | Accuracy | Precision | Recall | F1 Score |\n|---|---|---|---|---|\n| Train | 0.6701 | 0.6878\
+  \ | 0.6701 | 0.6564 |\n| Validation | 0.6645 | 0.6787 | 0.6645 | 0.6511 |\n| Test | 0.6570 | 0.6716\
+  \ | 0.6570 | 0.6440 |\n\nAccuracy climbed steadily from **49.1% → 67.0%** (train) over training, but\
+  \ plateaued in the mid-60s%. Since the encoder is frozen, this reflects the ceiling of features learned\
+  \ for *segmentation* being reused for *classification* — see [Notes & Known Limitations](#notes--known-limitations).\n\
+  \n> **Note:** the per-class sample count printout during setup only listed `glioma`, `meningioma`, and\
+  \ `pituitary` — `notumor` did not appear, despite it being one of the 4 classes used downstream.\n\n\
+  ### Segmentation — `AttU_Net` (6-level, attention gates, 30 epochs)\n\nFinal training loss reached **0.1853**\
+  \ (train) / **0.2210** (val) at epoch 30 — a lower validation loss than the baseline `UNet` (0.2294),\
+  \ suggesting the attention gates and extra depth give a modest improvement, though full mIoU/Dice/pixel-accuracy\
+  \ evaluation wasn't re-run for this variant in the current notebook.\n\n### Learning-rate ablation (`AttU_Net`,\
+  \ 10 epochs each)\n\n| Learning rate | Final loss (epoch 10) |\n|---|---|\n| High (`1e-3`) | **0.3048**\
+  \ |\n| Baseline (`1e-4`, from main run) | 0.3147 (epoch 10 of the 30-epoch run, for fair comparison)\
+  \ |\n| Low (`1e-5`) | 1.0191 |\n\nThe high learning rate converged fastest and reached the lowest loss\
+  \ within 10 epochs; the low learning rate was still far from converging at epoch 10. This suggests `1e-4`–`1e-3`\
+  \ is a more productive range for this architecture than `1e-5`.\n\n## Tech Stack\n\n- **Deep learning:**\
+  \ PyTorch (`torch`, `torch.nn`, `torch.optim`, `torch.utils.data`)\n- **Data:** `kagglehub` (dataset\
+  \ download), `torchvision.transforms`, `PIL`\n- **Metrics:** scikit-learn (`accuracy_score`, `precision_recall_fscore_support`,\
+  \ `confusion_matrix`)\n- **Visualization:** matplotlib, seaborn\n\n## Requirements\n\n```bash\npip install\
+  \ torch torchvision kagglehub numpy matplotlib seaborn scikit-learn pillow\n```\n\nA CUDA GPU is strongly\
+  \ recommended — the Attention U-Net (6 levels, 4-conv blocks) has roughly **250M parameters**. On multi-GPU\
+  \ environments (e.g. Kaggle's T4 ×2), the learning-rate ablation cell can be pointed at a second GPU\
+  \ to avoid contention with the main training run.\n\n## Usage\n\n```bash\njupyter notebook brisc.ipynb\n\
+  ```\n\nRun cells top to bottom. Key things to know before running:\n\n- The dataset downloads automatically\
+  \ on first run via `kagglehub` — no manual setup needed.\n- If re-running after modifying any model\
+  \ architecture, do a full restart (**Kernel → Restart & Run All**) rather than resuming partway, since\
+  \ later cells load saved weights (`unet_v1_req1.pth`) that must match the currently defined architecture.\n\
+  \n\n\n## Notes & Known Limitations\n\n- **Train/validation split timing:** the segmentation and classification\
+  \ splits are both created *before* training starts, specifically to prevent the model from being evaluated\
+  \ on data it has already seen.\n- **Memory:** the Attention U-Net's 6-level, 4-conv-block design is\
+  \ substantially heavier than the baseline U-Net. If you hit a CUDA out-of-memory error, lower the batch\
+  \ size before reducing model depth.\n- **Frozen encoder:** the classification head only updates its\
+  \ own weights; the segmentation encoder's weights stay fixed at their pretrained values from the `UNet`\
+  \ run.\n"

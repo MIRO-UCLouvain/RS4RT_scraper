@@ -1,0 +1,69 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Nandu-000/predict_radiomics
+url: https://github.com/Nandu-000/predict_radiomics
+platform: github
+description: This project implements a radiomics-based pipeline for extracting quantitative features from
+  CT scans and analyzing their association with coronary calcium burden using Agatston scoring.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-03-29T15:23:30Z'
+image_source: null
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 3 support term(s).
+readme_excerpt: "# Radiomics Feature Extraction and Calcium Phenotyping from CT Scans\n\n## Overview\n\
+  \nThis project implements a radiomics-based pipeline for extracting quantitative features from CT scans\
+  \ and analyzing their association with coronary calcium burden using Agatston scoring.\n\nThe pipeline\
+  \ is designed to be **dataset-agnostic** and supports both **NIfTI (.nii/.nii.gz)** and **DICOM (.dcm)**\
+  \ formats, enabling direct use with clinical datasets such as the Stanford COCA dataset.\n\n---\n\n\
+  ## Pipeline Architecture\n\n```\nCT Scan (DICOM / NIfTI)\n        ↓\nPreprocessing (Resampling + HU\
+  \ Windowing)\n        ↓\nCalcium Mask (HU > 130)\n        ↓\nRadiomics Feature Extraction (Shape + Texture)\n\
+  \        ↓\nAgatston Score Calculation\n        ↓\nStatistical Analysis & Visualization\n```\n\n---\n\
+  \n## Features Extracted\n\n### Shape Features\n\n* Sphericity\n* Surface Volume Ratio\n* Maximum 3D\
+  \ Diameter\n\n### Texture Features\n\n* **GLCM**: Contrast, Correlation, Inverse Difference Moment\n\
+  * **GLSZM**: Small Area Emphasis, Large Area Emphasis, Zone Percentage\n* **GLRLM**: Short Run Emphasis,\
+  \ Long Run Emphasis, Run Percentage\n\n---\n\n## Installation\n\nCreate a virtual environment and install\
+  \ dependencies:\n\n```bash\npip install -r requirements.txt\n```\n\n---\n\n## How to Run\n\n### 1. Generate\
+  \ Sample Data (for testing)\n\n```bash\npython src/generate_test_data.py\n```\n\n### 2. Run Feature\
+  \ Extraction Pipeline\n\n```bash\npython src/analysis.py\n```\n\n### 3. Run Analysis\n\nOpen:\n\n```\n\
+  notebooks/analysis.ipynb\n```\n\n---\n\n## Input Data Support\n\n### Supported Formats\n\n* `.nii`,\
+  \ `.nii.gz` (NIfTI)\n* DICOM folders (each folder = one scan)\n\n### Example Structure\n\n```\ndata/raw/\n\
+  \n# NIfTI\nscan_1.nii.gz\nscan_2.nii.gz\n\n# OR DICOM\npatient_001/\n    ├── IM-0001-0001.dcm\n    ├──\
+  \ IM-0001-0002.dcm\n```\n\n---\n\n## Agatston Score Categories\n\n| Category | Score Range |\n| --------\
+  \ | ----------- |\n| 0        | 0           |\n| 1        | 1–99        |\n| 2        | 100–399    \
+  \ |\n| 3        | ≥ 400       |\n\n---\n\n## Results & Observations\n\n* Texture-based radiomic features\
+  \ (e.g., GLCM contrast and correlation) show measurable association with calcium burden.\n* Shape features\
+  \ exhibit weaker correlation compared to texture features.\n* Dimensionality reduction using t-SNE demonstrates\
+  \ partial clustering across calcium burden categories.\n* Radiomics features capture heterogeneity in\
+  \ calcium distribution patterns.\nResults Interpretation\n* The results presented are based on synthetic\
+  \ data and are intended to demonstrate pipeline functionality rather than clinical validity.\n\nRadiomic\
+  \ texture features such as GLCM contrast and correlation demonstrated measurable association with Agatston\
+  \ scores, indicating sensitivity to calcium distribution heterogeneity. Shape features exhibited weaker\
+  \ correlations, suggesting that spatial distribution and texture of calcifications provide more discriminative\
+  \ information than global morphology.\n\nNon-parametric statistical testing (Kruskal-Wallis) further\
+  \ confirmed that several radiomic features vary significantly across calcium burden categories (p <\
+  \ 0.05).\n\nDimensionality reduction using t-SNE showed partial clustering of samples across categories,\
+  \ supporting the hypothesis that radiomics can capture underlying phenotypic differences in calcium\
+  \ deposition.\n---\n\n## Limitations\n\n* Calcium detection is based on a simple threshold (HU > 130),\
+  \ which may include non-coronary calcifications (e.g., bone).\n* Agatston score calculation is simplified\
+  \ and does not fully incorporate slice thickness weighting.\n* Synthetic data is used for testing; real-world\
+  \ validation is required for clinical deployment.\n* Due to computational and storage constraints, synthetic\
+  \ CT volumes were used to validate the pipeline during development. However, the pipeline is designed\
+  \ to be dataset-agnostic and supports direct processing of real clinical datasets such as the Stanford\
+  \ COCA dataset via DICOM or NIfTI inputs.\n\n---\n\n## Future Improvements\n\n* Integrate anatomical\
+  \ heart segmentation for precise calcium localization\n* Validate against ground truth Agatston scores\
+  \ (XML annotations)\n* Improve calcium detection using learning-based methods\n* Extend pipeline for\
+  \ phenotype clustering and risk prediction\n\n---\n\n## Technologies Used\n\n* Python\n* SimpleITK\n\
+  * PyRadiomics\n* NumPy / Pandas\n* Scikit-learn\n* Matplotlib / Seaborn\n\n---\n\n## Reproducibility\n\
+  \nThe project is fully reproducible:\n\n```bash\ngit clone <repo>\npip install -r requirements.txt\n\
+  python src/generate_test_data.py\npython src/analysis.py\n```\n\n---\n\n## Notes for GSoC Evaluation\n\
+  \n* The pipeline is modular and easily extensible for segmentation, phenotyping, and predictive modeling\
+  \ tasks.\n* Designed to work with real datasets such as COCA after DICOM loading.\n* Emphasis is placed\
+  \ on interpretability, statistical analysis, and reproducibility rather than model complexity.\n\n---"

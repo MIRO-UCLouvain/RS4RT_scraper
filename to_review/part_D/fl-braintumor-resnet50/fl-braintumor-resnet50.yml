@@ -1,0 +1,53 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hamzaadil1/FL_BrainTumor-RESNET50
+url: https://github.com/hamzaadil1/FL_BrainTumor-RESNET50
+platform: github
+description: Federated Learning framework for bias-resilient multi-class brain tumor segmentation on the
+  BraTS dataset (4 classes). Compares BR-FedAvg vs standard FedAvg, with ANFIS-based aggregation and a
+  simulated Human-in-the-Loop (LLM) component. Includes data quality analysis and full result visualizations.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-04T08:14:11Z'
+image_source: null
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+readme_excerpt: "# Federated Learning for Bias-Resilient Brain Tumor Segmentation\n\nA federated learning\
+  \ (FL) framework for **multi-class brain tumor segmentation** on the BraTS dataset, designed to be resilient\
+  \ to client data bias. The project compares several aggregation strategies, adds a fuzzy (ANFIS) aggregation\
+  \ method, and includes a simulated Human-in-the-Loop (HITL) feedback mechanism. Everything is built\
+  \ to run on **free-tier Google Colab**.\n\n## Overview\n\nInstead of pooling all patient data in one\
+  \ place, federated learning trains a shared model across multiple clients (e.g. hospitals) while the\
+  \ data stays local. This is well-suited to medical imaging, where data is sensitive and unevenly distributed.\
+  \ This notebook trains a U-Net for 4-class tumor segmentation and studies how different aggregation\
+  \ methods cope with biased, imbalanced client data.\n\n## Key Features\n\n- **Multi-class segmentation**\
+  \ — 4 BraTS classes: `Background`, `Necrotic Core`, `Edema`, `Enhancing Tumor`\n- **Multi-class U-Net**\
+  \ built in PyTorch (`MultiClassUNet`)\n- **Aggregation methods compared:**\n  - `FedAvg` — standard\
+  \ size-weighted averaging\n  - `BR-FedAvg` — bias-resilient weighting based on client Dice scores\n\
+  \  - `ANFIS aggregation` — fuzzy-logic weighting using Dice + cosine similarity\n- **Human-in-the-Loop\
+  \ (HITL)** — LLM-simulated feedback that adjusts client sample weights between rounds\n- **Data Quality\
+  \ Analysis** — per-client class imbalance and bias detection before training\n- **Loss functions** —\
+  \ Multi-class Dice loss, combined loss, and Unified Focal loss with label smoothing\n- **Auto-save protection**\
+  \ — models and client splits saved to Google Drive to survive Colab disconnects\n\n## Dataset\n\n- **BraTS**\
+  \ (Brain Tumor Segmentation) — multi-modal MRI volumes (~570 MB download)\n- Preprocessed into 4-class\
+  \ masks and split across **3 simulated clients** (40% / 30% / 30%)\n\n## Pipeline\n\n1. Install libraries\
+  \ and configure (Cells 1–2)\n2. Mount Google Drive and download/unzip BraTS (Cells 3–4)\n3. Multi-class\
+  \ preprocessing and client splitting (Cells 5–6)\n4. Data quality / bias analysis per client (Cell 6)\n\
+  5. Build U-Net, losses, and metrics (Cells 7–9)\n6. Local training + aggregation methods (Cells 10–11)\n\
+  7. HITL feedback simulation (Cell 12)\n8. Full FL training loop with all methods (Cell 13)\n9. Load\
+  \ saved models and plot all result graphs\n\n## Configuration (default — tuned for free Colab)\n\n|\
+  \ Setting | Value |\n| --- | --- |\n| FL rounds | 5 |\n| Local epochs / round | 2 |\n| Number of clients\
+  \ | 3 |\n\nThese are kept low for free Colab; increase them if you have more compute.\n\n## Requirements\n\
+  \n```bash\npip install nibabel opencv-python tqdm scikit-fuzzy\n```\n\nAlso requires: `torch`, `numpy`,\
+  \ `matplotlib`. Designed to run in Google Colab with a GPU runtime.\n\n## How to Run\n\n1. Open `FL_BrainTumor_.ipynb`\
+  \ in Google Colab.\n2. Set runtime to **GPU** (Runtime → Change runtime type → GPU).\n3. Run the cells\
+  \ in order from top to bottom.\n4. Models and histories are auto-saved to `MyDrive/FL_BrainTumor/`.\n\
+  \n## Results\n\nThe notebook generates comparison plots across `FedAvg`, `BR-FedAvg`, `ANFIS`, and `ANFIS+HITL`,\
+  \ showing Dice scores, the bias gap between clients, and per-class performance.\n\n## Project Structure\n\
+  \n```\nFL_BrainTumor_.ipynb    # Main notebook (full pipeline)\nREADME.md               # This file\n\
+  ```\n\n## License\n\nAdd your preferred license here (e.g. MIT).\n"

@@ -1,0 +1,81 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: SarvagyaGupta-19/CBCT-Tooth-Segmentation-Pipeline
+url: https://github.com/SarvagyaGupta-19/CBCT-Tooth-Segmentation-Pipeline
+platform: github
+description: 'MaxilloSeg: An end-to-end 3D deep learning pipeline for dental CBCT scans. Powered by nnU-Net
+  for automated FDI numbering, jawbone mapping, and restoration flagging.'
+license: null
+language: Python
+keywords: []
+stars: 2
+updated_at: '2026-06-01T16:15:02Z'
+image_source: https://raw.githubusercontent.com/SarvagyaGupta-19/CBCT-Tooth-Segmentation-Pipeline/HEAD/assets/viewer_screenshot.png
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# MaxilloSeg: 3D Dental CBCT Segmentation Pipeline\n\n![Python](https://img.shields.io/badge/Python-3.10%2B-blue)\
+  \ ![PyTorch](https://img.shields.io/badge/PyTorch-2.1%2B-ee4c2c) ![nnU-Net](https://img.shields.io/badge/nnU--Net-v2-green)\n\
+  \n**MaxilloSeg** is a production-ready, deep-learning pipeline engineered to perform highly accurate\
+  \ 3D maxillofacial segmentation on Cone Beam Computed Tomography (CBCT) scans. Designed to seamlessly\
+  \ ingest raw `.mha` and `.nii.gz` volumes, the system automates FDI tooth numbering, jawbone classification\
+  \ (Mandible/Maxilla), and detects metallic restorations natively.\n\n> [!IMPORTANT]  \n> **Project Status:\
+  \ Architecture & Codebase Complete (Untrained)**  \n> *Due to physical hardware and GPU compute constraints,\
+  \ the deep-learning models detailed in this repository have not been actively trained. This repository\
+  \ currently serves as a complete structural, architectural, and procedural codebase mapping out exactly\
+  \ how the inference, preprocessing, and 3D UI logic should be executed once compute becomes available.*\n\
+  \n<p align=\"center\">\n  <img src=\"./assets/viewer_screenshot.png\" alt=\"3D CBCT HTML Viewer\" width=\"\
+  85%\"/>\n</p>\n\n## \U0001F4A1 What It Does\n\nDentistry and oral surgery require precise pre-operative\
+  \ planning. MaxilloSeg automates the tedious process of manual tooth annotation and structural mapping\
+  \ by providing:\n1. **Automated FDI Numbering:** Isolates and uniquely labels 32 individual teeth in\
+  \ 3D space.\n2. **Anatomical Mapping:** Automatically separates the Mandible (lower jaw) and Maxilla\
+  \ (upper jaw) structures.\n3. **Restoration Flagging:** Detects crowns, implants, and metallic artifacts\
+  \ by evaluating material density (Hounsfield Units).\n4. **Interactive 3D Visualization:** Allows users\
+  \ to view and manipulate the generated 3D segmentations directly in any web browser without needing\
+  \ heavy clinical software.\n\n## ⚙️ How It Works (Pipeline)\n\nThe workflow consists of three distinct\
+  \ phases: **Preprocessing**, **AI Inference**, and **Algorithmic Post-Processing**.\n\n```mermaid\n\
+  graph TD\n    A[Raw CBCT Scan .mha / .nii.gz] --> B(Preprocessing: Isotropic Resampling & HU Normalization);\n\
+  \    B --> C{Primary AI Engine: nnU-Net v2};\n    C -->|33 Channel Semantic Output| D[3D Voxel Segmentation];\n\
+  \    D --> E(Algorithmic Post-Processing);\n    E --> F[LCC Filtering for Artifact Removal];\n    E\
+  \ --> G[Jaw Anatomy Mapping: Mandible / Maxilla];\n    E --> H[HU Thresholding: Restoration Detection];\n\
+  \    F --> I((Final Output JSON Label Graphs));\n    G --> I;\n    H --> I;\n    I --> J[WebGL 3D Interactive\
+  \ Viewer];\n```\n\n1. **Preprocessing:** Scans are resampled to uniform voxel spacing and normalized\
+  \ to standard Hounsfield Unit (HU) densities. This ensures the AI model receives consistent, unskewed\
+  \ spatial data regardless of the scanning machine.\n2. **AI Inference:** The core `nnU-Net` model processes\
+  \ the volume to assign semantic classes (Background + 32 FDI teeth) to every 3D voxel coordinate.\n\
+  3. **Refinement:** The system algorithms drop isolated floating pixels (artifacts), calculate which\
+  \ teeth belong to the upper or lower jaw based on geometric coordinates, and flag metallic density anomalies\
+  \ (>1500 HU) as specific dental restorations.\n\n## \U0001F3D7️ System Architecture\n\nMaxilloSeg utilizes\
+  \ a two-pronged strategy: a self-configuring neural network architecture paired with rigid deterministic\
+  \ post-processing algorithms.\n\n```mermaid\ngraph LR\n    subgraph Data Input\n    A(Raw Volume Scans)\n\
+  \    end\n    subgraph Core AI Model: nnU-Net v2\n    B[ResEncL Backbone]\n    C[Self-Configuring Augmentations]\n\
+  \    D[3D Full-Resolution Topology]\n    B --> D\n    C --> D\n    end\n    subgraph Post-Processing\
+  \ Logic\n    E[Connected Component Isolation]\n    F[Density Checks >1500 HU]\n    end\n    A --> B\n\
+  \    D --> E\n    E --> F\n    F --> G(FDI Multi-class Segments & Restoration Flags)\n```\n\n*   **Backbone:**\
+  \ We utilize the robust 3D full-resolution layout using a Residual Encoder (`ResEncL`) preset from `nnU-Net\
+  \ v2`.\n*   **Why nnU-Net?:** It automatically analyzes voxel spacings and class imbalances, autonomously\
+  \ configuring batch sizes and augmentations. It eliminates human bias from the preprocessing layer,\
+  \ routinely achieving benchmark-breaking performance in medical datasets.\n\n## \U0001F4C2 Codebase\
+  \ Structure\n\nThe repository is cleanly segmented into pipeline actions:\n\n```text\ncbct_seg/\n├──\
+  \ scripts/\n│   ├── nnunet_pipeline.py      # Production workflow (Convert → Preprocess → Train → Infer)\n\
+  │   ├── unet_inference.py       # Standalone Sliding-window inference logic\n│   ├── unet_training.py\
+  \        # Fallback PyTorch 3D U-Net baseline architecture\n│   └── unet_preprocessing.py   # Baseline\
+  \ volume manipulation (Isotropic Resampling / HU Norm)\n├── viewer/\n│   └── index.html            \
+  \  # Custom interactive 3D WebGL viewer (Drag-and-drop .json)\n├── assets/                     # Documentation\
+  \ UI materials       \n└── Dockerfile                  # Baseline Ubuntu + CUDA Container spec orchestration\n\
+  ```\n\n## \U0001F680 Execution & Deployment\n\nWhen compute becomes available, the pipeline is fully\
+  \ pre-configured to build entirely in the cloud or via local Docker containers.\n\n### Google Colab\
+  \ Execution\n1. Ensure the dataset `.zip` is uploaded to Google Drive.\n2. Open `COLAB_GUIDE.md` and\
+  \ execute the defined cells sequentially. \n3. The codebase dynamically interfaces with broken zip structures\
+  \ and establishes proper `dataset.json` keys to execute Epoch 1.\n\n### Local Docker Orchestration\n\
+  ```bash\n# Build the container\ndocker build -t maxilloseg-pipeline .\n\n# Simulate single-scan inference\
+  \ (Requires pre-trained weights in /runs)\ndocker run --gpus all -v /data:/data -v /runs:/runs -v /results:/results\
+  \ maxilloseg-pipeline\n```\n\n## \U0001F4CA Evaluation Criteria\n\nOnce trained, the pipeline will evaluate\
+  \ via the following metrics across 33 semantic classes:\n* **Dice Coefficient:** Volumetric overlap\
+  \ accuracy per FDI tooth.\n* **Hausdorff95:** Edge-boundary structural alignment tracking in absolute\
+  \ millimeters.\n"

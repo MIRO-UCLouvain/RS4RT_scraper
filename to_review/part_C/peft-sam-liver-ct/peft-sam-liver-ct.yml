@@ -1,0 +1,114 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Ramtin-Mojtahedi/peft-sam-liver-ct
+url: https://github.com/Ramtin-Mojtahedi/peft-sam-liver-ct
+platform: github
+description: Official code for “Parameter-Efficient Fine-Tuning of Foundation Models for Liver Tumor Segmentation
+  in CT” (SAM/MedSAM-style PEFT + prompting).
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-08-03T07:20:49Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# Parameter-efficient fine-tuning of foundation models for liver tumor segmentation in\
+  \ CT\n\n[![DOI](https://img.shields.io/badge/DOI-10.1117%2F12.3087835-blue)](https://doi.org/10.1117/12.3087835)\n\
+  ![Status](https://img.shields.io/badge/status-research%20snapshot-6c757d)\n![License](https://img.shields.io/badge/license-none%20declared-lightgrey)\n\
+  \nResearch code associated with:\n\n> Ramtin Mojtahedi, Mohammad Hamghalam, Jacob J. Peoples, Richard\
+  \ K. G. Do, and Amber L. Simpson. “Parameter-efficient fine-tuning of foundation models for liver tumor\
+  \ segmentation in CT.” *Medical Imaging 2026: Computer-Aided Diagnosis*, Proceedings of SPIE, vol. 13926,\
+  \ pp. 260–268, article 1392612, 2026. [https://doi.org/10.1117/12.3087835](https://doi.org/10.1117/12.3087835)\n\
+  \n<!-- repository-guide:start -->\n## At a glance\n\n[Paper](https://doi.org/10.1117/12.3087835) · [Code\
+  \ map](#what-is-included) · [Missing components](#missing-runtime-components) · [Environment assumptions](#hard-coded-environment-assumptions)\
+  \ · [Data and weights](#data-and-model-availability) · [`CITATION.cff`](CITATION.cff)\n\n### Dependency\
+  \ evidence\n\n| Area | Packages imported by committed files |\n|---|---|\n| Training and evaluation\
+  \ | `torch`, `torchvision`, `monai`, `numpy`, `scikit-learn`, `scikit-image`, `Pillow`, `einops`, `tensorboardX`,\
+  \ `matplotlib`, `seaborn`, `tqdm`, `python-dateutil` |\n| Adapters and profiling | `peft`, `transformers`;\
+  \ conditional `bitsandbytes`; optional `ptflops` |\n| Notebook analysis | `nibabel`, `scipy`, `pandas`\
+  \ |\n| Perceptual helper | `lucent` |\n| Unresolved references | `pytorch_ssim` and the absent local\
+  \ `dataset`, `conf`, and `models` modules |\n\nNo versions are pinned; this table is an import inventory,\
+  \ not a tested installation specification.\n\n### Workflow represented by the snapshot\n\n```mermaid\n\
+  flowchart LR\n    A[\"Private 3D CT volumes and tumour labels<br/>(not included)\"] --> B[\"Notebook\
+  \ preprocessing<br/>NIfTI to 2D PNG images and masks\"]\n    B --> C[\"Dataset loader<br/>(referenced,\
+  \ not included)\"]\n    C --> D[\"SAM-family backbone and base checkpoint<br/>(implementations and weights\
+  \ not included)\"]\n    D --> E[\"Full tuning or adapter injection<br/>LoRA · QLoRA · Conv · RoSA ·\
+  \ DiSCo\"]\n    E --> F[\"Fold-based prompt-conditioned training\"]\n    F --> G[\"Validation with point,\
+  \ box, or no-prompt modes\"]\n    G --> H[\"IoU · Dice · HD95\"]\n    H --> I[\"Checkpoints · CSV/JSON\
+  \ summaries · plots\"]\n```\n\n> **Reproducibility boundary:** the diagram documents committed control\
+  \ flow, not a runnable recipe. Missing local modules, private data, base weights, absolute paths, and\
+  \ an unpinned environment prevent reproduction from a fresh clone.\n<!-- repository-guide:end -->\n\n\
+  ## Repository status\n\n> **Important:** this repository is an archival research snapshot. It is **not\
+  \ a standalone or turnkey implementation**, and it cannot reproduce the paper from a fresh clone.\n\n\
+  The snapshot preserves selected experiment code for adapting SAM/MedSAM-style segmentation models to\
+  \ CT liver-tumor segmentation. It contains configuration, training, validation, adapter, metric, and\
+  \ notebook code, but it does not contain the complete runtime used in the study.\n\nSpecifically:\n\n\
+  - the in-house colorectal liver metastasis CT images, tumor masks, patient-level splits, and clinical\
+  \ metadata are not included;\n- the dataset loader, model implementations, runtime settings module,\
+  \ and one imported SSIM module are absent;\n- SAM/MedSAM checkpoints and trained adapter checkpoints\
+  \ are not versioned here;\n- there is no dependency lockfile, requirements file, container, or tested\
+  \ environment specification;\n- several source files and notebook cells contain workstation-specific\
+  \ absolute paths; and\n- no software license has been declared.\n\nTreat this repository as a transparent\
+  \ record of selected research code, not as a validated clinical product or a fully reproducible package.\n\
+  \n## What is included\n\n| Path | Contents |\n|---|---|\n| `cfg.py` | Command-line configuration for\
+  \ model, adapter, optimization, prompts, cross-validation, and data paths. |\n| `train.py` | Training\
+  \ and cross-validation orchestration, checkpointing, result export, and experiment summaries. |\n| `val.py`\
+  \ | Checkpoint-loading and validation entry point. |\n| `function.py` | SAM-style training and validation\
+  \ functions, prompting, loss wiring, and evaluation logic. |\n| `utils.py` | Adapter implementations,\
+  \ model assembly helpers, metrics, logging, plotting, checkpoint utilities, and MONAI helpers. |\n|\
+  \ `precpt.py` | VGG/Lucent-based perceptual-loss helper. Despite its filename, it is not a complete\
+  \ dataset-preprocessing pipeline. |\n| `MedSAM2D_Tumours.ipynb` | Historical data-preparation, experiment-launch,\
+  \ evaluation, aggregation, and visualization notebook with retained cell outputs. |\n| `CITATION.cff`\
+  \ | Machine-readable citation metadata for the accompanying paper. |\n\n## Missing runtime components\n\
+  \nThe following imports are referenced by the committed source but are not present in this snapshot:\n\
+  \n| Referenced component | Used by | Why it matters |\n|---|---|---|\n| `dataset.py` / `dataset` | `train.py`,\
+  \ `val.py`, `precpt.py` | Defines dataset classes and `get_dataloader`; without it, the input schema\
+  \ and split logic are unavailable. |\n| `conf.py` / `conf.settings` | `train.py`, `val.py`, `function.py`\
+  \ | Supplies runtime settings such as timestamps and output conventions. |\n| `models/` | `function.py`,\
+  \ `utils.py` | Supplies SAM, EfficientSAM, and MobileSAM model code and transforms. |\n| `pytorch_ssim`\
+  \ | `function.py` | Imported by the loss/evaluation code but neither included nor pinned as a dependency.\
+  \ |\n\nThe code also imports third-party packages including PyTorch, torchvision, MONAI, Transformers,\
+  \ scikit-learn, scikit-image, tensorboardX, einops, Pillow, NumPy, Matplotlib, seaborn, tqdm, python-dateutil,\
+  \ and Lucent. Their exact versions are not recorded.\n\nBecause `dataset.py` is missing, a reliable\
+  \ input-directory contract cannot be inferred from this repository alone. Do not assume that a generic\
+  \ `images/` and `labels/` layout will reproduce the study.\n\n## Hard-coded environment assumptions\n\
+  \nBefore attempting any reconstruction, review and replace the following:\n\n- `train.py` writes experiments\
+  \ beneath `/mnt/largedrive1/rmojtahedi/medsam_adapter`.\n- `MedSAM2D_Tumours.ipynb` contains numerous\
+  \ `/mnt/largedrive0/...`, `/mnt/largedrive1/...`, and `/home/rmojtahedi/...` paths for private data,\
+  \ checkpoints, cached weights, and results.\n- `cfg.py` defaults to `../data` and `sam_vit_b_01ec64.pth`;\
+  \ neither target is included.\n- `utils.py` contains a historical example checkpoint path under `./logs/siren_train_init_2022_08_19_21_00_16/...`.\n\
+  - Retained notebook outputs refer to experiment directories and checkpoints that are not part of this\
+  \ repository.\n\nThese paths document the original workstation layout; they are not portable configuration\
+  \ defaults.\n\n## Clone for inspection\n\n```bash\ngit clone https://github.com/Ramtin-Mojtahedi/peft-sam-liver-ct.git\n\
+  cd peft-sam-liver-ct\n```\n\nA successful clone does not make the training or validation commands runnable.\
+  \ To reconstruct the environment, a researcher would need to:\n\n1. obtain authorized access to the\
+  \ study data, masks, and exact patient-level splits;\n2. restore the missing `dataset`, `conf`, `models`,\
+  \ and `pytorch_ssim` components in versions compatible with this snapshot;\n3. obtain the exact SAM/MedSAM\
+  \ base weights and study checkpoints;\n4. replace every absolute data, checkpoint, cache, and output\
+  \ path;\n5. reconstruct and record a compatible dependency environment; and\n6. verify all configuration\
+  \ values against the paper and original experiment records.\n\nUntil those pieces are restored, `python\
+  \ train.py`, `python val.py`, and the notebook should be expected to fail or to produce non-comparable\
+  \ results.\n\n## Data and model availability\n\nThe patient CT data and annotations used in the study\
+  \ are not distributed in this repository. They may be subject to institutional approvals, privacy constraints,\
+  \ and data-use agreements. Do not add identifiable or restricted clinical data to a public fork.\n\n\
+  No base-model or trained-adapter weight file is committed in this snapshot. Any separately obtained\
+  \ weights remain subject to their own terms and provenance requirements.\n\nFor access questions, consult\
+  \ the paper and contact the authors.\n\n## Citation\n\nIf this repository informs your work, cite the\
+  \ accompanying paper:\n\n```bibtex\n@inproceedings{mojtahedi2026parameter,\n  author    = {Mojtahedi,\
+  \ Ramtin and Hamghalam, Mohammad and Peoples, Jacob J. and Do, Richard K. G. and Simpson, Amber L.},\n\
+  \  title     = {Parameter-efficient fine-tuning of foundation models for liver tumor segmentation in\
+  \ {CT}},\n  booktitle = {Medical Imaging 2026: Computer-Aided Diagnosis},\n  series    = {Proceedings\
+  \ of SPIE},\n  volume    = {13926},\n  pages     = {260--268},\n  year      = {2026},\n  publisher =\
+  \ {SPIE},\n  doi       = {10.1117/12.3087835},\n  url       = {https://doi.org/10.1117/12.3087835}\n\
+  }\n```\n\nGitHub can also expose this citation through `CITATION.cff`.\n\n## Funding\n\nThe associated\
+  \ work acknowledges support from the National Institutes of Health / National Cancer Institute under\
+  \ awards R01CA233888 and U01CA238444.\n\n## License and reuse\n\n**No license file or software license\
+  \ grant is included.** The repository’s public visibility does not by itself grant permission to copy,\
+  \ modify, redistribute, or incorporate the code into another project. Unless an exception in applicable\
+  \ law applies, obtain permission from the relevant rights holders before reuse.\n\nFor permissions or\
+  \ research questions, contact the authors or open an issue with the repository owner.\n"

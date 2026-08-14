@@ -1,0 +1,90 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Lasa937/Neuro-Radiomic_Pipeline
+url: https://github.com/Lasa937/Neuro-Radiomic_Pipeline
+platform: github
+description: A fully open source, automated and explainable radiomics pipeline for neuro-imaging MRI
+license: MIT
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-01-15T07:31:20Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# Medical Image Analysis Pipeline for Brain Tumor Classification\n\n## Overview\nThis\
+  \ repository contains a comprehensive pipeline for medical image analysis and machine learning classification\
+  \ of brain tumor types (Class1 and Class2). The pipeline can be used on multiple MRI sequences, extracts\
+  \ radiomic features, evaluates feature robustness, and builds predictive models.\n\n## Pipeline Structure\n\
+  \nThe analysis consists of 5 sequential Python scripts:\n\n### 1. `1_Normalization.py`\n- **Purpose**:\
+  \ Normalizes MRI images using brainstem intensity values\n- **Input**: Raw MRI sequences (T1, T1CE,\
+  \ T2, FLAIR) and corresponding segmentation files\n- **Output**: Normalized MRI sequences\n- **Method**:\
+  \ Uses median and interquartile range (IQR) of brainstem intensities for normalization\n- **Compatibility**:\
+  \ Works with all standard MRI sequences\n\n### 2. `2_Seg_Perturbation.py`\n- **Purpose**: Generates\
+  \ modified segmentation masks to simulate real-world variations\n- **Input**: Normalized MRI sequences\
+  \ and original segmentations\n- **Output**: Three types of modified segmentations for each MRI sequence:\n\
+  \  - Combined segmentation (merging labels)\n  - Random zero-pixel segmentation\n  - Human error simulation\
+  \ segmentation\n- **Method**: Applies morphological operations and random modifications\n- **Note**:\
+  \ Processes all available MRI sequences in the input directory\n\n### 3. `3_Features_Extraction.py`\n\
+  - **Purpose**: Extracts radiomic features from multiple MRI sequences and evaluates their robustness\n\
+  - **Input**: Normalized MRI sequences and modified segmentations\n- **Output**: \n  - Extracted features\
+  \ for Class1 and Class2 from each MRI sequence\n  - ICC (Intraclass Correlation Coefficient) analysis\
+  \ per sequence type\n  - Robust feature selection (ICC ≥ 0.75) for each sequence\n  - Mean feature values\
+  \ across segmentations\n- **Method**: Uses PyRadiomics library for feature extraction across all MRI\
+  \ sequences\n\n### 4. `4_ML_Analysis.py`\n- **Purpose**: Machine learning classification and model interpretation\
+  \ using features from multiple MRI sequences\n- **Input**: Mean features and robust feature lists from\
+  \ all available sequences\n- **Output**: \n  - Cross-validated performance metrics\n  - SHAP feature\
+  \ importance analysis\n  - ROC curves and confusion matrices\n  - Excel reports with results\n- **Models**:\
+  \ Random Forest and XGBoost classifiers\n- **Method**: 5-fold stratified cross-validation with SMOTE\
+  \ for class balancing\n- **Feature Integration**: Combines features from all MRI sequences for comprehensive\
+  \ analysis\n\n### 5. `5_plots.py`\n- **Purpose**: Comparative visualization of model performance across\
+  \ feature sets\n- **Input**: Results from ML analysis using different MRI sequences\n- **Output**: Comparison\
+  \ plots between all features vs. robust features\n- **Metrics**: Accuracy, Balanced Accuracy, Precision,\
+  \ Recall, F1-Score, AUC-ROC\n\n## Usage Instructions\n\n### Prerequisites\n- Python 3.7+\n- Required\
+  \ libraries: \n  - SimpleITK, PyRadiomics, nibabel, scipy, scikit-learn, imbalanced-learn, xgboost,\
+  \ SHAP, pandas, numpy, matplotlib, seaborn, openpyxl\n\n### Supported MRI Sequences\nThe pipeline is\
+  \ designed to work with all standard MRI sequences:\n- **T1-weighted (T1)**\n- **T1-weighted contrast-enhanced\
+  \ (T1CE)**\n- **T2-weighted (T2)**\n- **Fluid-attenuated inversion recovery (FLAIR)**\n- **Other MRI\
+  \ sequences** (with appropriate file naming)\n\n### Step-by-Step Execution\n\n1. **Normalize MRI Sequences**:\n\
+  \   ```bash\n   python 1_Normalization.py\n   ```\n   - Update file paths for your MRI sequences and\
+  \ segmentation directories\n   - Script processes all MRI sequences found in the input directory\n\n\
+  2. **Generate Modified Segmentations**:\n   ```bash\n   python 2_Seg_Perturbation.py\n   ```\n   - Uses\
+  \ normalized images from Step 1 for all available sequences\n   - Generates modified segmentations for\
+  \ each MRI sequence type\n\n3. **Extract and Analyze Features**:\n   ```bash\n   python 3_Features_Extraction.py\n\
+  \   ```\n   - Processes all three segmentation types for each MRI sequence\n   - Identifies robust features\
+  \ using ICC analysis per sequence type\n   - Can be run separately for different MRI sequences or combined\n\
+  \n4. **Run Machine Learning Analysis**:\n   ```bash\n   python 4_ML_Analysis.py\n   ```\n   - Trains\
+  \ and evaluates both Random Forest and XGBoost models\n   - Can analyze features from individual sequences\
+  \ or combined multi-sequence features\n   - Generates comprehensive performance reports\n\n5. **Generate\
+  \ Comparative Plots**:\n   ```bash\n   python 5_plots.py\n   ```\n   - Visualizes performance differences\
+  \ between feature sets\n   - Can compare performance across different MRI sequences\n\n## File Structure\
+  \ Requirements\n\nBefore running the pipeline, ensure you have the following directory structure:\n\n\
+  ```\nproject_root/\n├── raw_data/\n│   ├── MRI_sequences/\n│   │   ├── T1/            # T1-weighted\
+  \ images\n│   │   ├── T1CE/          # T1 contrast-enhanced images\n│   │   ├── T2/            # T2-weighted\
+  \ images\n│   │   ├── FLAIR/         # FLAIR images\n│   │   └── [other_sequences]/\n│   ├── segmentations/\
+  \      # Original segmentation masks\n│   └── pathology_labels/   # Class labels (Class1/Class2)\n├──\
+  \ normalized_images/      # Output from 1_Normalization.py\n│   ├── T1/\n│   ├── T1CE/\n│   ├── T2/\n\
+  │   └── FLAIR/\n├── modified_segmentations/ # Output from 2_Seg_Perturbation.py\n│   ├── T1/\n│   ├──\
+  \ T1CE/\n│   ├── T2/\n│   └── FLAIR/\n└── results/               # Output from 3, 4, 5 scripts\n   \
+  \ ├── features/\n    │   ├── T1/\n    │   ├── T1CE/\n    │   ├── T2/\n    │   └── FLAIR/\n    ├── ICC_analysis/\n\
+  \    └── ML_results/\n```\n\n## Configuration\n\nUpdate the following paths in each script before execution:\n\
+  - Input directories for MRI sequences and segmentations\n- Output directories for processed files and\
+  \ results\n- Pathology label file paths\n- Specify which MRI sequences to include in the analysis\n\n\
+  ## Multi-Sequence Analysis Options\n\nThe pipeline supports several analysis approaches:\n\n1. **Single\
+  \ Sequence Analysis**: Run the entire pipeline for one MRI sequence type\n2. **Multi-Sequence Combined**:\
+  \ Extract features from all sequences and combine them for analysis\n3. **Sequence Comparison**: Compare\
+  \ performance across different MRI sequences\n\n## Key Features\n\n- **Multi-Sequence Support**: Compatible\
+  \ with all standard MRI sequences\n- **Robust Feature Selection**: Uses ICC analysis to identify reproducible\
+  \ features per sequence\n- **Class Imbalance Handling**: Implements SMOTE for balanced training\n- **Comprehensive\
+  \ Evaluation**: Multiple metrics and cross-validation\n- **Model Interpretability**: SHAP analysis for\
+  \ feature importance across sequences\n- **Segmentation Variability**: Accounts for real-world segmentation\
+  \ inconsistencies\n\n## Output\n\nThe pipeline generates:\n- Normalized medical images for all MRI sequences\n\
+  - Multiple segmentation variants for each sequence\n- Extracted radiomic features per sequence type\n\
+  - ICC analysis results for each MRI sequence\n- Machine learning model performance reports\n- Feature\
+  \ importance rankings across sequences\n- Comparative visualizations\n\nFor questions or issues, please\
+  \ check the script comments for detailed parameter explanations and ensure all file paths are correctly\
+  \ configured for your specific MRI sequences and environment.\n"

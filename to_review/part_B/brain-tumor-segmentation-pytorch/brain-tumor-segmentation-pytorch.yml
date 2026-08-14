@@ -1,0 +1,635 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: KalparitamGogoi/Brain-tumor-segmentation-pytorch
+url: https://github.com/KalparitamGogoi/Brain-tumor-segmentation-pytorch
+platform: github
+description: Brain Tumor Segmentation using U-Net in PyTorch with BraTS2020 dataset, BCE+Dice Loss, Mixed
+  Precision Training, and evaluation metrics.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-02T16:31:36Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: '# 🧠 Brain Tumor Segmentation using U-Net, Attention U-Net and UNet++ (PyTorch)
+
+
+  A PyTorch implementation of **U-Net**, **Attention U-Net**, and **UNet++** for automatic brain tumor
+  segmentation on the **BraTS 2020** dataset.
+
+
+  The repository provides a complete deep learning pipeline including data preprocessing, model training,
+  evaluation, prediction, visualization, and performance benchmarking for brain tumor segmentation.
+
+
+  ---
+
+
+  # 📖 Overview
+
+
+  Brain tumor segmentation plays an essential role in medical image analysis by accurately identifying
+  tumor regions for diagnosis, treatment planning, and disease monitoring.
+
+
+  This repository implements three state-of-the-art encoder-decoder architectures:
+
+
+  - **U-Net**
+
+  - **Attention U-Net**
+
+  - **UNet++ (Nested U-Net)**
+
+
+  Each model accepts the four MRI modalities from the BraTS dataset:
+
+
+  - FLAIR
+
+  - T1
+
+  - T1CE
+
+  - T2
+
+
+  and performs multi-label segmentation of:
+
+
+  - **Whole Tumor (WT)**
+
+  - **Tumor Core (TC)**
+
+  - **Enhancing Tumor (ET)**
+
+
+  ---
+
+
+  # ✨ Features
+
+
+  - ✅ U-Net implementation from scratch
+
+  - ✅ Attention U-Net implementation from scratch
+
+  - ✅ UNet++ implementation from scratch
+
+  - ✅ BraTS 2020 preprocessing pipeline
+
+  - ✅ Automatic HDF5 dataset generation
+
+  - ✅ Multi-modal MRI support
+
+  - ✅ BCE + Dice Loss
+
+  - ✅ Mixed Precision Training (AMP)
+
+  - ✅ Early Stopping
+
+  - ✅ Learning Rate Scheduler
+
+  - ✅ Dice Score & IoU evaluation
+
+  - ✅ Prediction visualization
+
+  - ✅ Automatic loss curve generation
+
+  - ✅ CSV evaluation reports
+
+  - ✅ GPU (CUDA) support
+
+
+  ---
+
+
+  # 📊 Implemented Models
+
+
+  | Model | Status |
+
+  |--------|--------|
+
+  | U-Net | ✅ |
+
+  | Attention U-Net | ✅ |
+
+  | UNet++ | ✅ |
+
+  | Boundary-Aware Deep Supervised UNet++ | 🚧 Research in Progress |
+
+
+  ---
+
+
+  # 📂 Repository Structure
+
+
+  ```text
+
+  Brain-Tumor-Segmentation/
+
+  │
+
+  ├── checkpoints/
+
+  ├── data/
+
+  ├── datasets/
+
+  │   └── dataset.py
+
+  │
+
+  ├── losses/
+
+  │   └── loss.py
+
+  │
+
+  ├── models/
+
+  │   ├── unet.py
+
+  │   ├── attention_unet.py
+
+  │   └── unetplusplus.py
+
+  │
+
+  ├── preprocess/
+
+  │   └── preprocess_brats.py
+
+  │
+
+  ├── utils/
+
+  │   ├── early_stopping.py
+
+  │   └── model_summary.py
+
+  │
+
+  ├── results/
+
+  │   ├── unet_loss_curve.png
+
+  │   ├── attention_unet_loss_curve.png
+
+  │   ├── unetplusplus_loss_curve.png
+
+  │   ├── unet_predictions/
+
+  │   ├── attention_predictions/
+
+  │   └── unetplusplus_predictions/
+
+  │
+
+  ├── train.py
+
+  ├── evaluate.py
+
+  ├── predict.py
+
+  ├── requirements.txt
+
+  ├── README.md
+
+  └── LICENSE
+
+  ```
+
+
+  ---
+
+
+  # 🧬 Dataset
+
+
+  This project uses the **BraTS 2020 (Brain Tumor Segmentation Challenge)** dataset.
+
+
+  Each subject contains four MRI modalities:
+
+
+  - FLAIR
+
+  - T1
+
+  - T1CE
+
+  - T2
+
+
+  The preprocessing pipeline converts the original **NIfTI (.nii.gz)** volumes into **HDF5 slices** for
+  efficient training.
+
+
+  Segmentation masks are generated as:
+
+
+  | Channel | Description |
+
+  |----------|-------------|
+
+  | WT | Whole Tumor |
+
+  | TC | Tumor Core |
+
+  | ET | Enhancing Tumor |
+
+
+  ---
+
+
+  # ⚙️ Preprocessing Pipeline
+
+
+  The preprocessing pipeline performs:
+
+
+  - Reading NIfTI MRI volumes
+
+  - Intensity normalization
+
+  - Multi-modal MRI stacking
+
+  - WT / TC / ET mask generation
+
+  - Slice extraction
+
+  - Automatic HDF5 dataset creation
+
+
+  ---
+
+
+  # 🏗 Model Architectures
+
+
+  ## U-Net
+
+
+  A standard encoder-decoder architecture with skip connections for semantic segmentation.
+
+
+  ---
+
+
+  ## Attention U-Net
+
+
+  Attention U-Net enhances the standard U-Net by introducing **Attention Gates**, allowing the network
+  to suppress irrelevant background features while focusing on tumor regions.
+
+
+  ---
+
+
+  ## UNet++
+
+
+  UNet++ (Nested U-Net) redesigns the skip connections using dense nested pathways between encoder and
+  decoder layers.
+
+
+  Key improvements include:
+
+
+  - Dense skip connections
+
+  - Improved feature fusion
+
+  - Reduced semantic gap
+
+  - Better localization accuracy
+
+  - Efficient multi-scale feature learning
+
+
+  ---
+
+
+  # 📊 Performance
+
+
+  ## U-Net
+
+
+  | Metric | Value |
+
+  |---------|------:|
+
+  | Dice Score | **0.7850** |
+
+  | IoU | **0.7357** |
+
+  | Loss | **0.3385** |
+
+  | Parameters | **31,032,451** |
+
+  | Inference Speed | **30.15 ms/image** |
+
+
+  ---
+
+
+  ## Attention U-Net
+
+
+  | Metric | Value |
+
+  |---------|------:|
+
+  | Dice Score | **0.8415** |
+
+  | IoU | **0.8009** |
+
+  | Loss | **0.7438** |
+
+  | Inference Speed | **28.36 ms/image** |
+
+
+  ---
+
+
+  ## UNet++
+
+
+  | Metric | Value |
+
+  |---------|------:|
+
+  | WT Dice | **0.6768** |
+
+  | TC Dice | **0.8024** |
+
+  | ET Dice | **0.8951** |
+
+  | WT IoU | **0.6404** |
+
+  | TC IoU | **0.7760** |
+
+  | ET IoU | **0.8696** |
+
+  | Loss | **0.6832** |
+
+  | Parameters | **9,160,035** |
+
+  | Inference Speed | **27.88 ms/image** |
+
+
+  ---
+
+
+  # 📈 Training Curve
+
+
+  Training and validation loss during UNet++ training.
+
+
+  ```text
+
+  results/unetplusplus_loss_curve.png
+
+  ```
+
+
+  ---
+
+
+  # 🖼 Sample Predictions
+
+
+  Representative predictions on unseen BraTS test slices.
+
+
+  ```text
+
+  results/unetplusplus_predictions/
+
+  ├── prediction_1.png
+
+  ├── prediction_2.png
+
+  ├── prediction_3.png
+
+  ├── prediction_4.png
+
+  └── prediction_5.png
+
+  ```
+
+
+  ---
+
+
+  # 🛠 Technologies Used
+
+
+  - Python
+
+  - PyTorch
+
+  - NumPy
+
+  - Matplotlib
+
+  - OpenCV
+
+  - h5py
+
+  - NiBabel
+
+  - tqdm
+
+
+  ---
+
+
+  # 🚀 Installation
+
+
+  Clone the repository
+
+
+  ```bash
+
+  git clone https://github.com/KalparitamGogoi/Brain-tumor-segmentation-pytorch.git
+
+
+  cd Brain-tumor-segmentation-pytorch
+
+  ```
+
+
+  Install dependencies
+
+
+  ```bash
+
+  pip install -r requirements.txt
+
+  ```
+
+
+  ---
+
+
+  # ▶️ Training
+
+
+  ```bash
+
+  python train.py
+
+  ```
+
+
+  ---
+
+
+  # 📈 Evaluation
+
+
+  ```bash
+
+  python evaluate.py
+
+  ```
+
+
+  ---
+
+
+  # 🎯 Prediction
+
+
+  ```bash
+
+  python predict.py
+
+  ```
+
+
+  ---
+
+
+  # 📚 Results
+
+
+  The repository provides:
+
+
+  - Training pipeline
+
+  - Evaluation pipeline
+
+  - Prediction pipeline
+
+  - Dice Score evaluation
+
+  - IoU evaluation
+
+  - Inference benchmarking
+
+  - CSV reports
+
+  - Prediction visualizations
+
+  - Loss curves
+
+
+  ---
+
+
+  # 🔬 Current Research
+
+
+  This repository is currently being extended toward the following research project:
+
+
+  > **Boundary-Aware Deep Supervised U-Net++ for Brain Tumor Segmentation Using BraTS**
+
+
+  Upcoming contributions include:
+
+
+  - Boundary-aware loss functions
+
+  - Deep supervision
+
+  - Boundary refinement modules
+
+  - Extensive ablation studies
+
+  - Comparison against baseline architectures
+
+
+  ---
+
+
+  # 🔮 Future Work
+
+
+  - Boundary-Aware Deep Supervised UNet++
+
+  - Boundary Loss Integration
+
+  - Deep Supervision
+
+  - DeepLabV3+
+
+  - SegFormer
+
+  - Swin-UNet
+
+  - Hyperparameter Optimization
+
+  - Model Quantization
+
+  - Clinical Deployment
+
+
+  ---
+
+
+  # 👨‍💻 Author
+
+
+  **Kalparitam Gogoi**
+
+
+  B.Tech in Computer Science & Engineering
+
+
+  Gauhati University
+
+
+  GitHub:
+
+  https://github.com/KalparitamGogoi
+
+
+  ---
+
+
+  # ⭐ Support
+
+
+  If you found this project useful, consider giving the repository a ⭐.
+
+
+  Contributions, suggestions, and discussions are always welcome.'

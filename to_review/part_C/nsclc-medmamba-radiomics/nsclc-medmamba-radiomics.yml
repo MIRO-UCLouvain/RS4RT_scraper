@@ -1,0 +1,163 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Yamnasid09/nsclc-medmamba-radiomics
+url: https://github.com/Yamnasid09/nsclc-medmamba-radiomics
+platform: github
+description: CPU-adapted MedMamba segmentation and PyRadiomics feature extraction pipeline for NSCLC CT
+  scans
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-28T11:57:10Z'
+image_source: null
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: '# CPU-Adapted MedMamba Segmentation & Radiomics Feature Extraction for NSCLC CT Scans
+
+
+  A pipeline that adapts the open-source **MedMamba** vision model to run lung tumor segmentation on CPU
+  (no GPU/CUDA required), then extracts quantitative radiomics features from the resulting masks using
+  PyRadiomics — applied to the public NSCLC-Radiomics CT dataset.
+
+
+  ## Motivation
+
+
+  Most modern deep learning segmentation models, including MedMamba, are built and benchmarked assuming
+  GPU access. In many research settings — including my own, working with limited hardware — that assumption
+  doesn''t hold. This project explores how to adapt an existing state-of-the-art architecture to run inference
+  on CPU only, then uses the resulting segmentations as the basis for a full radiomics feature extraction
+  workflow, connecting deep learning-based segmentation to classical quantitative imaging analysis.
+
+
+  ## What this project does
+
+
+  1. **CPU-compatible inference**: Patches MedMamba''s CUDA-dependent selective-scan operations with CPU
+  fallbacks, allowing the pretrained model to run without a GPU (`fix_cpu_patch.py`, `run_medmamba_cpu.py`,
+  `cpu_mamba_segmentation.py`).
+
+  2. **Lung tumor segmentation**: Runs the adapted model over NIfTI CT volumes from the NSCLC-Radiomics
+  dataset to generate tumor masks (`mamba_segmentation.py`, `run_medmamba_cpu_clean.py`).
+
+  3. **Failure recovery**: Identifies and reprocesses scans that failed segmentation (e.g., due to shape
+  mismatches or insufficient slices), using volume padding and shape-matching to recover usable masks
+  (`repair_failed_scans.py`).
+
+  4. **Radiomics feature extraction**: Extracts first-order, texture, and shape radiomics features from
+  each segmented volume using PyRadiomics (`extract_radiomics_features.py`, `fast_radiomics.py`).
+
+  5. **Results summarization**: Computes per-scan metrics — lung/tumor volume, mean and standard deviation
+  of intensity, slice count — across the full cohort (`generate_results_summary.py`).
+
+
+  ## Dataset
+
+
+  CT scans and metadata are from the **NSCLC-Radiomics** collection (LUNG1), publicly hosted on [The Cancer
+  Imaging Archive (TCIA)](https://doi.org/10.7937/K9/TCIA.2015.PF0M9REI). `metadata.csv` in this repo
+  contains the TCIA-provided series-level metadata for the collection (not patient image data).
+
+
+  ## Repository Structure
+
+  ├── fix_cpu_patch.py                  # CPU fallback patch for MedMamba''s selective-scan CUDA ops
+
+  ├── run_medmamba_cpu.py               # Run MedMamba segmentation on CPU (local paths)
+
+  ├── run_medmamba_cpu_clean.py         # Cleaner CPU segmentation variant (Colab paths)
+
+  ├── cpu_mamba_segmentation.py         # CPU segmentation entry point (Colab paths)
+
+  ├── mamba_segmentation.py             # Core segmentation script
+
+  ├── repair_failed_scans.py            # Reprocesses scans that failed initial segmentation
+
+  ├── extract_radiomics_features.py     # PyRadiomics feature extraction (Excel output)
+
+  ├── fast_radiomics.py                 # PyRadiomics feature extraction (CLI, CSV output)
+
+  ├── generate_results_summary.py       # Computes volume/intensity summary stats per scan
+
+  ├── metadata.csv                      # TCIA NSCLC-Radiomics collection metadata
+
+  ├── requirements.txt                  # Dependencies
+
+  └── train.py                          # Reference training script from the original MedMamba repo
+
+
+  ## Setup
+
+
+  ```bash
+
+  pip install -r requirements.txt
+
+  ```
+
+
+  Note: the original MedMamba installation assumes a CUDA-enabled GPU (see `requirements.txt`). The CPU-adapted
+  scripts in this repo (`fix_cpu_patch.py`, `run_medmamba_cpu*.py`) bypass the GPU-only `mamba_ssm`/`causal_conv1d`
+  operations so the model can run on CPU, at the cost of using simplified fallback operations rather than
+  the full selective-scan mechanism.
+
+
+  ## Usage
+
+
+  ```bash
+
+  # 1. Run CPU-adapted segmentation
+
+  python run_medmamba_cpu.py
+
+
+  # 2. Repair any failed scans
+
+  python repair_failed_scans.py
+
+
+  # 3. Generate summary statistics
+
+  python generate_results_summary.py
+
+
+  # 4. Extract radiomics features
+
+  python fast_radiomics.py --image_dir <path> --mask_dir <path> --output_csv <path>
+
+  ```
+
+
+  ## Acknowledgments
+
+
+  This project builds on the **MedMamba** architecture:
+
+
+  > Yue, Y., & Li, Z. (2024). MedMamba: Vision Mamba for Medical Image Classification. *arXiv preprint
+  arXiv:2403.03849*. [https://arxiv.org/abs/2403.03849](https://arxiv.org/abs/2403.03849)
+
+  >
+
+  > Official repository: [https://github.com/YubiaoYue/MedMamba](https://github.com/YubiaoYue/MedMamba)
+
+
+  Radiomics feature extraction uses [PyRadiomics](https://pyradiomics.readthedocs.io/).
+
+
+  Dataset: NSCLC-Radiomics collection, [The Cancer Imaging Archive (TCIA)](https://www.cancerimagingarchive.net/).
+
+
+  ## Author
+
+
+  Yamna Siddiqi
+
+  '

@@ -1,0 +1,142 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: sdmadhav/CBCT_Dental
+url: https://github.com/sdmadhav/CBCT_Dental
+platform: github
+description: Production-Ready Deep Learning System for Medical Imaging
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 1
+updated_at: '2026-01-31T18:01:48Z'
+image_source: null
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# CBCT Dental Image Analysis Pipeline\n\nA comprehensive, production-ready deep learning\
+  \ pipeline for analyzing CBCT (Cone Beam Computed Tomography) dental images. This system provides end-to-end\
+  \ functionality from DICOM data loading to model training, evaluation, and inference.\n\n## \U0001F680\
+  \ Features\n\n- **Complete Pipeline**: Data loading, preprocessing, training, evaluation, and inference\n\
+  - **Multiple Architectures**: 2D CNN (ResNet), U-Net for segmentation, lightweight 3D CNN\n- **Advanced\
+  \ Preprocessing**: Noise reduction, normalization, contrast enhancement, windowing\n- **Data Augmentation**:\
+  \ Rotation, flip, zoom, elastic deformation\n- **Production Ready**: Comprehensive error handling, logging,\
+  \ checkpointing\n- **Easy Configuration**: YAML-based configuration system\n- **GPU Optimized**: Mixed\
+  \ precision training, efficient memory usage\n- **Extensive Metrics**: Accuracy, precision, recall,\
+  \ F1, IoU, confusion matrices, ROC curves\n\n## \U0001F4CB Table of Contents\n\n- [Installation](#installation)\n\
+  - [Quick Start](#quick-start)\n- [Project Structure](#project-structure)\n- [Configuration](#configuration)\n\
+  - [Usage Examples](#usage-examples)\n- [Customization](#customization)\n- [Model Architectures](#model-architectures)\n\
+  - [Troubleshooting](#troubleshooting)\n\n## \U0001F527 Installation\n\n### Prerequisites\n\n- Python\
+  \ 3.8 or higher\n- CUDA-capable GPU (recommended, but CPU is supported)\n- 16GB RAM minimum (32GB recommended\
+  \ for 3D processing)\n\n### Step 1: Clone or Create Project Structure\n\n```bash\n# Create project directory\n\
+  mkdir cbct_pipeline\ncd cbct_pipeline\n\n# Create directory structure\nmkdir -p src configs data/{raw,processed,cache}\
+  \ saved_models logs results\n```\n\n### Step 2: Install Dependencies\n\n```bash\n# Create virtual environment\
+  \ (recommended)\npython -m venv venv\nsource venv/bin/activate  # On Windows: venv\\Scripts\\activate\n\
+  \n# Install dependencies\npip install -r requirements.txt\n```\n\n### Step 3: Verify Installation\n\n\
+  ```python\npython -c \"import torch; print(f'PyTorch: {torch.__version__}'); print(f'CUDA available:\
+  \ {torch.cuda.is_available()}')\"\npython -c \"import pydicom; import SimpleITK; print('DICOM libraries\
+  \ OK')\"\n```\n\n## \U0001F6A6 Quick Start\n\n### 1. Prepare Your Data\n\nPlace your DICOM files in\
+  \ the data directory:\n\n```\ndata/raw/\n├── patient_001/\n│   ├── slice_001.dcm\n│   ├── slice_002.dcm\n\
+  │   └── ...\n├── patient_002/\n└── ...\n```\n\n### 2. Configure the Pipeline\n\nEdit `configs/config.yaml`\
+  \ to match your dataset and requirements:\n\n```yaml\ndata:\n  expected_shape: [401, 401, 251]  # Your\
+  \ volume dimensions\n  target_size_2d: [256, 256]       # Target size for 2D slices\n\nmodel:\n  name:\
+  \ \"resnet18_2d\"               # Choose your model\n  num_classes: 32                   # Number of\
+  \ teeth/classes\n\ntraining:\n  batch_size: 8\n  num_epochs: 100\n  learning_rate: 0.001\n```\n\n###\
+  \ 3. Train the Model\n\n```bash\npython main.py --mode train --config configs/config.yaml\n```\n\n###\
+  \ 4. Evaluate\n\n```bash\npython main.py --mode evaluate --config configs/config.yaml --checkpoint saved_models/best_model.pth\n\
+  ```\n\n### 5. Run Inference\n\n```bash\npython main.py --mode inference --input data/raw/patient_new.dcm\
+  \ --output results/prediction.json\n```\n\n## \U0001F4C1 Project Structure\n\n```\ncbct_pipeline/\n\
+  │\n├── src/                          # Source code modules\n│   ├── __init__.py\n│   ├── data_loader.py\
+  \           # DICOM loading & caching\n│   ├── preprocessing.py         # Image preprocessing pipeline\n\
+  │   ├── feature_extraction.py   # Feature extraction methods\n│   ├── dataset.py               # PyTorch\
+  \ Dataset classes\n│   ├── models.py                # Neural network architectures\n│   ├── train.py\
+  \                 # Training loop\n│   ├── evaluate.py              # Evaluation & metrics\n│   ├──\
+  \ inference.py             # Production inference\n│   └── utils.py                 # Utility functions\n\
+  │\n├── configs/                      # Configuration files\n│   ├── config.yaml              # Main\
+  \ configuration\n│   ├── model_configs.yaml       # Model-specific configs (optional)\n│   └── preprocessing_configs.yaml\
+  \ # Preprocessing presets (optional)\n│\n├── data/                         # Data directory\n│   ├──\
+  \ raw/                     # Raw DICOM files\n│   ├── processed/               # Preprocessed data\n\
+  │   └── cache/                   # Cached volumes\n│\n├── saved_models/                # Trained model\
+  \ checkpoints\n├── logs/                        # Training logs & TensorBoard\n├── results/        \
+  \             # Evaluation results & predictions\n│\n├── main.py                      # Main pipeline\
+  \ orchestrator\n├── requirements.txt             # Python dependencies\n├── README.md              \
+  \      # This file\n├── Dockerfile                   # Docker configuration (optional)\n└── .gitignore\n\
+  \n```\n\n## ⚙️ Configuration\n\nThe pipeline is controlled via `configs/config.yaml`. Key sections:\n\
+  \n### Data Configuration\n\n```yaml\ndata:\n  expected_shape: [401, 401, 251]  # Z, Y, X dimensions\n\
+  \  target_size_2d: [256, 256]       # Resize target for 2D\n  target_size_3d: [128, 128, 128]  # Resize\
+  \ target for 3D\n  split_ratios: [0.7, 0.15, 0.15]  # train/val/test\n  use_cache: true            \
+  \       # Cache processed volumes\n```\n\n### Preprocessing Options\n\n```yaml\npreprocessing:\n  normalization:\n\
+  \    method: \"min_max\"              # min_max, z_score, window\n    clip_percentile: [1, 99]     \
+  \  # Outlier clipping\n  \n  denoising:\n    method: \"gaussian\"              # gaussian, bilateral,\
+  \ median\n    sigma: 1.0\n  \n  contrast:\n    method: \"clahe\"                 # clahe, histogram_eq\n\
+  \    clip_limit: 2.0\n```\n\n### Model Selection\n\n```yaml\nmodel:\n  name: \"resnet18_2d\"   # Options:\n\
+  \                        # - resnet18_2d: 2D ResNet-18 for classification\n                        #\
+  \ - resnet50_2d: 2D ResNet-50 for classification\n                        # - unet_2d: U-Net for segmentation\n\
+  \                        # - cnn_3d: 3D CNN for volumetric analysis\n  num_classes: 32\n  pretrained:\
+  \ true      # Use ImageNet pretrained weights\n```\n\n### Training Parameters\n\n```yaml\ntraining:\n\
+  \  batch_size: 8\n  num_epochs: 100\n  learning_rate: 0.001\n  optimizer: \"adam\"                #\
+  \ adam, sgd\n  loss: \"cross_entropy\"            # cross_entropy, dice, focal\n  mixed_precision: true\
+  \            # Use AMP for faster training\n  early_stopping_patience: 10\n```\n\n## \U0001F4A1 Usage\
+  \ Examples\n\n### Example 1: Train a 2D Classifier\n\n```bash\n# 1. Update config for 2D classification\n\
+  # configs/config.yaml:\n#   model:\n#     name: \"resnet18_2d\"\n#     num_classes: 32\n\n# 2. Train\n\
+  python main.py --mode train --config configs/config.yaml\n\n# 3. Monitor with TensorBoard\ntensorboard\
+  \ --logdir logs/\n```\n\n### Example 2: Train U-Net for Segmentation\n\n```bash\n# 1. Update config\
+  \ for segmentation\n# configs/config.yaml:\n#   model:\n#     name: \"unet_2d\"\n#     num_classes:\
+  \ 2  # background + teeth\n#   training:\n#     loss: \"dice\"    # Dice loss for segmentation\n\n#\
+  \ 2. Train\npython main.py --mode train --config configs/config.yaml\n```\n\n### Example 3: Resume Training\n\
+  \n```bash\n# Resume from a checkpoint\npython main.py --mode train --config configs/config.yaml --resume\
+  \ saved_models/latest_checkpoint.pth\n```\n\n### Example 4: Batch Inference\n\n```python\nfrom src.inference\
+  \ import InferenceEngine\nfrom src.data_loader import DICOMLoader\nfrom src.preprocessing import CBCTPreprocessor\n\
+  \n# Setup\nloader = DICOMLoader(\"./data/raw\")\npreprocessor = CBCTPreprocessor()\n\n# Load model\n\
+  engine = InferenceEngine(\n    model=your_model,\n    checkpoint_path=\"saved_models/best_model.pth\"\
+  ,\n    device=torch.device('cuda'),\n    preprocessor=preprocessor\n)\n\n# Load images\nimages = []\n\
+  for patient_dir in Path(\"./data/test\").iterdir():\n    result = loader.load_dicom_series(patient_dir)\n\
+  \    images.append(result['volume'][100])  # Get middle slice\n\n# Batch prediction\nresults = engine.predict_batch(images)\n\
+  \n# Export\nengine.export_results(results, \"results/batch_predictions.json\")\n```\n\n## \U0001F3A8\
+  \ Customization\n\n### Adding a New Preprocessing Step\n\nEdit `src/preprocessing.py`:\n\n```python\n\
+  def your_custom_preprocessing(self, image: np.ndarray) -> np.ndarray:\n    \"\"\"Your custom preprocessing\
+  \ step.\"\"\"\n    # Your code here\n    processed = custom_operation(image)\n    return processed\n\
+  \n# Add to pipeline\ndef preprocess_pipeline(self, image: np.ndarray) -> np.ndarray:\n    processed\
+  \ = self.normalize(image)\n    processed = self.denoise(processed)\n    processed = self.your_custom_preprocessing(processed)\
+  \  # Add here\n    return processed\n```\n\n### Adding a New Model Architecture\n\nEdit `src/models.py`:\n\
+  \n```python\nclass YourCustomModel(nn.Module):\n    def __init__(self, num_classes: int = 32):\n   \
+  \     super().__init__()\n        # Define layers\n        self.conv1 = nn.Conv2d(1, 64, 3)\n      \
+  \  self.fc = nn.Linear(64, num_classes)\n    \n    def forward(self, x):\n        x = self.conv1(x)\n\
+  \        # Your forward pass\n        return self.fc(x)\n\n# Register in get_model function\ndef get_model(model_name:\
+  \ str, **kwargs):\n    models = {\n        'your_model': YourCustomModel,\n        # ... existing models\n\
+  \    }\n    return models[model_name](**kwargs)\n```\n\n### Custom Data Augmentation\n\nEdit `src/preprocessing.py`:\n\
+  \n```python\nclass DataAugmenter:\n    def custom_augmentation(self, image: np.ndarray) -> np.ndarray:\n\
+  \        # Your augmentation\n        return augmented_image\n    \n    def augment(self, image: np.ndarray)\
+  \ -> np.ndarray:\n        augmented = image.copy()\n        \n        # Add your custom augmentation\n\
+  \        if self.config.get('custom', {}).get('enabled'):\n            augmented = self.custom_augmentation(augmented)\n\
+  \        \n        return augmented\n```\n\n## \U0001F3D7️ Model Architectures\n\n### 1. ResNet-based\
+  \ 2D Classifier\n\n- **Use Case**: Tooth classification from 2D slices\n- **Input**: Single-channel\
+  \ 2D slices (256×256)\n- **Output**: Class probabilities for N classes\n- **Pretrained**: ImageNet weights\
+  \ available\n- **Parameters**: ~11M (ResNet-18), ~23M (ResNet-50)\n\n```yaml\nmodel:\n  name: \"resnet18_2d\"\
+  \n  num_classes: 32\n  pretrained: true\n```\n\n### 2. U-Net 2D Segmentation\n\n- **Use Case**: Pixel-wise\
+  \ tooth segmentation\n- **Input**: Single-channel 2D slices (256×256)\n- **Output**: Segmentation mask\
+  \ (H×W×num_classes)\n- **Architecture**: Encoder-decoder with skip connections\n- **Parameters**: ~31M\
+  \ (base_channels=64)\n\n```yaml\nmodel:\n  name: \"unet_2d\"\n  num_classes: 2  # background + teeth\n\
+  \  unet:\n    base_channels: 64\n```\n\n### 3. 3D CNN\n\n- **Use Case**: Volumetric analysis\n- **Input**:\
+  \ 3D volumes (128×128×128)\n- **Output**: Classification or volumetric segmentation\n- **Architecture**:\
+  \ Lightweight 3D convolutions\n- **Parameters**: ~5M\n- **Note**: Requires more memory\n\n```yaml\n\
+  model:\n  name: \"cnn_3d\"\n  num_classes: 32\n```\n\n## \U0001F41B Troubleshooting\n\n### Out of Memory\
+  \ Errors\n\n```yaml\n# Reduce batch size\ntraining:\n  batch_size: 4  # or 2\n\n# Reduce input size\n\
+  data:\n  target_size_2d: [128, 128]\n  target_size_3d: [64, 64, 64]\n\n# Disable mixed precision\ntraining:\n\
+  \  mixed_precision: false\n```\n\n### Slow Training\n\n```yaml\n# Enable mixed precision\ntraining:\n\
+  \  mixed_precision: true\n\n# Increase number of workers\ndata:\n  num_workers: 8\n\n# Use GPU\nhardware:\n\
+  \  use_gpu: true\n```\n\n### DICOM Loading Errors\n\n```python\n# Check DICOM file integrity\nfrom src.data_loader\
+  \ import DICOMLoader\n\nloader = DICOMLoader(\"./data/raw\")\ntry:\n    result = loader.load_dicom_series(\"\
+  ./data/raw/patient_001\")\n    print(f\"Successfully loaded: {result['metadata']}\")\nexcept Exception\
+  \ as e:\n    print(f\"Error: {e}\")\n```\n\n### Model Not Converging\n\n```yaml\n# Adjust learning rate\n\
+  training:\n  learning_rate: 0.0001  # Lower\n\n# Try different optimizer\ntraining:\n  optimizer: \"\
+  sgd\"\n  momentum: 0.9\n\n# Increase regularization\ntraining:\n  weight_decay: 0.0001\n\n# Check data\
+  \ preprocessing\npreprocessing:\n  normalization:\n    method: \"z_score\"  # Try different normalization\n\
+  ```\n\n## \U0001F4CA Monitoring Training\n\n### TensorBoard\n\n```bash\n# Start TensorBoard\ntensorboard\
+  \ --logdir logs/ --port 6006\n\n# Open browser to http://localhost:6006\n```\n\nMetrics tracked:\n-\
+  \ Training loss (per batch and per epoch)\n- Validation loss\n- Learning rate\n- Custom metrics (accuracy,\
+  \ IoU, etc.)\n\n### Logs\n\n```bash\n# View training logs\ntail -f logs/pipeline.log\n\n# C"

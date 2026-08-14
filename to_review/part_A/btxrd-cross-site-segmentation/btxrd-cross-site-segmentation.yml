@@ -1,0 +1,74 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: mihir-busani/btxrd-cross-site-segmentation
+url: https://github.com/mihir-busani/btxrd-cross-site-segmentation
+platform: github
+description: Code and analysis pipeline for 'Dataset Composition Confounds Cross-Site Generalization in
+  Bone Tumor Segmentation' — five-seed reproducible experiments on BTXRD.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-08-05T17:05:05Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+readme_excerpt: "# Dataset Composition Confounds Cross-Site Generalization in Bone Tumor Segmentation\n\
+  \nCode for reproducing every experiment, table, and figure in the paper.\n\n**Paper:** Busani, M. \"\
+  Dataset Composition Confounds Cross-Site Generalization in Bone Tumor Segmentation.\" IEEE MIT Undergraduate\
+  \ Research Technology Conference (URTC), 2026.\n\n---\n\n## What this repository shows\n\nA standard\
+  \ cross-site evaluation on BTXRD produces a counterintuitive result: segmentation Dice rises from 0.58\
+  \ in validation to 0.73 on a held-out center. The analysis here demonstrates that the improvement is\
+  \ compositional rather than algorithmic, and that per-site conclusions drawn from small subgroups reverse\
+  \ sign under resampling.\n\n---\n\n## Environment\n\nDeveloped and run on Kaggle with a T4 GPU. Paths\
+  \ assume the Kaggle layout (`/kaggle/input`, `/kaggle/working`); change `SEARCH_ROOT` and `OUT_DIR`\
+  \ in Cell 0 to run elsewhere.\n\n**Dataset:** BTXRD, public at https://www.kaggle.com/datasets/mihirbusani/btxrddataset\
+  \ — attach it to the notebook before running. The dataset is not redistributed here.\n\n**Dependencies:**\
+  \ `torch`, `segmentation-models-pytorch`, `opencv-python`, `numpy`, `pandas`, `scikit-learn`, `statsmodels`,\
+  \ `matplotlib`, `Pillow`, `openpyxl`. See `requirements.txt` for pinned versions.\n\n---\n\n## Notebook:\
+  \ `btxrd-unified.ipynb`\n\nSeven cells (0–6), run in order. Cell 0 defines everything and has no side\
+  \ effects; all state lives in later cells. This structure exists because an earlier three-notebook version\
+  \ redefined the same helper three different ways, which is how tables and figures drifted apart.\n\n\
+  | Cell | Does | Writes |\n|---|---|---|\n| 0 | Definitions only — every function used anywhere. Safe\
+  \ to re-run. | nothing |\n| 1 | Config, data loading, model construction. Set `SEED` and `CHECKPOINT`\
+  \ here. Trains only if no checkpoint exists for that seed and `TRAIN_IF_MISSING = True`. | checkpoint\
+  \ (if training) |\n| 2 | One evaluation pass → every number the paper reports. Identical inference protocol\
+  \ for validation and holdout. | `results_seed<N>.json` |\n| 3 | All figures, every value read back from\
+  \ the JSON. No hardcoded numbers. | `paper_figures/` |\n| 4 | Best / median / worst prediction overlay\
+  \ grids for the chosen seed. | `seed<N>/` |\n| 5 | Aggregates across seeds. SDs computed here with `ddof=1`,\
+  \ not transcribed by hand. | `paper_tables.md` |\n| 6 | Manifest — checks nothing is missing, then bundles\
+  \ artifacts. | `.zip` |\n\nCells 3 and 5 read from the JSON rather than recomputing, so a figure cannot\
+  \ disagree with a table.\n\n---\n\n## Reproducing the paper\n\nThe paper reports five seeds: **42, 1,\
+  \ 2, 3, 4**.\n\n1. In Cell 1, set `SEED` and, in Cell 0, `RANDOM_SEED` to the same value. Both must\
+  \ match.\n2. Run cells 0 → 1 → 2 → 3 for that seed.\n3. Repeat for all five seeds.\n4. Run Cell 5 once,\
+  \ after every seed has a `results_seed<N>.json`. This emits `paper_tables.md` containing Tables I, III,\
+  \ and IV.\n\nCell 4 is optional and produces qualitative overlays only.\n\n### Key settings\n\n| Setting\
+  \ | Value | Paper reference |\n|---|---|---|\n| Held-out center | Center 2 (Radiopaedia), entirely |\
+  \ §III-B |\n| Split | patient proxy = `age_gender_center`, stratified, `val_size = 0.111` | §III-B |\n\
+  | Leakage check | `verify_split_leakage()`, asserts zero proxy overlap | §III-B |\n| Backbone | U-Net\
+  \ + ResNet50, ImageNet-pretrained | §III-C |\n| Input | 512×512, CLAHE, grayscale normalization | §III-C\
+  \ |\n| Loss | Dice + BCE (`BCE_WEIGHT = 0.5`) | §III-C |\n| Optimizer | AdamW, lr 1e-4, cosine annealing,\
+  \ `WEIGHT_DECAY = 1e-4` | §III-C |\n| Schedule | ≤80 epochs, patience 15, batch size 16 | §III-C |\n\
+  | Inference | horizontal-flip TTA (`USE_TTA = True`), applied identically to val and holdout | §III-C\
+  \ |\n| SD convention | `ddof = 1` (sample SD) | §IV-D |\n\n`select_batch_size()` falls back to 12 if\
+  \ batch size 16 OOMs or no CUDA device is present. The paper states 16; check your run log to confirm\
+  \ the fallback never fired.\n\n---\n\n## Repository contents\n\n```\nbtxrd-unified.ipynb      full pipeline,\
+  \ cells 0-6\nrequirements.txt         pinned versions\nLICENSE                  MIT\nresults/      \
+  \           results_seed{42,1,2,3,4}.json — one per seed\npaper_tables.md          generated by Cell\
+  \ 5\nfigures/                 Figures 1-3 as they appear in the paper\n```\n\nTrained checkpoints are\
+  \ available on request; they are not committed here for size reasons.\n\n---\n\n## Known limitations\n\
+  \n- The patient proxy (`age_gender_center`) is a substitute for a real patient identifier, which BTXRD\
+  \ does not carry. It merges distinct patients sharing all three values and could split one patient whose\
+  \ recorded age changed between visits. Merging is conservative for leakage.\n- Bootstrap confidence\
+  \ intervals are seeded from `RANDOM_SEED`, so they shift with the seed. The paper reports seed-42 values.\n\
+  - Center 3 contributes only 24–32 validation images from 4–11 patient proxies. Its per-seed numbers\
+  \ are unstable by construction — that instability is the paper's finding, not a defect in the code.\n\
+  \n---\n\n## Citation\n\n```bibtex\n@inproceedings{busani2026dataset,\n  title     = {Dataset Composition\
+  \ Confounds Cross-Site Generalization in Bone Tumor Segmentation},\n  author    = {Busani, Mihir},\n\
+  \  booktitle = {IEEE MIT Undergraduate Research Technology Conference (URTC)},\n  year      = {2026}\n\
+  }\n```\n\nThe BTXRD dataset is described in: S. Yao et al., \"A radiograph dataset for the classification,\
+  \ localization, and segmentation of primary bone tumors,\" *Scientific Data*, vol. 12, art. 88, 2025.\n"

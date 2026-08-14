@@ -1,0 +1,307 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: sergiolsantamaria2/brats-segmentation
+url: https://github.com/sergiolsantamaria2/brats-segmentation
+platform: github
+description: 3D brain tumor segmentation on BraTS 2023 multimodal MRI (PyTorch + MONAI)
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-16T10:32:05Z'
+image_source: https://raw.githubusercontent.com/sergiolsantamaria2/brats-segmentation/HEAD/figures/headline.png
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: '# BraTS 2023 — 3D Brain Tumor Segmentation
+
+
+  > Multimodal MRI segmentation of adult glioma (BraTS 2023 Adult Glioma challenge) with PyTorch + MONAI.
+
+
+  ![SegResNet vs SwinUNETR predictions on test cases](figures/headline.png)
+
+
+  **Status:** v0.7. Three architectures evaluated on the 190-case held-out test split: SegResNet and SwinUNETR
+  (3 seeds each, our pipeline) and **nnU-Net v2** (full canonical 1000-epoch training, single fold) as
+  a reference. Our best inference-time pipeline — **6-model ensemble + 8-fold test-time augmentation**
+  — reaches mean Dice **0.909** and HD95 **4.32 mm**, closing most of the gap to nnU-Net (0.911 / 3.83
+  mm) without crossing it. The headline reading: ensembling + TTA mostly tightens the boundaries (-19
+  % HD95 vs single-seed), but pipeline engineering as embodied by nnU-Net still wins on the architecture-agnostic
+  axis.
+
+
+  ## Motivation
+
+
+  Automated tumor segmentation on multimodal MRI is one of the cornerstone problems in medical image analysis:
+  it underpins surgical planning, radiotherapy targeting, and treatment-response monitoring for patients
+  with glioma. The [BraTS challenge](https://www.synapse.org/brats) is the de-facto benchmark for this
+  task and has driven much of the methodological progress in 3D medical segmentation over the last decade.
+
+
+  This repository is a clean, reproducible 3D segmentation pipeline on BraTS 2023, built end-to-end (data,
+  preprocessing, training, evaluation) with the goal of producing a portfolio-quality artifact.
+
+
+  ## Results
+
+
+  Training on the stratified 70 / 15 / 15 split of the BraTS 2023 Adult Glioma training set (875 train,
+  186 val, 190 test held out). SegResNet and SwinUNETR are trained with our own pipeline at **3 seeds
+  each** (seeds 42, 0, 1; reproducibility wired through `monai.utils.set_determinism`), sharing the same
+  data pipeline, loss (DiceCE), optimizer (AdamW + cosine annealing), mixed precision (bf16), gradient
+  clipping, and 60 epochs. SwinUNETR uses `lr=5e-4`; SegResNet uses `lr=1e-3` (paper conventions for each).
+  **nnU-Net v2** is trained on the same 875 train / 186 val cases using its own auto-configured pipeline
+  (3d_fullres config, full canonical 1000-epoch training, fold 0 wired via a custom `splits_final.json`
+  so the 190-case test set stays held out). All numbers are reported on that test split.
+
+
+  | Model | Params | WT | TC | ET | Mean Dice | Mean HD95 (mm) |
+
+  |---|---|---|---|---|---|---|
+
+  | [SegResNet](https://docs.monai.io/en/stable/networks.html#segresnet) (3 seeds, single) | 4.7 M | 0.924
+  ± 0.001 | 0.921 ± 0.004 | 0.857 ± 0.005 | 0.901 ± 0.003 | 5.31 ± 0.19 |
+
+  | [SwinUNETR](https://docs.monai.io/en/stable/networks.html#swinunetr) (3 seeds, single) | 15.7 M |
+  0.924 ± 0.001 | 0.916 ± 0.001 | 0.856 ± 0.002 | 0.899 ± 0.000 | 5.42 ± 0.06 |
+
+  | 6-model ensemble + TTA (our best) | 6 × ≈ 10 M | 0.932 | 0.929 | 0.866 | 0.909 | 4.32 |
+
+  | **[nnU-Net v2](https://github.com/MIC-DKFZ/nnUNet)** (1000 ep, single fold) | ≈ 30 M | **0.937** |
+  **0.927** | **0.869** | **0.911** | **3.83** |
+
+
+  SegResNet and SwinUNETR are **statistically tied** on mean Dice (0.901 vs 0.899) — the 0.002 architecture
+  gap is smaller than SegResNet''s own seed-to-seed std (0.003). The only per-sub-region trend that survives
+  the noise band there is SegResNet''s edge on TC (0.921 vs 0.916).
+
+
+  **nnU-Net** is in a different league:
+
+
+  - **+0.010 mean Dice** over our best baseline (0.911 vs 0.901). The gap is **3 × SegResNet''s seed std**,
+  so this is not seed noise.
+
+  - Per-sub-region: **+0.013 WT, +0.006 TC, +0.012 ET** — every sub-region improves, and every improvement
+  is outside the v0.4 noise band.
+
+  - **HD95 drops from 5.3 mm to 3.8 mm** (-1.5 mm) — the boundaries are noticeably tighter. nnU-Net is
+  known for surface-quality wins; this confirms it on our data.
+
+  - The 5-fold ensemble (the canonical nnU-Net submission format) is left as future work; a 250-epoch
+  ablation we ran beforehand (mean Dice 0.910, HD95 4.02) was within 0.001 of the full 1000-epoch number
+  on this dataset, so the 4 × extra compute bought ~0.
+
+
+  The takeaway matches the original nnU-Net paper: **pipeline engineering carries more weight than backbone
+  architecture choice**. A plain 3D U-Net with auto-configured preprocessing, patch size, normalisation
+  and training schedule outperforms both a residual CNN (SegResNet) and a transformer (SwinUNETR) trained
+  on the same data. Our v0.7 ensembling + TTA work (next sub-section) closes most of the Dice gap (-0.001
+  mean Dice from the 6-model ensemble + TTA) and nearly halves the HD95 deficit (4.32 vs 3.83 mm) but
+  does **not** cross nnU-Net''s solo mark.
+
+
+  Two side observations from the multi-seed analysis:
+
+
+  - **WT is at the seed-ceiling for our pipeline.** Both our models hit 0.924 with std 0.001 — SegResNet
+  and SwinUNETR have saturated what our recipe can deliver on whole-tumor. nnU-Net pushes through this
+  ceiling (0.933), suggesting the bottleneck was on the pipeline side, not the architecture side.
+
+  - **SwinUNETR is dramatically more stable across seeds** than SegResNet — mean-Dice std of 0.000 vs
+  0.003, despite SwinUNETR having ≈ 3 × more parameters. Plausibly the patch-based attention regularises
+  the optimisation surface; not investigated further here.
+
+
+  ![Per-region test Dice across 3 seeds × 2 architectures](figures/seed_variance.png)
+
+
+  The figure (multi-seed comparison of SegResNet vs SwinUNETR only) makes the v0.4 finding visual: per-case
+  Dice spans roughly 0.5 to 1.0 for both architectures across all three sub-regions, while the architecture-vs-architecture
+  shift is the difference between two means that overlap within their seed-mean ± std bars (◆). nnU-Net
+  is single-fold and not plotted, but its mean Dice on every sub-region (0.937 / 0.927 / 0.869) sits well
+  above the upper seed-mean band of either MONAI model.
+
+
+  ### Ensembling + TTA (v0.7)
+
+
+  Two inference-time techniques applied to our MONAI checkpoints, evaluated on the same test split:
+
+
+  - **Multi-seed ensemble per architecture** — sigmoid probabilities from the 3 trained seeds averaged
+  before thresholding (matches the multi-seed checkpoints we already had from v0.4; no extra training).
+
+  - **8-fold test-time augmentation (TTA)** — each per-model prediction is the mean of 8 axis-flip variants
+  of the input (identity + 7 combinations of flipping H/W/D), un-flipped before averaging.
+
+
+  | Stage | WT | TC | ET | Mean Dice | Mean HD95 (mm) |
+
+  |---|---|---|---|---|---|
+
+  | SegResNet, single (3-seed avg) | 0.924 | 0.921 | 0.857 | 0.901 | 5.31 |
+
+  | SegResNet ensemble (3 seeds) | 0.927 | 0.925 | 0.859 | 0.904 | 4.75 |
+
+  | SegResNet ensemble + TTA | 0.929 | 0.926 | 0.860 | 0.905 | 4.68 |
+
+  | SwinUNETR, single (3-seed avg) | 0.924 | 0.916 | 0.856 | 0.899 | 5.42 |
+
+  | SwinUNETR ensemble (3 seeds) | 0.928 | 0.920 | 0.860 | 0.902 | 5.25 |
+
+  | SwinUNETR ensemble + TTA | 0.928 | 0.921 | 0.861 | 0.903 | 4.80 |
+
+  | **6-model ensemble + TTA** (3 SegRes + 3 SwinU) | **0.932** | **0.929** | **0.866** | **0.909** |
+  **4.32** |
+
+
+  What we learned:
+
+
+  - **Multi-seed ensembling is the bigger of the two free lunches** (+0.003 mean Dice over single seed).
+  The largest gain is on HD95 (-0.5 to -0.6 mm) — averaging stabilises the predicted boundary even when
+  the bulk Dice barely moves.
+
+  - **8-fold TTA adds a marginal +0.001 mean Dice** on top of the ensemble, but a further ~0.5 mm HD95
+  tightening for SwinUNETR. The pattern across both architectures: TTA squeezes out boundary noise more
+  than it shifts the mean.
+
+  - **Cross-architecture ensembling helps more than either intra-arch trick** (+0.004 mean Dice over the
+  best single-arch ensemble + TTA). SegResNet and SwinUNETR make slightly different mistakes; averaging
+  them is genuinely informative.
+
+  - **The full stack (6 × ensemble + TTA) reaches 0.909 mean Dice / 4.32 mm HD95** — short of nnU-Net
+  solo (0.911 / 3.83 mm) on every sub-region. The boundary improvement is the most visible win: -19 %
+  HD95 vs the single-seed SegResNet baseline.
+
+  - **Cross-architecture ensembling with nnU-Net is not done here** — nnU-Net predicts in the original
+  input grid, our MONAI pipeline scores in the val-transformed (foreground-cropped) space, so averaging
+  probabilities across the two needs an extra resampling step. Left as future work.
+
+
+  Reproducible via [`scripts/eval/evaluate_ensemble.py`](scripts/eval/evaluate_ensemble.py) (`--tta` for
+  the 8-fold variant). Per-case JSONs in [`reports/`](reports/).
+
+
+  ### Distribution: median vs mean
+
+
+  Test set per-case Dice is strongly **right-skewed** — most cases score very high, a thin left tail of
+  failures drags the mean down. The median is more representative of typical-case performance:
+
+
+  | Sub-region | SegResNet median | SwinUNETR median |
+
+  |---|---|---|
+
+  | WT | 0.945 | 0.945 |
+
+  | TC | 0.962 | 0.962 |
+
+  | ET | 0.926 | 0.926 |
+
+
+  Cases falling below quality thresholds (test set, 190 cases):
+
+
+  | | Dice < 0.5 | Dice < 0.7 | Dice < 0.9 |
+
+  |---|---|---|---|
+
+  | WT (both models) | 0 % | ~1.6 % | ~22 % |
+
+  | TC (both models) | 1-2 % | 3-4 % | ~21 % |
+
+  | ET (both models) | 6-7 % | 7-8 % | 37-40 % |
+
+
+  ET is the most fragile sub-region — partly genuine difficulty (small, fragmented), partly the BraTS
+  Dice-on-empty rule: low-grade gliomas have no enhancing tumor in the ground truth, and any false-positive
+  ET voxel forces Dice = 0 for that case. See [`notebooks/05_error_analysis.ipynb`](notebooks/05_error_analysis.ipynb).
+
+
+  ### Worst-case overlap → failures are data-driven, not architecture-driven
+
+
+  Of the 10 worst test cases per model (ranked by mean Dice), **9 are shared between SegResNet and SwinUNETR**.
+  Both architectures struggle on the same patients.
+
+
+  ![Worst test cases shared across architectures](figures/worst_cases.png)
+
+
+  The implication for next steps:
+
+
+  > Switching architecture alone will not lift the bottom tail. The gains from here come from richer modeling
+  (cascade refinement, post-processing) or richer training (multi-seed ensembling, test-time augmentation),
+  not from another transformer.
+
+
+  Multi-seed ensembling + TTA (v0.7 above) confirmed this empirically: the bottom-tail outliers (the worst
+  ET / TC failures around case `BraTS-GLI-01521-000` and similar) survive both techniques, so the worst-case
+  story is unchanged from v0.3.
+
+
+  ### Qualitative comparison
+
+
+  Predicted segmentations on randomly-sampled test cases are in [`notebooks/04_predictions.ipynb`](notebooks/04_predictions.ipynb),
+  showing T1c reference + ground truth + each model + the disagreement map.
+
+
+  ### Context against published baselines
+
+
+  For perspective (informal — different evaluation protocols, see [Caveats](#caveats)):
+
+
+  | Reference | WT | TC | ET | Mean |
+
+  |---|---|---|---|---|
+
+  | nnU-Net, BraTS 2021, 5-fold ensemble (Isensee et al.) | 0.92 | 0.88 | 0.85 | 0.883 |
+
+  | SwinUNETR, BraTS 2023 (Hatamizadeh et al.) | 0.92 | 0.86 | 0.83 | 0.870 |
+
+  | **This repo — SegResNet (v0.4, 3 seeds), test set** | 0.924 | 0.921 | 0.857 | 0.901 |
+
+  | **This repo — SwinUNETR (v0.4, 3 seeds), test set** | 0.924 | 0.916 | 0.856 | 0.899 |
+
+  | **This repo — nnU-Net v2 (v0.5, 1000 ep / 1 fold), test set** | 0.937 | 0.927 | 0.869 | 0.911 |
+
+  | **This repo — 6-model ensemble + TTA (v0.7), test set** | 0.932 | 0.929 | 0.866 | 0.909 |
+
+
+  ### Caveats
+
+
+  - The test set here is the **15 % held-out from the BraTS training set** (190 cases, same distribution
+  as train/val — never seen during training). Published numbers above are on the official BraTS validation
+  set (~250 cases, blind submission to Synapse leaderboard) and are **not directly comparable** — the
+  official set is more out-of-distribution.
+
+  - The MONAI models (SegResNet, SwinUNETR) are reported as 3-seed averages on a single fold. nnU-Net
+  is reported as a single fold of the full 1000-epoch canonical trainer. The 5-fold ensemble (the format
+  used in published BraTS submissions) is left as future work.
+
+
+  ## Dataset
+
+
+  The [BraTS 2023 Adult Glioma](https://www.synapse.org/Synapse:syn51514105) training set contains **1251
+  cases**, each comprising four co-registered MRI modalities and a voxel-level ground-truth segmentation:
+
+
+  | Modality (file suffix) | What it measures | Why it matters |
+
+  |---|---|---|
+
+  | `t1n` — T1 native | Anatomical refe'

@@ -1,0 +1,84 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: murali-33011/Cancer-cells-growth-Conway-s-Game-of-Life
+url: https://github.com/murali-33011/Cancer-cells-growth-Conway-s-Game-of-Life
+platform: github
+description: A multi-state cellular automaton that models tumor evolution in living tissue, built on an
+  extended version of Conway's Game of Life. Watch a single cancer cell invade healthy tissue, form a
+  necrotic core, develop drug-resistant mutations, and respond to chemotherapy or radiotherapy, all in
+  real time.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-11T06:07:19Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# Cancer Cell Growth Prediction : Conway's Game of Life\n\nA **multi-state cellular automaton**\
+  \ that models tumor evolution in living tissue, built on an extended version of Conway's Game of Life.\
+  \ Watch a single cancer cell invade healthy tissue, form a necrotic core, develop drug-resistant mutations,\
+  \ and respond to chemotherapy or radiotherapy all in real time.\n\n![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python&logoColor=white)\n\
+  ![Tkinter](https://img.shields.io/badge/GUI-Tkinter-informational)\n![Matplotlib](https://img.shields.io/badge/Plots-Matplotlib-orange)\n\
+  ![NumPy](https://img.shields.io/badge/Compute-NumPy-013243?logo=numpy)\n![License](https://img.shields.io/badge/License-MIT-green)\n\
+  \n---\n\n## Features\n\n###  Multi-State Cellular Automaton\nFive distinct cell states replace the binary\
+  \ alive/dead of classic Conway's Game of Life:\n\n| State | Color | Description |\n|---|---|---|\n|\
+  \ **Empty / ECM** | ⬛ Dark | Extracellular matrix open space |\n| **Healthy Cell** | \U0001F7E2 Green\
+  \ | Normal tissue with contact inhibition |\n| **Cancer Cell** | \U0001F534 Red | Invasive cells with\
+  \ altered survival rules |\n| **Resistant Cancer** | \U0001F7E3 Magenta | Drug-resistant mutants that\
+  \ survive therapy |\n| **Necrotic Core** | ⬜ Gray | Dead tissue formed at the tumor's overcrowded center\
+  \ |\n\n### Biologically-Inspired Rules\n- **Healthy cells** survive via homeostasis (2–4 healthy neighbours)\
+  \ and die when overwhelmed by ≥3 cancer-cell neighbours.\n- **Cancer cells** are born from empty cells\
+  \ with ≥3 cancer neighbours, survive under broader conditions, and collapse into a necrotic core when\
+  \ overly dense (≥7 cancer/necrotic neighbours).\n- **Necrotic cells** decay stochastically (~8% chance\
+  \ per generation) back to empty space.\n- **Resistant cells** arise via random mutation during cancer\
+  \ cell birth or invasion, at a tunable rate.\n\n### Interactive Controls\n- **Play / Pause / Step**\
+  \ : run the simulation continuously or advance one generation at a time.\n- **Speed Slider** : adjust\
+  \ simulation speed from 10 ms to 500 ms per step.\n- **Reset** : restart the current scenario from scratch.\n\
+  \n### Live Parameter Tuning\nAdjust key biological parameters mid-simulation using sliders:\n- **Mutation\
+  \ Rate** (0–15%) : probability that a new cancer cell becomes drug-resistant.\n- **Cancer Birth Threshold**\
+  \ (1–6 neighbours) : how aggressive cancer spread is.\n- **Overpopulation Threshold** (3–8 neighbours)\
+  \ : tolerance before necrosis sets in.\n\n### Therapy Simulation\nApply treatments at any point in the\
+  \ simulation:\n- **Chemotherapy** : kills ~70% of cancer cells but spares resistant mutants; causes\
+  \ ~15% collateral healthy cell damage.\n- **Radiotherapy** : higher efficacy (~80%) against cancer,\
+  \ but greater damage to healthy tissue (~25%).\n\n### Simulation Presets\nThree ready-to-run biological\
+  \ scenarios:\n\n| Preset | Description |\n|---|---|\n| **Tumor Inception** | A single cancer cell placed\
+  \ in a field of healthy tissue. Observe organic tumor growth from scratch. |\n| **Therapy & Relapse**\
+  \ | An established tumor with a necrotic core and seeded resistant cells, ready for therapy. Apply chemo\
+  \ and watch resistant cells repopulate. |\n| **Competitive Dynamics** | Healthy tissue (left) vs. a\
+  \ cancer blob (right) competing for space. |\n\n### Real-Time Visualizations\nThree synchronized views\
+  \ update every generation:\n\n1. **Tumor Evolution Grid** : 80×80 cell canvas with color-coded cell\
+  \ states.\n2. **Cell Population Chart** : live line chart tracking healthy, cancer, resistant, and necrotic\
+  \ cell counts over time.\n3. **Population Fraction (Stacked Area)** : normalized view showing the shifting\
+  \ balance of the entire grid at a glance.\n\n### Live Statistics Panel\n- Per-type cell counts (Healthy,\
+  \ Cancer, Resistant, Necrotic)\n- **Tumor diameter** estimate in cell units (computed from bounding\
+  \ radius of all tumor cells)\n- **5-generation growth rate** : rolling delta of total cancerous cells\n\
+  \n---\n\n## Getting Started\n\n### Prerequisites\n\n```bash\npip install numpy matplotlib\n```\n\nTkinter\
+  \ is included with most Python distributions. On Linux, install it via:\n\n```bash\nsudo apt-get install\
+  \ python3-tk\n```\n\n### Run\n\n```bash\npython cancer_simulation.py\n```\n\n---\n\n## Interface Overview\n\
+  \n```\n┌──────────────────────────────────────────────────┬──────────────────┐\n│                  \
+  \                                │  ▶ PLAYBACK      │\n│   Tumor Evolution Grid    │  Population Chart\
+  \    │  ⚡ SPEED        │\n│       (80×80 cells)       │  (line chart)        │  \U0001F9EC PARAMETERS\
+  \   │\n│                           ├──────────────────────│  \U0001F48A THERAPY      │\n│          \
+  \                 │  Population Fraction │  \U0001F3AC PRESETS      │\n│                           │\
+  \  (stacked area)      │  \U0001F4CA STATS        │\n└──────────────────────────────────────────────────┴──────────────────┘\n\
+  ```\n\n---\n\n## How It Works\n\nThe simulation engine (`CancerAutomaton`) applies transition rules\
+  \ simultaneously to all cells each generation using vectorized NumPy operations : no per-cell Python\
+  \ loops. Neighbour counts for each state are computed using 8-directional manual convolution on boolean\
+  \ masks, keeping each step fast even at 80×80 resolution.\n\nKey computational methods:\n- `count_neighbors(grid,\
+  \ state)` : counts same-state 8-connected neighbours for every cell at once.\n- `step()` : applies all\
+  \ birth, survival, invasion, necrosis, and decay rules in a single vectorized pass.\n- `estimate_tumor_diameter()`\
+  \ : computes the bounding radius from the centroid of all tumor cells.\n\n---\n\n## Project Structure\n\
+  \n```\ncancer_simulation.py\n├── CancerAutomaton        # Simulation engine (rules, presets, therapy)\n\
+  │   ├── step()             # Core CA transition\n│   ├── apply_chemotherapy()\n│   ├── apply_radiotherapy()\n\
+  │   └── presets: inception / relapse / competitive\n└── CancerSimApp           # Tkinter GUI + Matplotlib\
+  \ visualizations\n    ├── _build_plots()     # Grid + population charts\n    ├── _build_controls() \
+  \ # Sliders, buttons, stats panel\n    └── _update_display()  # Live re-render every generation\n```\n\
+  \n---\n\n## Potential Extensions\n\n- Export simulation frames as GIF or video\n- Add targeted therapy\
+  \ that also kills resistant cells (at higher cost)\n- Angiogenesis: nutrient gradient affecting cancer\
+  \ survival probability\n- Immune cell state that hunts cancer\n- Save/load simulation states\n\n---\n\
+  \n## License\n\nMIT License. See `LICENSE` for details.\n"

@@ -1,0 +1,215 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: vivekP2611/MRI-BraTS2024-DG-UNet
+url: https://github.com/vivekP2611/MRI-BraTS2024-DG-UNet
+platform: github
+description: Domain-Generalized Brain Tumor Segmentation with Missing Modality Robustness & Uncertainty
+  Quantification
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-30T11:19:43Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: '## DG-UNet++ v6.1 — Brain Tumor Segmentation with Missing Modality Robustness
+
+
+  **Domain-Generalized 3D Segmentation + Evidential Uncertainty Quantification | BraTS 2024**
+
+
+  ---
+
+
+  ### The Problem
+
+
+  Current brain tumor segmentation models achieve 90% Dice on BraTS. But when deployed at a new hospital
+  with a different MRI scanner, performance drops to 65%. Our model not only maintains robust accuracy
+  across hospitals, but tells the radiologist exactly which voxels it''s uncertain about — so they know
+  where to focus their attention. When a modality is missing (e.g., patient couldn''t tolerate contrast),
+  our model adapts instead of failing.
+
+
+  Companies actively working on this: Philips (SmartSpeed Precise FDA cleared 2025), Siemens, GE Healthcare,
+  and startups like Paige.ai, Jona. The FDA is pushing for "total product lifecycle" oversight, meaning
+  models must prove they don''t degrade after deployment.
+
+
+  ---
+
+
+  ### What I Built
+
+
+  This is a custom-built DG-UNet++ architecture from scratch, not a pre-trained model or tutorial copy.
+  It includes:
+
+
+  - **Modality-Gated Fusion** — dynamically reweights features when any MRI sequence is missing
+
+  - **Evidential Uncertainty Head** — outputs voxel-level uncertainty maps using Subjective Logic (vacuity
+  + dissonance)
+
+  - **Synchronized 3D Augmentation** — elastic deformation, rotation, intensity scaling applied identically
+  to image and label
+
+  - **Foreground-Aware Sampling** — 75% of training batches contain tumor voxels to fix class imbalance
+
+  - **Combined Multi-Task Loss** — CE + Dice + Focal Tversky + Deep Supervision + Uncertainty Calibration
+
+  - **Mixed Precision Training** — AMP with gradient clipping and ReduceLROnPlateau scheduler
+
+
+  ---
+
+
+  ### Architecture
+
+
+  Input: [B, 4, 128, 128, 128] — 4 MRI modalities (T1, T1ce, T2, FLAIR)
+
+  │
+
+  ├── Modality Projection (4 × 1→16 conv)
+
+  ├── Modality-Gated Fusion (attention per modality, handles missing input)
+
+  ├── UNet++ Encoder (4 levels, InstanceNorm, Channel Attention)
+
+  │   └── Deep supervision heads at multiple scales
+
+  ├── Bottleneck
+
+  ├── Decoder with skip connections
+
+  └── Evidential Output Layer
+
+  ├── Segmentation Logits (4 classes: BG, NCR, ED, ET)
+
+  └── Uncertainty Map (interpretable for radiologists)
+
+
+
+  ---
+
+
+  ### Results — Missing Modality Robustness
+
+
+  Trained on BraTS 2024 GLI subset. Best validation mean Dice: **0.5641 at Epoch 77** (6h 2m on dual T4
+  GPUs).
+
+
+  The model was tested on all 15 non-empty modality combinations. Unlike standard models that crash when
+  T1ce is missing, this model adapts gracefully:
+
+
+  | Available Modalities | ET Dice | WT Dice | TC Dice | Mean Dice |
+
+  |---------------------|---------|---------|---------|-----------|
+
+  | T1 | 0.1567 | 0.3483 | 0.1330 | 0.2127 |
+
+  | T1ce | 0.2195 | 0.2890 | 0.1539 | 0.2208 |
+
+  | T2 | 0.1332 | 0.3372 | 0.1267 | 0.1990 |
+
+  | FLAIR | 0.2413 | 0.5933 | 0.2472 | 0.3606 |
+
+  | T1+T1ce | 0.3494 | 0.3945 | 0.2175 | 0.3205 |
+
+  | T1+T2 | 0.3159 | 0.5831 | 0.2683 | 0.3891 |
+
+  | T1ce+T2 | 0.3667 | 0.5156 | 0.2530 | 0.3784 |
+
+  | T2+FLAIR | 0.2905 | 0.6258 | 0.3238 | 0.4134 |
+
+  | T1+FLAIR | 0.3034 | 0.6875 | 0.3566 | 0.4492 |
+
+  | T1+T1ce+T2 | 0.4418 | 0.5742 | 0.3172 | 0.4444 |
+
+  | T1ce+FLAIR | 0.4621 | 0.6936 | 0.4178 | 0.5245 |
+
+  | T1+T2+FLAIR | 0.3549 | 0.7059 | 0.3853 | 0.4821 |
+
+  | T1ce+T2+FLAIR | 0.4833 | 0.6981 | 0.4337 | 0.5384 |
+
+  | T1+T1ce+FLAIR | 0.4960 | 0.7038 | 0.4433 | 0.5477 |
+
+  | **T1+T1ce+T2+FLAIR** | **0.5182** | **0.7187** | **0.4593** | **0.5654** |
+
+
+  **Key insight:** Even with only FLAIR (single modality), the model achieves 0.3606 mean Dice. With T1ce+FLAIR,
+  it reaches 0.5245 — proving it adapts instead of failing when contrast is unavailable.
+
+
+  ---
+
+
+  ### Uncertainty Quantification
+
+
+  When T1ce is missing, the model raises uncertainty in the tumor core region, guiding radiologist attention
+  for human-in-the-loop validation.
+
+
+  | Condition | Mean Uncertainty |
+
+  |-----------|-----------------|
+
+  | All modalities present | 0.4396 |
+
+  | T1ce missing | 0.4391 |
+
+
+  The uncertainty heatmap highlights the enhancing tumor boundary exactly where a radiologist would need
+  to verify manually.
+
+
+  ---
+
+
+  ### Training Configuration
+
+
+  | Parameter | Value |
+
+  |-----------|-------|
+
+  | Input shape | 128 × 128 × 128 |
+
+  | Batch size | 1 |
+
+  | Base channels | 16 |
+
+  | Depth | 4 |
+
+  | Dropout | 0.3 |
+
+  | Optimizer | AdamW (lr=5e-4, wd=1e-4) |
+
+  | Scheduler | ReduceLROnPlateau (factor=0.5, patience=7) |
+
+  | Loss | 0.15×CE + 0.35×Dice + 0.5×Focal Tversky + 0.3×Deep Supervision + 0.1×Uncertainty MSE |
+
+  | Early stopping patience | 20 epochs |
+
+  | Augmentation | Synchronized flip, rotation, elastic deform, intensity scale, gamma, Gaussian noise
+  |
+
+  | Hardware | 2 × NVIDIA T4 (Kaggle) |
+
+  | Training time | ~6 hours |
+
+
+  ---
+
+
+  Note: This is research code for educational and portfolio purposes. Not cleared for clinical diagnosis.'

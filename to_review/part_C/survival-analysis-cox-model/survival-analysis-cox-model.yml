@@ -1,0 +1,82 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: sujatachaudhury/survival-analysis-cox-model
+url: https://github.com/sujatachaudhury/survival-analysis-cox-model
+platform: github
+description: This project investigates whether cardiac calcification (measured via the Agatston Score)
+  and other clinical and dosimetric variables are associated with overall survival in lung cancer patients
+  treated with radiation therapy (RT).
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-04T19:42:37Z'
+image_source: https://raw.githubusercontent.com/sujatachaudhury/survival-analysis-cox-model/HEAD/Poster%20Presentation%20Applied%20Statistics.png
+heuristic_total_score: 29
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 7 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Cardiac Calcification and Overall Survival in Lung Cancer Patients Undergoing Radiotherapy\n\
+  \n**Applied Statistics Project — Politecnico di Milano, Semester II**\n\n## Overview\n\nThis project\
+  \ investigates whether **cardiac calcification** (measured via the Agatston Score) and other clinical\
+  \ and dosimetric variables are associated with **overall survival** in lung cancer patients treated\
+  \ with radiation therapy (RT).\n\nThe analysis combines:\n- Automated cardiac calcification scoring\
+  \ from CT DICOM images (Python)\n- Statistical survival analysis using Cox Proportional Hazards models\
+  \ (R)\n\n![Poster Presentation](Poster%20Presentation%20Applied%20Statistics.png)\n\n---\n\n## Repository\
+  \ Structure\n\n```\n├── Calcification/\n│   └── Original_code_calcification_in_heart.ipynb   # DICOM\
+  \ processing & Agatston Score computation\n│\n├── Statistical Analysis/\n│   ├── InitialDataPrep.R \
+  \    # Data merging, cleaning, and multiple imputation\n│   ├── PreAnalysis.R         # Exploratory\
+  \ analysis, correlation, VIF, feature selection\n│   └── Coxfinal.R            # Cox PH model fitting,\
+  \ variable selection, diagnostics\n│\n└── Poster Presentation Applied Statistics.png\n```\n\n---\n\n\
+  ## Methods\n\n### 1. Cardiac Calcification Scoring (`Calcification/`)\n\nThe Jupyter notebook processes\
+  \ per-patient DICOM CT images to:\n\n- Load CT volumes and heart segmentation masks using `DicomRTTool`\n\
+  - Detect calcified lesions within the heart (HU threshold: 130–700)\n- Filter regions by area and eccentricity\
+  \ to reduce noise\n- Compute the **Agatston Score** (density-weighted area of calcifications per slice)\n\
+  - Compute the **total calcification volume** (mm³)\n- Extract **Dose-Volume Histogram (DVH)** statistics\
+  \ for heart and lungs\n\n**Key libraries:** `DicomRTTool`, `pydicom`, `SimpleITK`, `scikit-image`, `NumPy`,\
+  \ `Matplotlib`\n\n### 2. Data Preparation (`InitialDataPrep.R`)\n\n- Merges multiple data sources: patient\
+  \ demographics, DVH statistics (heart & lungs), body composition (fat/muscle volumes), calcium scores,\
+  \ chemotherapy schedule, and LAA (Low Attenuation Area)\n- Normalizes body composition features (fat/muscle)\
+  \ by total body volume\n- Handles missing data using **Multiple Imputation by Chained Equations (MICE)**\
+  \ with method-specific strategies:\n  - Continuous variables: predictive mean matching (`pmm`)\n  -\
+  \ Binary variables: logistic regression (`logreg`)\n  - Multinomial variables: polytomous regression\
+  \ (`polyreg`)\n\n**Key libraries:** `mice`, `survival`, `glmnet`, `writexl`\n\n### 3. Pre-Analysis (`PreAnalysis.R`)\n\
+  \n- Computes and visualizes the **correlation matrix** across all features\n- Calculates **Variance\
+  \ Inflation Factors (VIF)** and the **condition number** to identify multicollinearity\n- Drops collinear\
+  \ features: `Weight` and `Height` (kept `BMI`), `Calcification_Volume` (kept `Agatston_Score`)\n- Applies\
+  \ **one-hot encoding** for categorical variables\n- Computes Pearson and Spearman correlations with\
+  \ the survival outcome (`OS_months`)\n\n**Key libraries:** `corrplot`, `car`, `GGally`, `caret`\n\n\
+  ### 4. Cox Proportional Hazards Modelling (`Coxfinal.R`)\n\n- Defines the survival object: `Surv(OS_months,\
+  \ event)` (event = death within 2 years)\n- Applies variable transformations (polynomial, log, sqrt,\
+  \ Box-Cox) to continuous predictors and selects the best-fitting form via univariate screening\n- Adjusts\
+  \ p-values using Benjamini-Hochberg (BH) and Bonferroni corrections\n- Fits univariate and multivariate\
+  \ Cox PH models\n- Performs model diagnostics:\n  - Proportional hazards assumption (Schoenfeld residuals\
+  \ via `cox.zph`)\n  - Martingale residuals plot\n  - Forest plot of hazard ratios\n  - Kaplan-Meier\
+  \ survival curves stratified by significant variables\n\n**Key libraries:** `survival`, `survminer`,\
+  \ `rms`, `splines`, `ggplot2`, `forestmodel`\n\n---\n\n## Key Variables\n\n| Category | Variables |\n\
+  |---|---|\n| Demographics | Age, Sex, BMI |\n| Comorbidities | Hypertension, Diabetes Drugs, Antilipidic\
+  \ Drugs, Beta Blockers, Antithrombotic |\n| Lifestyle | Smoking Status |\n| Treatment | Prescription\
+  \ Dose, Stage at RT, Chemotherapy, Immunotherapy, Target Therapy, Chemo Schedule |\n| Dosimetry | Max/Mean\
+  \ dose to heart & lungs, heart & lung volumes |\n| Body composition | Subcutaneous Fat, Torso Fat, Skeletal\
+  \ Muscle, Intermuscular Fat (normalized by body volume) |\n| Calcification | Agatston Score, LAA (Low\
+  \ Attenuation Area) |\n| Outcome | OS_months, Overall Survival at 2 years |\n\n---\n\n## Requirements\n\
+  \n### Python (Calcification notebook)\n```\nDicomRTTool\npydicom\nSimpleITK\nscikit-image\nnumpy\nmatplotlib\n\
+  pandas\nopenpyxl\n```\n\n### R (Statistical Analysis)\n```r\ninstall.packages(c(\n  \"readxl\", \"writexl\"\
+  , \"xlsx\", \"dplyr\", \"ggplot2\",\n  \"corrplot\", \"car\", \"GGally\", \"caret\",\n  \"survival\"\
+  , \"survminer\", \"glmnet\",\n  \"mice\", \"VIM\", \"rms\", \"splines\",\n  \"moments\", \"gridExtra\"\
+  , \"patchwork\", \"forestmodel\"\n))\n```\n\n---\n\n## How to Run\n\n1. **Calcification scoring**: Run\
+  \ `Calcification/Original_code_calcification_in_heart.ipynb` on your DICOM dataset. Update the `dicom_folder`\
+  \ path to point to your patient directories. The notebook outputs Agatston scores and DVH statistics\
+  \ as Excel files.\n\n2. **Data preparation**: Place all input Excel files in the same directory as the\
+  \ R scripts and run `InitialDataPrep.R`. This produces `data_imputed_3.xlsx`.\n\n3. **Pre-analysis**:\
+  \ Run `PreAnalysis.R` to perform multicollinearity checks and generate `data_imputed_cleaned.csv`.\n\
+  \n4. **Survival modelling**: Run `Coxfinal.R` to fit Cox PH models and generate diagnostic plots.\n\n\
+  > **Note:** The raw patient DICOM and clinical data are not included in this repository due to patient\
+  \ privacy constraints.\n\n---\n\n## Results\n\nThe final multivariate Cox model identified the following\
+  \ variables as significant predictors of overall survival:\n\n- Mean lung dose (polynomial term)\n-\
+  \ Torso fat fraction\n- Hypertension\n- Diabetes medication use\n\nDetailed results and interpretation\
+  \ are presented in the poster (`Poster Presentation Applied Statistics.png`).\n"

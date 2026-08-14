@@ -1,0 +1,73 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: dilarasnmz/Tumor-Segmentation-Using-Deep-Learning
+url: https://github.com/dilarasnmz/Tumor-Segmentation-Using-Deep-Learning
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-18T07:36:51Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Tumor Segmentation Using Deep Learning\n\n## Primary Production Pipeline: YOLO-Based\
+  \ Two-Stage Inference\n\nThis repository deploys a **YOLO-first production pipeline** with automatic\
+  \ fallback:\n\n1. **Stage-1 (YOLO Detector)**: Finds candidate mass regions (`models/best_yolo.pt`)\n\
+  2. **Stage-2 (UNet++ Classifier)**: Refines segmentation and classifies benign vs malignant (`models/best_classifier.pth`)\n\
+  3. **Desktop App**: Shows segmentation overlays and Grad-CAM-style heatmaps\n\n### Model Priority\n\n\
+  - **Primary**: YOLO two-stage pipeline (active when `models/best_yolo.pt` and `models/best_classifier.pth`\
+  \ exist)\n- **Fallback**: Legacy single-model pipeline (`models/best_model.pth`) — used only when YOLO\
+  \ models are missing\n- **No silent fallback**: App explicitly logs which pipeline is active on startup\n\
+  \n## Setup\n\nInstall dependencies:\n\n```bash\npip install -r requirements.txt\n```\n\nRun desktop\
+  \ app:\n\n```bash\npython app/main.py\n```\n\nThe app will print logs indicating which pipeline loaded:\n\
+  \n```\n[INFERENCE] Loading YOLO two-stage pipeline...\n[INFERENCE]   Stage-1 (YOLO detector): models/best_yolo.pt\n\
+  [INFERENCE]   Stage-2 (UNet++ classifier): models/best_classifier.pth\n[INFERENCE] ✅ YOLO two-stage\
+  \ pipeline ready\n```\n\nOr if YOLO models are missing:\n\n```\n[INFERENCE] ⚠️  YOLO weights missing:\n\
+  [INFERENCE]   - Stage-1 detector not found: models/best_yolo.pt\n[INFERENCE] Falling back to legacy\
+  \ pipeline...\n[INFERENCE] Loading legacy single-model pipeline...\n[INFERENCE]   Model: models/best_model.pth\n\
+  [INFERENCE] ✅ Legacy pipeline ready (fallback only)\n```\n\n```bash\npython app/main.py\n```\n\n## Inference\
+  \ Artifacts\n\nThe app reads model paths from [configs/config.yaml](configs/config.yaml) and follows\
+  \ this priority:\n\n### YOLO Two-Stage Pipeline (PRIMARY)\n\nWhen these files exist, the app uses the\
+  \ YOLO-based pipeline:\n\n- `models/best_yolo.pt` — YOLO detector (Stage-1)\n- `models/best_classifier.pth`\
+  \ — UNet++ classifier (Stage-2)\n\n### Legacy Single-Model Pipeline (FALLBACK ONLY)\n\nIf YOLO models\
+  \ are missing, the app falls back to:\n\n- `models/best_model.pth` — Legacy single-model backup\n\n\
+  The app never silently uses the legacy model when YOLO models exist. Terminal output clearly indicates\
+  \ which pipeline is active.\n\n## Prepare CBIS-DDSM Dataset for YOLO Training\n\nBefore training YOLO,\
+  \ convert CBIS-DDSM images and ROI masks to YOLOv8 segmentation format.\n\nPreparation script: [scripts/prepare_yolo_dataset.py](scripts/prepare_yolo_dataset.py)\n\
+  \n### Quick start (full dataset):\n\n```bash\npython scripts/prepare_yolo_dataset.py\n```\n\n- Reads\
+  \ CSV: `data/CBIS_Master_Index.csv`\n- Dataset root: `data/CBIS-DDSM-512-FULL1/CBIS-DDSM-512-FULL1`\n\
+  - Output: `data/yolo_run85/`\n- Auto-generates train/val split with class stratification (BENIGN=0,\
+  \ MALIGNANT=1)\n\n### Quick test (200 samples):\n\n```bash\npython scripts/prepare_yolo_dataset.py --max-samples\
+  \ 200\n```\n\n### Custom parameters:\n\n```bash\npython scripts/prepare_yolo_dataset.py \\\n  --csv\
+  \ data/CBIS_Master_Index.csv \\\n  --data-root data/CBIS-DDSM-512-FULL1/CBIS-DDSM-512-FULL1 \\\n  --output-dir\
+  \ data/yolo_run85 \\\n  --val-size 0.2 \\\n  --max-samples 1000\n```\n\nThe script:\n- Extracts polygon\
+  \ contours from ROI masks\n- Generates YOLO segmentation labels (normalized polygon coordinates)\n-\
+  \ Creates `data.yaml` for training\n- Logs class distribution and sample counts\n\nOutput structure:\n\
+  \n```\ndata/yolo_run85/\n├── images/\n│   ├── train/    (training images)\n│   └── val/      (validation\
+  \ images)\n├── labels/\n│   ├── train/    (YOLO polygon labels)\n│   └── val/\n└── data.yaml     (dataset\
+  \ metadata)\n```\n\n## Train YOLO Detector (Notebook-Aligned)\n\nTraining script: [scripts/train_yolo.py](scripts/train_yolo.py)\n\
+  \n### Basic command (uses prepared dataset):\n\n```bash\npython scripts/train_yolo.py\n```\n\n- Uses\
+  \ prepared dataset: `data/yolo_run85`\n- Trains on GPU 0 for 50 epochs with batch size 8\n- Image size:\
+  \ 1024\n\n### Custom parameters:\n\n```bash\npython scripts/train_yolo.py \\\n  --dataset-dir data/yolo_run85\
+  \ \\\n  --work-dir outputs \\\n  --device 0 \\\n  --epochs 50 \\\n  --imgsz 1024 \\\n  --batch 8 \\\n\
+  \  --model yolov8s.pt\n```\n\nAll hyperparameters match the notebook (AdamW optimizer, lr0=1e-3, weight_decay=5e-4,\
+  \ iou=0.8, augmentation settings).\n\n### Trained model location:\n\nAfter training completes, the best\
+  \ model is saved to:\n\n```\noutputs/yolo_run85/weights/best.pt\n```\n\n### Copy to app models directory:\n\
+  \n```bash\ncopy outputs\\yolo_run85\\weights\\best.pt models\\best_yolo.pt\n```\n\n(On Linux/Mac, use\
+  \ `cp` instead of `copy`)\n\n## Evaluate Production Pipeline\n\nRun evaluation through the deployed\
+  \ inference path:\n\n```bash\npython -m src.evaluate\n```\n\nArtifacts are written to:\n\n- `outputs/metrics/yolo_pipeline_metrics.json`\n\
+  - `outputs/figures/confusion_matrix.png`\n- `outputs/figures/eval_overlay_*.png`\n\n## Project Structure\n\
+  \n```text\nTumor-Segmentation-Using-Deep-Learning/\n|- app/\n|  |- main.py\n|- configs/\n|  |- config.yaml\n\
+  |- data/\n|- docs/\n|- models/                  ← deployed inference weights (do not delete)\n|  |-\
+  \ best_yolo.pt          ← Stage-1 YOLO detector          (PRIMARY)\n|  |- best_classifier.pth   ← Stage-2\
+  \ UNet++ classifier       (PRIMARY)\n|  |- best_model.pth        ← Legacy single-model backup      (FALLBACK\
+  \ ONLY)\n|- notebooks/\n|  |- final_experiment.ipynb\n|  |- archive/\n|- outputs/\n|  |- figures/\n\
+  |  |- metrics/\n|- scripts/\n|  |- train_yolo.py\n|- src/\n|- tests/\n|- requirements.txt\n|- README.md\n\
+  ```\n"

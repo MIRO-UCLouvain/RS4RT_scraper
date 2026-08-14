@@ -1,0 +1,62 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Muhammadwaqas1234/GLO-NCA
+url: https://github.com/Muhammadwaqas1234/GLO-NCA
+platform: github
+description: 'GLO-NCA: Global Context-Aware Neural Cellular Automata for Brain Tumor Segmentation (BraTS).
+  A lightweight (~13k params) NCA with a Squeeze-and-Excitation global-context block for multi-modal MRI
+  (T1/T1ce/T2/FLAIR) segmentation of WT/TC/ET regions. Runs on a 6GB GPU. MS thesis, educational use.'
+license: NOASSERTION
+language: Python
+keywords: []
+stars: 2
+updated_at: '2026-08-05T06:52:53Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# GLO-NCA: Global Context-Aware Neural Cellular Automata for Brain Tumor Segmentation\n\
+  \n> **MS Thesis — Muhammad Waqas, Air University, Islamabad.**\n> *For academic and educational use\
+  \ only — not a medical device (see [LICENSE](LICENSE)).*\n\nGLO-NCA segments brain tumors from **multi-modal\
+  \ MRI (BraTS)** using a\nlightweight **Neural Cellular Automata** with a **global-context mechanism**.\n\
+  A plain NCA only communicates locally; GLO-NCA adds a cheap Squeeze-and-\nExcitation (SE) block that\
+  \ injects whole-volume context, so the model captures\nboth **local boundaries** and **global tumor\
+  \ location** while staying tiny\n(~13k parameters, fits a 6 GB GPU).\n\n---\n\n## Why GLO-NCA\n- **Lightweight**\
+  \ — ~13k parameters vs millions in U-Net / Transformers; runs on\n  low-resource hardware (laptop GPU,\
+  \ edge devices).\n- **Global-context aware** — the SE block (`use_attention=True`) adds whole-\n  volume\
+  \ context for only ~4% extra parameters; this is the thesis novelty.\n- **Multi-modal** — fuses the\
+  \ four BraTS modalities (T1, T1ce, T2, FLAIR).\n- **Multi-class** — predicts the three standard nested\
+  \ tumor regions\n  **WT** (Whole Tumor), **TC** (Tumor Core), **ET** (Enhancing Tumor).\n- **Built-in\
+  \ quality control** — variance over stochastic inferences (NQM).\n\n## Method (coarse-to-fine)\n1. Downscale\
+  \ the volume and run an NCA on the **full low-res** image → global context.\n2. Upscale its features,\
+  \ concatenate with the higher-res image, run a second NCA\n   on a **random patch** (keeps VRAM low\
+  \ during training; full volume at inference).\n3. Read out 3 channels → sigmoid → WT / TC / ET.\n\n\
+  Loss: **Dice + Cross-Entropy** (`DiceCELoss`). Optimizer: **AdamW**.\nMetrics: **Dice**, **mIoU**, **HD95**\
+  \ per region.\n\n---\n\n## Repository layout\n```\n.\n├── src/                         # GLO-NCA pipeline\
+  \ (the only code you need to run it)\n│   ├── agents/                  #   Agent, Agent_NCA, Agent_Multi_NCA,\
+  \ Agent_GLO_NCA\n│   ├── datasets/                #   BraTS loader (Nii_Gz_Dataset_3D: Dataset_NiiGz_3D_BraTS)\n\
+  │   ├── models/                  #   Model_BasicNCA3D (+ SE global-context block)\n│   ├── losses/ \
+  \                 #   DiceCELoss\n│   ├── utils/                   #   Experiment, helper\n│   └── examples/train_GLO_NCA.py\n\
+  ├── train_GLO_NCA.ipynb          # main notebook (edit paths, run)\n├── extra/                     \
+  \  # non-GLO code kept for reference (UNet/Med-NCA/tutorials)\n├── requirements.txt\n└── LICENSE\n```\n\
+  \n## Installation (Python 3.12)\n```bash\npy -3.12 -m venv .venv\n.venv\\Scripts\\activate\npip install\
+  \ --upgrade pip\npip install torch --index-url https://download.pytorch.org/whl/cu121   # GPU build\n\
+  pip install -r requirements.txt\n```\n\n## Dataset\nUses the **BraTS** dataset (one folder per patient\
+  \ with the modality + seg\nvolumes). Tested on **BraTS 2024** (`*-t1n / -t1c / -t2w / -t2f / -seg .nii`);\n\
+  the loader also handles the older `t1 / t1ce / t2 / flair` naming.\n\n## Run\nEdit the paths in `train_GLO_NCA.ipynb`\
+  \ (or `src/examples/train_GLO_NCA.py`) —\nset **both** `img_path` and `label_path` to the BraTS dataset\
+  \ root — then run.\n\n```python\n# in the config\n'img_path':   r\"/path/to/BraTS2024_small_dataset\"\
+  ,\n'label_path': r\"/path/to/BraTS2024_small_dataset\",\n'input_channels': 4,    # T1, T1ce, T2, FLAIR\n\
+  'output_channels': 3,   # WT, TC, ET\n'use_attention': True,  # global-context SE block (the novelty)\n\
+  ```\n\nEvaluation prints **Dice / mIoU / HD95** per region on the test split.\n\n## Ablation (baseline\
+  \ vs GLO-NCA)\nSet `use_attention: False` to get the plain multi-level NCA baseline, and\n`True` for\
+  \ the global-context model — same code, one flag — to measure exactly\nwhat the global-context block\
+  \ contributes.\n\n---\n\n## Acknowledgements\nBuilt on the open-source **Med-NCA / M3D-NCA** framework\
+  \ by John Kalkhof et al.\n(MIT-licensed). The global-context design, BraTS multi-modal/multi-class\n\
+  pipeline, and evaluation are the thesis contributions.\n\n- Kalkhof et al., *Med-NCA: Robust and Lightweight\
+  \ Segmentation with Neural Cellular Automata*, IPMI 2023.\n- Kalkhof & Mukhopadhyay, *M3D-NCA: Robust\
+  \ 3D Segmentation with Built-In Quality Control*, MICCAI 2023.\n\n## License\nMIT, for **academic/educational\
+  \ use only** — see [LICENSE](LICENSE). Not for\nclinical use.\n\n"

@@ -1,0 +1,45 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: stratis-forge/CBCT_Pancreas_Mermaid
+url: https://github.com/stratis-forge/CBCT_Pancreas_Mermaid
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2022-03-31T17:57:42Z'
+image_source: null
+heuristic_total_score: 25
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 particle-therapy term(s).
+- Matched 7 support term(s).
+readme_excerpt: "# CBCT_Pancreas_Mermaid\n\n## Description\n\nDeep-learning (DL) registration model to\
+  \ predict OAR segmentations on the CBCT derived from segmentations on the planning CT.\n\n## Code Location\n\
+  \nSource code is hosted on the public-facing Stratis-Forge (https://github.com/stratis-forge)\n\n##\
+  \ Software Verification via Test Dataset\n### Generated Output\n* RTSTRUCT with warped structures to\
+  \ match input CBCT\n* DICOM with cropped FOV CBCT\n* HPC Implementation\n\n## Image Input Requirements\n\
+  \nTo run the routine, the process requires the following images in DICOM format:\n\n* planning CT \n\
+  * RTSTRUCT file with the following contours (drawn on planning CT):\n* Bowel_Sm  (Small bowel)\n* Stomach_duo \
+  \ (Stomach duodenum)\n* LUNG_L \n* LUNG_R (or optionally, combined \"LUNGS\" structure) \n* ISOCENTER \
+  \ (point/fiducial)\n* ROI  (15mm-enlarged PTV4500)\n* Conebeam CT (CBCT), rigidly aligned to isocenter\
+  \ and resliced to match planning CT\n\nForthcoming change: code will have ability to work from single,\
+  \ combined \"LUNGS\" structure. Some flexible/dynamic determination of these structure names.\n\n##\
+  \ Input Folder Format\n### INPUTDIR\n* CT1.3.46.670589.33.1.63754445356596240200002.525470822017xxxxx \
+  \  (planning CT)\n* OnlineMatchResliced  (resliced CBCT)\n* RTSStandardized (RTSTRUCT on planning CT)\n\
+  \n## Run Script\n\n```\n#!/bin/bash\n\nINPUTDIR=${1?Error: no input dicom dir}\nAWAREOUT=${2?Error:\
+  \ no output dicom dir}\n\nEMAILDIST=\"ur@home.edu\"\nSERVERLIST=\"pllimphsing1 pllimphsing2 pllimphsing3\
+  \ pllimphsing4\"\nlog_dir=/cluster/home/clinSegData/logs/eclipse_test\nLOGPFX=mermaid\nptname=`basename\
+  \ $INPUTDIR`\n\n\n{\nbsub -m \"${SERVERLIST}\" \\\n     -N -u \"${EMAILDIST}\" \\\n     -o $log_dir/${LOGPFX}output.pt$ptname.%J\
+  \ \\\n     -e $log_dir/${LOGPFX}errors.pt$ptname.%J \\\n     -R rusage[mem=25GB] -q clinical -n 1 \\\
+  \n     -W 00:20  -gpu \"num=1:mode=exclusive_process:mps=no:j_exclusive=yes\" \\\n     -I /cluster/home/clinSegData/scripts/eclipse_test/mermaid_process.sh\
+  \ ${INPUTDIR} ${AWAREOUT}\n} || {\n            echo failed\n        echo \"======== $1 job failed =========\"\
+  \ | \\\n        mail -s \"MP_CLIN1 JOB FAILURE ${LOGPFX}\" \"${EMAILDIST}\"\n}\n```\n\n\n## References\n\
+  * Han X, Hong J, Reyngold M, Crane C, Cuaron J, Hajj C, Mann J, Zinovoy M, Greer H, Yorke E, Mageras\
+  \ G, Niethammer M. Deep-learning-based image registration and automatic segmentation of organs-at-risk\
+  \ in cone-beam CT scans from high-dose radiation treatment of pancreatic cancer. Med Phys. 2021 Jun;48(6):3084-3095.\
+  \ doi: 10.1002/mp.14906. Epub 2021 May 14. PMID: 33905539.\n"

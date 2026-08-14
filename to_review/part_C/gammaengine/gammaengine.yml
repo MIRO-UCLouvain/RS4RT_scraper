@@ -1,0 +1,48 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Elliot-Wadge/gammaEngine
+url: https://github.com/Elliot-Wadge/gammaEngine
+platform: github
+description: Gamma analysis in 1, 2, and 3D as fast as I can make it
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-24T03:28:15Z'
+image_source: null
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 6 support term(s).
+readme_excerpt: "# gammaEngine\n\nHigh-performance gamma analysis for radiotherapy quality assurance.\n\
+  \ngammaEngine is a fast NumPy/Numba-based implementation of gamma index evaluation designed for clinical\
+  \ and research QA workflows. It focuses on computational efficiency, numerical correctness, and flexible\
+  \ handling of both regular and irregular dose grids for comparison between treatment planning system\
+  \ dose planes and measurement data.\n\n---\n\n## Key Features\n\n- High-performance gamma computation\
+  \ using Numba-acceleration\n- Parallel execution support for large-scale dose evaluations\n- Efficient\
+  \ interpolation and indexing strategies for structured grids\n- Support for both regular and irregular\
+  \ coordinate systems\n- Designed for integration into QA and research pipelines\n\n---\n\n## Design\
+  \ Goals\n\ngammaEngine is built around three primary goals:\n\n### Performance\nCore routines are compiled\
+  \ with Numba and optimized for:\n- Tight loop execution\n- Parallel execution where appropriate\n\n\
+  ### Numerical clarity\n- Explicit handling of grid geometry\n- Deterministic interpolation behaviour\n\
+  - Clear separation of coordinate mapping and gamma evaluation\n\n### Flexibility\n- Works with regular\
+  \ dose grids directly\n- Supports irregular measurement grids via explicit coordinate mapping\n- Consistent\
+  \ evaluation framework across different data sources\n\n---\n\n## Performance\n\ngammaEngine is designed\
+  \ for high-throughput gamma evaluation.\n\nTypical behaviour:\n- 1D comparisons: large speedups compared\
+  \ to general-purpose implementations\n- 2D comparisons: significant acceleration, especially when parallelized\n\
+  - 3D comparisons: increasingly memory-bound but still substantially faster in many practical cases\n\
+  \nPerformance improvements come primarily from:\n- Eliminating general-purpose search overhead\n- Using\
+  \ direct index-based interpolation on structured grids\n- JIT compilation of inner loops\n- Parallel\
+  \ execution across evaluation points\n\n---\n\n## Example Usage\n\n```python\nfrom gamma_engine import\
+  \ gamma\n\n\ndef make_grid(nx=101, ny=101, spacing=1.0):\n    x = np.linspace(0, (nx-1)*spacing, nx)\n\
+  \    y = np.linspace(0, (ny-1)*spacing, ny)\n    xv, yv = np.meshgrid(x, y)\n    return x, y, xv, yv\n\
+  \n\ndef gaussian_2D(xx,yy,sigma,x0,y0):\n    return np.exp(-((xx-x0)**2 + (yy-y0)**2)/2/sigma**2)\n\n\
+  \ndef gaussian(x, b, c):\n    return np.exp(-(x-b)**2/(2*c**2))\n\n# 1D example\nx_ref = np.arange(-10,10,0.1,\
+  \ dtype=np.float64)\nx_eval = x_ref + 0.1\ny_ref = gaussian(x_ref, 0.7, 2)*100\ny_eval = gaussian(x_ref,\
+  \ 0, 1.98)*100\n# note the comma in (x_ref,) is necessary to ensure compatibility with the higher dimension\
+  \ formatting\ngamma_me = gamma(x_eval,(x_ref,),y_eval,y_ref,2,2,0.001,1)\n\n\n# 2D example\nx, y, xx,\
+  \ yy = make_grid()\nz1 = gaussian_2D(xx, yy, 9.5, 0, 0)*100\nz2 = gaussian_2D(xx, yy, 10, 1, 0)*100\
+  \ + 1\ncoords1 = np.stack((yy.ravel(), xx.ravel()), axis=1)\ngamma_me = gamma(coords1, (y,x), z1.ravel(),\
+  \ z2, 2.0, 2.0, 0.02, 1)\n\n\n\n"

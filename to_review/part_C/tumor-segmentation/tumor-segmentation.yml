@@ -1,0 +1,79 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hunter133733/Tumor-Segmentation
+url: https://github.com/hunter133733/Tumor-Segmentation
+platform: github
+description: ''
+license: AGPL-3.0
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-15T00:54:24Z'
+image_source: https://raw.githubusercontent.com/hunter133733/Tumor-Segmentation/HEAD/assets/visualize_segmentation_pred_subsets.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# Comparison of Segmentation and Foundation Models in MRI Imaging for Tumor Segmentation\
+  \ (CSFIM)\n_A project for CMPT340 — Biomedical Computing at SFU Fall 2025._ \n_Sumant Dhir, Christopher\
+  \ Gutwin, Abdulahi Odeyeyiwa, Nick Smart, and Steven Shijia Zhang_\n\nThe goal of this project is to\
+  \ train a baseline segmentation model on MRI scans containing brain tumors, and compare it against a\
+  \ medical imaging foundation model by varying the input modality and training set completeness. By evaluating\
+  \ the models on performance, better diagnoses and patient care can be realized by choosing appropriate\
+  \ imaging modes and amounts for models deployed in healthcare settings.\n\n## Table of Contents\n1.\
+  \ [Demo Video](#demo)\n2. [Installation](#install)\n3. [Reproduction](#repro)\n    - [Running the Trainer](#unet-trainer)\n\
+  \    - [Running the SAM Notebook](#sam)\n4. [Important Links](#links)\n\n<a name=\"demo\"></a>\n## Demo\n\
+  \n[Demo Video](https://drive.google.com/file/d/1JcWgulfSrhyAGc0aGq8VX0-Mzu27QmLH/view)\n\n<a name=\"\
+  install\"></a>\n## Installation\nTo install, create a new Python virtual environment using `python -m\
+  \ venv venv` and activate it with `source venv/bin/activate`. Running `pip install -r requirements.txt`\
+  \ will install necessary packages to run the scripts provided.\n\n<a name=\"repro\"></a>\n## Reproduction\n\
+  \n<a name=\"unet-trainer\"></a>\n### Running the nnUNet Trainer\nRunning the trainer requires the [BRaTS\
+  \ TCGA LGG Dataset](https://www.cancerimagingarchive.net/analysis-result/brats-tcga-lgg/) to be downloaded\
+  \ and extracted to the root of the repository. \nThe script in `./src/FileAnalysis.py` will look for\
+  \ the `PKG - BraTS-TCGA-LGG` in the repository root, and extract files to their proper folders for nnUNet\
+  \ processing. Run this to setup the data for use with nnUNet.\n\n#### Environment\nThe nnUNet training\
+  \ process requires environment variables to be set for processed, raw, and results data. Before continuing,\
+  \ set the following environment variables based on your shell:\n\n##### Bash\n```sh\nexport nnUNet_raw=\"\
+  ./src/nnUNet_raw/nnUNet_raw\"\nexport nnUNet_preprocessed=\"./src/nnUNet_raw/nnUNet_preprocessed\"\n\
+  export nnUNet_results=\"./src/nnUNet_raw/nnUNet_results\"\n```\n\n##### Fish\n```fish\nset -gx nnUNet_raw\
+  \ \"./src/nnUNet_raw/nnUNet_raw\"\nset -gx nnUNet_preprocessed \"./src/nnUNet_raw/nnUNet_preprocessed\"\
+  \nset -gx nnUNet_results \"./src/nnUNet_raw/nnUNet_results\"\n```\n\n#### Preprocessing with nnUNet\n\
+  Before training, run the preprocessor using the following command, ensuring you've set the environment\
+  \ variables as above.\n\n```sh\nnnUNetv2_plan_and_preprocess -d 501 --verify-dataset-integrity\n```\n\
+  \nThis will place preprocessed files in the specified directory.\n\n##### Verifying Preprocessing\n\
+  To visually verify preprocessing, you can run the included project script to produce a figure of an\
+  \ MRI along with its segmentations.\n\n```sh\npython ./src/visualize_preprocessed_b2nd.py\n```\n\n####\
+  \ Running Training\n\nRunning training is done on different subsets of data, specified by `splits_x.json`\
+  \ files moved to the preprocessed directory.\nSubsets are as follows:\n- 10% of data on all modes\n\
+  - 25% of data on all modes\n- 90% of data on all modes (the preconfigured split)\n\nEach of the subset\
+  \ sizes represent `x` in `splits_x.json`. For example, `splits_10.json` runs 10% of the data for training.\n\
+  \nStart training using the command\n```sh\nnnUNetv2_train 501 2d 0 -tr nnUNetTrainer_10epochs\n```\n\
+  \n#### Predicting a Segmentation\nUsing the `imagesTs` folder, created by the `FileAnalysis.py` script,\
+  \ predictions can be made using the trained model with the `nnUNetv2_predict` command, specifying a\
+  \ location for results output.\n\nIn some cases, postprocessing can improve Dice scores by removing\
+  \ nonconnected segments. The `nnUNetv2_apply_postprocessing` command will try and improve scores.\n\n\
+  #### Visualizing a Segmentation\nUsing the `visualize_segmentation_pred_subsets.py` script, you can\
+  \ visualize how well a segmentation stacks up to various training sizes. After following the training\
+  \ and setup cases in [Running the Trainer](#unet-trainer), the following command will output a figure\
+  \ showing the segmentation on a test case (ex. `DU-7014_0000` as an interesting case.)\n\n![Visualize\
+  \ Segmentation Subsets Image Example](/assets/visualize_segmentation_pred_subsets.png)\n\n```sh\npython\
+  \ visualize_segmentation_pred_subsets.py \\\n--image /path/to/data/imagesTs/TCGA-DU-7014_0000.nii.gz\
+  \ \\\n--pred_10 /path/to/output/10/postprocessed/TCGA-DU-7014.nii.gz \\\n--pred_25 /path/to/output/25/postprocessed/TCGA-DU-7014.nii.gz\
+  \ \\\n--pred_90 /path/to/output/90/postprocessed/TCGA-DU-7014.nii.gz \\\n--axis 2 --slice-index 80 --output\
+  \ sc.png\n```\n\n<a name=\"sam\"></a>\n### Running SAM Notebook\nThe SAM experiments are run in **Google\
+  \ Colab** using 2D PNG slices and binary tumour masks.\n#### Create slices + masks locally\nRun on your\
+  \ own machine: \n```sh\npython SamAnalysis.py\n```\nMake sure SamAnalysis.py is in the same folder as\
+  \ the **PKG - BraTS-TCGA-LGG** data folder so the paths in the py file work. Paths might need adjusting\
+  \ if the file setup is different than this. After running SamAnalysis.py, the results are stored in\
+  \ a folder called **sam_slices** in the same project folder.\n\n#### Google Colab \nOpen the SAM notebook\
+  \ **SAM(Roboflow_adaptation) (1).ipynb** in Google Colab.\nIn Google Colab, set **Runtime -> Change\
+  \ runtime type -> Hardware accelerator: GPU**. We used a T4 GPU.\n\n#### Data Setup\nPlace the folder\
+  \ produced by SamAnalysis.py, in the first step, into your Google Drive. Then configure paths under\
+  \ the **Mount Drive** tab in the notebook to access the data in your Google Drive.\n\n#### Results\n\
+  Click **Run All** at the top left side of the screen and wait for all cells to complete running. It\
+  \ takes around 20 minutes for the notebook to complete running, where the majority of time is spent\
+  \ running SAM on each set of images.\n\n<a name=\"links\"></a>\n## Important Links\n\n| [Timesheet](https://1sfu-my.sharepoint.com/:x:/g/personal/hamarneh_sfu_ca/ETydZFuk0LpFoiaTlMgPoTABSCIO_YL-YbIvMBIAJ0MgRg)\
+  \ | [Slack channel](https://cmpt340fall2025.slack.com/archives/C09F8PS7UUU) | [Project report](https://google.com)\
+  \ |\n|-----------|---------------|-------------------------|\n"

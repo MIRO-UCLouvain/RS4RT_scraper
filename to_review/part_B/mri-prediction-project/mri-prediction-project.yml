@@ -1,0 +1,58 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ParasSoni08/mri-prediction-project
+url: https://github.com/ParasSoni08/mri-prediction-project
+platform: github
+description: Brain MRI tumor segmentation (U-Net) with RAG-based clinical guideline retrieval and LLM
+  preliminary report generation
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-08-09T10:41:12Z'
+image_source: null
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# MRI Brain Tumor Segmentation & Preliminary Report Pipeline\n\nAn end-to-end pipeline\
+  \ that segments brain tumors in MRI slices using a U-Net\n(ResNet-34 encoder), estimates tumor size,\
+  \ retrieves a matching clinical\nguideline via RAG (retrieval-augmented generation), and drafts a short\n\
+  preliminary report with a local LLM.\n\n**This is a research/portfolio project, not a medical device.**\
+  \ All generated\nreports carry an explicit disclaimer and are for physician review only — they\nare\
+  \ not diagnoses.\n\n## Pipeline overview\n\n1. **Segmentation** — a U-Net (`segmentation_models_pytorch`,\
+  \ ResNet-34\n   encoder) is trained on paired MRI slices and tumor masks to predict a\n   binary tumor\
+  \ mask for a given slice.\n2. **Size analysis** — the predicted tumor mask is compared against an\n\
+  \   estimated brain-tissue mask (simple intensity thresholding) to compute the\n   tumor's percentage\
+  \ of visible brain area and bucket it into a size\n   category (`Small` / `Medium` / `Large` / `No tumor\
+  \ detected`).\n3. **Guideline retrieval (RAG)** — the size category is embedded with\n   `sentence-transformers`\
+  \ (`all-MiniLM-L6-v2`) and used to query a\n   [ChromaDB](https://www.trychroma.com/) collection of\
+  \ illustrative clinical\n   guideline documents for the closest match.\n4. **Report generation** — the\
+  \ measured data and retrieved guideline are\n   passed to a local LLM (via [Ollama](https://ollama.com/),\
+  \ default model\n   `llama3.2:latest`) with a strict prompt that constrains it to only\n   summarize\
+  \ the provided information and always append a \"for physician\n   review only\" disclaimer.\n\n## Repository\
+  \ contents\n\n| File | Description |\n|---|---|\n| [`MRI_project.ipynb`](MRI_project.ipynb) | Full walkthrough\
+  \ notebook: data loading (Kaggle LGG MRI segmentation dataset), EDA, train/val/test split, dataset/dataloader\
+  \ setup, U-Net training loop, evaluation (Dice/IoU), visualization, tumor size analysis, guideline corpus\
+  \ creation, RAG retrieval, and report generation — in order. |\n| [`pipeline.py`](pipeline.py) | Standalone,\
+  \ reusable version of the inference pipeline (model loading, segmentation, size analysis, guideline\
+  \ retrieval, report generation) extracted from the notebook. |\n\n## Data\n\nTrained on the [LGG MRI\
+  \ Segmentation dataset](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)\n(Kaggle),\
+  \ downloaded automatically in the notebook via `kagglehub`.\n\n## Setup\n\n```bash\npip install -r requirements.txt\n\
+  ```\n\nReport generation additionally requires a running [Ollama](https://ollama.com/)\ninstance with\
+  \ a model pulled (e.g. `ollama pull llama3.2`), reachable at\n`http://localhost:11434`.\n\n## Usage\n\
+  \n```python\nfrom pipeline import (\n    load_segmentation_model,\n    get_inference_transform,\n  \
+  \  segment_image,\n    get_brain_mask,\n    analyze_tumor_size,\n    load_guideline_retriever,\n   \
+  \ retrieve_guideline,\n    generate_report,\n)\nimport numpy as np\nfrom PIL import Image\n\nmodel =\
+  \ load_segmentation_model(\"best_model.pth\")\ntransform = get_inference_transform()\n\nimage_rgb =\
+  \ np.array(Image.open(\"slice.tif\").convert(\"RGB\"))\npred_mask = segment_image(model, transform,\
+  \ image_rgb)\nbrain_mask = get_brain_mask(image_rgb)\n\nanalysis = analyze_tumor_size(pred_mask, brain_mask)\n\
+  \nembedder, collection = load_guideline_retriever()\nguideline = retrieve_guideline(analysis[\"size_category\"\
+  ], collection, embedder)\n\nreport = generate_report(analysis, guideline)\nprint(report)\n```\n\nNote:\
+  \ model weights (`best_model.pth`) and the guideline/ChromaDB artifacts\nare produced by running the\
+  \ notebook and are not included in this repo (see\n`.gitignore`).\n\n## Disclaimer\n\nAll output from\
+  \ this pipeline, including generated reports, is for\ndemonstration and physician-review purposes only.\
+  \ It is not a diagnosis and\nmust not be used for clinical decision-making without full verification\
+  \ by a\nqualified physician against the complete scan series and clinical context.\n"

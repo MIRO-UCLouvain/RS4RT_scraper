@@ -1,0 +1,81 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: xiaolinjie2007-ship-it/PeptidePredictPipeline
+url: https://github.com/xiaolinjie2007-ship-it/PeptidePredictPipeline
+platform: github
+description: Automated bioactive peptide prediction pipeline integrating enzymatic digestion, antioxidant,
+  allergenicity, toxicity, and BBB penetration prediction
+license: MIT
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-07-02T10:46:56Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "<img width=\"1536\" height=\"1024\" alt=\"全景图\" src=\"https://github.com/user-attachments/assets/afff3d40-c65e-46ca-a736-e59f7a945a8c\"\
+  \ />\n# PeptidePredictPipeline\n\nAutomated bioactive peptide prediction pipeline integrating enzymatic\
+  \ digestion, antioxidant activity prediction, allergenicity prediction, toxicity prediction, BBB penetration\
+  \ prediction, and bioactivity scoring.\n\n> 多肽生物活性预测自动化流水线。整合多种网络预测工具，实现从蛋白质酶解到活性/毒性/致敏性/抗氧化/血脑屏障穿透的全流程预测。\n\
+  \n---\n\n## Project Structure\n\n```\nPeptidePredictPipeline/\n│\n├── digestion/                   \
+  \ # Module 1: Enzymatic Digestion\n│   ├── run_digestion.py          # BIOPEP online digestion (25 enzyme\
+  \ schemes)\n│   ├── merge_xlsx.py             # Merge detail + summary Excel\n│   ├── check_xlsx.py\
+  \             # Check digestion output structure\n│   ├── check_merged.py           # Check merged file\
+  \ content\n│   └── inspect_excel.py          # Check input protein file format\n│\n├── prediction/ \
+  \                  # Module 2: Multi-step Prediction Pipeline\n│   ├── pipeline.py               # [Main\
+  \ Entry] 4-step combined prediction\n│   ├── antioxidant.py            # AnOxPePred antioxidant (FRS\
+  \ + CHEL)\n│   ├── antioxidant_zisu.py       # Perilla peptide antioxidant (dedicated)\n│   ├── allergen.py\
+  \               # AllerTOP allergenicity prediction\n│   ├── allergen_resume.py        # Resume interrupted\
+  \ allergenicity\n│   ├── toxicity.py               # ToxinPred3 single toxicity prediction\n│   ├──\
+  \ toxicity_batch.py         # ToxinPred3 batch toxicity prediction\n│   ├── toxicity_verify.py     \
+  \   # Toxicity prediction verification\n│   ├── bbb.py                    # B3Pred BBB batch prediction\n\
+  │   └── bbb_single.py             # B3Pred BBB single prediction (recommended)\n│\n├── bioactivity/\
+  \                  # Module 3: Bioactivity Scoring\n│   ├── __init__.py\n│   └── ranker_pipeline.py\
+  \        # PeptideRanker auto-submission pipeline\n│\n├── data_crawl/                   # Module 4:\
+  \ Data Collection\n│   ├── __init__.py\n│   └── fetch_satpdb_cpp.py       # Crawl SATPdb cell-penetrating\
+  \ peptides\n│\n├── data/                         # Input data (Excel / CSV)\n│   └── samples/      \
+  \            # Sample data\n│\n├── outputs/                      # Prediction output directory\n├──\
+  \ config.example.py             # Configuration template\n├── requirements.txt              # Python\
+  \ dependencies\n├── LICENSE                       # MIT License\n├── README.md                     #\
+  \ This file\n└── .gitignore                    # Git ignore rules\n```\n\n---\n\n## Quick Start\n\n\
+  ### 1. Install Dependencies\n\n```bash\npip install -r requirements.txt\n```\n\n### 2. Full Pipeline\
+  \ (4-Step Combined)\n\n```bash\ncd prediction\npython pipeline.py\n```\n\nAutomatically executes: Activity\
+  \ screening → Antioxidant prediction → Allergenicity prediction → Toxicity prediction\n\n### 3. Individual\
+  \ Digestion\n\n```bash\ncd digestion\npython run_digestion.py\n```\n\n### 4. Individual Predictions\n\
+  \n```bash\n# Antioxidant\ncd prediction\npython antioxidant.py\n\n# Allergenicity\npython allergen.py\n\
+  \n# Batch toxicity\npython toxicity_batch.py\n\n# BBB penetration (recommended: single mode)\npython\
+  \ bbb_single.py input.csv\n```\n\n---\n\n## Module Details\n\n### Module 1: Digestion (`digestion/`)\n\
+  \n| Script | Function | Input | Output |\n|--------|----------|-------|--------|\n| `run_digestion.py`\
+  \ | BIOPEP digestion with 25 enzyme schemes | Protein sequence Excel | `digest_detail_*.xlsx` + `digest_summary_*.xlsx`\
+  \ |\n| `merge_xlsx.py` | Merge detail and summary into one Excel | Two xlsx files | `enzyme_digestion_results.xlsx`\
+  \ |\n| `check_xlsx.py` | Debug: check digestion output structure | `digest_detail_*.xlsx` | Console\
+  \ output |\n| `check_merged.py` | Debug: check merged result | `enzyme_digestion_results.xlsx` | Console\
+  \ output |\n| `inspect_excel.py` | Debug: check input file format | Protein sequence Excel | Console\
+  \ output |\n\n### Module 2: Prediction (`prediction/`)\n\n**Combined Pipeline** `pipeline.py` runs 4\
+  \ steps sequentially:\n\n```\nStep 1: Activity screening (bioscore >= 0.5)\n    → active_ge_05.xlsx\n\
+  Step 2: AnOxPePred antioxidant prediction\n    → antioxidant_pred.xlsx + antioxidant_ge_05.xlsx\nStep\
+  \ 3: AllerTOP allergenicity prediction (browser automation)\n    → allergen_pred.xlsx + non_allergen.xlsx\n\
+  Step 4: ToxinPred3 toxicity prediction\n    → toxicity_pred.xlsx + non_toxic.xlsx\n```\n\n| Script |\
+  \ Function | Usage |\n|--------|----------|-------|\n| `pipeline.py` | 4-step combined entry | `python\
+  \ pipeline.py` |\n| `antioxidant.py` | DTU AnOxPePred antioxidant (FRS + CHEL) | `python antioxidant.py`\
+  \ |\n| `antioxidant_zisu.py` | Perilla peptide dedicated antioxidant | `python antioxidant_zisu.py`\
+  \ |\n| `allergen.py` | AllerTOP browser automation | `python allergen.py` |\n| `allergen_resume.py`\
+  \ | Resume interrupted prediction | `python allergen_resume.py` |\n| `toxicity.py` | Single peptide\
+  \ toxicity (CLI) | `python toxicity.py AAAA...` |\n| `toxicity_batch.py` | Batch toxicity from Excel\
+  \ | `python toxicity_batch.py` |\n| `toxicity_verify.py` | Verify results vs cache | `python toxicity_verify.py`\
+  \ |\n| `bbb.py` | B3Pred BBB batch (CSV) | `python bbb.py` |\n| `bbb_single.py` | B3Pred single (recommended)\
+  \ | `python bbb_single.py input.csv` |\n\n### Module 3: Bioactivity (`bioactivity/`)\n\n| Script | Function\
+  \ | Description |\n|--------|----------|-------------|\n| `ranker_pipeline.py` | PeptideRanker bioactivity\
+  \ scoring | Browser submit + QQ mail receive, resume supported |\n\n### Module 4: Data Collection (`data_crawl/`)\n\
+  \n| Script | Function | Description |\n|--------|----------|-------------|\n| `fetch_satpdb_cpp.py`\
+  \ | Crawl SATPdb CPP database | 17 pages, 831 records, CSV + Excel |\n\n---\n\n## Prediction Tools Overview\n\
+  \n| Type | Tool | Script |\n|------|------|--------|\n| \U0001F9EC Bioactivity (0-1) | PeptideRanker\
+  \ | `ranker_pipeline.py` |\n| \U0001F6E1️ Antioxidant (FRS/CHEL) | AnOxPePred (DTU) | `antioxidant.py`\
+  \ |\n| \U0001F927 Allergenicity | AllerTOP | `allergen.py` |\n| ☠️ Toxicity | ToxinPred3 | `toxicity_batch.py`\
+  \ |\n| \U0001F9E0 BBB Penetration | B3Pred | `bbb_single.py` |\n| \U0001F52A Digestion | BIOPEP | `run_digestion.py`\
+  \ |\n\n---\n\n## Dependencies\n\n```txt\nopenpyxl>=3.1.0\nrequests>=2.31.0\nnodriver>=0.38.0\nbeautifulsoup4>=4.12.0\n\
+  lxml>=5.0.0\nPillow>=10.0.0\n```\n\n## License\n\nMIT License\n"

@@ -1,0 +1,103 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: esimiele/VMAT-TBI-CSI
+url: https://github.com/esimiele/VMAT-TBI-CSI
+platform: github
+description: ESAPI code used for VMAT TBI and VMAT CSI autoplanning
+license: MIT
+language: C#
+keywords: []
+stars: 15
+updated_at: '2025-12-20T21:13:41Z'
+image_source: null
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 particle-therapy term(s).
+- Matched 4 support term(s).
+readme_excerpt: "# VMAT TBI and CSI Auto Planning\n\nAn automated planning solution for VMAT TBI and VMAT\
+  \ CSI using the Eclipse Scripting Application Programming Interface (ESAPI)\n\n## *Attention!!*\n\n\
+  12/1/2025\n\n*THIS REPOSITORY WILL NO LONGER BE SUPPORTED STARTING JANUARY 2026! ONLY CRITICAL BUGS\
+  \ FIXES WILL BE ADDRESSED!*\nThe actively maintained version of the VMAT TBI autoplanning code can be\
+  \ found here:\n\n[VMAT-TBI-CSI-TMLI](https://github.com/esimiele/VMAT-TBI-CSI-TMLI)\n\nSee the readme\
+  \ in that repo for details (includes automated planning for VMAT CSI/TMI/TMLI as well). \n*All users\
+  \ of this repository should begin migrating to the new version of the code as this repository will NOT\
+  \ be supported indefinitely!*\n\n## Authors\n- Primary contributors and authors:\n\t- Eric Simiele:\
+  \ primary developer and maintainer of code\n\t- Ignacio Romero: developer and tester\n\t- Nataliya Kovalchuk:\
+  \ tester and project PI\n\t- Jen-Yeu Wang: DICOM import/export developer and AI autosegmentation model\
+  \ developer\n\n## Updates\nSee [Changes log](https://github.com/esimiele/VMAT-TBI-CSI/blob/master/ChangesLog.md)\n\
+  \n\n## Initial public release of code v1.0\n- The purpose of this code is to automate as much of the\
+  \ treatment planning process as possible for VMAT TBI and CSI following the planning techniques used\
+  \ at Stanford University\n- Code is now available to public following clinical release at Stanford\n\
+  - Feel free to download and use the code\n- No example patients are provided with the code\n\t- Wanted\
+  \ to avoid dealing with any privacy/HIPAA issues\n- The solution file is located under VMATTBICSIAutoPlanMT/VMATTBICSIAutoPlanMT.sln\n\
+  - This code has been developed over the past year through a Stanford Clinical Innovation Fund grant\n\
+  - This code utilized the initial framework from the [VMAT TBI autoplanning code](https://github.com/esimiele/VMAT-TBI),\
+  \ but has been massively overhauled and expanded to permit VMAT CSI autoplanning\n\t- In addition, it\
+  \ has been rewritten to be more general, maintainable and readable\n\t- All of the code has been refactored\
+  \ to try and limit the maximum line count in any one function to 100 lines and make the functions into\
+  \ much smaller units (compared to the VMAT TBI autoplanning code)\n\t\t- permits unit testing\n- Much\
+  \ of the code has been abstracted into the VMATTBICSIAutoPlanningHelpers library, which contains many\
+  \ useful methods that are relevant to both VMAT TBI and CSI autoplanning\n\n## Install and run guide\n\
+  ### Install and build\n- Clone the repository to your local computer\n- Open the solution file in visual\
+  \ studio\n- Fixes any references to the Varian DLL files for the following projects:\n\t- ImportListener\n\
+  \t- VMATCSIAutoPlanMT\n\t- VMATTBIAutoPlanMT\n\t- VMATTBICSIAutoplanningHelpers\n\t- VMATTBICSIOptLoopMT\n\
+  - The code was compiled using the v15.6 ESAPI libraries\n\t- v16 libraries are included with the code\n\
+  - Ignore any warnings from ParallelTest and VMATTBICSIAutoplanningHelpersTests\n\t- ParallelTest was\
+  \ a test project at parallelizing the optimization/dose calculation for sequential CSI plans (haven't\
+  \ decided what I want to do with it yet)\n\t- VMATTBICSIAutoplanningHelpersTests are the unit tests\
+  \ for VMATTBICSIAutoplanningHelpers (still updating them)\n- In the solution explorer, under the \\\
+  _configuration folder, open the log_configuration.ini file in visual studio and update the log file\
+  \ path to a location on your computer\n\t- specifically, a drive that can be seen and written to by\
+  \ citrix\n- Under the VMATCSIAutoPlanMT and VMATTBIAutoPlanMT projects, in the Configuration folders,\
+  \ open the .ini configuration files and update the file paths to the desired locations on the computer/network\n\
+  \t- documentation\n\t- image export\n\t- Aria DB daemon, VMS File Daemon, local Daemon information (if\
+  \ you want automated import/export of CT and RT Struct dicom data)\n\t- RT structure set import file\
+  \ location\n- At the top of Visual Studio select --> build --> rebuild solution\n- Resolve any build\
+  \ errors\n\n### Troubleshooting\n- Again, don't care about build failures for ParallelTest and VMATTBICSIAutoplanningHelpersTests\n\
+  - A likely failure is the varian ESAPI dlls not being found/correctly referenced\n\t- be sure to update\
+  \ them to **YOUR VERSION OF ECLIPSE/ESAPI** for all projects listed in the installation section\n- Another\
+  \ failure is in nuget package restoration. This project uses two main nuget packages: simpleprogresswindow\
+  \ and EvilDicom\n- Info on the two packages can be found here:\n\t- Github: [SimpleProgressWindow](https://github.com/esimiele/SimpleProgressWindow)\
+  \ Nuget: [SimpleProgressWindow](https://www.codecademy.com/resources/docs/markdown/links)\n\t- [EvilDicom](https://github.com/rexcardan/Evil-DICOM)\
+  \ \n- Only VMATTBICSIAutoplanningHelpers project uses EvilDicom\n- VMATTBICSIAutoplanningHelpers, VMATCSIAutoPlanMT,\
+  \ and VMATTBIAutoPlanMT all use simpleprogresswindow\n- To update the nuget packages, right click on\
+  \ the project --> manage nuget packages\n\t- If the package manager shows the packages as installed\
+  \ and working fine, uninstall both packages and reinstall them\n\t\t- after uninstalling, select browse\
+  \ and search for simpleprogresswindow and evildicom and install them to the above projects\n- Try rebuilding\
+  \ the solution now, everything should work\n\n### Build files and testing\n- All files will be built\
+  \ in the top parent directory under /bin\n- Included in this folder are the configuration files (placed\
+  \ in a created folder under /bin/configuration) and plan template files (/bin/templates/\\<plan type\\\
+  >)\n\t- Both autoplanning scripts have been built around the concept of plan templates\n\t- These plan\
+  \ template files are read upon launch and are available to the user for selection for planning\n\t\t\
+  - They contain the relevant information regarding targets, rings, optimization structures, optimization\
+  \ constraints, etc.\n- Upon successful build of all projects, at the top of Visual Studio next to the\
+  \ build configuration drop downs, select the VMATCSIAutoPlanMT project in the drop down (i.e., which\
+  \ project to launch in debug mode)\n- Hit Start, there should be one error message regarding no connection\
+  \ to aria. Pay attention to any other error messages, particularly any messages regarding not being\
+  \ able to find folders\n- Once the gui pops up, switch to the Script configuration tab and review the\
+  \ settings to ensure they match what you changed in the .ini files previously\n\n### Run\n- The scripts\
+  \ can be run either through citrix or as stand-alone applications on a thick-client\n- To run through\
+  \ citrix:\n\t- Copy the bin/ folder and all of its contents to a network drive that citrix can access\n\
+  \t- Open a patient structure set in Eclipse, select tools --> scripts --> change folder --> select folder\
+  \ --> navigate to the bin/ directory --> hit ok\n\t\t- A script should show up in the scripts window\
+  \ called *LaunchVMATTBICSIAutoPlan.cs* select this script and hit run\n\t\t- You will be presented with\
+  \ a small window asking you to choose between VMAT TBI and VMAT CSI, select VMAT CSI\n\t\t- The VMAT\
+  \ CSI UI should pop up. Repeat for VMAT TBI to ensure everything is wired up correctly\n- To run as\
+  \ a stand-alone application:\n\t- Copy the bin/ folder and all of its contents to the desktop of a thick\
+  \ client\n\t\t- Open the bin/ folder and double click on the VMATCSIAutoPlanMT.exe file\n\t\t\t- You\
+  \ will be prompted to enter a patient MRN and a warning message should pop up saying that you need to\
+  \ select a structure set in the UI\n\t\t- Do the same for the VMATTBIAutoPlanMT.exe file\n\n### Approvals\n\
+  - Please test the code on a t-box prior to approving in your clinical system\n\t- **I'm not responsible\
+  \ if the code is not configured correctly for your system and it ends up causing problems**\n- Once\
+  \ you have configured the code correctly and tested it and are ready to move to the clinical system,\
+  \ you will need to approve the following files under script approvals:\n\t- VMATCSIAutoPlanMT\n\t- VMATTBIAutoPlanMT\n\
+  \t- VMATTBICSIAutoplanningHelpers\n\t- VMATTBICSIOptLoopMT\n\t- ImportListener\n\n## Contributing\n\
+  - The authors welcome contributions, suggestions, issues, etc.\n- For contributions, fork the code,\
+  \ make your changes and open a pull request with a short description of your changes\n\t- I will review\
+  \ it and determine if it should be incorporated into the code\n- For all other items:\n\t- Feel free\
+  \ to open an issue for problems with the code or feature requests\n\t- I monitor it fairly regularly\
+  \ so I should get back to you in a week or so\n"

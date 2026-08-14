@@ -1,0 +1,288 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: HarshithaNellore/Hybrid-Tumor-Segmentation-Using-SAM
+url: https://github.com/HarshithaNellore/Hybrid-Tumor-Segmentation-Using-SAM
+platform: github
+description: Hybrid brain tumor segmentation using a SegNet-inspired U-Net with Segment Anything Model
+  (SAM) refinement on the BraTS 2021 MRI dataset for accurate medical image segmentation.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-10T06:38:32Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: '# Hybrid Tumor Segmentation (U-Net + SAM Refinement)
+
+
+  A brain tumor segmentation pipeline that combines a supervised 2D U-Net (trained on the BraTS 2021 dataset)
+  with **Segment Anything (SAM)** as a post-hoc mask refinement step. The U-Net produces coarse tumor
+  masks from MRI slices, and SAM refines each connected region using bounding-box prompts derived from
+  those coarse predictions.
+
+
+
+  ## Overview
+
+
+  The pipeline has four stages:
+
+
+  1. **Data extraction & verification** — Unpack the BraTS 2021 `.tar` archive and confirm all NIfTI volumes
+  are present.
+
+  2. **Preprocessing** — Convert 3D FLAIR/segmentation volumes into normalized, resized 2D axial slices
+  saved as `.npy` files, keeping only slices with non-trivial tumor content.
+
+  3. **Training** — Train a U-Net-style encoder-decoder (`SegNetSimple`) with a combined BCE + Dice loss
+  to produce coarse binary tumor masks.
+
+  4. **SAM refinement** — Take the coarse U-Net predictions, extract bounding boxes per connected component,
+  and prompt SAM to produce refined, higher-fidelity masks.
+
+
+  ## Dataset
+
+
+  - **BraTS 2021 Task 1** (brain tumor segmentation) — expects `BraTS2021_Training_Data.tar` provided
+  as a Kaggle input dataset.
+
+  - Only the **FLAIR** modality and its corresponding **segmentation (SEG)** label are used.
+
+  - Slices with fewer than 10 tumor-labeled pixels are discarded to avoid training on near-empty masks.
+
+
+  ## Model Architecture
+
+
+  `SegNetSimple` — a U-Net-like architecture with skip connections:
+
+
+  - **Encoder:** 4 convolutional blocks (Conv → BatchNorm → ReLU, ×2) with 2×2 max-pooling, channel widths
+  `64 → 128 → 256 → 512`.
+
+  - **Bottleneck:** one additional conv block at the deepest resolution.
+
+  - **Decoder:** transposed-convolution upsampling paired with skip connections from each encoder stage,
+  mirroring the encoder''s channel widths back down to the output.
+
+  - **Output:** 1×1 convolution producing a single-channel probability mask.
+
+
+  ### Loss & Metrics
+
+
+  - **Loss:** `BCEDiceLoss` — a weighted sum of binary cross-entropy and Dice loss (default 40% BCE /
+  60% Dice).
+
+  - **Metrics:** Dice coefficient, IoU (Jaccard), sensitivity, and specificity, along with raw TP/TN/FP/FN
+  counts.
+
+
+  ### SAM Refinement
+
+
+  - Requires the `segment-anything` package and a SAM checkpoint (`sam_vit_h_4b8939.pth`) added as a Kaggle
+  input.
+
+  - For each coarse mask, connected components are found via `skimage.measure.label`/`regionprops`.
+
+  - Each component''s bounding box (with a small margin) is used as a box prompt for SAM''s `SamPredictor`,
+  and the resulting per-region masks are combined via logical OR.
+
+
+  ## Project Structure (Notebook Cells)
+
+
+  | Cell | Purpose |
+
+  |---|---|
+
+  | 1 | Setup & configuration (imports, paths, hyperparameters, GPU check) |
+
+  | 2 | Extract the BraTS `.tar` archive (run once) |
+
+  | 3 | Verify extracted NIfTI files |
+
+  | 4 | Preprocess NIfTI volumes into normalized 2D slices (`.npy`) |
+
+  | 5 | Create train/val/test splits (80/10/10) |
+
+  | 6 | `BrainSliceDataset` — PyTorch `Dataset` for loading slice pairs |
+
+  | 7 | Model definition (`ConvBlock`, `SegNetSimple`) |
+
+  | 8 | Loss function (`BCEDiceLoss`) and evaluation metrics |
+
+  | 9 | Dataloader construction and training loop (`train_model`) |
+
+  | 10 | Run training end-to-end |
+
+  | 11 | Inference function — run the trained model and save predictions |
+
+  | 12 | SAM refinement functions — refine coarse predictions using SAM |
+
+
+  ## Configuration
+
+
+  Key parameters (set in Cell 1):
+
+
+  | Parameter | Default | Description |
+
+  |---|---|---|
+
+  | `IMG_SIZE` | 256 | Slice resize target (H×W) |
+
+  | `BATCH_SIZE` | 8 | Training batch size |
+
+  | `NUM_WORKERS` | 2 | Dataloader worker processes |
+
+  | `EPOCHS` | 40 | Training epochs |
+
+  | `LEARNING_RATE` | 1e-4 | Adam optimizer learning rate |
+
+
+  Paths (Kaggle-specific, adjust for other environments):
+
+
+  ```python
+
+  INPUT_DATA_DIR = ''/kaggle/input/brats-2021-task1''
+
+  DATA_DIR       = ''/kaggle/working/data''        # extracted NIfTI volumes
+
+  PROCESSED_DIR  = ''/kaggle/working/processed''    # slices, splits, predictions
+
+  SAM_CHECKPOINT = ''/kaggle/input/segment-anything-models/sam_vit_h_4b8939.pth''
+
+  ```
+
+
+  ## Requirements
+
+
+  - Python 3.11
+
+  - `torch`
+
+  - `numpy`, `pandas`
+
+  - `nibabel` (NIfTI I/O)
+
+  - `opencv-python` (`cv2`)
+
+  - `scikit-image` (`skimage.transform`, `skimage.measure`)
+
+  - `scikit-learn` (`jaccard_score`)
+
+  - `matplotlib`, `tqdm`
+
+  - `segment-anything` (for the SAM refinement stage)
+
+  - A CUDA-enabled GPU is strongly recommended; training on CPU will be very slow.
+
+
+  ## Usage
+
+
+  1. Add the BraTS 2021 dataset and a SAM checkpoint (`sam_vit_h_4b8939.pth`) as Kaggle input datasets.
+
+  2. Enable GPU: **Settings → Accelerator → GPU**.
+
+  3. Run cells 1–3 to extract and verify the data.
+
+  4. Run cell 4 to preprocess volumes into slices, then cell 5 to create train/val/test splits.
+
+  5. Run cells 6–10 to define the model and train it. The best checkpoint is saved to `PROCESSED_DIR/best_segnet_model.pth`.
+
+  6. Run cell 11''s `run_inference(...)` on the test dataloader to generate coarse predictions and per-slice
+  metrics.
+
+  7. Run cell 12''s `run_sam_refinement(...)` to refine the coarse predictions with SAM.
+
+
+  ## 📈 Results
+
+
+  The pipeline successfully:
+
+
+  - Segments tumor regions from MRI slices
+
+  - Learns robust representations using Dice + BCE Loss
+
+  - Supports GPU training for faster convergence
+
+  - Enhances segmentation quality through optional SAM refinement
+
+
+  ## 🔮 Future Improvements
+
+
+  - Multi-class tumor segmentation
+
+  - 3D U-Net implementation
+
+  - Attention U-Net
+
+  - MONAI framework integration
+
+  - Mixed precision training
+
+  - TensorBoard logging
+
+  - Model deployment using Streamlit or Gradio
+
+  - ONNX/TorchScript export
+
+  - Hyperparameter optimization
+
+
+
+  ## Acknowledgements
+
+
+  - **BraTS 2021** dataset for brain tumor segmentation.
+
+  - **Segment Anything (SAM)** by Meta AI, used here for mask refinement.
+
+
+  ## 📚 References
+
+
+  - BraTS 2021 Challenge
+
+  - PyTorch Documentation
+
+  - Segment Anything Model (Meta AI)
+
+  - U-Net: Convolutional Networks for Biomedical Image Segmentation
+
+
+  ---
+
+
+  ## 👩‍💻 Author
+
+
+  **Harshitha Nellore**
+
+
+  AI/ML Engineer | Deep Learning Enthusiast
+
+
+  GitHub: https://github.com/HarshithaNellore
+
+
+  LinkedIn: https://linkedin.com/in/harshithanellore
+
+
+  '

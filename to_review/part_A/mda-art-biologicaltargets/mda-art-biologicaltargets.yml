@@ -1,0 +1,61 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: OncologyModelingGroup/MDA_ART_BiologicalTargets
+url: https://github.com/OncologyModelingGroup/MDA_ART_BiologicalTargets
+platform: github
+description: This repository contains data and code for identifying biologically-relevant adaptive radiotherapy
+  targets using statistical analysis.
+license: NOASSERTION
+language: MATLAB
+keywords: []
+stars: 0
+updated_at: '2026-06-19T22:41:58Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# MDA Adaptive RT - Biological Targets\nThis README provides an overview of the MATLAB\
+  \ scripts and data files used for the classification and spatial analysis of Apparent Diffusion Coefficient\
+  \ (ADC) data. These scripts are designed to delineate candidate radiotherapy targets informed by changes\
+  \ in diffusion within the tumor. Voxels are classified as Increased Diffusion Restriction (IDR) or Decreased/Maintained\
+  \ Diffusion Restriction (DMDR) in this framework.\n\n## Setup and Requirements\nDependencies\nMATLAB\
+  \ (Recommended R2022b or later).\nStatistics and Machine Learning Toolbox (Required for ecdf, paretotails,\
+  \ and confusionmat).\n\n## Data Description\n| Filename | Description |\n|----------| ------------|\n\
+  |ADC_Data.mat | MATLAB file containing each subject's voxel-wise measurement of apparent diffusion coefficient\
+  \ within the tumor. |\n|SpatialDistribution_BestScenario.mat | MATLAB file containing each tumor voxel's\
+  \ class (IDR vs. DMDR) using the optimal cutoff provided in the manuscript.\n\n## Code Summary\n| Filename\
+  \ | Description |\n|----------| ------------|\n| Script1_VoxelClassification_OptimalCutoffResults.m\
+  \ |Performs voxel-wise classification using pre-determined \"optimal\" cutoffs. Generates confusion\
+  \ matrices, eCDF plots, and performance metrics (Sensitivity, Specificity, DSC). |\n|Script2_VoxelClassification_AllCutoffROC.m\
+  \ | Iterates through multiple LTCP (Lower Tail Cumulative Probability) thresholds to perform ROC analysis\
+  \ and determine the best-performing cutoffs for the model. \n|Script3_IDR_SpatialDistributionAnalysis_EnhBorder.m\
+  \ | Analyzes the localization of IDR voxels, specifically comparing the \"Periphery-to-Core\" (PC) ratio\
+  \ between observed and predicted data. |\n\n## Methodology: Voxel-Wise Tumor Classification and Spatial\
+  \ Analysis\nThis repository contains a suite of MATLAB scripts for processing ADC imaging data, determining\
+  \ optimal classification thresholds via ROC analysis, and analyzing the spatial distribution of predicted\
+  \ tumor patterns.\n\n#### Statistical Mapping & Classification\nThe script utilize Empirical Cumulative\
+  \ Distribution Functions (eCDF) and Pareto Tail Analysis to establish thresholds for $\\Delta ADC$ ($ADC_{final}\
+  \ - ADC_{baseline}$).\n\n| Class | Description |\n|-------| ------------|\n|IDR (Class 1) | Areas where\
+  \ $\\Delta ADC$ is $\\le$ the determined threshold (increased restriction). |\n|DMDR (Class 2) | Areas\
+  \ where $\\Delta ADC$ is > the threshold (maintained/decreased restriction). |\n \n#### ROC Analysis\n\
+  To find the optimal balance between sensitivity and specificity, the analysis tests LTCP thresholds\
+  \ ranging from 20% to 40%. Observed Cutoff: Selected based on the highest Area Under the Curve (AUC).\
+  \ Model Cutoff: Selected using the Youden’s Index ($J$), where $J = Sensitivity + Specificity - 1$.\n\
+  \n#### Performance Evaluation\nThe scripts calculate the following metrics to compare the model against\
+  \ observed data: Sensitivity (TPR) and Specificity (TNR). Dice-Sorensen Coefficient (DSC): Measures\
+  \ spatial overlap/agreement between predicted and observed classes. Confusion Matrices: Generated for\
+  \ each patient case across four different scenarios.\n\n| Scenario | Tumor Regions | Timepoint |\n|-----|-------|-----|\n\
+  | Scenario 1 | Enhancing + Non-Enhancing Tumor Volume | End of radiotherapy |\n| Scenario 2 | Enhancing\
+  \ + Non-Enhancing Tumor Volume | 1-month follow-up visit |\n| Scenario 3 | Enhancing Tumor Volume |\
+  \ End of radiotherapy |\n| Scenario 4 | Enhancing Tumor Volume | 1-month follow-up visit |\n\n#### Spatial\
+  \ Distribution\nThis analysis classifies IDR voxels based on their location within the tumor. Clinician\
+  \ delineated border between the enhancing and non-enhancing volume was used as the boundary to define\
+  \ tumor periphery (non-enhancing volume) versus tumor core (enhancing volume). IDR Periphery-to-Core\
+  \ Ratio was calculated across subjects and used to assess preferential localization.\n\n| Class Number\
+  \  | Description | Clinician Delineated Tumor Volume |\n|---------------|-------------|------------------------------------|\n\
+  | 1 | IDR voxel located in the tumor periphery | Non-enhancing volume |\n| 2 | IDR voxel located in\
+  \ the tumor core | contrast enhancing volume |\n"

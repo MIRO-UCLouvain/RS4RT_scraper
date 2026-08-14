@@ -1,0 +1,136 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: VinayakMokashi/AI-Powered-Brain-Tumor-Detection-and-Localization
+url: https://github.com/VinayakMokashi/AI-Powered-Brain-Tumor-Detection-and-Localization
+platform: github
+description: Two-stage deep-learning pipeline that detects (ResNet50) and localizes (ResUNet) brain tumors
+  in MRI scans — 98.1% classification accuracy with pixel-level tumor segmentation. Built with TensorFlow/Keras.
+license: MIT
+language: Jupyter Notebook
+keywords:
+- brain-tumor
+- computer-vision
+- deep-learning
+- image-segmentation
+- keras
+- medical-imaging
+- mri
+- python
+- resnet
+- tensorflow
+- transfer-learning
+- unet
+stars: 1
+updated_at: '2026-07-09T22:30:04Z'
+image_source: https://raw.githubusercontent.com/VinayakMokashi/AI-Powered-Brain-Tumor-Detection-and-Localization/HEAD/assets/segmentation_results.png
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+readme_excerpt: "# \U0001F9E0 AI-Powered Brain Tumor Detection & Localization\n\n![Python](https://img.shields.io/badge/Python-3.x-blue.svg)\n\
+  ![TensorFlow](https://img.shields.io/badge/TensorFlow-2.11-orange.svg)\n![Keras](https://img.shields.io/badge/Keras-API-red.svg)\n\
+  ![License](https://img.shields.io/badge/License-MIT-green.svg)\n\nA deep-learning system that **detects**\
+  \ and **localizes** brain tumors in MRI\nscans. It chains two models into a single pipeline: a **ResNet50**\
+  \ classifier\nthat decides whether a scan contains a tumor, followed by a **ResUNet**\nsegmentation\
+  \ network that outlines the tumor at the pixel level for every scan\nflagged as positive.\n\n<p align=\"\
+  center\">\n  <b>MRI scan → [ ResNet50: tumor? ] → if yes → [ ResUNet: where? ] → pixel-level mask</b>\n\
+  </p>\n\n<p align=\"center\">\n  <img src=\"assets/segmentation_results.png\" alt=\"Sample output: MRI,\
+  \ ground-truth mask, AI-predicted mask, and overlays\" width=\"100%\">\n  <br>\n  <em>End-to-end output\
+  \ — for each scan: MRI · ground-truth mask · AI-predicted mask · ground-truth overlay (red) · AI-predicted\
+  \ overlay (green).</em>\n</p>\n\n> **Disclaimer:** This is a research / portfolio project. It is **not**\
+  \ a medical\n> device and must not be used for actual diagnosis.\n\n---\n\n## Table of Contents\n\n\
+  - [Why two models?](#why-two-models)\n- [Architecture](#architecture)\n- [Dataset](#dataset)\n- [Results](#results)\n\
+  - [Repository structure](#repository-structure)\n- [Getting started](#getting-started)\n- [How the code\
+  \ is organized](#how-the-code-is-organized)\n- [Tech stack](#tech-stack)\n- [Future work](#future-work)\n\
+  - [License & acknowledgements](#license--acknowledgements)\n\n---\n\n## Why two models?\n\nEvery scan\
+  \ raises two clinically different questions — *is there a tumor?* and\n*where is it?* — and no single\
+  \ model answers both cleanly:\n\n- A **classifier** alone tells you a tumor exists but not its location.\n\
+  - A **segmentation** model alone is heavier, harder to train on imbalanced data,\n  and wastes compute\
+  \ on the ~65% of scans that are healthy.\n\nSo I use a **two-stage cascade**: a fast classifier screens\
+  \ *every* scan, and\nonly the positives are handed to the segmentation network. This is both\nefficient\
+  \ and accurate — the same screening-then-diagnosis pattern used in real\nradiology workflows.\n\n##\
+  \ Architecture\n\n| Stage | Model | Task | Key idea |\n| :---: | --- | --- | --- |\n| **1** | ResNet50\
+  \ (transfer learning) | Binary classification — tumor vs. no tumor | Freeze an ImageNet-pretrained backbone,\
+  \ train only a custom softmax head |\n| **2** | ResUNet + Focal Tversky loss | Semantic segmentation\
+  \ — pixel-level mask | U-Net encoder/decoder built from residual blocks + skip connections |\n\n**ResUNet\
+  \ at a glance:**\n\n```\nEncoder (downsampling)                          Decoder (upsampling)\n  Stage\
+  \ 1  Conv x2   (16)  ------ skip ------>  concat -> ResBlock (16)\n  Stage 2  ResBlock  (32)  ------\
+  \ skip ------>  concat -> ResBlock (32)\n  Stage 3  ResBlock  (64)  ------ skip ------>  concat -> ResBlock\
+  \ (64)\n  Stage 4  ResBlock (128)  ------ skip ------>  concat -> ResBlock (128)\n              \\ \
+  \                                       /\n               ------>  Bottleneck ResBlock (256)  ----\n\
+  \  Final: Conv 1x1 + sigmoid  ->  tumor mask (256 x 256 x 1)\n```\n\nThe segmentation model is trained\
+  \ with the **Focal Tversky loss**, which weights\nmissed tumor pixels more heavily than false alarms\
+  \ — essential because tumor\npixels are a tiny fraction of each scan. See\n[`docs/PROJECT_REPORT.md`](docs/PROJECT_REPORT.md)\
+  \ for the full technical write-up.\n\n## Dataset\n\n[**LGG MRI Segmentation**](https://www.kaggle.com/mateuszbuda/lgg-mri-segmentation)\n\
+  — FLAIR brain MRI scans from The Cancer Genome Atlas (TCGA), each paired with a\nmanually annotated\
+  \ binary tumor mask.\n\n| Property | Value |\n| --- | --- |\n| Total scans | 3,929 |\n| Tumor-negative\
+  \ (`mask = 0`) | 2,556 |\n| Tumor-positive (`mask = 1`) | 1,373 |\n| Image size | 256 × 256 × 3 |\n\
+  | Mask values | 0 (background) / 255 (tumor) |\n\nTwo metadata files (`data.csv`, `data_mask.csv`) map\
+  \ each scan to its mask and\nstore the binary tumor flag.\n\n<p align=\"center\">\n  <img src=\"assets/dataset_samples.png\"\
+  \ alt=\"Sample MRI scans with tumor masks\" width=\"90%\">\n  <br>\n  <em>Tumor-positive samples: MRI\
+  \ · annotated mask · mask overlaid on the scan (red).</em>\n</p>\n\n## Results\n\nThe ResNet50 classifier\
+  \ was evaluated on a held-out test set of **576 scans**:\n\n| Metric | Class 0 (no tumor) | Class 1\
+  \ (tumor) |\n| --- | :---: | :---: |\n| Precision | 0.98 | 0.98 |\n| Recall | 0.99 | 0.96 |\n| F1-score\
+  \ | 0.99 | 0.97 |\n\n**Overall classification accuracy: 98.1%.**\n\n<p align=\"center\">\n  <img src=\"\
+  assets/confusion_matrix.png\" alt=\"Classifier confusion matrix on the test set\" width=\"360\">\n \
+  \ <br>\n  <em>Confusion matrix on the 576-scan test set (rows = actual, cols = predicted).</em>\n</p>\n\
+  \nThe ResUNet produces tight, well-localized tumor masks — see the qualitative\nresults shown at the\
+  \ top of this README and rendered in full at the end of the\nnotebook.\n\n## Repository structure\n\n\
+  ```\n.\n├── Brain_Tumor.ipynb        # End-to-end pipeline: EDA → classifier → segmenter → evaluation\n\
+  ├── models.py                # Model builders: ResNet50 classifier + ResUNet\n├── train.py         \
+  \        # Reproducible training — regenerates the weights + JSON files\n├── predict.py            \
+  \   # CLI: run the trained pipeline on new MRI scans\n├── utilities.py             # Custom DataGenerator,\
+  \ Focal Tversky loss, two-stage inference\n├── requirements.txt         # Pinned Python dependencies\n\
+  ├── docs/\n│   └── PROJECT_REPORT.md    # Technical write-up (problem, approach, results, limitations)\n\
+  ├── assets/                  # Result figures used in the README / report\n├── LICENSE             \
+  \     # MIT\n├── .gitignore\n└── README.md\n```\n\n**Not committed** (large / generated locally — see\
+  \ `.gitignore`): the MRI dataset\n(`Brain_MRI/`, `data.csv`, `data_mask.csv`), the trained weights\n\
+  (`weights.hdf5`, `weights_seg.hdf5`) and the serialized architectures\n(`resnet-50-MRI.json`, `ResUNet-MRI.json`).\
+  \ Run [`train.py`](train.py) to\n(re)generate the weights and architecture JSON files — see\n[Getting\
+  \ the trained weights](#getting-the-trained-weights) below.\n\n## Getting started\n\n### Option A —\
+  \ Google Colab (recommended)\n\nThe notebook was built on Colab with a free GPU. Just open it and run:\n\
+  \n[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/VinayakMokashi/AI-Powered-Brain-Tumor-Detection-and-Localization/blob/main/Brain_Tumor.ipynb)\n\
+  \n1. Open the badge above (Runtime → Change runtime type → **GPU**).\n2. Download the [LGG MRI dataset](https://www.kaggle.com/mateuszbuda/lgg-mri-segmentation)\n\
+  \   and place it in your Google Drive (e.g. `MyDrive/Brain_MRI/`).\n3. Update the dataset path cell\
+  \ (`%cd /content/drive/MyDrive/Brain_MRI`) to match\n   your folder, then run the cells top to bottom.\n\
+  \n### Option B — Run locally\n\n```bash\n# 1. Clone\ngit clone https://github.com/VinayakMokashi/AI-Powered-Brain-Tumor-Detection-and-Localization.git\n\
+  cd AI-Powered-Brain-Tumor-Detection-and-Localization\n\n# 2. Create an environment and install dependencies\n\
+  python -m venv .venv\n# Windows:  .venv\\Scripts\\activate    |    macOS/Linux:  source .venv/bin/activate\n\
+  pip install -r requirements.txt\n\n# 3. Launch Jupyter\njupyter notebook Brain_Tumor.ipynb\n```\n\n\
+  When running locally, remove the `from google.colab import ...` /\n`drive.mount(...)` cells and point\
+  \ the dataset path at your local dataset folder.\nA GPU is strongly recommended for training (inference\
+  \ on trained weights runs\nfine on CPU, just slower).\n\n### Getting the trained weights\n\nThe notebook's\
+  \ evaluation sections load four files that are **not** committed\n(they're large): `weights.hdf5` +\
+  \ `resnet-50-MRI.json` (classifier) and\n`weights_seg.hdf5` + `ResUNet-MRI.json` (segmenter). You have\
+  \ two options.\n\n**1. Train them yourself (fully reproducible).** [`train.py`](train.py) builds,\n\
+  trains and saves all four files, after which the notebook runs end-to-end:\n\n```bash\n# trains both\
+  \ stages and writes the .hdf5 / .json files into the data folder\npython train.py --data-dir /path/to/Brain_MRI\n\
+  \n# handy flags:\n#   --stage classifier|segmenter|all   pick a stage\n#   --clf-epochs N  --seg-epochs\
+  \ N      epochs per stage\n#   --batch-size N                      batch size (default 16)\n```\n\n\
+  **2. Use pre-trained weights (optional).** If you host your trained weights on a\n[GitHub Release](https://github.com/VinayakMokashi/AI-Powered-Brain-Tumor-Detection-and-Localization/releases)\n\
+  or Google Drive, drop the four files into the dataset folder and jump straight to\nthe evaluation cells.\
+  \ *(No pre-trained weights are published yet — use `train.py`\nabove to generate them.)*\n\n### Run\
+  \ inference on new scans\n\nOnce you have the trained weights, [`predict.py`](predict.py) runs the full\n\
+  pipeline on unseen scans from the command line:\n\n```bash\n# single scan\npython predict.py --image\
+  \ path/to/scan.tif\n\n# a folder of scans -> overlay PNGs saved in ./predictions\npython predict.py\
+  \ --dir path/to/scans --out-dir predictions\n```\n\nFor each scan it prints whether a tumor was detected\
+  \ and, for positives, saves a\nside-by-side **MRI / predicted mask / overlay** figure (tumor region\
+  \ in green).\n\n## How the code is organized\n\nMost of the pipeline lives in the notebook, but the\
+  \ pieces that don't fit\noff-the-shelf Keras are factored into [`utilities.py`](utilities.py):\n\n-\
+  \ **`DataGenerator`** — a Keras `Sequence` that streams (MRI, mask) pairs in\n  batches, resizing and\
+  \ normalizing on the fly so the full dataset never has to\n  sit in memory.\n- **`tversky` / `tversky_loss`\
+  \ / `focal_tversky`** — the segmentation\n  metric and loss functions (see [Abraham & Khan, 2018](https://arxiv.org/abs/1810.07842)).\n\
+  - **`prediction`** — runs the complete classify-then-segment inference over a\n  test set and returns\
+  \ per-scan masks and a has-tumor flag.\n\nThe network architectures live in [`models.py`](models.py)\
+  \ (`build_classifier`,\n`build_resunet`), [`train.py`](train.py) wires the data, models and loss together\n\
+  into a single reproducible training run, and [`predict.py`](predict.py) loads the\ntrained models to\
+  \ run the pipeline on new scans.\n\n## Tech stack\n\n`Python` · `TensorFlow / Keras` · `NumPy` · `pandas`\
+  \ · `OpenCV` ·\n`scikit-image` · `scikit-learn` · `Matplotlib` · `Seaborn` · `Plotly`\n\n## Future work\n\
+  \n- k-fold cross-validation for tighter confidence intervals on the metrics\n- Hyperparameter tuning\
+  \ and test-time augmentation\n- Uncertainty estimation on the predicted masks\n- A small **Streamlit\
+  \ / Flask** web app for interactive, real-time inference\n\n## License & acknowledgements\n\nReleased\
+  \ under the [MIT License](LICENSE).\n\n- Dataset: [LGG MRI Segmentation](https://www.kaggle.com/mateuszbuda/lgg-mri-segmentation)\
+  \ (M. Buda et al.)\n- ResNet: He et al., *Deep Residual Learning for Image Recognition* (2015)\n- U-Net:\
+  \ Ronneberger et al., *U-Net: Convolutional Networks for Biomedical Image Segmentation* (2015)\n- Focal\
+  \ Tversky loss: Abraham & Khan (2018)\n\n---\n\n*Built by [Vinayak Mokashi](https://github.com/VinayakMokashi).*\n"

@@ -1,0 +1,89 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: yashikasharma2004/brain-tumor-segmentation-resnet-unet
+url: https://github.com/yashikasharma2004/brain-tumor-segmentation-resnet-unet
+platform: github
+description: Pixel-level brain tumor segmentation using ResNet34-UNet with 90.45% Dice Score
+license: null
+language: Jupyter Notebook
+keywords:
+- brain-tumor
+- deep-learning
+- medical-imaging
+- pytorch
+- resnet
+- segmentation
+- tranfer-learning
+- unet
+stars: 0
+updated_at: '2026-06-18T12:15:51Z'
+image_source: https://raw.githubusercontent.com/yashikasharma2004/brain-tumor-segmentation-resnet-unet/HEAD/metrics_bar_chart.png
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "<div align=\"center\">\n\n# \U0001F9E0 Brain Tumor Segmentation — ResNet34-UNet\n\n**Pixel-level\
+  \ brain tumor segmentation using Transfer Learning on LGG MRI Dataset**\n\n[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)\n\
+  [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-red.svg)](https://pytorch.org)\n[![Dice Score](https://img.shields.io/badge/Dice%20Score-90.02%25-brightgreen.svg)](#results)\n\
+  [![ROC--AUC](https://img.shields.io/badge/ROC--AUC-99.36%25-brightgreen.svg)](#results)\n[![Demo](https://img.shields.io/badge/\U0001F917\
+  %20Live%20Demo-Hugging%20Face-yellow)](https://huggingface.co/spaces/yashikasharma2004/brain-tumor-segmentation)\n\
+  \n</div>\n\n---\n\n## \U0001F4CC Overview\n\nThis project implements **pixel-level binary segmentation**\
+  \ of brain tumors from FLAIR MRI scans using a **ResNet34-UNet hybrid architecture** with ImageNet pretrained\
+  \ weights. The model achieves **90.02% Dice Score** and **99.36% ROC-AUC** on the LGG MRI Segmentation\
+  \ Dataset.\n\n> **Clinical Relevance:** Accurate tumor boundary delineation is critical for surgical\
+  \ planning, radiotherapy targeting, and treatment monitoring. This model automates a task that typically\
+  \ takes radiologists 20–30 minutes per patient.\n\n---\n\n## \U0001F3C6 Results\n\n| Metric | Score\
+  \ |\n|--------|-------|\n| \U0001F3AF **Dice Score** | **90.02%** |\n| \U0001F4D0 **IoU (Jaccard)**\
+  \ | **81.84%** |\n| \U0001F50D **Sensitivity (Recall)** | **87.85%** |\n| \U0001F6E1️ **Specificity**\
+  \ | **99.89%** |\n| \U0001F3AF **Precision** | **92.29%** |\n| ⚖️ **F1-Score** | **90.02%** |\n| \U0001F4C8\
+  \ **ROC-AUC** | **99.36%** |\n\n### Metrics Visualization\n![Metrics Bar Chart](metrics_bar_chart.png)\n\
+  \n### ROC Curve\n![ROC Curve](roc_curve.png)\n\n---\n\n## \U0001F52C Sample Predictions\n\nThe model\
+  \ accurately delineates tumor boundaries across varying sizes, shapes, and locations:\n\n![Sample Predictions](sample_predictions.png)\n\
+  \n*Columns: Brain MRI (FLAIR) | Ground Truth Mask | Model Prediction | Overlay*\n\n---\n\n## \U0001F4CA\
+  \ Training History\n\n### Phase 1 (30 Epochs) — Feature Extraction\n![Phase 1 Training](training_curves_phase1.png)\n\
+  \n### Full Training (Phase 1 + Phase 2 Fine-Tuning — 80 Epochs)\n![Combined Training](training_curves_combined.png)\n\
+  \nTraining was done in **two phases** — initial feature extraction with frozen ResNet34 encoder (30\
+  \ epochs), followed by end-to-end fine-tuning (50 epochs) with a reduced learning rate.\n\n---\n\n##\
+  \ \U0001F4C2 Dataset\n\n![Class Distribution](class_distribution.png)\n\n| Property | Value |\n|----------|-------|\n\
+  | **Source** | [LGG MRI Segmentation — Kaggle](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)\
+  \ |\n| **Patients** | 110 |\n| **Total Images** | 3,929 (MRI + Mask pairs) |\n| **Tumor Images** | 1,373\
+  \ (34.9%) |\n| **No-Tumor Images** | 2,556 (65.1%) |\n| **Image Type** | FLAIR MRI (Brain axial slices)\
+  \ |\n| **Task** | Binary segmentation (tumor / no-tumor) |\n\n### Sample Data\n![Sample Data](sample_data.png)\n\
+  \n*Columns: Brain MRI (Original) | Tumor Mask (white = tumor) | Overlay (red = tumor)*\n\n---\n\n##\
+  \ \U0001F3D7️ Architecture\n\n```\nInput (256×256×3)\n       │\n  ┌────▼────────────────────────────┐\n\
+  \  │   ResNet34 Encoder (ImageNet)   │  ← Pretrained, frozen in Phase 1\n  │   5 stages → feature maps\
+  \       │\n  └────┬────────────────────────────┘\n       │  skip connections ──────────┐\n  ┌────▼────────────────────────────┐\
+  \ │\n  │       U-Net Decoder             │◄┘\n  │   4× upsampling + conv blocks   │\n  └────┬────────────────────────────┘\n\
+  \       │\n  ┌────▼────────┐\n  │  Sigmoid    │  → Binary Mask (256×256×1)\n  └─────────────┘\n```\n\
+  \n| Component | Detail |\n|-----------|--------|\n| **Encoder** | ResNet34 (ImageNet pretrained) |\n\
+  | **Decoder** | U-Net with skip connections |\n| **Loss Function** | BCE with Logits Loss |\n| **Optimizer**\
+  \ | Adam |\n| **Phase 1 LR** | 1e-4 (encoder frozen) |\n| **Phase 2 LR** | 1e-5 (full model fine-tuned)\
+  \ |\n| **Input Size** | 256 × 256 px |\n| **Total Epochs** | 80 (30 + 50) |\n| **Batch Size** | 16 |\n\
+  \n---\n\n## \U0001F6E0️ Tech Stack\n\n- **Framework:** PyTorch\n- **Architecture Library:** segmentation-models-pytorch\n\
+  - **Pretrained Backbone:** ResNet34 (ImageNet)\n- **Training Platform:** Kaggle (GPU T4)\n- **Data Augmentation:**\
+  \ Horizontal flip, vertical flip, rotation, elastic transform\n\n---\n\n## \U0001F680 Quick Start\n\n\
+  ### Installation\n```bash\ngit clone https://github.com/yashikasharma2004/brain-tumor-segmentation-resnet-unet.git\n\
+  cd brain-tumor-segmentation-resnet-unet\npip install torch torchvision segmentation-models-pytorch opencv-python\
+  \ matplotlib scikit-learn albumentations\n```\n\n### Dataset Setup\nDownload from Kaggle: [LGG MRI Segmentation\
+  \ Dataset](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)\n\n### Run Inference\n\
+  ```python\nimport torch\nimport segmentation_models_pytorch as smp\nfrom PIL import Image\nimport numpy\
+  \ as np\n\n# Load model\nmodel = smp.Unet(encoder_name=\"resnet34\", encoder_weights=None, in_channels=3,\
+  \ classes=1)\nmodel.load_state_dict(torch.load(\"resnet_unet_best.pth\", map_location=\"cpu\"))\nmodel.eval()\n\
+  \n# Predict\nimg = np.array(Image.open(\"brain_mri.jpg\").resize((256, 256))) / 255.0\nimg_tensor =\
+  \ torch.tensor(img.transpose(2, 0, 1), dtype=torch.float32).unsqueeze(0)\n\nwith torch.no_grad():\n\
+  \    mask = torch.sigmoid(model(img_tensor)).squeeze().numpy()\n\ntumor_mask = (mask > 0.5).astype(np.uint8)\n\
+  ```\n\n---\n\n## \U0001F4C1 Repository Structure\n\n```\nbrain-tumor-segmentation-resnet-unet/\n├──\
+  \ notebooka0571a011c.ipynb      # Full training notebook (Kaggle)\n├── sample_predictions.png      \
+  \  # Model predictions vs ground truth\n├── training_curves_phase1.png    # Phase 1 training history\n\
+  ├── training_curves_combined.png  # Full 80-epoch training history\n├── metrics_bar_chart.png      \
+  \   # Performance metrics visualization\n├── roc_curve.png                 # ROC-AUC curve\n├── class_distribution.png\
+  \        # Dataset class balance\n├── sample_data.png               # Sample MRI + mask pairs\n└── README.md\n\
+  ```\n\n---\n\n## \U0001F310 Live Demo\n\nTry the model live — upload a brain MRI scan and get instant\
+  \ tumor segmentation:\n\n**\U0001F449 https://huggingface.co/spaces/yashikaSharma/brain-tumor-segmentation**\n\
+  \n---\n\n## \U0001F469‍\U0001F4BB Author\n\n**Yashika Sharma**  \nB.Tech CSE (AI/ML) | Passionate about\
+  \ Medical AI & Computer Vision\n\n[![GitHub](https://img.shields.io/badge/GitHub-yashikasharma2004-black?logo=github)](https://github.com/yashikasharma2004)\n\
+  \n---\n\n## \U0001F4C4 License\n\nThis project is open-source under the [MIT License](LICENSE).\n"

@@ -1,0 +1,59 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: OpenTOPAS/OpenTOPAS-RBE
+url: https://github.com/OpenTOPAS/OpenTOPAS-RBE
+platform: github
+description: Extensions for proton-RBE modeling
+license: null
+language: C++
+keywords: []
+stars: 2
+updated_at: '2024-10-17T02:48:55Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 4 particle-therapy term(s).
+readme_excerpt: "RBE Scorer extensions for OpenTOPAS\n---\n\n  - David Hall. First commit 07/2017.\n \
+  \ - Jan Schuemann. Major revision 11/2019.\n  - Jose Ramos-Mendez. Update to OpenTOPAS v4.0/Geant4 v11.1.3\
+  \ 05/2024\n    \n---\n\n## Installation.\n\n> [!NOTE]\n> The main difference in installing for Debian/Ubuntu\
+  \ and MacOS is the installation paths. \n\n> [!TIP]\n> Users can install multiple extensions by either:\n\
+  > - Copy all the Extension directories into a common global directory, or\n> - Using the `\\;` between\
+  \ directory paths e.g., (and see below):\n>\n>      `-DTOPAS_EXTENSIONS_DIR=/MyProject1Extensions/\\\
+  ;/MyProject2Extensions/`\n\n### Debian\n\nFollow [installation for Debian/Ubuntu](https://opentopas.readthedocs.io/en/latest/getting-started/Debian.html)\
+  \ procedures after and including **step 8.4**. Then:\n\n    $ cd $HOME/Applications/\n\nClone the repository:\n\
+  \n    $ git clone https://github.com/OpenTOPAS/OpenTOPAS-RBE.git\n\nReturn to the topas-build directory:\n\
+  \n    $ cd $HOME/Applications/TOPAS/OpenTOPAS-build\n\nRepeat `cmake` command by including the `TOPAS_EXTENSIONS_DIR`\
+  \ variable as follows (don't miss the `-D`):\n\n    $ cmake ../OpenTOPAS -DCMAKE_INSTALL_PREFIX=../OpenTOPAS-install\
+  \ -DTOPAS_EXTENSIONS_DIR=$HOME/Applications/OpenTOPAS-RBE\n\nBuild:\n\n    $ make -j8 install\n\n###\
+  \ MacOS\n\nFollow [installation for MacOS](https://opentopas.readthedocs.io/en/latest/getting-started/MacOS.html)\
+  \ procedures after and including **step 7.4**. Then:\n\n    $ cd /Applications\n\nClone the repository:\n\
+  \n    $ git clone https://github.com/OpenTOPAS/OpenTOPAS-RBE.git\n\nReturn to the topas-build directory:\n\
+  \n    $ cd /Applications/TOPAS/OpenTOPAS-build\n\nRepeat `cmake` command by including the `TOPAS_EXTENSIONS_DIR`\
+  \ variable as follows (don't miss the `-D`):\n\n    $ cmake ../OpenTOPAS -DCMAKE_INSTALL_PREFIX=../OpenTOPAS-install\
+  \ -DTOPAS_EXTENSIONS_DIR=/Applications/OpenTOPAS-RBE\n\nBuild:\n\n    $ make -j8 install\n    \n---\n\
+  \n## Implementation of the models and corresponding references can be found at:  \n\n### :books: Polster,\
+  \ et al., \"Extension of TOPAS for the simulation of proton radiation effects considering molecular\
+  \ and cellular endopoints\" [doi:10.1088/0031-9155/60/13/5053](doi:10.1088/0031-9155/60/13/5053)\n\n\
+  ## Full documentation is found at\n\n### :books: [https://OpenTOPAS.readthedocs.io/en/latest](https://OpenTOPAS.readthedocs.io/en/latest/)\n\
+  \n---\n\nThese extension scorers require OpenTOPAS version 4.0 or later.\n\nThe directory consists of\
+  \ the following file types:\nScorers:\n\n   . TsScoreDose* : These score quantities in the ProcessHits\
+  \ function like normal scorers.\n\nRBE Scorers: These do not have a ProcessHits function and instead\
+  \ combine scored\nproperties (dose, LET, etc) to RBE or biological dose, etc.\n\n   . TsV*: Base classes\
+  \ for the scorers\n\nAdditionally, the example directory contains an example experiment irradiation\n\
+  (`experiment.txt`) scoring each of the available RBE scorers (`rbe_scorers.txt`) for\nV79 cells (`CellLineV79.txt`).\
+  \ V79 cells are used because they are one of the most\nstudied cells and biological parameters for all\
+  \ models were available.\n\nThe simulations can be run with `\"topas run.txt\"` and analyzed with the\
+  \ provided\npython script. Before running `examples/run.txt` make sure that the directory\n`results/`\
+  \ exists in the `examples/` directory, otherwise, create it with:\n\n   cd OpenTOPAS-RBE/examples/\n\
+  \   mkdir results/\n\nIn order to change the experimental setup edit `experiment.txt`_.\n\nIn order\
+  \ to change the cell line, provide a new cell line file and change\n\n   sv:Sc/CellLines     = 1 \"\
+  CellLineV79\"\n\nin run.txt.\n\n`run.txt` also controls the Prescribed dose used to calculate RBE and\
+  \ the output\nquantity. The output quantities available depend on the RBE model.\n\nRBE scorers are\
+  \ defined in rbe_scorers.txt and can be edited there. Typically,\nwe recommend not to run too many scorers\
+  \ at once as that increases memory use.\nIn particular, the two parameters:\n\n    `ReferencedSubScorer_Dose`\n\
+  \nand\n\n    `ReferencedSubScorer_LET`\n\nshould be set if a dose and LET scorer already exists, otherwise\
+  \ each RBE scorer\nwill create scorers for all properties it needs, potentially resulting in\nmultiple\
+  \ parallel dose scorers.\n"

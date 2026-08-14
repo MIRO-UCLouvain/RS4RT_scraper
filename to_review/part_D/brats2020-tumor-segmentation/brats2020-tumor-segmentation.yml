@@ -1,0 +1,54 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: srikar22562c/BraTS2020-Tumor-Segmentation
+url: https://github.com/srikar22562c/BraTS2020-Tumor-Segmentation
+platform: github
+description: Two-stage brain tumor detection and segmentation pipeline using ResNet18 + U-Net on BraTS
+  2020 dataset. Achieves 82% classification accuracy and 0.83 Dice score on held-out patients.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-20T00:58:07Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# Brain Tumor Detection and Segmentation — BraTS 2020\r\n\r\n## Problem\r\nRadiologists\
+  \ manually trace brain tumor boundaries in MRI scans —\r\na process that takes 2-3 hours per patient.\
+  \ This project automates \r\nthat using deep learning, reducing annotation time to under 1 minute \r\
+  \nper patient.\r\n\r\n## Pipeline\r\nTwo-stage AI pipeline:\r\n\r\n**Stage 1 — Classification:**\r\n\
+  ResNet18 classifier predicts tumor aggressiveness (HGG = High Grade \r\nGlioma vs LGG = Low Grade Glioma)\
+  \ from brain MRI slices.\r\n\r\n**Stage 2 — Segmentation:**\r\nU-Net model locates the exact tumor boundaries\
+  \ pixel by pixel, \r\nproducing a precise tumor mask overlaid on the brain scan.\r\n\r\n## Dataset\r\
+  \nBraTS 2020 (Brain Tumor Segmentation Challenge)\r\n- 369 real brain tumor patients\r\n- 4 MRI modalities\
+  \ per patient: FLAIR, T1, T1CE, T2\r\n- Expert-annotated tumor masks (ground truth)\r\n- 22,891 usable\
+  \ 2D slices extracted for training\r\n\r\nDownload from Kaggle:\r\nhttps://www.kaggle.com/datasets/awsaf49/brats20-dataset-training-validation\r\
+  \n\r\n## Results\r\n\r\n| Task | Metric | Score |\r\n|---|---|---|\r\n| Grade Classification (HGG vs\
+  \ LGG) | Accuracy | 82% |\r\n| Grade Classification (HGG vs LGG) | F1 Score | 0.73 |\r\n| Tumor Segmentation\
+  \ | Dice Score | 0.83 |\r\n\r\nAll scores computed on 56 held-out patients never seen during training.\r\
+  \n\r\n## Sample Predictions\r\nFLAIR scan | Ground Truth (doctor) | Model Prediction\r\n\r\n![Predictions](results/predictions.png)\r\
+  \n\r\n## EDA — 4 MRI Modalities + Tumor Mask\r\n\r\n![EDA](results/eda_visualization.png)\r\n\r\n##\
+  \ Key Technical Decisions\r\n\r\n**1. Dice + CrossEntropy combined loss**\r\nTumor pixels are less than\
+  \ 1% of any scan — plain accuracy would \r\nscore 99% by ignoring tumors entirely. Dice loss measures\
+  \ overlap \r\nbetween predicted and real tumor shapes, forcing the model to \r\nactually find the tumor.\r\
+  \n\r\n**2. Patient-level train/test split**\r\nSplit by whole patient, not by individual slice — prevents\
+  \ data \r\nleakage where the model gets tested on slices from a brain it \r\npartially trained on.\r\
+  \n\r\n**3. 2D slice-wise U-Net**\r\nEach 3D brain volume (240×240×155) was sliced into 2D images for\
+  \ \r\nColab GPU compatibility. Only tumor-containing slices were kept.\r\n\r\n**4. 4-channel input**\r\
+  \nAll 4 MRI modalities (FLAIR, T1, T1CE, T2) stacked as channels — \r\neach highlights different aspects\
+  \ of the tumor, giving the model \r\nmore information than any single scan alone.\r\n\r\n## Business\
+  \ Impact\r\nModel reduces manual tumor annotation time from ~2-3 hours per \r\npatient to under 1 minute,\
+  \ with 83% overlap accuracy versus expert \r\nradiologist ground truth — directly applicable to hospital\
+  \ radiology \r\nworkflows handling brain MRI scans.\r\n\r\n## Architecture\r\n\r\n**Classifier:** ResNet18\
+  \ adapted for 4-channel medical image input\r\n**Segmentation:** 2D U-Net with skip connections\r\n\
+  - Encoder: 4 levels (32 → 64 → 128 → 256 → 512 channels)\r\n- Bottleneck: 512 channels\r\n- Decoder:\
+  \ 4 levels with transposed convolutions + skip connections\r\n- Output: Per-pixel binary tumor mask\r\
+  \n\r\n## How to Run\r\n\r\n1. Download the dataset from Kaggle (link above)\r\n2. Get a Kaggle API key:\
+  \ kaggle.com → Settings → API → Create Legacy API Key\r\n3. Open `notebook/BraTS2020_pipeline.ipynb`\
+  \ in Google Colab\r\n4. Set Runtime → GPU\r\n5. Run cells top to bottom (Step 0 through Step 11)\r\n\
+  \r\n## Tech Stack\r\n- Python 3.12\r\n- PyTorch\r\n- nibabel (NIfTI medical image format)\r\n- scikit-image\r\
+  \n- NumPy, Pandas, Matplotlib\r\n- Google Colab (T4 GPU)"

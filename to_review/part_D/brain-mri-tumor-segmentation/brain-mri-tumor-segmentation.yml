@@ -1,0 +1,93 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: vkoraganji1/brain-mri-tumor-segmentation
+url: https://github.com/vkoraganji1/brain-mri-tumor-segmentation
+platform: github
+description: Automatic brain tumor boundary detection from MRI scans using a custom DeepLabV3+ encoder-decoder
+  with ASPP. Trained on LGG MRI (110 patients, 3,929 slices) — Mean Dice 0.78, IoU 0.74. Runs on Apple
+  Silicon and NVIDIA CUDA.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-08-11T23:56:54Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Brain Tumor Segmentation — DeepLabV3+ on LGG MRI\n\nAutomatic delineation of Low-Grade\
+  \ Glioma (LGG) boundaries from brain MRI using a custom **DeepLabV3+** encoder-decoder architecture.\
+  \ Trained and evaluated on the [LGG MRI Segmentation dataset](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)\
+  \ (Kaggle / TCIA).\n\nRuns natively on **Apple Silicon (M-series via `tensorflow-metal`)** and **NVIDIA\
+  \ CUDA** with no code changes.\n\n---\n\n## Results\n\n| Metric | Mean | Std Dev |\n|---|---|---|\n\
+  | Sørensen–Dice coefficient | **0.7808** | ±0.3321 |\n| Jaccard index (IoU) | **0.7430** | ±0.3391 |\n\
+  \n> Evaluated on a held-out 20% test split (no patient-level leakage correction — see [Limitations](#limitations)).\
+  \  \n> Published nnU-Net on BraTS achieves ~0.85–0.89 Dice using a larger dataset and test-time augmentation.\n\
+  \nBoth loss and validation loss decrease steadily over 100 epochs with no sign of divergence, and early\
+  \ stopping does not trigger — the model continues improving through the full run. Qualitative predictions\
+  \ show accurate boundary delineation on large and medium tumours; performance degrades on small lesions,\
+  \ which is reflected in the high standard deviation.\n\n**Benchmark context**\n\n| Model | Dice | Notes\
+  \ |\n|---|---|---|\n| This model | **0.7808** | Trained from scratch, no augmentation, 128×128 |\n|\
+  \ nnU-Net (Isensee 2021) | ~0.85–0.89 | Self-configuring, test-time augmentation, larger data |\n\n\
+  ---\n\n## Architecture\n\nThe model follows the DeepLabV3+ design pattern: a convolutional encoder,\
+  \ an Atrous Spatial Pyramid Pooling (ASPP) bottleneck, and a lightweight decoder that fuses multi-scale\
+  \ features via a skip connection.\n\n```\nInput (128×128×3)\n    │\n    ├─ Encoder block 1  (32→32 filters,\
+  \ stride 2)  ──────────────────┐  skip\n    ├─ Encoder block 2  (64→64 filters, stride 2)          \
+  \          │\n    ├─ Encoder block 3  (128→128 filters, stride 2)                  │\n    │        \
+  \                                                          │\n    ├─ ASPP bottleneck               \
+  \                                 │\n    │     ├─ Global average pool → 1×1 conv                   \
+  \       │\n    │     ├─ Dilated conv  rate=1                                     │\n    │     ├─ Dilated\
+  \ conv  rate=4                                     │\n    │     └─ Dilated conv  rate=8            \
+  \                         │\n    │     └─ Concatenate + 1×1 projection (256 filters)              │\n\
+  \    │                                                                  │\n    ├─ Bilinear upsample\
+  \ ×4                                          │\n    ├─ Concatenate with skip ◄────────────────────────────────────────┘\n\
+  \    ├─ Conv block (128 filters)\n    ├─ Bilinear upsample ×2\n    └─ Output head  (1×1 conv → sigmoid)\
+  \  →  (128×128×1)\n```\n\n**Key design choices and why:**\n\n- **ASPP with dilation rates 1, 4, 8**\
+  \ — captures context at multiple receptive field scales simultaneously without losing spatial resolution.\
+  \ Critical for tumours that vary widely in size across patients.\n- **BCE + Dice combined loss** — binary\
+  \ cross-entropy provides stable per-pixel gradient signal; Dice loss directly optimises region-level\
+  \ overlap. The combination is the standard approach for imbalanced medical segmentation where tumour\
+  \ pixels can be <2% of the image.\n- **Bilinear upsampling over transposed convolutions** — avoids checkerboard\
+  \ artifacts common in transposed conv decoders, which are particularly visible on medical mask boundaries.\n\
+  - **He normal init + BatchNormalization** — stabilises training on a small dataset (~3,929 image-mask\
+  \ pairs).\n\n---\n\n## Dataset\n\n[LGG MRI Segmentation](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)\
+  \ — 110 patients, 3,929 brain MRI slices with binary tumour masks.  \nOriginally from The Cancer Imaging\
+  \ Archive (TCIA), curated by Buda et al. (2019).\n\n**Download:**\n```bash\nkaggle datasets download\
+  \ -d mateuszbuda/lgg-mri-segmentation\nunzip lgg-mri-segmentation.zip -d ~/data/\n```\nOr download manually\
+  \ from Kaggle and place the `kaggle_3m/` folder at `~/data/lgg-mri-segmentation/kaggle_3m/`.\n\n---\n\
+  \n## Setup\n\n### Requirements\n- Python 3.10\n- macOS (Apple Silicon) **or** Linux/Windows with NVIDIA\
+  \ GPU\n\n### Apple Silicon (M1/M2/M3)\n\n```bash\n# 1. Create environment\nconda create -n mri-seg python=3.10\
+  \ -y\nconda activate mri-seg\n\n# 2. Install Apple-optimised TensorFlow + Metal GPU plugin\npip install\
+  \ tensorflow-macos==2.13.0 tensorflow-metal==1.0.1\n\n# 3. Install remaining dependencies\npip install\
+  \ numpy pandas matplotlib seaborn scikit-learn opencv-python keras==2.13.1\n\n# 4. Verify GPU is visible\n\
+  python -c \"import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))\"\n# Expected: [PhysicalDevice(name='/physical_device:GPU:0',\
+  \ device_type='GPU')]\n```\n\n### NVIDIA CUDA (Linux / Windows)\n\n```bash\nconda create -n mri-seg\
+  \ python=3.10 -y\nconda activate mri-seg\npip install tensorflow==2.13.0\npip install numpy pandas matplotlib\
+  \ seaborn scikit-learn opencv-python keras==2.13.1\n```\n\n---\n\n## Usage\n\n### Train\n```bash\npython\
+  \ src/train.py --data ~/data/lgg-mri-segmentation/kaggle_3m\n```\n\nCheckpoints are saved to `checkpoints/`\
+  \ (best validation Dice only).  \nTraining curves and prediction outputs are saved to `outputs/`.\n\n\
+  A step-by-step notebook version is also available at `notebooks/segmentation.ipynb`.\n\nKey hyperparameters\
+  \ are defined at the top of `src/train.py` — `IMAGE_SIZE`, `BATCH_SIZE`, `EPOCHS`, `PATIENCE`, and `TEST_SPLIT`.\n\
+  \n---\n\n## Limitations\n\n- **No patient-level train/test split** — the current split is random across\
+  \ slices. Multiple slices from the same patient can appear in both train and test, which inflates reported\
+  \ metrics. A patient-stratified split would give a more honest evaluation and is planned.\n- **No data\
+  \ augmentation** — the model trains on unaugmented images. Adding random flips, rotation, and brightness\
+  \ jitter would likely reduce the high standard deviation (±0.33) caused by performance variability on\
+  \ small vs. large tumours.\n- **Fixed threshold at 0.5** — predictions are binarised at 0.5. Threshold\
+  \ tuning on a validation set could meaningfully improve boundary precision on small lesions.\n- **128×128\
+  \ resolution** — resizing to a fixed square compresses detail in non-square slices. Higher resolution\
+  \ or aspect-ratio-preserving padding would preserve fine boundary structure.\n\n---\n\n## Planned improvements\n\
+  \n- [ ] Patient-stratified train/test split\n- [ ] Data augmentation (flips, rotation, brightness/contrast\
+  \ jitter) via Albumentations\n- [ ] Benchmark comparison against nnU-Net on same data split\n- [ ] Uncertainty\
+  \ quantification (MC Dropout) for clinical confidence estimation\n- [ ] Hugging Face Spaces demo for\
+  \ interactive inference\n\n---\n\n## References\n\n- Chen et al. (2018) — [Encoder-Decoder with Atrous\
+  \ Separable Convolution for Semantic Image Segmentation (DeepLabV3+)](https://arxiv.org/abs/1802.02611)\n\
+  - Buda et al. (2019) — [Association of genomic subtypes of lower-grade gliomas with shape features automatically\
+  \ extracted by a deep learning algorithm](https://www.sciencedirect.com/science/article/pii/S0010482519301520)\
+  \ *(original dataset paper)*\n- Isensee et al. (2021) — [nnU-Net: a self-configuring method for deep\
+  \ learning-based biomedical image segmentation](https://www.nature.com/articles/s41592-020-01008-z)\n\
+  \n---\n\n## License\n\nMIT License — see [LICENSE](LICENSE) for details.\n"

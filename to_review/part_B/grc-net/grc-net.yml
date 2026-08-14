@@ -1,0 +1,60 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ajaykm3/GRC-Net
+url: https://github.com/ajaykm3/GRC-Net
+platform: github
+description: Geometric and Radiomics features for Cardiovascular disease classification - STACOM2025 -
+  MICCAI2025
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-12-29T18:59:12Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "For the official release, please see https://github.com/biomedia-mira/grc-net\n# GRC-Net:\
+  \ Cardiovascular disease classification using radiomics and geometric features from cardiac CT Images\n\
+  \nWhen using this code, please cite the following paper:\n> (A. Mittal, R. Mehta, O. Todd, P. Seeboeck,\
+  \ G. Langs, B. Glocker) Cardiovascular disease classification using radiomics and geometric features\
+  \ from cardiac CT Images\n\n## Code\n\nFor running the code, we recommend setting up a dedicated Python\
+  \ environment.\n\n### Setup Python environment using conda\n\nCreate and activate a Python 3.9 conda\
+  \ environment:\n\n   ```shell\n   conda create -n grcnet python=3.9\n   conda activate grcnet\n   ```\n\
+  Install PyTorch using conda (for CUDA toolkit 12.4)\n   ```shell\n    # torch dependencies\n    conda\
+  \ install pytorch torchvision torchaudio pytorch-cuda=12.4 -c pytorch -c nvidia\n\n    # other Python\
+  \ packages\n    pip install numpy==1.23 torchio tensorboard tensorboardX\n\n    # TotalSegmentator and\
+  \ utils\n    pip install TotalSegmentator\n    pip install --upgrade acvl_utils==0.2\n\n    # GPU transforms\
+  \ (MONAI with CuCIM)\n    pip install monai[cucim] cupy-cuda12x==12.3.0\n\n    # Patches\n    pip install\
+  \ mkl==2024.0 dicom2nifti==1.2.21 pydicom==1.4.1\n  ```\n   \nTo run both the Anatomix fine-tuning and\
+  \ Geo-Radio Classification tutorial:\n```shell\n  pip install ipykernel ipywidgets pyradiomics optuna\n\
+  ```\n\n## Pipeline Overview\nThis model assumes the existence of the ASOCA dataset and the MM-WHS dataset\
+  \ in the `data` subdirectory. \n- The CT volumes and labelmaps for the MM-WHS dataset need to be extracted\
+  \ to the `data/MM-WHS/images` and `data/MM-WHS/labels` directory accordingly, with data splits pre-defined\
+  \ in the ``train``, ``val`` and ``test`` files in `data/config`. These images are used to fine-tune\
+  \ the Anatomix model and train the Atlas and registration network.  \n- The CT volumes for the ASOCA\
+  \ dataset need to be extracted to the `data/ASOCA/images` directory. The segmentations will be generated\
+  \ and hence do not need to be provided.\n\nThis repository provides training scripts for three key stages\
+  \ of the pipeline:\n\n1. **Segmentation model training**\n2. **Atlas construction and registration network\
+  \ training**\n3. **Disease classification model training and evaluation**\n\n### 1. Segmentation Model\
+  \ Training\n\nTo fine-tune the Anatomix segmentation model, use:\n\n- `anatomix-fine-tuning.ipynb`\n\
+  \n### 2. Atlas Construction and Registration\n\nThere are three available options for training the atlas\
+  \ and registration network:\n\n- **Fully supervised** (requires manual segmentation labels):  \n  Use\
+  \ `atlas-istn-fully-supervised.py`\n\n- **Semi-supervised (Anatomix-based)** (requires a fine-tuned\
+  \ Anatomix model):  \n  Use `atlas-istn-anatomix.py`  \n  _Note: Ensure the Anatomix model has been\
+  \ fine-tuned using `anatomix-fine-tuning.ipynb`_\n\n- **Semi-supervised (TotalSegmentator-based)** (uses\
+  \ TotalSegmentator as a pseudo-label generator):  \n  Use `atlas-istn-totalsegmentator.py`\n  _Note:\
+  \ requires a commercial license, (see https://github.com/wasserth/TotalSegmentator/)_\n\n_Note: The\
+  \ Semi-supervised scripts provided here evaluate against the pseudo-labels during training instead of\
+  \ against the manual annotations as done in the paper. More generally, the semi-supervised scripts do\
+  \ not load any manual annotations. This is done for easier flexibility to add more unlabelled data for\
+  \ any further data you wish to train the model with in the future._\n\nNo validation or test images\
+  \ are _needed_ to train the registration network and atlas.\n\n### 3. Disease Classification\n\nTo train\
+  \ and evaluate the disease classification model, use:\n\n- `Geo-Radio-Classification.ipynb`\n\nThis\
+  \ step requires:\n- A trained Anatomix segmentation model (from step 1)\n- A trained registration model\
+  \ and constructed atlas (from step 2)  \nThe required atlas labelmaps will be automatically generated\
+  \ during the registration stage.\n\n\n## License\nThis project is licensed under the [Apache License\
+  \ 2.0](LICENSE).\n"

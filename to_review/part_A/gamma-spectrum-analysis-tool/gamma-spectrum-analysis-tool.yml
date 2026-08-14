@@ -1,0 +1,138 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: celvin-am/gamma-spectrum-analysis-tool
+url: https://github.com/celvin-am/gamma-spectrum-analysis-tool
+platform: github
+description: Tool analisis spektrum gamma berbasis Python untuk kalibrasi energi, deteksi photopeak, dan
+  identifikasi radionuklida Cs-137 serta Co-60 menggunakan data detektor BGO.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-04-29T11:45:14Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# Gamma Spectrum Analysis Tool\n\n## 1. Deskripsi Proyek\n\n**Gamma Spectrum Analysis\
+  \ Tool** adalah program Python sederhana untuk menganalisis spektrum gamma dari file data berformat\
+  \ `.Spe`. Program ini dikembangkan sebagai produk fungsional untuk proyek radioanalisis dengan topik\
+  \ **Gamma Spectrum Analysis Tool (Python / Excel)**, tetapi implementasi proyek ini menggunakan **Python**.\n\
+  \nProgram ini dapat digunakan untuk:\n\n1. Membaca data spektrum gamma dari file `.Spe`.\n2. Menampilkan\
+  \ dan menyimpan grafik spektrum gamma.\n3. Melakukan smoothing data spektrum.\n4. Mendeteksi photopeak\
+  \ menggunakan metode peak detection.\n5. Melakukan kalibrasi energi dari channel ke satuan keV.\n6.\
+  \ Mengidentifikasi radionuklida berdasarkan pencocokan energi photopeak terhadap energi gamma referensi.\n\
+  7. Menyimpan hasil analisis dalam format `.txt`, `.csv`, dan `.png`.\n\nProgram ini dibuat sebagai prototype\
+  \ produk nyata yang menunjukkan bagaimana metode spektrometri gamma digunakan dalam praktik radioanalisis.\n\
+  \n---\n\n## 2. Latar Belakang\n\nSpektrometri gamma merupakan salah satu metode radioanalisis yang digunakan\
+  \ untuk mengidentifikasi radionuklida berdasarkan energi sinar gamma yang dipancarkan. Setiap radionuklida\
+  \ memiliki energi gamma karakteristik yang dapat muncul sebagai photopeak pada spektrum hasil pengukuran.\n\
+  \nDalam pengukuran spektrum gamma, data awal biasanya masih berupa hubungan antara **channel** dan **counts**.\
+  \ Channel belum langsung menunjukkan energi radiasi. Oleh karena itu, diperlukan proses **kalibrasi\
+  \ energi** agar channel dapat dikonversi menjadi energi dalam satuan keV.\n\nSetelah spektrum dikalibrasi,\
+  \ posisi photopeak dapat dibandingkan dengan energi referensi radionuklida. Dengan cara ini, radionuklida\
+  \ seperti **Cs-137** dan **Co-60** dapat diidentifikasi secara kualitatif.\n\n---\n\n## 3. Tujuan Program\n\
+  \nTujuan utama program ini adalah membuat tool analisis spektrum gamma berbasis Python yang mampu:\n\
+  \n- membaca data spektrum gamma dari file `.Spe`;\n- melakukan visualisasi spektrum;\n- mendeteksi photopeak;\n\
+  - melakukan kalibrasi energi;\n- mengidentifikasi radionuklida berdasarkan energi photopeak;\n- menyimpan\
+  \ hasil analisis agar dapat digunakan dalam laporan atau dokumentasi proyek.\n\n---\n\n## 4. Metode\
+  \ Radioanalisis\n\nMetode radioanalisis yang digunakan adalah:\n\n**Spektrometri gamma berbasis analisis\
+  \ photopeak dan kalibrasi energi.**\n\nTahapan analisis yang digunakan:\n\n1. Data spektrum gamma dibaca\
+  \ dari file `.Spe`.\n2. Data counts diplot terhadap channel.\n3. Data dihaluskan menggunakan moving\
+  \ average.\n4. Photopeak dideteksi menggunakan `scipy.signal.find_peaks`.\n5. Channel photopeak dikonversi\
+  \ menjadi energi menggunakan persamaan kalibrasi linear.\n6. Energi peak terdeteksi dibandingkan dengan\
+  \ energi gamma referensi.\n7. Radionuklida diidentifikasi secara kualitatif berdasarkan kecocokan energi.\n\
+  \n---\n\n## 5. Jenis Detektor\n\nData spektrum yang digunakan berasal dari pengukuran menggunakan detektor:\n\
+  \n**BGO (Bismuth Germanate)**\n\nDetektor BGO merupakan detektor sintilasi yang dapat digunakan untuk\
+  \ mendeteksi radiasi gamma. BGO memiliki efisiensi deteksi gamma yang baik karena densitas dan nomor\
+  \ atom efektifnya tinggi. Namun, resolusi energinya tidak setajam detektor HPGe, sehingga identifikasi\
+  \ pada program ini dibuat secara kualitatif dan menggunakan toleransi energi yang konservatif.\n\n---\n\
+  \n## 6. Data yang Digunakan\n\nData mentah disimpan pada folder:\n\n```text\ndata/raw/\n\nFile data\
+  \ utama:\n\ndata/raw/BGO Cs137 0deg 300sec.Spe\ndata/raw/BGO Co60 0deg 600sec.Spe\n\nData tambahan/simulasi\
+  \ disimpan pada folder:\n\ndata/processed/\n\nFile data tambahan:\n\ndata/processed/Cs-137_Spectrum_Real.csv\n\
+  data/processed/cs137_realistic.csv\n\nPada tool utama gamma_spectrum_tool.py, data utama yang dianalisis\
+  \ adalah file .Spe dari Cs-137 dan Co-60.\n\n7. Struktur Folder Proyek\n\nStruktur folder proyek:\n\n\
+  radioanalisis/\n│\n├── data/\n│   ├── raw/\n│   │   ├── BGO Cs137 0deg 300sec.Spe\n│   │   └── BGO Co60\
+  \ 0deg 600sec.Spe\n│   │\n│   └── processed/\n│       ├── Cs-137_Spectrum_Real.csv\n│       └── cs137_realistic.csv\n\
+  │\n├── docs/\n│   ├── log_proses.md\n│   └── keputusan_metodologi.md\n│\n├── notebooks/\n│\n├── output/\n\
+  │   ├── figures/\n│   └── reports/\n│\n├── src/\n│   ├── baca_dataawal_specs137.py\n│   ├── baca_dataawal_speco60.py\n\
+  │   ├── cari_titik_kalibrasi.py\n│   ├── kalibrasi_energi.py\n│   ├── identifikasi_radionuklida.py\n\
+  │   ├── gamma_spectrum_tool.py\n│   ├── gammaspektum.py\n│   ├── kalibrasi.py\n│   └── data.py\n│\n\
+  ├── README.md\n├── requirements.txt\n└── .gitignore\n\nKeterangan folder:\n\nFolder/File\tFungsi\ndata/raw/\t\
+  Menyimpan data spektrum asli dari alat\ndata/processed/\tMenyimpan data olahan atau simulasi\nsrc/\t\
+  Menyimpan script Python\ndocs/\tMenyimpan dokumentasi proses dan keputusan metodologi\noutput/figures/\t\
+  Menyimpan grafik hasil analisis\noutput/reports/\tMenyimpan laporan hasil analisis dalam TXT dan CSV\n\
+  requirements.txt\tDaftar library Python yang dibutuhkan\nREADME.md\tDokumentasi penggunaan proyek\n\
+  8. Environment dan Dependensi\n\nProgram dibuat menggunakan Python dan beberapa library utama:\n\nnumpy\n\
+  matplotlib\nscipy\npandas\n8.1 Membuat Virtual Environment\n\nDari folder utama proyek, jalankan:\n\n\
+  python3 -m venv .venv\n\nAktifkan environment:\n\nsource .venv/bin/activate\n\nJika berhasil, terminal\
+  \ akan menampilkan tanda seperti:\n\n(.venv)\n8.2 Instalasi Dependensi\n\nInstall library dari requirements.txt:\n\
+  \npip install -r requirements.txt\n\nJika requirements.txt belum tersedia, install manual:\n\npip install\
+  \ numpy matplotlib scipy pandas\n\nSimpan daftar library:\n\npip freeze > requirements.txt\n8.3 Mengecek\
+  \ Environment\n\nJalankan:\n\npython -c \"import numpy, matplotlib, scipy, pandas; print('environment\
+  \ siap')\"\n\nJika berhasil, terminal akan menampilkan:\n\nenvironment siap\n9. Kalibrasi Energi\n\n\
+  Kalibrasi energi dilakukan untuk mengubah channel menjadi energi dalam satuan keV.\n\nModel kalibrasi\
+  \ yang digunakan adalah model linear:\n\nEnergi (keV) = m × Channel + c\n\nTitik kalibrasi yang digunakan:\n\
+  \nRadionuklida\tChannel\tEnergi Referensi\nCs-137\t338\t662.0 keV\nCo-60\t594\t1173.2 keV\n\nHasil kalibrasi:\n\
+  \nEnergi (keV) = 1.9969 × Channel - 12.9437\n\nPada program utama, nilai slope dan intercept dihitung\
+  \ dari titik kalibrasi tersebut menggunakan numpy.polyfit.\n\n10. Database Referensi Radionuklida\n\n\
+  Database referensi yang digunakan masih sederhana dan terbatas pada radionuklida yang digunakan dalam\
+  \ data uji.\n\nRadionuklida\tEnergi Gamma Referensi\tKeterangan\nCs-137\t661.7 keV\tPhotopeak utama\
+  \ Cs-137\nCo-60\t1173.2 keV\tPhotopeak pertama Co-60\nCo-60\t1332.5 keV\tPhotopeak kedua Co-60\n\nIdentifikasi\
+  \ dilakukan dengan mencocokkan energi peak hasil deteksi terhadap database referensi tersebut.\n\nToleransi\
+  \ pencocokan energi default:\n\n±10 keV\n\nToleransi ini digunakan agar identifikasi lebih konservatif\
+  \ dan mengurangi kemungkinan false positive.\n\n11. Cara Menjalankan Program Utama\n\nProgram utama\
+  \ berada di:\n\nsrc/gamma_spectrum_tool.py\n11.1 Menjalankan Analisis Default\n\nProgram akan menganalisis\
+  \ dua file default:\n\ndata/raw/BGO Cs137 0deg 300sec.Spe\ndata/raw/BGO Co60 0deg 600sec.Spe\n\nPerintah:\n\
+  \npython src/gamma_spectrum_tool.py\n11.2 Menjalankan Tanpa Menampilkan Grafik\n\nJika hanya ingin menyimpan\
+  \ grafik tanpa membuka jendela plot:\n\npython src/gamma_spectrum_tool.py --no-show\n11.3 Menganalisis\
+  \ Satu File Tertentu\n\nContoh untuk Cs-137:\n\npython src/gamma_spectrum_tool.py \"data/raw/BGO Cs137\
+  \ 0deg 300sec.Spe\"\n\nContoh untuk Co-60:\n\npython src/gamma_spectrum_tool.py \"data/raw/BGO Co60\
+  \ 0deg 600sec.Spe\"\n11.4 Mengubah Toleransi Energi\n\nDefault toleransi adalah ±10 keV. Untuk mengubah\
+  \ toleransi:\n\npython src/gamma_spectrum_tool.py --tolerance 15\n11.5 Mengubah Minimum Channel Analisis\n\
+  \nDefault minimum channel adalah 100. Untuk mengubah:\n\npython src/gamma_spectrum_tool.py --min-channel\
+  \ 80\n12. Output Program\n\nProgram menghasilkan tiga jenis output:\n\nGrafik spektrum dalam format\
+  \ PNG.\nLaporan analisis dalam format TXT.\nHasil identifikasi dalam format CSV.\n12.1 Output Grafik\n\
+  \nDisimpan di:\n\noutput/figures/\n\nContoh file:\n\noutput/figures/gamma_analysis_BGO_Cs137_0deg_300sec.png\n\
+  output/figures/gamma_analysis_BGO_Co60_0deg_600sec.png\n12.2 Output Laporan TXT\n\nDisimpan di:\n\n\
+  output/reports/\n\nContoh file:\n\noutput/reports/gamma_analysis_BGO_Cs137_0deg_300sec.txt\noutput/reports/gamma_analysis_BGO_Co60_0deg_600sec.txt\n\
+  12.3 Output CSV\n\nDisimpan di:\n\noutput/reports/\n\nContoh file:\n\noutput/reports/gamma_analysis_BGO_Cs137_0deg_300sec.csv\n\
+  output/reports/gamma_analysis_BGO_Co60_0deg_600sec.csv\n13. Hasil Uji Program\n13.1 Hasil Uji Cs-137\n\
+  \nFile:\n\ndata/raw/BGO Cs137 0deg 300sec.Spe\n\nHasil:\n\nParameter\tNilai\nChannel peak\t339\nEnergi\
+  \ terdeteksi\t664.00 keV\nEnergi referensi\t661.7 keV\nSelisih energi\t2.30 keV\nStatus\tTeridentifikasi\
+  \ berdasarkan satu photopeak\n\nInterpretasi:\n\nCs-137 berhasil diidentifikasi karena photopeak terdeteksi\
+  \ pada energi 664.00 keV, sangat dekat dengan energi referensi Cs-137 sebesar 661.7 keV.\n\n13.2 Hasil\
+  \ Uji Co-60\n\nFile:\n\ndata/raw/BGO Co60 0deg 600sec.Spe\n\nPhotopeak pertama:\n\nParameter\tNilai\n\
+  Channel peak\t595\nEnergi terdeteksi\t1175.20 keV\nEnergi referensi\t1173.2 keV\nSelisih energi\t2.00\
+  \ keV\n\nPhotopeak kedua:\n\nParameter\tNilai\nChannel peak\t672\nEnergi terdeteksi\t1328.96 keV\nEnergi\
+  \ referensi\t1332.5 keV\nSelisih energi\t3.54 keV\n\nStatus:\n\nCo-60 teridentifikasi kuat\n\nInterpretasi:\n\
+  \nCo-60 berhasil diidentifikasi kuat karena dua photopeak utamanya, yaitu sekitar 1173.2 keV dan 1332.5\
+  \ keV, berhasil terdeteksi.\n\n14. Contoh Output Terminal\n\nContoh ringkasan output program:\n\n========================================================================\n\
+  GAMMA SPECTRUM ANALYSIS TOOL\n========================================================================\n\
+  Jumlah file dianalisis : 2\nToleransi energi       : ±10.0 keV\nMinimum channel        : 100\n\n========================================================================\n\
+  GAMMA SPECTRUM ANALYSIS TOOL\n========================================================================\n\
+  File dianalisis        : data/raw/BGO Cs137 0deg 300sec.Spe\nRumus kalibrasi        : Energi (keV) =\
+  \ 1.9969 * Channel + -12.9437\nProminence peak        : 135.10\nJumlah peak terdeteksi : 1\n\nPEAK YANG\
+  \ COCOK DENGAN REFERENSI\n------------------------------------------------------------------------\n\
+  Cs-137         661.7      664.00       2.30       339\n\nKESIMPULAN IDENTIFIKASI\n------------------------------------------------------------------------\n\
+  - Cs-137 | Teridentifikasi berdasarkan satu photopeak\n  Alasan: Photopeak utama Cs-137 sekitar 661.7\
+  \ keV terdeteksi pada spektrum.\n\n========================================================================\n\
+  GAMMA SPECTRUM ANALYSIS TOOL\n========================================================================\n\
+  File dianalisis        : data/raw/BGO Co60 0deg 600sec.Spe\nRumus kalibrasi        : Energi (keV) =\
+  \ 1.9969 * Channel + -12.9437\nProminence peak        : 10.00\nJumlah peak terdeteksi : 2\n\nPEAK YANG\
+  \ COCOK DENGAN REFERENSI\n------------------------------------------------------------------------\n\
+  Co-60          1173.2     1175.20      2.00       595\nCo-60          1332.5     1328.96      3.54 \
+  \      672\n\nKESIMPULAN IDENTIFIKASI\n------------------------------------------------------------------------\n\
+  - Co-60 | Teridentifikasi kuat\n  Alasan: Dua photopeak utama Co-60, yaitu 1173.2 keV dan 1332.5 keV,\
+  \ terdeteksi pada spektrum.\n15. Alur Kerja Program\n\nAlur kerja program:\n\nInput file .Spe\n    \
+  \  ↓\nBaca data counts\n      ↓\nBuat array channel\n      ↓\nSmoothing spektrum\n      ↓\nDeteksi peak\
+  \ dengan find_peaks\n      ↓\nKalibrasi channel ke energi keV\n      ↓\nPencocokan energi peak dengan\
+  \ energi referensi\n      ↓\nIdentifikasi radionuklida\n      ↓\nSimpan grafik, TXT, dan CSV\n16. Script\
+  \ Penting\n16.1 Program Utama\nsrc/gamma_spectrum_tool.py\n\nFungsi:\n\nmenjalankan analisis lengkap;\n\
+  membaca file .Spe;\nmendeteksi peak;\nmelakukan kalibrasi energi;\nmengidentifikasi radionuklida;\n\
+  menyimpan output.\n16.2 Script Pendukung\nsrc/cari_titik_kalibrasi.py\n\nFungsi:\n\nmencari titik peak\
+  \ awal untuk kalibrasi energi.\nsrc/kalibrasi_energi.py\n\nFungsi:\n\nmenghitung dan menampilkan hasil\
+  \ kalibrasi energi.\nsrc/identifikasi_radionuklida.py\n\nFungsi:\n\nprototype aw"

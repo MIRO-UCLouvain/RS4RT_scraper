@@ -1,0 +1,93 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ENHANCE-PET/LION
+url: https://github.com/ENHANCE-PET/LION
+platform: github
+description: 'LION: Lesion Segmentation. Simplified. '
+license: Apache-2.0
+language: Python
+keywords:
+- 3d
+- fdg
+- nnunet
+- pet
+- pet-tumor-segmentation
+- segmentation
+- tumor
+stars: 22
+updated_at: '2026-07-02T06:06:17Z'
+image_source: https://raw.githubusercontent.com/ENHANCE-PET/LION/HEAD/Images/lion.png
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "<div align=\"center\">\n  <img src=\"/Images/lion.png\" alt=\"LION\" width=\"100%\"/>\n\
+  \  <h1>LION</h1>\n  <p>Fully automated tumor segmentation for FDG and PSMA PET scans</p>\n</div>\n\n\
+  <p align=\"center\">\n  <a href=\"https://pypi.org/project/lionz/\"><img alt=\"PyPI\" src=\"https://img.shields.io/pypi/v/lionz.svg?label=PyPI&style=flat-square&logo=python&logoColor=white&color=E87461\"\
+  ></a>\n  <a href=\"https://zenodo.org/badge/latestdoi/685935027\"><img alt=\"DOI\" src=\"https://img.shields.io/badge/DOI-10.5281%2Fzenodo.12626789-B5A89A?style=flat-square&labelColor=282a36&logo=zenodo&logoColor=white\"\
+  ></a>\n  <a href=\"https://www.python.org/downloads/\"><img alt=\"Python\" src=\"https://img.shields.io/badge/Python-3.10%2B-E87461?style=flat-square&logo=python&logoColor=white\"\
+  ></a>\n  <a href=\"https://www.apache.org/licenses/LICENSE-2.0\"><img alt=\"License\" src=\"https://img.shields.io/badge/License-Apache--2.0-B5A89A?style=flat-square&logo=apache&logoColor=white\"\
+  ></a>\n  <a href=\"https://pepy.tech/project/lionz\"><img alt=\"Downloads\" src=\"https://img.shields.io/pepy/dt/lionz?style=flat-square&color=E87461&label=Downloads\"\
+  ></a>\n  <a href=\"https://pypistats.org/packages/lionz\"><img alt=\"Monthly\" src=\"https://img.shields.io/pypi/dm/lionz?style=flat-square&color=B5A89A&label=Monthly\"\
+  ></a>\n</p>\n\n## Quick Start\n\n```bash\npython -m venv lion-env\nsource lion-env/bin/activate    \
+  \    # macOS / Linux\nlion-env\\Scripts\\activate           # Windows\n\npip install lionz\nlionz -d\
+  \ /path/to/data -m fdg\n```\n\nThat's it. Models download automatically on first run.\n\n## Requirements\n\
+  \n- Python 3.10+\n- 32GB RAM recommended\n- GPU optional (NVIDIA CUDA or Apple Silicon MPS) - CPU works\
+  \ but slower\n\n## Installation\n\n> **We recommend installing LION in a virtual environment to avoid\
+  \ dependency conflicts.**\n\n### Using uv (recommended)\n\n[uv](https://docs.astral.sh/uv/) is a fast\
+  \ Python package manager that handles virtual environments automatically.\n\n```bash\n# Install uv if\
+  \ you don't have it\ncurl -LsSf https://astral.sh/uv/install.sh | sh   # macOS/Linux\npowershell -ExecutionPolicy\
+  \ ByPass -c \"irm https://astral.sh/uv/install.ps1 | iex\"  # Windows\n```\n\n**Install from PyPI:**\n\
+  ```bash\nuv venv lion-env\n```\n\n```bash\n# Activate the environment\nsource lion-env/bin/activate\
+  \        # macOS / Linux\nlion-env\\Scripts\\activate           # Windows\n```\n\n```bash\nuv pip install\
+  \ lionz\n```\n\n**Install from source:**\n```bash\ngit clone https://github.com/ENHANCE-PET/LION.git\n\
+  cd LION\nuv sync\n```\n\n### Using pip + venv\n\n```bash\npython -m venv lion-env\n```\n\n```bash\n\
+  # Activate the environment\nsource lion-env/bin/activate        # macOS / Linux\nlion-env\\Scripts\\\
+  activate           # Windows\n```\n\n```bash\npython -m pip install lionz\n```\n\n## Input Data Structure\n\
+  \nLION runs on PET input only. CT is not required for the current FDG and PSMA models.\n\n```\ndata/\n\
+  ├── patient_001/\n│   └── PT_scan.nii.gz      # PET file with PT_ or PT- prefix\n├── patient_002/\n\
+  │   └── PT_scan.nii.gz\n└── patient_003/\n    └── PT_scan.nii.gz\n```\n\n**Rules:**\n- One folder per\
+  \ subject\n- PET files must start with `PT_` or `PT-`\n- CT files are not needed and are ignored by\
+  \ the current segmentation models\n- Supports `.nii` and `.nii.gz`\n- PET DICOM folders are also supported;\
+  \ modality is auto-detected from tags\n\n### Messy Data?\n\nUse the **lion-mcp** server with Claude\
+  \ Code or Codex to organize chaotic DICOM/NIfTI dumps. See [lion-mcp/README.md](lion-mcp/README.md).\n\
+  \n## CLI Usage\n\n```bash\n# Basic\nlionz -d /path/to/data -m fdg\n\n# With SUV threshold\nlionz -d\
+  \ /path/to/data -m fdg -t 2.5\n\n# Generate MIP preview\nlionz -d /path/to/data -m fdg -g\n\n# Parallel\
+  \ processing (multiple subjects)\nlionz -d /path/to/data -m fdg -p 4\n\n# All options\nlionz -d /path/to/data\
+  \ -m fdg -t 2.5 -g -p 4\n```\n\n**Options:**\n| Flag | Description |\n|------|-------------|\n| `-d`\
+  \ | Input directory containing subject folders |\n| `-m` | Model name: `fdg` or `psma` |\n| `-t` | SUV\
+  \ threshold (requires SUV-calibrated input) |\n| `-g` | Generate rotational MIP GIF |\n| `-p` | Number\
+  \ of parallel jobs |\n| `-h` | Show help |\n\n## Library Usage\n\n```python\nimport lionz\n\n# From\
+  \ file path\nresult = lionz.lion('/path/to/PT_scan.nii.gz', 'fdg')\n\n# From SimpleITK image\nimport\
+  \ SimpleITK as sitk\nimg = sitk.ReadImage('/path/to/PT_scan.nii.gz')\nseg = lionz.lion(img, 'fdg') \
+  \ # Returns SimpleITK.Image\n\n# From numpy array\nimport numpy as np\narray = np.load('pet_data.npy')\n\
+  spacing = (2.0, 2.0, 2.0)\nseg = lionz.lion((array, spacing), 'fdg')  # Returns np.ndarray\n\n# With\
+  \ options\nresult = lionz.lion(\n    '/path/to/PT_scan.nii.gz',\n    'fdg',\n    output_dir='/path/to/output',\n\
+  \    accelerator='mps',  # 'cpu', 'cuda', or 'mps'\n    threshold=2.5\n)\n```\n\n**Important:** Wrap\
+  \ in `if __name__ == '__main__':` to avoid multiprocessing issues:\n\n```python\nimport lionz\n\nif\
+  \ __name__ == '__main__':\n    lionz.lion('/path/to/PT_scan.nii.gz', 'fdg')\n```\n\n## Models\n\n| Tracer\
+  \ | Model | Training Data | Status |\n|--------|-------|---------------|--------|\n| FDG | `fdg` | 5,235\
+  \ patients | Stable |\n| PSMA | `psma` | 2,046 patients | Stable |\n\n## Output Structure\n\n```\npatient_001/\n\
+  ├── PT_scan.nii.gz                    # Original PET input\n└── lionz-2024-01-15-10-30-00/\n    ├──\
+  \ segmentations/\n    │   ├── PT_scan_tumor_seg.nii.gz  # Tumor mask\n    │   └── patient_001_rotational_mip.gif\
+  \  # If -g flag used\n    └── stats/\n        └── patient_001_metrics.csv   # Volume, SUV metrics\n\
+  ```\n\n## Platform Support\n\n| Platform | Accelerator | Status |\n|----------|-------------|--------|\n\
+  | Linux | CUDA | Fully supported |\n| Linux | CPU | Supported (slower) |\n| macOS (Apple Silicon) |\
+  \ MPS | Fully supported |\n| macOS (Intel) | CPU | Supported (slower) |\n| Windows | CUDA | Fully supported\
+  \ |\n| Windows | CPU | Supported (slower) |\n\n## For AI Agents\n\nLION provides an MCP server for organizing\
+  \ messy medical imaging data. Install and configure:\n\n```bash\ncd lion-mcp && pip install -e .\n```\n\
+  \nAdd to `.mcp.json`:\n```json\n{\n  \"lion-mcp\": {\n    \"type\": \"stdio\",\n    \"command\": \"\
+  .venv/bin/lion-mcp\"\n  }\n}\n```\n\n**Available MCP tools:**\n- `scan_directory` - Scan for DICOM/NIfTI\
+  \ files, extract metadata\n- `read_dicom_header` - Read full DICOM tags\n- `organize_for_lion` - Reorganize\
+  \ files into LION structure\n- `validate_structure` - Check if directory is LION-ready\n- `get_lion_requirements`\
+  \ - Get structure documentation\n\n## Telemetry\n\nLION collects anonymous usage statistics to help\
+  \ us understand how the tool is used and prioritize development. This is completely optional.\n\n**What\
+  \ we collect:** version, model used, platform, accelerator type, number of subjects, success/failure\n\
+  \n**What we DON'T collect:** file paths, patient data, IP addresses, any identifiable information\n\n\
+  **Opt-out:**\n```bash\nexport LIONZ_TELEMETRY=0\n```\n\n## Citation\n\n```\nDOI: 10.5281/zenodo.12626789\n\
+  ```\n\n## License\n\nApache 2.0. For enterprise integrations, contact [Zenta](mailto:lalith@zenta.solutions).\n\
+  \n## Contributors\n\n- [Lalith Kumar Shiyam Sundar](https://github.com/LalithShiyam)\n- [Manuel Pires](https://github.com/mprires)\n\
+  - [Sebastian Gutschmayer](https://github.com/Keyn34)\n\nPart of the [ENHANCE.PET](https://enhance.pet)\
+  \ initiative.\n"

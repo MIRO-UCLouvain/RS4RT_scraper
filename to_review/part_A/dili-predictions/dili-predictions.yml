@@ -1,0 +1,90 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: SHASANKsp/DILI-predictions
+url: https://github.com/SHASANKsp/DILI-predictions
+platform: github
+description: 'Toxicity predictions: DILI'
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-01-25T14:22:36Z'
+image_source: null
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# **Mechanistic Interpretation of Descriptor and Substructure Features Predictive of\
+  \ Drug-Induced Liver Injury in SMILES-Driven Machine Learning Models**\n\n## **Abstract**\nDrug-induced\
+  \ liver injury (DILI) is a major cause of clinical attrition despite extensive in vitro toxicity screening.\
+  \ I applied interpretable machine learning to molecular descriptors and fingerprint bits derived from\
+  \ SMILES strings to identify structural and physicochemical features predictive of DILI risk. These\
+  \ bits, when interpreted in the context of top RDKit descriptors including aromaticity, heterocycle\
+  \ count, lipophilicity proxies, and topological features, reveal mechanistically plausible pathways\
+  \ to hepatotoxicity such as reactive metabolite formation, transporter inhibition, metabolic stress,\
+  \ clearance overload, and intracellular accumulation. I build two model using the same approach with\
+  \ two dataset **DILIrank** and **InterDILI**.  \nInterDILI: 1850 drugs  \nDILIrank: 500 drugs\n\nBoth\
+  \ the SMILES-based machine learning models were developed to predict drug-induced liver injury (DILI)\
+  \ using RDKit descriptors and molecular fingerprint bits. Model-1 was trained on a smaller dataset (DILIrank),\
+  \ while Model-2 leveraged a substantially larger chemical space (InterDILI). Although both models identify\
+  \ mechanistically plausible DILI drivers, they differ in **resolution, emphasis, and abstraction level**.\
+  \ Below I have clarified how dataset scale influences the type of hepatotoxicity signals learned and\
+  \ how each model should be interpreted and used.\n\n---\n\n## **Overview of the Two Models**\n\n| Aspect\
+  \               | Model-1                         | Model-2                              |\n| --------------------\
+  \ | ------------------------------- | ------------------------------------ |\n| Dataset size       \
+  \  | 500              | 1850                     |\n| Dominant signal type | Explicit toxicophores \
+  \          | Physicochemical asymmetry & exposure |\n| Interpretability     | High, local          \
+  \           | High, global                         |\n| Best use             | Mechanistic explanation,\
+  \ alerts | Generalization, safety guidance      |\n\n\nExplore each folder for in detail information\
+  \ about each model    \n\n---\n\n## **Descriptor-Level Comparison**\n\n### **Model-1 Descriptor Emphasis**\n\
+  \nModel-1 is dominated by descriptors and fragments that correspond to **classical, chemically explicit\
+  \ DILI mechanisms**, including:\n\n* Direct bioactivation alerts (e.g., anilines, N-hydroxyls)\n* Aromatic\
+  \ and heterocycle counts\n* Lipophilicity surface area proxies\n* Fingerprint density reflecting structural\
+  \ complexity\n\nThese features emphasize **what functional groups are present** and how they traditionally\
+  \ fail in the liver.\n\n---\n\n### **Model-2 Descriptor Emphasis**\n\nModel-2 shifts decisively toward\
+  \ **second-order physicochemical organization**, highlighted by:\n\n* The **BCUT2D family**, capturing\
+  \ electronic, lipophilic, mass, and charge asymmetry\n* Multiple **VSA-weighted descriptors** partitioned\
+  \ by lipophilicity and charge\n* Continued but more contextual use of aromaticity and heterocycles\n\
+  * Retention of only the most severe classical alerts (aniline, NHO, hydrazine)\n\nThis indicates that\
+  \ with more data, the model becomes less reliant on “named toxicophores” and more sensitive to **how\
+  \ properties are distributed across the molecule**.\n\n---\n\n## **Fingerprint Bit Comparison**\n\n\
+  ### **Model-1 Bits: Mechanism-Centric Alerts**\n\nModel-1 fingerprint bits cluster into **clear mechanistic\
+  \ classes**:\n\n* Reactive metabolite precursors\n* Transporter inhibition and accumulation\n* Metabolic\
+  \ bottlenecks\n* Clearance overload\n\nEach bit can be readily explained by a dominant failure pathway,\
+  \ making Model-1 especially suitable for **post-hoc toxicological interpretation**.\n\n---\n\n### **Model-2\
+  \ Bits: Structural Organization Classes**\n\nModel-2 bits are broader and more architectural in nature:\n\
+  \n* Compact heteroaromatic carbonyl cores (metabolic focusing)\n* Extended conjugated or macrocyclic\
+  \ frameworks (residence time)\n* Fused aromatic heterocycles with polar exit vectors (persistent stress)\n\
+  * Bulky aromatic–polar hybrids (clearance imbalance)\n\nRather than pointing to a single toxic mechanism,\
+  \ these bits define **liability envelopes** — structural patterns that increase the probability of DILI\
+  \ through combined exposure, metabolism, and persistence.\n\n---\n\n## **Mechanistic Resolution: How\
+  \ the Models Differ**\n\n| Dimension         | Model-1                 | Model-2                   \
+  \        |\n| ----------------- | ----------------------- | --------------------------------- |\n| Bioactivation\
+  \     | Explicit and dominant   | Present but contextual            |\n| Accumulation      | Clear via\
+  \ lipophilicity | Emergent via surface partitioning |\n| Metabolic stress  | Fragment-driven       \
+  \  | Asymmetry-driven                  |\n| Clearance failure | Identified via motifs   | Identified\
+  \ via organization       |\n| DILI type         | Mechanism-specific      | Exposure-integrated    \
+  \           |\n\nIn short:\n\n* **Model-1 asks:** *What chemical liabilities are present?*\n* **Model-2\
+  \ asks:** *How does this molecule behave in the liver as a system?*\n\n---\n\n## **Effect of Dataset\
+  \ Scale**\n\nThe transition from Model-1 to Model-2 reflects a well-known phenomenon in cheminformatics:\n\
+  \n* Smaller datasets favor **explicit, high-signal features**\n* Larger datasets allow learning of **distributed,\
+  \ second-order patterns**\n\nModel-2’s reliance on BCUT and VSA descriptors strongly suggests that increased\
+  \ data volume enabled the model to resolve **subtle electronic and spatial effects** that are invisible\
+  \ in smaller datasets.\n\n---\n\n## **Complementarity of the Two Models**\n\nImportantly, the models\
+  \ are **not redundant**.\n\n* Model-1 provides **clear mechanistic flags** and aligns closely with toxicology\
+  \ intuition.\n* Model-2 provides **generalizable safety guidance** across broader chemical space.\n\n\
+  Used together:\n\n* Model-1 explains *why* a molecule is risky.\n* Model-2 estimates *how likely* that\
+  \ risk is to manifest given overall structure.\n\n---\n\n## **Practical Interpretation**\n\nFrom a decision-making\
+  \ standpoint:\n\n* Agreement between Model-1 and Model-2 indicates **high confidence DILI risk**\n*\
+  \ Disagreement often highlights:\n\n  * Borderline chemical space\n  * Context-dependent risk\n  * Optimization\
+  \ opportunities\n\nThis dual-model view mirrors real drug development, where both **structural alerts**\
+  \ and **exposure-driven liabilities** must be considered.\n\n---\n\n## **Conclusion**\n\nThe two DILI\
+  \ models represent successive layers of chemical understanding derived from SMILES alone. Model-1 captures\
+  \ well-established toxicological motifs and provides mechanistic clarity. Model-2, enabled by a larger\
+  \ dataset, abstracts these mechanisms into higher-order organizational principles governing hepatic\
+  \ exposure, metabolism, and stress.\n\n## Future Work\nUsing the model for reinforcement learning in\
+  \ REINVENT4 for DILI aware molecule generation. \n\n"

@@ -1,0 +1,62 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ranakinabadi/multimodal-cancer-prognosis
+url: https://github.com/ranakinabadi/multimodal-cancer-prognosis
+platform: github
+description: This project implements and evaluates four survival prediction architectures on 200 NSCLC
+  patients from the TCIA NSCLC-Radiomics collection
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-05-11T21:11:32Z'
+image_source: https://raw.githubusercontent.com/ranakinabadi/multimodal-cancer-prognosis/HEAD/results/figures/fusion_results.png
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# Multimodal Cancer Prognosis via Cross-Modal Attention Fusion\n\n> **Bidirectional cross-modal\
+  \ attention fusion of 3D CT imaging and clinical tabular data for NSCLC survival prediction.**  \n\n\
+  [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)\n[![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-red.svg)](https://pytorch.org/)\n\
+  [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/)\n\
+  [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)\n\n---\n\n## Overview\n\
+  \nThis project implements and evaluates four survival prediction architectures on 200 NSCLC patients\
+  \ from the [TCIA NSCLC-Radiomics](https://www.cancerimagingarchive.net/collection/nsclc-radiomics/)\
+  \ collection:\n\n| Model | Test C-index | vs. tabular-only |\n|---|---|---|\n| Image-only (3D ResNet)\
+  \ | 0.452 | −0.216 |\n| Tabular-only (MLP) | 0.668 | — |\n| Concat fusion | 0.697 | +0.029 |\n| **Attention\
+  \ fusion (ours)** | **0.747** | **+0.079** |\n\nThe key finding is that **bidirectional cross-modal\
+  \ attention** outperforms naive concatenation by learning which clinical variables are most relevant\
+  \ *given* the observed CT content — and vice versa — on a per-patient basis.\n\n---\n\n## Architecture\n\
+  \n```\nCT volume (64³)          Clinical features (age, stage, sex)\n     │                        \
+  \      │\n┌────▼────────┐            ┌────────▼────┐\n│ 3D ResNet   │            │  MLP (3→64) │\n│\
+  \ encoder     │            │  encoder    │\n└────┬────────┘            └────────┬────┘\n     │  f_i\
+  \ ∈ R^64         f_t ∈ R^64 │\n     │                               │\n     │     ┌─────────────────────┐\
+  \   │\n     │     │  Cross-modal        │   │\n     └────►│  attention (↔)      │◄──┘\n           │\
+  \  f1 = attn(f_i→f_t) │\n           │  f2 = attn(f_t→f_i) │\n           └──────────┬──────────┘\n  \
+  \                    │  [f1; f2] ∈ R^128\n                 ┌────▼────┐\n                 │  Cox PH │\n\
+  \                 │  head   │\n                 └────┬────┘\n                      │\n             \
+  \  Risk score r ∈ R\n```\n\n\n## Quickstart\n\n### Option A — Google Colab (recommended)\n\nOpen the\
+  \ notebooks in order. Each notebook installs its own dependencies.\n\n1. [01 — Data pipeline](notebooks/01_data_pipeline.ipynb)\n\
+  2. [02 — Baselines](notebooks/02_baselines.ipynb)\n3. [03 — Fusion models](notebooks/03_fusion.ipynb)\n\
+  4. [04 — Analysis](notebooks/04_analysis.ipynb)\n\n### Option B — Local installation\n\n```bash\ngit\
+  \ clone https://github.com/ranakinabadi/multimodal-cancer-prognosis.git\ncd multimodal-cancer-prognosis\n\
+  \nconda env create -f environment.yml\nconda activate multimodal-prognosis\n\n# Download 200 patients\
+  \ from TCIA\npython scripts/download_data.py --n_patients 200 --output data/raw_ct/\n\n# Preprocess\
+  \ to tensors\npython -c \"from src.data.preprocessing import preprocess_all; preprocess_all('data/raw_ct/',\
+  \ 'data/tensors/')\"\n```\n\n---\n\n## Results\n\n### Ablation table\n\nTraining curves and test C-index\
+  \ for all four architectures:\n\n![Fusion results](results/figures/fusion_results.png)\n\n### Kaplan-Meier\
+  \ survival stratification\n\nModel-predicted high/low risk groups show trend toward statistical separation\
+  \ (log-rank p = 0.068, n=30 test patients):\n\n![Kaplan-Meier](results/figures/kaplan_meier.png)\n\n\
+  ### Calibration\n\nMonotone relationship between predicted risk bins and observed event rate:\n\n![Calibration](results/figures/calibration_plot.png)\n\
+  \n### SHAP feature attribution\n\nCancer stage is the dominant clinical predictor, consistent with established\
+  \ NSCLC prognosis literature:\n\n![SHAP](results/figures/shap_importance.png)\n\n---\n\n## Limitations\
+  \ and future work\n\nThis is a proof-of-concept. Survival labels are **synthetic** (not derived from\
+  \ CT content), which explains the poor image-only C-index. The architectural design and ablation methodology\
+  \ are the primary contributions and remain valid under synthetic labels.\n\nPlanned extensions:\n- Replace\
+  \ synthetic labels with real follow-up data from NSCLC-Radiomics-Lung1\n- Add MC Dropout for calibrated\
+  \ survival uncertainty intervals\n- Extend tabular branch with radiomics features from tumour segmentation\
+  \ masks\n- Multi-site generalisation via optimal transport domain adaptation\n- Topological loss terms\
+  \ for tumour segmentation \n\n---\n\n---\n\n## Acknowledgements\n\nData from [The Cancer Imaging Archive\
+  \ (TCIA)](https://www.cancerimagingarchive.net/).  \n\n---\n\n## License\n\nMIT License — see [LICENSE](LICENSE).\n"

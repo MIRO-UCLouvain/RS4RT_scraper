@@ -1,0 +1,78 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: abdollahDraz/brain-tumor-segmentation-streamlit
+url: https://github.com/abdollahDraz/brain-tumor-segmentation-streamlit
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-08-14T05:02:59Z'
+image_source: https://raw.githubusercontent.com/abdollahDraz/brain-tumor-segmentation-streamlit/HEAD/assets/demo-1-upload.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# \U0001F9E0 Brain Tumor Segmentation\n\n[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://brain-tumor-segmentation-app-3bgwsdk9vxxy9vvrvdadui.streamlit.app/)\n\
+  \nAI-powered web application for **automatic brain tumor segmentation from MRI images**, built with\
+  \ **Deep Learning (U-Net + ResNet34 encoder)** and deployed with **Streamlit**.\n\nThe app takes a single\
+  \ MRI slice as input and returns a **binary segmentation mask** highlighting the tumor region, allowing\
+  \ quick visual inspection of the affected area.\n\n\U0001F517 **Live App:** [brain-tumor-segmentation-app.streamlit.app](https://brain-tumor-segmentation-app-3bgwsdk9vxxy9vvrvdadui.streamlit.app/)\n\
+  \n---\n\n## \U0001FA7A Supported Tumor Types\n\nThe model was trained to detect and segment the following\
+  \ tumor types from MRI scans:\n\n- **Glioma Tumor**\n- **Meningioma Tumor**\n- **Pituitary Tumor**\n\
+  \n> ⚠️ The uploaded MRI image must contain one of the tumor types above for the model to produce a meaningful\
+  \ segmentation mask.\n\n---\n\n## \U0001F680 Demo\n\nThe app is live and deployed on **Streamlit Cloud**\
+  \ → **[Try it here](https://brain-tumor-segmentation-app-3bgwsdk9vxxy9vvrvdadui.streamlit.app/)**\n\n\
+  Below is a walkthrough of the app in action:\n\n### 1. Upload an MRI Image\n![Upload MRI Image](assets/demo-1-upload.png)\n\
+  \n### 2. Preview the Uploaded Image\n![Uploaded MRI Image](assets/demo-2-uploaded-image.png)\n\n###\
+  \ 3. Run Segmentation and View the Result\nThe app displays the **original MRI** side-by-side with the\
+  \ **predicted segmentation mask**:\n\n![Original vs Predicted Mask](assets/demo-3-result.png)\n\n---\n\
+  \n## ⚙️ How It Works\n\n```\nMRI Image (PNG/JPG)\n        ↓\nPreprocessing (Grayscale → Resize 256x256\
+  \ → 3-channel → Normalize)\n        ↓\nU-Net Model (ResNet34 Encoder) — loaded from Hugging Face Hub\n\
+  \        ↓\nBinary Segmentation Mask (Tumor Region)\n        ↓\nStreamlit UI (Original Image + Predicted\
+  \ Mask side-by-side)\n```\n\n1. **Image Upload** — the user uploads a 2D MRI slice (PNG/JPG/JPEG).\n\
+  2. **Preprocessing** — the image is converted to grayscale, resized to `256x256`, expanded to 3 channels,\
+  \ and normalized using the same preprocessing function as the model's encoder (`resnet34`).\n3. **Prediction**\
+  \ — the preprocessed image is passed to a pretrained **U-Net segmentation model**, downloaded automatically\
+  \ from the Hugging Face Hub at runtime (no need to bundle large model weights in the repo).\n4. **Postprocessing**\
+  \ — the raw prediction is thresholded (`> 0.5`) to produce a binary mask.\n5. **Visualization** — the\
+  \ original MRI and the predicted mask are displayed side-by-side in the Streamlit interface.\n\n---\n\
+  \n## \U0001F9EC Model\n\n| Detail | Value |\n|---|---|\n| Architecture | U-Net |\n| Encoder (Backbone)\
+  \ | ResNet34 (pretrained) |\n| Framework | TensorFlow / Keras (`segmentation_models` library) |\n| Input\
+  \ Size | 256 x 256 x 3 |\n| Output | Binary segmentation mask |\n| Hosting | [Hugging Face Hub](https://huggingface.co/abdollah111/brain-tumor-segmentation/tree/main)\
+  \ |\n| Direct Download | [`best_model.keras`](https://huggingface.co/abdollah111/brain-tumor-segmentation/blob/main/best_model.keras)\
+  \ |\n\nThe model weights are **not stored in this repository**. Instead, they are pulled at runtime\
+  \ via `huggingface_hub.hf_hub_download`, which keeps the repository lightweight and avoids Git LFS limitations.\n\
+  \n---\n\n## \U0001F4CA Dataset & EDA (Exploratory Data Analysis)\n\nThe model was trained on an MRI\
+  \ brain tumor dataset containing labeled slices for three tumor classes (Glioma, Meningioma, Pituitary),\
+  \ each paired with a ground-truth segmentation mask.\n\n### Class Distribution (Image–Mask Pairs)\n\n\
+  | Tumor Type | Image–Mask Pairs | Tumor Pixels % (avg) |\n|---|---|---|\n| Pituitary Tumor | 930 | 1.13%\
+  \ |\n| Meningioma | 708 | 2.17% |\n| Glioma | 554 | 1.85% |\n| **Total** | **2,192** | — |\n\n> ⚠️ **Imbalanced\
+  \ Dataset** — Pituitary tumor has significantly more samples than Glioma. Accuracy alone is not a reliable\
+  \ metric here; Dice / IoU is used instead to properly evaluate segmentation quality.\n\n### Data Quality\
+  \ Checks\n\n- ✅ **0 empty masks** across all three classes (every image has a valid, non-empty tumor\
+  \ mask).\n- ✅ **0 mismatches** between MRI images and their corresponding masks (every MRI has a matching\
+  \ mask, and vice versa).\n\n### Image Properties\n\n| Property | Value |\n|---|---|\n| Image Type |\
+  \ Grayscale |\n| Image Size | 512 × 512 |\n| Pixel Value Range (MRI) | 1 – 255 |\n| Pixel Value Range\
+  \ (Mask) | 3 – 255 |\n\n### Tumor Area Analysis\n\nTumors occupy a **very small percentage of the total\
+  \ image area** (1.1% – 2.2% on average across classes), confirming this is a **small-object segmentation\
+  \ problem** — a key factor that guided the choice of loss function and evaluation metric during training.\n\
+  \n### \U0001F4D3 Notebooks\n\n- [`EDA_Tumer_Signification_.ipynb`](EDA_Tumer_Signification_.ipynb) —\
+  \ Full exploratory data analysis: class distribution, mask/image checks, pixel statistics.\n- [`Brian__Tumer.ipynb`](Brian__Tumer.ipynb)\
+  \ — Model building, training, and evaluation (U-Net + ResNet34).\n\n---\n\n## \U0001F6E0️ Tech Stack\n\
+  \n- **Python**\n- **Streamlit** — web app interface\n- **TensorFlow / Keras** — deep learning model\n\
+  - **segmentation_models** — U-Net implementation with pretrained encoders\n- **OpenCV** — image preprocessing\n\
+  - **Hugging Face Hub** — model hosting & download\n\n---\n\n## \U0001F4BB Run Locally\n\n```bash\n#\
+  \ 1. Clone the repository\ngit clone https://github.com/abdollahDraz/brain-tumor-segmentation-streamlit.git\n\
+  cd brain-tumor-segmentation-streamlit\n\n# 2. Install dependencies\npip install -r requirements.txt\n\
+  \n# 3. Run the Streamlit app\nstreamlit run app.py\n```\n\nThe app will open automatically in your browser\
+  \ at `http://localhost:8501`.\n\n---\n\n## \U0001F4C1 Project Structure\n\n```\nbrain-tumor-segmentation-streamlit/\n\
+  ├── app.py              # Main Streamlit application\n├── requirements.txt    # Python dependencies\n\
+  ├── assets/             # Demo screenshots used in this README\n└── README.md\n```\n\n---\n\n## \U0001F4DC\
+  \ License\n\nThis project is for **research and educational purposes**. Not intended for clinical or\
+  \ diagnostic use.\n\n---\n\n## \U0001F64F Acknowledgements\n\n- [segmentation_models](https://github.com/qubvel/segmentation_models)\
+  \ library for the U-Net + ResNet34 implementation.\n- [Hugging Face Hub](https://huggingface.co/) for\
+  \ model hosting.\n"

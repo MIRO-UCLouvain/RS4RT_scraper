@@ -1,0 +1,51 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: shoffan28/pso-ce-unet-t-pso
+url: https://github.com/shoffan28/pso-ce-unet-t-pso
+platform: github
+description: Code for PSO-based contrast enhancement and PSO-tuned U-Net for brain tumor MRI segmentation.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-06T11:35:32Z'
+image_source: null
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# PSO-CE + U-Net-T-PSO for Brain Tumor Segmentation\n\nThis repository provides a reproducible\
+  \ implementation template for a sequential dual-stage brain tumor segmentation pipeline:\n\n1. **PSO-based\
+  \ contrast enhancement (PSO-CE)** using CLAHE followed by an optimized power-law transformation.\n2.\
+  \ **U-Net-T-PSO** using Particle Swarm Optimization to select the learning rate and dropout rate for\
+  \ a U-Net segmentation model.\n\nThe code is organized for experiments on:\n\n- Figshare Brain Tumor\
+  \ Segmentation (FBTS) data with `Meningioma`, `Glioma`, and `Pituitary` classes.\n- BraTS 2021 slice\
+  \ data using either a single modality or multimodal stacked inputs.\n\n> This repository does not include\
+  \ the datasets or trained weights. Follow each dataset's license and data-access procedure.\n\n## Repository\
+  \ structure\n\n```text\nconfigs/                  YAML configuration files\nscripts/               \
+  \   Example run scripts\nsplits/                   Patient/subject split manifests, not included by\
+  \ default\nsrc/psoce_unet/           Main source code\noutputs/                  Experiment outputs,\
+  \ ignored by Git\nlogs/                     Training and PSO logs, ignored by Git\n```\n\n## Installation\n\
+  \n```bash\nconda create -n psoce-unet python=3.9 -y\nconda activate psoce-unet\npip install -r requirements.txt\n\
+  ```\n\nFor GPU training, install a TensorFlow build compatible with your CUDA/cuDNN environment. The\
+  \ manuscript experiments used TensorFlow 2.10 and NVIDIA A100-SXM4-40GB GPUs.\n\n## Expected dataset\
+  \ layouts\n\n### Figshare / FBTS\n\n```text\n/path/to/Brain_Class/\n  images/\n    Meningioma/*.png\n\
+  \    Glioma/*.png\n    Pituitary/*.png\n  masks/\n    Meningioma/*.png\n    Glioma/*.png\n    Pituitary/*.png\n\
+  ```\n\n### BraTS 2021 slice format\n\nSingle-modality slice layout:\n\n```text\n/path/to/Images_Slice/\n\
+  \  subject_or_slice_id/\n    FLAIR.png\n    T1.png\n    T1CE.png\n    T2.png\n/path/to/Images_Mask/\n\
+  \  subject_or_slice_id/\n    FLAIR_masked.png\n    T1_masked.png\n    T1CE_masked.png\n    T2_masked.png\n\
+  ```\n\nFor multimodal inputs, the loader stacks modalities in the order specified in the config, for\
+  \ example `[FLAIR, T1, T1CE, T2]`.\n\n## Example commands\n\nTrain on Figshare Meningioma:\n\n```bash\n\
+  python -m psoce_unet.train --config configs/figshare_meningioma.yaml\n```\n\nRun PSO hyperparameter\
+  \ search:\n\n```bash\npython -m psoce_unet.train --config configs/figshare_meningioma.yaml --run-pso\n\
+  ```\n\nEvaluate a trained model:\n\n```bash\npython -m psoce_unet.evaluate \\\n  --config configs/figshare_meningioma.yaml\
+  \ \\\n  --weights outputs/figshare_meningioma/best_model.keras\n```\n\nGenerate qualitative segmentation/error-overlay\
+  \ figures:\n\n```bash\npython -m psoce_unet.visualize \\\n  --config configs/figshare_meningioma.yaml\
+  \ \\\n  --weights outputs/figshare_meningioma/best_model.keras \\\n  --num-samples 6\n```\n\n## Reproducibility\
+  \ notes\n\n- Keep patient-level or subject-level split files in `splits/`.\n- Do not perform slice extraction\
+  \ or augmentation before splitting by patient/subject.\n- Save PSO search logs, selected hyperparameters,\
+  \ random seeds, and config files with each experiment.\n- The held-out test partition should not be\
+  \ used during PSO search or model selection.\n\n## Citation\n\nAdd the manuscript citation here after\
+  \ publication.\n"

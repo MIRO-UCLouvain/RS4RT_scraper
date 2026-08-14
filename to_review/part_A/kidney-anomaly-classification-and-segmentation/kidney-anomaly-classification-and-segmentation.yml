@@ -1,0 +1,82 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Fizza-Awan/Kidney-Anomaly-Classification-and-Segmentation
+url: https://github.com/Fizza-Awan/Kidney-Anomaly-Classification-and-Segmentation
+platform: github
+description: Kidney anomaly classification and tumor segmentation from CT scans using deep learning (NephroScan).
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-05-24T19:26:47Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Kidney Anomaly Classification and Segmentation Using Deep Learning\n\n**Final Year\
+  \ Project — FAST-NUCES Lahore, May 2026**\nEisha Shafiq · Emaan Munib · Fizza Zaitoon\n\nSupervisor:\
+  \ Dr. Asma Ahmad\n\n---\n\n## Overview\n\nNephroScan is a deep learning system that automatically classifies\
+  \ and segments kidney abnormalities in CT scans. It targets four conditions — **Normal, Cyst, Stone,\
+  \ Tumor** — and generates pixel-level segmentation masks to localize tumor regions. The system supports\
+  \ both 2D CT slices (PNG/JPG) and full 3D volumetric scans (NIfTI), and is deployed as a browser-based\
+  \ web application for clinical decision support.\n\nThe pipeline is structured into four phases covering\
+  \ 2D classification, 2D segmentation, 3D classification, and 3D segmentation.\n\n---\n\n## Pipeline\n\
+  \n### Phase 1 — 2D Classification\n\nThree models were trained and evaluated on 224×224 CT images across\
+  \ four classes.\n\n| Model | Precision | Recall | F1-Score | Accuracy |\n|---|---|---|---|---|\n| VGG16\
+  \ (baseline) | 0.89 | 0.89 | 0.89 | 89.21% |\n| ResNet50 (baseline) | 0.92 | 0.92 | 0.92 | 92.16% |\n\
+  | **Hybrid (VGG16 + ResNet50)** | **0.96** | **0.96** | **0.96** | **96.05%** |\n\nThe **Hybrid Classifier**\
+  \ concatenates intermediate feature embeddings from VGG16 and ResNet50, freezes early convolutional\
+  \ blocks to preserve learned low-level textures, and trains a dense classification head on top. It uses\
+  \ Focal Loss with per-class weights to address class imbalance, trained with Adam at LR=0.0001.\n\n\
+  Per-class breakdown (Hybrid Classifier):\n\n| Class | Precision | Recall | F1-Score |\n|---|---|---|---|\n\
+  | Cyst | 0.99 | 0.99 | 0.99 |\n| Normal | 0.93 | 0.98 | 0.95 |\n| Stone | 0.99 | 0.97 | 0.98 |\n| Tumor\
+  \ | 0.95 | 0.90 | 0.93 |\n\n---\n\n### Phase 2 — 2D Tumor Segmentation\n\nTwo segmentation models were\
+  \ evaluated on 512×512 grayscale CT images, predicting three classes: Background, Kidney, Tumor.\n\n\
+  | Model | Dice Coefficient | IoU Score | Pixel Accuracy |\n|---|---|---|---|\n| UNet | 0.9895 | 0.9798\
+  \ | 98.97% |\n| **DeepLabV3+ (MobileNetV2)** | **0.9924** | **0.9850** | **99.28%** |\n\n**DeepLabV3+**\
+  \ uses a MobileNetV2 encoder pretrained on ImageNet, an ASPP module with dilation rates 6, 12, 18 for\
+  \ multi-scale context, and a decoder that fuses low-level features with ASPP output. Trained with combined\
+  \ Cross-Entropy + Dice Loss, Adam, LR=0.0001, 50 epochs.\n\nSegmentation is triggered conditionally\
+  \ — only when the classifier predicts Tumor.\n\n---\n\n### Phase 3 — 3D Volume Classification\n\nRather\
+  \ than training a dedicated 3D network, the 2D Hybrid Classifier is reused on NIfTI volumes by decomposing\
+  \ each volume into 2D slices across two orthogonal anatomical planes (axial and coronal). Only the central\
+  \ 50% of slices are used to focus on the region of interest.\n\nSlice-level softmax predictions are\
+  \ aggregated via **multi-view soft-voting**:\n\n```\nVolume Prediction = argmax( (1/N) * Σ softmax(Classifier(sᵢ))\
+  \ )\n```\n\nThis approach avoids retraining, scales efficiently, and handles ambiguous borderline slices\
+  \ better than hard majority voting.\n\n---\n\n### Phase 4 — 3D Tumor Segmentation (2.5D)\n\nA 2.5D approach\
+  \ processes NIfTI volumes by stacking five adjacent axial slices `[z-2, z-1, z, z+1, z+2]` as a single\
+  \ 5-channel input. This gives the 2D segmentation model implicit depth context without the GPU cost\
+  \ of full 3D convolutions.\n\nThe DeepLabV3+ architecture is adapted to accept 5-channel input and trained\
+  \ on the **KiTS23** dataset.\n\n| Class | Dice Coefficient | IoU Score |\n|---|---|---|\n| Kidney |\
+  \ 0.9382 | 0.8837 |\n| Tumor | 0.8198 | 0.6947 |\n| **Overall Mean** | **0.8790** | **0.7892** |\n\n\
+  Per-slice masks are aggregated across the volume to produce a final 3D segmentation.\n\n---\n\n## Preprocessing\n\
+  \nApplied uniformly before all model inputs:\n\n- **HU clipping** — constrains Hounsfield Unit range\
+  \ to relevant tissue densities\n- **CLAHE** — contrast-limited adaptive histogram equalization for local\
+  \ contrast enhancement\n- **Median filtering** — removes salt-and-pepper noise\n- **Normalization**\
+  \ — pixel values scaled to [0, 1]\n- **Resizing** — 224×224 for classification, 512×512 for segmentation\n\
+  \n---\n\n## Web Application (NephroScan)\n\nA Flask-based web interface for radiologists and medical\
+  \ professionals.\n\n**Features:**\n- JWT authentication with per-user analysis history (SQLite)\n- Accepts\
+  \ 2D CT slices (PNG, JPG) and 3D NIfTI volumes (.nii, .nii.gz)\n- Returns classification label with\
+  \ confidence score and colour-coded segmentation overlay\n  - Green = Kidney parenchyma · Red = Tumor\
+  \ region\n- For 3D inputs: vote breakdown across analysed slices is shown\n\n**API endpoints:** `/api/auth/signup`,\
+  \ `/api/auth/login`, `/api/analyze`, `/api/history`\n\n> NephroScan is a decision-support tool. All\
+  \ results must be reviewed by a qualified radiologist before any clinical action is taken.\n\n---\n\n\
+  ## Repository Structure\n\n```\nRepo/\n├── WebApp/\n│   ├── app.py                    # Flask backend\n\
+  │   ├── index.html                # Frontend\n│   ├── models/                   # Pretrained weights\
+  \ (.pth)\n│   └── requirements.txt\n├── model_results/                # Evaluation outputs, plots, metrics\n\
+  ├── kidney_ct_baseline_models.ipynb   # VGG16 / ResNet50 experiments\n├── kidney_ct_hybrid_model.ipynb\
+  \      # Hybrid classifier\n├── kidney_tumor_segmentation.ipynb   # DeepLabV3+ segmentation\n├── Report/main.pdf\
+  \                   # Full project report\n├── architecture.pdf                  # System architecture\
+  \ diagram\n└── Final_Demo.mp4                    # Application demo video\n```\n\n---\n\n## Tech Stack\n\
+  \n| Component | Technology |\n|---|---|\n| Deep Learning | PyTorch, torchvision |\n| Models | VGG16,\
+  \ ResNet50, DeepLabV3+, MobileNetV2, UNet |\n| Backend | Flask, Flask-JWT-Extended |\n| Database | SQLite\
+  \ |\n| Medical Imaging | nibabel (NIfTI), OpenCV, Pillow |\n| Evaluation | scikit-learn (accuracy, precision,\
+  \ recall, F1), Dice, IoU |\n\n---\n\n## Datasets\n\n- **Classification:** Kidney CT dataset (Kaggle)\
+  \ — ~10,900 images across 4 classes\n- **Segmentation:** KiTS23 (Kidney Tumor Segmentation Challenge\
+  \ 2023)\n\nDatasets are not included in this repository due to size.\n\n---\n\n## Quick Start\n\n```bash\n\
+  git clone https://github.com/Fizza-Awan/Kidney_Anomaly-Classification-and-Segmentation.git\ncd Kidney_Anomaly-Classification-and-Segmentation/WebApp\n\
+  pip install -r requirements.txt\npython app.py\n# Open http://127.0.0.1:5000\n```\n"

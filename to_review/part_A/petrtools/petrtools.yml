@@ -1,0 +1,87 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Mitch-Chen-Group/PETrtools
+url: https://github.com/Mitch-Chen-Group/PETrtools
+platform: github
+description: PET-CT radiomics tools
+license: NOASSERTION
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-03-05T13:29:12Z'
+image_source: https://raw.githubusercontent.com/Mitch-Chen-Group/PETrtools/HEAD/workflow.png
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# PETrtools\r\n**PET-CT data processing tools for multi-label radiomics and NHOC feature\
+  \ computation**\r\n\r\n*Chen, M., Copley, S.J., Han, Y. et al. An explainable imaging-clinical biomarker\
+  \ for non-small cell lung cancer prognostication based on normalised hotspot to centroid distance and\
+  \ [18F]FDG PET/CT radiomics. Eur J Nucl Med Mol Imaging (2025).* https://link.springer.com/article/10.1007/s00259-025-07659-4\r\
+  \n\r\nAuthor: Mitch Chen\r\n\r\nLicense: CC BY-NC-SA 4.0\r\n\r\nUpdated 2025.12.16\r\n\r\nAll workflows\
+  \ tested on **Ubuntu 20.04** [https://releases.ubuntu.com/focal/]\r\n\r\n**Pre-requisite:** Python version\
+  \ 3.10 [https://www.python.org/downloads/]\r\n\r\nMove your zipped DICOM files to directory /(your_data_directory)/raw\r\
+  \n\r\n## Step 1: Clone this repository\r\n\r\n```bash\r\ngit clone https://github.com/Mitch-Chen-Group/PETrtools.git\r\
+  \n```\r\ncd into ./PETrtools/ directory\r\n\r\n\r\n## Step 2: Create a virtual environment\r\n\r\n```bash\r\
+  \nconda create -n PETrtools python=3.10 -y\r\n\r\nconda activate PETrtools\r\n\r\npip install -r ./PETrtools/requirements.txt\r\
+  \n```\r\n\r\n## Step 3: Select one of the following options\r\n\r\n\r\n### Option A: Multi-label ROI\
+  \ generator for CT scans only  (i.e for CT radiomics workflows) \r\n\r\n```bash\r\npython multilabel_ct.py\
+  \ --import_path /ct_path --destination_path /dest_path --a_psi 5 --a_thres 1 --pp_dist 10 --pp_size\
+  \ 10\r\n\r\n```\r\n**a_psi**: annulus thickness\r\n\r\n**a_thres**: apply CT thresholding on annulus\
+  \ (removed bones and soft tissues, recommended)\r\n\r\n**pp_dist**: distance of parenchymal patch from\
+  \ lesion border\r\n\r\n**pp_size**: lesion size\r\n\r\n**NB: Check for any errors in parenchymal patch\
+  \ generation, if failed, can alter pp_dist for a better chance, or add this manually in Slicer**\r\n\
+  \r\n\r\n## Conceptual workflow \r\n<p align=\"center\">\r\n  <img src=\"workflow.png\" width=\"600\"\
+  >\r\n</p>\r\n\r\n\r\n### Option B: Batch scripted PET-CT data processing (from zipped DICOM files) \
+  \ \r\n\r\n**NB: Check for any errors in the workflow, for starters, Option C is recommended.**\r\n\r\
+  \n**Base directory structure** <br />\r\n\r\n    BaseDirectory/\r\n    ├── zipped/\r\n        ├── Case001.zip\r\
+  \n        ├── Case002.zip\r\n        ├── ...\r\n\r\n```bash\r\nchmod +x process_pet_ct_p1.sh\r\n./process_pet_ct_p1.sh\
+  \ --base [YOUR BASE DIRECTORY]\r\n```\r\n\r\n**Create lesion patch ROIs using 3D Slicer**\r\n\r\n<p\
+  \ align=\"center\">\r\n  <img src=\"lesionpatch.png\" width=\"300\">\r\n</p>\r\n\r\n**Saving as:** <br\
+  \ />\r\n\r\n    BaseDirectory/\r\n      nifti/\r\n    \t├── Case001/\r\n        \t├── Case001_PET_ROI.nii.gz\r\
+  \n        \t├── ...\r\n    \t├── Case002\r\n    \t├── Case003\r\n    \t├── ...\r\n\r\n```bash\r\nchmod\
+  \ +x process_pet_ct_p2.sh\r\n./process_pet_ct_p2.sh --base [YOUR BASE DIRECTORY]\r\n```\r\n\r\n\r\n\r\
+  \n### Option C: PET-CT data processing workflow (Step-By-Step)\r\n\r\n```bash\r\npython dcm_unzip.py\
+  \ -i /pet_data/zipped -o /pet_data/unzipped\r\n\r\npython dcm_sort.py --input /pet_data/unzipped --output\
+  \ /pet_data/sorted\r\n\r\npython dcm2nii_pet.py --import_path /pet_data/sorted/PET/ --export_path /pet_data/nifti/\r\
+  \n\r\npython dcm2nii_ct.py --import_path /pet_data/sorted/CT/ --export_path /ct_data/nifti/\r\n\r\n\
+  ```\r\n\r\n**The script outputs SUV by default, if raw counts required:**\r\n\r\n```bash\r\n(Optional)\
+  \ python dcm2nii_pet.py --import_path /pet_data/sorted/PET/ --export_path /pet_data/nifti/ --save_raw\
+  \ \r\n```\r\n\r\n**If segmentations created in DCM, ie. using Hermes/Affinity Viewer):**\r\n\r\n```bash\r\
+  \npython dcm2nii_seg.py  --import_path /pet_data/nifti/   --seg_path /pet_data/sorted/SEG  --export_path\
+  \ /pet_data/nifti  \r\n```\r\n\r\n**Create lesion patch ROIs using 3D Slicer (as above in Option B)\
+  \ or if lesion ROI automatically segmented using LCUNet-Turbo can bypass the roi2lesion_pet.py step.**\r\
+  \n\r\n```bash\r\npython roi2lesion_pet.py --import_path /pet_data/nifti --destination_path /pet_data/nifti\
+  \ --mtv 40\r\n```\r\n\r\n**Multi-label ROI generator for BOTH PET and attenuation correction CT**\r\n\
+  \r\n```bash\r\npython multilabel_pet.py --import_path /pet_data/nifti --destination_path /pet_data/nifti\
+  \ --mtv 40\r\n```\r\n**Options to specify the following parameters:** \r\n\r\n```bash\r\npython multilabel_pet.py\
+  \ --import_path /pet_data/nifti --destination_path /pet_data/nifti --mtv 40 --a_psi 5 --a_thres 1 --pp_dist\
+  \ 10 --pp_size 10\r\n```\r\n\r\n**a_psi**: annulus thickness (default: 10)\r\n\r\n**a_thres**: apply\
+  \ CT thresholding on annulus (removed bones and soft tissues, recommended, default: 1)\r\n\r\n**pp_dist**:\
+  \ distance of parenchymal patch from lesion border (default: 20)\r\n\r\n**pp_size**: lesion size (default:\
+  \ 20)\r\n\r\n**NB: Check for any errors in parenchymal patch generation, if failed, can alter pp_dist\
+  \ for a better chance, or add this manually in Slicer**\r\n\r\n**NHOC computation and folders prep**\r\
+  \n\r\n**Data folder structure** <br />\r\n\r\n    DataFolder/\r\n    ├── Case001/\r\n        ├── Case001.nii.gz\r\
+  \n        ├── Mask_1.nii.gz\r\n        ├── Mask_2.nii.gz\r\n        ├── ...\r\n    ├── Case002\r\n \
+  \   ├── Case003\r\n    ├── Case004\r\n    ├── Case005\r\n    ├── ...\r\n\r\n```bash\r\npython compute_nhoc.py\
+  \ --import_path /pet_data/nifti --output_csv /pet_data/nhoc.csv\r\n\r\npython split_PETCT.py --import_path\
+  \ /pet_data/nifti --destination_PETpath /pet_data/PET/ --destination_CTpath /pet_data/CT/ --move\r\n\
+  \r\npython rename_raw.py --path /pet_data/PET/\r\n\r\npython rename_raw.py --path /pet_data/CT/\r\n\
+  ```\r\n\r\n**Standard Radiomics Extraction Worklfow (Resampling & feature extraction)**\r\n\r\n```bash\r\
+  \npython image_resampler.py --root_dir /pet_data/CT --out_dir /pet_data/rs/resampledCT --vox 3.0 3.0\
+  \ 3.0\r\n\r\npython image_resampler.py --root_dir /pet_data/PET --out_dir /pet_data/rs/resampledPET\
+  \ --vox 5.0 5.0 5.0\r\n\r\npython folder_nav.py --input_path /pet_data/rs/resampledCT --output_csv /pet_data/ct_db.csv\r\
+  \n\r\npyradiomics /pet_data/ct_db.csv -o /pet_data/ct_radiomics.csv -f csv -p radiomics_config.yaml\r\
+  \n\r\npython folder_nav.py --input_path /pet_data/rs/resampledPET --output_csv /pet_data/pet_db.csv\r\
+  \n\r\npyradiomics /pet_data/pet_db.csv -o /pet_data/pet_radiomics.csv -f csv -p radiomics_config.yaml\r\
+  \n\r\n```\r\n\r\n#### Additional scripts (Not used)\r\n\r\nctRun.py (Not used)\r\n\"\"\"\r\nRun Script\
+  \ for CT radiomics data curation\r\nVersion 1.0, 24.07.2023\r\n\"\"\"\r\n\r\nanalyze2nii.py (Not used)\r\
+  \n\"\"\"\r\nRun Script for Analyze75 to NIFTI conversion\r\nVersion 1.0, 24.07.2023\r\n\"\"\"\r\n\r\n\
+  ctROIGen.py (Not used)\r\n\"\"\"\r\nRun Script for 1) PET to CT upsampling, 2) mask generator and 3)\
+  \ split into two folders\r\nVersion 1.0, 25.07.2023\r\n\"\"\"\r\n\r\nctRun.py\r\n\"\"\"\r\nRun Script\
+  \ for CT radiomics data curation\r\nVersion 1.0, 24.07.2023\r\n\"\"\"\r\n\r\ndataRun.py\r\n\"\"\"\r\n\
+  Complete both PET and CT annulus and pp multi-labels\r\nVersion 1.0, 17.07.2023\r\n\"\"\"\r\n\r\ndcm2nii.py\
+  \ (Not used)\r\n\"\"\"\r\nRun Script for DCM to NIFTI conversion\r\nVersion 1.0, 28.07.2023\r\n\"\"\"\
+  \r\n\r\n\r\n\r\n\r\n\r\n"

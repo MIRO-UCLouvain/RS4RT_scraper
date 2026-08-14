@@ -1,0 +1,83 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Patrick-Bonsu/medical-seg-brats-ped
+url: https://github.com/Patrick-Bonsu/medical-seg-brats-ped
+platform: github
+description: 3D U-Net for pediatric brain tumor segmentation — BraTS 2023 PED, Dice 0.869 (whole tumor)
+license: MIT
+language: Jupyter Notebook
+keywords:
+- 3d-unet
+- brats
+- medical-imaging
+- pytorch
+- segmentation
+stars: 0
+updated_at: '2026-07-25T20:20:37Z'
+image_source: null
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+readme_excerpt: "# Pediatric Brain Tumor Segmentation\n### 3D U-Net · BraTS 2023 PED · PyTorch · Apple\
+  \ Silicon (MPS)\n\nA complete medical image segmentation pipeline built from scratch —\ndata loading,\
+  \ preprocessing, model architecture, training, evaluation,\nand an interactive demo. Every architectural\
+  \ and design decision is\ndocumented with the reasoning behind it.\n\n---\n\n## Results\n\n| Region\
+  \ | Dice Score |\n|---|---|\n| Whole Tumor | 0.869 |\n| Tumor Core | 0.414 * |\n| Enhancing Tumor |\
+  \ 0.512 |\n\n\\* TC score is bimodal — patients with TC present score 0.75–0.85.\nThe low mean is driven\
+  \ by patients where TC is genuinely absent\n(a known characteristic of pediatric brain tumors).\n\n\
+  ---\n\n## Dataset\n\n**BraTS 2023 Pediatric (PED) Challenge**\n- 99 patients total — 79 train / 20 validation\n\
+  - 4 MRI modalities per patient: T1n, T1c, T2, FLAIR\n- 3 tumor sub-regions: SNFH, NETC, Enhancing Tumor\n\
+  - Severe class imbalance: ~99.8% background voxels\n- Available at: https://www.synapse.org/Synapse:syn51514105\n\
+  \n---\n\n## Architecture\n\n3D U-Net with 4 encoder levels, bottleneck, and symmetric decoder.\n\nInput:\
+  \      (4, 128, 128, 128)  — 4 MRI channels, 128³ patch\nEncoder:    32 → 64 → 128 → 256 channels (MaxPool\
+  \ between levels)\nBottleneck: 512 channels at 8³ spatial resolution\nDecoder:    256 → 128 → 64 → 32\
+  \ (ConvTranspose + skip connections)\nOutput:     (3, 128, 128, 128)  — 3 binary segmentation maps\n\
+  Parameters: 10.8M trainable\n\n**Key design decisions:**\n- 3D convolutions capture volumetric context\
+  \ across all 3 spatial axes\n- Skip connections preserve spatial detail lost during downsampling\n-\
+  \ Output uses sigmoid not softmax — regions overlap by design\n- bias=False in conv layers paired with\
+  \ BatchNorm (redundant otherwise)\n\n---\n\n## Training\nOptimizer:    AdamW (lr=1e-4, weight_decay=1e-5)\n\
+  Scheduler:    CosineAnnealingLR (T_max=50, eta_min=1e-6)\nLoss:         BCE + Dice combined (0.5 / 0.5\
+  \ weighting)\nBatch size:   1 (3D volumes are memory intensive)\nEpochs:       50 with early stopping\
+  \ (patience=10)\nHardware:     MacBook Pro M-series, MPS backend, 24GB unified memory\nTraining time:\
+  \ ~4 hours\n\n**Why BCE + Dice:**\nCrossEntropyLoss is dominated by the 99.8% background class.\nA model\
+  \ predicting background everywhere achieves 99.8% accuracy\nbut zero medical usefulness. Dice loss directly\
+  \ optimises the\noverlap metric and is immune to class imbalance. BCE sharpens\nboundary predictions.\
+  \ Together they handle both problems.\n\n---\n\n## Preprocessing\n\n- **Patch extraction:** 128³ patches\
+  \ from 240×240×155 volumes\n- **Tumor-centered sampling:** 80% of patches centered on tumor voxels\n\
+  - **Z-score normalization:** per modality, computed over non-zero brain voxels only\n- **Augmentation:**\
+  \ random flip, 90° rotation, elastic deformation,\n  intensity scale ±10%, intensity shift ±0.1\n\n\
+  ---\n\n## Key findings\n\n**What the model learned well:**\nWhole tumor segmentation is consistent and\
+  \ reliable (Dice 0.87).\nThe model correctly identifies the full extent of tumor including\nsurrounding\
+  \ edema across nearly all validation patients.\n\n**Where it struggles and why:**\nTumor core predictions\
+  \ are bimodal — excellent when TC exists,\nnear-zero when it does not. Many pediatric tumors have no\
+  \ organized\nnecrotic core, which differs from adult gliomas. The model\ndeveloped a habit of predicting\
+  \ TC inside any large tumor mass\nbecause that was true for most training patients.\n\n**The hollow\
+  \ prediction failure mode:**\nOn one worst-case patient, the model predicted a ring shape\nwhere the\
+  \ ground truth was a solid filled mass. The model\nlearned that tumor centers are often a different\
+  \ region (TC/ET)\nand incorrectly applied that prior to a patient whose center\nwas solid whole tumor.\n\
+  \n---\n\n## Project structure\nmedical_seg/\n├── src/\n│   ├── dataset.py      # BraTSDataset — lazy\
+  \ loading, patch sampling\n│   ├── transforms.py   # Augmentation pipeline\n│   ├── model.py       \
+  \ # 3D U-Net architecture\n│   ├── losses.py       # DiceLoss, BCEDiceLoss, ChannelwiseDiceLoss\n│ \
+  \  └── metrics.py\n├── notebooks/\n│   ├── 01_explore_data.ipynb       # Data exploration and visualisation\n\
+  │   └── 03_evaluate.ipynb           # Evaluation and error analysis\n├── checkpoints/\n│   └── best_model.pth\n\
+  ├── results/\n│   ├── training_curves.png\n│   ├── dice_distribution.png\n│   └── training_history_*.json\n\
+  ├── train.py            # Full training loop\n├── app.py              # Gradio demo\n└── config.yaml\n\
+  \n---\n\n## Model weights\n\nThe checkpoint (`best_model.pth`, ~124MB) exceeds GitHub's file size limit\
+  \ and is not\nincluded in this repository. Two options to get it:\n\n**Option 1 — Train from scratch\
+  \ (~4 hours on Apple M-series MPS):**\n```bash\n# Place BraTS 2023 PED data at data/brats2023/<patient_id>/\n\
+  # Dataset: https://www.synapse.org/Synapse:syn51514105\npython train.py\n```\n\n**Option 2 — Download\
+  \ model weights**\n\nWeights are hosted on HuggingFace (too large for GitHub):\n\n```bash\npip install\
+  \ huggingface_hub\n\npython -c \"\nfrom huggingface_hub import hf_hub_download\nhf_hub_download(\n \
+  \   repo_id='Patrick-Bonsu/brats-ped-unet',\n    filename='best_model.pth',\n    local_dir='checkpoints/'\n\
+  )\n\"\n```\n\n---\n\n## Running the demo\n\n```bash\n# Install dependencies\npip install -r requirements.txt\n\
+  \n# Run the demo\npython app.py\n\n# Open in browser\nhttp://localhost:7860\n```\n\nUpload all 4 NIfTI\
+  \ modalities for one patient to see predictions.\n\n---\n\n## Limitations\n\n- Trained on 99 patients\
+  \ — limited generalisation to unseen scanners\n- Center patch inference only — sliding window would\
+  \ be more thorough\n- Not validated for clinical use — research prototype only\n- TC predictions unreliable\
+  \ for patients without organised tumor core\n\n---\n\n## What I would do differently with more data\n\
+  \n1. Sliding window inference across the full volume\n2. Per-class loss weighting — penalise false positive\
+  \ TC more heavily\n3. Increase base_channels to 48 for more model capacity\n4. Two-stage pipeline —\
+  \ detect TC presence first, then segment\n5. Test time augmentation — average predictions across flipped\
+  \ volumes"

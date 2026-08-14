@@ -1,0 +1,159 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: nikitadn10/Brain_MRI_Segmentation
+url: https://github.com/nikitadn10/Brain_MRI_Segmentation
+platform: github
+description: U-Net brain tumor segmentation on MRI (LGG dataset) — 0.89 Dice score with a memory-efficient
+  Keras data pipeline
+license: MIT
+language: Jupyter Notebook
+keywords:
+- computer-vision
+- deep-learning
+- keras
+- medical-imaging
+- python
+- semantic-segmentation
+- tensorflow
+- unet
+stars: 0
+updated_at: '2026-07-02T17:55:42Z'
+image_source: null
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+readme_excerpt: '# 🧠 Brain MRI Tumor Segmentation with U-Net
+
+
+  Binary semantic segmentation of brain tumors from MRI scans, built with a memory-efficient data pipeline
+  to handle the full dataset without RAM crashes on Colab.
+
+
+  ## Overview
+
+
+  This project trains a U-Net to segment tumor regions in brain MRI scans from the **LGG Segmentation
+  Dataset**. Rather than loading the entire dataset into memory upfront (which crashed earlier attempts),
+  the pipeline uses a custom Keras `Sequence`-based generator that loads and augments images batch-by-batch
+  during training.
+
+
+  ## Dataset
+
+
+  - **Source:** [LGG MRI Segmentation](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)
+  (Kaggle, `kaggle_3m`)
+
+  - Paired MRI slices and binary tumor masks across multiple patients
+
+  - Split: 80% train / 10% validation / 10% test (patient-level file pairs, seeded split)
+
+
+  ## Approach
+
+
+  **Data pipeline**
+
+  - `MRIDataGenerator`: custom `tf.keras.utils.Sequence` that loads images on-the-fly per batch — no full-dataset
+  RAM footprint
+
+  - On-the-fly augmentation for training: horizontal/vertical flips + random brightness
+
+  - Images resized to 128×128 (vs. 256×256) to further cut memory use with minimal accuracy tradeoff
+
+
+  **Model**
+
+  - U-Net with encoder/bottleneck/decoder and skip connections
+
+  - Filters: `[32, 64, 128, 256]`, bottleneck at 512
+
+  - Each conv block: Conv2D → BatchNorm → ReLU (×2) with dropout (0.1 encoder/decoder, 0.2 bottleneck)
+
+  - Output: 1×1 Conv2D with sigmoid activation for pixel-wise binary mask
+
+
+  **Loss & metrics**
+
+  - Loss: combined **BCE + Dice loss** (stable gradients + directly optimizes overlap)
+
+  - Metrics tracked: **Dice Coefficient**, **Pixel Accuracy**
+
+
+  **Training**
+
+  - Adam optimizer (lr 1e-4), batch size 16, up to 50 epochs
+
+  - Early stopping + model checkpointing on validation Dice
+
+  - ReduceLROnPlateau on validation loss
+
+
+  ## Results
+
+
+  Evaluated on tumor-positive test samples only (i.e., excluding slices with no tumor, to give a meaningful
+  measure of actual segmentation quality):
+
+
+  | Metric | Score |
+
+  |---|---|
+
+  | **Dice Score** | **0.8917** |
+
+  | **Pixel Accuracy** | **99.39%** |
+
+
+  The notebook also generates:
+
+  - Training curves (loss / pixel accuracy / Dice over epochs)
+
+  - Side-by-side MRI / ground truth / prediction visualizations
+
+  - Overlay plots (green = correct tumor pixels, red = missed)
+
+  - Per-sample Dice score distribution histogram
+
+
+  ## Project Structure
+
+
+  ```
+
+  ├── Brain_MRI_Segmentation_v2_MemoryEfficient.ipynb   # full pipeline notebook
+
+  └── README.md
+
+  ```
+
+
+  ## Running It
+
+
+  1. Download `kaggle_3m.zip` from the [dataset link above](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)
+
+  2. Open the notebook in Google Colab
+
+  3. Run cells top to bottom — you''ll be prompted to upload `kaggle_3m.zip` when the notebook reaches
+  the extraction step
+
+  4. Trained model and result plots are saved and downloadable at the end
+
+
+  **Requirements:** TensorFlow, OpenCV (`cv2`), NumPy, scikit-learn, Matplotlib — all pre-installed on
+  Colab.
+
+
+  ## Notes
+
+
+  - The 128×128 resolution and reduced filter counts were deliberate choices to fit training within Colab''s
+  free-tier memory limits while still hitting strong Dice scores.
+
+  - Evaluating tumor-only samples avoids the metric being inflated by the many slices with entirely empty
+  (no-tumor) masks.
+
+  '

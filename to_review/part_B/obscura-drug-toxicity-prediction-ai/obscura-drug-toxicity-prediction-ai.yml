@@ -1,0 +1,125 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: aishwariyasaha/Obscura-Drug-Toxicity-Prediction-AI
+url: https://github.com/aishwariyasaha/Obscura-Drug-Toxicity-Prediction-AI
+platform: github
+description: A production-grade ML pipeline for predicting drug toxicity across all **12 Tox21 assay targets**
+  using an ensemble of LightGBM, XGBoost, and Random Forest, with SHAP explainability and a dynamic Streamlit
+  interface.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-04-02T21:17:57Z'
+image_source: null
+heuristic_total_score: 21
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# \U0001F9EC Obscura — Drug Toxicity Prediction AI\n\n> **CodeCure AI Hackathon · Track\
+  \ A · Drug Toxicity Prediction (Pharmacology + AI)**\n>\n> **Team Bit by Bit (B3)** — Subhagata Sardar\
+  \ · Hrishita Ray · Aishwariya Saha\n\nObscura is a production-grade machine learning pipeline for predicting\
+  \ drug toxicity across all **12 Tox21 assay targets**. It uses an ensemble of LightGBM, XGBoost, and\
+  \ Random Forest models trained on ~7,500 comprehensive molecular features, with SHAP-based explainability\
+  \ and a dynamic Streamlit prediction interface.\n\n---\n\n## \U0001F4CB What Does Obscura Do?\n\nObscura\
+  \ predicts whether a chemical compound is likely to be toxic based on its **molecular structure (SMILES\
+  \ string)**. Given a molecule, it:\n\n1. Standardizes and parses the SMILES into a molecular graph\n\
+  2. Engineers ~7,564 features (fingerprints + physicochemical descriptors + ADMET flags)\n3. Runs the\
+  \ features through an AUPR-weighted ensemble of three gradient boosting models\n4. Outputs a **toxicity\
+  \ probability** and a **risk level** (LOW → HIGH)\n5. Breaks down predictions across all **12 Tox21\
+  \ assay targets** individually\n6. Explains the prediction using **SHAP feature importance**\n\n###\
+  \ What \"Toxicity\" Means Here\n\nObscura predicts **Tox21 assay-based toxicity** — specifically whether\
+  \ a compound activates:\n\n- **Nuclear receptors (NR):** NR-AR, NR-ER, NR-AhR, NR-Aromatase, NR-ER-LBD,\
+  \ NR-PPAR-gamma\n- **Stress response pathways (SR):** SR-ARE, SR-MMP, SR-p53, SR-HSE, SR-ATAD5\n\nThis\
+  \ covers **acute receptor-mediated and genotoxic toxicity**. It does not cover chronic mechanisms like\
+  \ carcinogenicity via bioaccumulation or environmental persistence.\n\n---\n\n## \U0001F3C6 Results\
+  \ vs Published Baselines\n\n| Assay | **Our AUC** | MolNet Baseline | Δ |\n|-------|:-----------:|:---------------:|:---:|\n\
+  | NR-AR | **0.779** | 0.745 | +0.034 |\n| NR-AR-LBD | **0.834** | 0.811 | +0.023 |\n| NR-AhR | **0.814**\
+  \ | 0.803 | +0.011 |\n| NR-Aromatase | **0.817** | 0.791 | +0.026 |\n| NR-ER | **0.743** | 0.728 | +0.015\
+  \ |\n| NR-ER-LBD | **0.807** | 0.791 | +0.016 |\n| NR-PPAR-gamma | **0.776** | 0.726 | +0.050 |\n| SR-ARE\
+  \ | **0.801** | 0.746 | +0.055 |\n| SR-ATAD5 | **0.800** | 0.777 | +0.023 |\n| SR-HSE | **0.740** |\
+  \ 0.690 | +0.050 |\n| SR-MMP | **0.882** | 0.836 | +0.046 |\n| SR-p53 | **0.788** | 0.766 | +0.022 |\n\
+  | **Mean** | **0.798** | 0.768 | **+0.031** |\n\n**Aggregate metrics:** ROC-AUC = 0.772 · AUPR = 0.693\
+  \ · MCC = 0.402 · Sensitivity = 0.613 · Specificity = 0.788\n\n> ROC-AUC > 0.77 is considered strong\
+  \ for Tox21. Published GNN-based models typically reach 0.82–0.85 with significantly more architectural\
+  \ complexity.\n\n---\n\n## \U0001F4CA Key Improvements Over Baseline\n\n| Dimension | Baseline | Obscura\
+  \ |\n|---|---|---|\n| Features | 3 descriptors | ~7,000 (ECFP4/6, MACCS, RDKit FP, 200 descriptors)\
+  \ |\n| Class imbalance | Unhandled | sensitivity_boost=3.5 + Platt calibration |\n| Evaluation | AUC\
+  \ only | AUC, AUPR, MCC, Sensitivity, Specificity, Brier |\n| Ensemble | Hardcoded | AUPR-optimized\
+  \ weights on validation set |\n| Threshold | Fixed 0.5 | MCC-optimal 0.43 per assay |\n| Per-assay models\
+  \ | None | 12 dedicated classifiers with per-assay thresholds |\n| Explainability | None | SHAP TreeExplainer,\
+  \ grouped by feature type |\n\n---\n\n## \U0001F5C2️ Project Structure\n\n```\nObscura/\n│\n├── app.py\
+  \                        # Streamlit prediction interface\n├── run.py                        # Main\
+  \ training pipeline\n├── visualize.py                  # Molecular property visualizations\n├── test_model.py\
+  \                 # Quick model validation script\n├── fix_pickle.py                 # One-time pickle\
+  \ migration utility\n├── README.md\n│\n├── src/\n│   ├── __init__.py\n│   ├── ensemble.py          \
+  \     # EnsembleModel class (pickle-safe)\n│   ├── preprocessing.py          # Data loading, SMILES\
+  \ parsing, label engineering\n│   ├── features.py               # Molecular featurization (fingerprints\
+  \ + descriptors)\n│   ├── train.py                  # Model training (LightGBM, XGBoost, RF)\n│   ├──\
+  \ evaluate.py               # Metrics, ROC/PR curves, per-assay analysis\n│   ├── explain.py       \
+  \         # SHAP explainability plots\n│   └── predict.py                # Inference pipeline, ADMET\
+  \ profiling\n│\n├── data/\n│   └── raw/\n│       └── tox21.csv             # Primary dataset (Tox21,\
+  \ ~8000 compounds)\n│\n├── models/                       # Saved model artifacts (auto-generated by\
+  \ run.py)\n│   ├── ensemble_model.pkl        # Final ensemble (LightGBM + XGBoost + RF)\n│   ├── lgbm_model.pkl\n\
+  │   ├── xgb_model.pkl\n│   ├── rf_model.pkl\n│   ├── per_assay_models.pkl      # 12 per-assay LightGBM\
+  \ models\n│   ├── imputer.pkl               # Median imputer for missing descriptors\n│   ├── nonzero_mask.pkl\
+  \          # Zero-variance feature removal mask\n│   ├── feature_names.pkl         # Feature name registry\
+  \ for SHAP\n│   └── threshold.json            # Optimal classification threshold\n│\n└── outputs/  \
+  \                    # Generated plots and reports (auto-generated)\n    ├── roc_pr_curves.png\n   \
+  \ ├── confusion_matrix.png\n    ├── score_distribution.png\n    ├── per_assay_auc.png\n    ├── shap_beeswarm.png\n\
+  \    ├── shap_bar.png\n    ├── shap_groups.png\n    ├── viz_logp_toxicity.png\n    ├── viz_mw_toxicity.png\n\
+  \    ├── viz_tpsa_scatter.png\n    ├── viz_hbond_toxicity.png\n    ├── viz_property_correlation.png\n\
+  \    ├── viz_structural_alerts.png\n    ├── viz_chemical_space.png\n    └── metrics.txt\n```\n\n---\n\
+  \n## \U0001F680 Setup & Installation\n\n# 1. Clone\ngit clone https://github.com/aishwariyasaha/Obscura-Drug-Toxicity-Prediction-AI.git\n\
+  cd Obscura-Drug-Toxicity-Prediction-AI\n\n# 2. Install dependencies\npip install lightgbm xgboost scikit-learn\
+  \ numpy pandas matplotlib seaborn\npip install rdkit shap joblib imbalanced-learn\npip install streamlit\
+  \ pubchempy pillow\n\n# 3. Run\nstreamlit run app.py\n\n---\n\n## \U0001F52C How It Works — Full Pipeline\n\
+  \n```\nSMILES Input\n     │\n     ▼\nMolecular Standardization (RDKit)\n     │\n     ▼\nFeature Engineering\
+  \ (~7,564 features)\n     ├── ECFP4 / ECFP6 / FCFP4 / MACCS Keys / RDKit FP\n     ├── 200 Physicochemical\
+  \ Descriptors (RDKit)\n     └── 19 ADMET Rule Flags (Lipinski, Veber, nitro groups, halogens, etc.)\n\
+  \     │\n     ▼\nMedian Imputation + Zero-Variance Feature Removal\n     │\n     ▼\n┌─────────────┬─────────────┬──────────────┐\n\
+  │  LightGBM   │   XGBoost   │ Random Forest│\n│ (calibrated)│             │              │\n└──────┬──────┴──────┬──────┴──────┬───────┘\n\
+  \       │             │             │\n       └─────────────┴─────────────┘\n                     │\n\
+  \              AUPR-Weighted Ensemble\n          (weights optimized on validation set)\n           \
+  \          │\n                     ▼\n            Toxicity Probability\n                     │\n   \
+  \         MCC-Optimal Threshold (0.430)\n                     │\n              ┌──────┴──────┐\n   \
+  \        TOXIC         NON-TOXIC\n```\n\nAdditionally, **12 per-assay models** are trained in parallel\
+  \ — one per Tox21 target — each with assay-specific class weights and individually MCC-optimized thresholds.\n\
+  \n---\n\n## \U0001F52C Feature Engineering in Detail\n\nEach molecule is represented by **7,564 features**\
+  \ across 6 groups:\n\n| Feature Type | Dimensions | Description |\n|---|---|---|\n| ECFP4 | 2048 | Morgan\
+  \ fingerprint (radius=2, with chirality) |\n| ECFP6 | 2048 | Morgan fingerprint (radius=3, with chirality)\
+  \ |\n| FCFP4 | 1024 | Feature-based pharmacophore fingerprint |\n| MACCS Keys | 167 | Structural keys\
+  \ — toxicophore detection |\n| RDKit FP | 2048 | Topological fingerprint |\n| RDKit Descriptors | 200\
+  \ | Full physicochemical descriptor suite |\n| ADMET Flags | 19 | Rule-based flags (Lipinski, Veber,\
+  \ nitro, halogens, etc.) |\n\n---\n\n## \U0001F5A5️ Prediction Interface (Streamlit)\n\nThe `app.py`\
+  \ interface provides:\n\n- **Name → SMILES lookup** via PubChem (type \"aspirin\", \"caffeine\", etc.)\n\
+  - **Molecule structure visualization**\n- **Aggregate toxicity probability** with color-coded risk level\n\
+  - **ADMET property panel** with Lipinski/Veber rule flags\n- **Structural alerts** (nitro groups, halogens,\
+  \ high LogP, etc.)\n- **Per-assay bar chart** across all 12 Tox21 targets\n- **Highest risk assay**\
+  \ identification\n\n### Risk Levels\n\n| Level | Probability | Indicator |\n|---|---|---|\n| HIGH |\
+  \ ≥ 0.65 | \U0001F534 Red |\n| MODERATE-HIGH | ≥ 0.45 | \U0001F7E0 Orange |\n| MODERATE | ≥ 0.30 | \U0001F7E1\
+  \ Yellow |\n| LOW-MODERATE | ≥ 0.18 | \U0001F7E2 Teal |\n| LOW | < 0.18 | \U0001F7E2 Teal |\n\n---\n\
+  \n## \U0001F9EA Validated Test Compounds\n\n| Compound | SMILES | Expected | Result |\n|---|---|---|---|\n\
+  | Aspirin | `CC(=O)Oc1ccccc1C(=O)O` | LOW | ✅ LOW |\n| Ethanol | `CCO` | LOW | ✅ LOW |\n| Nitrobenzene\
+  \ | `O=[N+]([O-])c1ccccc1` | MODERATE | ✅ MODERATE |\n| Benzo[a]pyrene | `c1ccc2cc3c(ccc3c3ccccc23)cc1`\
+  \ | HIGH | ✅ MODERATE-HIGH |\n| Chloroacetanilide | `CC1=CC=C(C=C1)NC(=O)CCl` | HIGH | ✅ MODERATE-HIGH\
+  \ |\n\n---\n\n## \U0001F4C8 Visualizations Generated\n\n| Plot | Description |\n|---|---|\n| `viz_logp_toxicity.png`\
+  \ | LogP distribution — toxic vs non-toxic |\n| `viz_mw_toxicity.png` | Molecular weight violin + histogram\
+  \ |\n| `viz_tpsa_scatter.png` | Chemical space: LogP vs TPSA |\n| `viz_hbond_toxicity.png` | H-bond\
+  \ donors/acceptors by class |\n| `viz_property_correlation.png` | Full molecular property correlation\
+  \ heatmap |\n| `viz_structural_alerts.png` | Alert frequency: toxic vs non-toxic compounds |\n| `viz_chemical_space.png`\
+  \ | MW vs LogP chemical space map |\n| `shap_beeswarm.png` | SHAP beeswarm — top 30 features |\n| `shap_bar.png`\
+  \ | SHAP bar chart by feature importance |\n| `shap_groups.png` | SHAP importance grouped by feature\
+  \ type |\n| `per_assay_auc.png` | ROC-AUC per Tox21 assay |\n| `roc_pr_curves.png` | ROC and Precision-Recall\
+  \ curves |\n\n---\n\n## \U0001F4E6 Datasets\n\n- **Primary:** [Tox21](https://www.kaggle.com/datasets/epicskills/tox21-dataset)\
+  \ (~7,800 compounds, 12 assays)\n- **Secondary:** [ZINC250k](https://www.kaggle.com/datasets/basu369victor/zinc250k)\n\
+  - **Optional:** [ChEMBL](https://chembl.gitbook.io/chembl-interface-documentation/downloads)\n\n---\n\
+  \n## ⚠️ Limitations\n\n- Predictions are scoped to **Tox21 assay mechanisms only**\n- Does not predict\
+  \ carcinogenicity, bioaccumulation, or chronic toxicity\n- Model performance is bounded by Tox21 dataset\
+  \ noise and label sparsity\n- Not validated for clinical or regulatory use\n\n---\n\n> ⚠ For research\
+  \ purposes only. Not intended for clinical or regulatory decision-making.\n"

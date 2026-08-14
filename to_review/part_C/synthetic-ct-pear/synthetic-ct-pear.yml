@@ -1,0 +1,94 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Hugo-Li-Junyan/Synthetic_CT_pear
+url: https://github.com/Hugo-Li-Junyan/Synthetic_CT_pear
+platform: github
+description: Synthetic CT data generation for pear fruit
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-16T08:31:01Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Synthetic CT Pear\n\nThis repository trains and evaluates models for 3D pear CT volumes\
+  \ stored as NIfTI files (`.nii` or `.nii.gz`).\n\nIt currently contains three main workflows:\n\n1.\
+  \ Train a VAE-GAN that compresses and reconstructs 3D CT volumes.\n2. Train a latent diffusion model\
+  \ on the VAE latent space, then generate synthetic 3D pears.\n3. Train a 3D ResNet classifier on real,\
+  \ synthetic, or pseudo-labeled CT volumes.\n\nThe default scripts assume single-channel `128 x 128 x\
+  \ 128` volumes.\n\n## Repository Layout\n\n```text\ncomponent/              Model and dataset components\
+  \ used by generation scripts\nscripts/                Evaluation, interpolation, and latent-space utilities\n\
+  slurm/                  Example SLURM jobs for cluster runs\nutils/                  Shared helpers\
+  \ for metrics, model loading, volume I/O, and splitting\nmain.py                 Generate synthetic\
+  \ CT volumes with a trained VAE + diffuser\ntrain_vae.py            Train the VAE-GAN reconstruction\
+  \ model\ntrain_diffuser.py       Train latent diffusion on top of a trained VAE\ntrain_clf_3d.py   \
+  \      Train a 3D ResNet classifier\ntest_clf_3d.py          Test a saved 3D ResNet classifier checkpoint\n\
+  interpolation_line.py   Interpolate between two CT volumes in latent space\nmed3d_fid.py           \
+  \ Compute 3D FID-style metrics with a pretrained 3D ResNet\n```\n\n## Data Format\n\nLabeled training/evaluation\
+  \ scripts expect one image folder plus a CSV file:\n\n```text\ndata/\n  images/\n    A01.nii\n    A02.nii\n\
+  \    B01.nii\n  labels.csv\n```\n\nThe CSV should contain at least a filename column and a label column:\n\
+  \n```csv\nfilename,label\nA01.nii,0\nA02.nii,0\nB01.nii,1\n```\n\nFiles are loaded with `nibabel`, min-max\
+  \ normalized to `[0, 1]`, and converted to PyTorch tensors with shape:\n\n```text\n(channels, depth,\
+  \ height, width) = (1, 128, 128, 128)\n```\n\nThe dataset loader only reads `.nii` and `.nii.gz` files.\n\
+  \n## Installation\n\n```bash\ngit clone https://github.com/Hugo-Li-Junyan/Synthetic_CT_pear.git\ncd\
+  \ Synthetic_CT_pear\n\npython -m venv venv\n\n# Windows\nvenv\\Scripts\\activate\n\n# Linux/macOS\n\
+  source venv/bin/activate\n\npip install -r requirements.txt\n```\n\nInstall PyTorch separately if your\
+  \ CUDA setup requires a specific build.\n\n## Train the VAE-GAN\n\nThe VAE-GAN learns to reconstruct\
+  \ 3D pear CT volumes. Its checkpoint is also used later by the diffusion model.\n\n```bash\npython train_vae.py\
+  \ \\\n  --image_dir /path/to/images \\\n  --labels_csv /path/to/labels.csv \\\n  --save_dir /path/to/models/vae\
+  \ \\\n  --epochs 500 \\\n  --batch_size 4\n```\n\nEach run creates a timestamped folder under `--save_dir`\
+  \ containing:\n\n```text\ncheckpoint.pth\nbest.pth\nvae_log.csv\nvae_hyperparameter.json\n```\n\n##\
+  \ Train the Latent Diffusion Model\n\nAfter training the VAE, train the diffuser using the VAE run folder\
+  \ as `--model_id`.\n\n```bash\npython train_diffuser.py \\\n  --image_dir /path/to/images \\\n  --labels_csv\
+  \ /path/to/labels.csv \\\n  --save_dir /path/to/models/vae \\\n  --model_id 20250626-021325 \\\n  --epochs\
+  \ 800 \\\n  --batch_size 16\n```\n\nThe diffusion files are saved inside the same model folder:\n\n\
+  ```text\ndiffuser_checkpoint.pth\ndiffuser_best.pth\ndiffuser_log.csv\ndiffuser_hyperparameter.json\n\
+  ```\n\n## Generate Synthetic CT Volumes\n\nUse a folder that contains both the trained VAE checkpoint\
+  \ and diffuser checkpoint.\n\n```bash\npython main.py \\\n  --model_dir /path/to/models/vae/20250626-021325\
+  \ \\\n  --save_dir /path/to/generated_pears \\\n  --batch_size 2 \\\n  --batches 3000\n```\n\nThe script\
+  \ writes generated `.nii` files to `--save_dir`.\n\nTotal generated samples:\n\n```text\nbatch_size\
+  \ * batches\n```\n\n## Latent Interpolation\n\nInterpolate between one healthy and one defective CT\
+  \ volume.\n\n```bash\npython interpolation_line.py \\\n  --healthy_pth /path/to/healthy/A01.nii \\\n\
+  \  --defective_pth /path/to/defective/B01.nii \\\n  --model_dir /path/to/models/vae/20250626-021325\
+  \ \\\n  --save_dir /path/to/interpolation \\\n  --num_steps 11\n```\n\nOptional flags:\n\n```bash\n\
+  --diffusion      Denoise interpolated latents with the diffusion model\n--show_latent    Save latent-space\
+  \ slices instead of decoded volumes\n```\n\nOutputs:\n\n```text\ninterpolation_line.png\n0.nii\n1.nii\n\
+  ...\n```\n\n## Train a 3D ResNet Classifier\n\n`train_clf_3d.py` trains a compact 3D ResNet for binary\
+  \ or multi-class volume classification. It is designed to be practical for `128 x 128 x 128` CT images\
+  \ and datasets in the range of hundreds to a few thousand samples.\n\nBasic CSV-labeled training:\n\n\
+  ```bash\npython train_clf_3d.py \\\n  --train_dir /path/to/images \\\n  --label_csv /path/to/labels.csv\
+  \ \\\n  --save_dir /path/to/models/classifier \\\n  --epochs 100 \\\n  --batch_size 2 \\\n  --augment\
+  \ \\\n  --class_weighted_loss\n```\n\nTraining with an unlabeled folder for pseudo-labeling:\n\n```bash\n\
+  python train_clf_3d.py \\\n  --train_dir /path/to/images \\\n  --label_csv /path/to/labels.csv \\\n\
+  \  --unlabeled_dir /path/to/unlabeled \\\n  --save_dir /path/to/models/classifier \\\n  --pseudo_start_epoch\
+  \ 5 \\\n  --pseudo_threshold 0.95 \\\n  --pseudo_weight 0.3\n```\n\nRun final test evaluation from a\
+  \ separate image folder and CSV after training:\n\n```bash\npython test_clf_3d.py \\\n  --checkpoint\
+  \ /path/to/models/classifier/20250626-021325/best.pth \\\n  --test_dir /path/to/test_images \\\n  --test_csv\
+  \ /path/to/test_labels.csv\n```\n\nThe test CSV should contain at least:\n\n```csv\nfilename,label\n\
+  A01.nii,0\nB01.nii,1\n```\n\nUseful classifier options:\n\n```text\n--base_channels 16          Model\
+  \ width. Increase if you have enough GPU memory.\n--batch_size 2              Safe starting point for\
+  \ 128^3 volumes.\n--amp                       Use CUDA mixed precision.\n--early_stop_patience 20  \
+  \  Stop after this many stale validation epochs.\n--early_stop_min_delta 0.0  Minimum validation accuracy\
+  \ gain counted as improvement.\n--cpu                       Force CPU training.\n```\n\nClassifier outputs:\n\
+  \n```text\nclf_3d_config.json\nclf_3d_log.csv\nlatest.pth\nbest.pth\n```\n\n## Evaluation\n\nEvaluate\
+  \ a trained VAE reconstruction model:\n\n```bash\npython scripts/evaluate.py \\\n  --model_dir /path/to/models/vae/20250626-021325\
+  \ \\\n  --image_dir /path/to/images \\\n  --labels_csv /path/to/labels.csv \\\n  --batch_size 1\n```\n\
+  \nThe script reports MAE, SSIM, and PSNR on a validation split reconstructed by the VAE.\n\n## Practical\
+  \ Notes\n\n- Keep raw data, generated `.nii` files, checkpoints, and `.npy` activation caches outside\
+  \ git.\n- Start with small classifier batches for `128^3` volumes. Increase batch size only after checking\
+  \ GPU memory.\n- Use `--augment` for classifier training when the dataset is small.\n- For pseudo-labeling,\
+  \ keep `--pseudo_threshold` high at first, such as `0.95`, to avoid reinforcing low-confidence mistakes.\n\
+  - The VAE and diffusion scripts currently assume cubic 3D volumes and single-channel input.\n\n## Typical\
+  \ Full Pipeline\n\n```bash\n# 1. Train VAE-GAN\npython train_vae.py --image_dir data/images --labels_csv\
+  \ data/labels.csv --save_dir models/vae\n\n# 2. Train latent diffusion using the VAE run ID\npython\
+  \ train_diffuser.py --image_dir data/images --labels_csv data/labels.csv --save_dir models/vae --model_id\
+  \ 20250626-021325\n\n# 3. Generate synthetic pears\npython main.py --model_dir models/vae/20250626-021325\
+  \ --save_dir outputs/generated --batch_size 2 --batches 3000\n\n# 4. Train classifier with real data\
+  \ and optional pseudo-labeled data\npython train_clf_3d.py --train_dir data/images --label_csv data/labels.csv\
+  \ --unlabeled_dir outputs/generated --save_dir models/classifier\n```\n"

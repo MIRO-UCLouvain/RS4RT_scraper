@@ -1,0 +1,138 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: zaredos/molecule-prediction-ML
+url: https://github.com/zaredos/molecule-prediction-ML
+platform: github
+description: A Machine Learning model which uses both graph nodes and regular torch tensors to predict
+  molecular properties such as Activation or Inhibition, Toxicity Prediction, Binding Affinity, Dose-Response
+  Relationships. Final project for COSI 149B.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2023-12-15T21:30:59Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# molecule-prediction-ML\nA Machine Learning model which uses both graph nodes and regular\
+  \ torch tensors to predict molecular properties such as Activation or Inhibition, Toxicity Prediction,\
+  \ Binding Affinity, Dose-Response Relationships. Final project for COSI 149B.\n\n## Project 3: Molecule\
+  \ Toxicity Prediction using Hybrid Model\nMolecules can be represented as 2D graphs, with atoms as nodes\
+  \ and chemical bonds as edges. In the Hybrid Model we developed, we combined the given graph nodes as\
+  \ well as new non-graph nodes to see insights that might be missed out when only doing one kind of data.\
+  \ But before that, we are going to test to see what descriptors will make the model have the highest\
+  \ accuracy, and that’s why we created the first ipynb: rand_descriptors. More descriptions can be found\
+  \ in the ipynb as comments.\nFrom these 33 descriptors, we created a looping function that randomly\
+  \ selects 10 of them to be used in a GCN model and compares the validation accuracy to see which descriptor\
+  \ combination is the most beneficial for the results.\n\n```\ndescriptor_list = [desc.FpDensityMorgan1,\n\
+  \                  desc.FpDensityMorgan2,\n                  desc.FpDensityMorgan3,\n              \
+  \    desc.BalabanJ,\n                  desc.BertzCT,\n                  desc.Ipc,\n                \
+  \  desc.Kappa1,\n                  desc.Kappa2,\n                  desc.Kappa3,\n                  desc.MolWt,\n\
+  \                  desc.MolLogP,\n                  desc.NumRotatableBonds,\n                  desc.NumHAcceptors,\n\
+  \                  desc.NumHDonors,de\n                  desc.NumHeteroatoms,\n                  desc.NumValenceElectrons,\n\
+  \                  desc.MolMR,\n                  desc.NumRadicalElectrons,\n                  desc.RingCount,\n\
+  \                  desc.NumAromaticRings,\n                  desc.NumAliphaticRings,\n             \
+  \     desc.NumSaturatedRings,\n                  desc.NumAromaticHeterocycles,\n                  desc.NumAromaticCarbocycles,\n\
+  \                  desc.NumSaturatedHeterocycles,\n                  desc.NumSaturatedCarbocycles,\n\
+  \                  desc.NumAliphaticHeterocycles,\n                  desc.NumAliphaticCarbocycles,\n\
+  \                  desc.NOCount,\n                  desc.NHOHCount,\n                  desc.FractionCSP3,\n\
+  \                  desc.LabuteASA,\n                  desc.TPSA,\n]\n```\n\nAfter that, we will be using\
+  \ hybrid_model.ipynb. We will first import the datasets:\n\n```\nimport torch\nimport torch_geometric\n\
+  import numpy as np\nfrom torch_geometric.data import Data\nfrom torch_geometric.data import DataLoader\n\
+  from torch_geometric.datasets import MoleculeNet\nimport pickle\n\n# Load datasets. The training and\
+  \ validation sets contain both molecules and their property labels. The test set only contain molecules.\n\
+  # There are 12 property tasks for prediction. Some properties labels are missing (i.e., nan). You can\
+  \ ignore them.\n\ntrain_dataset = torch.load(\"train_data.pt\")\nvalid_dataset = torch.load(\"valid_data.pt\"\
+  )\ntest_dataset = torch.load(\"test_data.pt\")\nprint(f'Size of training set: {len(train_dataset)}')\n\
+  print(f'Size of validation set: {len(valid_dataset)}')\nprint(f'Size of test set: {len(test_dataset)}')\n\
+  ```\n\nAnd then we build the Hybrid Model\n## Build Hybrid Model\nThis is our take on integrating Graph-Based\
+  \ and Non-Graph Features.\nThe HybridModel class in this implementation is a neural network model designed\
+  \ to handle both graph-structured data (from the individual atoms and their edge features) and non-graph\
+  \ features (chemical descriptors on the molecular level). This model is particularly useful in scenarios\
+  \ where additional features (that are not part of the graph structure) can complement the graph data\
+  \ for more accurate predictions.\nComponents of the Hybrid Model Graph-Based Classifier\n\n- Atom Encoding:\
+  \ Uses the given AtomEncoder to transform node features into a higher-dimensional space using embedding.\n\
+  - GCNs: Consists of three GCNConv layers to process the graph data. Each GCNConv layer transforms the\
+  \ node features while considering the graph structure.\n- Linear Transformation: We applied a linear\
+  \ layer (lin_graph) to the graph-level features after pooling.\nNon-Graph Classifier\n- Non-Graph Feature\
+  \ Encoding: Uses a modified AtomEncoder without embedding ModifiedAtomEncoder (created and tested in\
+  \ rand_descriptors.ipynb) to transform non-graph features, which allows for float values and values\
+  \ greater than 100 (which the original AtomEncoder does not allow).\n- Fully Connected Layers: Two fully\
+  \ connected (fc) layers process the non-graph features.\nCombined Architecture\n- Integration of Features:\
+  \ The model combines the features extracted from both graph-based and non-graph components.\n- Final\
+  \ Classification Layers: After concatenation, additional fc layers are used to make final predictions\
+  \ based on combined features.\nForward Pass\n- Graph Component Handling: Processes graph features (x)\
+  \ and uses global mean pooling (gap) to obtain a fixed-size representation for each graph in the batch.\n\
+  - Non-Graph Component Handling: Processes non-graph features (y) in a similar manner.\n- Combination\
+  \ and Prediction: Concatenates the outputs from both components and passes them through final layers\
+  \ to produce predictions.\nBelow is our implementation:\n\n```\n def reshape_tensor(tensor):\n   reshaped_tensor\
+  \ = tensor.view(16, 32)\n   return reshaped_tensor\n\n  # The given AtomEncoder\nclass AtomEncoder(torch.nn.Module):\n\
+  \   def __init__(self, hidden_channels):\n       super(AtomEncoder, self).__init__()\n       self.embeddings\
+  \ = torch.nn.ModuleList()\n       for i in range(9):\n           self.embeddings.append(torch.nn.Embedding(100,\
+  \ hidden_channels))\n   def reset_parameters(self):\n       for embedding in self.embeddings:\n    \
+  \       embedding.reset_parameters()\n   def forward(self, x):\n       if x.dim() == 1:\n          \
+  \ x = x.unsqueeze(1)\n       out = 0\n       for i in range(x.size(1)):\n           out += self.embeddings[i](x[:,\
+  \ i])\nreturn out\n\n# Our Encoder (does not use the edge_index or embeddings, can get about 65% accuracy)\n\
+  class ModifiedAtomEncoder(torch.nn.Module):\n   def __init__(self, hidden_channels, num_node_features):\n\
+  \       super(ModifiedAtomEncoder, self).__init__()\n\n         self.linear_layers = torch.nn.ModuleList()\n\
+  \       for i in range(num_node_features):\n           self.linear_layers.append(torch.nn.Linear(1,\
+  \ hidden_channels))\n   def reset_parameters(self):\n       for linear in self.linear_layers:\n    \
+  \       torch.nn.init.xavier_uniform_(linear.weight)\n           torch.nn.init.zeros_(linear.bias)\n\
+  \   def forward(self, x):\n       if x.dim() == 1:\n           x = x.unsqueeze(1)\n       out = 0\n\
+  \       for i in range(x.size(1)):\n           out += self.linear_layers[i](x[:, i:i+1])\n       return\
+  \ out\n\nclass GCN_noGraph(torch.nn.Module):\n   def __init__(self, hidden_channels, num_node_features,\
+  \ num_classes):\n       super(GCN_noGraph, self).__init__()\n\n         torch.manual_seed(42)\n    \
+  \   self.emb = AtomEncoder(hidden_channels=32, num_node_features=num_node_features)\n       self.lin\
+  \ = Linear(hidden_channels, num_classes)\n   def forward(self, batch):\n       x, batch_size = batch.descriptors,\
+  \ batch.batch\n       x = self.emb(x)\n       # 2. Readout layer\n       x = gap(x, batch_size)  # [batch_size,\
+  \ hidden_channels]\n       # 3. Apply a final classifier\n       x = F.dropout(x, p=0.5, training=self.training)\n\
+  \       x = self.lin(x)\n       return x\n\n # The given model (uses the edge_index, can get about 74%\
+  \ accuracy)\nclass GCN(torch.nn.Module):\n   def __init__(self, hidden_channels, num_node_features,\
+  \ num_classes):\n       super(GCN, self).__init__()\n       torch.manual_seed(42)\n       self.emb =\
+  \ AtomEncoder(hidden_channels=32)\n       self.conv1 = GCNConv(hidden_channels, hidden_channels)\n \
+  \      self.conv2 = GCNConv(hidden_channels, hidden_channels)\n\n         self.conv3 = GCNConv(hidden_channels,\
+  \ hidden_channels)\n       self.lin = Linear(hidden_channels, num_classes)\n   def forward(self, batch):\n\
+  \       x, edge_index, batch_size = batch.x, batch.edge_index, batch.batch\n       x = self.emb(x)\n\
+  \       # 1. Obtain node embeddings\n       x = self.conv1(x, edge_index)\n       x = x.relu()\n   \
+  \    x = self.conv2(x, edge_index)\n       x = x.relu()\n       x = self.conv3(x, edge_index)\n    \
+  \   # 2. Readout layer\n       x = gap(x, batch_size)  # [batch_size, hidden_channels]\n       # 3.\
+  \ Apply a final classifier\n       x = F.dropout(x, p=0.5, training=self.training)\n       x = self.lin(x)\n\
+  \       return x\n\n # Hybrid model (uses both the edge_index and the non-graph features)\nclass HybridModel(torch.nn.Module):\n\
+  \n     def __init__(self, hidden_channels, num_node_features, num_classes,\nnum_features_nongraph):\n\
+  \       super(HybridModel, self).__init__()\n       # Graph-based Classifier\n       self.emb = AtomEncoder(hidden_channels=hidden_channels)\n\
+  \       self.non_graph_emb = ModifiedAtomEncoder(hidden_channels=hidden_channels,\nnum_node_features=num_features_nongraph)\n\
+  \       self.conv1 = GCNConv(hidden_channels, hidden_channels)\n       self.conv2 = GCNConv(hidden_channels,\
+  \ hidden_channels)\n       self.conv3 = GCNConv(hidden_channels, hidden_channels)\n       self.lin_graph\
+  \ = Linear(hidden_channels, hidden_channels)\n       # Non-graph Classifier\n       self.fc1 = torch.nn.Linear(hidden_channels,\
+  \ hidden_channels)\n       self.fc2 = torch.nn.Linear(hidden_channels, hidden_channels)\n       # Combined\
+  \ layers\n       self.fc3 = torch.nn.Linear(2 * hidden_channels, hidden_channels)  # Combining\ngraph\
+  \ and non-graph outputs\n       self.fc4 = torch.nn.Linear(hidden_channels, num_classes)\n   def forward(self,\
+  \ batch):\n       # Graph component (x is the graph features, y is the non-graph features)\n       x,\
+  \ edge_index, batch_index, y = batch.x, batch.edge_index, batch.batch,\nbatch.descriptors\n\n  x = self.emb(x)\n\
+  x = F.relu(self.conv1(x, edge_index))\nx = F.relu(self.conv2(x, edge_index))\nx = F.relu(self.conv3(x,\
+  \ edge_index))\nx = gap(x, batch_index)  # [batch_size, hidden_channels]\nx = F.dropout(x, p=0.5, training=self.training)\n\
+  x = self.lin_graph(x)\nx = x.float() # Convert to float for concatenation\n# Non-graph component\ny\
+  \ = self.non_graph_emb(y)\ny = F.relu(self.fc1(y))\ny = gap(y, batch_index)  # [batch_size, hidden_channels]\n\
+  # 3. Apply a final classifier\ny = F.dropout(y, p=0.5, training=self.training)\ny = self.fc2(y)\n# Combine\
+  \ (via simple concatenation)\nz = torch.cat([x, y], dim=1)\nz = F.relu(self.fc3(z))\nz = self.fc4(z)\n\
+  return z\n```\n\n## Feature Engineering for Graph Datasets Process Overview\n1. Combining Datasets:\
+  \ All datasets are combined into a single list named datasets for streamlined processing.\n2. Iterating\
+  \ Over Each Graph:\n- The code iterates through each dataset in datasets, and then through each graph\
+  \ within these datasets.\n3. Molecular Descriptor Calculation:\n- For every graph, the corresponding\
+  \ molecular structure is retrieved using Chem.MolFromSmiles.\n- A series of molecular descriptors are\
+  \ computed for each molecule. These descriptors include:\n  - FpDensityMorgan1,FpDensityMorgan2,FpDensityMorgan3:\
+  \ Morgan fingerprint densities.\n  - HeavyAtomMolWt:Weightofheavyatomsinthemolecule.\n  - NumHAcceptors:Numberofhydrogenbondacceptors.\n\
+  \  - NHOHCount:Countofnitrogenandhydroxidegroups.\n  - Kappa3:Ashapedescriptor.\n  - NOCount:Countofnitrogenandoxygenatoms.\n\
+  \  - HallKierAlpha:Hall-KierAlphavalue.\n  - MinEStateIndex:Minimumelectrotopologicalstateindex.\n \
+  \ - MolWt:Molecularweight.\n  - BalabanJ:BalabanJvalue.\n  - MolLogP:Octanol-waterpartitioncoefficient.\n\
+  \  - PEOE_VSA6,SlogP_VSA2,SMR_VSA7:VariousVSAdescriptors.\n4. Tensor Conversion and Assignment:\n- The\
+  \ computed descriptors are converted into a PyTorch tensor with torch.float32 data type.\n- These new\
+  \ features are then assigned to the descriptors attribute of each graph for later use in models.\n \
+  \ \n## Model init Model creation\n\nHere we created a Hybrid Model with 32 hidden channels, the number\
+  \ of node features, 12 output classes, and the number of non-graph features.\n- num_node_features:Thenumberofnodefeaturesinthegraph,determinedfromthe\
+  \ shape of the x attribute of the first graph in the training da"

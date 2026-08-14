@@ -1,0 +1,142 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: codewiththiha/vmate-cli
+url: https://github.com/codewiththiha/vmate-cli
+platform: github
+description: ''
+license: MIT
+language: Rust
+keywords: []
+stars: 1
+updated_at: '2026-08-08T14:20:42Z'
+image_source: null
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# vmate-cli\n\nA fast, interactive OpenVPN config **scanner**, **tester** and **connector**\
+  \ for\nthe command line. It finds `.ovpn` files on disk, tests them concurrently,\nremembers which ones\
+  \ work, and lets you connect, switch and copy configs — all\nfrom a keyboard-driven terminal UI backed\
+  \ by SQLite.\n\n> **⚠️ Note:** by default vmate-cli cleans up only the OpenVPN processes it\n> spawned:\
+  \ each process group is sent SIGTERM, given a grace period, then\n> SIGKILLed if needed. Pass `--killall`\
+  \ to also run the `killall -9 openvpn`\n> sweep (the behavior of the original Go tool) during connection\
+  \ switching and\n> shutdown.\n\n---\n\n## Features\n\n- \U0001F50D **Scan** — recursively discover `.ovpn`\
+  \ files and test them concurrently.\n- ⚡ **Connect** — intelligent retry, manual skip, deferred reshuffling.\n\
+  - \U0001F5C2️ **Recent** — browse previously successful configs in a clickable TUI.\n- \U0001F3AC **All**\
+  \ — scan, store, then connect using only the filtered matches.\n- \U0001F4E6 **Export** — copy successful\
+  \ configs with sanitized, country-prefixed names.\n- \U0001F30D **Filter** — filter by country code,\
+  \ case-insensitive, across every command.\n- \U0001F5B1️ **Click-to-copy** — copy config paths from\
+  \ the recent TUI.\n- \U0001F4BE **SQLite (WAL mode)** — persistent history with automatic migrations.\n\
+  - \U0001FA7A **Doctor** — environment and dependency checks.\n- ⚙️ **Completions** — shell completions\
+  \ for bash/zsh/fish.\n- \U0001F50D **Country detection** — filename heuristics, an IP cache, and a geo\
+  \ IP API.\n\n## Requirements\n\n- Rust **1.85+** (edition 2024)\n- [OpenVPN](https://openvpn.net/) —\
+  \ `openvpn` on `PATH`, or pass `--openvpn-bin`\n- Root/sudo for `scan`, `connect` and `all` (vmate-cli\
+  \ re-executes under `sudo`\n  automatically on an interactive terminal; set `VMATE_NO_ELEVATE=1` to\
+  \ run\n  without elevation — OpenVPN will likely fail)\n- `killall` (optional) only if you pass `--killall`\
+  \ for the global OpenVPN sweep\n\n## Build & Test\n\n```bash\ncargo build --release          # optimized,\
+  \ stripped binary → target/release/vmate-cli\ncargo test                     # unit + integration tests\n\
+  cargo clippy --all-targets --all-features -- -D warnings\ncargo fmt --check\n```\n\n## Install from\
+  \ a release\n\nReleases are built automatically when a `v*` tag is pushed. Each release\nattaches a\
+  \ zip per platform (`vmate-cli-<version>-<target>.zip`):\n\n| Target | Binary | Notes |\n| ------ |\
+  \ ------ | ----- |\n| `aarch64-apple-darwin` | Apple Silicon Macs | arm64 |\n| `x86_64-apple-darwin`\
+  \ | Intel Macs | x86_64 |\n| `x86_64-unknown-linux-gnu` | Linux x86_64 | most servers / desktops |\n\
+  | `aarch64-unknown-linux-gnu` | Linux arm64 | Pi, AWS Graviton, etc. |\n\nWindows is not shipped — vmate-cli\
+  \ is Unix-only (process groups, root checks,\n`killall` when `--killall` is used).\n\nDownload and extract\
+  \ a zip, then install the binary to your PATH:\n\n```bash\ntar -xzf vmate-cli-1.0.1-aarch64-apple-darwin.zip\n\
+  cd vmate-cli-1.0.1-aarch64-apple-darwin\nsudo ./install.sh        # copies vmate-cli → /usr/local/bin\n\
+  vmate-cli --help\n```\n\n`install.sh` can also replace an existing install, install to a different\n\
+  directory by editing the `DEST`/`OPERATION` variables at the top, and remove\nitself with `sudo ./install.sh\
+  \ --uninstall`.\n\n## Usage\n\n```\nvmate-cli <COMMAND> [OPTIONS]\n```\n\nRun `vmate-cli --help` for\
+  \ all options and `vmate-cli <COMMAND> --help` for\nper-command help.\n\n### Global options\n\nThese\
+  \ apply to every subcommand:\n\n| Option | Description |\n|---|---|\n| `-f, --filter <COUNTRY>` | Filter\
+  \ by country code, e.g. `jp,kr`. Repeatable. |\n| `--db <PATH>` | Path to the SQLite database (default\
+  \ `~/.config/vmate-cli/vmate.db`). |\n| `--openvpn-bin <BIN>` | OpenVPN binary to use (default `openvpn`).\
+  \ |\n| `--killall` | Also run `killall -9 openvpn` on shutdown/switch. Default is per-process cleanup\
+  \ of only the openvpn processes vmate spawned. |\n| `--no-elevate` | Don't re-execute under sudo; run\
+  \ with current privileges (OpenVPN will likely fail). |\n| `--ipinfo-token <TOKEN>` | ipinfo.io API\
+  \ token (defaults to a bundled free token). |\n| `--save-defaults` | Persist explicitly-passed default\
+  \ flags (e.g. `--max`, `--timeout`, `--retry-count`) to the config file for future sessions. |\n| `-v,\
+  \ -vv, -q` | Verbosity / quiet logging. |\n| `-h, --help` | Print help. |\n\n### Persisted defaults\n\
+  \nThe scan/connect tunables (`--max`, `--limit`, `--timeout`, `--connect-timeout`,\n`--cooldown`, `--retry-count`,\
+  \ `--stability-grace`) have built-in defaults. Pass\n`--save-defaults` alongside the value flags to\
+  \ persist them for future sessions:\n\n```bash\nvmate-cli scan    --save-defaults --max 500 --timeout\
+  \ 20\nvmate-cli connect --save-defaults --retry-count 5 --connect-timeout 10 --cooldown 60 --stability-grace\
+  \ 8\n```\n\n`--save-defaults` **only writes the new defaults and exits** — it does not scan\nor connect\
+  \ (no root/OpenVPN needed). Run the command again without\n`--save-defaults` to actually scan/connect,\
+  \ resolving each value as\n`explicit flag → persisted → built-in default`. `scan`/`all` persist their\n\
+  workers (`--max`), `--limit`, and `--timeout` defaults; `connect`/`all` persist\n`--connect-timeout`,\
+  \ `--cooldown`, `--retry-count`, and `--stability-grace`.\n`--retry-count` controls how many times a\
+  \ failing config is retried before it is\ndropped from history; `--connect-timeout` is the handshake\
+  \ threshold,\n`--cooldown` the delay before retrying a recently-failed config, and\n`--stability-grace`\
+  \ how long a connected session must last before its crash\nresets the retry budget.\n\nOnly the flags\
+  \ you **explicitly pass** are saved; unmentioned tunables keep\ntheir existing persisted or built-in\
+  \ default. Persisted settings live in\n`vmate-cli/settings.json` inside your config directory (printed\
+  \ when you save)\nand can be edited by hand. Each tunable is resolved as:\n\n```\nexplicit CLI flag\
+  \ → persisted setting → built-in default\n```\n\nA missing or corrupt `settings.json` is ignored and\
+  \ falls back to the built-in\ndefaults.\n\n### Commands\n\n#### `scan` — discover, test and remember\
+  \ configs\n\n```bash\n# Scan ~/configs, keep testing until 20 Japan/Korea configs succeed.\n# --max/-m\
+  \ controls concurrency, --timeout/-t is per-test seconds.\nvmate-cli scan ~/configs --filter jp,kr --limit\
+  \ 20 --max 64 --timeout 15 -v\n\n# Scan the built-in vpn-gate remotes over UDP (no directory argument)\n\
+  vmate-cli scan --filter jp\n\n# Try the same built-in remotes over TCP instead\nvmate-cli scan --proto\
+  \ tcp\n\n# Do not write results to the database\nvmate-cli scan ~/configs --no-save\n\n# Also copy this\
+  \ scan's filtered matches into ./out\nvmate-cli scan ~/configs --filter jp --export ./out\n```\n\n`scan`\
+  \ tests every `.ovpn` file it finds, stores the successful ones in the\ndatabase (so they show up in\
+  \ `vmate-cli recent` later), and reports the configs\nthat match the current `--filter`.\n\nWith no\
+  \ directory argument, `scan` materializes the built-in configs for the\nchosen provider and protocol\
+  \ into `~/.config/vmate-cli/builtin/<provider>/<proto>/`\nand scans those. `--provider` selects the\
+  \ built-in provider (default `vpn-gate`)\nand `--proto` selects the transport protocol (`udp` or `tcp`,\
+  \ default `udp`);\nre-scan with `--proto tcp` to try the other protocol.\n\n#### `connect` — connect\
+  \ with intelligent retry\n\n```bash\n# Connect using stored JP candidates only\nvmate-cli connect --filter\
+  \ jp\n\n# Connect to an explicit config (fallbacks still respect the filter)\nvmate-cli connect ./some.ovpn\
+  \ --filter jp\n\n# Reject an explicit config that does not match the filter\nvmate-cli connect ./us.ovpn\
+  \ --filter jp --strict-filter\n```\n\n`connect` picks candidates from the stored history, tries each\
+  \ one, retries a\nfailed handshake once, and drops a config from history after repeated failures.\n\
+  Use the interactive keys below while connected.\n\n#### `recent` — browse previously successful configs\n\
+  \n```bash\n# Show the last 50 successful configs in a TUI\nvmate-cli recent\n\n# Plain table output\
+  \ (no TUI)\nvmate-cli recent --no-tui\n\n# Show everything\nvmate-cli recent --all\n\n# Copy the newest\
+  \ config path immediately\nvmate-cli recent --copy-first\n\n# Also copy the listed configs into ./out\n\
+  vmate-cli recent --filter jp --export ./out\n```\n\nIn the TUI: press `Enter` or `c` to copy a config\
+  \ path, `/` to filter the list,\narrow keys / `j` `k` to move, and `q` / Ctrl+C to quit. Clicking a\
+  \ row copies\nits path too.\n\n#### `all` — scan, store, then connect\n\n```bash\n# Scan, then connect\
+  \ using only the filtered matches\nvmate-cli all ~/configs --filter jp,kr\n\n# Scan the built-in vpn-gate\
+  \ remotes and connect (no directory argument)\nvmate-cli all --filter jp,kr\n\n# Scan and report only\
+  \ (do not connect)\nvmate-cli all ~/configs --no-connect\n\n# Scan, connect, and also export this scan's\
+  \ matches\nvmate-cli all ~/configs --filter jp --export ./out\n```\n\n`all` runs a full scan (storing\
+  \ successes as usual), reports the matches, then\nhands them to the connect flow. `--no-connect` stops\
+  \ after the scan report. As\nwith `scan`, omitting the directory scans the built-in remotes for\n`--provider`/`--proto`.\n\
+  \n#### `export` — copy stored successful configs\n\n```bash\n# Export JP configs to ./exported\nvmate-cli\
+  \ export --filter jp --out ./exported\n```\n\nExports configs from the database, naming each file `COUNTRY_<original\
+  \ name>`\nand avoiding collisions with `_1`, `_2`, ... suffixes. For exporting from a\nfresh scan or\
+  \ from the recent list, use `scan --export` or `recent --export`\ninstead.\n\n#### `doctor` — environment\
+  \ checks\n\n```bash\nvmate-cli doctor\n```\n\nChecks for OpenVPN, root access, and database health.\n\
+  \n#### `completions` — shell completion scripts\n\n`vmate-cli` installs completion scripts for bash,\
+  \ zsh and fish into the\nstandard location for each shell, then prints how to activate them:\n\n```bash\n\
+  vmate-cli completions bash\nvmate-cli completions zsh\nvmate-cli completions fish\n```\n\nFor zsh it\
+  \ prefers a Homebrew `zsh-completions` dir already on `$fpath`\n(falling back to `~/.zfunc`). After\
+  \ installing, restart your shell — or just\nrun `compinit` in zsh to pick it up immediately.\n\nIf you\
+  \ need the raw script (for example to capture it into a dotfiles repo),\nuse `--print`:\n\n```bash\n\
+  vmate-cli completions zsh --print > _vmate-cli\n```\n\nManual one-liners, if you prefer to place the\
+  \ script yourself:\n\n```bash\n# bash\necho 'source <(vmate-cli completions bash --print)' >> ~/.bashrc\n\
+  \n# zsh (with fpath + compinit)\nmkdir -p ~/.zfunc && vmate-cli completions zsh --print > ~/.zfunc/_vmate-cli\n\
+  echo 'fpath=(~/.zfunc $fpath); autoload -Uz compinit && compinit' >> ~/.zshrc\n\n# fish\nmkdir -p ~/.config/fish/completions\n\
+  vmate-cli completions fish --print > ~/.config/fish/completions/vmate-cli.fish\n```\n\n## Filtering\n\
+  \n`--filter` is a global flag, case-insensitive, and can be repeated or comma\nseparated:\n\n```bash\n\
+  vmate-cli scan ./configs --filter JP,KR\nvmate-cli scan ./configs --filter jp,kr\nvmate-cli scan ./configs\
+  \ -f jp -f kr\n```\n\n`UNKNOWN` is an allowed value. An empty filter matches everything.\n\nDuring a\
+  \ scan, the filter limits what is *reported* and *exported*, not what is\n*tested* — unfiltered successes\
+  \ are still stored so they show up in\n`vmate-cli recent` later.\n\n## Country detection\n\nEach config\
+  \ is tagged with a country using, in order:\n\n1. **Filename heuristic** — a two-letter code embedded\
+  \ in the file name, e.g.\n   `vpngate_20260801_jp_vpn-gate.ovpn` → `JP`. Fast, no network.\n2. **IP\
+  \ cache** — the remote host is resolved and looked up in the SQLite cache.\n3. **Geo IP API** — a lookup\
+  \ against ipinfo.io, persisted to the cache.\n\nBy default vmate sends client IPs to ipinfo.io under\
+  \ a shared free-tier token,\nso country detection works with no configuration. That shared token is\n\
+  rate-limited and shared across all vmate-cli users — for privacy-sensitive\nsetups, provide your own\
+  \ token with `--ipinfo-token` or the `IPINFO_TOKEN`\nenvironment variable (a warning is emitted when\
+  \ the shared token is in use).\nFailures degrade to `UNKNOWN` — geo lookup never aborts a scan.\n\n\
+  ## Connect keys\n\nWhile connected:\n\n```\nn       Next config (kill current, skip, defer)\nr     \
+  \  Reconnect to the same config\nc       Copy current config path\nv       Toggle live OpenVPN output\
+  \ log\n?       Show help\nq       Quit\nCtrl+C  Quit and cleanup\n```\n\n`v` toggles "

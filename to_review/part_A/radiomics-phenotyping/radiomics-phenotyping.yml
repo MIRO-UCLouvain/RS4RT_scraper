@@ -1,0 +1,136 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: tpanjwani/radiomics_phenotyping
+url: https://github.com/tpanjwani/radiomics_phenotyping
+platform: github
+description: ''
+license: null
+language: HTML
+keywords: []
+stars: 0
+updated_at: '2026-03-27T09:08:03Z'
+image_source: https://raw.githubusercontent.com/tpanjwani/radiomics_phenotyping/HEAD/README/images/micro-us-vs-conventional-us.png
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 4 support term(s).
+readme_excerpt: "# Unsupervised Radiomic Phenotyping for Prostate Micro-Ultrasound\n\n[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)\n\
+  [![PyRadiomics](https://img.shields.io/badge/PyRadiomics-3.x-green.svg)](https://pyradiomics.readthedocs.io/)\n\
+  [![Stage 1](https://img.shields.io/badge/Stage%201-Complete-brightgreen.svg)]()\n[![Stage 2](https://img.shields.io/badge/Stage%202-Complete-brightgreen.svg)]()\n\
+  \n> **Research Project | Université Libre de Bruxelles (LISA Lab) × CHIREC Hospital**  \n> Toshna Manohar\
+  \ Panjwani | Supervisors: Prof. Olivier Debeir · Prof. Christine Decaestecker · Dr. Mohammed Salah Ouertani\n\
+  \n---\n\n## Background\n\nMicro-ultrasound (microUS) at 29 MHz offers approximately 300% higher spatial\
+  \ resolution than conventional transrectal ultrasound, enabling detailed visualization of prostate architecture\
+  \ in real time. It is cost-effective, fits existing TRUS clinical workflows, and is increasingly used\
+  \ to guide both systematic and targeted prostate biopsies.\n\n<p align=\"center\">\n  <img src=\"README/images/micro-us-vs-conventional-us.png\"\
+  \ width=\"700px\"/>\n  <br>\n  <em>Conventional transrectal ultrasound versus 29 MHz micro-ultrasound,\
+  \ illustrating the resolution difference.</em>\n</p>\n\nThe clinical scoring system for microUS is [PRI-MUS](https://www.exactimaging.com/primus-protocol)\
+  \ (Prostate Risk Identification using Micro-Ultrasound), which assigns suspicion scores of 1–5 in the\
+  \ **peripheral zone** to guide targeted biopsy decisions. For the **anterior region**, classification\
+  \ is binary: high or low suspicion. PRI-MUS was designed as a biopsy guidance tool for the peripheral\
+  \ zone — it was not designed to characterize the full prostate imaging space across all [zones](https://radiologyassistant.nl/abdomen/prostate/prostate-cancer-pi-rads-v2-1-1).\n\
+  \nThis has a practical consequence for AI development on microUS: there is no established, quantitative\
+  \ description of what prostate tissue looks like across all zones in this modality. Unlike MRI, where\
+  \ tissue appearance is well characterized and [PI-RADS](https://pmc.ncbi.nlm.nih.gov/articles/PMC6364687/)\
+  \ provides a standardized, full-gland scoring framework, microUS has no equivalent.\n\n---\n\n## Motivation\n\
+  \nThe standard supervised approach for Gleason score prediction from medical images is:\n\n```\nImages\
+  \ → Segmentation → Feature extraction → Train model (Gleason as ground truth)\n```\n\nThis is a direct\
+  \ pipeline that bypasses clinical scoring systems entirely and trains on histopathological labels. It\
+  \ works well when the labeled dataset is large, labels map cleanly to images, and the imaging space\
+  \ is well understood.\n\nThree factors in this specific setting motivate an intermediate unsupervised\
+  \ step before supervised training:\n\n**1. The modality is undercharacterized**\n\n29 MHz microUS is\
+  \ a recent clinical tool. The full texture space of the prostate in this modality — across the peripheral\
+  \ zone, transition zone, anterior region, and including probe-specific artefacts — has not been systematically\
+  \ described in quantitative terms. Characterizing this space before imposing clinical labels could be\
+  \ both scientifically useful and practically important for building models that generalize across operators\
+  \ and acquisition conditions.\n\n**2. Small labeled dataset, high-dimensional features**\n\nThe labeled\
+  \ clinical cohort consists of 300 patients with confirmed histopathology, of whom 17.09% have clinically\
+  \ significant cancer (ISUP Grade Group ≥ 2). With 769 radiomic features and this degree of class imbalance,\
+  \ direct supervised training is at high risk of overfitting. The unsupervised phenotyping step uses\
+  \ 4,550 unlabeled frames to learn a compact representation of the full imaging space first — making\
+  \ use of data that exists but cannot be directly labeled, and reducing effective feature dimensionality\
+  \ before supervision begins.\n\n**3. Frame-to-biopsy correspondence is ambiguous**\n\nGleason labels\
+  \ derive from biopsy cores taken at specific anatomical locations. The microUS acquisitions are cine\
+  \ loops of a sweeping probe, yielding many frames per patient. Mapping a Gleason label to a specific\
+  \ frame requires reliable cine loop ID and biopsy location linkage — a correspondence that involves\
+  \ known ambiguities in practice, and required substantial data cleaning in the clinical dataset. Imposing\
+  \ labels onto frames before understanding what those frames contain carries the risk of training on\
+  \ incorrectly paired image-label combinations.\n\n**The research question this motivates:**\n\nBefore\
+  \ asking *what is the Gleason score of this tissue*, this project asks a more basic question: *what\
+  \ does prostate tissue actually look like across the full gland in 29 MHz microUS, described in quantitative\
+  \ image features?*\n\nThe unsupervised phenotyping produces a data-driven vocabulary of tissue appearances\
+  \ — zone textures, echogenicity patterns, artefact types, boundary characteristics — derived from the\
+  \ full imaging space without clinical label or zone restriction. This is something PRI-MUS, by design,\
+  \ does not provide.\n\nWhether a phenotype-informed supervised model outperforms direct supervised training\
+  \ on Gleason labels is an empirical question this project is designed to answer.\n\n---\n\n## Pipeline\n\
+  \n<p align=\"center\">\n  <img src=\"README/images/radiomics_pipeline.png\" width=\"750px\"/>\n  <br>\n\
+  \  <em> Radiomics Pipeline</em>\n</p>\n\n\n### - Dataset\n\n80 DICOM cine loops acquired with the ExactVu\
+  \ 29 MHz probe at CHIREC Hospital, converted to 7,221 individual PNG frames. Acquisitions followed standardized\
+  \ clinical imaging protocols across multiple operators. No clinical metadata is associated with this\
+  \ subset — used exclusively for unsupervised discovery.\n\n### - Segmentation\n\n[MicroSegNet](https://www.sciencedirect.com/science/article/pii/S089561112400003X)\
+  \ (Jiang et al. 2024), a multi-scale Transformer–UNet framework, was used for prostate segmentation.\
+  \ In the absence of expert-labelled ground truth, segmentation quality was assessed through a three-part\
+  \ surrogate evaluation:\n\n- **Monte Carlo Dropout** — dropout layers kept active during inference;\
+  \ stochastic forward passes generate per-pixel uncertainty maps via prediction variance. Uncertainty\
+  \ concentrated in anatomically complex regions: apex, anterior zone, seminal vesicle–prostate boundary.\n\
+  \n- **Test-Time Augmentation** — random flips, rotations, and scaling applied at inference; output variability\
+  \ quantified across augmented views to estimate sensitivity to clinically plausible image variation.\
+  \ Frames near capsule boundaries and low-contrast zones showed elevated instability.\n\n- **Confidence\
+  \ thresholding** — per-frame confidence scores computed from mean softmax probabilities across predicted\
+  \ mask pixels. Threshold selected empirically and validated by consistent correlation with both entropy\
+  \ and TTA variance. Frames below threshold removed from radiomic extraction.\n\n→ **4,550 frames (63%)\
+  \ retained**\n\nFour segmentation scenarios were observed across the dataset:\n\n| | Scenario | Description\
+  \ |\n|--|----------|-------------|\n| A | High confidence | Well-circumscribed gland, smooth margins,\
+  \ uniform texture |\n| B | Partial / over-segmented | Seminal vesicle included; capsule boundary ambiguity\
+  \ |\n| C | False positive | Seminal vesicle segmented as prostate; morphological similarity in low-contrast\
+  \ regions |\n| D | False positive | No prostate present; background misinterpreted as gland structure\
+  \ |\n\nLow-confidence and mis-segmented frames were **intentionally retained** for clustering. These\
+  \ failure modes are texturally distinct and expected to emerge as identifiable clusters, providing signal\
+  \ about which image characteristics cause segmentation models to fail and informing the downstream attention\
+  \ mechanism.\n\n\n### - Radiomic Feature Extraction\n\n769 radiomic features extracted per frame using\
+  \ PyRadiomics, across:\n\n**Image types:** original B-mode, LoG-filtered (σ = 0.3, 0.5, 1.0, 2.0, 3.0,\
+  \ 5.0 mm), wavelet decompositions, gradient, square, square root, logarithmic, exponential transforms\n\
+  \n**Feature categories:**\n- First-order statistics: energy, entropy, mean, variance, skewness, kurtosis\n\
+  - Shape descriptors: sphericity, elongation, surface area, compactness\n- Texture matrices: GLCM, GLRLM,\
+  \ GLSZM, GLDM\n\nMulti-scale extraction captures tissue heterogeneity at different spatial frequencies\
+  \ — fine-grained speckle texture at small σ, broader structural patterns at large σ — including patterns\
+  \ not visually perceptible in B-mode alone.\n\n\n### - Preprocessing Pipeline Selection\n\n300 feature\
+  \ matrix variants generated across combinations of normalization (Z-score, quantile, min-max, robust,\
+  \ none), correlation filtering (Kendall / Spearman / Pearson at r = 0.75, 0.80, 0.85, 0.90), and PCA\
+  \ variance retention (75%, 80%, 85%, 90%, 95%).\n\nEach variant assessed for clusterability using Hopkins\
+  \ statistic, dip test p-value, variance-per-PC ratio, and eigenvalue spread. Top 5 datasets selected\
+  \ via Borda count ranking.\n\n**Selected pipeline:** Z-score normalization → Spearman filtering (r =\
+  \ 0.90) → PCA retaining 75% variance\n\n- Z-score preserves relative intensity patterns — important\
+  \ in ultrasound where absolute pixel values vary by probe pressure and gain settings\n- Spearman filtering\
+  \ retains non-linear feature dependencies while removing redundancy — appropriate for radiomic texture\
+  \ features\n- PCA at 75% variance produces a compact, computationally tractable feature space while\
+  \ retaining the majority of discriminative variance\n\n\n### - Clustering\n\n13 clustering algorithms\
+  \ evaluated: K-means, Mini-batch K-means, GMM, FCM, Agglomerative, Divisive, Affinity Propagation, BIRCH,\
+  \ DBSCAN, HDBSCAN, OPTICS, Spectral, Mean-shift.\n\n**Fuzzy C-Means (FCM)** selected for its soft assignment\
+  \ of samples across clusters — appropriate for microUS tissue characterization where boundaries between\
+  \ anatomical zones and tissue types are genuinely gradual rather than discrete.\n\nHyperparameters k\
+  \ = 20 and fuzziness m = 1.2 selected via metric-driven tuning.\n\n**Cluster validity results:**\n\n\
+  | Metric | Value |\n|--------|-------|\n| Fuzzy Partition Coefficient (FPC) | 0.884 |\n| Fuzzy Partition\
+  \ Entropy (FPE) | 0.22 |\n| Partition Index | 17.9 |\n| Separation Index | 3.14 |\n| Frames with membership\
+  \ confidence > 0.85 | 85% |\n| Frames with cluster entropy < 0.3 | 87% |\n\n\nThe membership heatmap\
+  \ shows bright vertical bands for confidently assigned frames alongside scattered entries for anatomically\
+  \ transitional cases — consistent with the gradual tissue boundaries expected in prostate microUS. The\
+  \ 3D UMAP projection confirms spatial separation between clusters with soft, continuous boundaries between\
+  \ adjacent phenotypes.\n\n<p align=\"center\">\n  <img src=\"README/images/membership_heatmap.png\"\
+  \ width=\"750px\"/>\n  <br>\n  <em>Fuzzy C-Means membership heatmap (k=20). Bright vertical bands indicate\
+  \ confident cluster assignments; scattered entries reflect anatomically transitional cases.</em>\n</p>\n\
+  \n\n### - Statistical Validation\n\n- **Kruskal–Wallis** tests: significant inter-cluster differences\
+  \ detected across radiomic features\n- **Dunn's post-hoc tests** (Bonferroni-corrected): pairwise separability\
+  \ confirmed\n- **Cliff's Delta** effect sizes: median = 0.90 across 798 significant pairwise comparisons\n\
+  \nTop discriminative features:\n- `log-sigma-0-3-mm-3D_firstorder_Uniformity`\n- `wavelet-L_firstorder_Kurtosis`\n\
+  - `original_gldm_LargeDependenceEmphasis`\n\n<p align=\"center\">\n  <img src=\"README/images/top_features.png\"\
+  \ width=\"700px\"/>\n  <br>\n  <em>Heatmap of mean Cliff's Delta values for top discriminative radiomic\
+  \ features across 20 clusters.</em>\n</p>\n\n\n### What the Clusters Capture\n\nVisual inspection of\
+  \ cluster panels (true members and fuzzy members sorted by membership strength) revealed recognizable\
+  \ clinical patterns emerging without labels:\n\n- Peripheral zone with distinct capsule border\n- Transition\
+  \ zone with heterogeneous echogenicity\n- Bright echogenic foci consistent with calcifications\n- Acoustic\
+  \ shadowing obscuring gland structure\n- Capsule bulge\n- Seminal ves"

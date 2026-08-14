@@ -1,0 +1,44 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: CaroleLf/Improving-AIM-UNet
+url: https://github.com/CaroleLf/Improving-AIM-UNet
+platform: github
+description: PyTorch implementation of AIM-UNet, a Mamba-based U-Net architecture for breast tumor segmentation
+  in ultrasound images
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-08-10T13:27:11Z'
+image_source: null
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Improving-AIM-UNet\n\nPyTorch implementation of AIM-UNet, a Mamba-based U-Net architecture\
+  \ for breast tumor segmentation in ultrasound images.\n\nReproduction of:\n> Mai et al., \"AIM-UNet:\
+  \ Adaptive Inception Vision Mamba U-Net with Selective Kernel Gating for Breast Ultrasound Tumor Segmentation\"\
+  , 2026.\n\nProgression in 5 steps: U-Net baseline, then VSS/Mamba blocks, then the AIM module, then\
+  \ the DESL loss, then full training with the paper's hyperparameters. Followed by a proposed improvement:\
+  \ a boundary-aware loss term (Solution A), compared against the reproduced baseline on BUSI and Dataset\
+  \ B2.\n\nReal training runs on a remote GPU machine (SSH, CUDA, RTX 3090). This repo is developed locally,\
+  \ then transferred manually.\n\n## Status\n\nAll 5 reproduction steps done, plus Solution A. Best results\
+  \ on BUSI so far:\n\n| Model | Loss | Test Dice | Test IoU | Precision | Recall | Boundary Dice |\n\
+  |-------|------|-----------|----------|-----------|--------|----------------|\n| U-Net baseline | BCE+Dice\
+  \ | 0.7710 | 0.6747 | 0.8406 | 0.7596 | n/a |\n| AIM-UNet | DESL | 0.7712 | 0.6869 | 0.8284 | 0.7778\
+  \ | 0.5747 |\n| AIM-UNet | DESL + Solution A (lambda_bdry=0.2) | 0.7722 | 0.6858 | 0.8018 | 0.7832 |\
+  \ 0.5823 |\n\nFull history, hyperparameter sweeps, and known open questions (unconfirmed N per stage\
+  \ and base channel width, a sign error found in the paper's eq. 10, a structural difference from the\
+  \ official VMamba SS2D) are tracked in [docs/results.md](docs/results.md).\n\n## Dataset\n\nBUSI (Breast\
+  \ Ultrasound Images), Al-Dhabyani et al. 2020:\n\n```bash\npython scripts/download_dataset.py\n```\n\
+  \nExpected structure once unzipped:\n\n```\nDataset_BUSI_with_GT/\n    benign/\n        benign (1).png\n\
+  \        benign (1)_mask.png\n        ...\n    malignant/\n        malignant (1).png\n        malignant\
+  \ (1)_mask.png\n        ...\n    normal/        # excluded from train/val/test (no lesion)\n```\n\n\
+  ## Setup\n\n```bash\npip install -r requirements.txt\n```\n\n## Published baselines (BUSI, paper Table\
+  \ 1)\n\n| Model       | Dice   | IoU    |\n|-------------|--------|--------|\n| U-Net       | 70.10\
+  \  | 60.70  |\n| ViM-UNet    | 76.92  | 66.04  |\n| MSVM-UNet   | 79.33  | 70.37  |\n| AIM-UNet    |\
+  \ 82.44  | 72.63  |\n\nSee [docs/results.md](docs/results.md) for the full table and the reproduction\
+  \ results log, and [docs/legacy_reference.md](docs/legacy_reference.md) for supporting notes (an earlier\
+  \ boundary-aware loss draft that fed into Solution A's design).\n"

@@ -1,0 +1,83 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Farjp/Lung-Tumor-Detection
+url: https://github.com/Farjp/Lung-Tumor-Detection
+platform: github
+description: Lung Tumor Detection using NSCLC-Radiomics Dataset
+license: Apache-2.0
+language: null
+keywords: []
+stars: 0
+updated_at: '2025-08-09T15:20:42Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# Lung Tumor Detection using Monai Detection model\n\nA comprehensive approach for automated\
+  \ lung tumor detection in Non-Small Cell Lung Cancer (NSCLC) patients using deep learning and medical\
+  \ imaging.\n <p align=\"center\">\n<img width=\"600\" height=\"600\" alt=\"Case-220\" src=\"https://github.com/user-attachments/assets/8971ac70-c673-420a-bbaf-5c0870519fb1\"\
+  \ />\n\n  \n## \U0001F4CB Table of Contents\n- [Overview](#overview)\n- [Dataset](#dataset)\n- [Data\
+  \ Pipeline](#data-pipeline)\n- [Preprocessing](#preprocessing)\n- [Bounding Box Generation](#bounding-box-generation)\n\
+  - [Model Training](#model-training)\n- [Evaluation](#evaluation)\n- [Results](#results)\n\n## \U0001F3AF\
+  \ Overview\n\nThis repository contains our implementation for automated lung tumor detection using the\
+  \ NSCLC-Radiomics dataset. Our approach leverages 3D deep learning models to identify and localize tumors\
+  \ in CT scans from Non-Small Cell Lung Cancer patients across different stages.\n\n## \U0001F4CA Dataset\n\
+  \n**Source**: [NSCLC-Radiomics Dataset](https://www.cancerimagingarchive.net/collection/nsclc-radiomics/)\
+  \ from The Cancer Imaging Archive\n\n**Specifications**:\n- \U0001F4C1 **Total Patients**: 420 CT scans\
+  \ with segmentation maps\n- \U0001F3E5 **Patient Population**: Non-Small Cell Lung Cancer patients (various\
+  \ stages)\n- \U0001F4BE **Format**: DICOM files with corresponding segmentation masks\n\n**Data Split**:\n\
+  - \U0001F9EA **Test Set**: 42 patients (10% held out for final evaluation)\n- \U0001F504 **Training/Validation**:\
+  \ 378 patients (90% with 10-fold cross-validation)\n  <p align=\"center\">\n  <img width=\"600\" height=\"\
+  300\" alt=\"download (1)\" src=\"https://github.com/user-attachments/assets/35630d91-466e-4d4e-9bb1-939b182b0f23\"\
+  \ />\n\n\n## \U0001F504 Data Pipeline\n\n### 1. Format Conversion (DICOM → NRRD)\n\nWe utilize **Plastimatch**\
+  \ for efficient DICOM to NRRD conversion:\n\n#### CT Scan Conversion:\n```bash\nplastimatch convert\
+  \ --input DCM_FOLDER --output-img CT.nrrd\n```\n\n#### Mask Conversion:\n```bash\nplastimatch convert\
+  \ \\\n  --input 3.000000-78236/1-1.dcm \\\n  --interpolation=nn \\\n  --output-type=uchar \\\n  --referenced-ct\
+  \ 0.000000-82046 \\\n  --output-prefix segmentations \\\n  --prefix-format nrrd \\\n  --fixed\n```\n\
+  \n## \U0001F527 Preprocessing\n\n### Image Standardization\n- **\U0001F4CF Resampling**: Standardized\
+  \ to 1.0 × 1.0 × 3.0 mm (x, y, z) resolution\n- **\U0001F39A️ Intensity Clipping**: Values clipped between\
+  \ -1000 and 500 HU\n- **\U0001F4CA Normalization**: Mean = 0, Standard deviation = 1\n\n### Training\
+  \ Configuration\n- **\U0001F4E6 Patch Size**: [144, 144, 33] (x, y, z)\n- **\U0001F504 Inference Method**:\
+  \ Sliding window approach for full volume coverage\n- **\U0001F3C3 Training Duration**: 300 epochs with\
+  \ identical hyperparameters\n- **\U0001F3AF Model Selection**: Based on lowest validation loss\n\n##\
+  \ \U0001F4E6 Bounding Box Generation\n\nSince the dataset lacks bounding box annotations, we extract\
+  \ them from segmentation masks using **SimpleITK**:\n\n### Process Workflow:\n1. **\U0001F4E5 Load Images**:\
+  \ Load CT scans and corresponding mask images\n2. **\U0001F50D Component Analysis**: Identify connected\
+  \ components in segmentation mask\n3. **\U0001F3F7️ Label Assignment**: Assign unique labels to each\
+  \ connected region\n4. **\U0001F4CA Property Computation**: Calculate properties for each connected\
+  \ component\n5. **\U0001F4D0 Coordinate Extraction**: Extract bounding box coordinates\n6. **\U0001F4CB\
+  \ Format Conversion**: Convert to standardized format\n   \n<p align=\"center\">\n  <img width=\"300\"\
+  \ height=\"400\" alt=\"BBox\" src=\"https://github.com/user-attachments/assets/f50dda5b-dbd7-4d5b-b898-16f37fd2fc79\"\
+  \ />\n</p>\n\n\n### Output Formats:\n- **Voxel Coordinates**: `[x_min, y_min, z_min, x_size, y_size,\
+  \ z_size]`\n- **Physical Coordinates**: `[x_center, y_center, z_center, x_size_physical, y_size_physical,\
+  \ z_size_physical]`\n\n## \U0001F916 Model Training\n\n### Framework\nWe leverage the **MONAI Detection**\
+  \ framework for robust medical image analysis:\n- **Repository**: [MONAI Detection Tutorials](https://github.com/Project-MONAI/tutorials/tree/main/detection)\n\
+  - **Architecture**: 3D detection model optimized for medical imaging\n- **Training Strategy**: 10-fold\
+  \ cross-validation on 90% of data\n <p align=\"center\">\n  <img width=\"600\" height=\"400\" alt=\"\
+  avg_training_loss_over_Epochs\" src=\"https://github.com/user-attachments/assets/45c2d091-e283-467a-939f-7d1787cd40a0\"\
+  \ />\n\n## \U0001F4C8 Evaluation\n\n### Primary Metrics\n- **\U0001F4CA Mean Average Precision (mAP)**:\
+  \ Across different cross-validation folds\n<p align=\"center\">\n   <img width=\"300\" height=\"200\"\
+  \ alt=\"mAP_over_each_5epochs\" src=\"https://github.com/user-attachments/assets/07baa600-7b14-4cb4-8641-4312ced1bbce\"\
+  \ />\n\n  \n  - **\U0001F3AF Mean Average Recall (mAR)**: Comprehensive detection performance assessment\n\
+  <p align=\"center\"> \n  <img width=\"300\" height=\"200\" alt=\"mAR_for_each_5_epochs\" src=\"https://github.com/user-attachments/assets/72b6ebb0-3822-4cc6-bf1e-126ead7e8218\"\
+  \ />\n\n\n\n### Detailed Analysis\n- **\U0001F4CB Case-by-case IoU**: Individual patient evaluation\
+  \ on 42-patient test set\n<p align=\"center\">\n<img width=\"674\" height=\"417\" alt=\"Barplot Testcase\"\
+  \ src=\"https://github.com/user-attachments/assets/b59a1d14-f7c8-49fe-bcee-05f575d7835c\" />\n\n \n\
+  - **\U0001F4C8 Correlation Analysis**: Pearson correlation between IoU and:\n  - Tumor size\n<p align=\"\
+  center\">\n<img width=\"320\" height=\"260\" alt=\"Correlation1\" src=\"https://github.com/user-attachments/assets/0cec28c5-e869-4ccf-b712-4411ebe69c7b\"\
+  \ />\n\n  - Tumor location\n<p align=\"center\">\n<img width=\"320\" height=\"260\" alt=\"Correlation2\"\
+  \ src=\"https://github.com/user-attachments/assets/2791c3e8-acbd-4272-8c29-5722959508d0\" />\n\n## \U0001F389\
+  \ Results\n\n### Key Findings\n- **✅ Unbiased Detection**: No strong correlation found between model\
+  \ performance and tumor characteristics\n- **\U0001F4CF Size Independence**: Model performs consistently\
+  \ across different tumor sizes\n- **\U0001F4CD Location Independence**: Performance not biased by tumor\
+  \ location\n- **\U0001F3AF Robust Performance**: Consistent detection across various patient cases\n\
+  \n### Statistical Analysis\nThe Pearson correlation analysis revealed **no significant bias** in the\
+  \ model's identification capabilities, indicating robust generalization across diverse tumor presentations.\n\
+  \n\n\n## \U0001F4DA References\n\n- **Dataset**: Aerts, H. J. W. L., et al. \"Data From NSCLC-Radiomics.\"\
+  \ The Cancer Imaging Archive (2019).\n- **Framework**: MONAI Detection - PyTorch-based framework for\
+  \ medical imaging AI\n- **Tools**: Plastimatch for medical image processing\n\n**Note**: This project\
+  \ demonstrates the application of deep learning techniques for automated medical image analysis, specifically\
+  \ targeting lung tumor detection in clinical CT scans.\n"

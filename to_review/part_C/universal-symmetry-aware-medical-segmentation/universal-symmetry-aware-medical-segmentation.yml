@@ -1,0 +1,72 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hoangtung386/Universal_Symmetry-Aware_Medical_Segmentation
+url: https://github.com/hoangtung386/Universal_Symmetry-Aware_Medical_Segmentation
+platform: github
+description: 'SymFormer: Universal Symmetry-Aware Medical Segmentation for CT/MRI. Features Mamba-2 bottleneck,
+  KAN decoder heads, clinical conditioning, and Tversky-based StrokeLoss for stroke and brain tumor segmentation.'
+license: MIT
+language: Python
+keywords:
+- brain-tumor-segmentation
+- deep-learning
+- kan
+- mamba
+- medical-image-segmentation
+- monai
+- pytorch
+- stroke-segmentation
+- symmetry
+- transformer
+stars: 1
+updated_at: '2026-05-28T08:28:12Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# Universal Symmetry-Aware Medical Segmentation (SymFormer)\n\nSymmetry-aware transformer\
+  \ for medical image segmentation (CT/MRI). Leverages brain\nhemisphere symmetry to detect stroke lesions\
+  \ and brain tumors.\n\n## Key Features\n\n- **Symmetry-Aware Bottleneck** — models left-right hemisphere\
+  \ symmetry with Mamba-2 or custom SSM\n- **Alignment Network** — automatically aligns inputs to canonical\
+  \ symmetric pose\n- **KAN Decoder Heads** — Kolmogorov–Arnold Network layers for sharper boundaries\n\
+  - **Clinical Conditioning** — injects NIHSS, age, sex, time metadata via cross-attention\n- **StrokeLoss**\
+  \ — Tversky(0.7/0.3) + contrastive(Core↔Penumbra) + boundary refinement\n- **Multi-Dataset** — CPAISD\
+  \ (Stroke CT), BraTS (Brain Tumor MRI), RSNA (Abdominal CT)\n- **3 Bottleneck variants** — Symmetry,\
+  \ Mamba-2, SimplifiedSSM fallback\n\n---\n\n## Quick Start\n\n### 1. Environment Setup\n\n```bash\n\
+  conda create -n symformer python=3.10\nconda activate symformer\npip install -e .\n# If you want Mamba-2\
+  \ support:\n# pip install mamba-ssm causal-conv1d\n```\n\n### 2. API Keys (optional)\n\nCopy `.env.example`\
+  \ to `.env` and fill in your keys for W&B tracking:\n\n```bash\ncp .env.example .env\n# Edit .env with\
+  \ your WANDB_API_KEY\n```\n\n### 3. Dataset Paths\n\nEnsure dataset paths in `configs/base.yaml`:\n\n\
+  ```yaml\nDATA_PATHS:\n  cpaisd: \"dataset_APIS/dataset\"\n  cpaisd_enhanced: \"dataset_APIS/dataset\"\
+  \n  brats: \"Dataset_BraTs\"\n  rsna: \"datasets/RSNA\"\n```\n\n---\n\n## Training\n\n```bash\npython\
+  \ scripts/train.py --devices \"0\" --dataset cpaisd\npython scripts/train.py --devices \"0\" --dataset\
+  \ cpaisd_enhanced\npython scripts/train.py --devices \"0,1\" --dataset brats\n```\n\n## Evaluation\n\
+  \n```bash\npython scripts/evaluate.py --checkpoint checkpoints/symformer_best_cpaisd.pth --dataset cpaisd\n\
+  python scripts/evaluate.py --checkpoint checkpoints/symformer_best_brats.pth --dataset brats\n```\n\n\
+  ---\n\n## Testing\n\n```bash\npytest tests/ -v\n```\n\n---\n\n---\n\n## Project Structure\n\n```\n├──\
+  \ models/\n│   ├── symformer.py              # Core SymFormer architecture\n│   ├── conditioned_symformer.py\
+  \  # Wrapper with clinical metadata conditioning\n│   ├── components.py             # AlignmentNetwork,\
+  \ EncoderBlock3D, Attention\n│   ├── losses.py                 # StrokeLoss (Tversky + Contrastive +\
+  \ Boundary)\n│   ├── bottleneck/               # 3 variants: Symmetry, Mamba-2, SimplifiedSSM\n│   ├──\
+  \ decoder/\n│   │   ├── hvt.py                # HVTDecoder, DecoderBlock, kMaXBlock\n│   │   └── kan.py\
+  \                # KANDecoderHead, RationalKANLayer\n│   └── layers/                   # Mamba-2, ClinicalConditionEncoder\n\
+  ├── datasets/                     # CPAISD, BraTS, RSNA loaders + factory\n├── training/\n│   └── trainer.py\
+  \                # SymFormerTrainer (AMP, W&B, checkpoint)\n├── evaluation/                   # Evaluator,\
+  \ metrics, complexity, visualization\n├── configs/                      # base.yaml + dataset-specific\
+  \ overrides\n├── scripts/\n│   ├── train.py                  # Entry point for training\n│   └── evaluate.py\
+  \               # Entry point for evaluation\n├── preprocessing/                # Enhancement pipeline,\
+  \ BraTS NIfTI converter\n├── tests/                        # Smoke tests (pytest)\n├── utils/      \
+  \                  # compute_class_weights, transforms\n├── pyproject.toml                # Installable\
+  \ package\n└── .env.example                  # API key template\n```\n\n## Loss System (StrokeLoss)\n\
+  \n| Component | Weight | Purpose |\n|-----------|--------|---------|\n| Tversky (α=0.7, β=0.3) | 0.5\
+  \ | Focus on recall for Core class |\n| Cross-Entropy | 0.3 | Multi-class discrimination |\n| Focal\
+  \ (γ=2.0) | 0.1 | Hard example mining |\n| Core↔Penumbra Contrastive | 0.3 | Separate Core from Penumbra\
+  \ |\n| Boundary | 0.05 | Edge refinement |\n| Multi-scale deep supervision | 0.05 | All decoder stages\
+  \ |\n\n## Config Overrides (CPAISD)\n\n```yaml\nFP_PENALTY_WEIGHT: 0.0          # Disabled — was suppressing\
+  \ Core recall\nCUSTOM_CLASS_WEIGHTS: [0.05, 200.0, 8.0]  # Aggressive Core weight\nNEGATIVE_SAMPLE_RATIO:\
+  \ 0.02     # Only 2% background slices kept\n```\n\n## Tests\n\n```bash\npytest tests/ -v    # 12 smoke\
+  \ tests (loss, model, alignment, config)\n```\n\n## Checkpoints\n\nSaved to `checkpoints/`:\n- `symformer_best_{dataset}.pth`\
+  \ — best validation Dice\n- `symformer_{dataset}.pth` — last epoch\n"

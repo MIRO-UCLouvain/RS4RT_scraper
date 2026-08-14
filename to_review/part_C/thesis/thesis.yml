@@ -1,0 +1,121 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: despidel/Thesis
+url: https://github.com/despidel/Thesis
+platform: github
+description: 'Data Augmentation Techniques for 3D generative models for post-radiotherapy MRI prediction. '
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-25T18:05:30Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Thesis\n### Data Augmentation Techniques for 3D generative models for post-radiotherapy\
+  \ MRI prediction. \nThis work explores the extent to which data augmentation techniques, and more specifically\
+  \ domain randomization, can enhance the robustness of conditional 3D generative AI models for longitudinal\
+  \ post-treatment morphological prediction to variations in image quality. To evaluate our models, we\
+  \ measure performance using image quality, segmentation, and deformation metrics, comparing the baseline\
+  \ model with the domain randomization model across multiple levels of transformation in the pre-treatment\
+  \ image for three imaging modalities: T1, T1C, and T2-FLAIR.\n### Methodology Overview\nTwo models are\
+  \ investigated: a baseline model and a domain randomization model. Each architecture consists of a diffusion\
+  \ model integrated with a ControlNet. While the same diffusion model was utilized for both, the experiments\
+  \ differed in the training of the ControlNet. \nAt first, all modalities in the training set were compressed\
+  \ into latent embeddings separately using pre-trained MAISI autoencoder. The produced embeddings are\
+  \ concatenated along the channel dimension at the session level. During training of the diffusion model,\
+  \ noise is added to the concatenated embeddings at a randomly sampled timestep via the noise scheduler.\
+  \ The diffusion model is trained using an L1 loss function and the Adam optimizer, with the model learning\
+  \ to predict the denoised latent representation at each timestep. During ControlNet training, the follow-up\
+  \ images embeddings across all modalities for the same patient and session are concatenated along the\
+  \ channel dimension, as are the baseline image embeddings.Additionally, the raw baseline images across\
+  \ all modalities for the same patient and session are concatenated along the channel dimension. Noise\
+  \ is added to the concatenated follow-up embeddings at a randomly sampled timestep via the noise scheduler.\
+  \ The resulting noisy latents, along with the dose map, follow-up times, and concatenated baseline images,\
+  \ are passed as inputs to the ControlNet. The ControlNet processes this conditioning information and\
+  \ produces residual feature maps, which are subsequently passed to the pre-trained diffusion U-Net to\
+  \ steer its predictions toward the denoised follow-up latent representation. The model is trained using\
+  \ an L1 loss function and the Adam optimizer. The key distinction between the baseline and domain randomization\
+  \ ControlNet training lies in the training dataset. In the domain randomization model, the dataset is\
+  \ augmented with synthetically generated samples. For each patient in the dataset, an additional augmented\
+  \ sample is created in which all information is preserved except for the baseline images, which are\
+  \ subjected to a set of random transformations. Each transformation is applied independently with a\
+  \ probability of 0.5. The augmented sample is treated as an independent patient.\n\n# **Workflow**\n\
+  0. Set up environment\n1. Prepare data and configs\n2. Test autoencoder and create embeddings\n3. Train\
+  \ unconditional diffusion model\n4. Train Baseline Model ControlNet for conditional generation\n5. Train\
+  \ Domain Randomisation Model ControlNet for conditional generation\n6. Test Models\n7. Result Analysis\n\
+  \n## 0. Set up environment\n### 0.1 Python Virtual Environment\npython -m venv venv\nsource venv/bin/activate\n\
+  pip install -r requirements.txt\n\n### 0.2 WanDB\nCreate a wandb account, get an API key from https://wandb.ai/authorize\
+  \ and add it to your environment variables (if you don't want to add it every time you start a new terminal,\
+  \ add it to your .bashrc or .zshrc file):\nexport WANDB_API_KEY=<your_api_key>\n\n### 0.3 Container\
+  \ Environment\nModel evaluation requires a containerized environment bundling neuroimaging tools including\
+  \ FreeSurfer, FSL, and ANTs. The container is provided as a .sif file and executed via Apptainer. We\
+  \ also provide TumorSynth as a separate container.\nSetup\nDownload TumorSynth from its official repository\
+  \ and follow the installation instructions provided there.\nInstall dependencies for both the neuroimaging\
+  \ container and the TumorSynth container as specified in their respective installation guides.\nBuild\
+  \ the containers using the provided build script, which automatically generates both .sif files.\nFinally,\
+  \ set the environment variables:\n#### Paths to container files\n```export NEURO_CONTAINER_PATH=<neuro_suite_sif>\n\
+  export TUMORSYNTH_CONTAINER_PATH=<tumorsynth_sif>\n```\n#### Bind paths: map host directories to container\
+  \ paths\n```\nexport APPTAINER_BINDPATH=\"\\\n<model_restore_script>:/opt/miniconda/lib/python3.XX/site-packages/nnunet/training/model_restore.py,\\\
+  \n<data_dir>,\\\n<results_dir>,\\\n<output_dir>,\\\n<nnUNet_trained_models>:/opt/nnUNet/nnUNet_v1.7/nnUNet_trained_models,\\\
+  \n<nnUNet_trained_models>:/opt/nnUNet/results,\\\n<nnUNet_raw_data>:/opt/nnUNet/nnUNet_v1.7/nnUNet_raw_data_base,\\\
+  \n<nnUNet_preprocessed>:/opt/nnUNet/nnUNet_v1.7/nnUNet_preprocessed,\\\n<nnUNet_raw_data2>:/opt/nnUNet/raw\"\
+  \n```\n#### Paths to bind into the container (required if data is on network filesystem)\n`export APPTAINER_BINDPATH=/path/to/data,/path/to/output`\n\
+  \n## 1. Prepare data and configs\n### Dataset format and cofigs\nInformation about subjects, dataset\
+  \ metadata, and image quality are stored in two Excel files: source_excel (subject and metadata information)\
+  \ and quality_excel (image quality information).\nDataset should have the following structure:\n```\n\
+  project <--- data_base_dir\n└── subject\n└── session\n└── anat\n└── Modality Name\n```\nTo set up the\
+  \ config files, run the following command (also see example usage in the module source code):\n\n```\n\
+  python -m data.configure_paths \\\n    --data_base_dir <data_base_dir> \\\n    --output_dir <output_dir>\
+  \ \\\n    --img_filename <img_filename> \\\n    --brain_mask_filename <brain_mask_filename> \\\n   \
+  \ --roi_mask_filename <roi_mask_filename> \\\n    --dose_filename <dose_filename>\n```\nWhere `data_base_dir`\
+  \ is the path to the dataset (as shown above in the dataset structure), `output_dir` is the path to\
+  \ the output directory (for training and inference runs), `img_filename` is the name of the image file,\
+  \ `brain_mask_filename` is the name of the brain mask file, `roi_mask_filename` is the name of the region-of-interest\
+  \ (tumor mask) file, and `dose_filename` is the name of the dose file.\n### Create Unconditional Model\
+  \ Datalists and Configure Image Dimensions/Stats\n```\npython -m data.parse_excel --data_base_dir<data_base_dir>\
+  \ --source_excel <soyrce_excel.xlsx> --quality_excel <quality_excel.csv>\npython -m data.create_datalist\
+  \ --mode unconditional --output_filename <baseline_datalist_name.json>\npython -m data.configure_dims_and_stats\
+  \ --method baseline\n'''\n\n## 2. Test autoencoder and create embeddings\nTo test the autoencoder on\
+  \ a number of samples run:\n```\npython -m data.create_embeddings --num_samples n --run_name <baseline_embedings_name>\
+  \  --method baseline\n```\nTo create all the latent embeddings that the diffusion model will be trained\
+  \ on, run:\n```\npython -m data.create_embeddings --run_name <baseline_embedings_name>  --method baseline\n\
+  ```\n## 3. Train unconditional diffusion model\nBefore training, ensure all parameters in the corresponding\
+  \ configuration script (`model_config_diff_model_train.json`) are set correctly. Then run:\n'''\npython\
+  \ -m train.diff_model_train --run_name <name>\n```\n## 4. Train Baseline Model ControlNet for conditional\
+  \ generation\nBefore training, ensure all parameters in the corresponding configuration script (`env_config_controlnet_train.json`)\
+  \ are set correctly. \nSet `trained_diff_model_path` to the checkpoint of the desired diffusion model\
+  \ epoch. \nThen run:\n```\npython -m train.controlnet_train --mode concat --method baseline --run_name\
+  \ <baseline_controlNet_name>\n```\n## 5. Train Domain Randomisation Model ControlNet for conditional\
+  \ generation\nCreate datalist and embeddings for domain randomisation model. \n```\npython -m data.create_datalist\
+  \ --mode domainRand --output_filename <domainRand_datalist_name.json>\n\npython -m data.create_embeddings\
+  \ --run_name <domainRand_embedings_name>  --method domainRand\n```\nBefore training, ensure all parameters\
+  \ in the corresponding configuration script (`env_config_controlnet_train.json`) are set correctly.\
+  \ \nSet `trained_diff_model_path` to the checkpoint of the desired diffusion model epoch.\nThen run:\n\
+  ```\npython -m train.controlnet_train --mode concat --method domainRand --run_name <domain_randomisation_controlNet_name>\n\
+  ```\n## 6. Test Models\nEnsure `trained_diff_model_path` and `trained_controlnet_path` in `env_config_controlnet_infer.json`\
+  \ point to the correct trained diffusion model and ControlNet checkpoints, respectively. Both the baseline\
+  \ and domain randomisation models share the same `trained_diff_model_path`, but each requires a different\
+  \ `trained_controlnet_path` corresponding to their respective trained ControlNet model.\nThen run:\n\
+  ```\npython -m infer.controlnet_infer --mode concat --max_follow_ups n --num_subjects m --run_name <inference_name>\n\
+  ```\nwhere n is the maximum number of follow-ups per subject and m is the maximum number of subjects\
+  \ in the test set used for inference.\n\n## 7. Result Analysis\nProduced results can be further analysed\
+  \ using the Results_Analysis Jupyter Notebook. The metrics.csv files generated per level during inference\
+  \ of each model are used for this analysis. Additionally, the produced Jacobian maps in .nii.gz format\
+  \ are used for plotting.\n\n# Files\n**configs:** Includes configuration files for the models. Here,\
+  \ users can set model parameters, data source paths, output directories, etc.\\\n**data:** Scripts for\
+  \ data handling, including reading data information, dataset splitting (train, validation, test), data\
+  \ loading, image statistics computation, embedding creation, and image transformations.\\\n**eval:**\
+  \ Scripts for evaluation, metric definitions, and the ControlNet evaluation pipeline.\\\n**infer:**\
+  \ Scripts for inference across all trained models, specifically  the diffusion model and ControlNet\
+  \ models (baseline model and domain randomisation model)\\\n**model:** Scripts for model definitions,\
+  \ including the autoencoder, diffusion model, and ControlNet.\\\n**plot:** Scripts for generating plots\
+  \ and figures.\\\n**train:** Scripts for training the diffusion model and ControlNet models (baseline\
+  \ model and domain randomisation model).\\\n**utils:** Helper functions.\\\n**Results_Analysis.ipynb:**\
+  \ A Jupyter notebook that processes results and generates figures and plots for the thesis document.\\\
+  \n**requirements:** Python packages required for installation.\n"

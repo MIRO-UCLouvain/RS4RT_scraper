@@ -1,0 +1,77 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: 2802990u/3D-CBCT-Super-Resolution-
+url: https://github.com/2802990u/3D-CBCT-Super-Resolution-
+platform: github
+description: 'This project focuses on enhancing the spatial resolution of 3D Cone Beam Computed Tomography
+  (CBCT) images using deep learning-based super-resolution techniques. CBCT is widely used in medical
+  and dental imaging but often suffers from lower image quality compared to traditional CT due to lower
+  radiation doses and hardware limitations.  '
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-06T18:12:33Z'
+image_source: null
+heuristic_total_score: 18
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# 3D CBCT Super-Resolution\n\nCode accompanying *\"Exploring Advanced Deep Learning Models\
+  \ for Super Resolution of 3D Dental CBCT Volumes\"* (Rahim Ullah, Hassan Abbas, Syed Waqar Nabi -- University\
+  \ of Glasgow).\n\nHigh-resolution imaging is important in dentistry, but capturing it directly means\
+  \ more radiation dose. This project compares five deep learning approaches for reconstructing high-resolution\
+  \ (HR) 3D dental Cone-Beam CT (CBCT) volumes from low-resolution (LR) ones, so that lower-dose scans\
+  \ can be enhanced computationally instead:\n\n- **DCSRN** -- Dilated Convolutional Super-Resolution\
+  \ Network (baseline)\n- **Multi-Path 3D CNN** -- parallel multi-kernel convolutional paths for richer\
+  \ feature extraction\n- **Multi-Path 3D SRGAN** -- the same multi-path generator, trained adversarially\n\
+  - **Mamba-UNet** -- a 3D UNet with a Mamba state-space block at the bottleneck for global context\n\
+  - **Auto-Encoder + Diffusion** -- an auto-encoder whose reconstruction is refined by a small conditional\
+  \ DDPM\n\nAll five take a 64<sup>3</sup> low-resolution patch (produced by trilinear downsample-then-upsample,\
+  \ so LR and HR patches share the same grid size) and reconstruct the corresponding sharp 64<sup>3</sup>\
+  \ patch.\n\n## Repository structure\n\n```\ndata/\n  dataset.py          patch dataset: loads volumes,\
+  \ generates LR, extracts 64^3 patches\nmodels/\n  dcsrn.py            DCSRN baseline\n  cnn_multipath.py\
+  \    Multi-Path 3D CNN\n  srgan_multipath.py  Multi-Path 3D SRGAN (generator + discriminator)\n  mamba_unet.py\
+  \       Mamba-UNet\n  ae_diffusion.py     Auto-Encoder + conditional diffusion refiner\nlosses.py  \
+  \           L1 / adversarial / diffusion-noise losses\nmetrics.py            PSNR, SSIM (3D), parameter\
+  \ counting\ntrain.py              unified training entry point (--model selects architecture)\nevaluate.py\
+  \           loads checkpoints, reports PSNR/SSIM/time/params comparison table\n```\n\n## Installation\n\
+  \n```bash\npip install -r requirements.txt\n```\n\n`mamba-ssm` (used by `mamba_unet.py` for its fused\
+  \ CUDA scan) is Linux/CUDA-only; on other platforms, or without a GPU, `MambaUNetSR` automatically falls\
+  \ back to a pure-PyTorch scan (much slower, but useful for a CPU shape/sanity check).\n\n## Dataset\n\
+  \nThe dataset is 200 3D dental CBCT volumes (~600x600x500 voxels), available on Figshare:\n[3D multimodal\
+  \ dental dataset based on CBCT and oral scan](https://figshare.com/articles/dataset/_b_3D_multimodal_dental_dataset_based_on_CBCT_and_oral_scan_b_/26965903)\n\
+  \nDownload it, place the volumes (`.nii`/`.nii.gz`, or `.npy`) in a single directory, and point `--data_root`\
+  \ at that directory. `data/dataset.py` handles LR generation and 64<sup>3</sup> patch extraction automatically;\
+  \ no separate preprocessing step is required.\n\n## Training\n\nEach model has its own quick shape/sanity\
+  \ check -- run it before a real training job:\n\n```bash\npython -m models.dcsrn\npython -m models.cnn_multipath\n\
+  python -m models.srgan_multipath\npython -m models.mamba_unet\npython -m models.ae_diffusion\n```\n\n\
+  Then train:\n\n```bash\npython train.py --model dcsrn        --data_root /path/to/cbct_volumes --epochs\
+  \ 100\npython train.py --model cnn          --data_root /path/to/cbct_volumes --epochs 100\npython train.py\
+  \ --model srgan        --data_root /path/to/cbct_volumes --epochs 100\npython train.py --model mamba_unet\
+  \   --data_root /path/to/cbct_volumes --epochs 100\npython train.py --model ae_diffusion --data_root\
+  \ /path/to/cbct_volumes --epochs 100\n```\n\nAdd `--val_root /path/to/held_out_volumes` to also track\
+  \ validation PSNR/SSIM and save the best checkpoint.\n\n## Evaluation\n\n```bash\npython evaluate.py\
+  \ --data_root /path/to/test_volumes \\\n    --checkpoints checkpoints/dcsrn_best.pt:dcsrn \\\n     \
+  \              checkpoints/cnn_best.pt:cnn \\\n                   checkpoints/srgan_best.pt:srgan \\\
+  \n                   checkpoints/mamba_unet_best.pt:mamba_unet \\\n                   checkpoints/ae_diffusion_best.pt:ae_diffusion\n\
+  ```\n\nprints a PSNR / SSIM / inference time / parameter-count table across all requested checkpoints,\
+  \ in the same spirit as the paper's cross-model comparison figure.\n\n## Results (from the paper)\n\n\
+  All models were trained under identical conditions (PyTorch 2.2.0, NVIDIA RTX A4000 16GB, Python 3.10,\
+  \ CUDA 12.8, Adam lr=2e-4, L1 loss, patch size 64<sup>3</sup>, batch size 1).\n\n| Model | PSNR | SSIM\
+  \ | Notes |\n|---|---|---|---|\n| Multi-Path 3D CNN | 35.35 | 0.952 | highest PSNR/SSIM of all models\
+  \ tested; longest processing time |\n| DCSRN (baseline) | -- | -- | ranks second on PSNR/SSIM; time\
+  \ comparable to CNN |\n| Mamba-UNet | -- | -- | ranks third on PSNR/SSIM |\n| Multi-Path 3D SRGAN |\
+  \ 39.97 | 0.935 | improved time performance vs. CNN/DCSRN |\n| Auto-Encoder + Diffusion | -- | -- |\
+  \ lowest PSNR/SSIM; fastest to train (28.63 hours) |\n\nExact PSNR/SSIM for DCSRN, Mamba-UNet, and Auto-Encoder\
+  \ + Diffusion are reported only as normalized bar values in the paper's Figure 3, not as raw numbers\
+  \ in the text -- fill these in as you reproduce them.\n\n## Data availability\n\n- Dataset: [Figshare,\
+  \ 3D multimodal dental dataset based on CBCT and oral scan](https://figshare.com/articles/dataset/_b_3D_multimodal_dental_dataset_based_on_CBCT_and_oral_scan_b_/26965903)\n\
+  - Plots and visualizations: shared via OSF under the project *3D-CBCT-Super-Resolution*\n\n## Citation\n\
+  \nIf you use this code, please cite:\n\n```\nUllah, R., Abbas, H., Nabi, S.W. \"Exploring Advanced Deep\
+  \ Learning Models for\nSuper Resolution of 3D Dental CBCT Volumes.\"\n```\n\n## License\n\nMIT -- see\
+  \ [LICENSE](LICENSE).\n"

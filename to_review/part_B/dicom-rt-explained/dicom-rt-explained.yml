@@ -1,0 +1,228 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: lucasbritocFis/dicom-rt-explained
+url: https://github.com/lucasbritocFis/dicom-rt-explained
+platform: github
+description: A practical, code-first guide to DICOM RT (Radiotherapy) objects — RT Plan, Structure Set,
+  Dose, Image — for developers and medical physicists entering the field.
+license: MIT
+language: null
+keywords:
+- brazilian-portuguese
+- dicom
+- dicom-rt
+- documentation
+- educational
+- healthcare
+- medical-physics
+- pydicom
+- python
+- radiation-oncology
+- radiothe
+- tutorial
+stars: 1
+updated_at: '2026-05-30T15:41:49Z'
+image_source: null
+heuristic_total_score: 31
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 5 particle-therapy term(s).
+- Matched 7 support term(s).
+readme_excerpt: '# dicom-rt-explained
+
+
+  > A practical, code-first guide to DICOM-RT (Radiotherapy) objects — RT Plan, Structure Set, Dose, Image
+  — for developers and medical physicists entering the field.
+
+
+  **Status:** 🚧 Active development · contributions welcome.
+
+
+  ---
+
+
+  ## Why this exists
+
+
+  DICOM-RT is the file format that holds the actual content of cancer radiotherapy: where the radiation
+  goes, how much, in which beams, against which contoured organs. Every Treatment Planning System (Eclipse,
+  RayStation, Monaco, Pinnacle) emits these files, and every Oncology Information System (ARIA, MOSAIQ)
+  consumes them.
+
+
+  The official DICOM standard is technically complete but practically inaccessible — thousands of pages
+  of specifications, organized for parsers rather than for humans. The few introductory texts that exist
+  either assume deep medical physics background or stop at trivial examples.
+
+
+  This repository fills that gap. It explains DICOM-RT from the perspective of someone who wants to **read,
+  write, validate, and reason about** these files in code — without first reading 1,500 pages of specifications.
+
+
+  It is written by a clinical medical physicist who builds software with this data daily.
+
+
+  ---
+
+
+  ## Who this is for
+
+
+  - **Software engineers** entering the radiation oncology domain (medical device companies, healthtech
+  startups)
+
+  - **Medical physicists** learning Python / pydicom for clinical automation
+
+  - **Researchers** in AI for radiation oncology needing to handle these files
+
+  - **Auditors / regulators** seeking a plain-language reference for what''s actually inside these files
+
+
+  If you already know DICOM-RT cold, this is not for you. If you''ve ever opened a DICOM file in `pydicom`,
+  seen 400 tags, and not known where to start — this is for you.
+
+
+  ---
+
+
+  ## What''s covered
+
+
+  | Object | Purpose | Status |
+
+  |---|---|---|
+
+  | [RT Plan](docs/01-rt-plan.md) | The treatment prescription: beams, MUs, isocenter, geometry | ✅ |
+
+  | [RT Structure Set](docs/02-rt-structure-set.md) | The contours: targets, organs at risk | ✅ |
+
+  | [RT Dose](docs/03-rt-dose.md) | The calculated 3D dose distribution | 🚧 |
+
+  | [RT Image](docs/04-rt-image.md) | Treatment-time imaging (DRR, portal images) | 🚧 |
+
+  | [RT Treatment Record](docs/05-rt-treatment-record.md) | What was actually delivered, per fraction
+  | 📋 planned |
+
+  | [RT Ion Plan](docs/06-rt-ion-plan.md) | Proton and heavy ion variants | 📋 planned |
+
+
+  Plus:
+
+  - [DICOM-RT Overview](docs/00-overview.md) — the framework before any single object
+
+  - [Glossary](glossary.md) — every acronym in radiation oncology, in plain language
+
+  - `examples/` — runnable Python scripts for common extraction tasks
+
+  - `samples/` — tiny anonymized DICOM files for testing
+
+
+  ---
+
+
+  ## How to use this repo
+
+
+  **Read the chapters in order** if you''re new to DICOM-RT. Each chapter is self-contained and includes:
+
+
+  1. **What this object is and why it exists** (clinical motivation, plain language)
+
+  2. **The key tags** (organized by what they answer, not by their hex codes)
+
+  3. **Code examples** in Python using `pydicom`
+
+  4. **Common pitfalls** when reading or writing the object
+
+  5. **Cross-references** to related objects
+
+
+  **Use the examples directly** if you have a specific task. Each script in `examples/` solves one real
+  problem (extract prescription, list structures, compute coverage, etc.).
+
+
+  **Use the samples for testing** in your own projects. The `samples/` directory contains tiny anonymized
+  DICOMs in each transfer syntax variant.
+
+
+  ---
+
+
+  ## Bilingual goal
+
+
+  The repository will be **bilingual (English / Brazilian Portuguese)**. Quase nenhum recurso de qualidade
+  sobre DICOM-RT existe em português hoje, e isso é um problema concreto pra desenvolvedores e físicos
+  médicos brasileiros entrando na área.
+
+
+  Portuguese translations will live under `docs/pt-br/`. The English version is canonical for now; PT-BR
+  will follow.
+
+
+  ---
+
+
+  ## Quick start (when examples are added)
+
+
+  ```bash
+
+  git clone https://github.com/lucasbritocFis/dicom-rt-explained.git
+
+  cd dicom-rt-explained
+
+  pip install -r requirements.txt   # pydicom, numpy
+
+  python examples/01_extract_prescription.py samples/rt_plan_breast.dcm
+
+  ```
+
+
+  ---
+
+
+  ## Contributing
+
+
+  Issues and PRs welcome. Especially valuable:
+
+
+  - Corrections (this is written from clinical experience but DICOM is vast — I will get things wrong)
+
+  - Portuguese translations
+
+  - New examples for tasks I haven''t covered
+
+  - Sample DICOMs for transfer syntaxes / scanner variants I don''t have access to
+
+
+  Please anonymize all clinical data before contributing samples. See `samples/ANONYMIZATION.md` for guidelines.
+
+
+  ---
+
+
+  ## License
+
+
+  MIT — see [LICENSE](./LICENSE).
+
+
+  ## Author
+
+
+  **Lucas Brito, PhD** — Clinical Medical Physicist and Software Developer.
+
+  Currently at Oncobarra (Rio de Janeiro). PhD in Physics from CBPF, research at CERN/CMS.
+
+
+  I build software at the intersection of clinical radiotherapy and engineering.
+
+
+  [GitHub](https://github.com/lucasbritocFis) · [LinkedIn](https://www.linkedin.com/in/lucas-de-brito-cavalcanti-136baa226/)
+
+  '

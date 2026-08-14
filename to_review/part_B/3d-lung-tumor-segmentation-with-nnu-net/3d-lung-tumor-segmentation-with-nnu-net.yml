@@ -1,0 +1,73 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Usamakhan843/3D-Lung-Tumor-Segmentation-with-nnU-Net
+url: https://github.com/Usamakhan843/3D-Lung-Tumor-Segmentation-with-nnU-Net
+platform: github
+description: 'Automatic segmentation of 3D CT scans using self-configuring preprocessing architecture
+  (nnU-Net) '
+license: null
+language: Python
+keywords: []
+stars: 5
+updated_at: '2026-08-03T13:11:13Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# 3D Lung Tumor Segmentation with nnU-Net (MSD Task06 Lung)\n\n3D volumetric tumor segmentation\
+  \ on chest CT using the self-configuring **nnU-Net v2**\nframework. This is the **3D segmentation pillar**\
+  \ of a medical image segmentation\nportfolio. Its 2D counterpart is a hand-built U-Net pipeline for\
+  \ breast-ultrasound\nlesion segmentation on the cleaned BUSI dataset. Together they cover 2D and 3D,\
+  \ and a\ncustom pipeline alongside a standard self-configuring framework.\n\n## Why this project\n\n\
+  This project extends the **scope from 2D to 3D**: full volumetric segmentation of lung \ntumors in CT,\
+  \ where context across slices matters and the\nnetwork uses 3D convolutions. It demonstrates running\
+  \ a complete 3D medical segmentation\npipeline and reading and reporting its results.\n\n## Dataset\n\
+  \nMedical Segmentation Decathlon, Task06 Lung (http://medicaldecathlon.com/).\n\n- 63 labeled training\
+  \ CT volumes (image + expert mask), 32 unlabeled test volumes.\n- Single channel (CT). Labels: background\
+  \ = 0, cancer = 1.\n- Licence: CC-BY-SA 4.0.\n- Test labels are withheld, so evaluation uses nnU-Net's\
+  \ cross-validation on the labeled\n  training set, not the test set.\n\n## Method\n\nnnU-Net v2 is a\
+  \ self-configuring segmentation framework. Rather than hand-designing the\nnetwork and preprocessing,\
+  \ it analyzes the dataset (a \"fingerprint\") and automatically\nsets the spacing, normalization, patch\
+  \ size, network depth, and training schedule. Its\narchitecture is a U-Net; the value is the automated,\
+  \ dataset-adaptive configuration.\n\nConfiguration used (compute-limited on an 8 GB RTX 5050):\n\n-\
+  \ Configuration: `3d_lowres`\n- Fold: 0 (one fold of the 5-fold cross-validation)\n- Trainer: `nnUNetTrainer_250epochs`\
+  \ (250 epochs instead of the 1000-epoch default)\n\nThese choices trade some peak accuracy for feasible\
+  \ training time on entry hardware and\nare reported as such.\n\n### What nnU-Net configured (from the\
+  \ plan)\n\nFor `3d_lowres` on this dataset:\n\n- Target spacing: 2.39 x 1.50 x 1.50 mm (resampled from\
+  \ each scan's native spacing)\n- Patch size: 80 x 192 x 160\n- Batch size: 2\n- Normalization: CT scheme,\
+  \ clip to the 0.5 to 99.5 foreground intensity percentiles, then\n  z-score with the foreground mean\
+  \ and standard deviation\n- Network: 6-stage U-Net, feature maps 32 up to 320, five downsampling steps\n\
+  \nPreprocessing applied automatically: crop to the nonzero region, resample to the target\nspacing,\
+  \ CT intensity normalization, then foreground-oversampled 3D patch sampling with\non-the-fly augmentation\
+  \ (rotation, scaling, noise, blur, brightness/contrast, gamma,\nmirroring).\n\n## Pipeline\n\nSingle\
+  \ entry point that runs convert, preprocess, train, and evaluate through the nnU-Net\nv2 CLI.\n\n```bash\n\
+  python pipeline.py                                # full run\npython pipeline.py --no-convert --no-preprocess\
+  \   # train + evaluate only\npython pipeline.py --no-train                      # everything except\
+  \ training\n```\n\nKey files:\n\n- `pipeline.py`  orchestrator\n- `config.py`    paths and run settings\
+  \ (dataset id, configuration, fold, trainer, workers)\n\n## Results\n\n5-fold cross-validation, fold\
+  \ 0, evaluated on the 13 held-out labeled cases that the model\nnever saw during training.\n\n| Metric\
+  \        | Value |\n|---------------|-------|\n| Mean Dice     | 0.772 |\n| Mean IoU      | 0.648 |\n\
+  | Median Dice   | ~0.836 |\n| Dice range    | 0.38 to 0.887 |\n| Cases >= 0.80 | 9 of 13 |\n\nThe mean\
+  \ is pulled down by a few small or ambiguous tumors; the median reflects the\ntypical case. MSD lung\
+  \ is one of the harder Decathlon tasks (small, sparse tumors in large\nvolumes), so a mean Dice in this\
+  \ range is competitive. A reduced-budget single-fold run is\nexpected to sit slightly below a full 5-fold,\
+  \ full-resolution, 1000-epoch run.\n\nThe pseudo dice seen during training (~0.80) is nnU-Net's on-the-fly\
+  \ monitoring estimate\non patches. The 0.772 above is the proper validation Dice computed on full volumes\
+  \ and is\nthe number reported.\n\n### Reading the results\n\nMetrics live in `fold_0/validation/summary.json`:\n\
+  \n- `foreground_mean.Dice` is the headline (0.772).\n- `metric_per_case` lists each of the 13 cases\
+  \ with Dice, IoU, and the voxel counts\n  TP, FP, FN, TN.\n- Dice = 2*TP / (2*TP + FP + FN); IoU = TP\
+  \ / (TP + FP + FN). TN is huge because most of the\n  volume is background, which is why overlap metrics,\
+  \ not accuracy, are used.\n\n\n## Output files (fold_0)\n\n- `checkpoint_best.pth`, `checkpoint_final.pth`\
+  \  trained weights (best epoch and last epoch)\n- `summary.json`        validation metrics\n- `progress.png`\
+  \        training curves (loss, pseudo dice, epoch time, learning rate)\n- `training_log_*.txt`  per-session\
+  \ logs\n- `debug.json`          full run configuration for reproducibility\n- `validation/*.nii.gz`\
+  \ predicted masks for the held-out cases\n\n## Limitations\n\n- Single fold of the 5-fold cross-validation,\
+  \ not the full ensemble.\n- `3d_lowres`, not `3d_fullres`, and 250 epochs, not the 1000-epoch default.\
+  \ Compute-limited\n  on entry hardware.\n- Lung CT, not breast ultrasound. 3D breast ultrasound (TDSC-ABUS)\
+  \ is the intended next step.\n\n## References\n\n- Isensee et al. nnU-Net: a self-configuring method\
+  \ for deep learning-based biomedical image\n  segmentation. Nature Methods, 2021.\n- Antonelli et al.\
+  \ The Medical Segmentation Decathlon. Nature Communications, 2022.\n"

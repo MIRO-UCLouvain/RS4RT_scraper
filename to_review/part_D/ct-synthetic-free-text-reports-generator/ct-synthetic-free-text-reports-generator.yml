@@ -1,0 +1,100 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ChenMordehai/CT_Synthetic_Free_Text_Reports_Generator
+url: https://github.com/ChenMordehai/CT_Synthetic_Free_Text_Reports_Generator
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-01-05T08:39:07Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# CT Synthetic Free Text Reports Generator\n\nThis repository generates **synthetic Hebrew\
+  \ CT radiology reports** for:\n\n- Instruction–response datasets (e.g. for instruction-tuned models)\n\
+  - NER (Named Entity Recognition) training\n\nIt uses hand-crafted templates, fills anonymized placeholders\
+  \ with randomized but realistic values, and exports:\n\n- An **Excel** file with `instruction` and `response`\
+  \ columns\n- A **JSON** file with NER-style entity annotations (character offsets + labels)\n\n---\n\
+  \n## Table of Contents\n\n1. [Overview](#overview)\n2. [Repository Structure](#repository-structure)\n\
+  3. [Installation](#installation)\n4. [Usage](#usage)\n   - [Command-line Usage](#command-line-usage)\n\
+  \   - [Python API Usage](#python-api-usage)\n5. [Generated Data Format](#generated-data-format)\n  \
+  \ - [Excel File](#excel-file)\n   - [NER JSON File](#ner-json-file)\n6. [Templates Module](#templates-module)\n\
+  7. [Configuration & Extension](#configuration--extension)\n8. [Notes](#notes)\n9. [License](#license)\n\
+  \n---\n\n## Overview\n\nThe generator creates synthetic CT reports in Hebrew by:\n\n1. Sampling a template\
+  \ from a list of CT report templates.\n2. Identifying anonymized tags such as:\n   - `<תאריך_קודם_>`\n\
+  \   - `<ממצא_>`, `<ממצאים_>`\n   - `<גודל_>`\n   - `<המלצה_>`\n3. Replacing these tags with:\n   - Realistic\
+  \ dates using `Faker('he_IL')`\n   - Random clinical entities (like: findings, sizes, and recommendations)\
+  \ from predefined lists\n4. Recording the **character spans** and **labels** of these inserted values\
+  \ for NER training.\n5. Saving the result to:\n   - An Excel file (`instruction`, `response`)\n   -\
+  \ A JSON file (NER annotations), while preserving previous runs.\n\n---\n\n## Repository Structure\n\
+  \nTypical layout:\n\n```text\n.\n├── main_script.py\n├── templates\n│       └── CTAbdomenAndPelvis_template.py\n\
+  ├── data\n│   ├── train_synthetic_data.xlsx      # created/updated by the script\n│   └── ner_train_data.json\
+  \            # created/updated by the script\n└── README.md\n```\n\n### `main_script.py`\n\nMain entry\
+  \ point. Responsibilities:\n\n- Generate synthetic CT records.\n- Replace anonymized tags in templates\
+  \ with concrete values.\n- Collect NER entities (start, end, label).\n- Append to/initialize:\n  - Excel\
+  \ file with instruction/response pairs.\n  - JSON file with NER annotations.\n- Expose CLI parameters\
+  \ via `argparse`:\n  - `--num-records`\n  - `--excel-output-path`\n  - `--json-output-path`\n\n### `templates/CTAbdomenAndPelvis_template.py`\n\
+  \nTemplate module, imported as:\n\n```python\nfrom templates.CTAbdomenAndPelvis_template import (\n\
+  \    CTAbdomenAndPelvis,\n    individual_finding,\n    many_findings,\n    recommendations,\n    prev_date_options,\n\
+  )\n```\n\nContains:\n\n- `CTAbdomenAndPelvis`: list of base CT abdomen & pelvis report templates (with\
+  \ placeholders).\n- `individual_finding`, `many_findings`: text snippets for single/multiple findings.\n\
+  - `recommendations`: possible recommendation sentences.\n- `prev_date_options`: patterns for previous-study\
+  \ statements containing `<תאריך_>`.\n\n---\n\n## Installation\n\n### Python Version\n\n- Python **3.8+**\
+  \ (3.9+ recommended)\n\n### Dependencies\n\nInstall requirements (you can put these in a `requirements.txt`\
+  \ if you like):\n\n- `faker`\n- `pandas`\n- `tqdm`\n- `openpyxl` (Excel writer engine used by `pandas.to_excel`)\n\
+  \nInstall via:\n\n```bash\npip install faker pandas tqdm openpyxl\n```\n\nIf you’re using a virtual\
+  \ environment:\n\n```bash\npython -m venv .venv\nsource .venv/bin/activate  # Windows: .venv\\Scripts\\\
+  activate\npip install faker pandas tqdm openpyxl\n```\n\n---\n\n## Usage\n\n### Command-line Usage\n\
+  \nFrom the repository root:\n\n```bash\npython main_script.py\n```\n\nThis runs with the **default behavior**:\n\
+  \n- Generates **100** synthetic records.\n- Appends them to:\n\n  - `./data/train_synthetic_data.xlsx`\n\
+  \n- Merges NER annotations into:\n\n  - `./data/ner_train_data.json`\n\n#### CLI Arguments\n\n`main_script.py`\
+  \ uses `argparse` and supports:\n\n- `--num-records`  \n  Number of synthetic records to generate. \
+  \ \n  **Default:** `100`\n\n- `--excel-output-path`  \n  Path to the Excel file for instruction/response\
+  \ pairs.  \n  **Default:** `./data/train_synthetic_data.xlsx`\n\n- `--json-output-path`  \n  Path to\
+  \ the JSON file for NER annotations.  \n  **Default:** `./data/ner_train_data.json`\n\n#### Examples\n\
+  \nGenerate 500 records (default output locations):\n\n```bash\npython main_script.py --num-records 500\n\
+  ```\n\nCustom Excel and JSON paths:\n\n```bash\npython main_script.py \\\n  --num-records 250 \\\n \
+  \ --excel-output-path ./data/ct_train_250.xlsx \\\n  --json-output-path ./data/ct_ner_250.json\n```\n\
+  \n### Python API Usage\n\nYou can import and call the generator directly in Python:\n\n```python\nfrom\
+  \ main_script import run_generation\n\nrun_generation(\n    additional_records=200,\n    excel_output_path=\"\
+  ./data/custom_train_synthetic_data.xlsx\",\n    json_output_path=\"./data/custom_ner_train_data.json\"\
+  ,\n)\n```\n\nThis reuses the exact same generation logic as the CLI.\n\n---\n\n## Generated Data Format\n\
+  \n### Excel File\n\nDefault path: `./data/train_synthetic_data.xlsx`\n\nColumns:\n\n- `instruction`\
+  \  \n  The **de-anonymized text** (all placeholders replaced with concrete values).\n\n- `response`\
+  \  \n  The **original template text** used as the “target” / reference.\n\nEach row corresponds to one\
+  \ generated record.\n\n### NER JSON File\n\nDefault path: `./data/ner_train_data.json`\n\nStructure\
+  \ (simplified):\n\n```json\n{\n  \"0\": [\n    { \"start\": 10, \"end\": 25, \"label\": \"prev_date\"\
+  \ },\n    { \"start\": 40, \"end\": 55, \"label\": \"finding\" }\n  ],\n  \"1\": [\n    { \"start\"\
+  : 5, \"end\": 12, \"label\": \"size\" }\n  ]\n}\n```\n\n- **Keys**: numeric strings (`\"0\"`, `\"1\"\
+  `, …) identifying each record.\n- **Values**: lists of entities, where each entity has:\n  - `start`:\
+  \ character offset in the de-anonymized text (inclusive)\n  - `end`: character offset in the de-anonymized\
+  \ text (exclusive)\n  - `label`: e.g. `\"prev_date\"`, `\"finding\"`, `\"size\"`, `\"recommendations\"\
+  `\n\nMultiple runs:\n\n- If the JSON file already exists, the script:\n  - Reads existing keys.\n  -\
+  \ Computes the max key.\n  - Offsets new keys by `max_key + 1` so previous entries are preserved.\n\
+  \  - Merges and writes back.\n\n---\n\n## Templates Module\n\nThe template file `CTAbdomenAndPelvis_for_thesis.py`\
+  \ defines:\n\n- Template texts for CT abdomen & pelvis, including placeholders like:\n  - `<תאריך_קודם_>`\n\
+  \  - `<ממצא_>`\n  - `<ממצאים_>`\n  - `<גודל_>`\n  - `<המלצה_>`\n- Lists of candidate replacements for\
+  \ each placeholder.\n\nThe main script:\n\n1. Samples a template from `CTAbdomenAndPelvis`.\n2. Calls\
+  \ `get_non_anonymized_record(response)`:\n   - Finds all tags matching `(<[א-ת_]+>)`.\n   - Replaces\
+  \ each tag according to its type:\n     - `<תאריך_קודם_>` → a text from `prev_date_options` with a replaced\
+  \ `<תאריך_>` date.\n     - `<ממצא_>` → a single random finding from `individual_finding`.\n     - `<ממצאים_>`\
+  \ → a composite finding from `many_findings`.\n     - `<גודל_>` → random size + units (cm/mm).\n   \
+  \  - `<המלצה_>` → a random element from `recommendations`.\n   - Records the character spans and labels\
+  \ in `entities`.\n\nThis core flow has **not** been changed; only parameterization and CLI parsing have\
+  \ been added.\n\n---\n\n## Configuration & Extension\n\nTo extend the generator:\n\n- **New record types**\
+  \  \n  Add additional template lists (e.g. `CTChest`, `CTHead`) to the templates module and extend:\n\
+  \n  ```python\n  def generate_medical_records(record_type):\n      if record_type == \"CT בטן ואגן\"\
+  :\n          ...\n      elif record_type == \"CT חזה\":\n          ...\n  ```\n\n- **Additional placeholder\
+  \ types**  \n  Add new tag patterns (e.g. `<מיקום_>`) and extend the `get_non_anonymized_record` function\
+  \ with another `elif` block that:\n  - Chooses a replacement string.\n  - Updates `new_res`.\n  - Appends\
+  \ an entity with the appropriate label.\n\n---\n\n## Notes\n\n- Generated reports are **synthetic**,\
+  \ written in **Hebrew**, and are intended for **research/experimentation** only.\n- No random seed is\
+  \ set by default, so each run produces different data.\n  - For reproducibility, you can manually set:\n\
+  \n    ```python\n    import random\n    from faker import Faker\n\n    random.seed(42)\n    fake = Faker('he_IL')\n\
+  \    fake.seed_instance(42)\n    ```\n\n---\n\n## License\n\nMIT\n"

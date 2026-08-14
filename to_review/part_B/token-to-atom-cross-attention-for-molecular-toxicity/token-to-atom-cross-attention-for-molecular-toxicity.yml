@@ -1,0 +1,88 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Amir-Tav/Token-to-Atom-Cross-Attention-for-Molecular-Toxicity
+url: https://github.com/Amir-Tav/Token-to-Atom-Cross-Attention-for-Molecular-Toxicity
+platform: github
+description: Multi-Modal Molecular Toxicity Prediction A deep learning framework that combines SMILES
+  text (ChemBERTa), molecular graphs (GIN), and RDKit descriptors through cross-attention fusion to predict
+  toxicity across 12 Tox21 assays.
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 1
+updated_at: '2025-09-26T17:54:30Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# **V7 Fusion: Multi-Modal Molecular Toxicity Prediction**\n\nA sophisticated deep learning\
+  \ framework for molecular toxicity prediction using multi-modal fusion of SMILES text, molecular graphs,\
+  \ and RDKit descriptors on the Tox21 dataset.\n\n---\n\n## **Overview**\n\nThis project implements a\
+  \ novel fusion architecture that combines three molecular representations:\n- **Text**: SMILES strings\
+  \ via ChemBERTa encoder\n- **Graph**: Molecular graphs via Graph Isomorphism Network (GIN)\n- **Descriptors**:\
+  \ 208 RDKit molecular descriptors\n\nThe model predicts toxicity across 12 assays using cross-attention\
+  \ fusion and specialist ensemble heads.\n\n---\n\n## **Architecture**\n\n### **Core Fusion Model**\n\
+  \n```python\nclass V7FusionModel(nn.Module):\n    def __init__(self, text_encoder, graph_encoder, desc_in_dim=208,\
+  \ dim=256, n_labels=12):\n        super().__init__()\n        self.text_encoder = text_encoder     \
+  \ # ChemBERTa\n        self.graph_encoder = graph_encoder    # GIN\n        self.cross = CrossAttentionBlock(dim)\
+  \ # Text attends to graph\n        self.desc_mlp = DescriptorMLP(desc_in_dim, dim)\n        self.shared_head\
+  \ = FusionClassifier(dim, n_labels)\n\n    def forward(self, smiles_list, desc_feats):\n        # Encode\
+  \ modalities\n        text_tokens, text_mask = self.text_encoder(smiles_list)\n        graph_nodes,\
+  \ graph_mask = self.graph_encoder(smiles_list)\n        desc_embed = self.desc_mlp(desc_feats)\n   \
+  \     \n        # Cross-attention fusion\n        text_attended = self.cross(text_tokens, text_mask,\
+  \ graph_nodes, graph_mask)\n        \n        # Pool and concatenate\n        text_pool = masked_mean(text_attended,\
+  \ text_mask, dim=1)\n        graph_pool = masked_mean(graph_nodes, graph_mask, dim=1)\n        fused\
+  \ = torch.cat([text_pool, graph_pool, desc_embed], dim=-1)\n        \n        return self.shared_head(fused)\n\
+  ```\n\n### **Cross-Attention Block**\n\n```python\nclass CrossAttentionBlock(nn.Module):\n    def __init__(self,\
+  \ dim=256, n_heads=4, p=0.1):\n        super().__init__()\n        self.mha = nn.MultiheadAttention(dim,\
+  \ n_heads, dropout=p, batch_first=False)\n        self.ln = nn.LayerNorm(dim)\n        self.dropout\
+  \ = nn.Dropout(p)\n\n    def forward(self, text_tokens, text_mask, graph_nodes, graph_mask):\n     \
+  \   Q = text_tokens.transpose(0,1)   # Text queries\n        K = graph_nodes.transpose(0,1)   # Graph\
+  \ keys\n        V = graph_nodes.transpose(0,1)   # Graph values\n        \n        key_padding_mask\
+  \ = (graph_mask == 0)\n        attn_out, _ = self.mha(Q, K, V, key_padding_mask=key_padding_mask)\n\
+  \        \n        # Residual connection + LayerNorm\n        return self.ln(text_tokens + self.dropout(attn_out.transpose(0,1)))\n\
+  ```\n\n---\n\n## **Project Structure**\n\n### **Phase 1: Data Processing**\n\n- **Load & Inspect**:\
+  \ Tox21 dataset validation and metadata generation\n- **Descriptor Generation**: 208 RDKit molecular\
+  \ descriptors with imputation/scaling\n- **Scaffold Splitting**: 80/10/10 train/val/test split using\
+  \ Murcko scaffolds\n- **Data Packaging**: Train-only fitted preprocessing pipeline\n\n### **Phase 2:\
+  \ Model Architecture**\n\n- **Text Encoder**: ChemBERTa-zinc-base-v1 for SMILES representation\n- **Graph\
+  \ Encoder**: 4-layer GIN for molecular graph processing\n- **Fusion Core**: Cross-attention mechanism\
+  \ for multi-modal integration\n- **Dual Heads**: Shared multi-label head + specialist ensemble heads\n\
+  \n### **Phase 3: Training**\n\n- **Hardware Optimization**: AMP support, batch size tuning\n- **Two-Stage\
+  \ Training**:\n  - Stage A: Frozen ChemBERTa backbone (8 epochs)\n  - Stage B: Unfrozen last 2 layers\
+  \ (20 epochs)\n- **Specialist Ensemble**: 5-seed ensemble per label with class-balanced sampling\n-\
+  \ **Loss Function**: Asymmetric Loss with class-balanced weighting\n\n```python\nclass AsymmetricLossCB(nn.Module):\n\
+  \    def __init__(self, gamma_neg=5.0, gamma_pos=1.0, clip=0.05, alpha=None):\n        super().__init__()\n\
+  \        self.gamma_neg = gamma_neg\n        self.gamma_pos = gamma_pos\n        self.clip = clip\n\
+  \        self.alpha = alpha  # Per-label class weights\n\n    def forward(self, logits, targets, missing_mask):\n\
+  \        pred = torch.sigmoid(logits)\n        if self.clip:\n            pred = torch.clamp(pred, self.clip,\
+  \ 1 - self.clip)\n        \n        # Asymmetric focal weighting\n        pt = pred * targets + (1 -\
+  \ pred) * (1 - targets)\n        gamma = self.gamma_pos * targets + self.gamma_neg * (1 - targets)\n\
+  \        focal_weight = torch.pow(1 - pt, gamma)\n        \n        # BCE loss with focal and class\
+  \ weighting\n        loss = -(targets * torch.log(pred) + (1 - targets) * torch.log(1 - pred))\n   \
+  \     return (loss * focal_weight * self.alpha).mean()\n```\n\n### **Phase 4: Calibration & Thresholding**\n\
+  \n- **Temperature Scaling**: Per-label calibration on validation set\n- **Threshold Optimization**:\
+  \ F1 and F-beta (β=1.5) maximization\n- **Blend Calibration**: Weighted combination of specialist +\
+  \ shared predictions\n\n### **Phase 5: Inference System**\n\n- **Model Loading**: Cold-start inference\
+  \ with checkpoint restoration\n- **Prediction Modes**: \n  - `fbeta15`: F-beta optimized thresholds\n\
+  \  - `f1`: F1 optimized thresholds  \n  - `policy`: Custom precision-floor policy\n- **Blended Ensemble**:\
+  \ α=0.8 specialist + 0.2 shared head weighting\n\n### **Phase 6: Evaluation**\n\n- **Comprehensive Metrics**:\
+  \ PR-AUC, ROC-AUC, calibration error (ECE)\n- **Reliability Curves**: Per-label calibration assessment\n\
+  - **Comparison Framework**: Specialist vs blend performance analysis\n\n---\n\n## **Key Features**\n\
+  \n- **Multi-Modal Fusion**: Novel cross-attention between text and graph modalities\n- **Scaffold-Aware\
+  \ Splitting**: Prevents data leakage in molecular datasets\n- **Ensemble Architecture**: Best-of-5-seeds\
+  \ specialist heads per label\n- **Production Ready**: Temperature scaling, threshold optimization, policy\
+  \ framework\n- **Comprehensive Evaluation**: Multiple threshold strategies with reliability analysis\n\
+  \n---\n\n## **Performance Highlights**\n\nThe model achieves strong performance across 12 toxicity assays\
+  \ with:\n- Macro PR-AUC: ~0.75-0.80 on test set\n- Calibrated predictions with ECE < 0.1 for most labels\n\
+  - Adaptive thresholding based on precision requirements\n- Robust handling of label imbalance and missing\
+  \ data\n\n---\n\n## **Usage**\n\n```python\n# Load model and predict\nresults = predict_smiles_blend(['CCO'],\
+  \ mode='fbeta15')\nfor smiles, predictions in zip(['CCO'], results):\n    for label, details in predictions.items():\n\
+  \        print(f\"{label}: {details['prob_blend']:.3f} -> {details['decision']}\")\n```\n\n---\n\n##\
+  \ **Requirements**\n\n- PyTorch 1.8+\n- RDKit 2022.03+\n- Transformers 4.20+\n- scikit-learn 1.1+\n\
+  - CUDA-compatible GPU (recommended)\n\n---\n\nThe codebase provides a complete pipeline from raw SMILES\
+  \ to calibrated toxicity predictions, with extensive evaluation and comparison frameworks for multi-modal\
+  \ molecular property prediction."

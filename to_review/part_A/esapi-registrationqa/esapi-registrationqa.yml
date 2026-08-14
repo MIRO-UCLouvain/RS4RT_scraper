@@ -1,0 +1,140 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: davidpadron76/ESAPI_RegistrationQA
+url: https://github.com/davidpadron76/ESAPI_RegistrationQA
+platform: github
+description: ESAPI / VMS.IRS plugin in C# & WPF for automated quantitative quality assurance (QA) and
+  clinical audit of rigid and deformable image registrations based on AAPM TG-132 and TG-233 guidelines.
+license: MIT
+language: C#
+keywords: []
+stars: 2
+updated_at: '2026-08-03T10:11:42Z'
+image_source: null
+heuristic_total_score: 40
+heuristic_reasons:
+- Matched 5 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+- Matched 11 support term(s).
+readme_excerpt: "# ESAPI Registration Quantitative Audit (ESAPI_RegistrationQA)\n\nA C# / WPF plugin for\
+  \ the **Varian Eclipse Treatment Planning System** (ESAPI and VMS.IRS\narchitecture) that automates\
+  \ the quantitative audit of image registrations.\n\n## Intended use, and what this tool is not\n\n**This\
+  \ is a measurement instrument for a qualified medical physicist. It is not a medical\ndevice, it is\
+  \ not certified by any regulatory body, and it does not decide whether a\nregistration may be used clinically.**\
+  \ That decision is the physicist's, and nothing here\nsubstitutes for it.\n\nRead that as a statement\
+  \ about what the tool does, not as boilerplate:\n\n* **It measures, and it grades only where TG-132\
+  \ gives a number.** Five metrics can fail a\n  registration and they are exactly Table III. Everything\
+  \ else is reported without a colour and\n  cannot affect the verdict. Where the report declines to give\
+  \ a limit, so does this tool.\n* **A green verdict is not a released registration.** It says the metrics\
+  \ that carry a TG-132\n  tolerance met it on the data available. It says nothing about the metrics that\
+  \ could not be\n  measured, about anatomy outside the sampled region, or about whether the registration\
+  \ is fit\n  for the use you have in mind.\n* **A red verdict is not a rejected registration either.**\
+  \ TG-132 asks for the influence of a\n  breach on the intended use to be evaluated. The tool gives you\
+  \ the evidence — where the\n  folding is, how many landmarks the TRE rests on, what fraction of the\
+  \ volume overlapped — and\n  stops there.\n* **Every number carries its provenance, and you should read\
+  \ it.** Voxel pairs, overlap\n  fraction, effective sampling, grid spacing, which structure produced\
+  \ a worst case, which\n  region a metric was computed over. A DSC over 8 % overlap at 4 mm sampling\
+  \ is not the same\n  measurement as one over 80 % at 1 mm, and the criterion column says which you are\
+  \ looking at.\n* **It has been exercised on one Eclipse installation.** See [Validation\n  status](#validation-status)\
+  \ for exactly what has been checked against an independent answer\n  and what has not. Commission it\
+  \ against your own data before you rely on it, the same way you\n  would commission any other measuring\
+  \ device.\n\nLicensed under [MIT](LICENSE), which includes its warranty disclaimer.\n\n## Reference\n\
+  \nBrock KK, Mutic S, McNutt TR, Li H, Kessler ML. *Use of image registration and fusion\nalgorithms\
+  \ and techniques in radiotherapy: Report of the AAPM Radiation Therapy Committee\nTask Group No. 132.*\
+  \ Med Phys. 2017;44(7):e43–e76. [doi:10.1002/mp.12256](https://doi.org/10.1002/mp.12256)\n\n## Why each\
+  \ metric is here\n\nA metric earns its place by the clinical decision it supports. Appearing in TG-132\
+  \ Table III\nis evidence for that, not the criterion itself — and the converse holds too: several metrics\n\
+  the report does not tabulate are useful for interpreting a co-registration, and TG-132 §4.C.3\nexplicitly\
+  \ admits some of them for assessment.\n\nEach definition carries its justification in the code (`Models/MetricCatalog.cs`),\
+  \ and the\nconstructor refuses a metric that leaves it blank. The same table is printed as an appendix\n\
+  to every exported report, so whoever countersigns the document can see the basis for each\nnumber.\n\
+  \n| Metric | Question it answers | Relation to TG-132 | Drives the verdict? | Status |\n|---|---|---|---|---|\n\
+  | **NCC** | Does the anatomy line up, same modality? | §4.C.3, admitted for assessment | **No** — no\
+  \ tolerance exists | Measured |\n| **NMI** | Does it line up when intensities are not linearly comparable\
+  \ (CT-MR, CT-PET)? | §4.C.3, admitted for assessment | **No** — no tolerance exists | Measured |\n|\
+  \ **SSD** | Are there local intensity differences beyond the overall alignment? | §4.C.3, admitted for\
+  \ assessment | **No** — no tolerance exists | Measured |\n| **Jacobian < 0** | Has the deformation folded\
+  \ tissue onto itself? | Table III, first clause: no negative values | Yes, at 0 %, inside the patient\
+  \ outline | Exact for rigid · measured from the field for DIR |\n| **Jacobian departure from 1** | Is\
+  \ the volume change the one the case led you to expect? | Table III, second clause: no departure from\
+  \ 1 beyond what the clinical scenario expects | **No** — the report ties it to the structure and the\
+  \ expectation, neither of which the tool knows | Exact for rigid · measured from the field for DIR |\n\
+  | **Max Displacement** | How far has the registration moved the anatomy? | Not tabulated; plausibility\
+  \ check | **No** — limits were invented | Exact for rigid · measured over the field for DIR |\n| **Smoothness**\
+  \ | Is the deformation physically plausible? | Not tabulated; related to §4.C.3 | **No** — limits were\
+  \ invented | Exact for rigid · hidden for DIR, see DVF gradient |\n| **DVF Gradient (max)** | Does the\
+  \ deformation vary abruptly between neighbouring points? | Not tabulated; related to §4.C.3 | **No**\
+  \ — no tolerance exists | Measured for DIR only |\n| **DSC** | Do the same organs end up in the same\
+  \ place? | Table III, ~0.80–0.90 | Yes, from that range | Measured |\n| **MDA** | On average, how far\
+  \ apart are the two organ surfaces? | Table III, ~2–3 mm | Yes, at the voxel dimension | Measured |\n\
+  | **HD95** | How far apart are the surfaces where they disagree most? | Not tabulated; report specifies\
+  \ MDA | **No** — limits were inherited | Measured |\n| **TRE (mean)** | How large is the spatial error,\
+  \ in millimetres? | Table III, primary metric | Yes, at the voxel dimension | Measured |\n| **TRE (max)**\
+  \ | Is any single landmark badly placed? | Table III; mean/max split is ours | Yes, at the voxel dimension\
+  \ | Measured |\n| **Inverse consistency** | Is the algorithm behaving stably? | §4.C.4 and Table III\
+  \ | Yes, at the voxel dimension | Measured |\n\nTwo points the report makes that shape how the first\
+  \ three should be read. TG-132 §4.C.3\nadmits SSD, CC and MI for assessment **provided the metric was\
+  \ not the one the registration\nalgorithm optimised** — otherwise the assessment is circular — and notes\
+  \ they are **difficult\nto convert into a measure of spatial accuracy**. A compliant NCC does not establish\n\
+  millimetric accuracy; TRE is the metric that does. The plugin raises an advisory saying so on\nevery\
+  \ case where those metrics are available.\n\n## Where every tolerance comes from\n\nShort answer: **five\
+  \ metrics can fail a registration, and they are exactly TG-132 Table III.**\nFour of the five limits\
+  \ are not constants — the report states them as a property of the images,\nand the plugin measures it.\n\
+  \n| Metric | Limit | Source |\n|---|---|---|\n| **TRE (mean and max)** | maximum voxel dimension of\
+  \ the two series | Table III, verbatim |\n| **MDA** | same | Table III, verbatim |\n| **Inverse consistency**\
+  \ | same | Table III, verbatim |\n| **DSC** | ≥ 0.90 green, ≥ 0.80 yellow | Table III's `~0.80–0.90`\
+  \ range mapped onto the two bands |\n| **Jacobian < 0** | 0 % inside the patient outline | Table III,\
+  \ first clause: \"no negative values\", stated per structure |\n| **Jacobian departure from 1** | *ungraded*\
+  \ | Table III, second clause — tied to the structure and the expected volume change, so no fixed band\
+  \ exists to apply |\n\nThe one exception the report makes: *\"stereotactic radiosurgery tolerances are\
+  \ 1 mm.\"* That is\nthe whole of the profile selector — **Standard treatment** or **Stereotactic (SRS/SBRT)**.\n\
+  \n**There used to be four anatomical profiles, and their spatial limits were a fiction.** TG-132\nhas\
+  \ no tolerance that varies by anatomical site. Where it does allow variation, in the MDA and\nDSC rows,\
+  \ it attributes it to the contouring uncertainty and the volume of the *individual\nstructure*, not\
+  \ to the region. And the two interobserver studies the report actually cites in\n§4.C.2 run the other\
+  \ way from the profiles this project shipped: 2.6 mm for peripheral lung\n(Persson) against 3.9 mm for\
+  \ glottic larynx (Brouwer), while the profiles allowed head and neck\n2.0 mm and thorax 3.0 mm. The\
+  \ ordering was inverted with respect to the evidence.\n\nFor the record, since the question is a fair\
+  \ one to ask of any QA tool: **DSC and HD95 carried\ntheir per-site numbers from this project's first\
+  \ version.** MDA, TRE and inverse consistency did\nnot exist then; their per-site numbers were invented\
+  \ when those metrics were implemented. None\nof them had a source.\n\nWhen the voxel size cannot be\
+  \ read, TRE, MDA and consistency are not classified at all — a limit\nthe report ties to the image cannot\
+  \ be applied without the image.\n\n## Which metrics can fail a registration\n\nMeasuring a quantity\
+  \ and being entitled to fail a registration on it are different claims, and\nthe tool used to treat\
+  \ them as one.\n\n**TG-132 gives no tolerance for NCC, NMI or SSD.** They appear in Table I, which catalogues\
+  \ the\nmetrics that *drive* a registration. As assessment tools they appear once, in §4.C.3, and in\n\
+  passing. Table III has five rows and none of them is an intensity metric: TRE, MDA, DSC,\nJacobian determinant\
+  \ and consistency. The limits this project used to apply to the three\nintensity metrics were its own\
+  \ invention, and they were producing NOT COMPLIANT verdicts on a\nclass of metric the report says cannot\
+  \ be converted into spatial accuracy. They are now\nreported as **INFO**: value shown, no colour, no\
+  \ effect on the verdict, still written to the\nCSV — which is where they earn their keep, as a local\
+  \ baseline distribution.\n\n**Maximum displacement does not classify at all.** It is not in TG-132 and\
+  \ its per-site limits\nwere invented here, but there was a second reason before that one was faced:\
+  \ within one frame of\nreference the identity is the \"no correction\" state, so the displacement is\
+  \ the correction the\nregistration applies — while across two frames, two scanners or a CT and an MR,\
+  \ the matrix must\nalso span the offset between the coordinate systems, and a correct registration can\
+  \ exceed any\nlimit for that reason alone. The value is shown as a plausibility check, with an advisory\
+  \ naming\nwhich of the two situations this case is in.\n\n**Smoothness follows the intensity metrics,\
+  \ for the same reason.** TG-132 does not name it and\nits limits were invented too. It stays on screen\
+  \ for a rigid transform because 1.0 is a true\nstatement worth recording — the field gradient is constant,\
+  \ so no local irregularity is\npossible — but a statement true by definition cannot fail anything. On\
+  \ a deformable case it is\nhidden and the **DVF gradient** carries the real measurement, on the opposite\
+  \ scale: 0 there\nmeans what 1.0 means here. It is ungraded for the same reason — the report sets no\
+  \ limit for\nfield regularity, so any number chosen would be invented. Section 5 of `VALIDATION.md`\
+  \ is how a\nlocal baseline makes it actionable.\n\n**The Jacobian row of Table III has two clauses,\
+  \ and only one of them can be gated.** The row\nreads: no negative values, *nor values departing from\
+  \ 1 relative to what is expected for the\nclinical scenario (0–1 for structures where volume reduction\
+  \ is expected; above 1 where expansion\nis expected)*. The first clause is absolute and is gated at\
+  \ 0 %. The second is explicitly relative\nto the structure and to what the physicist expected of it,\
+  \ so it is measured — as the departure of\nthe p1/p99 Jacobian from 1 — and shown ungraded. Picking\
+  \ a fixed band there would invent the very\nnumber the report declined to give.\n\n**The Jacobian limit\
+  \ is 0 %.** Table III admits no negative values; the profiles used to admit\nbetween 1 % and 4 %, so\
+  \ the tool was more permissive than the standard it cites, on its own\nauthority. It does not vary with\
+  \ anything: the report ties this tolerance to the physics, and a\nfolded voxel is as unphysical in a\
+  \ lung as in a brain.\n\n**It is applied inside the patient, not over the whole grid.** Table III states\
+  \ this criterion\nper structure, and a deformation field's grid is a box that extends well past the\
+  \ anatomy into\nair, where the algorithm has no image to constrain it and folds freely. On a head phantom,\
+  \ 2.979 %\nof the whole box folded against 0.003 % inside `BODY` — 99.95 % of the folded points were\
+  \ in air.\nGrading the box is not the conservative choice it looks like: it fails almost every d"

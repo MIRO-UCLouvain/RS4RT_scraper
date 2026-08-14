@@ -1,0 +1,67 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: TarunT27/tumorlens-ai
+url: https://github.com/TarunT27/tumorlens-ai
+platform: github
+description: AI-assisted 3D Slicer brain tumor segmentation and portfolio demo
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-09T03:39:34Z'
+image_source: https://raw.githubusercontent.com/TarunT27/tumorlens-ai/HEAD/public/assets/tumorlens/screenshots/web-demo-desktop.png
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+readme_excerpt: "# TumorLens AI\n\nTumorLens AI is a starter 3D Slicer extension for research and education\
+  \ workflows around AI-assisted brain tumor MRI segmentation. It is designed to show credible medical\
+  \ imaging engineering skills: Slicer/MRML workflow orchestration, MONAI Label integration, 3D segmentation\
+  \ surfaces, and quantitative tumor measurements.\n\nThis project is not a medical device and does not\
+  \ provide diagnosis, treatment advice, or clinical decision support.\n\n## Screenshots\n\n### Web Demo\
+  \ Interface\n\n<img src=\"public/assets/tumorlens/screenshots/web-demo-desktop.png\" alt=\"TumorLens\
+  \ AI web demo showing MRI slices, 3D tumor surface, workflow steps, MONAI connection status, and measurement\
+  \ cards\" width=\"100%\">\n\n### Responsive View\n\n<img src=\"public/assets/tumorlens/screenshots/web-demo-mobile.png\"\
+  \ alt=\"TumorLens AI responsive web demo layout\" width=\"360\">\n\n### Imaging And 3D Output Visuals\n\
+  \n| MRI review canvas | 3D tumor surface | Combined workflow concept |\n| --- | --- | --- |\n| <img\
+  \ src=\"public/assets/tumorlens/mri-axial.png\" alt=\"Axial brain MRI with tumor segmentation overlay\"\
+  \ width=\"260\"> | <img src=\"public/assets/tumorlens/model-3d.png\" alt=\"3D brain and tumor surface\
+  \ rendering\" width=\"260\"> | <img src=\"public/assets/tumorlens/combined-concept.png\" alt=\"TumorLens\
+  \ AI combined MRI and 3D segmentation concept\" width=\"260\"> |\n\n## What It Does\n\n- Loads MRI volumes\
+  \ into 3D Slicer.\n- Connects to a separately running MONAI Label server.\n- Requests AI segmentation\
+  \ for a selected volume.\n- Imports predicted labelmaps as Slicer segmentation nodes.\n- Creates closed-surface\
+  \ 3D representations.\n- Computes tumor measurements:\n  - volume in `cm^3`\n  - voxel count\n  - bounding\
+  \ box dimensions\n  - center of mass\n  - approximate surface area\n  - label breakdown\n- Exports measurement\
+  \ reports as JSON or CSV.\n\n## Project Structure\n\n```text\nTumorLensAI/\n  TumorLensAI.py\n  TumorLensAILogic.py\n\
+  \  TumorLensAIMetrics.py\n  TumorLensAIMONAIClient.py\n  Resources/\n    UI/\n    Icons/\n  monai_app/\n\
+  \    README.md\n    config/\n  sample_data/\n    README.md\n  tests/\n```\n\n## Development Setup\n\n\
+  The code is split so pure-Python pieces can be tested without launching 3D Slicer.\n\n```bash\npowershell\
+  \ -ExecutionPolicy Bypass -File scripts/setup_dev.ps1\npowershell -ExecutionPolicy Bypass -File scripts/run_tests.ps1\n\
+  ```\n\nTo load the extension in 3D Slicer during development:\n\n```bash\npowershell -ExecutionPolicy\
+  \ Bypass -File scripts/find_slicer.ps1\npowershell -ExecutionPolicy Bypass -File scripts/launch_slicer.ps1\n\
+  ```\n\nThe launch script opens 3D Slicer with this extension's module folder added. You can also add\
+  \ `TumorLensAI` manually from `Edit > Application Settings > Modules`.\n\n## Web Demo Prototype\n\n\
+  The portfolio demo is a React/Vite walkthrough of the TumorLens AI workflow: load scan, connect MONAI\
+  \ Label, run segmentation, review 2D/3D output, inspect measurements, and export a report.\n\n```bash\n\
+  npm install\nnpm run dev\n```\n\nOpen the printed local URL, usually `http://127.0.0.1:5173/`.\n\n##\
+  \ MONAI Label Server\n\nTumorLens AI expects MONAI Label to run separately, usually at:\n\n```text\n\
+  http://127.0.0.1:8000\n```\n\nExample server startup:\n\n```bash\npowershell -ExecutionPolicy Bypass\
+  \ -File scripts/setup_monai.ps1\npowershell -ExecutionPolicy Bypass -File scripts/download_monai_radiology_app.ps1\n\
+  powershell -ExecutionPolicy Bypass -File scripts/download_monai_brats_bundle.ps1\npowershell -ExecutionPolicy\
+  \ Bypass -File scripts/create_synthetic_brats_study.ps1\npowershell -ExecutionPolicy Bypass -File scripts/start_monai_server.ps1\
+  \ -StudiesPath sample_data/synthetic_brats_mri/imagesTr -UseBrainTumorBundle\n```\n\nThe `-UseBrainTumorBundle`\
+  \ flag stages the downloaded `MONAI/brats_mri_segmentation` bundle into the local MONAI Label radiology\
+  \ app and exposes the `brats_mri_segmentation` model through `/info`.\n\nWith the server running, verify\
+  \ a real inference round-trip:\n\n```bash\npowershell -ExecutionPolicy Bypass -File scripts/test_monai_inference.ps1\n\
+  ```\n\nThe smoke test runs `brats_mri_segmentation` on `synthetic_brats_001`, saves the returned labelmap\
+  \ under `reports/monai_smoke`, and prints model labels plus latency. CPU-only inference can take about\
+  \ a minute.\n\nSee `monai_app/README.md` for more setup notes.\n\n## Public Logic API\n\nThe main orchestration\
+  \ class is `TumorLensAILogic`.\n\n```python\nloadVolume(path) -> volumeNode\nconnectMonaiServer(url)\
+  \ -> ServerStatus\nrunSegmentation(volumeNode, modelName) -> segmentationNode\ncreateClosedSurface(segmentationNode)\
+  \ -> modelNode\ncomputeTumorMetrics(volumeNode, segmentationNode) -> MeasurementReport\nexportReport(report,\
+  \ outputPath) -> None\n```\n\n## Dataset Direction\n\nThe recommended starter dataset is the public\
+  \ Medical Segmentation Decathlon `Task01_BrainTumour` dataset or another BraTS-style public MRI dataset.\
+  \ Do not use private patient data for demos.\n\nFor local setup checks, use the generated 4-channel\
+  \ synthetic BraTS-style study:\n\n```bash\npowershell -ExecutionPolicy Bypass -File scripts/create_synthetic_brats_study.ps1\n\
+  ```\n"

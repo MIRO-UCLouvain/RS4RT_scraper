@@ -1,0 +1,130 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: DutchVanDerTahiti/MRI-brain-tumor-segmentation
+url: https://github.com/DutchVanDerTahiti/MRI-brain-tumor-segmentation
+platform: github
+description: ''
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-29T23:20:41Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: '# Brain MRI Segmentation using U-Net
+
+
+  Projekt implementujący model głębokiego uczenia maszynowego do segmentacji guzów mózgu na podstawie
+  obrazów z rezonansu magnetycznego (MRI). Rozwiązanie opiera się na architekturze U-Net, zaimplementowanej
+  od podstaw przy użyciu biblioteki PyTorch.
+
+
+  ## Opis projektu
+
+  Celem projektu jest automatyczna identyfikacja i precyzyjne wyodrębnienie obszarów zajętych przez guz
+  na skanach mózgu.  Projekt ma formę interaktywnego notatnika (Jupyter Notebook), który zawiera pełny
+  potok przetwarzania – od pobrania i przygotowania danych, poprzez trening modelu, aż po jego ewaluację
+  i wizualizację wyników.
+
+
+  ## Architektura i podejście techniczne
+
+  * **Model:** U-Net zaimplementowany w czystym PyTorch. Sieć przyjmuje na wejściu trzykanałowe obrazy
+  o wymiarach 256x256 i zwraca jednokanałową maskę prawdopodobieństwa wystąpienia guza. Wykorzystuje klasyczną
+  strukturę enkodera i dekodera z połączeniami pomijającymi (skip connections).
+
+  * **Funkcja straty:** Zastosowano hybrydowe podejście polegające na zsumowaniu `Dice Loss` oraz standardowego
+  `BCEWithLogitsLoss`. Takie rozwiązanie bardzo dobrze sprawdza się w przypadku niezbalansowanych klas,
+  z którymi często mamy do czynienia w obrazowaniu medycznym (guz zajmuje zazwyczaj niewielką część kadru).
+
+  * **Optymalizator:** Adam z domyślnym współczynnikiem uczenia na poziomie 1e-4.
+
+  * **Sprzęt:** Kod automatycznie wykrywa dostępność karty graficznej ze wsparciem dla CUDA. W przypadku
+  jej braku, powraca do obliczeń na procesorze.
+
+
+  ## Zbiór danych
+
+  Projekt wykorzystuje zbiór danych **LGG MRI Segmentation** (autor: mateuszbuda). Dane są automatycznie
+  pobierane bezpośrednio z platformy Kaggle za pomocą biblioteki `kagglehub`. Zbiór zawiera skany w formacie
+  `.tif` oraz odpowiadające im binarne maski.
+
+
+  Podczas wykonywania komórek notatnika, zbiór jest normalizowany do przedziału [0, 1] i dzielony na trzy
+  części:
+
+  * Zbiór treningowy (~72%)
+
+  * Zbiór walidacyjny (~13%)
+
+  * Zbiór testowy (15%)
+
+
+  ## Wymagania
+
+  Do uruchomienia projektu wymagane jest środowisko Python oraz następujące biblioteki:
+
+
+  ```bash
+
+  pip install torch torchvision numpy pandas matplotlib opencv-python scikit-learn tqdm kagglehub jupyter
+
+  ```
+
+  ## Uruchomienie projektu
+
+  Aby rozpocząć pracę z modelem, należy sklonować repozytorium i uruchomić serwer Jupyter Notebook:
+
+  ```
+
+  git clone https://github.com/TWOJA_NAZWA/segmentacja_mri.git
+
+  cd segmentacja_mri
+
+  jupyter notebook
+
+  ```
+
+  Następnie w oknie przeglądarki otwórz plik segmentacja_MRI.ipynb i uruchamiaj kolejne komórki kodu.
+
+
+  Struktura notatnika krok po kroku:
+
+  * Pobranie plików z API Kaggle.
+
+  * Parsowanie ścieżek oraz walidacja wczytywania (wyświetlenie przykładowego obrazu).
+
+  * Inicjalizacja obiektów DataLoader (rozmiar batcha: 16).
+
+  * Uruchomienie pętli treningowej. Domyślna liczba epok to 2 w celu szybkiej demonstracji działania (wartość
+  przypisana do zmiennej EPOCHS).
+
+  * Obliczanie i logowanie wartości funkcji straty dla zbioru treningowego i walidacyjnego.
+
+  * Zapisanie wag wytrenowanego modelu do pliku unet_brain_mri.pth.
+
+  * Wykonanie predykcji na losowej próbce.
+
+
+  ## Ewaluacja i wizualizacja
+
+  Główną metryką wykorzystywaną do weryfikacji skuteczności segmentacji w fazie testowej jest Intersection
+  over Union (IoU), określana również mianem indeksu Jaccarda.
+
+  Po zakończeniu treningu i wczytaniu zapisanych wag, notatnik przetwarza jedno losowe zdjęcie z zestawu
+  testowego, nakłada próg detekcji (wartość progowa 0.5 po przejściu przez funkcję Sigmoid) i oblicza
+  procentową dokładność pokrycia pikseli. Na sam koniec generowany jest wykres porównawczy, składający
+  się z trzech części:
+
+  * Oryginalnego obrazu MRI
+
+  * Prawdziwej maski (Ground Truth)
+
+  * Przewidywanej maski wygenerowanej przez sieć U-Net
+
+  '

@@ -1,0 +1,86 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: thomleroy/drug-radiotherapy-explorer
+url: https://github.com/thomleroy/drug-radiotherapy-explorer
+platform: github
+description: ''
+license: null
+language: JavaScript
+keywords: []
+stars: 0
+updated_at: '2026-04-17T11:31:24Z'
+image_source: null
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# Radiosync — Drug & Radiotherapy Explorer\n\nA bilingual (FR/EN) reference web app,\
+  \ built under the aegis of the\n[Société Française de Radiothérapie Oncologique (SFRO)](https://www.sfro.fr),\n\
+  to help oncology clinicians decide **when and how long to stop systemic\nanticancer therapies before\
+  \ radiotherapy**.\n\nThe app covers four radiotherapy modalities (normofractionated, palliative,\nstereotactic,\
+  \ intracranial) and 158+ drugs across chemotherapy, endocrine\ntherapy, targeted therapy and immunotherapy.\n\
+  \n---\n\n## Quick start\n\n```bash\nnpm install\nnpm run dev           # Vite dev server on http://localhost:3000\n\
+  ```\n\n```bash\nnpm test              # Vitest, single run\nnpm run test:watch    # Vitest in watch\
+  \ mode\nnpm run build         # production bundle in build/\nnpm run preview       # serve the production\
+  \ build locally\nnpm run validate:data # sanity-check the drug catalog\n```\n\nThe project uses **Vite\
+  \ + Vitest** (migrated from Create React App). Requires **Node.js 18+**.\n\n## Project layout\n\n```\n\
+  index.html                Vite entry, CSP, OpenGraph, manifest, favicon\nvite.config.js            build\
+  \ + Vitest config + dev CSP stripper\npublic/\n  manifest.json           PWA manifest\n  service-worker.js\
+  \       offline cache (production only)\n  sfro-logo.png, …        static assets served at /\nsrc/\n\
+  \  App.jsx                 thin wrapper around DrugExplorer\n  index.jsx               React entry point\
+  \ + service worker registration\n  buildMeta.js            ⚠️ generated, do not edit\n  components/\n\
+  \    DrugExplorer.js       orchestration: state, effects, main JSX\n    translations.js       single\
+  \ source of truth for UI strings + drug class labels\n    state/useAppStore.js  tiny in-memory store\
+  \ (theme, lang, filters, …)\n    explorer/\n      cards/DrugCard.js\n      content/aboutContent.js\n\
+  \      hooks/useDebounce.js\n      hooks/useModalA11y.js\n      modals/AboutPopup.js\n      modals/ColumnManagerModal.js\n\
+  \      modals/ErrorBoundary.js\n      modals/HelpModal.js\n      modals/ReferencesPopup.js\n      search/SearchSuggestions.js\n\
+  \      ui/Badge.js\n      ui/ColumnHeaderWithTooltip.js\n      ui/LoadingFallback.js\n  data/\n    drugs.js\
+  \              the drug catalog (single source)\n    drugCatalog.js        wraps drugs.js, generates\
+  \ stable IDs\n    references.js         bibliographic references keyed by string number\n    ctProtocols.json\
+  \      RT-CT protocol map\n  utils/\n    security.js           escapeCsvField, isSafeHttpUrl, readFavorites/writeFavorites\n\
+  \    text.js               getCellColor, highlightMatch, hasMeaningfulReferences, …\n    markdown.js\
+  \           tiny markdown renderer used by AboutPopup\nscripts/\n  generate-build-meta.js  prebuild\
+  \ step writing src/buildMeta.js\n  validate-drugs.js       prebuild step validating the catalog\n```\n\
+  \n## Adding a new drug\n\n1. Open `src/data/drugs.js` and add an object to the `allDrugs` array.\n \
+  \  The schema is:\n\n   ```js\n   {\n     name: \"Cisplatin\",                // required, displayed\
+  \ in the table\n     dci: \"cisplatine\",                // optional, INN\n     commercial: \"Platinol\"\
+  ,           // brand name\n     administration: \"IV\",             // \"IV\", \"Oral\", …\n     class:\
+  \ \"Platinum based drugs\",    // must match a key in translations.fr.drugClasses\n     category: \"\
+  chemotherapy\",         // chemotherapy | endocrine | targeted | immunotherapy\n     halfLife: \"30min\
+  \ to 2h\",          // free-text, parsed for the half-life filter\n     normofractionatedRT: \"0\",\
+  \         // \"0\" | \"24h\" | \"48h\" | \"3 days\" | …\n     palliativeRT: \"0\",\n     stereotacticRT:\
+  \ \"0\",\n     intracranialRT: \"0\",\n     references: \"[228,229]\"           // comma-separated reference\
+  \ IDs in references.js,\n                                       // or \"[None]\" to mark \"no bibliography\"\
+  \n   }\n   ```\n\n2. If the drug class is new, add the French translation in\n   `src/components/translations.js`\
+  \ under `fr.drugClasses`.\n3. Add any new bibliographic references to `src/data/references.js`,\n  \
+  \ keyed by their identifier string.\n4. Run `npm run validate:data` — it checks that:\n   - every required\
+  \ field is present\n   - the category is one of the allowed buckets\n   - the slugified id (`name`-`class`)\
+  \ is unique\n   - every cited reference number exists in `references.js`\n   - reports orphan (uncited)\
+  \ references as a non-blocking warning\n\nCI fails the build if `validate:data` fails.\n\n## Color semantics\
+  \ (radiotherapy delay cells)\n\n| Color  | Meaning                       | Examples                \
+  \  |\n|--------|-------------------------------|---------------------------|\n| Green  | No delay required\
+  \             | `0`, `0 (except IV)`      |\n| Yellow | Short delay (≤ 48h)           | `24h`, `48h`,\
+  \ `24h to 48h`|\n| Red    | Long delay (> 48h, days/weeks)| `3 days`, `21 days`       |\n| —      |\
+  \ Free-text note (no rule)      | `No concomitant association: …` |\n\nThe legend in the table footer\
+  \ reflects this.\n\n## Keyboard shortcuts\n\n| Shortcut    | Action                          |\n|-------------|---------------------------------|\n\
+  | `⌘K` / `Ctrl+K` | Focus the search input      |\n| `?`         | Open the keyboard help modal    |\n\
+  | `↑` / `↓`   | Navigate search suggestions     |\n| `Enter`     | Pick the highlighted suggestion |\n\
+  | `Esc`       | Close the active dialog         |\n\n## Sharing a filtered view\n\nThe current filters,\
+  \ search term and sort column are mirrored to the URL\nquery string (`?q=…&category=…&class=…&halfLife=…&sort=…&dir=…`).\
+  \ Use the\n**Copy link** button next to the filter chips to copy a shareable URL.\n\n## Offline / PWA\n\
+  \nIn production builds, `src/serviceWorkerRegistration.js` installs a small\nservice worker (`public/service-worker.js`)\
+  \ that:\n\n- pre-caches the app shell on install\n- serves navigation requests network-first with a\
+  \ fallback to the cached shell\n- serves static assets cache-first with background revalidation\n\n\
+  Once the main JS chunk has been cached, the entire drug catalog is bundled\ninside it, so the app keeps\
+  \ working without a network connection.\n\n## Tests\n\n```bash\nnpm test                       # all\
+  \ suites\nnpm test -- --watchAll=false   # CI mode, single run\n```\n\nThe test suites cover the security/text\
+  \ helpers and a smoke test for\n`<App />`. Component-level tests live alongside their components in\n\
+  `src/components/explorer/**`.\n\n## Deployment\n\n```bash\nnpm run build\n```\n\nOutputs static assets\
+  \ in `build/` ready to serve from any CDN. Deployed on\nVercel; the `Analytics` and `SpeedInsights`\
+  \ components are imported in\n`src/App.js`.\n\n## Contact / contributing\n\nSuggestions, corrections\
+  \ and new molecules can be sent to\n[contact@sfro.fr](mailto:contact@sfro.fr).\n\n## License\n\n© SFRO\
+  \ — Société Française de Radiothérapie Oncologique. All rights reserved.\n"

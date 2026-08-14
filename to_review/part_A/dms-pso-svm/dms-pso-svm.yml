@@ -1,0 +1,145 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Edward-E-S-Wang/DMS-PSO-SVM
+url: https://github.com/Edward-E-S-Wang/DMS-PSO-SVM
+platform: github
+description: Dynamic Multi-Swarm Particle Swarm Optimization Support Vector Machine
+license: null
+language: Jupyter Notebook
+keywords:
+- machine-learning
+- medical-data-analysis
+- particle-swarm-optimization
+- prediction-model
+- radiomics
+- support-vector-machine
+stars: 1
+updated_at: '2026-06-20T02:55:56Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "## What is DMS-PSO-SVM?\n\n### Basic idea\n\nDMS-PSO-SVM is a hybrid optimization and\
+  \ classification framework that combines **Dynamic Multi-Swarm Particle Swarm Optimization (DMS-PSO)**\
+  \ with a **Support Vector Machine (SVM)**.\n\nIn this framework:\n\n- **SVM** is used as the final classifier\n\
+  - **DMS-PSO** is used to automatically optimize the key hyperparameters of SVM, typically:\n  - `C`:\
+  \ penalty parameter\n  - `gamma`: kernel parameter of the RBF kernel\n\nBecause the performance of SVM\
+  \ is highly sensitive to hyperparameter selection, a strong optimization strategy is often necessary.\
+  \ Instead of relying on manual tuning or exhaustive grid search, DMS-PSO-SVM uses an intelligent swarm-based\
+  \ search strategy to identify better parameter combinations efficiently.\n\n---\n\n### Why SVM needs\
+  \ optimization\n\nSVM is a powerful supervised learning algorithm, especially suitable for:\n\n- high-dimensional\
+  \ data\n- small-sample datasets\n- nonlinear classification tasks\n\nHowever, its classification performance\
+  \ depends strongly on the choice of hyperparameters.\n\nFor an RBF-kernel SVM:\n\n- `C` controls the\
+  \ trade-off between maximizing the margin and minimizing classification error\n- `gamma` determines\
+  \ how far the influence of a single sample reaches in feature space\n\nIf these parameters are not properly\
+  \ selected:\n\n- the model may overfit\n- the decision boundary may become unstable\n- generalization\
+  \ performance may decrease significantly\n\nTherefore, hyperparameter optimization is a key step in\
+  \ building a reliable SVM classifier.\n\n---\n\n### What is PSO-SVM?\n\nPSO-SVM is a common hybrid approach\
+  \ that uses **Particle Swarm Optimization (PSO)** to search for the optimal SVM hyperparameters.\n\n\
+  In standard PSO:\n\n- each particle represents a candidate solution, such as a pair of values `(C, gamma)`\n\
+  - particles move through the search space by updating their velocity and position\n- each particle learns\
+  \ from:\n  - its own historical best position (**personal best**, `pbest`)\n  - the best position found\
+  \ by the entire swarm (**global best**, `gbest`)\n\nThe algorithm iteratively updates the swarm until\
+  \ convergence, and the best parameter combination is then used to train the final SVM model.\n\nThis\
+  \ PSO-SVM framework is widely used because it is more flexible and often more efficient than manual\
+  \ search or grid search.\n\n---\n\n### Limitations of traditional PSO-SVM\n\nAlthough PSO-SVM is effective,\
+  \ standard PSO still has several well-known limitations, especially in complex or high-dimensional optimization\
+  \ tasks:\n\n1. **Premature convergence**  \n   The swarm may converge too early to a local optimum,\
+  \ especially when particles quickly cluster around a suboptimal region.\n\n2. **Loss of population diversity**\
+  \  \n   As iterations proceed, particles tend to become increasingly similar, which reduces the exploration\
+  \ ability of the algorithm.\n\n3. **Weak local-global balance**  \n   Standard PSO may struggle to maintain\
+  \ a good balance between:\n   - global exploration of the search space\n   - local exploitation around\
+  \ promising solutions\n\n4. **Overdependence on a single global best**  \n   Since all particles are\
+  \ influenced by the same `gbest`, the swarm may become overly centralized, limiting search diversity.\n\
+  \nBecause of these limitations, standard PSO-SVM may fail to find the best SVM parameters, particularly\
+  \ when the optimization landscape is complex.\n\n---\n\n## Improvements of DMS-PSO-SVM over PSO-SVM\n\
+  \nDMS-PSO-SVM improves traditional PSO-SVM by replacing standard PSO with **Dynamic Multi-Swarm Particle\
+  \ Swarm Optimization (DMS-PSO)**.\n\nThe key idea of DMS-PSO is to divide the entire population into\
+  \ several smaller **sub-swarms**, and then periodically reorganize these sub-swarms during the optimization\
+  \ process. This dynamic mechanism enhances diversity and improves the balance between exploration and\
+  \ exploitation.\n\n### 1. From single-swarm to multi-swarm optimization\n\nIn traditional PSO-SVM:\n\
+  \n- all particles belong to one swarm\n- all particles are guided by the same global best solution\n\
+  \nIn DMS-PSO-SVM:\n\n- particles are divided into multiple **sub-swarms**\n- each sub-swarm searches\
+  \ semi-independently\n- each sub-swarm maintains its own **local best** (`lbest`)\n\nThis design allows\
+  \ different groups of particles to explore different regions of the parameter space simultaneously.\n\
+  \n**Advantage:**  \nIt reduces the risk that the entire population becomes trapped in the same local\
+  \ optimum.\n\n---\n\n### 2. Introduction of local best learning instead of purely global learning\n\n\
+  Traditional PSO typically emphasizes the influence of the global best particle. In contrast, DMS-PSO\
+  \ introduces **local best guidance** within each sub-swarm.\n\nThis means that each particle updates\
+  \ itself based on:\n\n- its own best historical position (`pbest`)\n- the best solution found within\
+  \ its current sub-swarm (`lbest`)\n\nrather than relying only on one global leader.\n\n**Advantage:**\
+  \  \nThis mechanism preserves local search diversity and avoids excessive dependence on a single global\
+  \ optimum candidate.\n\n---\n\n### 3. Dynamic regrouping mechanism\n\nOne of the most important improvements\
+  \ in DMS-PSO is the **dynamic regrouping strategy**.\n\nAfter a fixed number of iterations, particles\
+  \ are randomly reassigned into new sub-swarms. In your implementation, this is controlled by:\n\n```python\n\
+  if t % regroup_period == 0:\n    rng.shuffle(indices)\n    subswarm_idxs = np.array_split(indices, n_swarms)\n\
+  ````\n\nThis means that particles periodically leave their current sub-swarm and join a new one, allowing\
+  \ information exchange across different search groups.\n\n**Advantage:**\n\n* prevents long-term isolation\
+  \ of sub-swarms\n* allows promising search patterns to spread across the population\n* improves communication\
+  \ between particles\n* helps the algorithm escape local optima\n\nThis dynamic regrouping is the core\
+  \ feature that distinguishes DMS-PSO from ordinary multi-swarm or standard PSO methods.\n\n---\n\n###\
+  \ 4. Better balance between exploration and exploitation\n\nA good optimization algorithm must achieve\
+  \ two goals:\n\n* **Exploration**: searching broadly across the parameter space\n* **Exploitation**:\
+  \ refining promising candidate solutions\n\nStandard PSO sometimes shifts too quickly from exploration\
+  \ to exploitation, which can lead to premature convergence.\n\nDMS-PSO-SVM improves this balance by:\n\
+  \n* using multiple sub-swarms for parallel exploration\n* using local best guidance for focused refinement\n\
+  * using regrouping to renew diversity and expand search coverage\n\n**Advantage:**\nThe algorithm is\
+  \ generally more robust in complex optimization landscapes and more likely to find better hyperparameter\
+  \ combinations.\n\n---\n\n### 5. Improved robustness and global search capability\n\nBecause DMS-PSO\
+  \ maintains higher particle diversity and avoids over-centralization, it usually has better global search\
+  \ performance than standard PSO.\n\nFor SVM hyperparameter tuning, this means:\n\n* more stable optimization\
+  \ behavior\n* reduced chance of poor local solutions\n* potentially better classification performance\
+  \ on unseen data\n\nThis is especially useful for biomedical datasets such as radiomics, where:\n\n\
+  * feature space is often high-dimensional\n* sample size is limited\n* data distribution may be complex\
+  \ and nonlinear\n\n---\n\n## Compared with traditional PSO-SVM, DMS-PSO-SVM introduces several important\
+  \ improvements:\n\n* it divides the swarm into multiple sub-swarms instead of using a single swarm\n\
+  * it uses local best learning instead of relying only on a global best\n* it periodically reshuffles\
+  \ particles through a dynamic regrouping strategy\n* it better preserves population diversity during\
+  \ optimization\n* it reduces premature convergence and improves global search capability\n* it provides\
+  \ a more effective and robust way to optimize SVM hyperparameters\n\nIn short, **DMS-PSO-SVM can be\
+  \ regarded as an enhanced PSO-SVM framework** that is more suitable for difficult parameter optimization\
+  \ problems, especially in small-sample, high-dimensional, and nonlinear classification tasks.\n\n---\n\
+  \n## Conceptual comparison between PSO-SVM and DMS-PSO-SVM\n\n| Aspect                             \
+  \   | PSO-SVM                      | DMS-PSO-SVM                              |\n| -------------------------------------\
+  \ | ---------------------------- | ---------------------------------------- |\n| Swarm structure   \
+  \                    | Single swarm                 | Multiple dynamic sub-swarms              |\n|\
+  \ Learning strategy                     | Personal best + global best  | Personal best + local best\
+  \               |\n| Search behavior                       | Easier to become centralized | More distributed\
+  \ and flexible            |\n| Information exchange                  | Mainly through global best  \
+  \ | Through regrouping and local competition |\n| Suitability for complex search spaces | Limited  \
+  \                    | More suitable                            |\n\n---\n\n## Interpretation in this\
+  \ project\n\nIn this project, DMS-PSO-SVM is used to optimize the two most important hyperparameters\
+  \ of the RBF-SVM:\n\n* `C`\n* `gamma`\n\nEach particle represents one candidate pair of parameter values\
+  \ in log-space. During iterative optimization:\n\n1. particles explore the parameter space\n2. each\
+  \ sub-swarm updates according to its own local best solution\n3. sub-swarms are periodically regrouped\n\
+  4. the best discovered parameter combination is used to train the final SVM classifier\n\nThe quality\
+  \ of each particle is evaluated by **cross-validated ROC-AUC**, making the optimization process directly\
+  \ aligned with classification performance.\n\nThis design makes the framework particularly suitable\
+  \ for structured biomedical classification tasks where robust hyperparameter tuning is critical.\n\n\
+  ---\n\n# DMS-PSO-SVM for Binary Classification\n\nA Python implementation of a **DMS-PSO-SVM** framework\
+  \ for binary classification, integrating **Dynamic Multi-Swarm Particle Swarm Optimization (DMS-PSO)**\
+  \ with an **RBF-kernel Support Vector Machine (SVM)** to automatically optimize hyperparameters and\
+  \ build a robust predictive model.\n\nThis project is especially suitable for **small-sample, high-dimensional\
+  \ structured datasets**, such as radiomics, pathomics, or other biomedical feature-based classification\
+  \ tasks.\n\n---\n\n## Overview\n\nSupport Vector Machine (SVM) is a widely used machine learning algorithm\
+  \ for binary classification, particularly effective in high-dimensional problems. However, the performance\
+  \ of SVM strongly depends on the selection of hyperparameters, especially:\n\n- `C`: penalty parameter\
+  \ controlling the trade-off between margin maximization and classification error\n- `gamma`: kernel\
+  \ coefficient in the RBF kernel, controlling the influence range of individual samples\n\nTraditional\
+  \ hyperparameter tuning methods such as grid search are often computationally expensive and may not\
+  \ efficiently explore the search space. To address this issue, this project adopts **Dynamic Multi-Swarm\
+  \ Particle Swarm Optimization (DMS-PSO)** to optimize SVM hyperparameters automatically.\n\nThe workflow\
+  \ includes:\n\n1. Loading and preprocessing raw tabular data\n2. Handling complex-like or non-standard\
+  \ numeric entries\n3. Splitting data into training and validation sets\n4. Using DMS-PSO to search for\
+  \ the optimal `C` and `gamma`\n5. Training the final SVM model with the best parameters\n6. Evaluating\
+  \ model performance on an independent validation set\n\n---\n\n## Features\n\n- Implements **DMS-PSO**\
+  \ for SVM hyperparameter optimization\n- Uses **cross-validated ROC-AUC** as the fitness criterion\n\
+  - Supports **binary classification**\n- Handles **complex-like string values** by converting them to\
+  \ real values\n- Reports multiple evaluation metrics:\n  - AUC\n  - Accuracy\n  - Sensitivity\n  - Specificity\n\
+  - Easy to adapt to radiomics and other structured biomedical datasets\n\n---\n\n## Requirements\n\n\
+  Install the required Python packages before running the project:\n\n```bash\npip install pandas numpy\
+  \ scikit-learn\n```\n\n---\n\n## Input Data Format\n\nThe input file should be a CSV file, for example:\n\
+  \n```csv\nlabel,feature1,feature2,feature3,...\n0,0.123,1.456,2.78"

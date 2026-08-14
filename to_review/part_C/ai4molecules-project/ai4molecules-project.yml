@@ -1,0 +1,119 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: KChengus/AI4Molecules_project
+url: https://github.com/KChengus/AI4Molecules_project
+platform: github
+description: Under what biological and statistical conditions does multi-task learning help or hurt toxicity
+  prediction?
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-03-05T16:12:02Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: '# MTL vs STL Toxicity Prediction on Tox21
+
+
+  **DAT675 - AI for Molecules** | Chalmers University of Technology
+
+
+  ## Research Question
+
+
+  > Does multi-task learning on the Tox21 dataset reliably improve endpoint-level toxicity prediction
+  over single-task learning, or does negative transfer emerge under specific biological and data conditions?
+
+
+  ## Hypotheses
+
+
+  - **H1 (Positive Transfer):** MTL gains correlate with inter-task biological similarity (Phi correlation)
+
+  - **H2 (Cross-Mechanism Interference):** Mixing NR + SR tasks causes negative transfer
+
+  - **H3 (Imbalance & Instability):** Severe class imbalance marginalizes sparse endpoints in MTL
+
+
+  ## Dataset
+
+
+  [Tox21](https://moleculenet.org/datasets-1) from MoleculeNet (~8,000 molecules, 12 binary toxicity endpoints):
+
+
+  | Group | Endpoints |
+
+  |-------|-----------|
+
+  | Nuclear Receptor (NR) | NR-AR, NR-AR-LBD, NR-AhR, NR-Aromatase, NR-ER, NR-ER-LBD, NR-PPAR-gamma |
+
+  | Stress Response (SR) | SR-ARE, SR-ATAD5, SR-HSE, SR-MMP, SR-p53 |
+
+
+  Heavy label sparsity and class imbalance (<5% positive for most endpoints).
+
+
+  ## Methods
+
+
+  - **Scaffold split** (80/10/10) using Bemis-Murcko scaffolds — zero scaffold overlap between sets
+
+  - **Molecular featurization** via Chemprop (72-dim atom features, 14-dim bond features) converted to
+  PyG graphs
+
+  - **Baselines:** Logistic Regression and Random Forest on Morgan fingerprints (radius=2, 2048 bits)
+
+  - **STL:** 12 independent GCN models (3 layers, 128 hidden, global mean pooling)
+
+  - **MTL:** Shared GCN encoder + 12 task-specific heads
+
+  - **Loss:** Masked BCE with task-specific class weights
+
+  - **Metrics:** AUPRC (primary), AUROC (secondary)
+
+
+  ## Project Structure
+
+
+  ```
+
+  project/
+
+  ├── main.ipynb           # All code: pipeline, profiling, baselines, STL, MTL
+
+  ├── project_proposal.pdf # Full proposal with methodology
+
+  ├── CLAUDE.md            # Dev notes and implementation tracker
+
+  ├── tox21/raw/tox21.csv  # Raw dataset (auto-downloaded)
+
+  └── graphs/              # Saved figures
+
+  ```
+
+
+  ## Setup
+
+
+  ```bash
+
+  conda activate dat675
+
+  ```
+
+
+  Key dependencies: `rdkit`, `torch`, `torch_geometric`, `pytorch_lightning`, `chemprop`, `scikit-learn`,
+  `seaborn`
+
+
+  ## Running
+
+
+  Open `main.ipynb` and run cells sequentially. The dataset downloads automatically on first run.
+
+  '

@@ -1,0 +1,52 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ahad21005-cloud/brats-goat-2026-segmentation
+url: https://github.com/ahad21005-cloud/brats-goat-2026-segmentation
+platform: github
+description: Engineering-optimized nnU-Net v2 baseline for BraTS-GoAT 2026 Task 3 (Brain Tumor Segmentation)
+license: MIT
+language: Shell
+keywords: []
+stars: 0
+updated_at: '2026-08-11T06:36:39Z'
+image_source: null
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+readme_excerpt: "# BraTS-GoAT 2026 (Task 3): Brain Tumor Segmentation\n\nEngineering-optimized nnU-Net\
+  \ v2 baseline for BraTS-GoAT 2026 Task 3 (Brain Tumor Segmentation).\n\nThis repository contains the\
+  \ methodology, SLURM HPC scripts, and codebase for our submission to the **BraTS-GoAT 2026 Challenge\
+  \ (Task 3: Generalizability)**.\n\n**Authors:** Ahad Ali Nazir, Absaar ul Jabbar  \n**Institution:**\
+  \ School of Interdisciplinary Engineering and Sciences (SINES), National University of Sciences and\
+  \ Technology (NUST), Islamabad, Pakistan\n\n---\n\n## Project Overview\n\nThis project establishes an\
+  \ engineering-optimized **nnU-Net v2 (3D full-resolution)** baseline for segmenting brain tumors into\
+  \ three sub-regions:\n1. Necrotic Core (NCR)\n2. Peritumoral Edema (ED)\n3. Enhancing Tumor (ET)\n\n\
+  The model was trained on the **Dataset 503 (BraTS Tumors)** cohort using a rigorous 5-fold cross-validation\
+  \ strategy.\n\n---\n\n## Infrastructure & Engineering Optimizations\n\nTraining was conducted on the\
+  \ NUST SINES High-Performance Computing (HPC) cluster using NVIDIA A10G (24GB VRAM) GPUs. To guarantee\
+  \ stable, multi-day 1000-epoch training runs under strict 72-hour SLURM wall-time limits, we implemented\
+  \ the following critical cluster optimizations:\n\n* **Worker Down-regulation:** Reduced parallel data-augmentation\
+  \ workers (`nnUNet_n_proc_DA=2`) to resolve `ArrayMemoryError` multi-threading crashes during 3D spatial\
+  \ augmentation.\n* **Compilation Bypass:** Disabled PyTorch dynamic compilation (`TORCHDYNAMO_DISABLE=1`\
+  \ and `nnUNet_compile=0`) to prevent graph-compilation instability over multi-day workloads.\n\n---\n\
+  \n## Repository Contents\n\n* `/slurm_scripts/`: Custom bash scripts used for cluster deployment, including\
+  \ bulletproof environment path activation and automatic resume logic.\n* **End-to-End Pipeline Scripts:**\
+  \ All numbered Python and Bash scripts (00_env.sh through 05_fold0_best_worst_cases.py) for Synapse\
+  \ download, dataset conversion, A10G SLURM training, and evaluation are available directly in the root\
+  \ repository.\n* **Docker Submission:** The finalized 5-fold ensemble model will be containerized and\
+  \ pushed to the official Synapse registry for the July 23, 2026 hidden test-set evaluation.\n\n---\n\
+  \n## Quickstart Guide for New Students\n\n### 1. Directory Structure\n\n### 1. Directory Structure\n\
+  Set up your project directory structure as follows:\n\n```text\npeds_brain_project/\n├── data/\n│  \
+  \ ├── nnUNet_raw/\n│   │   └── Dataset503_BraTSGoAT/\n│   ├── nnUNet_preprocessed/\n│   └── nnUNet_results/\n\
+  └── slurm_scripts/\n```\n\n### 2. Environment Setup\nActivate the pre-configured Conda environment:\n\
+  \n```bash\nconda activate brats\n```\n\n### Preliminary Validation Results\nOur current baseline demonstrates\
+  \ strong performance, particularly in delineating enhancing tumor and edema regions.\n\n| Fold | Overall\
+  \ Mean Dice | NCR Dice | ED Dice | ET Dice |\n| :--- | :---: | :---: | :---: | :---: |\n| Fold 0 | 0.827\
+  \ | 0.770 | 0.850 | 0.862 |\n| Fold 1 | 0.830 | 0.780 | 0.850 | 0.861 |\n| Fold 2 | 0.831 | 0.780 |\
+  \ 0.849 | 0.864 |\n| Fold 3 | 0.824 | 0.758 | 0.853 | 0.862 |\n| Fold 4 (Best) | **0.845** | **0.795**\
+  \ | **0.860** | **0.878** |\n| **Mean (5-fold)** | **0.831** | **0.776** | **0.853** | **0.866** |\n\
+  \n### Overall Metrics\n\n| Metric | Overall Mean | NCR | ED | ET |\n| :--- | :---: | :---: | :---: |\
+  \ :---: |\n| **Median HD95 (mm)** | 1.52 | 1.57 | 2.00 | 1.00 |\n| **Median NSD** | 0.9302 | 0.9331\
+  \ | 0.8992 | 0.9582 |\n"

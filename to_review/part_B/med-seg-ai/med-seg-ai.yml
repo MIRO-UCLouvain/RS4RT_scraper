@@ -1,0 +1,99 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Pavan-220405/Med-Seg-AI
+url: https://github.com/Pavan-220405/Med-Seg-AI
+platform: github
+description: Full-stack brain tumor segmentation system using FastAPI, PostgreSQL, Redis, Tensorflow and
+  a modern frontend. Enables MRI upload, U-NET powered tumor detection, and visualization through an interactive
+  web interface
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-23T06:12:09Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# Med-Seg-AI\n\nA FastAPI backend for **medical image segmentation**, built around a\
+  \ U-Net deep-learning model for **brain tumor segmentation**. It exposes a secure, token-authenticated\
+  \ REST API for running inference on MRI scans, managing a registry of ML models, and tracking prediction\
+  \ history.\n\nThe service loads a trained Keras/TensorFlow U-Net at startup, accepts an uploaded scan,\
+  \ returns the original image with the predicted tumor region overlaid, and persists both the input and\
+  \ the generated mask along with inference metadata.\n\n---\n\n## Features\n\n- **Brain tumor segmentation**\
+  \ — upload a brain MRI image and receive a PNG with the predicted tumor mask overlaid in red.\n- **JWT\
+  \ authentication** — access/refresh token flow with token-type validation, expiry, and refresh-token\
+  \ revocation (logout) backed by a Redis blocklist.\n- **Role-based access control** — `user`, `radiologist`,\
+  \ and `admin` roles; admin-only operations are guarded by a role checker.\n- **Model registry** — admins\
+  \ can register and remove ML models, each with version, framework, type, storage path, and evaluation\
+  \ metrics.\n- **Prediction tracking** — every inference is recorded in the database with the input/mask\
+  \ paths and measured inference time.\n- **Async stack** — `asyncpg` connection pooling for PostgreSQL\
+  \ and `redis.asyncio` for the token blocklist, managed through the FastAPI lifespan.\n\n---\n\n## Tech\
+  \ Stack\n\n| Layer | Technology |\n|-------|-----------|\n| API framework | FastAPI + Uvicorn |\n| ML\
+  \ runtime | TensorFlow 2.11 / Keras 2.11 (U-Net, `.h5` model) |\n| Image processing | OpenCV, NumPy\
+  \ |\n| Database | PostgreSQL (via `asyncpg`) |\n| Cache / token store | Redis (via `redis.asyncio`)\
+  \ |\n| Migrations | Alembic |\n| Auth | PyJWT, bcrypt, passlib |\n| Config | Pydantic `BaseSettings`\
+  \ (`.env`) |\n\n---\n\n## Project Structure\n\n```\n.\n├── app/\n│   ├── main.py                  #\
+  \ FastAPI app, lifespan startup/shutdown, router registration\n│   ├── config.py                # Pydantic\
+  \ settings loaded from .env\n│   ├── db/\n│   │   ├── engine.py            # asyncpg connection pool\
+  \ (init/get/close)\n│   │   └── redis_engine.py      # Redis client + JWT blocklist helpers\n│   ├──\
+  \ auth/\n│   │   ├── utils.py             # password hashing, JWT create/decode\n│   │   └── dependencies.py\
+  \      # token bearers, get_conn, current-user & role-checker deps\n│   ├── users/\n│   │   ├── routes.py\
+  \            # signup, login, refresh, logout, make_admin\n│   │   ├── crud.py              # user DB\
+  \ operations\n│   │   └── schemas.py           # user Pydantic models\n│   └── ML_models/\n│       ├──\
+  \ routes.py            # model registry endpoints (add/delete)\n│       ├── crud.py              # model\
+  \ & prediction DB operations\n│       ├── schemas.py           # model & prediction Pydantic models\n\
+  │       ├── Brain_Tumor_Segmentation/\n│       │   ├── routes.py        # /predict inference endpoint\n\
+  │       │   ├── utils.py         # model lifecycle, file validation, preprocessing\n│       │   ├──\
+  \ best_model.h5    # trained U-Net weights (not committed — see below)\n│       │   └── *.ipynb    \
+  \      # training / testing notebooks\n│       └── Brain_Tumor_Classification/   # placeholder for a\
+  \ future classification model\n├── alembic/                     # database migrations\n├── alembic.ini\n\
+  ├── requirements.txt             # core dependency list\n├── final_requirements.txt       # full pinned\
+  \ dependency set (incl. transitive)\n└── Notes/                       # background reading (U-Net /\
+  \ CNN PDFs)\n```\n\n---\n\n## Getting Started\n\n### Prerequisites\n\n- Python 3.10+\n- PostgreSQL (a\
+  \ database named `MedSegAI` by default)\n- Redis\n- The trained model weights file `best_model.h5` placed\
+  \ in\n  `app/ML_models/Brain_Tumor_Segmentation/` (model weights are git-ignored and must be supplied\
+  \ separately).\n\n### 1. Install dependencies\n\n```bash\npython -m venv venv\nsource venv/bin/activate\n\
+  pip install -r requirements.txt\n# or, for the fully pinned environment:\n# pip install -r final_requirements.txt\n\
+  ```\n\n### 2. Configure environment\n\nCreate a `.env` file in the project root:\n\n```env\nJWT_SECRET_KEY=your-secret-key\n\
+  JWT_ALGORITHM=HS256\nACCESS_TOKEN_EXPIRY_MINUTES=15\nREFRESH_TOKEN_EXPIRY_DAYS=7\nDATABASE_URL=postgresql://postgres:1234@localhost:5432/MedSegAI\n\
+  REDIS_HOST=localhost\nREDIS_PORT=6379\nJTI_EXPIRY=60\n```\n\n> `REDIS_HOST`, `REDIS_PORT`, and `JTI_EXPIRY`\
+  \ have defaults (`localhost`, `6379`, `60`) and can be omitted.\n\n### 3. Run database migrations\n\n\
+  The migration connection string lives in `alembic.ini` (`sqlalchemy.url`) — update it to match your\
+  \ database before running:\n\n```bash\nalembic upgrade head\n```\n\n### 4. Start the server\n\n```bash\n\
+  uvicorn app.main:app --reload\n```\n\nThe API will be available at `http://localhost:8000`. Interactive\
+  \ docs are served at `http://localhost:8000/docs`.\n\n---\n\n## API Reference\n\nAll routes are prefixed\
+  \ with `/api/v1`. Protected routes require an `Authorization: Bearer <token>` header.\n\n### Users —\
+  \ `/api/v1/users`\n\n| Method | Path | Auth | Description |\n|--------|------|------|-------------|\n\
+  | POST | `/signup` | Public | Register a new user (`user` or `radiologist`). |\n| POST | `/login` |\
+  \ Public | Authenticate; returns access + refresh tokens and user details. |\n| POST | `/refresh_token`\
+  \ | Refresh token | Issue a new access token. |\n| POST | `/logout` | Refresh token | Revoke the refresh\
+  \ token (adds its `jti` to the Redis blocklist). |\n| POST | `/make_admin` | Admin | Promote a user\
+  \ to `admin` by email. |\n| GET | `/` | Access token | List active models. |\n\n### Segmentation — `/api/v1/segmentation`\n\
+  \n| Method | Path | Auth | Description |\n|--------|------|------|-------------|\n| POST | `/predict`\
+  \ | Access token | Upload a brain MRI image; returns a PNG with the tumor mask overlaid. Saves input/mask\
+  \ and records the prediction. |\n\nAccepted upload formats: `.png`, `.tif`, `.tiff`. Images are resized\
+  \ to 256×256 and normalized before inference; the mask is thresholded at 0.5.\n\n### Models — `/api/v1/models`\n\
+  \n| Method | Path | Auth | Description |\n|--------|------|------|-------------|\n| POST | `/` | Admin\
+  \ | Register a new model in the registry. |\n| DELETE | `/{model_id}` | Admin | Remove a model by UUID.\
+  \ |\n\n---\n\n## Database Schema\n\nManaged by Alembic migrations under `alembic/versions/`.\n\n- **users**\
+  \ — `id`, `user_name`, `first_name`, `last_name`, `email`, `hashed_password`, `role` (`user` / `radiologist`\
+  \ / `admin` / `expert`), `joined_at`.\n- **models** — `id`, `model_name`, `version`, `description`,\
+  \ `framework`, `model_type`, `model_path`, `metrics` (JSONB), `is_active`, `created_at`, `added_by`\
+  \ → `users(id)`. Unique on `(model_name, version)`.\n- **predictions** — `prediction_id`, `user_id`\
+  \ → `users(id)`, `model_id` → `models(id)`, `input_path`, `mask_path`, `inference_time`, `created_at`.\n\
+  \n---\n\n## How Inference Works\n\n1. The U-Net model (`best_model.h5`) is loaded once at application\
+  \ startup via the FastAPI lifespan (`init_model`) and held in memory.\n2. On `POST /predict`, the uploaded\
+  \ file's extension and contents are validated, then decoded with OpenCV.\n3. The image is converted\
+  \ to RGB, resized to 256×256, and normalized to `[0, 1]`.\n4. The model predicts a mask; values above\
+  \ `0.5` are kept as the tumor region.\n5. The mask is overlaid in red (alpha 0.55) on the original image\
+  \ and returned as a PNG.\n6. The input image and generated mask are written to `segmentation_storage/`,\
+  \ and a prediction record is persisted to the database with the measured inference time.\n\n> The segmentation\
+  \ `MODEL_ID` is currently hard-coded in `Brain_Tumor_Segmentation/routes.py`; this can be made dynamic\
+  \ once a full model registry/selection flow is in place.\n\n---\n\n## Notes\n\n- Model weight files\
+  \ (`*.h5`, `*.pt`, `*.pth`, `*.ckpt`, `*.pkl`) and the `segmentation_storage/` directory are git-ignored.\n\
+  - The `Brain_Tumor_Classification/` module is a placeholder for a future classification model.\n- Training\
+  \ and testing experiments are kept in the Jupyter notebooks under `Brain_Tumor_Segmentation/`.\n"

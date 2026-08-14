@@ -1,0 +1,138 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: mazenElzeiny/AURORA-RT
+url: https://github.com/mazenElzeiny/AURORA-RT
+platform: github
+description: '"Real-time Cherenkov-based adaptive radiotherapy with hypoxia-targeted dose modulation"'
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-11T16:35:16Z'
+image_source: null
+heuristic_total_score: 22
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 4 particle-therapy term(s).
+- Matched 4 support term(s).
+readme_excerpt: "<div align=\"center\">\n\n# ☢️ AURORA-RT\n\n### **A**utonomous · **O**xy-Responsive ·\
+  \ **R**adiotherapy · **A**pproach — **R**eal-**T**ime\n\n> \U0001FA7A *Real-Time Oxygen-Guided Adaptive\
+  \ Radiation Therapy*\n\n**A Digital Twin simulation framework for Cherenkov-guided, hypoxia-mediated\
+  \ adaptive radiotherapy**\n\nIntegrating TOPAS Monte Carlo · NIRFAST optical diffusion · Virtual ICCD\
+  \ sensing · Deliverability-constrained dose optimization\n\n![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=for-the-badge&logo=python&logoColor=white)\n\
+  ![TOPAS](https://img.shields.io/badge/TOPAS-v3.7-00897B?style=for-the-badge)\n![Geant4](https://img.shields.io/badge/Geant4-10.7-1565C0?style=for-the-badge)\n\
+  ![NIRFAST](https://img.shields.io/badge/NIRFAST-optical--diffusion-6A1B9A?style=for-the-badge)\n![License](https://img.shields.io/badge/License-Academic-orange?style=for-the-badge)\n\
+  ![Status](https://img.shields.io/badge/Status-Proof--of--Concept-brightgreen?style=for-the-badge)\n\n\
+  </div>\n\n---\n\n## \U0001F4CB Table of Contents\n\n- [Pipeline at a Glance](#️-pipeline-at-a-glance)\n\
+  - [Overview](#-overview)\n- [Key Results](#-key-results)\n- [Results Visualized](#-results-visualized)\n\
+  - [TOPAS Model Configuration](#-topas-model-configuration)\n- [Setup Instructions](#️-setup-instructions)\n\
+  \  - [1. Clone NIRFAST](#1-clone-nirfast)\n  - [2. Place the Demo Notebook](#2-place-the-demo-notebook)\n\
+  \  - [3. Add the Data Files](#3-add-the-data-files)\n- [Running the Demo](#-running-the-demo)\n- [Project\
+  \ Structure](#-project-structure)\n- [Team](#-team)\n\n---\n\n## \U0001F5FA️ Pipeline at a Glance\n\n\
+  > Four sequential phases — from beam delivery to adaptive dose update.\n\n<div align=\"center\">\n\n\
+  ```mermaid\nflowchart LR\n    A[\"⚛️ **Phase I**\\nTOPAS MC\\nGeant4 · 6 MV\"]:::phase1\n    B[\"\U0001F30A\
+  \ **Phase II**\\nNIRFAST\\ndiffusion + ICCD\"]:::phase2\n    C[\"\U0001F9EE **Phase III**\\nRed Ref\
+  \ + NNLS\\nmelanin fix\"]:::phase3\n    D[\"\U0001F3AF **Phase IV**\\nDose boost\\nα = 0.12\"]:::phase4\n\
+  \    R[\"✅ **63.38%**\\nhypoxia reduction\"]:::result\n\n    A -- \"Cherenkov\" --> B\n    B -- \"Raw\
+  \ RGB\" --> C\n    C -- \"StO₂ map\" --> D\n    D -. \"↻ feedback to\\nnext fraction\" .-> A\n    D\
+  \ --> R\n\n    classDef phase1 fill:#EEEDFE,stroke:#534AB7,color:#3C3489\n    classDef phase2 fill:#E1F5EE,stroke:#0F6E56,color:#085041\n\
+  \    classDef phase3 fill:#FAECE7,stroke:#993C1D,color:#712B13\n    classDef phase4 fill:#FAEEDA,stroke:#854F0B,color:#633806\n\
+  \    classDef result  fill:#EAF3DE,stroke:#3B6D11,color:#27500A\n```\n\n</div>\n\n---\n\n## \U0001F52C\
+  \ Overview\n\nThis project implements a four-phase Digital Twin pipeline for in silico prototyping of\
+  \ biologically adaptive radiotherapy driven by real-time Cherenkov emission:\n\n| Phase | Module | Description\
+  \ |\n|-------|--------|-------------|\n| ⚛️ **I — Physics** | TOPAS / Geant4 | Monte Carlo radiation\
+  \ transport, secondary electron tracking & Cherenkov photon generation via Frank–Tamm model |\n| \U0001F30A\
+  \ **II — Sensing** | NIRFAST + ICCD model | Optical diffusion transport to tissue surface; virtual intensified\
+  \ CCD camera with shot & read noise |\n| \U0001F9EE **III — Recovery** | Red Reference + NNLS | Beer-Lambert\
+  \ melanin correction across 100 Fitzpatrick skin phenotypes; affine calibration for low-dose regimes\
+  \ |\n| \U0001F3AF **IV — Adaptation** | Dose optimizer | Hypoxia classification at 70% StO₂ threshold;\
+  \ locked dose-weighted enhancement (α = 0.12) |\n\n---\n\n## \U0001F4CA Key Results\n\nResults on the\
+  \ **TOPAS TumorPhantom** (10⁷ particle histories — low-dose stress-test regime):\n\n| Metric | Value\
+  \ |\n|--------|-------|\n| \U0001F3AF Calibrated StO₂ recovery — MAE | **1.55 pp** |\n| \U0001F4C8 Calibrated\
+  \ StO₂ recovery — R² | **0.964** (N = 1534 voxels) |\n| ✅ Hypoxia classification — Precision | **0.993**\
+  \ |\n| \U0001F501 Hypoxia classification — Recall | **0.979** |\n| \U0001F3C5 Hypoxia classification\
+  \ — F1 | **0.986** |\n| \U0001F7E9 Confusion matrix | TP=139 · FP=1 · FN=3 · TN=1391 |\n| \U0001F489\
+  \ Hypoxic burden reduction (α=0.12) | **63.38%** (142 → 52 voxels) |\n\n> Computational benchmark under\
+  \ idealized conditions (comparative reference): R²=0.97, MAE=0.80 pp, hypoxia reduction 86.7% over 10\
+  \ fractions.\n\n---\n\n## \U0001F4F8 Results Visualized\n\n### \U0001F527 Calibration Effect — Before\
+  \ vs After\n\n> Raw StO₂ recovery suffered severe systematic bias (MAE = 78.85 pp) in the low-dose TOPAS\
+  \ regime.\n> Affine calibration reduced this to **MAE = 1.55 pp (R² = 0.964)** — bringing predictions\
+  \ tightly onto the identity line.\n\n<!-- \U0001F4CC INSERT FIGURE HERE: calibration scatter plot (before/after\
+  \ side-by-side) -->\n<!-- Suggested filename: figures/fig3_calibration_scatter.png -->\n\n<img width=\"\
+  1600\" height=\"691\" alt=\"Calibration\" src=\"https://github.com/user-attachments/assets/419d9cef-751b-4869-a15f-badfdd5560a0\"\
+  \ />\n\n\n---\n\n### \U0001F3AF Hypoxia Classification Performance\n\n> At the clinical 70% StO₂ threshold,\
+  \ the calibrated pipeline achieves near-perfect separation\n> between normoxic and hypoxic voxels —\
+  \ with only **1 false positive** and **3 false negatives** out of 1534 voxels.\n\n<!-- \U0001F4CC INSERT\
+  \ FIGURE HERE: confusion matrix + bar chart of Precision / Recall / F1 -->\n<!-- Suggested filename:\
+  \ figures/fig4_hypoxia_classification.png -->\n\n<img width=\"1600\" height=\"678\" alt=\"Hypoxia\"\
+  \ src=\"https://github.com/user-attachments/assets/c7ad9b3c-76dc-4463-823a-6a32151680c3\" />\n\n\n---\n\
+  \n### \U0001F30A NIRFASTerFF Optical Diffusion — Surface Fluence Maps\n\n> Phase II solves the photon\
+  \ diffusion equation using the Cherenkov source field from TOPAS as input.\n> The three spectral channels\
+  \ (630, 700, 850 nm) show characteristic spatial attenuation — strongest at 630 nm due to higher haemoglobin\
+  \ absorption — and feed directly into the virtual ICCD camera model.\n\n<!-- \U0001F4CC INSERT FIGURE\
+  \ HERE: wavelength-resolved surface fluence maps at 630 / 700 / 850 nm -->\n<!-- Suggested filename:\
+  \ figures/fig_nirfast_fluence.png -->\n<!-- Content: side-by-side or 3-panel surface fluence output\
+  \ from NIRFASTerFF on the TOPAS TumorPhantom geometry -->\n\n<img width=\"1600\" height=\"599\" alt=\"\
+  NIRFASR + TOPAS\" src=\"https://github.com/user-attachments/assets/5ff45d79-8a1b-48a5-9e5a-c48585139870\"\
+  \ />\n\n\n---\n\n### \U0001F489 Adaptive Dose Enhancement — Hypoxic Burden Reduction\n\n> Locked enhancement\
+  \ (α = 0.12) selectively boosted dose to pre-identified hypoxic voxels only.\n> **90 voxels reoxygenated**,\
+  \ 52 remained persistently hypoxic — a **63.38% net reduction**.\n\n<!-- \U0001F4CC INSERT FIGURE HERE:\
+  \ pre/post StO₂ maps + enhancement magnitude + transition map (4-panel Figure 5) -->\n<!-- Suggested\
+  \ filename: figures/fig5_dose_enhancement.png -->\n\n<img width=\"1600\" height=\"1041\" alt=\"Enhancement\"\
+  \ src=\"https://github.com/user-attachments/assets/66ac40b0-3b0c-405b-906e-7d366b556224\" />\n\n\n---\n\
+  \n## ⚙️ TOPAS Model Configuration\n\nThe Cherenkov 3-band wavelength model (`Cherenkov_3band_wavelength_debug.txt`)\
+  \ used to generate all input fluence files is configured as follows:\n\n### \U0001F3D7️ Geometry\n\n\
+  | Parameter | Value |\n|-----------|-------|\n| World volume | 2.0 m × 2.0 m × 2.0 m (half-lengths:\
+  \ 1.0 m each) |\n| Water phantom | 30 cm × 30 cm × 30 cm (half-lengths: 15.0 cm each) |\n| Scoring grid\
+  \ | 30 × 30 × 60 voxels |\n| Voxel size | 1.0 cm × 1.0 cm × 0.5 cm |\n| Total scored voxels (per file)\
+  \ | 54,000 |\n\n### \U0001F526 Beam & Run Parameters\n\n| Parameter | Value |\n|-----------|-------|\n\
+  | Source particle | gamma |\n| Beam energy | 6.0 MeV |\n| Histories per run | 1,000,000 |\n| Threads\
+  \ | 1 |\n| Random seed | 12345 |\n\n### \U0001F308 Optical Bands Scored\n\n| Output File | Band | Energy\
+  \ Range |\n|-------------|------|-------------|\n| `Fluence_OpticalAll.csv` | All optical photons (no\
+  \ KE filter) | — |\n| `Fluence_630nm.csv` | 615 – 645 nm | 1.9223 – 2.0160 eV |\n| `Fluence_700nm.csv`\
+  \ | 685 – 715 nm | 1.7340 – 1.8100 eV |\n| `Fluence_850nm.csv` | 835 – 865 nm | 1.4334 – 1.4849 eV |\n\
+  \n### \U0001F5A5️ Run Command (WSL / PowerShell)\n\n```powershell\nwsl -e bash -lc \"export TOPAS_G4_DATA_DIR=/home/mazen/topas/G4Data;\
+  \ cd /mnt/c/Users/HP/Desktop/Projects/MedicalPhysc\\ Comp; /home/mazen/topas/bin/topas Cherenkov_3band_wavelength_debug.txt\"\
+  \n```\n\n### \U0001F4C1 Expected Output Files\n\n```\nFluence_OpticalAll.csv\nFluence_630nm.csv\nFluence_700nm.csv\n\
+  Fluence_850nm.csv\nDose_resampled_30x30x60.npy        ← resampled from DoseRef.npy\nDose_generated_from_resampled.csv\
+  \  ← format: x, y, z, Dose\n```\n\n> \U0001F4A1 `Fluence_OpticalAll.csv` is included for debugging and\
+  \ cross-verification of band-filtered outputs.\n> The resampled dose volume was generated from the high-resolution\
+  \ `DoseRef.npy` onto the 30×30×60 voxel grid to match fluence scorer dimensions.\n\n---\n\n## \U0001F6E0\
+  ️ Setup Instructions\n\n### 1. Clone NIRFAST\n\nClone the NIRFAST repository from GitHub:\n\n```bash\n\
+  git clone https://github.com/milabuob/nirfaster-uFF.git\n```\n\nAfter cloning, navigate into `nirfast-uff/demo/`\
+  \ — all following steps apply inside that folder.\n\n---\n\n### 2. Place the Demo Notebook\n\nReplace\
+  \ the existing `demo_start.ipynb` inside the `demo` folder with the updated notebook from this repository:\n\
+  \n```\nnirfast-uff/\n└── demo/\n    └── demo_start.ipynb   ← \U0001F501 replace this with the file from\
+  \ this repo\n```\n\nVia terminal:\n\n```bash\ncp path/to/this/repo/demo_start.ipynb path/to/nirfast-uff/demo/demo_start.ipynb\n\
+  ```\n\n---\n\n### 3. Add the Data Files\n\nA `data.zip` archive is provided in this repository containing\
+  \ all fluence maps, dose files, and supporting CSVs required by the notebook.\n\n**Steps:**\n\n1. \U0001F4E5\
+  \ Download `data.zip`\n2. \U0001F4C2 Extract its contents\n3. \U0001F4CB Place **all extracted files**\
+  \ directly inside `nirfast-uff/demo/`:\n\n```\nnirfast-uff/\n└── demo/\n    ├── demo_start.ipynb\n \
+  \   ├── Fluence_OpticalAll.csv\n    ├── Fluence_630nm.csv\n    ├── Fluence_700nm.csv\n    ├── Fluence_850nm.csv\n\
+  \    ├── Dose_resampled_30x30x60.npy\n    ├── Dose_generated_from_resampled.csv\n    └── ... (all other\
+  \ extracted files)\n```\n\n> ⚠️ **Important:** Do **not** place files inside a nested subfolder. They\
+  \ must sit at the **same level** as `demo_start.ipynb`.\n\n---\n\n## \U0001F680 Running the Demo\n\n\
+  Once setup is complete:\n\n```bash\n# Navigate to the demo folder\ncd path/to/nirfast-uff/demo\n\n#\
+  \ Launch Jupyter\njupyter notebook demo_start.ipynb\n```\n\nRun all cells **in order** — the notebook\
+  \ is self-contained and will:\n- Load fluence and dose maps\n- Apply melanin correction across 100 skin\
+  \ phenotypes\n- Run the non-circular Beer-Lambert validation\n- Produce all result figures and CSV summaries\
+  \ automatically\n\n**\U0001F40D Dependencies:** Python 3.9+, NumPy, SciPy, Pandas, Matplotlib — standard\
+  \ scientific Python packages.\n\n---\n\n## \U0001F4C1 Project Structure\n\n```\n.\n├── \U0001F4D3 demo_start.ipynb\
+  \                    # Main demo notebook → place in nirfast-uff/demo/\n├── \U0001F5DC️  data.zip  \
+  \                          # Input data archive → extract into nirfast-uff/demo/\n├── \U0001F40D patch_cell_v2.py\
+  \                    # Non-circular DPF validation patch cell\n├── \U0001F4C4 Cherenkov_3band_wavelength_debug.txt\
+  \ # TOPAS model definition file\n├── \U0001F4CB README_Cherenkov_3band_wavelength_debug.md  # TOPAS\
+  \ model documentation\n└── \U0001F4D6 README.md                           # This file\n```\n\n---\n\n\
+  ## \U0001F465 Team\n\nDeveloped by students of the **Biomedical Engineering Department, Cairo University**\n\
+  under the supervision of **Dr. Sherif ElGohary**\n\n| \U0001F464 Name | \U0001F4BB GitHub | \U0001F517\
+  \ LinkedIn |\n|---------|----------|------------|\n| Aya Sayed | [GitHub](https://github.com/14930)\
+  \ | [LinkedIn](https://www.linkedin.com/in/aya-sayed-bb6a80397) |\n| Mazen Mohamed | [GitHub](https://github.com/mazenElzeiny)\
+  \ | [LinkedIn](https://www.linkedin.com/in/mazenelzeiny) |\n| Maryam Moustafa | [GitHub](https://github.com/maryamkhalid-06)\
+  \ | [LinkedIn](https://www.linkedin.com/in/maryam-moustafa-653257378) |\n| Engy Wael | [GitHub](https://github.com/engy27005)\
+  \ | [LinkedIn](https://www.linkedin.com/in/engy-wael-284277342/) |\n| Engy Mohamed | [GitHub](https://github.com/engyelsarta)\
+  \ | [LinkedIn](https://www.linkedin.com/in/engy-elsarta-6a6a06283) |\n\n---\n\n<div align=\"center\"\
+  >\n\n\U0001F3DB️ **Cairo University · Faculty of Engineering · Biomedical Engineering Department**\n\
+  \nSupervised by Dr. Sherif ElGohary — [Sh.elgohary@eng1.cu.edu.eg](mailto:Sh.elgohary@eng1.cu.edu.eg)\n\
+  \n</div>\n"

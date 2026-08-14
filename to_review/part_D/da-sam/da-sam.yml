@@ -1,0 +1,72 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: zymalpha/DA_SAM
+url: https://github.com/zymalpha/DA_SAM
+platform: github
+description: a systematic adaptation of SAM for metal trace segmentation in CBCT projections
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-03-07T15:44:18Z'
+image_source: https://raw.githubusercontent.com/zymalpha/DA_SAM/HEAD/assets/DA_SAM.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# DA-SAM: Dual-Adapter SAM with Learned Mask Prompts for CBCT Projection-Domain Metal\
+  \ Trace Segmentation\n\nOfficial implementation of DA-SAM for CBCT projection-domain metal trace segmentation.\n\
+  \n## Abstract\n\nAccurate segmentation of metal traces within the cone-beam computed tomography (CBCT)\
+  \ projection domain is a fundamental but challenging task for metal artifact reduction (MAR). As a prompt-driven\
+  \ foundation model, the Segment Anything Model (SAM) holds great potential for improving projection-domain\
+  \ metal trace segmentation. However, several challenges must be addressed before applying SAM in this\
+  \ setting. First, the domain gap between natural images and CBCT projections leads to performance degradation.\
+  \ Second, SAM's image encoder, optimized for natural scenes, has limited capability in capturing the\
+  \ high-frequency boundaries of metal traces. Third, SAM's heavy dependency on high-quality prompts creates\
+  \ a bottleneck for metal trace segmentation. To address these issues, we propose Dual-Adapter SAM (DA-SAM).\
+  \ DA-SAM incorporates three key components: an Adaptive Input Adapter (AIA) that bridges the domain\
+  \ gap by modulating features between raw and histogram-equalized projections; a Wavelet Frequency Adapter\
+  \ (WFA), which captures high-frequency metal boundaries via the discrete wavelet transform and compensates\
+  \ for the limitations of SAM's image encoder in modeling subtle structures; and a Mask Prompt Generator\
+  \ (MPG) that fuses coarse mask priors with raw projections via a U-Net to synthesize high-quality mask\
+  \ prompts, thereby eliminating the need for manual interaction. Extensive experiments on clinical CBCT\
+  \ datasets demonstrate that DA-SAM achieves superior segmentation performance.\n\n## Framework\n\n![DA-SAM\
+  \ framework](assets/DA_SAM.png)\n\n## Repository\n\n```text\nDA_SAM_new/\n|-- assets/\n|-- code/\n|\
+  \   |-- preprocess/\n|   |-- datasets/\n|   |-- models/\n|   |-- utils/\n|   |-- train_stage1.py\n|\
+  \   |-- train_stage2.py\n|   |-- test_stage1.py\n|   `-- test_stage2.py\n|-- configure/\n|-- requirements.txt\n\
+  `-- README.md\n```\n\nMain entry points:\n\n- `code/preprocess/reconstruct_from_mat.py`\n- `code/preprocess/project_metal_trace.py`\n\
+  - `code/preprocess/equalize_projection.py`\n- `code/preprocess/export_png_slices.py`\n- `code/train_stage1.py`\n\
+  - `code/train_stage2.py`\n- `code/test_stage1.py`\n- `code/test_stage2.py`\n\n## Installation\n\nInstall\
+  \ DA-SAM:\n\n```bash\ngit clone https://github.com/3067348049/DA_SAM\ncd DA_SAM_new\npip install -r\
+  \ requirements.txt\n```\n\nExact tested package versions are listed in `requirements.txt`.\n\nPlace\
+  \ the SAM checkpoint at:\n\n```text\ncheckpoints/sam_vit_b_01ec64.pth\n```\n\n### Optional: Install\
+  \ CTorch for preprocessing\n\n`code/preprocess/` depends on CTorch. If you already have prepared `proj_img\
+  \ / Eq_proj_img / proj_metal / metal_trace_label`, you can skip this part.\n\n```bash\nconda create\
+  \ -n dasam_ct python=3.9\nconda activate dasam_ct\npip install pybind11\npip install git+https://github.com/JHU-AIAI-Shared/AIAI-CTorch-Public.git@main\n\
+  ```\n\nOr install from a local CTorch copy:\n\n```bash\ncd path/to/AIAI-CTorch-Public\npython setup.py\
+  \ install\n```\n\nCheck CTorch:\n\n```bash\npython -c \"import CTorch; print('CTorch is available')\"\
+  \n```\n\n## Data\n\nThe dataset is private. Only the expected directory layout is shown here.\n\n```text\n\
+  data/\n|-- proj_img/\n|   `-- sampleXX/*.png\n|-- Eq_proj_img/\n|   `-- sampleXX/*.png\n|-- proj_metal/\n\
+  |   `-- sampleXX/*.png\n`-- metal_trace_label/\n    `-- sampleXX/*.png\n```\n\nFilenames must stay aligned\
+  \ across the four folders for each sample.\n\n## Pipeline\n\n### 1. Optional preprocessing from `.mat`\n\
+  \nReconstruct CBCT volumes:\n\n```bash\npython code/preprocess/reconstruct_from_mat.py ^\n  --data_dir\
+  \ path\\\\to\\\\mat_files ^\n  --seq_dir path\\\\to\\\\geometry_seq ^\n  --out_dir path\\\\to\\\\preprocess\\\
+  \\recon ^\n  --gpu_idx 0\n```\n\nGenerate `proj_img`, `proj_metal`, and labels:\n\n```bash\npython code/preprocess/project_metal_trace.py\
+  \ ^\n  --recon_dir path\\\\to\\\\preprocess\\\\recon ^\n  --mat_dir path\\\\to\\\\mat_files ^\n  --seq_dir\
+  \ path\\\\to\\\\geometry_seq ^\n  --out_dir path\\\\to\\\\preprocess\\\\proj ^\n  --threshold 0.08 ^\n\
+  \  --gpu_idx 0\n```\n\nEqualize projections:\n\n```bash\npython code/preprocess/equalize_projection.py\
+  \ ^\n  --in_dir path\\\\to\\\\preprocess\\\\proj ^\n  --out_dir path\\\\to\\\\preprocess\\\\eq\n```\n\
+  \nExport training PNG folders:\n\n```bash\npython code/preprocess/export_png_slices.py ^\n  --proj_img_dir\
+  \ path\\\\to\\\\preprocess\\\\proj ^\n  --eq_dir path\\\\to\\\\preprocess\\\\eq ^\n  --proj_metal_dir\
+  \ path\\\\to\\\\preprocess\\\\proj ^\n  --label_dir path\\\\to\\\\preprocess\\\\proj ^\n  --out_dir\
+  \ path\\\\to\\\\data\n```\n\n### 2. Train\n\n```bash\ncd code\npython train_stage1.py --gpu_idx 0\n\
+  python train_stage2.py --gpu_idx 0\n```\n\n### 3. Test\n\n```bash\ncd code\npython test_stage1.py --gpu_idx\
+  \ 0\npython test_stage2.py --gpu_idx 0 --save_predictions\n```\n\n## Results\n\n| Method | Dice | IoU\
+  \ | Precision | Recall | HD95 |\n|--------|------|-----|-----------|--------|------|\n| SAM-B | 0.9396\
+  \ | 0.8879 | 0.9387 | 0.9419 | 10.21 |\n| MK-UNet | 0.9506 | 0.9071 | 0.9503 | 0.9520 | 4.83 |\n| MedSAM\
+  \ | 0.8543 | 0.7520 | 0.8495 | 0.8622 | 23.25 |\n| MSA | 0.9481 | 0.9028 | 0.9369 | 0.9608 | 5.40 |\n\
+  | DeSAM | 0.9513 | 0.9084 | 0.9473 | 0.9564 | 2.65 |\n| **DA-SAM (Ours)** | **0.9567** | **0.9180**\
+  \ | **0.9523** | **0.9620** | **1.59** |\n\n### Qualitative Comparison\n\n![Qualitative results](assets/qualitative_results.png)\n"

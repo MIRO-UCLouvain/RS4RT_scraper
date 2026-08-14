@@ -1,0 +1,101 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Maxlo24/AMASSS_CBCT
+url: https://github.com/Maxlo24/AMASSS_CBCT
+platform: github
+description: Automatic segmentation of CBCT scans with a 3D Unet
+license: null
+language: Python
+keywords: []
+stars: 67
+updated_at: '2026-08-10T14:58:42Z'
+image_source: https://user-images.githubusercontent.com/46842010/155926868-ca81d82b-8735-4f33-97af-0c3d616e6910.png
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# Automatic Multi-Anatomical Skull Structure Segmentation of Cone-Beam Computed Tomography\
+  \ scans Using 3D UNETR\n*AMASSS-CBCT*\n\n\n# Presentation\n\n- The segmentation of medical and dental\
+  \ images is a fundamental step in automated clinical decision support systems. It supports the entire\
+  \ clinical workflows from diagnosis, therapy planning, intervention and follow-up. \n- We propose a\
+  \ novel tool to accurately process a full face segmentation in about 5 minutes that would otherwise\
+  \ require an average of 7h of manual work by experienced clinicians. \n- This work focuses on the integration\
+  \ of the state-of-the-art UNEt TRansformers (UNETR) of the Medical Open Network for Artificial Intelligence\
+  \ (MONAI) framework. \n- We trained and tested our models using 618 de-identified Cone-Beam Computed\
+  \ Tomography (CBCT) volumetric images of the head acquired with several parameters from different centers\
+  \ for a generalized clinical application. \n- Our results on a 5 fold cross-validation showed high accuracy\
+  \ and robustness with an F1 score up to $0.962\\pm0.02$.\n- Full face model made by combining the mandible,\
+  \ the maxilla, the cranial base, the cervical vertebra and the skin segmentation:\n\n---\n![Segmentation](https://user-images.githubusercontent.com/46842010/155926868-ca81d82b-8735-4f33-97af-0c3d616e6910.png)\n\
+  \n\n# How to use AMASSS-CBCT\n\n- Using the [AMASSS-CBCT 3D Slicer module](https://github.com/DCBIA-OrthoLab/SlicerAutomatedDentalTools).\
+  \ You can segment a CBCT scan with no coding language required using 3D Slicer GUI.\n- Using the [DSCI](https://dsci.dent.umich.edu/#/)\
+  \ web-based plateform, you can segment a CBCT scan with no coding language required.\n- Localy, you\
+  \ can use the scipts on you computer using docker or the source code on github.\n\n\n# Local usage\n\
+  \n## Arguments to run AMASSS-CBCT prediction script\n\nRecquired arguments:\n```\n-i <Path of the scan\
+  \ to segment> or <Folder with the scans to segment> \n-o <Output folder to save the segmentation>\n\
+  -dm <Folder with the trained models>\n```\n\nSegmentation options:\n```\n -ss <structure to segment>\n\
+  \ -hd <working on small FOV ?> \n -m <merge the segmentation ?>\n```\n\nValid arguments for `-ss`: \n\
+  - `MAND` (mandible)\n- `MAX` (maxilla)\n- `CB` (cranial base)\n- `CV` (cervical vertebra)\n- `UAW` (upper\
+  \ airway) \n- `SKIN` (skin)\n- `RC` (root canal)\n\n\n\nSave options:\n```\n-sf <Save outputs in one\
+  \ folder ?>\n-id <ID in the generated files name>\n```\n\n3D surface generation arguments:\n```\n-vtk\
+  \ <Generate vtk files ?>\n-vtks <Smoothing applied to the 3d surface>\n```\n\nTechnical arguments:\n\
+  ```\n-sp <Spacing recquired by the model>\n-cs <Crop size as imput of the model>\n-pr <Overlapping of\
+  \ the sliding window inferer (between 0 and 1)>\n-mo <Merging order of the sgemented structure>\n```\n\
+  \nComputing power arguments:\n\n```\n-ncw <number of CPU processes>\n-ngw <number of GPU processes>\
+  \ \n```\n\n\n## Use Docker image\nYou can get the AMASSS docker image by running the folowing command\
+  \ lines.\n\n**Building using the DockerFile**\n\nFrom the DockerFile directory:\n```\ndocker pull dcbia/amasss:latest\n\
+  ```\n\nFrom the DockerFile directory:\n\n```\ndocker build -t amasss .\n```\n\n**Automatic segmentation**\n\
+  *Running on CPU*\n```\ndocker run --rm --shm-size=5gb -v <Folder_with_the_scans_to_segment>:/app/data/scans\
+  \ amasss:latest python3 /app/MULTI_SEG/src/predict_CBCTSeg.py \n```\n*Running on GPU*\n```\ndocker run\
+  \ --rm --shm-size=5gb --gpus all -v <Folder_with_the_scans_to_segment>:/app/data/scans amasss:latest\
+  \ python3 /app/MULTI_SEG/src/predict_CBCTSeg.py\n```\n\n**Informations**\n- A ***test scan*** \"MG_scan_test.nii.gz\"\
+  \ is provided in the Data folder of the AMASSS repositorie.\n- If the prediction with the ***GPU is\
+  \ not working***, make sure you installed the NVIDIA Container Toolkit : \nhttps://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker\n\
+  \n**Segmentation options/arguments exemple**\n- By default, the mandible (MAND), the maxilla (MAX),\
+  \ the cranial base (CB), the cervical vertebra (CV) and the upper airway (UAW) structures  are segmented\
+  \ and a merged segmentation is generated.\n    To choose which structure to segment, you can use the\
+  \ following arguments:\n    ```\n    -ss MAND MAX CB CV UAW\n    ```\n    To deactivate the merging\
+  \ step, you can use the following argument:\n    ```\n    -m False\n    ```\n- By default the prediction\
+  \ will use 5 CPU process and use a batch size of 5 on the GPU (which requires around 8GB on the GPU),\
+  \ you can use the following argument to change this numbers: \n    ```\n    -ncw 2 -ngw 2\n    ```\n\
+  \    (ncw for the CPU and ngw for the GPU)\n\n___\n\n## Using the scripts\n## Prerequisites\n\npython\
+  \ 3.8.8 with the librairies:\n\n**Main librairies:**\n\n> monai==0.7.0 \\\n> torch==1.10.1 \\\n> itk==5.2.1\
+  \ \\\n> numpy==1.20.1 \\\n> simpleitk==2.1.1\n\nYou can install the required librairies by running the\
+  \ following command:\n\n```\npip install -r requirements.txt\n``` \n\n\n## Running the code\n\nUsing\
+  \ the script [predict_CBCTSeg.py](MULTI_SEG/src/predict_CBCTSeg.py)\n\nBasic usage:\n```\npython3 predict_CBCTSeg.py\
+  \ -i <Folder_with_the_scans_to_segment> -o <Folder_to_save_the_segmentation> -dm <Folder with the trained\
+  \ models>\n```\nExample to segment the mandible, the maxilla, the cranial base, the cervical vertebra\
+  \ and the upper airway in a large FOV scan (the MG_scan_test.nii.gz) with 3D surface generation and\
+  \ merging:\n\n```\npython3 predict_CBCTSeg.py -i ./Data/MG_scan_test.nii.gz -o ./Data -dm <Folder with\
+  \ the trained models> -ss MAND MAX CB CV UAW -vtk True\n```\n\nPrediction steps\n\n![prediction](https://user-images.githubusercontent.com/46842010/155927157-19206e54-7a90-4816-8eb7-72369a04c39e.png)\n\
+  \n\n\n# Train AMASSS-CBCT\n\n### Prepare the data\n\n**Spacing**\nTo run the preprocess to organise\
+  \ the files and set them at the wanted spacing:\n\nChange the scan spacing to the wanted spacing using\
+  \ the script [init_training_data.py](MULTI_SEG/src/init_training_data.py):\n\n```\npython3 init_training_data.py\
+  \ -i \"path of the input folder with the scans and the segs\" -o \"path of the output folder\"\n```\n\
+  By defaul the spacing is set at 0.5 but we can change and add other spacing with the argument :\n```\n\
+  -sp 0.X1 0.X2 ... 0.Xn \n````\n\n**Contrast adjustment**\nTo run the preprocess to correct the image\
+  \ contrast and fill the holes in the segmentations\nrun the folowing command line using the script [correct_file.py](MULTI_SEG/src/correct_file.py):\n\
+  \n```\npython3 correct_file.py -i <Path of the input folder with the scans and the segs> -o <Path of\
+  \ the output folder> -rad <Closing radius>\n```\n\nExpected results of the contrast adjustment :\n![ContrastAdjust](https://user-images.githubusercontent.com/46842010/155178176-7e735867-4ad2-412d-9ac0-c47fe9d7cd8e.png)\n\
+  \n\n### Organise the training folder\n\nOrganise the training folder as follows:\n\n<img width=\"278\"\
+  \ alt=\"Screen Shot 2022-02-22 at 12 11 56 PM\" src=\"https://user-images.githubusercontent.com/46842010/181832258-ae140fed-4e8a-4871-a3b9-6e7dd68f628c.png\"\
+  >\n\n\n### Start the training\n\nUse the script [train_CBCTseg.py](MULTI_SEG/src/train_CBCTseg.py):\n\
+  \n\n```\npython3 train_CBCTseg.py --dir_project <Path of the training folder>\n\n```\nAditional options:\n\
+  ```\n-mn <Model name>\n-vp <Porcentage of data for validation> \n-cs <Input size of the model> \n-me\
+  \ <number of epoch> \n-nl <number of output label> \n-bs <batch size> \n-nw <number of workers>\n```\n\
+  \nYou can launch a TensorBoard session to follow the training progress:\n\n\n___\n\n\n\nResults \n\n\
+  ![RESULTS](https://user-images.githubusercontent.com/46842010/155927668-906b4fae-4249-4556-a4fa-7a622e9c6c81.png)\n\
+  \n\n\n\n# Acknowledgements\n\nAuthors: Maxime Gillot (University of Michigan), Baptiste Baquero (UoM),\
+  \ Celia Le (UoM), Romain Deleat-Besson (UoM), Lucia Cevidanes (UoM), Jonas Bianchi (UoM), Marcela Gurgel\
+  \ (UoM), Marilia Yatabe (UoM), Najla Al Turkestani (UoM), Kayvan Najarian (UoM), Reza Soroushmehr (UoM),\
+  \ Steve Pieper (ISOMICS), Ron Kikinis (Harvard Medical School), Beatriz Paniagua ( Kitware ), Jonathan\
+  \ Gryak (UoM), Marcos Ioshida (UoM), Camila Massaro (UoM), Liliane Gomes (UoM), Heesoo Oh (University\
+  \ of Pacific), Karine Evangelista (UoM), Cauby Chaves Jr (University of Ceara), Daniela Garib (University\
+  \ of São Paulo), Fábio Costa (University of Ceara), Erika Benavides (UoM), Fabiana Soki (UoM), Jean-Christophe\
+  \ Fillion-Robin (Kitware), Hina Joshi (University of North Narolina), Juan Prieto (Dept. of Psychiatry\
+  \ UNC at Chapel Hill)\n\nSupported by NIDCR R01 024450, AA0F Grabber Family Teaching and Research Award\
+  \ and by Research Enhancement Award Activity 141 from the University of the Pacific, Arthur A. Dugoni\
+  \ School of Dentistry.\n"

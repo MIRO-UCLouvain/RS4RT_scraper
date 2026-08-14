@@ -1,0 +1,56 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: leonlou921/MicroBT
+url: https://github.com/leonlou921/MicroBT
+platform: github
+description: 'MicroBT: centroid-guided learning for micro brain tumor segmentation and counting'
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-08-08T09:18:38Z'
+image_source: https://raw.githubusercontent.com/leonlou921/MicroBT/HEAD/docs/assets/microbt_method.png
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+readme_excerpt: "# MicroBT\n\n> **Accepted at the British Machine Vision Conference (BMVC) 2026.**\n\n\
+  MicroBT is a self-contained research implementation of **Centroid-Guided Synergistic Learning for Multi-Modal\
+  \ Micro Brain Tumor Segmentation and Counting**. It retains the complete nnU-Net v2 source tree and\
+  \ adds the original MicroBT architecture, Centroid-Anchored Synergy (CAS), Volume-Calibrated Loss (VC-Loss),\
+  \ and the two-stage Size-Aware Curriculum Optimization (SACO).\n\n\n## Overview\n\n[![MicroBT architecture\
+  \ overview](docs/assets/microbt_method.png)](docs/assets/microbt_method.pdf)\n\n*MicroBT architecture\
+  \ overview. Click the figure to open the original vector PDF.*\n\n## Pipeline\n\n```text\nenvironment\
+  \ check -> generic NIfTI conversion -> nnU-Net preprocessing\n                  -> Stage 1 (300 epochs)\
+  \ -> Stage 2 (200 epochs)\n                  -> inference -> segmentation/detection/counting evaluation\n\
+  ```\n\nThe supported execution target is Ubuntu/Linux with an NVIDIA CUDA GPU. Python 3.10, PyTorch\
+  \ 2.3, and torchvision 0.18 are pinned by the package metadata and environment file.\n\n## Quick start\n\
+  \n```bash\ngit clone https://github.com/leonlou921/MicroBT.git\ncd MicroBT\nconda env create -f environment.yml\n\
+  conda activate microbt\ncp configs/microbt_default.yaml configs/local.yaml\n```\n\nEdit `configs/local.yaml`\
+  \ to use your own paths and generic dataset specification, then inspect every action without executing\
+  \ it:\n\n```bash\npython -m microbt.cli run --config configs/local.yaml --dry-run\n```\n\nRun the stages\
+  \ individually:\n\n```bash\nbash scripts/00_check_environment.sh --config configs/local.yaml\nbash scripts/01_prepare_dataset.sh\
+  \ --config configs/local.yaml\nbash scripts/02_plan_and_preprocess.sh --config configs/local.yaml\n\
+  bash scripts/03_train_stage1.sh --config configs/local.yaml --fold 0\nbash scripts/04_train_stage2.sh\
+  \ --config configs/local.yaml --fold 0\nbash scripts/05_infer.sh --config configs/local.yaml\nbash scripts/06_evaluate.sh\
+  \ --config configs/local.yaml\n```\n\nOr run the ordered pipeline with validated resume semantics:\n\
+  \n```bash\npython -m microbt.cli run --config configs/local.yaml --resume\n```\n\nConfiguration precedence\
+  \ is `nnUNet_* environment variables < YAML < repeated --set dotted.key=value`.\n\n## Outputs\n\n- Segmentation:\
+  \ one NIfTI file per case.\n- Centroid heatmap: `<case>_heatmap.nii.gz`.\n- Instances: `<case>.instances.json`,\
+  \ with bounding boxes, centroids, scores, and classes.\n- Case status: `<case>.status.json`; resume\
+  \ skips only cases whose complete output set still exists.\n- Evaluation: `per_case_metrics.csv`, `summary.csv`,\
+  \ and versioned `summary.json`.\n- Pipeline state: sanitized manifests under `<pipeline_output>/manifests/`.\n\
+  \nThe evaluation field `predicted_count` is always computed from connected components of the **final\
+  \ segmentation mask** after thresholding at 0.5 (26-connectivity by default). Low-threshold proposals\
+  \ do not change that count.\n\n## Documentation\n\n- [Data format and converter](docs/DATA.md)\n- [Two-stage\
+  \ training](docs/TRAINING.md)\n- [Inference contract](docs/INFERENCE.md)\n- [Evaluation definitions](docs/EVALUATION.md)\n\
+  - [Reproducibility](docs/REPRODUCIBILITY.md)\n- [GPU smoke test](docs/GPU_SMOKE.md)\n- [Troubleshooting](docs/TROUBLESHOOTING.md)\n\
+  - [Model card](docs/MODEL_CARD.md)\n\n## Tests\n\n```bash\npython -m pytest tests/unit tests/integration\
+  \ -q\npython -m compileall -q microbt nnunetv2\npython tools/audit_release.py --root .\n```\n\nThe CPU\
+  \ suite uses generated data only. Run `bash scripts/run_gpu_smoke.sh` on a compatible CUDA host for\
+  \ bounded forward/backward, checkpoint handoff, and inference verification.\n\n## Attribution and license\n\
+  \nMicroBT is derived from [nnU-Net](https://github.com/MIC-DKFZ/nnUNet). Exact baseline provenance is\
+  \ recorded in [NOTICE](NOTICE). The repository is licensed under [Apache License 2.0](LICENSE).\n\n\
+  If you use this software, cite the software metadata in [CITATION.cff](CITATION.cff). The associated\
+  \ manuscript has been accepted at BMVC 2026; no DOI is claimed here.\n"

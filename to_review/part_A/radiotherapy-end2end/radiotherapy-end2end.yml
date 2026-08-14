@@ -1,0 +1,117 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ArunB2024/radiotherapy_end2end
+url: https://github.com/ArunB2024/radiotherapy_end2end
+platform: github
+description: ''
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-01-21T11:37:47Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 3 support term(s).
+readme_excerpt: "# An end-to-end natural language processing system for automatically extracting radiotherapy\
+  \ events from clinical texts\n\n## License\n\nThis code is released under the [Apache License, Version\
+  \ 2.0](https://www.apache.org/licenses/LICENSE-2.0)\n\n## Paper\n\nThe paper for which this code was\
+  \ written is [here]( https://doi.org/10.1016/j.ijrobp.2023.03.055 ).\nThis README does *not* include\
+  \ information on the schema or guidelines used in annotating the data,\nor more than basic information\
+  \ about the source of the data.\nFor technical questions not pertaining to this code, please see the\
+  \ paper.\n\n## Description\n\nThe provided code and data comprises a system for extracting radiotherapy\
+  \ treatment events from clinical text,\nusing paragraph parsing from [cTAKES](https://ctakes.apache.org),\n\
+  followed by event extraction over the paragraphs using\n[transformer](https://huggingface.co/docs/transformers/main/en/index)-based\n\
+  named entity recognition (NER) and relation extraction (RE) models, and rule-based post-processing.\n\
+  \nPlease note that the system uses individual NER models for each entity, and a single multi-class RE\
+  \ model for all relations.\n\n## User Community\n\nPhysicians, cancer registries, or individual developers,\n\
+  interested in extracting radiotherapy treatment events from free form clinical text.\n\n## Usability\n\
+  \nThe provided code can be used to train a model and classify it on the provided data in the `HemOnc_RT_Data`\
+  \ folder\n(or other data the developer has access to).\nThe provided code uses data from [HemOnc.org](HemOnc.org),\
+  \ the Kentucky Cancer Registry, and the Mayo Clinic,\nthat has been downloaded, annotated, paragraph\
+  \ parsed, and converted to `tsv`.\n\nThere are three types of `tsv` data formatting used in this code,\
+  \ one for training named entity recognition NERmodels,\none for training the RE model,\nand one for\
+  \ evaluating the full end to end pipeline system.\nFor further explanation see the [data format section](#input-format).\
+  \   \n\nWe include the formatted training and evaluation data from HemOnc.org,\nand not from the other\
+  \ two sources, due to data use agreements and to protect patient privacy.\nFor this reason we do not\
+  \ include our models used in the paper,\nhowever we include results from models trained on the included\
+  \ data for reproducibility.  \n\n## Uniqueness\n\nRadiotherapy treatment is often only described in\
+  \ clinical documents, but end-to-end extraction of these treatments from text is an as yet\nunaddressed\
+  \ problem in clinical natural language processing.\nThe authors hope this work will contribute to cancer\
+  \ surveillance and outcomes research in general by facilitating real-world evidence generation. Future\
+  \ goals including using these methods to help construct comprehensive cancer treatment timelines.\n\n\
+  ## Point of Contact\n\nIf you have trouble running this software or find any issues, please contact\
+  \ [Eli Goldner](mailto:eli.goldner@childrens.harvard.edu?subject=[GitHub]%20RT%20System%20Code). \n\n\
+  ## Process Overview\n\nTo reproduce our steps:\n- [Install this code](#installation)\n- [Train models\
+  \ for each RT task](#training-models)\n- [Run the models in pipeline mode on the data](#pipeline-evaluation)\n\
+  \n\nThe pipeline evaluation provides both instance averaged and document averaged results.\nThe models\
+  \ will provide instance averaged results on a validation set\n(just rename the test split or any other\
+  \ file to `dev.tsv` to have the model evaluate on that).\nIf however you have data organized by document\
+  \ and want to obtain document averaged results for an\nindividual model, see [this section](#individual-model-document-level-evaluation).\n\
+  \n\n## Installation\n\n```\nconda create -n cnlp python=3.8\n```\n\nFollow the instructions for installing\
+  \ PyTorch for CUDA [here](https://pytorch.org/get-started/locally/).\nIf you do not have GPU access,\
+  \ this code can *in theory* train models and load them for inference on CPU with significant RAM,\n\
+  however we do not recommend this nor do we support it at this time.\nIf this is your use case or you\
+  \ require other optimizations\nsee the [Huggingface pipeline documentation](https://huggingface.co/docs/transformers/main_classes/pipelines)\n\
+  for possible strategies for inference, for training optimizations see [Huggingface's suggestions](https://huggingface.co/docs/transformers/perf_train_cpu).\
+  \   \n\n\nDownload the repository via either:\n- HTTPS\n```\ngit clone https://github.com/Machine-Learning-for-Medical-Language/radiotherapy_end2end.git\
+  \ \n```\n- SSH\n```\ngit clone git@github.com:Machine-Learning-for-Medical-Language/radiotherapy_end2end.git\n\
+  ```\nThen  \n\n```\ncd radiotherapy_end2end && pip install -e .\n```\nwill install the package along\
+  \ with all the non-PyTorch dependencies.\n\n## Input format\n\n### Named Entity Recognition\n\n(Examples\
+  \ from [HemOnc.org](https://hemonc.org/wiki/Main_Page))\n\nNewline separated tab delimited (`tsv`) files.\n\
+  \nTags are one of `O`, `B-<mention type>`, `I-<mention type>`, respectively, the token is outside of\
+  \ a mention, the token is the beginning of a mention, and the token is inside of a mention.\n\nlabel:\n\
+  >`O O O B-Anatomical_site O B-Anatomical_site I-Anatomical_site I-Anatomical_site O B-Anatomical_site\
+  \ I-Anatomical_site I-Anatomical_site I-Anatomical_site I-Anatomical_site O O O O O O B-Anatomical_site\
+  \ I-Anatomical_site O`\n\n\ntokenized cTAKES paragraph:\n>`Then 5.4 Gy boost to secondary target volume\
+  \ of 1 - to 1.5-cm margin on all sides , including proven nodal involvement .`\n\nin the actual files\
+  \ these are separated by a tab, presentation here is for readability.\n\n### Relation Extraction\n\n\
+  Tokens which comprise the anchor dose mention are surrounded by the `<RT_DOSE-START>` and `<RT_DOSE-END>`\
+  \ tags.  Tokens which comprise the attribute mention (one of boost, date, second dose, fraction number,\
+  \ fraction frequency, site) are surrounded by their corresponding tags, e.g. `<BOOST-START>, <BOOST-END>`,\
+  \ `<DATE-START>, <DATE-END>`, `<DOSE-START>, <DOSE-END>`, etc.   \n\nlabel:\n>`DOSE-DOSE`\n\n\ncTAKES\
+  \ paragraph:\n>`of 30 Gy to point A given in 5 fractions , starting week 4 of XRT <RT_DOSE-START> 1.8\
+  \ Gy <RT_DOSE-END> fractions x 28 fractions , for a total dose of <DOSE-START> 50.4 Gy <DOSE-END> .\
+  \ The last 5.4 Gy of the 50.4 Gy is limited to the tumor bed . 1.8 Gy fractions x 25 fractions , then\
+  \ a 5.4 Gy final boost , for a total dose of 50.4 Gy , starting within 24 hours of start of chemotherapy\
+  \ 180 cGy x 22 with 3 cm margin to GTV then 180 cGy x 6 with 2 cm margin to GTV , total 50.4 Gy over\
+  \ 6`\n\n## Training Models\n\nDefining tasks is accomplished in `src/cnlpt/cnlp_processors.py`.\nNER\
+  \ tasks are cases of `tagging` tasks in the framework,\nrelation extraction with provided entities are\
+  \ `classification` tasks.\n\nHere is the script used to train the boost NER model\n\n`boost_train.sh`\
+  \ =\n\n```\ntask=rt_boost\ndir=\"/home/$USER/RT_cnlpt_data/NER/boost/\"\n\nepochs=10\n#actual_epochs=1.497041420118343\n\
+  lr=2e-5\nev_per_ep=0\nstl=0\nseed=42\ngas=4\nlr_type=constant\nencoder=\"emilyalsentzer/Bio_ClinicalBERT\"\
+  \ndmy=$(date +'%m_%d_%Y')\ntemp=\"/home/$USER/RT_pipeline_models/$task/\"\ncache=\"/home/$USER/RT_pipeline_models/caches/$task\"\
+  \nmkdir -p $cache\nmkdir -p $temp\npython -m cnlpt.train_system \\\n--task_name $task \\\n--data_dir\
+  \ $dir \\\n--encoder_name $encoder \\\n--do_train \\\n--cache $cache \\\n--output_dir $temp \\\n--overwrite_output_dir\
+  \ \\\n--evals_per_epoch $ev_per_ep \\\n--do_eval \\\n--num_train_epochs $epochs \\\n#--actual_epochs\
+  \ $actual_epochs \\\n--learning_rate $lr \\\n--lr_scheduler_type $lr_type \\\n--seed $seed \\\n--gradient_accumulation_steps\
+  \ $gas\n\n```\n\n**NB: `actual_epochs` vs `num_train_epochs`**\n\nThe need for these distinct hyperparameters\
+  \ arises from the cases of the cosine or linear learning rate schedulers.\nThe frequency of the cosine\
+  \ function, or the decay rate of the linear function, that generates learning rate values is defined\
+  \ in terms of the maximum number of epochs given to the model.\nIf you are using some form of early\
+  \ stopping, as we did, then to properly reproduce one's results one needs to stop the model not just\
+  \ at the\nepoch fraction at which it stopped but with the same trajectory of the learning rate scheduler\
+  \ throughout.\nThus where the `actual_epochs` argument is specified, the model's learning rate scheduler\
+  \ will generate a function with a frequency\ndetermined by `num_train_epochs` (the projected number\
+  \ of epochs used in training) but the stopping point will be determined by `actual_epochs`.\n\n## Individual\
+  \ Model Document Level Evaluation\n\nTo obtain document averaged scores for a model over a director\
+  \ of `tsv` files:\n\n>```python -m cnlpt.rt_model_eval --model_dir test_pipeline_models/rt_site/ --task_name\
+  \ rt_site --in_dir DocNERcnlpt/site/HemOnc/```\n\n## Pipeline Evaluation\n\n>```python -m cnlpt.cnlp_pipeline\
+  \ --models_dir test_pipeline_models/ --axis_task rt_dose --in_dir kcr-naacr/ --mode eval```\nAssumes\
+  \ `models_dir` is of the form:\n```\n/test_pipeline_models/\n├── rt_boost\n├── rt_date\n├── rt_dose\n\
+  ├── rt_fxfreq\n├── rt_fxno\n├── rt_rel\n└── rt_site\n\n```\nAnd that each task-named subdir is of the\
+  \ form:\n```\n/rt_boost/\n├── added_tokens.json\n├── config.json\n├── eval_predictions.txt\n├── eval_results.txt\n\
+  ├── pytorch_model.bin\n├── special_tokens_map.json\n├── tokenizer_config.json\n├── tokenizer.json\n\
+  ├── training_args.bin\n└── vocab.txt\n```\ni.e. contains the actual trained model binary (`pytorch_model.bin`)\
+  \ along with the other files related to the model's configuration.\n\n## Reproducing Results\n\nAs explained\
+  \ [earlier](#usability), we cannot provide our trained models or full training data.\nHowever we have\
+  \ provided data from [HemOnc.org](HemOnc.org) for training NER and RE models,\ninstructions for training\
+  \ models and obtaining end-to-end results with trained models,\nand own results from this process using\
+  \ the provided HemOnc.org data.\n\nFor the instructions and our results obtained from the same process,\
+  \ please see the file `HemOncInstructions.md` at the top level of this directory.\n\n## Acknowledgements\n\
+  \nThe work was supported by the US National Institutes of Health (grants UH3CA243120, U24CA248010, R01LM010090,\
+  \ R01LM013486, 5R01GM11435).\n"

@@ -1,0 +1,78 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Adipuranik/Pediatric-Brain-Tumor-Segmentation-Classification-using-MRI
+url: https://github.com/Adipuranik/Pediatric-Brain-Tumor-Segmentation-Classification-using-MRI
+platform: github
+description: An automated deep learning pipeline that combines **U-Net + ResNet34 segmentation** and **ResNet18
+  classification** to detect and classify pediatric brain tumors from MRI images — with ROI-based extraction,
+  Tversky loss for class imbalance handling, and a unified inference pipeline.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-31T04:46:57Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "#  Deep Learning Framework for Segmentation and Classification of Pediatric Brain Tumors\
+  \ using MRI\n\nAn automated deep learning pipeline that combines **U-Net + ResNet34 segmentation** and\
+  \ **ResNet18 classification** to detect and classify pediatric brain tumors from MRI images — with ROI-based\
+  \ extraction, Tversky loss for class imbalance handling, and a unified inference pipeline.\n\n> Final\
+  \ year project — Dept. of ECE, VVCE, Mysuru | April 2026  \n> Guide: **Dr. Jagadeesh B**, Associate\
+  \ Professor, Dept. of ECE\n\n---\n\n##  Team\n\n| USN | Name |\n|-----|------|\n| 4VV22EC006 | Aditi\
+  \ K |\n| 4VV22EC007 | Aditi S Puranik |\n| 4VV22EC008 | Ajeya S R |\n| 4VV22EC019 | Anveesh S |\n\n\
+  ---\n\n##  Results Summary\n\n| Stage | Model | Metric | Value |\n|-------|-------|--------|-------|\n\
+  | Segmentation | U-Net + ResNet34 encoder | Mean Dice Score | **0.80** |\n| Classification | ResNet18\
+  \ | Mean Accuracy | **98%** |\n| Training setup | CPU-based | Optimizer | Adam (LR: 0.0001) |\n\n---\n\
+  \n##  Repository Structure\n\n```\npediatric-brain-tumor-segmentation/\n├── src/\n│   ├── unet_resnet34.py\
+  \          # U-Net with ResNet34 encoder architecture\n│   ├── resnet_classifier.py      # ResNet18\
+  \ classification model\n│   ├── train_segmentation.py     # Segmentation training script\n│   ├── train_classifier.py\
+  \       # Classification training script\n│   ├── predict.py                # Run inference on new MRI\
+  \ images\n│   ├── gradio_app.py             # Interactive web UI\n│   └── utils.py                 \
+  \ # Preprocessing, metrics, visualization\n├── models/\n│   └── README.md                 # Instructions\
+  \ to download pretrained weights\n├── data/\n│   └── sample/                   # Sample MRI images for\
+  \ testing\n├── docs/\n│   └── pipeline_overview.md      # Architecture and design decisions\n├── results/\
+  \                      # Output masks and confusion matrix images\n└── README.md\n```\n\n---\n\n## \
+  \ Pipeline Architecture\n\n```\nInput MRI (2D slice, 128×128)\n        │\n        ▼\n┌───────────────────┐\
+  \    Tversky Loss     Epoch: 12, BS: 8\n│  U-Net            │ ──────────────────────────────────────\n\
+  │  Encoder: ResNet34│    Binary mask output (tumor region)\n│  Dice: 0.80       │\n└───────────────────┘\n\
+  \        │\n        ▼\n   ROI Extraction\n   (mask applied → isolate tumor region)\n        │\n    \
+  \    ▼\n┌───────────────────┐    CrossEntropy     Epoch: 5, BS: 16\n│  ResNet18         │ ──────────────────────────────────────\n\
+  │  Classification   │    Tumor type prediction\n│  Accuracy: 98%    │\n└───────────────────┘\n     \
+  \   │\n        ▼\n   Final Output:\n   Tumor type label + Segmentation overlay + Visualization\n```\n\
+  \n---\n\n##  Methodology\n\n### 1. MRI Image Input\n- Dataset: **BraTS** + **Kaggle Pediatric Brain\
+  \ Tumor** dataset\n- Only **2D slices** used (not volumetric 3D data)\n\n### 2. Preprocessing\n- Resize\
+  \ to **128×128**\n- Pixel value normalization\n- Data augmentation for improved generalization\n- Manual\
+  \ annotation completed for ground truth masks\n\n### 3. Segmentation — U-Net + ResNet34\n- U-Net architecture\
+  \ with **ResNet34 as the encoder backbone** for richer feature extraction\n- **Tversky Loss** used to\
+  \ handle class imbalance (tumor pixels vs background)\n- Trained for **12 epochs**, batch size **8**,\
+  \ Adam optimizer (LR: 0.0001)\n- Outputs a **probability map** → thresholded to binary mask\n- **Mean\
+  \ Dice Score: 0.80**\n\n### 4. ROI Extraction\n- Predicted mask used to isolate the tumor region\n-\
+  \ Background removed — improves downstream classification accuracy\n\n### 5. Classification — ResNet18\n\
+  - Extracted ROI fed into **ResNet18** for tumor type prediction\n- Trained for **5 epochs**, batch size\
+  \ **16**\n- **Mean Accuracy: 98%**\n\n### 6. Output\n- Detected tumor type\n- Segmented tumor region\
+  \ with visual overlay\n- Threshold vs Dice graph and confusion matrix generated\n\n---\n\n##  Hardware\
+  \ & Software Requirements\n\n| Category | Tool / Framework |\n|----------|-----------------|\n| Deep\
+  \ Learning | PyTorch |\n| Image Processing | OpenCV, NumPy |\n| Visualization | Matplotlib |\n| Segmentation\
+  \ Model | U-Net + ResNet34 |\n| Classification Model | ResNet18 |\n| Optimizer | Adam (LR: 0.0001) |\n\
+  | Training Hardware | CPU-based (GPU quota limited) |\n| Dataset Storage | Google Drive |\n\n---\n\n\
+  ##  requirements.txt\n\n```\ntorch>=2.0.0\ntorchvision>=0.15.0\nsegmentation-models-pytorch>=0.3.3\n\
+  numpy>=1.24.0\nopencv-python>=4.8.0\nmatplotlib>=3.7.0\nscikit-learn>=1.3.0\ngradio>=4.0.0\nPillow>=10.0.0\n\
+  tqdm>=4.65.0\n```\n\n---\n\n##  Dataset\n\nThis project uses two datasets:\n\n1. **BraTS (Brain Tumor\
+  \ Segmentation Challenge)** — [CBICA BraTS](https://www.med.upenn.edu/cbica/brats/)\n2. **Kaggle Pediatric\
+  \ Brain Tumor Dataset** — [Kaggle Link](https://www.kaggle.com/datasets/masoudnickparvar/brain-tumor-mri-dataset)\n\
+  \n> Datasets are not included in this repo due to size. Download and place under `data/` as described\
+  \ in `docs/pipeline_overview.md`.\n\n---\n\n##  Results\n\n> Add the following to `results/` folder:\n\
+  > - Validation Dice Score curve\n> - Training Loss graph\n> - Threshold vs Dice graph\n> - Confusion\
+  \ matrix\n> - Final output overlay samples\n\n---\n\n##  Disclaimer\n\nThis is an academic research\
+  \ prototype developed for the Project Exhibition at VVCE, Mysuru. It is **not a certified medical diagnostic\
+  \ tool** and should not be used for clinical decision-making.\n\n---\n\n##  License\n\nMIT License —\
+  \ free to use, modify, and distribute with attribution.\n\n---\n\n##  Authors\n\n**Aditi S Puranik**\
+  \ (4VV22EC007) · [LinkedIn](https://linkedin.com/in/aditi-s-puranik-598629391) · [GitHub](https://github.com/Adipuranik)\
+  \  \nAditi K (4VV22EC006) · Ajeya S R (4VV22EC008) · Anveesh S (4VV22EC019)  \nDept. of ECE, Vidyavardhaka\
+  \ College of Engineering, Mysuru\n"

@@ -1,0 +1,167 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: bin-art-666/SRT2026_TS_Wu
+url: https://github.com/bin-art-666/SRT2026_TS_Wu
+platform: github
+description: Brain tumor segmentation project based on HTS-Net for BraTS 2018.
+license: null
+language: Python
+keywords: []
+stars: 3
+updated_at: '2026-06-16T08:15:13Z'
+image_source: null
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+readme_excerpt: '# HTS-Net BraTS 2018 Teacher-Student Project
+
+
+  This project trains, evaluates, and visualizes an HTS-Net based 3D brain tumor
+
+  segmentation model for BraTS-style multi-modal MRI data.
+
+
+  ## Train From Scratch
+
+
+  Run training from the `src` directory:
+
+
+  ```powershell
+
+  cd D:\srt2026\teacher_student\src
+
+  python train.py --config configs\brats2018_20cases_gpu.yaml
+
+  ```
+
+
+  Without extra arguments, `train.py` creates a new model and trains from random
+
+  initial weights.
+
+
+  ## Resume Training From A Previous Model
+
+
+  To save GPU time, training can continue from an existing `.keras` model:
+
+
+  ```powershell
+
+  cd D:\srt2026\teacher_student\src
+
+  python train.py --config configs\brats2018_20cases_gpu.yaml --resume_checkpoint result\train\brats2018_20cases_gpu_20260614_125004\best_model.keras
+
+  ```
+
+
+  You can also pass a previous training directory. In that case, the script uses
+
+  `best_model.keras` first, and falls back to `last_model.keras` if the best model
+
+  is not found:
+
+
+  ```powershell
+
+  python train.py --config configs\brats2018_20cases_gpu.yaml --resume_checkpoint result\train\brats2018_20cases_gpu_20260614_125004
+
+  ```
+
+
+  The resumed run still creates a new timestamped output directory under
+
+  `result/train`. It records `resume` and `resume_checkpoint` in `run_info.json`.
+
+
+  ## Resume Configuration Rules
+
+
+  When resuming training, configuration changes are allowed only when they do not
+
+  change the saved model structure.
+
+
+  Usually safe to change:
+
+
+  - `epochs`
+
+  - `learning_rate`
+
+  - `batch_size`
+
+  - `augmentation`
+
+  - `validation_split`
+
+  - `dataset_fraction`
+
+  - `max_cases`
+
+  - `loss`
+
+  - `train_result_root`
+
+
+  Do not change these unless you intentionally want to start a new model from
+
+  scratch:
+
+
+  - `patch_size`
+
+  - `num_classes`
+
+  - `modalities`
+
+  - `base_channels`
+
+  - `num_levels`
+
+  - `deep_supervision`
+
+
+  The script checks the most important shape-related fields when resuming:
+
+  `patch_size`, modality count, and `num_classes`. If they do not match the saved
+
+  model, training stops with an error instead of silently using incompatible
+
+  weights.
+
+
+  ## Practical AutoDL Usage
+
+
+  For a low-cost continuation experiment, keep model-structure settings unchanged
+
+  and only lower the learning rate or add a small number of extra epochs, for
+
+  example:
+
+
+  ```yaml
+
+  epochs: 20
+
+  learning_rate: 0.0001
+
+  max_cases: 250
+
+  dataset_fraction: 1.0
+
+  ```
+
+
+  Then resume from the best model of the previous run. This means the new command
+
+  trains for another short run starting from the previous weights, instead of
+
+  spending time training from zero again.
+
+
+  '

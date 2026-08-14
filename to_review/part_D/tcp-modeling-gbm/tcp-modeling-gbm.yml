@@ -1,0 +1,63 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: DmitriiZakharenko/tcp-modeling-gbm
+url: https://github.com/DmitriiZakharenko/tcp-modeling-gbm
+platform: github
+description: Tumor Control Probability modeling in glioblastoma using the CFB-GBM open radiotherapy dataset
+  (TCIA). Reproducible Python workflow for DICOM-RT curation, DVH extraction, and dose-response modeling.
+license: GPL-3.0
+language: Jupyter Notebook
+keywords: []
+stars: 1
+updated_at: '2026-07-23T00:14:07Z'
+image_source: null
+heuristic_total_score: 44
+heuristic_reasons:
+- Matched 6 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 10 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# TCP Modeling in Glioblastoma\n\nReproducible Python pipeline for tumor control probability\
+  \ (TCP) modeling on the open CFB-GBM radiotherapy cohort (TCIA).\n\n**Dataset:** Moreau et al. 2025\
+  \ — [doi:10.7937/V9PN-2F72](https://doi.org/10.7937/V9PN-2F72)  \n**Primary cohort:** 181 patients with\
+  \ standard fractionation (60 Gy/30 fr or 40.05 Gy/15 fr) of 190 DVH-eligible cases. Nine non-standard\
+  \ schedules are retained only for sensitivity (`modeling_table_all_eligible.csv`).\n\n---\n\n## Pipeline\n\
+  \n| Stage | Module / command |\n|-------|------------------|\n| Cohort + clinical TSVs | `python -m\
+  \ src.data.cohort_builder` |\n| DVH features | `make process` / `src.data.feature_builder` |\n| Modeling\
+  \ table | `python -m src.data.export_modeling_dataset` |\n| TCP fit + metrics | `make report` → `reports/metrics/*.csv`\
+  \ |\n| Confounding audit | `python -m src.analysis.confounding_audit` |\n\n```bash\ngit clone https://github.com/DmitriiZakharenko/tcp-modeling-gbm.git\n\
+  cd tcp-modeling-gbm\npip install -r requirements.txt\nmake test\nmake report\n```\n\nPython 3.9+. Random\
+  \ seed: `42`. Unit tests (`make test` / `pytest`) use synthetic data only and do not require NIfTI.\n\
+  \n---\n\n## Cohort and endpoints\n\n| Item | Value |\n|------|------:|\n| Clinical TSV | 264 |\n| DVH-eligible\
+  \ | 190 |\n| Primary (standard schemes) | 181 |\n| 60 Gy / 30 fr | 120 |\n| 40.05 Gy / 15 fr | 61 |\n\
+  | RANO t0→t1 (primary) | 130 |\n| RANO in 40 Gy arm | 34 |\n\nPrimary TCP fits use an exploratory OS\
+  \ median-split proxy. RANO non-PD at t1 is the imaging endpoint (CFB-GBM v3).\n\nScheme filter: `src/data/scheme_filters.py`.\n\
+  \n---\n\n## Results (primary n=181)\n\n| Analysis | Result |\n|----------|--------|\n| Poisson TCP (EQD2\
+  \ → OS ≥ median) | AUC **0.673**; D50 **53.4 Gy** [49.6, 57.5]; γ50 **3.38** [2.07, 4.73] |\n| Logistic\
+  \ / probit (same endpoint) | AUC **0.673** (near-identical to Poisson) |\n| EQD2 alone → RANO non-PD\
+  \ | AUC **≈0.43** (no discrimination) |\n| GTV volume + clinical + scheme → RANO | in-sample AUC **0.707**;\
+  \ LOOCV **0.626** |\n| 40 Gy arm, volume → RANO (n=34) | Poisson AUC **≈0.83** |\n| PyRadiomics top-5\
+  \ vs volume (nested CV) | **0.712** vs **0.696** |\n| Sensitivity n=190 vs n=181 | conclusions unchanged\
+  \ (`reports/metrics/sensitivity_exclude_nonstandard.*`) |\n\nMachine-readable tables: `reports/metrics/`.\
+  \ Figures: `figures/`.\n\nInterpretation in brief:\n\n- Parametric TCP models fit stably on real institutional\
+  \ data; OS-proxy AUC ≈ 0.67 is moderate discrimination for a retrospective radiotherapy cohort.\n- Pooled\
+  \ dose alone does not predict early RANO; tumour volume does, especially in the hypofractionated arm.\n\
+  - Within the 60 Gy arm, GTV Dmean SD ≈ 0.28 Gy, so classical within-protocol dose–TCP inference remains\
+  \ underpowered.\n\n---\n\n## Repository layout\n\n```\ntcp-modeling-gbm/\n├── data/processed/   # cohort\
+  \ + modeling tables (NIfTI not versioned)\n├── src/              # data, models, analysis, reporting\n\
+  ├── tests/            # pytest unit tests (MLE, bootstrap, CV, filters)\n├── notebooks/        # 01\
+  \ → 06 analysis notebooks\n├── figures/          # PNG/PDF exports\n├── reports/metrics/  # CSV metrics\
+  \ from `make report`\n├── scripts/          # export / sync helpers\n└── requirements.txt\n```\n\nProse\
+  \ reports (assignment PDF/DOCX, manuscript drafts, glossary) are **local-only** and listed in `.gitignore`.\
+  \ Regenerate metrics with `make report`; optional local export targets remain in the Makefile (`export-assignment`,\
+  \ `export-manuscript`, `export-glossary`).\n\n---\n\n## Data\n\n| Path | In git | Role |\n|------|:------:|------|\n\
+  | `data/processed/cohort.csv` | yes | Full clinical cohort |\n| `data/processed/modeling_table.csv`\
+  \ | yes | Primary n=181 + DVH/RANO |\n| `data/processed/modeling_table_all_eligible.csv` | yes | n=190\
+  \ sensitivity |\n| `data/raw/` | no | RTDOSE + GTV NIfTI (~52 GB) |\n\n```python\nimport pandas as pd\n\
+  df = pd.read_csv(\"data/processed/modeling_table.csv\")\n```\n\nDownload NIfTI when needed:\n\n```bash\n\
+  python -m src.data.download_rt_connect\n# or: python -m src.data.download_rt_files\n```\n\n---\n\n##\
+  \ Citation\n\n```\nMoreau, N. N., et al. (2025). Pre and post treatment MRI and radiotherapy plans\n\
+  of patients with glioblastoma: the CFB-GBM cohort. The Cancer Imaging Archive.\nhttps://doi.org/10.7937/V9PN-2F72\n\
+  ```\n\nCode: [GPL-3.0](LICENSE). Dataset: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).\n"

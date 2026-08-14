@@ -1,0 +1,39 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: flywheel-io/scientific-solutions/app/dicom-rtstruct-to-fw-annotations
+url: https://gitlab.com/flywheel-io/scientific-solutions/app/dicom-rtstruct-to-fw-annotations
+platform: gitlab
+description: ''
+license: null
+language: null
+keywords: []
+stars: 0
+updated_at: '2026-03-24T21:25:26.747Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 3 support term(s).
+readme_excerpt: "# Usage\n\n## prerequisites\n\n### Install required libraries\n\n`poetry install` or\
+  \ `pip install -r requirements.txt`\n\n### Get task id and file id.\n\nFrom the task on Flywheel, you\
+  \ can click inspect and the network tab. The first request has the task_id in it.  Later requests have\
+  \ file id.\n\n## Running\n\nFrom an ipython window use the following code to get started\n\n```python\n\
+  # Source functions from converter.py\n%run rtstruct_to_fw/converter.py \n\n# Set task_id and file_id\
+  \ variables\ntask_id = 'your task id'\nfile_id = 'your file id'\n\n# Instantiate client\nfrom fw_client\
+  \ import FWClient\nfw = FWClient(api_key=<your api key>)\n\n# Load dicoms\nfrom fw_file.dicom import\
+  \ DICOM, DICOMCollection\nrt_dcm = DICOM('./resources/rt-struct.dcm')\nopt_dcm = DICOM('./resources/opt-dcm.dcm')\n\
+  ct_dcm = DICOMCollection.from_zip('./resources/ct-dcm.dicom.zip')\n\n# Extract ROIs from dicoms using\
+  \ get_rois function from converter.py\nrois, dcm_info = get_rois(rt_dcm, ct_dcm)\n\n# Upload all ROIs\
+  \ as annotations\nrois = {r.name: r for r in rois.values()}\nfor roi in rois.values():\n    print(roi.name)\n\
+  \    create_annotation(fw, task_id, file_id, roi, opt_dcm, dcm_info)\n```\n\n\nOr run the following\
+  \ to only get the annotations\n\n```python\n%run rtstruct_to_fw/converter.py \n\n# Set task_id and file_id\
+  \ variables\nfile_id = 'your file id'\n\n# Instantiate client\nfrom fw_client import FWClient\nfw =\
+  \ FWClient(api_key=<your api key>)\n\n# Load dicoms\nfrom fw_file.dicom import DICOM, DICOMCollection\n\
+  rt_dcm = DICOM('./resources/rt-struct.dcm')\nopt_dcm = DICOM('./resources/opt-dcm.dcm')\nct_dcm = DICOMCollection.from_zip('./resources/ct-dcm.dicom.zip')\n\
+  \n# Extract ROIs from dicoms using get_rois function from converter.py\nrois, dcm_info = get_rois(rt_dcm,\
+  \ ct_dcm)\n\n# Upload all ROIs as annotations\nrois = {r.name: r for r in rois.values()}\nannotations\
+  \ = []\nfor roi in rois.values():\n    print(roi.name)\n    annotations.append(roi_to_annotations(roi,\
+  \ dcm_info))\n```\n"

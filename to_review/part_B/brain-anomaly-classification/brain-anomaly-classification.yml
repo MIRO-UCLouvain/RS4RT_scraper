@@ -1,0 +1,150 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: AkhilJohnson2005/Brain-Anomaly-Classification
+url: https://github.com/AkhilJohnson2005/Brain-Anomaly-Classification
+platform: github
+description: Deep learning-based brain MRI anomaly classification using CNN architectures, radiomics,
+  and machine learning techniques.
+license: null
+language: null
+keywords: []
+stars: 0
+updated_at: '2026-08-03T18:12:22Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: '# Brain Anomaly Classification
+
+
+  **An Interpretable Deep Learning Approach for Brain Anomaly Classification**
+
+
+  A dual-pipeline system for automated brain tumor analysis from MRI scans — combining **segmentation**
+  (Attention U-Net), **interpretable radiomics** (GWO + Optuna optimized XGBoost), and **deep learning
+  ensemble classification** (ResNet-50 + EfficientNet-B3 + DenseNet-121) on the BraTS 2020 dataset.
+
+
+  > 📓 **Full code & notebook:** [Kaggle — Brain Anomaly Detection](https://www.kaggle.com/code/akhiljohnsonrajan/brain-anomaly-detection)
+
+
+  ---
+
+
+  ## Overview
+
+
+  Manual interpretation of brain MRI scans is time-consuming and subject to inter-observer variability,
+  especially when abnormalities are small or subtle. This project builds an automated system that detects
+  and localizes brain abnormalities from MRI, aiming to support radiologists with faster, more consistent
+  diagnostic assistance.
+
+
+  Rather than a single model, the project combines three complementary approaches so the system is both
+  **accurate** (deep learning) and **interpretable** (radiomics):
+
+
+  1. **Segmentation** — Attention U-Net highlights the exact abnormal region in the scan
+
+  2. **Radiomics** — handcrafted, clinically interpretable features (entropy, contrast, shape, etc.) optimized
+  via Grey Wolf Optimizer (GWO) + Optuna, feeding an XGBoost classifier
+
+  3. **Ensemble classification** — a soft-voting ensemble of ResNet-50, EfficientNet-B3, and DenseNet-121
+  for robust image-level tumor classification
+
+
+  ## Key Results
+
+
+  | Pipeline | Model | Metric(s) |
+
+  |---|---|---|
+
+  | Segmentation | Attention U-Net | **Dice: 0.87**, IoU: 0.77 (vs. 0.82 / 0.70 for standard U-Net) |
+
+  | Radiomics | XGBoost + GWO + Optuna | **Accuracy: 0.93**, F1: 0.91, ROC-AUC: 0.96 |
+
+  | Deep Learning Ensemble | Soft Voting (ResNet-50 + EfficientNet-B3 + DenseNet-121) | **Accuracy: 0.96**,
+  F1: 0.95, ROC-AUC: 0.98 |
+
+
+  The ensemble classifier outperformed every individual CNN, and the confusion matrix showed minimal false
+  negatives — the most clinically important error to avoid in a diagnostic setting.
+
+
+  Feature importance analysis on the radiomics pipeline found **entropy** (tumor heterogeneity) and **contrast**
+  to be the most predictive features, consistent with established clinical understanding of tumor aggressiveness.
+
+
+  ## Dataset
+
+
+  - **Source:** BraTS 2020 (369 patient cases, 4 MRI modalities per case — FLAIR, T1, T1ce, T2)
+
+  - **Preprocessing:** resized to 128×128, filtered/balanced to ~50% tumor-positive slices
+
+  - **Split:** 70% / 15% / 15% (train / validation / test)
+
+
+  ## Architecture
+
+
+  - **Segmentation:** Attention U-Net with Dice loss, trained on multi-modal MRI slices to localize tumor
+  regions
+
+  - **Radiomics:** first-order, shape, and GLCM texture features extracted from segmented regions → feature
+  selection via Grey Wolf Optimizer → hyperparameter tuning via Optuna → XGBoost classifier
+
+  - **Classification ensemble:** ResNet-50, EfficientNet-B3, and DenseNet-121 fine-tuned independently,
+  combined via soft voting (averaged softmax probabilities)
+
+
+  ## Tech Stack
+
+
+  - **Modeling:** PyTorch, torchvision (ResNet, EfficientNet, DenseNet), Attention U-Net
+
+  - **Radiomics & optimization:** XGBoost, Optuna, Grey Wolf Optimizer
+
+  - **Evaluation:** scikit-learn (classification reports, confusion matrices, ROC-AUC)
+
+  - **Environment:** Kaggle Notebooks (GPU)
+
+
+  ## Repository Contents
+
+
+  This repo hosts the project report and documentation. The full, runnable code (data preprocessing, model
+  training, and evaluation) lives in the Kaggle notebook linked above.
+
+
+  ## Team
+
+
+  - Akhil Johnson
+
+  - Siddharth Ravindranath
+
+  - Shashi Redhu
+
+
+  Project under the guidance of **Dr. N Jagadish Kumar**, Department of Data Science and Business Systems,
+  SRM Institute of Science and Technology.
+
+
+  ## Future Enhancements
+
+
+  - Web-based interface (FastAPI/Streamlit) for interactive MRI upload and instant prediction
+
+  - Extending classification beyond binary tumor/no-tumor to multi-class (glioma, meningioma, pituitary
+  tumor)
+
+  - Cloud deployment for broader clinical accessibility
+
+
+  '

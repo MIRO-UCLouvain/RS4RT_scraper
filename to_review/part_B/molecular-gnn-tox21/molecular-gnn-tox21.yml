@@ -1,0 +1,94 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ssid18/molecular-gnn-tox21
+url: https://github.com/ssid18/molecular-gnn-tox21
+platform: github
+description: Molecular Toxicity Prediction with Graph Neural Networks
+license: MIT
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-08-03T11:58:14Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Molecular Toxicity Prediction with Graph Neural Networks\n\n[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://python.org)\n\
+  [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-red.svg)](https://pytorch.org)\n[![PyG](https://img.shields.io/badge/PyG-2.3+-orange.svg)](https://pytorch-geometric.readthedocs.io)\n\
+  [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)\n\n## Abstract\n\nA systematic\
+  \ ablation study comparing six graph neural network architectures, two multimodal fusion strategies,\
+  \ and three loss functions for multi-task molecular toxicity prediction on the Tox21 benchmark (7,831\
+  \ molecules, 12 endpoints). The study progresses from a baseline fingerprint MLP through GCN / GraphSAGE\
+  \ / GAT encoders to a learned gated fusion of graph embeddings and Morgan fingerprints, culminating\
+  \ in a targeted hyperparameter optimization study. Chemically realistic generalisation is evaluated\
+  \ using Bemis–Murcko scaffold splits. All experiments are fully reproducible across three random seeds.\n\
+  \n---\n\n## Key Contributions\n\n- **Systematic 24-run ablation** across architectures (GCN, SAGE, GAT),\
+  \ fusion strategies (concat, gated), and loss functions (BCE, weighted BCE, focal loss) with multi-seed\
+  \ evaluation\n- **Gated multimodal fusion** that learns per-dimension soft weights between graph embeddings\
+  \ and Morgan fingerprints — outperforming both single-modality and concatenation baselines\n- **Sequential\
+  \ hyperparameter optimisation** of the strongest model (hidden dim → attention heads → fingerprint capacity\
+  \ → Morgan radius) without exhaustive grid search\n- **Scaffold generalisation study** using randomised\
+  \ Bemis–Murcko splits across three seeds, reporting a concrete generalisation gap of −0.037 to −0.052\
+  \ ROC-AUC\n- **Config-driven reproducibility** — every experiment is fully specified by a YAML file\
+  \ and can be reproduced with a single command\n\n---\n\n## Results\n\n### Ablation Study — Random Split\
+  \ (mean ± std, 3 seeds)\n\n| Rank | Architecture | Loss | ROC-AUC | PR-AUC |\n|------|-------------|------|---------|--------|\n\
+  | 1 | GAT + Gated Fusion | Focal | **0.8213 ± 0.006** | 0.451 ± 0.012 |\n| 2 | GAT + Gated Fusion |\
+  \ Weighted BCE | 0.8159 ± 0.007 | 0.409 ± 0.011 |\n| 3 | GAT + Gated Fusion | BCE | 0.8182 ± 0.008 |\
+  \ 0.443 ± 0.014 |\n| 4 | GAT + Concat Fusion | BCE | 0.8108 ± 0.009 | 0.419 ± 0.013 |\n| 5 | GAT (graph\
+  \ only) | BCE | ~0.785 | ~0.390 |\n| 6 | Fingerprint MLP | BCE | ~0.775 | ~0.360 |\n| 7 | GraphSAGE\
+  \ | BCE | 0.7512 | ~0.382 |\n| 8 | GCN | BCE | 0.7243 | ~0.375 |\n\n### Scaffold Generalisation — Random\
+  \ vs Scaffold Split\n\n| Model | Random ROC-AUC | Scaffold ROC-AUC | Gap |\n|-------|---------------|-----------------|-----|\n\
+  | GAT + Gated Fusion (Focal) | 0.8213 | 0.7697 | −0.052 |\n| GAT + Gated Fusion (wBCE) | 0.8159 | 0.7837\
+  \ | −0.032 |\n| GAT + Gated Fusion (BCE) | 0.8182 | 0.7745 | −0.044 |\n| GAT + Concat Fusion (BCE) |\
+  \ 0.8108 | 0.7706 | −0.040 |\n\n### Targeted Optimisation — `gat_concat + BCE` (best config)\n\n| hidden\\\
+  _dim | heads | fp\\_bits | radius | ROC-AUC |\n|------------|-------|---------|--------|---------|\n\
+  | 256 | 4 | 1024 | 2 | **0.8156** |\n| 512 | 4 | 1024 | 2 | 0.8144 |\n| 128 | 4 | 1024 | 2 | 0.8097\
+  \ |\n\n---\n\n## Architecture\n\n```\nMolecule (SMILES)\n       │\n       ├─────────────────────────────────────┐\n\
+  \       │                                     │\n       ▼                                     ▼\n┌─────────────────┐\
+  \               ┌────────────────────┐\n│   GAT Encoder   │               │  Morgan Fingerprint │\n\
+  │  2 layers, H=4  │               │  ECFP4, 1024 bits   │\n└─────────────────┘               └────────────────────┘\n\
+  \       │                                     │\n       ▼                                     ▼\n  Global\
+  \ Mean Pool               Linear Projection\n  g ∈ ℝ^hidden_dim               f ∈ ℝ^hidden_dim\n   \
+  \    │                                     │\n       └──────────────┬──────────────────────┘\n     \
+  \                 ▼\n           ┌──────────────────────┐\n           │    Gated Fusion      │\n    \
+  \       │  gate = σ(Wg·g+Wf·f) │\n           │  z = gate⊙g+(1−g)⊙f  │\n           └──────────────────────┘\n\
+  \                      │\n                      ▼\n               Linear → ℝ¹²\n            (12 toxicity\
+  \ tasks)\n```\n\nTwo fusion variants are implemented: **concatenation** (`gat_concat`) and the **learned\
+  \ gated fusion** (`gat_gated_fusion`) shown above.\n\n---\n\n## Repository Structure\n\n```\nmolecular-gnn-tox21/\n\
+  ├── src/\n│   ├── dataset.py        Morgan fingerprints + DataLoader construction\n│   ├── models.py\
+  \         MolecularNetwork (6 architectures)\n│   ├── losses.py         BCE / Weighted BCE / Focal Loss\n\
+  │   ├── train.py          Training loop + checkpoint saving\n│   ├── evaluate.py       ROC-AUC / PR-AUC\
+  \ per task\n│   ├── ablations.py      24-run automated ablation study\n│   ├── optimize.py       Scheduler\
+  \ / FP / regularisation studies\n│   ├── scaffold.py       Bemis–Murcko scaffold splitting\n│   ├──\
+  \ targeted_study.py Sequential optimisation of gat_concat\n│   ├── utils.py          Seeding, logging,\
+  \ YAML/JSON I/O\n│   └── visualize.py      Publication-style bar charts\n│\n├── configs/           \
+  \   YAML configs (8 baselines + 4 optimisation)\n├── docs/                 Technical documentation\n\
+  ├── notebooks/            analysis.ipynb — interactive results\n├── results/\n│   ├── figures/     \
+  \     Curated publication-quality figures (8 PNGs)\n│   └── tables/           Final CSVs (metrics, summary,\
+  \ scaffold gap)\n│\n├── main.py               Single-experiment CLI\n├── requirements.txt\n├── LICENSE\n\
+  └── .gitignore\n```\n\n---\n\n## Quick Start\n\n```bash\n# 1. Clone and install\ngit clone <repo-url>\n\
+  cd molecular-gnn-tox21\npip install -r requirements.txt\n\n# 2. Run a single experiment (downloads Tox21\
+  \ on first run)\npython main.py --config configs/gat_gated_focal.yaml --seed 42\n\n# 3. Run the full\
+  \ 24-experiment ablation (24 seeds × 3 = 72 runs)\npython src/ablations.py\n\n# 4. Run the targeted\
+  \ optimisation study\npython src/targeted_study.py --seeds 42          # quick single-seed\npython src/targeted_study.py\
+  \                     # full 3-seed run\n\n# 5. Scaffold generalisation study\npython src/optimize.py\
+  \ --phases 7 8\n```\n\nTox21 is downloaded automatically to `data/` on first run. No manual data preparation\
+  \ required.\n\n---\n\n## Reproducibility\n\nAll experiments are reproducible via fixed seeds and config\
+  \ files.\n\n| Experiment | Seeds | Split seed | Result file |\n|-----------|-------|------------|-------------|\n\
+  | Full ablation | 42, 123, 999 | 42 (fixed) | `results/tables/metrics.csv` |\n| Scaffold study | 42,\
+  \ 123, 999 | per-seed | `results/tables/scaffold_split_results.csv` |\n| Optimisation | 42, 123, 999\
+  \ | 42 (fixed) | `results/tables/summary.csv` |\n\n```bash\n# Verify key result — should print ROC-AUC\
+  \ ≈ 0.82 for gat_gated_fusion+focal\npython main.py --config configs/gat_gated_focal.yaml --seed 42\n\
+  ```\n\n---\n\n## Documentation\n\n| Document | Contents |\n|----------|----------|\n| [docs/methodology.md](docs/methodology.md)\
+  \ | Molecular graphs, Morgan fingerprints, GAT, fusion mechanisms, loss functions |\n| [docs/ablation_study.md](docs/ablation_study.md)\
+  \ | 24-run study design, experimental matrix, multi-seed findings |\n| [docs/optimization_study.md](docs/optimization_study.md)\
+  \ | Sequential optimisation: hidden dim → heads → fp capacity → radius |\n| [docs/scaffold_evaluation.md](docs/scaffold_evaluation.md)\
+  \ | Scaffold split methodology, generalisation gap, deployment implications |\n\n---\n\n## Citation\n\
+  \n```bibtex\n@misc{gnn-tox21-ablation,\n  title  = {Systematic Ablation Study of Graph Architectures,\
+  \ Multimodal Fusion\n             Strategies, and Loss Functions for Molecular Property Prediction on\
+  \ Tox21},\n  author = {Siddhi Seth},\n  year   = {2026},\n  url    = {https://github.com/ssid18/molecular-gnn-tox21}\n\
+  }\n```\n"

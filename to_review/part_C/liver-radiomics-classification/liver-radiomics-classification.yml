@@ -1,0 +1,57 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: yigith59/liver-radiomics-classification
+url: https://github.com/yigith59/liver-radiomics-classification
+platform: github
+description: Multiphasic contrast-enhanced CT radiomics pipeline for the simultaneous three-class classification
+  of HCC, ICC, and cHCC-CCA, featuring bias-aware nested cross-validation and SHAP-based feature interpretation
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-10T20:43:11Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Three-Class Radiomic Differentiation of HCC, ICC, and cHCC-CCA\n\nCode repository for\
+  \ the manuscript:\n\n**\"Three-Class Radiomic Differentiation of Hepatocellular Carcinoma, Intrahepatic\
+  \ Cholangiocarcinoma, and Combined Hepatocellular-Cholangiocarcinoma on Multiphasic Contrast-Enhanced\
+  \ CT\"**\n\n*Abdominal Radiology* (under revision)\n\n---\n\n## Overview\n\nThis repository contains\
+  \ the full analysis pipeline for a radiomics study classifying three primary liver tumor types (HCC,\
+  \ ICC, cHCC-CCA) on multiphasic CECT using custom spatial features and XGBoost with nested cross-validation.\n\
+  \n- **N = 138 patients** (HCC = 72, ICC = 43, cHCC-CCA = 23)\n- **Four CECT phases**: Pre-contrast (P),\
+  \ Arterial (C1), Portal Venous (C2), Delayed (C3)\n- **OOF macro AUC = 0.953** (full nested CV, SHAP\
+  \ top-K arm)\n\n---\n\n## Repository Structure\n\n| File | Description |\n|------|-------------|\n|\
+  \ `01_feature_extraction.py` | Custom spatial + peritumoral feature extraction (SimpleITK) |\n| `02_ml_classification.py`\
+  \ | Nested CV XGBoost pipeline with 4 feature-selection arms |\n| `03_statistics.py` | Statistical analysis,\
+  \ FDR correction, SHAP concordance, ablation |\n| `04_sensitivity_analysis.py` | HU normalization sensitivity\
+  \ analysis (R2.2) |\n| `05_robustness_analysis.py` | Mask perturbation robustness (ICC2 stability, top-5\
+  \ SHAP features) |\n\n---\n\n## Data Configuration\n\nEach script contains a `BASE_DIR` (or `BASE` /\
+  \ `CSV_PATH`) variable at the top of the configuration section. Set this to your local data directory\
+  \ before running.\n\nExpected directory layout under `BASE_DIR`:\n\n```\ndata/\n├── ct_files/      \
+  \     # NIfTI CT volumes, named <patient_id>_<phase>.nii.gz\n├── mask_files/         # NIfTI tumor masks,\
+  \ named <patient_id>_<phase>_mask.nii.gz\n├── patient_data.csv    # clinical metadata (columns: patient_id,\
+  \ cancer_type, ...)\n└── spatial_analysis_v4/\n    └── combined_spatial_v4_full.csv   # output of 01_feature_extraction.py\n\
+  ```\n\n> **Note:** Patient imaging data are not publicly available due to institutional privacy restrictions.\
+  \ Feature matrices and derived outputs can be shared upon reasonable request to the corresponding author.\n\
+  \n---\n\n## Requirements\n\n```\npip install -r requirements.txt\n```\n\nTested with Python 3.9. See\
+  \ `requirements.txt` for pinned versions.\n\n---\n\n## Execution Order\n\n```bash\npython 01_feature_extraction.py\
+  \    # generates combined_spatial_v4_full.csv\npython 02_ml_classification.py     # nested CV, saves\
+  \ OOF predictions + SHAP\npython 03_statistics.py            # KW tests, FDR, figures, ablation\npython\
+  \ 04_sensitivity_analysis.py  # HU normalization sensitivity\npython 05_robustness_analysis.py   # mask\
+  \ perturbation ICC\n```\n\n---\n\n## Key Methodological Notes\n\n- **Non-IBSI features** (radial profile,\
+  \ rim/core contrast, 3D angular heterogeneity, perilesional invasion slope, necrosis fraction, capsule\
+  \ score, TLR) are defined mathematically in Online Resource 1 of the manuscript.\n- **Effect size**\
+  \ is reported as η² = (H − k + 1)/(n − k) where H is the Kruskal-Wallis statistic, k the number of groups,\
+  \ and n the total sample size.\n- **FDR correction** uses the Benjamini-Hochberg procedure (backward-cumulative-minimum\
+  \ formulation).\n- **Nested CV**: outer 5-fold for performance estimation, inner 3-fold for hyperparameter\
+  \ tuning (RandomizedSearchCV, 25 iterations). All preprocessing (imputation, scaling, variance filter,\
+  \ correlation pruning, SHAP top-K selection) is fitted on the training fold only.\n\n---\n\n## Citation\n\
+  \nIf you use this code, please cite the manuscript (citation will be updated upon acceptance).\n\n---\n\
+  \n## License\n\nMIT License. See `LICENSE` for details.\n"

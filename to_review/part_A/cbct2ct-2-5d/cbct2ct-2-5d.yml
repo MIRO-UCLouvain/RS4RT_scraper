@@ -1,0 +1,75 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: kitewatermelon/CBCT2CT_2.5D
+url: https://github.com/kitewatermelon/CBCT2CT_2.5D
+platform: github
+description: official repository of 2.5D Context Encoding with Latent-Space Variational Diffu-sion for
+  CBCT-to-CT Synthesis
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-08-12T16:43:55Z'
+image_source: https://raw.githubusercontent.com/kitewatermelon/CBCT2CT_2.5D/HEAD/assets/fig1.png
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Official implementation of 2.5D Context Encoding with Latent-Space Variational Diffusion\
+  \ for CBCT-to-CT Synthesis\n\n**Yeson Su Park**<sup>1</sup>, **Ji Hye Won**<sup>1, 2*</sup>\n\n---\n\
+  ## Architectures\n\n![image](assets/fig1.png)\n\n## Environment Setup\n\n```bash\nconda create -n cbct2ct\
+  \ python=3.10 -y\nconda activate cbct2ct\npip install -r requirements.txt\n```\n\n---\n\n## Pipeline\
+  \ Overview\n\n```\ndata/preprocess.py  →  train/stage1_vqvae.py  →  train/stage2_vdm.py  →  eval/eval_gen.py\
+  \  →  eval/eval_full.py\n```\n\nThe key parameter controlling 2D vs. 2.5D is `--n_slices` / `--in_channels`:\n\
+  \n| Mode | n_slices | in_channels |\n|------|----------|-------------|\n| **2D**  | `1` | `1` |\n| **2.5D**\
+  \ | `5` (or 3, 7, 9) | `5` (or 3, 7, 9) |\n\n---\n\n## Step 1 — Preprocessing (`data/preprocess.py`)\n\
+  \nConverts raw SynthRad2025 volumes into per-slice `.npy` patches.\n\n**2D**\n```bash\npython -m data.preprocess\
+  \ \\\n  --data_root /path/to/synthrad2025 \\\n  --output_root /path/to/preprocessed \\\n  --n_slices\
+  \ 1 \\\n  --modality cbct ct \\\n  --anatomy AB HN TH\n```\n\n**2.5D**\n```bash\npython -m data.preprocess\
+  \ \\\n  --data_root /path/to/synthrad2025 \\\n  --output_root /path/to/preprocessed \\\n  --n_slices\
+  \ 5 \\\n  --modality cbct ct \\\n  --anatomy AB HN TH\n```\n\nKey options:\n- `--spatial_size` — patch\
+  \ size in pixels (default: `128`)\n- `--val_ratio` — validation split ratio (default: `0.2`)\n- `--hu_min`\
+  \ / `--hu_max` — HU clipping range (default: `-1024` / `3071`)\n\n---\n\n## Step 2 — Stage 1: VQ-VAE\
+  \ (`train/stage1_vqvae.py`)\n\nTrains separate VQ-VAE encoders for CBCT and CT. Run once per modality.\n\
+  \n**2D** (`--in_channels 1`)\n```bash\n# CT\npython -m train.stage1_vqvae \\\n  --data_root /path/to/preprocessed\
+  \ \\\n  --modality ct \\\n  --in_channels 1 \\\n  --exp_name vqvae_ct_n1_cpr4\n\n# CBCT\npython -m train.stage1_vqvae\
+  \ \\\n  --data_root /path/to/preprocessed \\\n  --modality cbct \\\n  --in_channels 1 \\\n  --exp_name\
+  \ vqvae_cbct_n1_cpr4\n```\n\n**2.5D** (`--in_channels 5`)\n```bash\n# CT\npython -m train.stage1_vqvae\
+  \ \\\n  --data_root /path/to/preprocessed \\\n  --modality ct \\\n  --in_channels 5 \\\n  --exp_name\
+  \ vqvae_ct_n5_cpr4\n\n# CBCT\npython -m train.stage1_vqvae \\\n  --data_root /path/to/preprocessed \\\
+  \n  --modality cbct \\\n  --in_channels 5 \\\n  --exp_name vqvae_cbct_n5_cpr4\n```\n\nKey options:\n\
+  - `--compress_ratio` — spatial compression factor: `2`, `4`, or `8` (default: `4`)\n- `--checkpoint_dir`\
+  \ — where to save checkpoints (default: `checkpoints/stage1_vqvae`)\n- `--num_epochs` — number of training\
+  \ epochs (default: `1000`)\n\n---\n\n## Step 3 — Stage 2: VDM (`train/stage2_vdm.py`)\n\nTrains the\
+  \ latent-space variational diffusion model conditioned on the CBCT latent.\n\n**2D** (`--in_channels\
+  \ 1`)\n```bash\npython -m train.stage2_vdm \\\n  --data_root /path/to/preprocessed \\\n  --in_channels\
+  \ 1 \\\n  --ct_ckpt   checkpoints/stage1_vqvae/vqvae_ct_n1_cpr4/best.pt \\\n  --cbct_ckpt checkpoints/stage1_vqvae/vqvae_cbct_n1_cpr4/best.pt\
+  \ \\\n  --exp_name vdm_uvit_n1_cpr4\n```\n\n**2.5D** (`--in_channels 5`)\n```bash\npython -m train.stage2_vdm\
+  \ \\\n  --data_root /path/to/preprocessed \\\n  --in_channels 5 \\\n  --ct_ckpt   checkpoints/stage1_vqvae/vqvae_ct_n5_cpr4/best.pt\
+  \ \\\n  --cbct_ckpt checkpoints/stage1_vqvae/vqvae_cbct_n5_cpr4/best.pt \\\n  --exp_name vdm_uvit_n5_cpr4\n\
+  ```\n\nKey options:\n- `--backbone` — diffusion backbone: `uvit` or `unet` (default: `uvit`)\n- `--compress_ratio`\
+  \ — must match Stage 1 (default: `4`)\n- `--num_steps` — total training steps (default: `50000`)\n-\
+  \ `--checkpoint_dir` — where to save checkpoints (default: `checkpoints/stage2_vdm`)\n\n---\n\n## Step\
+  \ 4 — Generate Predictions (`eval/eval_gen.py`)\n\nRuns inference and saves generated CT volumes to\
+  \ disk.\n\n**2D** (key: `uvit_n1_cpr4`)\n```bash\npython -m eval.eval_gen \\\n  --data_root /path/to/preprocessed\
+  \ \\\n  --keys uvit_n1_cpr4\n```\n\n**2.5D** (key: `uvit_n5_cpr4`)\n```bash\npython -m eval.eval_gen\
+  \ \\\n  --data_root /path/to/preprocessed \\\n  --keys uvit_n5_cpr4\n```\n\nMultiple configs can be\
+  \ generated at once:\n```bash\npython -m eval.eval_gen \\\n  --data_root /path/to/preprocessed \\\n\
+  \  --keys uvit_n1_cpr4 uvit_n3_cpr4 uvit_n5_cpr4 uvit_n7_cpr4 uvit_n9_cpr4\n```\n\nAvailable keys: `uvit_n1_cpr4`,\
+  \ `uvit_n3_cpr4`, `uvit_n5_cpr4`, `uvit_n7_cpr4`, `uvit_n9_cpr4`, `uvit_n5_cpr2`, `uvit_n5_cpr8`, `unet_n5_cpr4`\n\
+  \nKey options:\n- `--output_dir` — where to save generated volumes (default: `eval_results/gen`)\n-\
+  \ `--n_sample_steps` — DDPM sampling steps (default: `200`)\n- `--overwrite` — re-generate even if output\
+  \ already exists\n\n---\n\n## Step 5 — Evaluate Metrics (`eval/eval_full.py`)\n\nComputes PSNR, SSIM,\
+  \ and MSE across all generated results and saves summary statistics.\n\n**2D**\n```bash\npython -m eval.eval_full\
+  \ \\\n  --data_root /path/to/preprocessed \\\n  --gen_dir eval_results/gen\n```\n\n**2.5D** (same command\
+  \ — reads all configs present in `--gen_dir`)\n```bash\npython -m eval.eval_full \\\n  --data_root /path/to/preprocessed\
+  \ \\\n  --gen_dir eval_results/gen\n```\n\nOutputs saved to `--output_dir` (default: `eval_results/`):\n\
+  - `raw_metrics.csv` — per-sample PSNR / SSIM / MSE\n- `summary_stats.csv` — mean ± std per model × anatomy\n\
+  \nKey options:\n- `--no_fid` — skip FID computation (faster)\n- `--n_sample_steps` — sampling steps\
+  \ used during eval (default: `200`)\n\n---\n\n## Acknowledgements\n\nThis codebase is heavily inspired\
+  \ by and builds upon\n[synthrad2025-vardifformer](https://github.com/relyativist/synthrad2025-vardifformer).\n\
+  Key architectural components (VQ-VAE training pipeline, latent VDM framework,\nand evaluation structure)\
+  \ were adapted from that repository.\n"

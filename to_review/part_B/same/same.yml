@@ -1,0 +1,61 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: alibaba-damo-academy/same
+url: https://github.com/alibaba-damo-academy/same
+platform: github
+description: Medical image registration, affine and deformable registration
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 35
+updated_at: '2026-06-15T10:51:23Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "# Medical image registration with SAM feature\n\nThis is the official Pytorch implementation\
+  \ of \"SAME++: A Self-supervised Anatomical eMbeddings Enhanced medical image registration framework\
+  \ using stable sampling and regularized transformation\". If you have any questions, please contact\
+  \ us at alisonbrielee@gmail.com.\n\nThis is the repo for SAME registration. It contains the following\
+  \ registration methods:\n- Non-learning\n    - SAM-Affine \n    - SAM-Coarse\n    - SAM-InsOpt\n- Learning\n\
+  \    - SAM-Deform\n\n\n# Instructions\n## Requirements\n- Anaconda3 with python=3.7\n- Pytorch=1.9.0\n\
+  - SAM [[code]](https://github.com/alibaba-damo-academy/self-supervised-anatomical-embedding-v2) derived\
+  \ from SAM: Self-supervised Learning of Pixel-wise Anatomical Embeddings in Radiological Images (IEEE\
+  \ IMI 2022) [[pdf]](https://ieeexplore.ieee.org/document/9760421/) \n\n## Installation\nFirst install\
+  \ SAM repo\n```\npip install -U openmim\nmim install mmcv-full==1.4.7\ncd SAM\npython -m pip install\
+  \ -e .\n```\nThen install the repo SAMReg\n```\ngit clone https://github.com/alibaba-damo-academy/same.git\n\
+  cd same\npip install -e .\n```\n\n## Repo structures\nThis repo contains the following folders under\
+  \ root: \n- demos: demo code to test SAME on new data.\n- scripts: training script and training config\
+  \ files.\n\n\n\n## Usage example on LearnReg abdomenCTCT dataset\n```\nwget https://learnreg.oss-cn-beijing.aliyuncs.com/dataset/AbdomenCTCTC.zip\n\
+  unzip AbdomenCTCTC.zip -d ./data/\n ```\n\n\n### Prepare dataset\nSAMReg provides a base dataset class.\
+  \ To use this dataset class, one needs to organize the folder structure of the dataset as follows with\
+  \ a ‘splits.json’ file attached.  \n\n```\nroot/\n|-- case1/\n|   |-- case1_image.nii.gz\n|   |-- case1_label.nii.gz\n\
+  |   |-- case1_mask.nii.gz\n|-- case2/\n...\n|-- pre_align/\n|   |-- case1_case2_affine_inv.npy\n|  \
+  \ |-- case1_case2_affine.npy\n|   |-- case1_case2_coarse_phi.npy\n|   |-- case1_case3_affine_inv.npy\n\
+  |   |-- case1_case3_affine.npy\n|   |-- case1_case3_coarse_phi.npy\n\n```\nExample files can be found\
+  \ at [data](data/AbdomenCTCT).\n\n### Global Alignment via SAMAffine or SAMCoarse\n\n```\npython demos/reg_sam_affine.py\
+  \ -o=results/Affine -d=data/AbdomenCTCT --data_shape 192 160 256 --data_phase=train -e=SAMcoarse -g=0\n\
+  python demos/reg_sam_coarse.py -o=results/Coarse -d=data/AbdomenCTCT --data_shape 192 160 256 --data_phase=train\
+  \ -e=SAMcoarse -g=0\n```\n\n### Train SAM-Deform from scratch\n```\npython scripts/train.py -o=results\
+  \ -d=data/AbdomenCTCT --data_shape 192 160 256  -e=SAMDeform --train_config=SAMReg/scripts/train_config/train_config_abdomen.py\
+  \ -g=0 --lr=5e-5 --epochs=200 --save_model_period=20\n```\nOr, users can either use the training pipeline\
+  \ implemented in [scrips](scripts/) or implement their own training procedure. The included training\
+  \ pipeline provides the following features:\n- Tensorboard integrated\n- Well-structured output folder\
+  \ includes the tensorboard log, trained weights, plotted figures, and a record of the experiment.\n\n\
+  To use the included training pipeline, one only needs to implement the following functions in a training\
+  \ config class based on the specific training task.\n- make_net(self, inshape)\n- make_dataloader(self,\
+  \ data_path)\n- _init_losses(self)\n- train_kernel(self, model, train_batch, device, epoch, exp_folder)\n\
+  - debug_kernel(self, model, batch, device, epoch, exp_folder)\n\nMultiple sample training config files\
+  \ can be found at [here](scripts/train_config/).\n\n### Inference based on trained SAM-Deform model\
+  \ and SAM-IO\nUsers can either use the demo code to test.\n```\npython eval_NetInsO_abdomen.py\n```\n\
+  \n\n## Publication\nIf you find this repository useful, please cite:\n\n- **SAME++: A Self-supervised\
+  \ Anatomical eMbeddings Enhanced medical image registration framework using stable sampling and regularized\
+  \ transformation**  \nLin Tian*, [Zi Li*](https://alison-brie.github.io/), Fengze Liu, Xiaoyu Bai, Jia\
+  \ Ge, Le Lu, Marc Niethammer, Xianghua Ye, Ke Yan, Daikai Jin. ArXiv 2023 [eprint arXiv:2311.14986](https://arxiv.org/abs/2311.14986\
+  \ \"eprint arXiv:2311.14986\")\n\n- **SAME: Deformable Image Registration based on Self-supervised Anatomical\
+  \ Embeddings**  \nFengze Liu, Ke Yan, Adam Harrison, Dazhou Guo, Le Lu, Alan Yuille, Lingyun Huang,\
+  \ Guotong Xie, Jing Xiao, Xianghua Ye, Dakai Jin.\nMICCAI 2021 [eprint arXiv:2109.11572](https://arxiv.org/abs/2109.11572\
+  \ \"eprint arXiv:2109.11572\")\n\n"

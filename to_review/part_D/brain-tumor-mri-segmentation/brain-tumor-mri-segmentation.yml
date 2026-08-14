@@ -1,0 +1,119 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: YasirSiddiqui11/brain-tumor-mri-segmentation
+url: https://github.com/YasirSiddiqui11/brain-tumor-mri-segmentation
+platform: github
+description: U-Net brain tumor segmentation on Figshare (Dice 61.83%) and BraTS 2020 (Dice 93.64%)
+license: null
+language: Jupyter Notebook
+keywords:
+- brain-tumor
+- brats2020
+- deep-learning
+- medical-imaging
+- mri-segmentation
+- python
+- tensorflow
+- u-net
+stars: 0
+updated_at: '2026-05-30T01:00:59Z'
+image_source: https://raw.githubusercontent.com/YasirSiddiqui11/brain-tumor-mri-segmentation/HEAD/outputs/figshare_sample.png
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+readme_excerpt: "# Brain Tumor Detection Using MRI Image Segmentation\n**AI-Powered Brain Tumor Detection\
+  \ — MBA Business Analytics Project – Amity University Online**\n\n## About the Project\n\nBrain tumors\
+  \ represent one of the most lethal forms of cancer and the benefit of early detection cannot be overstated.\
+  \ Manual analysis of MRI is time-consuming and reliant on specialist skill. This project solves that\
+  \ problem by creating an AI segmentation pipeline which automatically identifies and localizes tumor\
+  \ areas from MRI scans.\n\nThe model was trained on the U-Net deep learning architecture and tested\
+  \ on two publicly available datasets, Figshare and BraTS 2020. We used the same model architecture for\
+  \ both datasets with a variation in input channels. This huge performance difference shows how much\
+  \ the quantity and quality of imaging data affects model output. This project does pixelwise, rather\
+  \ than blurry classification, it tells you exactly where in the scan the tumor is, which is much more\
+  \ useful from a clinical perspective than just a yes/no answer.\n\n---\n\n## Student\n**Mohammad Yasir\
+  \ Siddiqui** — MBA Business Analytics, 4th Semester, Amity University Online\n\n---\n\n## Datasets\n\
+  \n**Dataset 1 — Figshare Brain Tumor Dataset**\n\nThe dataset contains 3,077 T1-contrast enhanced MRI\
+  \ slices covering three tumor types: Meningioma, Glioma, and Pituitary Tumor. Files are in `.mat` format\
+  \ (HDF5 v7.3) and must be read using `h5py` — scipy cannot open this format. Each file contains the\
+  \ MRI image, tumor mask, and tumor type label.\n\nSource: [figshare.com/articles/dataset/brain_tumor_dataset/1512427](https://figshare.com/articles/dataset/brain_tumor_dataset/1512427)\n\
+  \n**Dataset 2 — BraTS 2020**\n\nThe BraTS dataset contains 57,195 MRI slices with four imaging sequences\
+  \ per scan: T1, T2, T1ce (contrast-enhanced), and FLAIR. Each slice also includes masks for three tumor\
+  \ sub-regions: Necrotic Core, Peritumoral Edema, and Enhancing Tumor. This multi-channel structure gives\
+  \ the model significantly more information to learn from compared to Figshare's single channel.\n\n\
+  Source: [Kaggle — awsaf49/brats2020-training-data](https://www.kaggle.com/datasets/awsaf49/brats2020-training-data)\n\
+  \n---\n\n## Repository Structure\n\n```\nBrainTumorDetection/\n│\n├── Brain_Tumor_Detection.ipynb\n\
+  │\n├── outputs/\n│   ├── figshare_sample.png\n│   ├── brats_sample.png\n│   ├── prediction_results.png\n\
+  │   ├── brats_results.png\n│    \n└── README.md\n```\n\n> The raw dataset files and trained model weights\
+  \ are not included due to size limits. The notebook regenerates everything from scratch when run. Dataset\
+  \ download links are provided above.\n\n---\n\n## Methodology\n\n**Preprocessing**\nAll images were\
+  \ normalized to [0, 1] and resized to 128×128. Figshare masks were binarized to a single tumor/no-tumor\
+  \ channel. BraTS slices with no tumor region were filtered out before training, and all four channels\
+  \ were normalized independently. Due to the size of the BraTS dataset (57k files), a file-based generator\
+  \ was used during training instead of loading everything into RAM.\n\n**Model Architecture — U-Net**\n\
+  The U-Net consists of three encoder blocks (32 → 64 → 128 filters), a bottleneck layer (256 filters),\
+  \ and three decoder blocks with UpSampling and skip connections. BatchNormalization and Dropout (0.2–0.3)\
+  \ are applied throughout. The output layer uses a sigmoid activation for binary segmentation. The same\
+  \ architecture (~1.95M parameters) was used for both datasets — only the input shape differs: `(128,\
+  \ 128, 1)` for Figshare and `(128, 128, 4)` for BraTS.\n\n**Loss Functions**\nFor Figshare, a combined\
+  \ Dice Loss and Weighted Binary Cross Entropy (49× weight on tumor pixels) was used to handle severe\
+  \ class imbalance — tumor pixels make up only ~1.7% of any image. For BraTS, Dice Loss was combined\
+  \ with Tversky Loss (α=0.3, β=0.7), which penalizes missed tumors more heavily than false alarms.\n\n\
+  **Training**\nBoth models were trained using the Adam optimizer (lr=1e-4) with EarlyStopping (patience=6),\
+  \ ReduceLROnPlateau (patience=3), and ModelCheckpoint saving the best model only. Figshare used batch\
+  \ size 16 and stopped at epoch 15. BraTS used batch size 8 due to Colab RAM limits and stopped at epoch\
+  \ 13.\n\n**Evaluation**\nPredictions were thresholded at 0.5 and compared against ground truth masks\
+  \ using Accuracy, Precision, Recall, F1 Score, and Dice Score.\n\n---\n\n## Results and Visualizations\n\
+  \n**Figshare Sample — MRI Scan + Tumor Mask**\n\n![Figshare Sample](outputs/figshare_sample.png)\n\n\
+  MRI scan alongside its doctor-labeled tumor mask and the AI-predicted mask. The Figshare dataset provides\
+  \ only a single T1-contrast channel, which limits how well the model can distinguish tumor boundaries.\n\
+  \n**BraTS Sample — Multi-Channel MRI**\n\n![BraTS Sample](outputs/brats_sample.png)\n\nBraTS scans include\
+  \ four MRI sequences per slice. Each sequence highlights different tissue properties, giving the model\
+  \ substantially more information to identify tumor boundaries accurately.\n\n**Prediction Results —\
+  \ Figshare**\n\n![Prediction Results](outputs/prediction_results.png)\n\nSide-by-side comparison of\
+  \ ground truth masks and model predictions on Figshare test scans.\n\n**Prediction Results — BraTS 2020**\n\
+  \n![BraTS Results](outputs/brats_results.png)\n\nBraTS predictions show significantly tighter alignment\
+  \ with ground truth masks, reflecting the benefit of multi-channel MRI input.\n\n---\n\n## Model Performance\n\
+  \n**Dataset 1 — Figshare** (1 MRI channel)\n\n| Metric | Score |\n|--------|-------|\n| Accuracy | 98.57%\
+  \ |\n| Precision | 55.36% |\n| Recall | 70.01% |\n| F1 Score | 61.83% |\n| **Dice Score** | **61.83%**\
+  \ |\n\n**Dataset 2 — BraTS 2020** (4 MRI channels)\n\n| Metric | Score |\n|--------|-------|\n| Accuracy\
+  \ | 99.67% |\n| Precision | 93.38% |\n| Recall | 93.90% |\n| F1 Score | 93.64% |\n| **Dice Score** |\
+  \ **93.64%** |\n\nThe Dice Score improved from 61.83% to 93.64% using the exact same U-Net architecture.\
+  \ The difference is entirely due to the number of MRI channels available. Figshare's single T1-contrast\
+  \ channel provides limited tissue contrast, while BraTS's four sequences give the model a far richer\
+  \ view of tumor boundaries.\n\nIt is also important to note that Figshare's 98.57% accuracy is misleading.\
+  \ Because tumor pixels are only ~1.7% of any scan, a model that predicts all-background already achieves\
+  \ ~98% accuracy automatically. Dice Score is the meaningful metric — it only scores well if the tumor\
+  \ region is actually found correctly.\n\n| Improvement | Value |\n|-------------|-------|\n| Precision\
+  \ | +38.02% |\n| Recall | +23.89% |\n| Dice Score | +31.81% |\n\n---\n\n## How to Run\n\n1. Clone or\
+  \ download this repository\n2. Install dependencies:\n```\npip install tensorflow h5py==3.11.0 scikit-image\
+  \ scikit-learn matplotlib numpy\n```\n3. Set up Google Drive folder structure:\n```\nMyDrive/brain_tumor_project/\n\
+  ├── data/          ← Figshare .mat files\n├── brats/data/    ← BraTS zip file (auto-unzipped by notebook)\n\
+  └── outputs/       ← models and results saved here automatically\n```\n4. Open `Brain_Tumor_Detection.ipynb`\
+  \ in Google Colab, mount Drive, and run all cells top to bottom\n   - Cells 1–9: Figshare pipeline\n\
+  \   - Cells 10–19: BraTS pipeline\n\n> **Note:** Use h5py version 3.11.0 exactly — version 3.16 conflicts\
+  \ with TensorFlow. No OpenCV (cv2) is used anywhere in this project; all image operations use scikit-image\
+  \ and PIL.\n\n---\n\n## Conclusions\n\nThese results indicate that deep learning approaches for MRI\
+  \ tumor segmentation yield high clinical performance when given sufficient imaging data. Therefore,\
+  \ the U-Net architecture was suitable for single-channel and multi-channel inputs, since the BraTS model\
+  \ achieved a Dice Score of 93.64% which is a clinically-relevant outcome.\n\nSomething of extreme importance\
+  \ that we found in this analysis is that performance does not depend solely on model architecture. Importance\
+  \ of Input Data: Just like output, the input data matters too. A better improvement I had from going\
+  \ from one MRI channel to 4 was a 31.81% increase in Dice Score with no model design change\n\nOther\
+  \ limitations are the use of 2D slice-based segmentation instead of full 3D volumetric analysis, and\
+  \ the training of models on public benchmark data rather than real clinical scans. In future work, I\
+  \ plan to explore 3D U-Net architectures, segmentation of multi-class tumor regions and deployment as\
+  \ a clinical decision support tool.\n\n---\n\n## Tools and Technologies\n\nPython · TensorFlow/Keras\
+  \ · h5py · scikit-image · NumPy · Matplotlib · Google Colab · Google Drive\n\n---\n\n## References\n\
+  \n1. Ronneberger et al. (2015) — U-Net: Convolutional Networks for Biomedical Image Segmentation\n2.\
+  \ Menze et al. (2015) — The Multimodal Brain Tumor Image Segmentation Benchmark (BraTS)\n3. Bakas et\
+  \ al. (2017) — Advancing The Cancer Genome Atlas glioma MRI collections\n4. Havaei et al. (2017) — Brain\
+  \ Tumor Segmentation with Deep Neural Networks\n5. Pereira et al. (2016) — Brain Tumor Segmentation\
+  \ Using CNN in MRI Images\n6. Louis et al. (2016) — WHO Classification of Tumors of the Central Nervous\
+  \ System\n7. Ostrom et al. (2019) — CBTRUS Statistical Report\n8. Gordillo et al. (2013) — State of\
+  \ the art survey on MRI brain tumor segmentation\n9. Akkus et al. (2017) — Deep Learning for Brain MRI\
+  \ Segmentation\n10. Zhao et al. (2018) — A deep learning model integrating FCNNs and CRFs for brain\
+  \ tumor segmentation\n\n---\n\n## Contact\n\nFor any questions, feedback, or collaboration opportunities,\
+  \ please reach out at:\n**yasirfcb14@gmail.com**\n"

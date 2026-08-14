@@ -1,0 +1,139 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: SultanMamun420/A-Phased-Risk-Managed-Approach-to-Multimodal-DL-for-Prognosis-in-Laryngeal-Cancer-Using-MRI
+url: https://github.com/SultanMamun420/A-Phased-Risk-Managed-Approach-to-Multimodal-DL-for-Prognosis-in-Laryngeal-Cancer-Using-MRI
+platform: github
+description: 'A Phased, Risk-Managed Approach to Multimodal Deep Learning for Prognosis in Laryngeal Cancer
+  Using MRI-Guided Radiotherapy and Clinical Data: An Advanced Framework Integrating Causal Inference,
+  Uncertainty Quantification, and Explainable AI'
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-02-19T07:04:57Z'
+image_source: null
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "Research Article  \n\nA Phased, Risk-Managed Approach to Multimodal Deep Learning for\
+  \ Prognosis in Laryngeal Cancer Using MRI-Guided Radiotherapy and Clinical Data: An Advanced Framework\
+  \ Integrating Causal Inference, Uncertainty Quantification, and Explainable AI\n\nAuthors: Sultan Mamun¹'²,\
+  \ Prof. Dr. Rytis Maskeliūnas² \n¹School of Mechanical Engineering,  Yangzhou University, Jiangsu, China\
+  \ \n²Faculty of Informatics, Kaunas University of Technology, Kaunas, Lithuania\n\nCorresponding Author:\
+  \ Prof. Dr. Rytis Maskeliūnas² (rytis.maskeliunas@ktu.lt)\n\nAbstract:\nBackground: Data scarcity, temporal\
+  \ dependence modeling, multimodal heterogeneity, model opacity, and deployment instability are some\
+  \ of the significant obstacles that come with integrating longitudinal MRI-guided radiotherapy (MRIgRT)\
+  \ imaging with diverse clinical data for laryngeal cancer prognosis. Although recent developments in\
+  \ causal machine learning [4-6], sparse mixture-of-experts architectures [7,8], and foundation models\
+  \ [1-3] present encouraging paths, comprehensive frameworks for risk-managed clinical translation are\
+  \ still woefully lacking [9,10].\n\nMethods: We provide a nine-phase development pipeline called the\
+  \ Phased, Risk-Managed Multimodal Oncology (PRIMO) framework, which combines explainable expert routing\
+  \ [17,18], causal structure learning [13,14], dual uncertainty quantification [15, 16], and synthetic\
+  \ data validation [11, 12]. Using three integrated innovations, we extend standard Sparse MoE designs\
+  \ [19,8] by introducing the Modality-Aware Causal Sparse Mixture-of-Experts (MAC-SparseMoE) architecture:\
+  \ (i) modality-aware gating conditioned on epistemic and aleatoric uncertainty estimates via Monte Carlo\
+  \ dropout and heteroscedastic regression [20,21]; (ii) causal regularization incorporating learned clinical\
+  \ causal graphs via structural causal models [22,23]; (iii) attention-weighted dynamic expert specialization\
+  \ [24,25]. We created the Gated Risk and Explainability Profiling (GREP) technique, which uses concept\
+  \ activation vectors, SHAP values, and counterfactual explanations to systematically assess expert behavior\
+  \ [18,26,27].\n\nResults: With realistic class imbalance (45%/35%/20%), missing data mechanisms [28],\
+  \ and measurement noise, MAC-SparseMoE achieved 97.00% accuracy (95% CI: 95.8-98.2%), F1-score of 0.9698,\
+  \ AUROC of 0.989, AUPRC of 0.984, and an expected calibration error (ECE) of 0.043 on a validated synthetic\
+  \ dataset (n=1000, 70% training, 10% validation, 20% test), demonstrating superior parameter efficiency\
+  \ (176,741 vs. 228,099 parameters, 22.5% reduction) compared to the static baseline. Risk-stratified\
+  \ performance was demonstrated by the GREP analysis: expert selection frequency was strongly correlated\
+  \ with TNM staging (χ²=67.3, p<0.001), uncertainty-aware routing (Spearman's ρ=-0.72, p<0.001), and\
+  \ 92% error localization to high-uncertainty subgroups. According to ablation studies, causal regularization\
+  \ increased calibration by 51.7% (ECE: 0.043 vs. 0.089), uncertainty conditioning improved resilience\
+  \ to modality dropout (accuracy retention: 94.2% vs. 87.6%), and dynamic routing achieved 89% clinical\
+  \ plausibility in counterfactual explanations by reducing prediction variance by 34% [26].\n\nConclusion:\
+  \ A methodologically sound approach for creating reliable multimodal AI systems in cancer is established\
+  \ by this study. PRIMO and MAC-SparseMoE overcome important obstacles to clinical translation [29–31]\
+  \ by combining causal reasoning, dual uncertainty quantification, and systematic risk assessment; they\
+  \ also offer a repeatable template that satisfies clinical practice standards [34,35] and regulatory\
+  \ constraints [32,33].\n\nKeywords: Multimodal Deep Learning; Laryngeal Cancer Prognosis; MRI-Guided\
+  \ Radiotherapy; Sparse Mixture-of-Experts; Causal Inference; Uncertainty Quantification; Explainable\
+  \ AI; Clinical Risk Management; Foundation Models; Synthetic Medical Data; Regulatory Compliance.\n\n\
+  1. Introduction\nWith more than 185,000 new cases and 100,000 fatalities occurring annually across the\
+  \ world, laryngeal cancer poses a serious threat to global health and shows notable geographic and socioeconomic\
+  \ inequalities [36, 37]. Although HPV-related illness is becoming more prevalent, particularly among\
+  \ younger age groups [38,39], tobacco exposure has been linked to more than 70% of cases, indicating\
+  \ that smokers are disproportionately at risk from the condition. Despite the intricate interplay of\
+  \ tumor morphology, treatment response dynamics, genetic heterogeneity, immunological factors, and patient-specific\
+  \ features [40,41], precise prognosis prediction is still crucial for treatment personalization, shared\
+  \ decision-making, resource allocation, and clinical trial stratification.\n\nAlthough clinically proven\
+  \ through decades of validation and widely accepted in clinical guidelines [42], traditional prognostic\
+  \ models that rely primarily on TNM staging systems exhibit low predictive accuracy (C-index: 0.62-0.71)\
+  \ and do not account for the complex, dynamic aspects of cancer development and treatment response [43-45].\
+  \ These anatomical staging systems fail to account for the biological diversity, tumor microenvironment\
+  \ features, genomic changes, and specific patient variables that have a significant impact on results.\
+  \ Although new prognostic models that include molecular biomarkers (p16, PD-L1 expression), radiomic\
+  \ features, and patient-reported outcomes have demonstrated incremental improvements, they are still\
+  \ not adequately validated for regular clinical use [46, 47].\n\nMRI-guided radiotherapy (MRIgRT) has\
+  \ transformed precision oncology by providing real-time soft-tissue visualization with superior contrast\
+  \ resolution (up to 10 times better than CT), adaptive treatment planning with on-table adjustments,\
+  \ and longitudinal response monitoring with millisecond temporal resolution [48-50]. Contemporary MRIgRT\
+  \ systems produce multiparametric, high-dimensional imaging data that includes functional MRI, which\
+  \ captures anatomical and functional tumor features, as well as diffusion-weighted imaging (DWI with\
+  \ ADC mapping), dynamic contrast-enhanced (DCE) sequences with pharmacokinetic modeling, T1-weighted,\
+  \ and T2-weighted images [51-53].\n\nHowever, combining this extensive longitudinal imaging data with\
+  \ disparate clinical information, such as histopathology, genomic profiles, proteomics, treatment protocols,\
+  \ patient demographics, comorbidities (Charlson index), performance status (ECOG), and quality-of-life\
+  \ indicators (EORTC QLQ-C30), presents a significant multimodal fusion challenge that is characterized\
+  \ by varying data scales, temporal asynchrony, missing values (10–40% missingness common), measurement\
+  \ heterogeneity, and complex nonlinear dependencies [54–57].\n\nMedical image analysis has seen tremendous\
+  \ success with deep learning, with expert-level performance in activities ranging from disease identification\
+  \ to treatment response prediction [58–60]. Millions of medical photos were used to train recent foundation\
+  \ models, which demonstrate promising generalization and transfer learning capabilities [1,2]. Systematic\
+  \ reviews have, however, found significant challenges to the use of clinical prediction, including:\
+  \ (i) data scarcity due to small cohort sizes and regulatory restrictions [61]; (ii) model opacity,\
+  \ which makes it harder to gain clinical trust and regulatory approval [62,63]; (iii) distribution shift\
+  \ and inadequate out-of-distribution generalization [64,65]; (iv) lack of uncertainty quantification\
+  \ [66,67]; (v) failure to incorporate clinical knowledge and causal relationships [4,6]; and (vi) insufficient\
+  \ evaluation of fairness and algorithmic bias [68,69].\n\n1.1 Novelty and Contributions\nAlthough our\
+  \ study expands upon well-established elements like synthetic data generation [11, 12] and sparse mixture-of-experts\
+  \ architectures [19, 7], the main innovation is the integration and extension of these components into\
+  \ a cohesive, risk-managed pipeline made for high-stakes oncology AI. By integrating clinical validation\
+  \ needs, regulatory factors, and systematic risk management into the development lifecycle, our contributions\
+  \ signal a paradigm change from traditional machine learning development [70, 71].\n\nFirst, we formalize\
+  \ the nine-step development cycle of the Phased, Risk-Managed Multimodal Oncology (PRIMO) framework,\
+  \ which explicitly links synthetic validation, causal structure learning, dual uncertainty quantification,\
+  \ expert-level explainability, and pre-deployment risk stratification. Unlike current frameworks that\
+  \ treat these components as optional post hoc studies, PRIMO integrates them as required validation\
+  \ gates, similar to clinical trial phase transitions, where progression necessitates specific success\
+  \ criteria and independent review [72]. By integrating best practices from clinical trial design (ICH\
+  \ E6 GCP guidelines), pharmaceutical development (ICH Q9 Quality Risk Management), and safety-critical\
+  \ systems engineering (ISO 14971), the framework operationalizes recent FDA guidance on Software as\
+  \ a Medical Device (SaMD) and guarantees that AI development adheres to the same standards as pharmaceutical\
+  \ interventions [32, 33].\n\nSecondly, we present the Modality-Aware Causal Sparse Mixture-of-Experts\
+  \ (MAC-SparseMoE), a cutting-edge architecture that builds upon the foundation of conventional SparseMoE\
+  \ [73,19] with three integrated innovations: (i) modality-aware gating conditioned on epistemic and\
+  \ aleatoric uncertainty estimates derived via Monte Carlo dropout and heteroscedastic regression [20,21,15],\
+  \ enabling dynamic down-weighting of unreliable modalities on a per-sample basis; (ii) causal regularization\
+  \ incorporating learned clinical causal graphs via structural causal models [22,4,23], aligning computational\
+  \ specialization with established medical reasoning; and (iii) attention-weighted dynamic expert specialization\
+  \ [24,25,74], enabling data-driven identification of salient features within each expert's domain. This\
+  \ design promotes clinically aligned, interpretable, and robust routing behavior, fundamentally addressing\
+  \ the black box issue that is a major obstacle to the uptake of clinical AI [62, 63].\n\nThird, we present\
+  \ Gated Risk and Explainability Profiling (GREP), a standard three-stage approach for methodical pre-deployment\
+  \ model analysis that builds upon earlier explainability methodologies [75,76] and understandable healthcare\
+  \ modeling [77]. By turning explainability into a crucial, practical component of model development,\
+  \ GREP helps identify routing biases, failure mechanisms, and subgroup performance variations early\
+  \ in the process, prior to clinical implementation. The protocol integrates several explainability strategies,\
+  \ such as counterfactual [26], SHAP values [18], concept activation vectors [27], and feature attribution\
+  \ methods [78], to offer a thorough overview of model decision-making across clinically relevant layers.\n\
+  \nWhen taken together, these contributions move the field closer to multimodal AI that is interpretable,\
+  \ reliable, and clinically implementable [79, 54, 80]. By immediately incorporating causal clinical\
+  \ expertise and modality dependability into the routing mechanism, MAC-SparseMoE closes the crucial\
+  \ gap between computational efficiency and clinical interpretability, while PRIMO and GREP provide a\
+  \ reproducible template for creating reliable AI in high-stakes medical areas.\n\n2. Materials and Methods\n\
+  Our approach combines recent developments in explainable AI [18, 17], mixture-of-experts architectures\
+  \ [19, 7], causal machine learning [13, 4], uncertainty quantification [21, 15], synthetic data generation\
+  \ [11, 12], and explainable AI [18, 17] into a unified, risk-managed framework tailored for high-stakes\
+  \ clinical applications. Throughout the development process, we complied with FDA advice on AI/ML-enabled\
+  \ medical devices [32] and TRIPOD+AI reporting criteria for transparent documentation of prediction\
+  \ model development [34].\n\n2.1. Phased, Risk-Managed Multimodal Oncology "

@@ -1,0 +1,97 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: tonmoyjoy/Breast-Cancer-Tumor-Segmentation-UNet
+url: https://github.com/tonmoyjoy/Breast-Cancer-Tumor-Segmentation-UNet
+platform: github
+description: An end-to-end PyTorch U-Net pipeline for segmenting breast cancer tumors from ultrasound
+  scans.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-24T04:45:09Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: '# Breast Cancer Tumor Segmentation using U-Net
+
+
+  An end-to-end deep learning pipeline built in PyTorch that automates the semantic segmentation and boundary
+  isolation of breast cancer tumors from ultrasound scans using the Breast Ultrasound Images (BUSI) dataset.
+
+
+  ## 📌 Project Overview
+
+  Medical ultrasound images are heavily prone to noise and extreme class imbalance (vast background areas
+  vs. small localized tumor structures). Standard cross-entropy loss functions often fail, causing networks
+  to converge on blank masks. This project implements a **U-Net architecture with a pre-trained ResNet18
+  encoder** optimized via a custom **Hybrid Loss Function** to accurately outline benign and malignant
+  tumor geometry.
+
+
+  ## 🛠️ Tech Stack & Architecture
+
+  * **Framework:** PyTorch
+
+  * **Model Architecture:** U-Net with a ResNet18 backbone (Transfer Learning via `segmentation-models-pytorch`)
+
+  * **Loss Function:** Hybrid Loss (BCEWithLogitsLoss + DiceLoss)
+
+  * **Data Processing:** Pandas, NumPy, PIL, Scikit-learn (Stratified Split)
+
+
+  ## 🚀 Key Engineering & Problem Solving
+
+  * **Data Pipeline Restructuring:** Engineered a custom PyTorch `Dataset` that dynamically pairs raw
+  images with ground-truth masks while generating synthetic blank target matrices for healthy tissue control
+  samples.
+
+  * **Loss Function Engineering:** Integrated Dice Loss alongside Binary Cross-Entropy to penalize structural
+  boundaries and region overlap discrepancies, preventing the model from collapsing into trapped local
+  minima (blank mask outputs).
+
+
+  ## 📊 Training Performance & Final Test Evaluation
+
+  The model was trained on a CPU runtime over 20 epochs, achieving steady convergence from an initial
+  validation loss of 0.6787 down to 0.4432.
+
+
+  When evaluated on the held-out test dataset, the model demonstrated high precision and stable macro-structural
+  overlap tracking across the clinical standard metrics:
+
+
+  | Metric | Score |
+
+  | :--- | :--- |
+
+  | **Dice Coefficient (F1-Score)** | 77.41% |
+
+  | **Intersection over Union (IoU)** | 64.48% |
+
+  | **Precision** | 78.22% |
+
+  | **Recall (Sensitivity)** | 77.89% |
+
+
+  ### Visual Segmentation Results
+
+
+  <img width="786" height="405" alt="image" src="https://github.com/user-attachments/assets/475f3173-01f4-4578-a540-1b2cb97b79f3"
+  />
+
+
+
+
+  ## 📁 Dataset Source
+
+  The data utilized in this project is the **Breast Ultrasound Images (BUSI)** dataset, which can be acquired
+  publicly via Kaggle. Do not upload the raw dataset image folder directly to this repository due to GitHub
+  hosting size constraints.
+
+  '

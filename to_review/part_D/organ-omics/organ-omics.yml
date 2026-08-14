@@ -1,0 +1,83 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Zhack47/Organ-omics
+url: https://github.com/Zhack47/Organ-omics
+platform: github
+description: Organ radiomics extraction
+license: MIT
+language: Python
+keywords: []
+stars: 2
+updated_at: '2026-04-28T14:35:26Z'
+image_source: https://joss.theoj.org/papers/eb222a85f897be2ed91d86ca9b86d108/status.svg
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# Organ-omics\n\n[![status](https://joss.theoj.org/papers/eb222a85f897be2ed91d86ca9b86d108/status.svg)](https://joss.theoj.org/papers/eb222a85f897be2ed91d86ca9b86d108)\n\
+  \n## Organ radiomics extraction using Python\nOrgan-omics is intended to accelerate research on organ-based\
+  \ radiomics and to improve reproducibility across such studies.\nOrgan-omics lets you automatically\
+  \ create organ contours using [TotalSegmentator](https://github.com/wasserth/TotalSegmentator). It then\
+  \ extracts radiomic features using [PyRadiomics](https://github.com/AIM-Harvard/pyradiomics/) from these\
+  \ contours across a whole dataset. Its contouring pipeline allows you to create custom organ sets with\
+  \ no additional code through a JSON config file. Organ-omics can be used as an end-to-end pipeline and\
+  \ is modular, using NIfTi files each step of the way, allowing you to use either the organ contouring\
+  \ or the radiomic extraction part on their own.\n\n## Installation\n\n### Install PyRadiomis from GitHub\n\
+  \nWe recommend installing PyRadiomics (required depndency) using the GitHub main branch since the PyPi\
+  \ distribution seems broken (see [this issue](https://github.com/AIM-Harvard/pyradiomics/issues/900))\n\
+  \n`pip install git+https://github.com/AIM-Harvard/pyradiomics.git`\n\n### Organ-omics from Test PyPI\n\
+  \n⚠️ Organ-omics is currently available via Test PyPI\n\n`pip install -i https://test.pypi.org/simple/\
+  \ organomics`\n\nYou can also install it from source\n\n```\ngit clone https://github.com/Zhack47/Organ-omics.git\n\
+  cd organomics\npip install -e .\n```\n\n## Data format\n\nYour data should be organized following the\
+  \ nnUNet dataset format:\n\n```bash\ndataset_path\n  ├── dataset.json\n  └── imagesTr/\n     ├── P001_0000.nii.gz\n\
+  \     ├── P001_0001.nii.gz\n     ├── P002_0000.nii.gz\n     ├── P002_0001.nii.gz\n     ├── ...\n  └──\
+  \ labelsTr/ \n      ├── \n```\n\nThe `labelsTr` folder can be empty as it will be used to store organ\
+  \ contours once they are extracted. If you want to extract radiomic features of an already contoured\
+  \ lesion class, labelsTr can contain the lesions contours for each patient.\n\n \n\nThe file `dataset.json`\
+  \ should be constructed as shown in [this example](https://raw.githubusercontent.com/Zhack47/Organ-omics/refs/heads/main/data/Dataset001_Test/dataset.json)\n\
+  \n```json\n\n{\n    \"name\": \"Test\", // Dataset name\n    \"description\": \"Test 1\", // Dataset\
+  \ description\n    \"channel_names\": {\n        // Needs at least one channel named CT for organ contouring\n\
+  \        \"0\": \"CT\", \n        \"1\": \"PT\"\n    },\n    // Target isotropic spacing for resampling\n\
+  \    \"spacing\": [2,2,2],\n    \n    // List of organ groups\n    \"labels\":\n    {\n        \"background\"\
+  : \"0\",\n        \"heart\": \"1\",\n        \"lungs\": \"2\",\n        \"thoracic vertebrae\": \"3\"\
+  ,\n        \"pectoralis\": \"4\",\n        \"rectus\": \"5\"\n    },\n    // For each task, the name\
+  \ of the task is defined\n    // then the mapping from task organs to organ groups\n    // is defined\
+  \ in correspondence\n\n    // The priority order (i.e. which task will overwrite the labels \n    //\
+  \ the others) is defined by the position in the list\n    \"tasks\":[\n         {// First task\n   \
+  \         // Task name (must be from TotalSegmentator)\n            \"name\": \"total\",\n         \
+  \   // Correspondence dictionnary\n            \"correspondence\":\n                {\n            \
+  \        \"heart\": [\"heart\"],\n                    \"lungs\": [\n                     \"lung_upper_lobe_left\"\
+  , \"lung_lower_lobe_left\",\n                     \"lung_upper_lobe_right\",\"lung_middle_lobe_right\"\
+  ,\n                      \"lung_lower_lobe_right\"],\n                    \"thoracic vertebrae\": [\n\
+  \                     \"vertebrae_T1\", \"vertebrae_T2\", \"vertebrae_T3\",\n                     \"\
+  vertebrae_T4\", \"vertebrae_T5\", \"vertebrae_T6\",\n                     \"vertebrae_T7\", \"vertebrae_T8\"\
+  , \"vertebrae_T9\",\n                     \"vertebrae_T10\",\"vertebrae_T11\",\"vertebrae_T12\"\n  \
+  \                   ]\n                }\n            },\n            {// Second task\n            \
+  \    \"name\": \"abdominal_muscles\", \n                \"correspondence\":{\n                    \"\
+  pectoralis\": [\n                     \"pectoralis_major_right\", \"pectoralis_major_left\"\n      \
+  \               ],\n\n                    \"rectus\": [\n                     \"rectus_abdominis_right\"\
+  , \"rectus_abdominis_left\"\n                    ]\n                }\n            }\n        ]\n}\n\
+  \n```\n\n**Multiple tasks from TotalSegmentator can be combined** to create custom organ sets.\n\n⚠️\
+  \ Some tasks can only be used with a license issued by the team maintaining TotalSegmentator. **No license\
+  \ can be obtained through Organ-omics**\n\n## Organs contours extraction\n\nUsing the following command\
+  \ in the root folder, organs contours will be saved in compressed NIfTi (.nii.gz) files  in the `<contours_output_path>/labelsTr`\
+  \ folder.\n\n```Organomics_contour_dataset -d <dataset_path> -o <contours_output_path> --json-file-path\
+  \ <json_file_path>```\n\n## Organ radiomics extraction\n\nOnce the organ contours have been extracted\
+  \ and stored in the `labelsTr` folder of the dataset, use the following command to compute the organ\
+  \ radiomics.\n\n``` Organomics_extract_radiomics -d <dataset_path> -o <csv_file_organomics_output_path>\
+  \ --json-file-path <json_file_path>```\n\nRadiomic feature values will be stored in the file defined\
+  \ with the `-o` option.\n\n\n\n[//]: <> (## Results on the HECKTOR22 dataset)\n\n[//]: <> (![Performance\
+  \ using Organ-omics for survival estimation]data/imgs/Organomics_performance.png)\n[//]: <> (Performance\
+  \ obtained using Organ-omics for survival estimation)\n\n[//]: <> (![Performance using Radiomics for\
+  \ survival estimation]data/imgs/Radiomics_performance.png)\nPerformance obtained using Radiomics for\
+  \ survival estimation)\n\n\n# Citation\n\nIf you use Organ-omics in your research, please cite:\n\n\
+  ```\nZacharia Mesbah (2025). Organ-omics: A Python package for organ-radiomics extraction.\n```\n\n\
+  A paper has been submitted for review\n\n# References\n\nWasserthal, J., Breit, H.-C., Meyer, M.T.,\
+  \ Pradella, M., Hinck, D., Sauter, A.W., Heye, T., Boll, D., Cyriac, J., Yang, S., Bach, M., Segeroth,\
+  \ M., 2023. TotalSegmentator: Robust Segmentation of 104 Anatomic Structures in CT Images. Radiology:\
+  \ Artificial Intelligence. https://doi.org/10.1148/ryai.230024\n\nvan Griethuysen, J. J. M., Fedorov,\
+  \ A., Parmar, C., Hosny, A., Aucoin, N., Narayan, V., Beets-Tan, R. G. H., Fillion-Robin, J. C., Pieper,\
+  \ S., Aerts, H. J. W. L. (2017). Computational Radiomics System to Decode the Radiographic Phenotype.\
+  \ Cancer Research, 77(21), e104–e107. https://doi.org/10.1158/0008-5472.CAN-17-0339\n"

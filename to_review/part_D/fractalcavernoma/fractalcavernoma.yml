@@ -1,0 +1,128 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Computational-Clinical-Neuroresearch/FractalCavernoma
+url: https://github.com/Computational-Clinical-Neuroresearch/FractalCavernoma
+platform: github
+description: GPU-accelerated neuroimaging pipeline for radiomics and fractal analysis of cerebral cavernous
+  malformations
+license: null
+language: Shell
+keywords: []
+stars: 0
+updated_at: '2026-03-23T05:28:20Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# FractalCavernoma: GPU-Accelerated Neuroimaging Pipeline\n\nGPU-accelerated preprocessing,\
+  \ radiomics, and fractal analysis pipeline for cavernous malformation MRI scans.\n\n---\n\n## Quick\
+  \ Start\n\n```bash\n# 1. Build Docker image (~30-60 min)\ndocker compose build\n\n# 2. Start container\n\
+  docker compose up -d\ndocker exec -it fractal-cavernoma-pipeline bash\n\n# 3. Run full pipeline on test\
+  \ data (4 scans)\ncd /workspace/scripts\n./run_pipeline_parallel.sh test_patients both\n\n# 4. Extract\
+  \ features\npython3 extract_radiomics.py test_patients radiomics.csv    # 1,409 features\npython3 extract_fractal.py\
+  \ test_patients fractal.csv        # 16 features\n```\n\n---\n\n## Table of Contents\n\n- [Dataset](#dataset)\n\
+  - [Directory Structure](#directory-structure)\n- [Pipeline Overview](#pipeline-overview)\n- [GPU Configuration](#gpu-configuration)\n\
+  - [Feature Extraction](#feature-extraction)\n- [Usage Examples](#usage-examples)\n- [Manual Segmentation](#manual-segmentation-optional)\n\
+  - [Troubleshooting](#troubleshooting)\n\n---\n\n## Dataset\n\n**Source**: Cambridge BIDS dataset (OpenNeuro)\n\
+  - **Total subjects**: 33 with cavernous malformations\n- **Sequences**: T1w + FLAIR (30 paired, 3 T1w\
+  \ only)\n- **Total scans**: 66\n- **Test subset**: 2 subjects × 2 sequences = 4 scans\n\n**Data organization**:\n\
+  ```bash\n# Inside container\ncd /workspace\n./bin/setup_cav_data.sh  # Creates patients/ and test_patients/\n\
+  ```\n\n---\n\n## Directory Structure\n\n```\nFractalCavernoma/\n├── bin/\n│   └── setup_cav_data.sh\
+  \         # Data organization script\n│\n├── data/\n│   ├── metadata/                  # Study metadata\
+  \ (Cambridge dataset)\n│   ├── raw_data/                  # Original BIDS dataset (not in git)\n│  \
+  \ ├── patients/                  # Full dataset (66 scans)\n│   └── test_patients/             # Test\
+  \ subset (4 scans)\n│\n├── scripts/\n│   ├── mri_preprocess_part1.sh   # N4 bias field correction\n\
+  │   ├── mri_preprocess_part2.sh   # Registration, skull-strip, normalize\n│   ├── run_pipeline_parallel.sh\
+  \  # GPU-accelerated batch processing\n│   ├── zscore_normalise.py       # Z-score normalization\n│\
+  \   ├── extract_radiomics.py      # PyRadiomics feature extraction\n│   ├── extract_fractal.py     \
+  \   # 3D fractal dimension & lacunarity\n│   └── start_vnc.sh              # VNC server for ITK-SNAP\n\
+  │\n├── results/                       # Feature CSVs\n│   ├── radiomics_features.csv\n│   └── fractal_features.csv\n\
+  │\n├── logs/                          # Pipeline logs\n│\n├── Dockerfile                     # Container\
+  \ definition\n├── docker-compose.yml            # GPU orchestration\n├── README.md                 \
+  \     # This file\n└── PROJECT_STRUCTURE.md          # Detailed structure documentation\n```\n\n**Subject\
+  \ directory structure**:\n```\npatients/sub-{ID}_{SEQUENCE}/\n├── Input_NIfTI/\n│   ├── sub-{ID}_{SEQUENCE}.nii.gz\
+  \               # Original scan\n│   └── sub-{ID}_{SEQUENCE}_lesion_mask.nii.gz   # Manual mask (you\
+  \ create this)\n├── Output_Part1/\n│   └── sub-{ID}_{SEQUENCE}_Step1_BFC.nii.gz     # Bias corrected\n\
+  └── Output_Part2/\n    ├── sub-{ID}_{SEQUENCE}_Step2_MNI.nii.gz     # MNI registered\n    ├── sub-{ID}_{SEQUENCE}_Step3_SkullStrip.nii.gz\
+  \  # Skull stripped\n    ├── sub-{ID}_{SEQUENCE}_Step4_ZScore.nii.gz  # Final (for radiomics)\n    └──\
+  \ sub-{ID}_{SEQUENCE}_lesion_mask_MNI.nii.gz   # Mask in MNI space\n```\n\n---\n\n## Pipeline Overview\n\
+  \n### Part 1: Bias Field Correction (CPU)\n- **Method**: ANTs N4BiasFieldCorrection\n- **Runtime**:\
+  \ ~30s per scan\n- **Parallelization**: 4 subjects at once\n\n**Steps**:\n1. Load raw T1w/FLAIR NIfTI\n\
+  2. Apply N4 bias correction (3 iterations, shrink factor 3)\n3. Save to `Output_Part1/`\n\n### Part\
+  \ 2: Registration & Normalization (GPU)\n- **Runtime**: ~2-3 min per scan\n- **Parallelization**: 2\
+  \ subjects at once (1 per GPU)\n\n**Steps**:\n1. **Registration to MNI152**: ANTs rigid + affine (lesion-masked\
+  \ to exclude from cost function)\n2. **Skull Stripping**: HD-BET with GPU acceleration\n3. **Z-score\
+  \ Normalization**: Mean=0, SD=1 (lesion voxels excluded from statistics)\n\n### Feature Extraction\n\
+  \n#### Radiomics (PyRadiomics)\n- **Features**: 1,409 per lesion\n  - Shape: 14 (volume, sphericity,\
+  \ surface area, etc.)\n  - First-order: 252 (mean, kurtosis, entropy × 14 image types)\n  - Texture:\
+  \ 1,143 (GLCM, GLRLM, GLSZM, GLDM, NGTDM)\n- **Image types**: Original + 8 wavelet + 5 filters (14 total)\n\
+  - **Runtime**: ~2-3 min per scan\n\n#### Fractal Analysis (imea)\n- **Features**: 16 per lesion\n  -\
+  \ Fractal Dimension: 8 (3 planes × mean/median + 3D average)\n  - Lacunarity: 8 (3 planes × mean/median\
+  \ + 3D average)\n- **Methods**: Box-counting (FD), Gliding-box (Lacunarity)\n- **Runtime**: ~1-2 min\
+  \ per scan\n- **Note**: Most meaningful for irregular boundaries, not spherical ROIs\n\n---\n\n## GPU\
+  \ Configuration\n\n**GPUs Used**: Device IDs 0 and 1 (NVIDIA runtime)\n\n**Parallel Processing Strategy**:\n\
+  - **Part 1** (N4): 4 subjects in parallel (CPU-bound, minimal GPU use)\n- **Part 2** (HD-BET): 2 subjects\
+  \ in parallel (1 per GPU, ~8GB VRAM each)\n\n**Environment Variables** (in container):\n```bash\nCUDA_VISIBLE_DEVICES=0,1\n\
+  NVIDIA_VISIBLE_DEVICES=0,1\n```\n\n**Performance**:\n- Sequential (CPU-only): ~18-22 hours for 66 scans\n\
+  - GPU-accelerated parallel: ~2.5-3 hours\n- **Speedup**: ~7-8x\n\n---\n\n## Feature Extraction\n\n###\
+  \ Extract Radiomics\n```bash\n# Test data (4 scans)\npython3 scripts/extract_radiomics.py test_patients\
+  \ results/radiomics.csv\n\n# Full dataset (66 scans)\npython3 scripts/extract_radiomics.py patients\
+  \ results/radiomics_all.csv\n```\n\n**Output CSV**:\n- Columns: `subject_id`, `subject_num`, `sequence`\
+  \ + 1,409 feature columns\n- Feature naming: `{image_type}_{feature_class}_{feature_name}`\n- Example:\
+  \ `original_firstorder_Mean`, `wavelet-LLH_glcm_Contrast`\n\n### Extract Fractal Metrics\n```bash\n\
+  # Test data\npython3 scripts/extract_fractal.py test_patients results/fractal.csv\n\n# Full dataset\n\
+  python3 scripts/extract_fractal.py patients results/fractal_all.csv\n```\n\n**Output CSV**:\n- Columns:\
+  \ `subject_id`, `subject_num`, `sequence` + 16 feature columns\n- Features: `fd_axial_mean`, `fd_3d_mean`,\
+  \ `lac_coronal_median`, etc.\n\n---\n\n## Usage Examples\n\n### Process Single Subject\n```bash\n# Part\
+  \ 1: Bias correction\n./scripts/mri_preprocess_part1.sh sub-6_T1w test_patients\n\n# Manually create\
+  \ lesion mask (see Manual Segmentation section)\n\n# Part 2: Registration, skull-strip, normalize\n\
+  ./scripts/mri_preprocess_part2.sh sub-6_T1w test_patients\n```\n\n### Batch Processing (Recommended)\n\
+  ```bash\n# Test dataset (4 scans) - run BOTH parts\n./scripts/run_pipeline_parallel.sh test_patients\
+  \ both\n# Creates lesion masks when prompted (or skip and create manually later)\n\n# Full dataset (66\
+  \ scans) - Part 1 only\n./scripts/run_pipeline_parallel.sh patients part1\n\n# Create all lesion masks\
+  \ manually (see below)\n\n# Full dataset - Part 2 only (after masks are ready)\n./scripts/run_pipeline_parallel.sh\
+  \ patients part2\n```\n\n### Check Outputs\n```bash\n# List final preprocessed images\nls -lh test_patients/*/Output_Part2/*_Step4_ZScore.nii.gz\n\
+  \n# Check job logs\ncat logs/test_patients_part1.log\ncat logs/test_patients_part2.log\n```\n\n---\n\
+  \n## Manual Segmentation (Optional)\n\n**Required**: Lesion masks must be created before running Part\
+  \ 2.\n\n### Option 1: ITK-SNAP via VNC (in Docker)\n\n```bash\n# Start VNC server (inside container)\n\
+  ./scripts/start_vnc.sh\n# Set password when prompted\n\n# From your local machine\nssh -L 5901:localhost:5901\
+  \ user@gpuserver\n\n# Open VNC client\n# Connect to: localhost:5901\n# Password: <what you set>\n\n\
+  # In ITK-SNAP:\n# 1. Load: test_patients/sub-6_T1w/Output_Part1/sub-6_T1w_Step1_BFC.nii.gz\n# 2. Draw\
+  \ lesion mask\n# 3. Save as: test_patients/sub-6_T1w/Lesion_Mask/sub-6_T1w_lesion_mask.nii.gz\n```\n\
+  \n### Option 2: ITK-SNAP on Host via SSH X11\n\n```bash\n# From local machine (with X11 forwarding)\n\
+  ssh -X user@gpuserver\ncd /path/to/FractalCavernoma\nitksnap test_patients/sub-6_T1w/Output_Part1/sub-6_T1w_Step1_BFC.nii.gz\n\
+  ```\n\n### Option 3: 3D Slicer or FSLeyes\n\n```bash\n# 3D Slicer (recommended, modern UI)\nslicer test_patients/sub-6_T1w/Output_Part1/sub-6_T1w_Step1_BFC.nii.gz\n\
+  \n# FSLeyes (lightweight)\nfsleyes test_patients/sub-6_T1w/Output_Part1/sub-6_T1w_Step1_BFC.nii.gz\n\
+  ```\n\n**Mask naming convention**:\n- Must match: `{subject_id}_lesion_mask.nii.gz`\n- Example: `sub-6_T1w_lesion_mask.nii.gz`\
+  \ (NOT `sub-006_T1w_lesion_mask.nii.gz`)\n- Location: `Lesion_Mask/` folder\n\n---\n\n## Software Stack\n\
+  \n| Component | Version | Purpose |\n|-----------|---------|---------|\n| CUDA | 12.2.0 | GPU runtime\
+  \ |\n| PyTorch | 2.0.1+cu118 | HD-BET backend |\n| ANTs | 2.5.0 | N4, registration |\n| HD-BET | 2.0.1\
+  \ | GPU skull stripping |\n| PyRadiomics | 3.0.1 | Feature extraction |\n| imea | latest | Fractal analysis\
+  \ |\n| nibabel | 5.2.0 | NIfTI I/O |\n| SimpleITK | 2.3.1 | Image processing |\n| scikit-learn | 1.3.2\
+  \ | ML utilities |\n| pandas | 2.1.4 | Data handling |\n\n---\n\n## Troubleshooting\n\n### GPU Not Detected\n\
+  ```bash\n# Check NVIDIA runtime\ndocker exec fractal-cavernoma-pipeline nvidia-smi\n\n# Should show\
+  \ GPUs 0 and 1\n```\n\n### HD-BET Out of Memory\n```bash\n# Reduce parallel jobs in run_pipeline_parallel.sh\n\
+  # Line 127: Change `-j 2` to `-j 1` (one GPU at a time)\nparallel -j 1 --bar --joblog \"${PATIENTS_DIR}_part2.log\"\
+  \ \\\n    'run_part2 {} $(( {%} % 2 )) '\"${PATIENTS_DIR}\" ::: \"${SUBJECTS[@]}\"\n```\n\n### Missing\
+  \ Lesion Mask Error\n```\nERROR: Missing lesion masks for the following subjects:\n  - sub-6_T1w\n```\n\
+  **Fix**: Create mask in `Lesion_Mask/` folder with correct naming (see Manual Segmentation)\n\n### N4BiasFieldCorrection\
+  \ Not Found\n```bash\n# Check PATH\ndocker exec fractal-cavernoma-pipeline echo $PATH\n# Should include:\
+  \ /opt/ants/bin\n\n# Verify ANTs installation\ndocker exec fractal-cavernoma-pipeline ls /opt/ants/bin/\n\
+  ```\n\n### VNC Connection Refused\n```bash\n# Check VNC is running\ndocker exec fractal-cavernoma-pipeline\
+  \ ps aux | grep vnc\n\n# Restart VNC\ndocker exec fractal-cavernoma-pipeline vncserver -kill :1\ndocker\
+  \ exec fractal-cavernoma-pipeline ./scripts/start_vnc.sh\n```\n\n---\n\n## Performance Benchmarks\n\n\
+  **Test Dataset (4 scans)**:\n- Part 1: ~2 min total (4 parallel)\n- Part 2: ~10 min total (2 parallel,\
+  \ GPU)\n- Radiomics: ~10 min total\n- Fractal: ~6 min total\n- **Total**: ~30 min\n\n**Full Dataset\
+  \ (66 scans)**:\n- Part 1: ~30 min total\n- Part 2: ~2.5 hours total (GPU)\n- Radiomics: ~3 hours total\n\
+  - Fractal: ~2 hours total\n- **Total**: ~8 hours (vs ~40 hours CPU-only)\n\n---\n\n## Citation\n\n**Methods\
+  \ adapted from**:\n- Fractal analysis: [Fractal-Dimension-and-Lacunarity-in-Gliomas](https://github.com/nibr-lab/Fractal-Dimension-and-Lacunarity-in-Gliomas)\n\
+  - HD-BET: Isensee et al., *arXiv:1901.11341*, 2019\n- PyRadiomics: van Griethuysen et al., *Cancer Research*,\
+  \ 2017\n- ANTs: Avants et al., *NeuroImage*, 2011\n\n**Dataset**: Cambridge Centre for Ageing and Neuroscience\
+  \ (CamCAN) - OpenNeuro\n\n---\n\n## Next Steps\n\n1. ✅ Run pipeline on test data (4 scans)\n2. ✅ Extract\
+  \ radiomics + fractal features\n3. ⏭ Create lesion masks for full dataset (66 scans)\n4. ⏭ Run full\
+  \ pipeline (patients/)\n5. ⏭ Feature selection (correlation analysis, variance filtering)\n6. ⏭ Statistical\
+  \ analysis (T1w vs FLAIR, clinical correlations)\n7. ⏭ Machine learning (classification, survival prediction)\n\
+  \n---\n\n## Contact\n\nFor detailed structure documentation, see [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)\n"

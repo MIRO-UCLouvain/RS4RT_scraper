@@ -1,0 +1,81 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Linda-SophieSchneider/Soft-Tuy-Completeness
+url: https://github.com/Linda-SophieSchneider/Soft-Tuy-Completeness
+platform: github
+description: Soft Tuy-Completeness for Robust Projection Selection in Cone-Beam CT
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-20T12:11:34Z'
+image_source: https://raw.githubusercontent.com/Linda-SophieSchneider/Soft-Tuy-Completeness/HEAD/assets/readme_figures/k_main_selection_metrics.png
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Soft-Tuy-Completeness\n\nOpen-source reproduction package for the soft Tuy completeness\
+  \ experiments and reconstruction evaluations used in the associated paper. The associated manuscript\
+  \ is currently under review at *Inverse Problems*.\n\n## Paper Summary\n\nThe paper studies ROI-focused\
+  \ projection selection for cone-beam CT under limited view budgets and view-dependent validity constraints.\
+  \ Instead of treating Tuy completeness as a purely binary condition, it introduces soft directional\
+  \ coverage measures that score how well a selected trajectory supports the target ROI.\n\nThe main experimental\
+  \ setting compares binary Tuy, Soft-Tuy, and saturated soft coverage objectives on a simulated industrial\
+  \ object with arbitrary 3D source-detector poses. Candidate trajectories are evaluated both on the selection\
+  \ side and through matched DiffCT reconstructions, including an occlusion-stress benchmark with `none`,\
+  \ `mild`, `moderate`, and `severe` attenuation stages.\n\nThe main takeaways are:\n\n- soft coverage\
+  \ objectives transfer substantially better to reconstruction quality than binary completeness alone\n\
+  - soft greedy tracks soft MILP closely across most budgets, making it a strong practical baseline\n\
+  - reconstruction quality improves concavely with budget, with most gains appearing before the highest-view\
+  \ regime\n- validity-aware selection remains effective under increasing occlusion, but stronger attenuation\
+  \ requires larger budgets for comparable ROI recovery\n\nThe repository contains only the code and input\
+  \ data needed to recompute the reported results:\n\n- trajectory selection and soft Tuy completeness\
+  \ code\n- experiment-suite runners\n- reconstruction and evaluation scripts\n- measured sim object geometry\
+  \ as `json`\n- measured projection stack as `tif`\n- occlusion-stage metadata and summaries\n- reference\
+  \ metadata\n\n\n## Repository Layout\n\n- `scripts/`: optimization, reconstruction, and evaluation scripts\n\
+  - `configs/`: experiment definitions used by the paper\n- `data/geometry/`: scanner geometry in DiffCT\
+  \ JSON format\n- `data/projections/`: measured projection TIFF stack for `sim_obj_1`\n- `data/occlusion_stress/`:\
+  \ occlusion-stage metadata and summaries\n- `data/references/`: reference metadata\n\n## Requirements\n\
+  \n- Python 3.12+ recommended\n- `diffct-mlx` installed from PyPI\n- `gurobipy` only if MILP runs should\
+  \ be reproduced\n\nInstall the Python dependencies:\n\n```bash\npython -m venv .venv\nsource .venv/bin/activate\n\
+  python -m pip install --upgrade pip\npython -m pip install -r requirements.txt\n```\n\n`gurobipy` is\
+  \ optional at install time, but required for the MILP-based experiments. Greedy runs work without it.\n\
+  \n## Data Availability\n\nLarge `.npy` detector stacks and reference volumes used for the paper experiments\
+  \ are omitted from the repository because of their size. The data are not a standalone public dataset\
+  \ but experiment-specific inputs generated for the study and are available from the authors upon request.\n\
+  \n## Citation\n\nIf you use this repository in academic work, please cite the associated manuscript.\
+  \ It is currently under review at *Inverse Problems*.\n\n```bibtex\n@misc{schneider2026softtuy,\n  title\
+  \   = {Soft Tuy-Completeness for Robust Projection Selection in Cone-Beam CT},\n  author  = {Schneider,\
+  \ Linda-Sophie and Maier, Andreas},\n  note    = {Under review at Inverse Problems},\n  year    = {2026}\n\
+  }\n```\n\nGitHub and other tools can also read the machine-readable citation metadata from [`CITATION.cff`](CITATION.cff).\n\
+  \n## Selected Results\n\nMain single-ROI budget sweep from the paper:\n\n![Main single-ROI budget sweep](assets/readme_figures/k_main_selection_metrics.png)\n\
+  \nMatched reconstruction quality across budgets:\n\n![Matched reconstruction quality across budgets](assets/readme_figures/k_reconstruction_metrics.png)\n\
+  \nQualitative moderate-occlusion comparison at two budgets:\n\n![Qualitative moderate-occlusion comparison](assets/readme_figures/paper_roi03_roi04_moderate_method_k060_k100.png)\n\
+  \n## Quick Start\n\nRun a small smoke test:\n\n```bash\npython scripts/run_tuy_cli.py \\\n  --config\
+  \ configs/ring_soft_example.json \\\n  --set limit_projections=5 \\\n  --set k=1 \\\n  --set force_solver='greedy'\
+  \ \\\n  --set sample_points_unit_sphere=32 \\\n  --set sphere_sampling_z=32 \\\n  --set save_visualizations=false\
+  \ \\\n  --set save_selected_projections=false\n```\n\nOutputs are written below `results/`, which is\
+  \ ignored by git.\n\n## Reproducing Reference Reconstructions\n\nReconstruct the baseline reference\
+  \ from the measured TIFF stack:\n\n```bash\npython scripts/reconstruct_sim1.py --tiff\n```\n\nThis writes\
+  \ the reference reconstructions to `results/reference_volumes/`.\n\n## Reproducing Occlusion-Stage Reference\
+  \ Reconstructions\n\nThe repository includes the four occlusion stages used in the paper:\n\n- `none`\n\
+  - `mild`\n- `moderate`\n- `severe`\n\nIf you have local copies of the omitted stage-level `.npy` stacks,\
+  \ you can reconstruct all four stage-specific reference volumes with:\n\n```bash\npython scripts/reconstruct_sim1.py\
+  \ \\\n  data/occlusion_stress/sim_obj_1_firefly_occlusion_stress_roi25_q95\n```\n\nThese outputs are\
+  \ also written to `results/reference_volumes/`.\n\n## Running the Paper Experiment Suite\n\nRun the\
+  \ main optimization suite:\n\n```bash\npython scripts/run_all_experiments.py \\\n  --suite-name paper_main\
+  \ \\\n  --suite-profile default\n```\n\nRun the occlusion-stress suite across all included stages:\n\
+  \n```bash\npython scripts/run_occlusion_stress_experiments.py \\\n  --suite-prefix paper_occlusion_stress_asd_pocs\n\
+  ```\n\nThis expects the stage-specific reference volumes in `results/reference_volumes/`. Generate them\
+  \ first with `scripts/reconstruct_sim1.py`.\n\n## Running Reconstruction Evaluation For Existing Selection\
+  \ Results\n\nIf a selection run already produced `results.json`, reconstruction evaluation can be rerun\
+  \ directly:\n\n```bash\npython scripts/reconstruct_MILP_results.py \\\n  --results-json path/to/results.json\
+  \ \\\n  --reference-volume results/reference_volumes/none_asd_pocs_384.npy\n```\n\n## Data Notes\n\n\
+  - Geometry is loaded from `data/geometry/sim_obj_1_geometry_diffct.json`.\n- Measured detector images\
+  \ are loaded from `data/projections/sim_obj_1_tif/`.\n- The repository tracks occlusion-stage summaries\
+  \ and metadata, but not the large `projections.npy` or `projections_line_integral.npy` arrays.\n- The\
+  \ repository tracks reference metadata, but not the large `sim_obj_1_firefly.npy` volume.\n- No generated\
+  \ figures, tables, or reconstructed volumes are tracked in this repository.\n\n## License\n\nSee [LICENSE](LICENSE).\n"

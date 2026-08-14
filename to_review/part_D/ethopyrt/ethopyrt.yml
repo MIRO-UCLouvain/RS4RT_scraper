@@ -1,0 +1,43 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: mknoll/ethoPyRT
+url: https://github.com/mknoll/ethoPyRT
+platform: github
+description: Helper for analysis of VARIAN Ethos DICOM data
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-22T07:18:34Z'
+image_source: null
+heuristic_total_score: 26
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 6 support term(s).
+readme_excerpt: "# Installation \n\nThe package can be installed via pip:\n\n    pip install git+https://github.com/mknoll/ethoPyRT.git\n\
+  \nIn addition, dcm2niix must be installed (see https://github.com/rordenlab/dcm2niix) and the executable\
+  \ must be visible from the python environment. \n\nThe pyradiomics (https://pyradiomics.readthedocs.io/en/latest/installation.html)\
+  \ executable must also be visible.\n\n# General remarks\n\nThis package helps analyze DICOM data exported\
+  \ from the Varian ETHOS system.\nThe Ethos treatment interface allows per-session export of data, i.e.\
+  \ \n\n\n`<dcmpath>/<patname>/Session Export/<PID>/<TreatmentIntent>/Session_<n>`\n\nwhere dcmpath is\
+  \ manually selected, `<patname>` is manually created and the \nsubfolders are automatically created\
+  \ during export.\n\n\n\n# Usage\n\n## General \n\nLoad the package with \n\n    import ethoPyRT\n\n\
+  The ethoPyRT package provides the RTMetrics class, which is instantiated per patient using its ID pid\
+  \ (correspoding to <PID> above):\n\n    rtm = RTMetrics(dcmpath, basepath, pid, analysisDir)\n\ndcmpath\
+  \ is the path where the exported data from Ethos is stored.\nbasepath is a folder to store transformed\
+  \ intermediate data generated with ethoPyRT (i.e. nifti files, see below) and \ncan be freely selected,\
+  \ as well as as `<analysisDir>`, where results are stored.\n\n\n## QC & Preprocessing\n\nFirst, completeness\
+  \ of data is checked via \n\n    rtm.checkFiles() \n\nFile conversions to help manual inspection of\
+  \ data is performed with\n\n    rtm.createNifti()\n\nand RT structures are extracted with \n\n    rtm.extractRTStruct()\n\
+  \nData is stored in \n\n    `<basepath>/<TreatmentIntent>/<PID>/Session_<n>/`\n\nin the nifti/ and RTSTRUCT/\
+  \ subfolders.\n\n\n## Data loading\n\nRT doses are loaded with \n    \n    rtm.loadDoses()\n\nand plans\
+  \ are assigned (scheduled / adapted) with\n\n    rtm.assignPlanType()\n\nRTStructures are loaded with\
+  \ \n    \n    rtm.loadMasks()\n\n\n## Data analysis\n\nDVHs are calculated with \n    \n    rtm.calcDVH()\n\
+  \nScheduled vs adapted vs treated plans are compared using \n    \n    rtm.compare()\n\nDifference DVHs\
+  \ are computed with \n    \n    rtm.diffDVH()\n\nand plotted with \n\n    rtm.plotDVH()\n\nDose metrics\
+  \ are calculated with \n\n    rtm.calcMetrics()\n\nRadiomics features are computed with \n\n    rtm.calcRadiomics()\n\
+  \nThe number of adapted / scheduled plans. \n\n    rtm.countAdpSched()\n\nRegistration of CBCTs (currently\
+  \ only tested for prostate)\n\n    rtm.registerCBCT()\n\nand application:\n    \n    rtm.applyTransform(type=\"\
+  CBCT\", ref=\"CBCT\")\n\n\n\n\n\n\n\n"

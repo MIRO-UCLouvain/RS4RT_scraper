@@ -1,0 +1,87 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: RawanKazma/breast-cancer-weakly-supervised-radiomics
+url: https://github.com/RawanKazma/breast-cancer-weakly-supervised-radiomics
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-04-07T10:32:35Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Breast Cancer Detection from 3D μ-Calcifications: Weakly Supervised Radiomics\n\n##\
+  \ Project Overview\n\nThis project aims to improve breast cancer detection by analyzing micro-calcifications\
+  \ (μ-calcifications) from high-resolution 3D breast tissue scans.\n\nWhile mammography, the standard\
+  \ screening method,relies on X-ray images to identify tumors, detecting small or subtle tumors is often\
+  \ challenging due to the complex structure of breast tissue. μ-Calcifications, tiny calcium deposits\
+  \ (around 1 mm), are highly visible in imaging and can provide additional diagnostic information\n\n\
+  Although many μ-calcifications are benign and occur naturally with aging, certain patterns, shapes,\
+  \ and textures are associated with malignancy. This project investigates whether radiomic features of\
+  \ individual μ-calcifications can be used to distinguish benign from malignant cases and ultimately\
+  \ support more accurate patient-level diagnosis. \n\n## Background\nMammography is the current state-of-the-art\
+  \ technique for breast cancer screening. It typically involves two X-ray images per breast. Despite\
+  \ its widespread use, tumor detection can be challenging unless the tumor is large or clearly distinguishable.\n\
+  \nMicro-calcifications are small deposits, typically around 1 mm in size, that appear as bright spots\
+  \ in imaging. Although they are often benign, clusters or specific structural patterns may indicate\
+  \ the presence of cancer. Radiologists often rely on these patterns during diagnosis.\n\nRecent research\
+  \ suggests that not only clusters, but also the properties of individual micro-calcifications, such\
+  \ as shape and texture, may provide predictive information about malignancy.\n\n**Clinical and Technical\
+  \ Motivation:**  \n- Radiologists typically label clusters of μ-calcifications, not individual instances,\
+  \ introducing label noise at the micro-level  \n- **Radiomic features** (shape, texture and wavelet-transformed\
+  \ descriptors) can capture patterns beyond human visual assessment, supporting early detection and reducing\
+  \ unnecessary invasive procedures  \n\n**Research Question:**  \n> Can radiomic features of individual\
+  \ μ-calcifications distinguish between benign and malignant regions despite patient-level label noise,\
+  \ and can this improve patient-level breast cancer detection?\n\n---\n\n## Research Hypothesis\n\n-\
+  \ **Malignant μ-calcification:** one that appears in the neighborhood of a tumor. These are considered\
+  \ potentially cancer-related because their presence is associated with malignant tissue\n- **Benign\
+  \ μ-calcification:** a μ-calcification that doesnt appear near a tumor. These may occur naturally due\
+  \ to aging or other non-cancerous processes and are generally considered harmless \n\nWe hypothesize\
+  \ that the radiomic features of individual μ-calcificationscan help distinguish malignant from benign\
+  \ μ-calcifications, even when labels are noisy because only patient-level diagnoses are available. This,\
+  \ in turn, may improve the accuracy of patient-level breast cancer detection.\n\n## Dataset\n\n- 100\
+  \ biopsy samples from female patients  \n- 3500 μ-calcifications extracted  \n- 150 radiomic features\
+  \ per μ-calcification (shape, texture, wavelet-transformed)  \n- Labels assigned at **patient level**,\
+  \ introducing **label noise**  \n\n## Problem Statement\n\nTwo main tasks:\n\n1. **Micro-level classification:**\
+  \ classify individual μ-calcifications as benign or malignant  \n2. **Patient-level prediction:** determine\
+  \ whether a patient has breast cancer based on multiple μ-calcification predictions  \n\nKey challenges:\n\
+  \n- Label noise due to patient-level labeling  \n- Multiple μ-calcifications per patient → data dependency\
+  \  \n- High dimensionality and limited patient number  \n- Class imbalance and ambiguity  \n\n## Methodology\n\
+  \n**Data Preparation**  \n- Standardization and grouped splits by patient ID to avoid leakage  \n- Feature\
+  \ reduction: correlation filtering (≥ 0.9) and mutual information (< 0.015) → 59 features  \n\n**Modeling**\
+  \  \n- Logistic Regression (linear baseline)  \n- Random Forest (tree-based ensemble)  \n- Multi-Layer\
+  \ Perceptron (MLP, baseline and tuned)  \n- Hyperparameter tuning: GridSearchCV and Optuna  \n- Stratified\
+  \ 5-fold cross-validation at patient level  \n\n**Patient-Level Aggregation**  \n- Max probability per\
+  \ patient for μ-calcifications  \n- Threshold optimized on validation set for balanced precision and\
+  \ recall  \n\n## Results\n\n### Micro-Level Classification\n\n| Model               | Accuracy | Precision\
+  \ | Recall | ROC-AUC | Notes                     |\n|---------------------|---------|-----------|--------|---------|----------------------------|\n\
+  | Logistic Regression | 0.735   | 0.729     | 0.618  | 0.781   |   \n| Random Forest       | 0.775 \
+  \  | 0.814     | 0.624  | 0.825   | Best overall performance   |\n| MLP                 | 0.761   |\
+  \ 0.807     | 0.591  | 0.741   | \n### Patient-Level Prediction\n\n- F1-score ≈ 0.70  \n- Balanced precision\
+  \ and recall  \n- Aggregating micro-level predictions improves clinical relevance  \n\n## Observations\n\
+  \n- Random Forest is the best-performing model overall  \n- MLP tuning increased precision but reduced\
+  \ recall → **shows precision-recall trade-off **\n- Logistic Regression provides an interpretable baseline\
+  \  \n- Weak supervision and label noise remain significant challenges\n\n- Inconclusion: radiomic features\
+  \ of individual μ-calcifications do contain predictive information, allowing models to classify them\
+  \ as benign or malignant under weak supervision. Aggregating micro-level predictions improves patient-level\
+  \ breast cancer detection (with F1 0.70). However, the limited dataset (100 patients) restricts model\
+  \ generalization and confidence in performance, indicating that further studies with larger cohorts\
+  \ or advanced weakly supervised methods like Multiple Instance Learning are needed to validate and enhance\
+  \ these results.\n\n## Future Work\n\n- Explore **Multiple Instance Learning (MIL)** for explicit weak\
+  \ supervision  \n- Increase dataset size to improve generalization  \n- Investigate confidence calibration\
+  \ and uncertainty quantification  \n\n> **Note:** The Colab notebook highlights key observations and\
+  \ insights throughout the project, offering reasoning and context for data analysis, feature selection\
+  \ and model evaluation.\n---\n\n## References\n\n1. Zhai, X. *Cross-Validation with Code Examples*.\
+  \ Medium, 2021  \n2. Markham, K. *18 Hyperparameter Search Results*. GitHub  \n3. Optuna Contributors.\
+  \ *Optuna: A Next-generation Hyperparameter Optimization Framework*  \n4. Huo, T., et al. *Stratified\
+  \ Split Sampling of Electronic Health Records*, BMC Med. Res. Methodol., 2023  \n5. Glaser, J. *Attention-Based\
+  \ Deep Multiple Instance Learning*, Towards Data Science, 2021  \n6. Sharma, K. *Mastering Random Forest\
+  \ Hyperparameter Tuning*, Medium, 2022\n"

@@ -1,0 +1,85 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: pivy-off/ToxIQ
+url: https://github.com/pivy-off/ToxIQ
+platform: github
+description: AI-powered drug toxicity prediction and pharmacokinetic simulation platform
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-13T18:05:02Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# ToxIQ\n\nPre-clinical drug safety simulation platform. Test any drug before it reaches\
+  \ a patient.\n\n## What It Does\n\nToxIQ is a drug safety simulator that predicts:\n\n- **Safety Score**\
+  \ — Composite 0-100 score based on toxicity, therapeutic index, and PK parameters\n- **Pharmacokinetics\
+  \ (PK)** — Absorption, distribution, metabolism, and excretion predictions\n- **PK Curve** — Simulated\
+  \ plasma concentration over time\n- **Organ Distribution** — Estimated drug accumulation in brain, liver,\
+  \ kidneys, heart, lungs\n- **Risk Assessment** — Automated flags for hERG inhibition, hepatotoxicity,\
+  \ and other concerns\n- **AI Summary** — Natural language summary powered by Gemini AI\n\n**Disclaimer:**\
+  \ This is a research tool for pre-clinical screening. Outputs are simulation estimates, not clinical\
+  \ evidence. Do not use for medical decisions.\n\n## Tech Stack\n\n### Frontend\n- **Next.js 16** (App\
+  \ Router)\n- **React 19**\n- **TypeScript** (strict mode)\n- **Chart.js** for PK visualizations\n- **Motion**\
+  \ for animations\n\n### Backend\n- **FastAPI** (Python)\n- **RDKit** for molecular feature extraction\n\
+  - **ADMET-AI** (optional) for ML-based ADMET predictions\n- **Gemini AI** (optional) for natural language\
+  \ summaries\n\n### Deployment\n- Frontend: **Vercel**\n- Backend: **Railway**\n\n## Local Development\n\
+  \n### Prerequisites\n\n- Node.js 20+\n- Python 3.10-3.12\n- npm or yarn\n\n### Frontend Setup\n\n```bash\n\
+  # Install dependencies\nnpm install\n\n# Start dev server\nnpm run dev\n```\n\nOpen [http://localhost:3000](http://localhost:3000)\n\
+  \n### Backend Setup\n\n```bash\n# Create virtual environment\ncd backend\npython -m venv venv\nsource\
+  \ venv/bin/activate  # Windows: venv\\Scripts\\activate\n\n# Install dependencies\npip install -r requirements.txt\n\
+  \n# Start backend server\nuvicorn main:app --reload\n```\n\nAPI runs at [http://localhost:8000](http://localhost:8000)\n\
+  \nAPI docs at [http://localhost:8000/docs](http://localhost:8000/docs)\n\n### Running Both\n\nFor full\
+  \ functionality, run both frontend and backend:\n\n```bash\n# Terminal 1: Backend\ncd backend && uvicorn\
+  \ main:app --reload\n\n# Terminal 2: Frontend\nnpm run dev\n```\n\n## Environment Variables\n\nCopy\
+  \ `.env.example` to `.env` and configure:\n\n```bash\n# Frontend (Next.js)\nBACKEND_URL=http://127.0.0.1:8000\
+  \  # Backend API URL\n\n# Backend (FastAPI)\nFRONTEND_URL=https://your-frontend.vercel.app  # For CORS\n\
+  TOXIQ_DEV_MODE=true  # Enable localhost in CORS (dev only)\n\n# Optional: Gemini AI for drug summaries\n\
+  GEMINI_API_KEY=your_api_key\nGEMINI_MODEL=gemini-2.0-flash\n\n# Optional: ADMET-AI for ML predictions\n\
+  PHARMASIM_USE_ADMET_AI=true  # Requires admet-ai package\n```\n\n## Architecture\n\n```\n┌─────────────────────────────────────────────────────────────────┐\n\
+  │                         Frontend (Next.js)                       │\n│  ┌──────────┐  ┌──────────┐\
+  \  ┌──────────┐  ┌──────────────────┐│\n│  │InputView │  │ResultView│  │ScienceView│ │   Components\
+  \     ││\n│  │          │  │          │  │           │ │ (Cards, Charts)  ││\n│  └────┬─────┘  └────┬─────┘\
+  \  └────┬──────┘ └────────┬─────────┘│\n│       └─────────────┴─────────────┴─────────────────┘    \
+  \      │\n│                              │                                   │\n│                  \
+  \   useReducer (appState.ts)                     │\n│                              │               \
+  \                    │\n│                     backendApi.ts (fetch)                        │\n└──────────────────────────────┼───────────────────────────────────┘\n\
+  \                               │ /api/backend/*\n                               ▼\n┌─────────────────────────────────────────────────────────────────┐\n\
+  │                         Backend (FastAPI)                        │\n│  ┌──────────┐  ┌──────────┐\
+  \  ┌──────────┐  ┌──────────────────┐│\n│  │/predict  │  │/compounds│  │/summary  │  │    /simulate\
+  \     ││\n│  └────┬─────┘  └────┬─────┘  └────┬──────┘ └────────┬─────────┘│\n│       └─────────────┴─────────────┴─────────────────┘\
+  \          │\n│                              │                                   │\n│              \
+  \        ML Pipeline (ml/src/)                       │\n│  ┌──────────┐  ┌──────────┐  ┌──────────┐\
+  \  ┌──────────────────┐│\n│  │Features  │  │PK Predict│  │Toxicity  │  │  Safety Score    ││\n│  │Extraction│\
+  \  │          │  │Heuristics│  │                  ││\n│  └──────────┘  └──────────┘  └──────────┘  └──────────────────┘│\n\
+  └─────────────────────────────────────────────────────────────────┘\n```\n\n## API Endpoints\n\n| Endpoint\
+  \ | Method | Description |\n|----------|--------|-------------|\n| `/health` | GET | Health check |\n\
+  | `/compounds` | GET | List preset compounds |\n| `/predict/` | POST | Full prediction pipeline |\n\
+  | `/summary/` | POST | Generate AI summary |\n| `/simulate/` | POST | PK curve simulation |\n| `/compare/`\
+  \ | POST | Compare two compounds |\n\n## Testing\n\n### Frontend Tests (Jest)\n\n```bash\nnpm test \
+  \             # Run tests\nnpm run test:watch    # Watch mode\nnpm run test:coverage # With coverage\n\
+  ```\n\n### Backend Tests (pytest)\n\n```bash\ncd backend\npytest tests/ -v\n```\n\n### ML Tests (pytest)\n\
+  \n```bash\npytest ml/tests/ -v\n```\n\n## Deployment\n\n### Vercel (Frontend)\n\n1. Connect repo to\
+  \ Vercel\n2. Set environment variable: `BACKEND_URL` = your Railway backend URL\n3. Deploy\n\n### Railway\
+  \ (Backend)\n\n1. Connect repo to Railway\n2. Set environment variables:\n   - `FRONTEND_URL` = your\
+  \ Vercel URL\n   - `GEMINI_API_KEY` (optional)\n   - `PHARMASIM_USE_ADMET_AI=false` (unless you want\
+  \ ADMET-AI)\n3. Deploy\n\nRailway will use `railway.toml` configuration automatically.\n\n## Project\
+  \ Structure\n\n```\n├── app/                    # Next.js App Router\n│   ├── page.tsx           # Main\
+  \ page component\n│   ├── layout.tsx         # Root layout\n│   └── globals.css        # Global styles\
+  \ (Apple design)\n├── components/             # React components\n│   ├── Navbar.tsx\n│   ├── SafetyScoreCard.tsx\n\
+  │   ├── PKChart.tsx\n│   └── ...\n├── views/                  # Page view components\n│   ├── InputView.tsx\n\
+  │   ├── ResultsView.tsx\n│   └── ScienceView.tsx\n├── lib/                    # Utilities\n│   ├── appState.ts\
+  \        # useReducer state management\n│   ├── backendApi.ts      # API client\n│   └── drugData.ts\
+  \        # Type definitions\n├── backend/               # FastAPI backend\n│   ├── main.py         \
+  \  # App entrypoint\n│   ├── routes/           # API routes\n│   ├── services/         # Business logic\n\
+  │   └── tests/            # pytest tests\n├── ml/                    # ML pipeline\n│   ├── src/\n│\
+  \   │   ├── pipeline.py   # Main orchestration\n│   │   ├── pk_predictor.py\n│   │   ├── safety_score.py\n\
+  │   │   └── ...\n│   └── tests/            # pytest tests\n└── __tests__/            # Jest frontend\
+  \ tests\n```\n\n## License\n\nMIT\n\n## Contributing\n\n1. Fork the repo\n2. Create a feature branch\n\
+  3. Make changes\n4. Run tests: `npm test && pytest backend/tests/ ml/tests/`\n5. Submit a PR\n\n## Support\n\
+  \nOpen an issue on GitHub for bugs or feature requests.\n"

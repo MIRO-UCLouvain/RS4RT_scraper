@@ -1,0 +1,130 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: PhelanShao/ToxD4C
+url: https://github.com/PhelanShao/ToxD4C
+platform: github
+description: A hybrid deep learning framework for toxicity prediction
+license: NOASSERTION
+language: Python
+keywords: []
+stars: 16
+updated_at: '2026-01-20T02:26:28Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# ToxD4C\n\nToxD4C (Dual‑Driven Dynamic Deep Chemistry) is a unified deep learning framework\
+  \ for multi‑task molecular toxicity prediction. It combines graph neural networks, transformers, geometric\
+  \ reasoning, and handcrafted fingerprint features to deliver accurate and interpretable toxicity assessments\
+  \ across diverse endpoints.\n\nThis README highlights the design of the framework, how the components\
+  \ interact, and the main configuration levers that enable reproduction and ablation studies.\n\n## Architecture\
+  \ at a Glance\n\nToxD4C follows a modular encoder–fusion–head design so that researchers can experiment\
+  \ with different molecular representations without rewriting the training loop.\n\n### Inputs & shared\
+  \ preprocessing\n\n- **Atom/bond graphs** – `MolecularFeatureExtractor` builds 119-d atom and 12-d bond\
+  \ descriptors from SMILES and packs them into LMDB entries as tensors (`preprocess_data.py`).\n- **3D\
+  \ geometry (optional)** – RDKit generates conformers during preprocessing; coordinates are stored so\
+  \ the geometric encoder can run without on-the-fly embedding.\n- **Hierarchical context (optional)**\
+  \ – multi-scale features are computed inside the hierarchical encoder rather than persisted, so no extra\
+  \ preprocessing step is required.\n- **Fingerprints** – SMILES strings are kept alongside tensors; attention-pooled\
+  \ ECFP/MACCS/RDKit descriptors are calculated at runtime when the fingerprint branch is enabled.\n\n\
+  ### Encoder stack (implemented in `models/`)\n\n- **GNN branch** – `GraphAttentionNetwork` is the default\
+  \ (`models/architectures/gnn_transformer_hybrid.py`); switching `--gnn_backbone pyg_gcn_stack` swaps\
+  \ in the residual PyG `GCNStack`.\n- **Transformer branch** – `MolecularTransformer` consumes dense\
+  \ node features with positional encodings to capture longer-range dependencies.\n- **Geometric enrichment\
+  \ (optional)** – `GeometricEncoder` refines atom embeddings with distance-aware message passing when\
+  \ coordinates are provided.\n- **Hierarchical branch (optional)** – `HierarchicalEncoder` runs staged\
+  \ GCN blocks and pools fragment-level signals back into a graph descriptor.\n- **Fingerprint encoder**\
+  \ – `MolecularFingerprintModule` computes multiple fingerprints and fuses them with attention weighting.\n\
+  \n### Fusion & heads\n\n- **Hybrid fusion** – When `use_dynamic_fusion` is true, `DynamicFusionModule`\
+  \ applies cross-attention between GNN and Transformer streams; disabling it or setting `--fusion_method\
+  \ concatenation` falls back to linear fusion.\n- **Auxiliary aggregation** – Hierarchical and fingerprint\
+  \ representations (when enabled) are concatenated with the fused hybrid output and projected through\
+  \ a shared fusion MLP.\n- **Prediction heads** – `MultiScalePredictionHead` exposes both classification\
+  \ and regression branches with configurable task masks, and a supervised contrastive projection can\
+  \ be activated via `use_contrastive_learning`.\n\n### Component-to-code reference\n\n| Subsystem | Main\
+  \ implementation | Key toggles |\n|-----------|---------------------|-------------|\n| Atom embed +\
+  \ hybrid encoder | `models/toxd4c.py`, `models/architectures/gnn_transformer_hybrid.py` | `--disable_gnn`,\
+  \ `--disable_transformer`, `--gnn_backbone`, `--disable_dynamic_fusion`, `--fusion_method` |\n| Geometric\
+  \ encoder | `models/encoders/geometric_encoder.py` | `--disable_geometric` |\n| Hierarchical encoder\
+  \ | `models/encoders/hierarchical_encoder.py` | `--disable_hierarchical` |\n| Fingerprint module | `models/fingerprints/molecular_fingerprint_enhanced.py`\
+  \ | `--disable_fingerprint` |\n| Prediction head & contrastive loss | `models/heads/multi_scale_prediction_head.py`,\
+  \ `models/losses/contrastive_loss.py` | `--disable_classification`, `--disable_regression`, `--disable_contrastive`\
+  \ |\n\n### High-level data flow\n\n```\nSMILES / Graph / 3D coords / Fingerprints\n           │    \
+  \       │           │\n           │           │           └──► Fingerprint Module (ECFP/MACCS/etc.,\
+  \ attention fusion)\n           │           │\n           │           └──► Geometric Encoder (optional)\n\
+  \           │\n           └──► Hybrid Main Encoder\n                 ├─ GNN Branch (GraphAttention or\
+  \ PyG GCN stack)\n                 ├─ Transformer Branch\n                 └─ Dynamic Fusion (cross-attention)\
+  \ or Concatenation\n\n          ──► Fused Graph Representation ──► Multi-task Head (Cls + Reg)\n   \
+  \                                      └─► (optional) SupCon representation for contrastive learning\n\
+  ```\n\n### Component configuration\n\n- Swap the GNN backbone via `--gnn_backbone {default,pyg_gcn_stack}`\
+  \ and control depth with `--gcn_stack_layers`.\n- Enable or disable auxiliary branches independently:\
+  \ `--disable_geometric`, `--disable_hierarchical`, `--disable_fingerprint`.\n- Choose the fusion strategy\
+  \ (`--disable_dynamic_fusion`, `--fusion_method concatenation`).\n- Route tasks by turning classification\
+  \ or regression heads on/off, or selecting specific task indices for per-endpoint studies.\n\n## Why\
+  \ This Architecture?\n\n- **Complementary representations** – Pairing topology-aware GNNs with sequence-aware\
+  \ transformers captures both local chemical environments and global substructure motifs.\n- **Multi-view\
+  \ enrichment** – Optional geometric and hierarchical branches incorporate 3D conformational cues and\
+  \ fragment-level insights when available, yet degrade gracefully when disabled.\n- **Descriptor alignment**\
+  \ – Attention-based fingerprint pooling integrates handcrafted descriptors without overwhelming the\
+  \ learned representation.\n- **Contrastive regularisation** – The SupCon objective encourages discriminative,\
+  \ well-separated embeddings that benefit both classification and regression heads.\n- **Reproducible\
+  \ experimentation** – Clear toggles for each component make it straightforward to run ablations, compare\
+  \ modalities, and reproduce published baselines.\n\n## Quick Start\n1) Prepare LMDB data with splits\
+  \ under a data directory (default below):\n   - `train.lmdb`, `valid.lmdb`, `test.lmdb`\n2) Train the\
+  \ full model (with contrastive learning):\n\n```bash\npython ToxD4C/train.py \\\n  --experiment_name\
+  \ \"toxd4c_full_model\" \\\n  --data_dir data/data/processed \\\n  --seed 42 --num_epochs 50 --batch_size\
+  \ 16 --deterministic\n```\n\nOutputs for each run are saved under `experiments/<name>_<timestamp>/`:\n\
+  - `train.log`: run‑specific logs\n- `checkpoints/<name>_best.pth`: best checkpoint\n- `checkpoints/<name>_results.json`:\
+  \ summary metrics + config snapshot\n\n## Key Flags\n- `--disable_contrastive`: disable supervised contrastive\
+  \ learning (default is enabled)\n- `--disable_gnn | --disable_transformer | --disable_geometric | --disable_hierarchical\
+  \ | --disable_fingerprint`: ablate components\n- `--disable_dynamic_fusion` or `--fusion_method concatenation`:\
+  \ use concatenation instead of cross‑attention fusion\n- `--gnn_backbone {default,pyg_gcn_stack}` and\
+  \ `--gcn_stack_layers N` (2–4): choose GNN backbone\n- `--use_preprocessed` is enabled by default; preprocessed\
+  \ LMDB under `--preprocessed_dir` is used when present\n\n### GNN backbone variants\n- default (GraphAttentionNetwork):\
+  \ multi‑head attention message passing with configurable depth.\n- pyg_gcn_stack (GCNStack): residual\
+  \ stack of PyG `GCNConv` layers with LayerNorm and dropout.\n  - Recommended `--gcn_stack_layers` in\
+  \ [2, 4].\n  - Works both in hybrid (with Transformer) and in GNN‑only ablations.\n\nExample (GCN stack,\
+  \ hybrid):\n\n```bash\npython ToxD4C/train.py \\\n  --experiment_name \"toxd4c_hybrid_gcnstack\" \\\n\
+  \  --gnn_backbone pyg_gcn_stack --gcn_stack_layers 3 \\\n  --seed 42 --num_epochs 50 --batch_size 16\
+  \ --deterministic\n```\n\n## Common Ablations\nAll runs share the same base args as the full model;\
+  \ only the ablation flags are shown below.\n\n- GNN only (baseline):\n  `--disable_transformer --disable_geometric\
+  \ --disable_hierarchical --disable_fingerprint`\n- GNN + Transformer (core):\n  `--disable_geometric\
+  \ --disable_hierarchical --disable_fingerprint`\n- GNN + Transformer + 3D:\n  `--disable_hierarchical\
+  \ --disable_fingerprint`\n- GNN + Transformer + Fingerprint:\n  `--disable_geometric --disable_hierarchical`\n\
+  - Full − Fingerprint:\n  `--disable_fingerprint`\n- Full − Contrastive:\n  `--disable_contrastive`\n\
+  - Concatenation Fusion:\n  `--disable_dynamic_fusion`\n- Classification only / Regression only:\n  `--disable_regression`\
+  \ / `--disable_classification`\n\n## Data & Preprocessing\n\n### Preparing LMDB datasets\n\n1. **Raw\
+  \ LMDB** – Each key corresponds to a SMILES string with classification/regression targets.\n2. **Preprocessing\
+  \ (`preprocess_data.py`)**\n   - Builds atom/bond feature tensors and RDKit 3D conformers via `MolecularFeatureExtractor`.\n\
+  \   - Stores tensors, label arrays, and the originating SMILES string directly in a new LMDB so training\
+  \ never has to regenerate conformers.\n   - Enforces `--max_atoms` by skipping over-length molecules\
+  \ to keep tensor shapes consistent.\n3. **Output layout** – The processed LMDB retains the original\
+  \ keys and adds:\n   - `atom_features` `[num_atoms, 119]`\n   - `bond_features` `[num_edges, 12]`\n\
+  \   - `edge_index` `[2, num_edges]`\n   - `coordinates` `[num_atoms, 3]`\n   - `classification_target`,\
+  \ `regression_target`, and SMILES.\n\n### Runtime data loading (`data/lmdb_dataset.py`)\n\n- `LMDBToxD4CDataset`\
+  \ reads the tensors, truncates to `--max_atoms`, builds boolean masks for missing labels (value `-10000`),\
+  \ and returns SMILES for fingerprinting.\n- `collate_lmdb_batch` concatenates node-level tensors, constructs\
+  \ a global `batch` index vector for PyG pooling, and stacks per-task labels/masks.\n- `create_lmdb_dataloaders`\
+  \ wires the datasets into PyTorch dataloaders with optional shuffling and exposes all three splits.\n\
+  \n### Training-time controls\n\n- `--use_preprocessed` (default) loads from `--preprocessed_dir`; `--force_preprocess`\
+  \ triggers preprocessing if cached tensors are absent.\n- `--max_atoms` must match the value used during\
+  \ preprocessing to avoid silently truncating nodes at load time.\n- The preprocessing script logs counts\
+  \ of processed vs. skipped molecules, which is useful when verifying data coverage.\n\n## Reproducibility\
+  \ & Splits\n- Determinism: `--seed` and `--deterministic` set consistent training behavior and snapshot\
+  \ full run metadata.\n- Splits: random / scaffold / cluster do not overlap by design; see `utils/splitter.py`\
+  \ for diagnostics.\n\n## Notes on Recent Changes\n- Contrastive learning is now part of the training\
+  \ objective, weighted by `config['contrastive_weight']` (default 0.3). To disable use `--disable_contrastive`.\n\
+  - Logs are no longer written to a global file. Each run now logs to `experiments/<name>_<timestamp>/train.log`.\n\
+  \n## Re‑running Old Experiments\nExperiments trained before this change did not include the contrastive\
+  \ loss in the objective even if enabled in the config. For fair comparisons, re‑run experiments where\
+  \ `use_contrastive_learning: true` appears in the saved config.\n\nTypical experiments to re‑run:\n\
+  - `toxd4c_ablation_gnn_only`\n- `toxd4c_ablation_gnn_transformer`\n- `toxd4c_ablation_gnn_trans_3d`\n\
+  - `toxd4c_ablation_gnn_trans_fp`\n- `toxd4c_ablation_full_model` (ensure NOT passing `--disable_contrastive`)\n\
+  - `toxd4c_ablation_full_no_fp`\n- `toxd4c_ablation_concat_fusion`\n- `toxd4c_ablation_classification_only`\n\
+  - `toxd4c_ablation_regression_only`\n\nAdditionally, earlier `full_hybrid_gcnstack` runs that failed\
+  \ during forward have been fixed and should be re‑run.\n\n## Inference\nSee `ToxD4C/inference_toxd4c.py`\
+  \ for batch inference on SMILES files using a trained checkpoint.\n\n## License and Contributions\n\
+  MIT‑licensed. Issues and PRs are welcome.\n"

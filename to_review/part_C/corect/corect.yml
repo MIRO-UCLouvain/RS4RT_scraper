@@ -1,0 +1,71 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: dratefhassan1999-creator/CoreCT
+url: https://github.com/dratefhassan1999-creator/CoreCT
+platform: github
+description: Portable CT/CBCT viewer — opens Sirona GALILEOS volumes directly, plus DICOM/NIfTI/NRRD.
+  MPR, panoramic reconstruction, mm-accurate measurement, optional multi-provider AI assistant.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-06T16:09:21Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "# CoreCT\n\nA portable desktop viewer for **CT and CBCT** volumes.\n\nIt opens **Sirona\
+  \ GALILEOS** cases directly — without the vendor viewer and without a\nversion-matched installer — plus\
+  \ DICOM, NIfTI, NRRD, MetaImage and raw slice stacks.\n\n**No installation.** Copy the `CoreCT` folder\
+  \ anywhere — a USB stick, a network share, a\nclinic PC with no Python — and double-click `CoreCT.exe`.\n\
+  \n## Why it exists\n\nGALILEOS cases ship as a `.gwg` descriptor plus a `_vol_N` folder. The `.gwg`\
+  \ is encrypted\nand version-locked, so a case written by one viewer version will not open in another.\
+  \ The\nimaging data itself is **not** encrypted: it is plain gzip. CoreCT reads the volume directly\n\
+  and ignores the descriptor, so version mismatches stop mattering.\n\nThe trade-off is honest: the implant\
+  \ plan lives inside the encrypted `.gwg` and is **not**\nrecoverable. CoreCT reconstructs the imaging,\
+  \ not the plan.\n\n## Features\n\n**Viewing**\n- Axial, coronal and sagittal MPR, **linked** — click\
+  \ one pane and the other two follow\n- Zoom about the cursor, pan, invert, flip, reset\n- Slab projections:\
+  \ **MIP**, MinIP and mean, with adjustable thickness\n- Window/level presets plus a live `W / L / zoom`\
+  \ readout per pane\n\n**Reformatting**\n- **Panoramic reconstruction** — trace the dental arch and get\
+  \ a curved panoramic view\n- **Cross-sections** perpendicular to the arch at any position, for ridge\
+  \ width and nerve\n  position — the view needed before implant placement\n- Adjustable slab thickness\
+  \ and reconstruction height\n\n**Measurement**\n- Distance (mm), angle (°) and density, using each volume's\
+  \ real voxel spacing\n- Measurement list with per-item delete and CSV export\n- ROI statistics with\
+  \ area in mm²\n\n**Formats**\n- GALILEOS `_vol_N` volumes\n- DICOM (single file, series folder, DICOMDIR)\n\
+  - NIfTI, NRRD, MetaImage\n- Unknown raw slice stacks, via a heuristic probe that reports what it guessed\n\
+  \n**AI assistant** (optional) — 11 providers, conversation memory, vision gating\n\n## Mouse and keyboard\n\
+  \n| Action | Control |\n|---|---|\n| Change slice | Wheel, or the slider under each pane |\n| Zoom |\
+  \ Ctrl + wheel (about the cursor) |\n| Pan | Middle-drag |\n| Window / level | Right-drag |\n| Move\
+  \ crosshair | Left-click with the Crosshair tool |\n| Measure | Pick Distance / Angle / Density, then\
+  \ click points |\n| Reset view | `0` |\n| Invert | `I` |\n| Add arch point | Left-click in the Panoramic\
+  \ window (right-click undoes) |\n\n## AI providers\n\n| Provider | Needs a key | Notes |\n|---|---|---|\n\
+  | Anthropic | `ANTHROPIC_API_KEY` | Claude, native API |\n| OpenAI | `OPENAI_API_KEY` | GPT models |\n\
+  | OpenRouter | `OPENROUTER_API_KEY` | One key, hundreds of models |\n| **Ollama** | **no** | **Local\
+  \ — no image leaves your machine** |\n| **LM Studio** | **no** | **Local — no image leaves your machine**\
+  \ |\n| Groq | `GROQ_API_KEY` | Fast inference |\n| Together | `TOGETHER_API_KEY` | |\n| DeepSeek | `DEEPSEEK_API_KEY`\
+  \ | |\n| Mistral | `MISTRAL_API_KEY` | Pixtral has vision |\n| xAI | `XAI_API_KEY` | Grok vision |\n\
+  | Custom | your choice | Any OpenAI-compatible base URL |\n\nThe two local options matter for patient\
+  \ data: no account, and **no image ever leaves the\ncomputer**. They read images noticeably worse than\
+  \ the frontier models — a real trade-off,\nnot a free win. Models that cannot see images are detected\
+  \ up front, and the question is\nsent as text with a note rather than failing with a confusing API error.\n\
+  \n## Building the portable bundle\n\n```bash\npython -m venv .venv\n.venv/Scripts/activate\npip install\
+  \ -e \".[dev,build]\"\npython build_portable.py\n```\n\nThe result lands in `C:\\ctbuild\\dist\\CoreCT\\\
+  `. That folder is the product.\n\n> **Why a short build path.** Windows' 260-character path limit breaks\
+  \ both the PySide6\n> install and the PyInstaller output tree on a Microsoft Store Python, whose\n>\
+  \ `site-packages` path is already very long. Building into `C:\\ctbuild` avoids it with no\n> admin\
+  \ rights and no registry changes. The same reason the dev setup uses a venv inside\n> the project.\n\
+  \n## Running from source\n\n```bash\npip install -e \".[dev]\"\nCoreCT\n```\n\n## Testing\n\n```bash\n\
+  pytest\n```\n\nTests use synthetic fixtures and never call the network. To also run the regression suite\n\
+  against a real case:\n\n```bash\nCORECT_GOLDEN_CASE=/path/to/case pytest\n```\n\n## Privacy\n\n**Never\
+  \ commit patient scans to this repository.** `.gitignore` blocks the common patterns\n(`*.gwg`, `*_vol_*/`,\
+  \ `cases/`, `*.dcm`, `*.nii`), but the responsibility is yours. Keep\nimaging data outside the working\
+  \ tree.\n\n## Status and limits\n\nCoreCT is a research and educational tool. **It is not a certified\
+  \ diagnostic device**, and\nthe AI assistant does not produce diagnostic findings. Clinical decisions\
+  \ remain with the\nclinician.\n\nCBCT grey values are scanner-relative and are **not** calibrated Hounsfield\
+  \ units; the\ndensity readout is a relative figure.\n\n3D rendering is maximum-intensity and depth-shaded\
+  \ surface projection, not full volume\nray-casting. That was a deliberate choice: a VTK ray-caster would\
+  \ render soft tissue better\nbut adds ~250 MB to the portable bundle and is the most failure-prone component\
+  \ to freeze.\n\n## Licence\n\nMIT — see `LICENSE`.\n"

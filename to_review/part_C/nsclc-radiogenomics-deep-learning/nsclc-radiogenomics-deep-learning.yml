@@ -1,0 +1,84 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: lakshminarayanan108/nsclc-radiogenomics-deep-learning
+url: https://github.com/lakshminarayanan108/nsclc-radiogenomics-deep-learning
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-08-19T19:08:50Z'
+image_source: https://raw.githubusercontent.com/lakshminarayanan108/nsclc-radiogenomics-deep-learning/HEAD/results/figures/umap_gene_expression.png
+heuristic_total_score: 22
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 3 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# NSCLC Radiogenomics with Deep Learning\n\n![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)\n\
+  ![License](https://img.shields.io/badge/License-MIT-green.svg)\n[![DOI](https://img.shields.io/badge/DOI-10.7937%2FK9%2FTCIA.2018.abcd1234-red.svg)](https://doi.org/10.7937/K9/TCIA.2018.abcd1234)\n\
+  \nThis repository contains a deep learning workflow for integrating **CT imaging (radiomics)** and **transcriptomic\
+  \ data** to study **Non-Small Cell Lung Cancer (NSCLC)**. \nThe objective is to classify tumors (e.g.,\
+  \ Adenocarcinoma vs. Squamous Cell Carcinoma) by combining imaging-derived radiomic features with molecular\
+  \ data, enabling multi-modal radiogenomic analysis.\n\n---\n\n## Project Structure\n\n```\nNSCLC-Radiogenomics-deep-learning/\n\
+  │\n├── config/                    # Configuration files\n│   └── radiomics_params.yaml  # Standardized\
+  \ radiomics extraction settings\n│\n├── data/                      # Raw and processed datasets\n│ \
+  \  ├── raw/                   # Original data\n│   │   ├── dicom/             # Raw CT scans in DICOM\
+  \ format\n│   │   ├── metadata/          # Metadata files\n│   │   └── omics/             # Gene expression\
+  \ CEL files\n│   └── processed/             # Preprocessed datasets for ML\n│       ├── masks/     \
+  \        # Segmentation masks\n│       ├── nifti/             # CT scans converted to NIfTI\n│     \
+  \  └── segmentation/      # Tumor segmentation outputs\n│\n├── env/                       # Python virtual\
+  \ environment (not tracked in git)\n│\n├── models/                    # Saved models\n│\n├── results/\
+  \                   # Model outputs, features, figures, logs\n│   ├── figures/               # High\
+  \ resolution workflow and result images\n│   │   ├── elasticnet_confusion.png\n│   │   ├── elasticnet_roc.png\n\
+  │   │   ├── elasticnet_top_features.png\n│   │   ├── multimodal_elasticnet_confusion.png\n│   │   ├──\
+  \ multimodal_elasticnet_roc.png\n│   │   ├── multimodal_elasticnet_top_features.png\n│   │   ├── radiomics_elasticnet_confusion.png\n\
+  │   │   ├── radiomics_elasticnet_roc.png\n│   │   ├── radiomics_elasticnet_top_features.png\n│   │ \
+  \  ├── tsne_gene_expression.png\n│   │   ├── tsne_multimodal.png\n│   │   ├── tsne_radiomics.png\n│\
+  \   │   ├── umap_gene_expression.png\n│   │   ├── umap_multimodal.png\n│   │   └── umap_radiomics.png\n\
+  │   ├── radiomics_features.csv\n│   ├── radiomics_features_dedup.csv\n│   ├── logs/\n│   └── models/\n\
+  │\n├── src/                       \n│   ├── 01_preprocess_gene_expression_data.py\n│   ├── 02_gene_expression_tsne_umap.py\n\
+  │   ├── 03_gene_expression_elasticnet.py\n│   ├── 04_preprocess_ctscan_data.py\n│   ├── 05_extract_radiomic_features.py\n\
+  │   ├── 06_radiomics_tsne_umap.py\n│   ├── 07_radiomics_elasticnet.py\n│   ├── 08_multimodal_tsne_umap.py\n\
+  │   ├── 09_multimodal_elasticnet.py\n│   └── utils/                 # Helper functions\n│\n├── requirements.txt\
+  \           # Python dependencies\n└── README.md                  # Project documentation\n```\n\n---\n\
+  \n## Dataset\n\n- **CT Scans**: [NSCLC-Radiogenomics Data (TCIA)](https://www.cancerimagingarchive.net/collection/nsclc-radiogenomics/)\
+  \  \n- **Transcriptomics**: Affymetrix microarray gene expression (CEL files available at TCIA dataset\
+  \ page).  \n- **Annotations**: Histology labels (Adenocarcinoma, Squamous Cell Carcinoma, others).\n\
+  \n---\n\n## Workflow\n\nThe project follows a modular workflow:\n\n1. **Data Download & Organization**\
+  \  \n   - Retrieve CT scans, masks (if available), and gene expression data from TCIA.  \n   - Organize\
+  \ into patient-specific folders.\n\n2. **Preprocessing**  \n   - Convert DICOM to NIfTI.  \n   - Resample\
+  \ to isotropic spacing (1×1×1 mm).  \n   - Normalize intensities.  \n   - Handle missing slices/patients.\n\
+  \n3. **Segmentation**  \n   - Automated tumor segmentation using pretrained **nnU-Net / TotalSegmentator**.\
+  \  \n   - Save binary tumor masks per patient.  \n   - (Optional) Vessel segmentation for vessel-based\
+  \ radiomics.\n\n4. **Radiomics Extraction**  \n   - Apply [PyRadiomics](https://pyradiomics.readthedocs.io/)\
+  \ with standardized parameters (`config/radiomics_params.yaml`).  \n   - Extract features: first-order,\
+  \ shape, texture (GLCM, GLRLM, GLSZM, NGTDM).  \n   - Validate extracted features (e.g., count consistency).\n\
+  \n5. **Omics Preprocessing**  \n   - Normalize gene expression (RMA or quantile normalization).  \n\
+  \   - Filter genes (variance thresholding, pathway selection).  \n   - Align with imaging patient IDs.\n\
+  \n6. **Modeling (Elastic Net Baseline)**  \n   - **Unimodal Models**:  \n     - Elastic Net regression\
+  \ on radiomics only.  \n     - Elastic Net regression on transcriptomics only.  \n   - **Multimodal\
+  \ Models**:  \n     - Elastic Net regression on combined features.  \n   - Dimensionality reduction\
+  \ (t-SNE, UMAP) for visualization.\n\n7. **Evaluation**  \n   - Metrics: Accuracy, ROC-AUC, Precision/Recall.\
+  \  \n   - Confusion matrices and top features analysis.  \n   - Cross-validation.  \n\n8. **Visualization**\
+  \  \n   - High resolution workflow diagrams.  \n   - UMAP/t-SNE plots for feature distributions.  \n\
+  \   - ROC curves, top features, and confusion matrices.\n\n---\n\n## Results\n\n### Gene Expression\n\
+  - **UMAP**\n  ![Gene Expression UMAP](results/figures/umap_gene_expression.png)\n- **Confusion Matrix**\n\
+  \  ![Gene Expression Confusion Matrix](results/figures/elasticnet_confusion.png)\n- **Top Features (Elastic\
+  \ Net)**\n  ![Gene Expression Top Features](results/figures/elasticnet_top_features.png)\n\n### Radiomics\n\
+  - **UMAP**\n  ![Radiomics UMAP](results/figures/umap_radiomics.png)\n- **Confusion Matrix**\n  ![Radiomics\
+  \ Confusion Matrix](results/figures/radiomics_elasticnet_confusion.png)\n\n  > **Note:** Tumor-specific\
+  \ segmentation masks are not available for this dataset.  \n  > We are using non-specific \"lung_nodules\"\
+  \ masks.  \n  > The performance of radiomic features is expected to improve if tumor-specific masks\
+  \ are applied.\n\n- **Top Features (Elastic Net)**\n  ![Radiomics Top Features](results/figures/radiomics_elasticnet_top_features.png)\n\
+  \n### Multimodal (Radiomics + Gene Expression)\n- **UMAP**\n  ![Multimodal UMAP](results/figures/umap_multimodal.png)\n\
+  - **Confusion Matrix**\n  ![Multimodal Confusion Matrix](results/figures/multimodal_elasticnet_confusion.png)\n\
+  \n---\n\n## Notes: Future Improvements\n\n- Incorporate **CNNs on raw CT scans** (currently the dataset\
+  \ is not big enough for training a CNN).  \n- Extend to **multi-class classification** (beyond binary\
+  \ Adeno vs Squamous).  \n- Add explainability modules (SHAP, Grad-CAM).\n\n---\n\n## Acknowledgements\n\
+  \n- **Dataset**: NSCLC Radiogenomics (The Cancer Imaging Archive, TCIA).  \n- Citation: Bakr S, et al.\
+  \ \"Data Descriptor: A radiogenomics dataset of non-small cell lung cancer.\" *Scientific Data* 2018.\
+  \  \n- Tools: PyRadiomics, nnU-Net, TotalSegmentator, scikit-learn, PyTorch/TensorFlow.\n\n---\n"

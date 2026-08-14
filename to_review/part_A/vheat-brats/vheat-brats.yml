@@ -1,0 +1,102 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: lxy3837/vHeat-BraTS
+url: https://github.com/lxy3837/vHeat-BraTS
+platform: github
+description: vHeat for BraTS brain tumor segmentation
+license: null
+language: Python
+keywords: []
+stars: 2
+updated_at: '2026-07-14T11:13:39Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "\n<div align=\"center\">\n<h1>vHeat-BraTS</h1>\n<h3>vHeat for BraTS Brain Tumor Segmentation</h3>\n\
+  </div>\n\n## Disclaimer\n\nThis is a **fork/reproduction** of the original vHeat project for research\
+  \ purposes. The core vHeat model code is developed by the original authors. This repository adds configurations\
+  \ and scripts for training vHeat on the BraTS 2021 brain tumor segmentation dataset.\n\n- **Original\
+  \ vHeat Project**: [MzeroMiko/vHeat](https://github.com/MzeroMiko/vHeat)\n- **Original Paper**: [vHeat:\
+  \ Building Vision Models upon Heat Conduction (CVPR 2025)](https://arxiv.org/pdf/2405.16555)\n\n---\n\
+  \n<div align=\"center\">\n<h3>vHeat: Building Vision Models upon Heat Conduction</h3>\n<h3>(Accepted\
+  \ by CVPR 2025)</h3>\n\n[ZhaoZhi Wang](https://scholar.google.com/citations?user=CkDanj8AAAAJ&hl=zh-CN&oi=ao)<sup>1,2*</sup>,\
+  \ [Yue Liu](https://github.com/MzeroMiko)<sup>1*</sup>, [Yunfan Liu](https://scholar.google.com.hk/citations?user=YPL33G0AAAAJ&hl=zh-CN&oi=ao)<sup>1</sup>,\
+  \ [Hongtian Yu](https://github.com/yuhongtian17)<sup>1</sup>, \n\n[Yaowei Wang](https://scholar.google.com.hk/citations?user=o_DllmIAAAAJ&hl=zh-CN&oi=ao)<sup>2,3</sup>,\
+  \ [Qixiang Ye](https://scholar.google.com.hk/citations?user=tjEfgsEAAAAJ&hl=zh-CN&oi=ao)<sup>1,2</sup>,\
+  \ [Yunjie Tian](https://sunsmarterjie.github.io/)<sup>1</sup>\n\n<sup>1</sup> University of Chinese\
+  \ Academy of Sciences, <sup>2</sup> Peng Cheng Laboratory,\n\n<sup>3</sup> Harbin Institute of Technology\
+  \ (Shenzhen)\n\n<sup>*</sup> Equal contribution.\n\nPaper: ([2405.16555](https://arxiv.org/pdf/2405.16555))\n\
+  \n</div>\n\n## Abstract\nA fundamental problem in learning robust and expressive visual representations\
+  \ lies in efficiently estimating the spatial relationships of visual semantics throughout the entire\
+  \ image. In this study, we propose vHeat, a novel vision backbone model that simultaneously achieves\
+  \ both high computational efficiency and global receptive field. The essential idea, inspired by the\
+  \ physical principle of heat conduction, is to conceptualize image patches as heat sources and model\
+  \ the calculation of their correlations as the diffusion of thermal energy. This mechanism is incorporated\
+  \ into deep models through the newly proposed module, the Heat Conduction Operator (HCO), which is physically\
+  \ plausible and can be efficiently implemented using DCT and IDCT operations with a complexity of O(N<sup>1.5</sup>).\
+  \ Extensive experiments demonstrate that vHeat surpasses Vision Transformers (ViTs) across various vision\
+  \ tasks, while also providing higher inference speeds, reduced FLOPs, and lower GPU memory usage for\
+  \ high-resolution images. \n\n## Main Results\n\n:book: \n***Checkpoint and log files will be released\
+  \ soon***\n\n### **Classification on ImageNet-1K with vHeat**\n\n| name | pretrain | resolution |acc@1\
+  \ | #params | FLOPs | Throughput | configs/logs/ckpts |\n| :---: | :---: | :---: | :---: | :---: | :---:\
+  \ | :---: | :---:|\n| Swin-T | ImageNet-1K | 224x224 | 81.2 | 29M | 4.5G | 1244 | \n| Swin-S | ImageNet-1K\
+  \ | 224x224 | 83.0 | 50M | 8.7G | 728 |\n| Swin-B | ImageNet-1K | 224x224 | 83.5 | 89M | 15.4G | 458\
+  \ |\n| vHeat-T | ImageNet-1K | 224x224 | 82.2 | 29M | 4.6G | 1514 | [config](classification/configs/vHeat/vHeat_tiny_224.yaml)/[log](https://github.com/MzeroMiko/vHeat/releases/download/vheatcls/vHeat_tiny.txt)/[ckpt](https://github.com/MzeroMiko/vHeat/releases/download/vheatcls/vHeat_tiny.pth)\
+  \ |\n| vHeat-S | ImageNet-1K | 224x224 | 83.6 | 50M | 8.5G | 945 | [config](classification/configs/vHeat/vHeat_small_224.yaml)/[log](https://github.com/MzeroMiko/vHeat/releases/download/vheatcls/vHeat_small.txt)/[ckpt](https://github.com/MzeroMiko/vHeat/releases/download/vheatcls/vHeat_small.pth)\
+  \ |\n| vHeat-B | ImageNet-1K | 224x224 | 83.9 | 87M | 14.9G | 661 | [config](classification/configs/vHeat/vHeat_base_224.yaml)/[log](https://github.com/MzeroMiko/vHeat/releases/download/vheatcls/vHeat_base.txt)/[ckpt](https://github.com/MzeroMiko/vHeat/releases/download/vheatcls/vHeat_base.pth)\
+  \ |\n\n* *Models in this subsection are trained from scratch with random or manual initialization.*\n\
+  * *Throughput is test on `pytorch2.0 + cuda12.1 + A100 + AMD EPYC 7542 CPU`.*\n* *We use ema because\
+  \ our model is still under development.*\n\n### **Object Detection on COCO with vHeat**\n  \n| Backbone\
+  \ | #params | FLOPs | Detector | box mAP | mask mAP | configs/logs/ckpts |\n| :---: | :---: | :---:\
+  \ | :---: | :---: | :---: |:---: |\n| Swin-T | 48M | 267G | MaskRCNN@1x | 42.7 | 39.3 |-- |-- |\n| vHeat-T\
+  \ | 53M | 286G | MaskRCNN@1x | 45.1 | 41.2 | [config](detection/configs/vheat/mask_rcnn_fpn_coco_tiny.py)/[log](https://github.com/MzeroMiko/vHeat/releases/download/vheatdet/vHeat_tiny_det.log)/[ckpt](https://github.com/MzeroMiko/vHeat/releases/download/vheatdet/vHeat_tiny_det.pth)\
+  \ |\n| Swin-S | 69M | 354G | MaskRCNN@1x | 44.8 | 40.9 |-- |-- |\n| vHeat-S | 74M | 377G | MaskRCNN@1x\
+  \ | 46.8 | 42.3 | [config](detection/configs/vheat/mask_rcnn_fpn_coco_small.py)/[log](https://github.com/MzeroMiko/vHeat/releases/download/vheatdet/vHeat_small_det.log)/[ckpt](https://github.com/MzeroMiko/vHeat/releases/download/vheatdet/vHeat_small_det.pth)\
+  \ |\n| Swin-B | 107M | 496G | MaskRCNN@1x | 46.9 | 42.3 |-- |-- |\n| vHeat-B | 115M | 526G | MaskRCNN@1x\
+  \ | 47.7 | 43.0 | [config](detection/configs/vheat/mask_rcnn_fpn_coco_base.py)/[log](https://github.com/MzeroMiko/vHeat/releases/download/vheatdet/vHeat_base_det.log)/[ckpt](https://github.com/MzeroMiko/vHeat/releases/download/vheatdet/vHeat_base_det.pth)\
+  \ |\n| Swin-T | 48M | 267G | MaskRCNN@3x | 46.0 | 41.6 |-- |-- |\n| vHeat-T | 53M | 286G | MaskRCNN@3x\
+  \ | 47.3| 42.5 | [config](detection/configs/vheat/mask_rcnn_fpn_coco_tiny_ms_3x.py)/[log](https://github.com/MzeroMiko/vHeat/releases/download/vheatdet/vHeat_tiny_det_ms3x.log)/[ckpt](https://github.com/MzeroMiko/vHeat/releases/download/vheatdet/vHeat_tiny_det_ms3x.pth)\
+  \ |\n| Swin-S | 69M | 354G | MaskRCNN@3x | 48.2 | 43.2 |-- |-- |\n| vHeat-S | 74M | 377G | MaskRCNN@3x\
+  \ | 48.8 | 43.7 | [config](detection/configs/vheat/mask_rcnn_fpn_coco_small_ms_3x.py)/[log](https://github.com/MzeroMiko/vHeat/releases/download/vheatdet/vHeat_small_det_ms3x.log)/[ckpt](https://github.com/MzeroMiko/vHeat/releases/download/vheatdet/vHeat_small_det_ms3x.pth)\
+  \ |\n\n* *Models in this subsection are initialized from the models trained in `classfication`.*\n\n\
+  \n### **Semantic Segmentation on ADE20K with vHeat**\n\n| Backbone | Input|  #params | FLOPs | Segmentor\
+  \ | mIoU(SS) | configs/logs/ckpts |\n| :---: | :---: | :---: | :---: | :---: | :---: |:---: |\n| Swin-T\
+  \ | 512x512 | 60M | 945G | UperNet@160k | 44.4 | -- | -- |\n| vHeat-T| 512x512 | 62M | 948G | UperNet@160k\
+  \ | 47.0 | [config](segmentation/configs/vheat/upernet_vheat_160k_ade20k_512x512_tiny.py)/[log](https://github.com/MzeroMiko/vHeat/releases/download/vheatseg/vHeat_tiny_seg.log)/[ckpt](https://github.com/MzeroMiko/vHeat/releases/download/vheatseg/vHeat_tiny_seg.pth)\
+  \ |\n| Swin-S | 512x512 | 81M | 1039G | UperNet@160k | 47.6 | -- | -- |\n| vHeat-S| 512x512 | 82M |\
+  \ 1028G | UperNet@160k | 49.0 |[config](segmentation/configs/vheat/upernet_vheat_160k_ade20k_512x512_small.py)/[log](#)/[ckpt](#)\
+  \ |\n| Swin-B | 512x512 | 121M | 1188G | UperNet@160k | 48.1 |-- |\n| vHeat-B| 512x512 | 129M | 1219G\
+  \ | UperNet@160k | 49.6 |[config](segmentation/configs/vheat/upernet_vheat_160k_ade20k_512x512_base.py)/[log](https://github.com/MzeroMiko/vHeat/releases/download/vheatseg/vHeat_base_seg.log)/[ckpt](https://github.com/MzeroMiko/vHeat/releases/download/vheatseg/vHeat_base_seg.pth)\
+  \ |\n\n\n* *Models in this subsection are initialized from the models trained in `classfication`.*\n\
+  \n## Getting Started\n### Installation\n\n**Step 1: Clone the vHeat repository:**\n\nTo get started,\
+  \ first clone the vHaet repository and navigate to the project directory:\n\n```bash\ngit clone https://github.com/MzeroMiko/vHeat.git\n\
+  cd vHeat\n```\n\n**Step 2: Environment Setup:**\n\n***Create and activate a new conda environment***\n\
+  \n```bash\nconda create -n vHeat\nconda activate vHeat\n```\n\n***Install Dependencies***\n\n```bash\n\
+  pip install -r requirements.txt\n```\n\n***Dependencies for `Detection` and `Segmentation` (optional)***\n\
+  \n```bash\npip install mmengine==0.10.1 mmcv==2.1.0 opencv-python-headless ftfy regex\npip install mmdet==3.3.0\
+  \ mmsegmentation==1.2.2 mmpretrain==1.2.0\n```\n\n\n### Model Training and Inference\n\n**Classification**\n\
+  \nTo train vHeat models for classification on ImageNet, use the following commands for different configurations:\n\
+  \n```bash\npython -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=16 --master_addr=\"\
+  127.0.0.1\" --master_port=29501 main.py --cfg </path/to/config> --batch-size 128 --data-path </path/to/dataset>\
+  \ --output /tmp\n```\n\nIf you only want to test the performance (together with params and FLOPs):\n\
+  \n```bash\npython -m torch.distributed.launch --nnodes=1 --node_rank=0 --nproc_per_node=1 --master_addr=\"\
+  127.0.0.1\" --master_port=29501 main.py --cfg </path/to/config> --batch-size 128 --data-path </path/to/dataset>\
+  \ --output /tmp --resume </path/to/checkpoint> --eval --model_ema False\n```\n\n***please refer to [modelcard](./modelcard.sh)\
+  \ for more details.***\n\n**Detection and Segmentation**\n\nTo evaluate with `mmdetection` or `mmsegmentation`:\n\
+  ```bash\nbash ./tools/dist_test.sh </path/to/config> </path/to/checkpoint> 1\n```\n*use `--tta` to get\
+  \ the `mIoU(ms)` in segmentation*\n\nTo train with `mmdetection` or `mmsegmentation`:\n```bash\nbash\
+  \ ./tools/dist_train.sh </path/to/config> 8\n```\n\nFor more information about detection and segmentation\
+  \ tasks, please refer to the manual of [`mmdetection`](https://mmdetection.readthedocs.io/en/latest/user_guides/train.html)\
+  \ and [`mmsegmentation`](https://mmsegmentation.readthedocs.io/en/latest/user_guides/4_train_test.html).\
+  \ Remember to use the appropriate backbone configurations in the `configs` directory.\n\n***Before training\
+  \ on downstream tasks (detection/segmentation), please run [interpolate4downstream.py](classification/interpolate4downstream.py)\
+  \ to modify the classification pre-trained checkpoint to load for training.***\n\n## Citation\n```\n\
+  @InProceedings{Wang_2025_CVPR,\n    author    = {Wang, Zhaozhi and Liu, Yue and Tian, Yunjie and Liu,\
+  \ Yunfan and Wang, Yaowei and Ye, Qixiang},\n    title     = {Building Vision Models upon Heat Conduction},\n\
+  \    booktitle = {Proceedings of the Computer Vision and Pattern Recognition Conference (CVPR)},\n \
+  \   month     = {June},\n    year      = {2025},\n    pages     = {9707-9717}\n}\n```\n\n"

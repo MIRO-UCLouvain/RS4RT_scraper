@@ -1,0 +1,181 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: HamdanTariq26/Conditional-Multimodal-MRI-Synthesis-and-Brain-Tumor-Segmentation
+url: https://github.com/HamdanTariq26/Conditional-Multimodal-MRI-Synthesis-and-Brain-Tumor-Segmentation
+platform: github
+description: Developed a dual-model system featuring a ResNet U-Net for multi-class brain tumor segmentation
+  and a Conditional Diffusion Model (DDPM) for synthesizing 4-modality MRI from masks. Trained on TPU
+  v3-8 with CPU-EMA and v-prediction, the pipeline enables high-fidelity medical imaging analysis and
+  privacy-safe synthetic data generation for medical AI.
+license: Apache-2.0
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-13T15:33:06Z'
+image_source: https://raw.githubusercontent.com/HamdanTariq26/Conditional-Multimodal-MRI-Synthesis-and-Brain-Tumor-Segmentation/HEAD/images/Sample-brain-tumor-segmentation.png
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: '# Conditional Multimodal MRI Synthesis & Brain Tumor Segmentation
+
+
+  [![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/)
+
+  [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-EE4C2C.svg)](https://pytorch.org/)
+
+  [![TPU](https://img.shields.io/badge/Hardware-TPU%20v3--8-008080.svg)](https://cloud.google.com/tpu)
+
+  [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+
+  An end-to-end medical AI pipeline for the **BraTS 2020 Challenge**. This project implements a dual-model
+  system: a high-precision **ResNet-encoded U-Net** for tumor segmentation and a **Conditional Diffusion
+  Model (DDPM)** for synthesizing realistic, multi-modal MRI volumes from segmentation masks.
+
+
+  ---
+
+
+  ## 🌟 Key Features
+
+
+  ### 1. Segmentation Pipeline (ResNet-U-Net)
+
+  *   **Architecture**: U-Net backbone with a Residual Encoder (ResNet) for superior feature extraction.
+
+  *   **Sub-region Detection**: Automated delineation of Whole Tumor (WT), Tumor Core (TC), and Enhancing
+  Tumor (ET).
+
+  *   **Performance**: Achieved mean Dice coefficients of **0.80 (WT)**, **0.76 (TC)**, and **0.86 (ET)**.
+
+
+  ### 2. Synthesis Pipeline (Conditional DDPM)
+
+  *   **Architecture**: UNet2DModel conditioned on categorical segmentation masks.
+
+  *   **Modalities**: Synthesizes T1, T2, T1ce, and FLAIR volumes simultaneously.
+
+  *   **Optimization**: Implements **v-prediction** objective and **DDIM sampling** (50 steps) for high-fidelity,
+  accelerated inference.
+
+
+  ---
+
+
+  ## 🚀 Technical Innovations
+
+
+  This project features advanced engineering solutions for training generative models on specialized hardware:
+
+
+  *   💎 **CPU-EMA Weight Tracking**: Solved BFloat16 precision underflow on TPUs by offloading Exponential
+  Moving Average shadow weights to CPU RAM in FP32.
+
+  *   🧠 **Brain-Masked Normalization**: Implemented foreground-specific Z-score normalization to prevent
+  "washed-out" syntheses caused by dark background pixels.
+
+  *   🎨 **Composite Loss Function**: A hybrid objective combining **MSE**, **SSIM**, and **VGG Perceptual
+  Loss** to optimize for pixel accuracy, structural integrity, and clinical texture.
+
+  *   ⚡ **XLA Optimization**: Custom distributed loading strategy to prevent communication deadlocks during
+  TPU multi-core execution.
+
+
+  ---
+
+
+  ## 📊 Dataset: BraTS 2020
+
+  Trained and validated on the **Multimodal Brain Tumor Segmentation Challenge 2020** dataset.
+
+  *   **369 Patient Cases**: Co-registered T1, T2, T1ce, and FLAIR modalities.
+
+  *   **Expert Labels**: NCR (Necrotic), ED (Edema), and ET (Enhancing).
+
+
+  ---
+
+
+  ## 🛠️ Installation & Usage
+
+
+  ### Prerequisites
+
+  *   Python 3.9+
+
+  *   Kaggle or Google Cloud TPU (Recommended for Synthesis)
+
+
+  ### Setup
+
+  ```bash
+
+  git clone https://github.com/HamdanTariq26/Conditional-Multimodal-MRI-Synthesis-and-Brain-Tumor-Segmentation.git
+
+  cd Conditional-Multimodal-MRI-Synthesis-and-Brain-Tumor-Segmentation
+
+  pip install -r requirements.txt
+
+  ```
+
+
+  ---
+
+
+  ## 🖼️ Results
+
+
+  ### Segmentation Performance
+
+  | Region | Dice Score |
+
+  | :--- | :--- |
+
+  | **Whole Tumor** | 0.80 |
+
+  | **Tumor Core** | 0.76 |
+
+  | **Enhancing Tumor** | 0.86 |
+
+
+  ![Results](images/Sample-brain-tumor-segmentation.png)
+
+
+  ### Conditional Multimodal MRI Synthesis
+
+  ![Results](images/Sample-mri-generation.png)
+
+
+  ---
+
+
+  ## 👥 Authors
+
+  *   **Hamdan Tariq - Team lead** - [@HamdanTariq26](https://github.com/HamdanTariq26)
+
+  *   **Mubashara Anees**
+
+
+  ## 📄 License
+
+  This project is licensed under the Apache License - see the [LICENSE](LICENSE) file for details.
+
+
+  ---
+
+  **National University of Sciences and Technology (NUST)**
+
+  *Semester — Department of Artificial Intelligence*
+
+
+  ---
+
+  **Note**
+
+  *Pretrained model files are available in the GitHub Releases section due to GitHub file size limitations.*
+
+  '

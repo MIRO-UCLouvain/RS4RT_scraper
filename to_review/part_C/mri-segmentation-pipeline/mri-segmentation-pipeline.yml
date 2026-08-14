@@ -1,0 +1,47 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: riyaarah/mri-segmentation-pipeline
+url: https://github.com/riyaarah/mri-segmentation-pipeline
+platform: github
+description: End-to-end 3D U-Net pipeline for automated brain tumor segmentation using BraTS 2021 dataset.
+  Achieves 0.52 mean Dice score across necrotic core, edema, and enhancing tumor regions.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-11T07:00:41Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+readme_excerpt: "# \U0001F9E0 MRI Brain Tumor Segmentation\n\nEnd-to-end deep learning pipeline for automated\
+  \ brain tumor segmentation using 3D U-Net architecture trained on the BraTS 2021 dataset.\n\n## Results\n\
+  \n| Metric | Score |\n|--------|-------|\n| Mean Dice Score | **0.59** |\n| Dataset | BraTS 2021 (1,251\
+  \ patients) |\n| Architecture | 3D U-Net |\n| Input | 4-modality MRI (FLAIR, T1, T1ce, T2) |\n\n## Tumor\
+  \ Classes\n\n| Class | Description | Color |\n|-------|-------------|-------|\n| Necrotic Core | Dead\
+  \ tumor tissue | \U0001F534 Red |\n| Edema | Swelling around tumor | \U0001F7E2 Green |\n| Enhancing\
+  \ Tumor | Active growing region | \U0001F535 Blue |\n\n## Architecture\n\nThe model uses a 3D U-Net\
+  \ with:\n- Encoder path: 4 levels with DoubleConv3D blocks (32 → 64 → 128 → 256 channels)\n- Bottleneck:\
+  \ 512 channels\n- Decoder path: 4 upsampling levels with skip connections\n- Dropout (0.1) for regularization\n\
+  - Total parameters: 22.5M\n\n## Pipeline\n\n```\nRaw MRI (.nii.gz)\n    ↓\nPreprocessing (normalize\
+  \ + crop to 96³)\n    ↓\n3D U-Net Inference\n    ↓\nTumor Mask (4 classes)\n    ↓\nStreamlit Visualization\n\
+  ```\n\n## Tech Stack\n\n- **Deep Learning:** PyTorch, MONAI\n- **MRI Processing:** Nibabel, SimpleITK\n\
+  - **Demo:** Streamlit\n- **Dataset:** BraTS 2021 (Kaggle)\n- **Training:** Google Colab T4 GPU\n\n##\
+  \ Project Structure\n\n```\nmri-segmentation-pipeline/\n├── app.py                  ← Streamlit demo\
+  \ app\n├── download_data.py        ← Dataset download script\n├── notebooks/\n│   ├── Untitled.ipynb\
+  \      ← Full training notebook\n│   └── results/\n│       └── training_curves.png\n└── src/\n    └──\
+  \ __init__.py\n```\n\n## Setup & Run\n\n```bash\n# Clone repo\ngit clone https://github.com/riyaarah/mri-segmentation-pipeline.git\n\
+  cd mri-segmentation-pipeline\n\n# Install dependencies\npip install torch torchvision\npip install monai\
+  \ nibabel SimpleITK streamlit\n\n# Run demo\nstreamlit run app.py\n```\n\n## Demo\n\nThe Streamlit app\
+  \ allows you to:\n- Upload 4 MRI modalities (FLAIR, T1, T1ce, T2) in .nii.gz format\n- Run automated\
+  \ 3D segmentation\n- Navigate brain slices interactively\n- View tumor regions color-coded by class\n\
+  - See percentage statistics for each tumor region\n\n## Training Details\n\n| Parameter | Value |\n\
+  |-----------|-------|\n| Optimizer | Adam (lr=1e-4) |\n| Loss | Dice Loss + Cross Entropy |\n| Batch\
+  \ Size | 2 |\n| Input Size | 96 × 96 × 96 |\n| Augmentation | Random flips (x, y, z axes) |\n| Scheduler\
+  \ | ReduceLROnPlateau |\n\n## Dataset\n\nBraTS 2021 Task 1 — Brain Tumor Segmentation Challenge\n- 1,251\
+  \ multi-institutional MRI scans\n- 4 MRI modalities per patient: T1, T1ce, T2, FLAIR\n- Expert-annotated\
+  \ tumor regions\n- Available on Kaggle: `dschettler8845/brats-2021-task1`\n\n---\n*Built with PyTorch\
+  \ · 3D U-Net · BraTS 2021*\n"

@@ -1,0 +1,141 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: tatsunidas/RadiomicsJ
+url: https://github.com/tatsunidas/RadiomicsJ
+platform: github
+description: Java library to compute radiomics features.
+license: Apache-2.0
+language: Java
+keywords: []
+stars: 6
+updated_at: '2026-08-13T05:50:06Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# RadiomicsJ\nJava library to compute radiomics features.\nThe RadiomicsJ computes 170\
+  \ or more imaging features.\nIt is using the imagej for the image processing backend.\n\n## Environment\n\
+  \n- Maven3\n- Java AdoptOpenJDK1.8 or 1.11.\n\n## Dependencies\n\nSee, pom.xml.\n\n## Image-Preprocessing\n\
+  \n### Resampling(2D/3D)\n\nRadiomicsJ performs resampling with:\n- [2D]  \n\tBilinear  \n\tBicubic \
+  \ \n\tNearestNeighbor2D  \n- [3D]  \n\tTrilinear  \n\tNearestNeighbor3D  \n\tTricubicBSpline/Polynomial\n\
+  \n### Range filtering\n\nUser can set voxel value range in unit of density [ range min <= v <= range\
+  \ max ].  \nFor example, -1000 HU to min , 400 HU to max for CT images.  \nRange filtering was performed\
+  \ before remove outliers.  \n\n### Remove outliers\n\nIf you wants removing outliers, RadiomicsJ remove\
+  \ out of range of [mean - z score × sd] < v < [mean + z score × sd] from mask.  \nMean value is caluculated\
+  \ by voxels in ROI.  \nDefault value of the z score is 3 (99.73%CI).  \n\n### Image Filtering\n\nUser\
+  \ can use any image filter that implemented in ImageJ/Fiji and these plugins.\n\n### Image Standardization\n\
+  \nRadiomicsJ has standardization function (v-mean/sd).  \nMean and SD values are caluculated by voxels\
+  \ in ROI.  \nUser can set standardization on your needs.  \n\n## Feature family\n- Morphological features\n\
+  - Local intensity features\n- Intensity-based statistical features\n- Intensity histogram features\n\
+  - Intensity-volume histogram features\n- Grey level co-occurrence based features\n- Grey level run length\
+  \ based features\n- Grey level size zone based features\n- Grey level distance zone based features\n\
+  - Neighbourhood grey tone difference based features\n- Neighbouring grey level dependence based features\n\
+  - Fractal based features (not presented in IBSI)\n- Gray level affinity metrics, GLAM (not presented\
+  \ in IBSI, off by default)\n- Shape2D features\n- (developping)Homological features (not presented in\
+  \ IBSI)  \n\n### 3D basis\n\n3D based radiomics features are calculated by using both series of images\
+  \ and series of masks.  \nMasks are sharing voxel size and geometry with a paired image.  \n\n#### Aggregation\
+  \ for textures\n\nRadiomicsJ aggregates by a mean value for each angles (3D, averaging) to compute GLCM,\
+  \ GLRLM features on the 3D configration. \n\n#### (Optional) 2D basis\n\nIn almost cases, meanings of\
+  \ 2D features were included in 3D fetures, that is inducing correlation sometimes.  \nWith this reason,\
+  \ RadiomicsJ does not including Shape2DFeatures as default.  \nIt is enable by both force2D=true and\
+  \ enableShape2D=true.  \n\n2D based radiomics features are calculated by using a single slice pair both\
+  \ image slice and mask slice.  \nA mask is sharing pixel size and geometry with a paired image.  \n\n\
+  As more details, see following correspondence tables.  \n\n## IBSI Correspondence table\n\n### 2D\n\n\
+  <table border=\"1\"; style=\"border-collapse: collapse;　margin-left: auto; margin-right: auto; text-align:\
+  \ center;\">\n  <!-- header -->\n  <tr>\n  \t<th> Feature Family </th>\n  \t<th> Feature Name </th>\n\
+  \  \t<th> IBSI Feature Code </th>\n  </tr>\n  <!-- contents -->\n  <!-- 2D shape features -->\n  <tr\
+  \ bgcolor=\"#ffffff\"><td> 2D Shape Features </td><td> Pixel Surface </td><td> - </td></tr>\n  <tr bgcolor=\"\
+  #ffffff\"><td> 2D Shape Features </td><td> Perimeter </td><td> - </td></tr>\n  <tr bgcolor=\"#ffffff\"\
+  ><td> 2D Shape Features </td><td> Perimeter to Surface ratio </td><td> - </td></tr>\n  <tr bgcolor=\"\
+  #ffffff\"><td> 2D Shape Features </td><td> Sphericity </td><td> - </td></tr>\n  <tr bgcolor=\"#ffffff\"\
+  ><td> 2D Shape Features </td><td> Circularity </td><td> - </td></tr>\n  <tr bgcolor=\"#ffffff\"><td>\
+  \ 2D Shape Features </td><td> SphericalDisproportion </td><td> - </td></tr>\n  <tr bgcolor=\"#ffffff\"\
+  ><td> 2D Shape Features </td><td> FerretAngle </td><td> - </td></tr>\n</table>\n\n### 3D\n\n<table border=\"\
+  1\"; style=\"border-collapse: collapse;　margin-left: auto; margin-right: auto; text-align: center;\"\
+  \ >\n  <!-- header -->\n  <tr>\n  \t<th> Feature Family </th>\n  \t<th> Feature Name </th>\n  \t<th>\
+  \ IBSI Feature Code </th>\n  </tr>\n  <!-- 3D shape features -->\n  <tr bgcolor=\"#ffffff\"><td> Morphological\
+  \ features </td><td> Volume (mesh) </td><td> RNU0 </td></tr>\n  <tr bgcolor=\"#e6e6e6\"><td> Morphological\
+  \ features </td><td> Volume (voxel counting) </td><td> YEKZ </td></tr>\n  <tr bgcolor=\"#ffffff\"><td>\
+  \ Morphological features </td><td> Surface area (mesh) </td><td> C0JK </td></tr>\n  <tr bgcolor=\"#e6e6e6\"\
+  ><td> Morphological features </td><td> Surface to volume ratio </td><td> 2PR5 </td></tr>\n  <tr bgcolor=\"\
+  #ffffff\"><td> Morphological features </td><td> Compactness 1 </td><td> SKGS </td></tr>\n  <tr bgcolor=\"\
+  #e6e6e6\"><td> Morphological features </td><td> Compactness 2 </td><td> BQWJ </td></tr>\n  <tr bgcolor=\"\
+  #ffffff\"><td> Morphological features </td><td> Spherical disproportion </td><td> KRCK </td></tr>\n\
+  \  <tr bgcolor=\"#e6e6e6\"><td> Morphological features </td><td> Sphericity </td><td> QCFX </td></tr>\n\
+  \  <tr bgcolor=\"#ffffff\"><td> Morphological features </td><td> Asphericity </td><td> 25C7 </td></tr>\n\
+  \  <tr bgcolor=\"#e6e6e6\"><td> Morphological features </td><td> Centre of mass shift </td><td> KLMA\
+  \ </td></tr>\n  <tr bgcolor=\"#ffffff\"><td> Morphological features </td><td> Maximum 3D diameter </td><td>\
+  \ L0JK </td></tr>\n  <tr bgcolor=\"#e6e6e6\"><td> Morphological features </td><td> Major axis length\
+  \ </td><td> TDIC </td></tr>\n  <tr bgcolor=\"#ffffff\"><td> Morphological features </td><td> Minor axis\
+  \ length </td><td> P9VJ </td></tr>\n  <tr bgcolor=\"#e6e6e6\"><td> Morphological features </td><td>\
+  \ Least axis length </td><td> 7J51 </td></tr>\n  <tr bgcolor=\"#ffffff\"><td> Morphological features\
+  \ </td><td> Elongation </td><td> Q3CK </td></tr>\n  <tr bgcolor=\"#e6e6e6\"><td> Morphological features\
+  \ </td><td> Flatness </td><td> N17B </td></tr>\n  <tr bgcolor=\"#ffffff\"><td> Morphological features\
+  \ </td><td> Volume density (axis-aligned bounding box) </td><td> PBX1 </td></tr>\n  <tr bgcolor=\"#e6e6e6\"\
+  ><td> Morphological features </td><td> Area density (axis-aligned bounding box) </td><td> R57B </td></tr>\n\
+  \  <!-- tr bgcolor=\"#ffffff\"><td> Morphological features </td><td> Volume density (oriented minimum\
+  \ bounding box) </td><td> ZH1A </td></tr -->\n  <!-- tr bgcolor=\"#e6e6e6\"><td> Morphological features\
+  \ </td><td> Area density (oriented minimum bounding box) </td><td> IQYR </td></tr -->\n  <tr bgcolor=\"\
+  #ffffff\"><td> Morphological features </td><td> Volume density (approximate enclosing ellipsoid) </td><td>\
+  \ 6BDE </td></tr>\n  <tr bgcolor=\"#e6e6e6\"><td> Morphological features </td><td> Area density (approximate\
+  \ enclosing ellipsoid) </td><td> RDD2 </td></tr>\n  <!-- tr bgcolor=\"#ffffff\"><td> Morphological features\
+  \ </td><td> Volume density (minimum volume enclosing ellipsoid) </td><td> SWZ1 </td></tr -->\n  <!--\
+  \ tr bgcolor=\"#e6e6e6\"><td> Morphological features </td><td> Area density (minimum volume enclosing\
+  \ ellipsoid) </td><td> BRI8 </td></tr -->\n  <tr bgcolor=\"#ffffff\"><td> Morphological features </td><td>\
+  \ Volume density (convex hull) </td><td> R3ER </td></tr>\n  <tr bgcolor=\"#e6e6e6\"><td> Morphological\
+  \ features </td><td> Area density (convex hull) </td><td> 7T7F </td></tr>\n  <tr bgcolor=\"#ffffff\"\
+  ><td> Morphological features </td><td> Integrated intensity </td><td> 99N0 </td></tr>\n  <tr bgcolor=\"\
+  #e6e6e6\"><td> Morphological features </td><td> Moran’s I index </td><td> N365 </td></tr>\n  <tr bgcolor=\"\
+  #ffffff\"><td> Morphological features </td><td> Geary’s C measure </td><td> NPT7 </td></tr>\n  <!--\
+  \ Local intensity features -->\n  <tr bgcolor=\"#e6e6e6\"><td> Local intensity features </td><td> Local\
+  \ intensity peak </td><td> VJGA </td></tr>\n  <tr bgcolor=\"#ffffff\"><td> Local intensity features\
+  \ </td><td> Global intensity peak </td><td> 0F91 </td></tr>\n  <!-- Intensity-based statistical features\
+  \ -->\n  <tr bgcolor=\"#e6e6e6\"><td> Intensity-based statistical features </td><td> Mean intensity\
+  \ </td><td> Q4LE </td></tr>\n  <tr bgcolor=\"#ffffff\"><td> Intensity-based statistical features </td><td>\
+  \ Intensity variance </td><td> ECT3 </td></tr>\n  <tr bgcolor=\"#e6e6e6\"><td> Intensity-based statistical\
+  \ features </td><td> Intensity skewness </td><td> KE2A </td></tr>\n  <!-- tr bgcolor=\"#ffffff\"><td>\
+  \ Intensity-based statistical features </td><td> (Excess) intensity kurtosis </td><td> IPH6 </td></tr\
+  \ -->\n  <tr bgcolor=\"#ffffff\"><td> Intensity-based statistical features </td><td> intensity kurtosis\
+  \ </td><td> - </td></tr>\n  <tr bgcolor=\"#e6e6e6\"><td> Intensity-based statistical features </td><td>\
+  \ Median intensity </td><td> Y12H </td></tr>\n  <tr bgcolor=\"#ffffff\"><td> Intensity-based statistical\
+  \ features </td><td> Minimum intensity </td><td> 1GSF </td></tr>\n  <tr bgcolor=\"#e6e6e6\"><td> Intensity-based\
+  \ statistical features </td><td> 10th intensity percentile </td><td> QG58 </td></tr>\n  <tr bgcolor=\"\
+  #ffffff\"><td> Intensity-based statistical features </td><td> 90th intensity percentile </td><td> 8DWT\
+  \ </td></tr>\n  <tr bgcolor=\"#e6e6e6\"><td> Intensity-based statistical features </td><td> Maximum\
+  \ intensity </td><td> 84IY </td></tr>\n  <tr bgcolor=\"#ffffff\"><td> Intensity-based statistical features\
+  \ </td><td> Intensity interquartile range </td><td> SALO </td></tr>\n  <tr bgcolor=\"#e6e6e6\"><td>\
+  \ Intensity-based statistical features </td><td> Intensity range </td><td> 2OJQ </td></tr>\n  <tr bgcolor=\"\
+  #ffffff\"><td> Intensity-based statistical features </td><td> Intensity-based mean absolute deviation\
+  \ </td><td> 4FUA </td></tr>\n  <tr bgcolor=\"#e6e6e6\"><td> Intensity-based statistical features </td><td>\
+  \ Intensity-based robust mean absolute deviation </td><td> 1128 </td></tr>\n  <tr bgcolor=\"#ffffff\"\
+  ><td> Intensity-based statistical features </td><td> Intensity-based median absolute deviation </td><td>\
+  \ N72L </td></tr>\n  <tr bgcolor=\"#e6e6e6\"><td> Intensity-based statistical features </td><td> Intensity-based\
+  \ coefficient of variation </td><td> 7TET </td></tr>\n  <tr bgcolor=\"#ffffff\"><td> Intensity-based\
+  \ statistical features </td><td> Intensity-based quartile coefficient of dispersion </td><td> 9S40 </td></tr>\n\
+  \  <tr bgcolor=\"#e6e6e6\"><td> Intensity-based statistical features </td><td> Intensity-based energy\
+  \ </td><td> N8CA </td></tr>\n  <tr bgcolor=\"#ffffff\"><td> Intensity-based statistical features </td><td>\
+  \ Root mean square intensity </td><td> 5ZWQ </td></tr>\n  <!-- Intensity histogram features -->\n  <tr\
+  \ bgcolor=\"#e6e6e6\"><td> Intensity histogram features </td><td> Mean discretised intensity </td><td>\
+  \ X6K6 </td></tr>\n  <tr bgcolor=\"#ffffff\"><td> Intensity histogram features </td><td> Discretised\
+  \ intensity variance </td><td> CH89 </td></tr>\n  <tr bgcolor=\"#e6e6e6\"><td> Intensity histogram features\
+  \ </td><td> Discretised intensity skewness </td><td> 88K1 </td></tr>\n  <!-- tr bgcolor=\"#ffffff\"\
+  ><td> Intensity histogram features </td><td> (Excess) discretised intensity kurtosis </td><td> C3I7\
+  \ </td></tr -->\n  <tr bgcolor=\"#ffffff\"><td> Intensity histogram features </td><td> discretised intensity\
+  \ kurtosis </td><td> - </td></tr>\n  <tr bgcolor=\"#e6e6e6\"><td> Intensity histogram features </td><td>\
+  \ Median discretised intensity </td><td> WIFQ </td></tr>\n  <tr bgcolor=\"#ffffff\"><td> Intensity histogram\
+  \ features </td><td> Minimum discretised intensity </td><td> 1PR8 </td></tr>\n  <tr bgcolor=\"#e6e6e6\"\
+  ><td> Intensity histogram features </td><td> 10th discretised intensity percentile </td><td> GPMT </td></tr>\n\
+  \  <tr bgcolor=\"#ffffff\"><td> Intensity histogram features </td><td> 90th discretised intensity percentile\
+  \ </td><td> OZ0C </td></tr>\n  <tr bgcolor=\"#e6e6e6\"><td> Intensity histogram features </td><td> Maximum\
+  \ discretised intensity </td><td> 3NCY </td></tr>\n  <tr bgcolor=\"#ffffff\"><td> Intensity histogram\
+  \ features </td><td> Intensity histogram mode </td><td> AMMC </td></tr>\n  <tr bgcolor=\"#e6e6e6\"><td>\
+  \ Intensity histogram features </td><td> Discretised intensity interquartile range </td><td> WR0O </td></tr>\n\
+  \  <tr bgcolor=\"#ffffff\"><td> Intensity histogram features </td><td> Discretised intensity range </td><td>\
+  \ 5Z3W </td></tr>\n  <tr bgcolor=\"#e6e6e6\"><td> Intensity histogram features </td><td> Intensity histogram\
+  \ mean absolute deviation </td><td> D2ZX </td></tr>\n  <tr bgcolor=\"#ffffff\"><td> Intensity histogram\
+  \ features </td><td> Intensit"

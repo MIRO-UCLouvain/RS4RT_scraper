@@ -1,0 +1,91 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: riosinda/scd-ml
+url: https://github.com/riosinda/scd-ml
+platform: github
+description: Skin cancer clasification repository, radiomic extraction and ML techniques
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-26T19:04:27Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# Skin Cancer Detection — ML Thesis\n\nSkin cancer classification pipeline using lesion\
+  \ segmentation (Mask R-CNN), radiomic feature extraction, and ML/DL classification. Datasets: HAM10000,\
+  \ ISIC Archive, UDEM.\n\n---\n\n## Pipeline\n\n```\nEDA  →  Mask R-CNN training  →  Inference (segmentation)\
+  \  →  Feature extraction  →  ML/DL model\n(HAM10000 + ISIC + UDEM)       (HAM10000)                \
+  \    (ISIC on GCS)          (radiomic features)\n```\n\n---\n\n## Repository Structure\n\n```\nscd-ml/\n\
+  ├── notebooks/              # EDA notebooks (Jupyter)\n│   └── archive/            # Deprecated notebooks\
+  \ (logic moved to scripts/)\n├── scripts/                # Training, inference, and feature extraction\
+  \ scripts\n├── src/\n│   ├── paths.py            # Portable path resolver (SCD_* env var overrides)\n\
+  │   ├── viz.py              # Shared plotting utilities\n│   └── mask/               # Mask R-CNN source\
+  \ (torchvision-based)\n├── requirements/\n│   ├── mask.txt            # Python 3.12.6 — Mask R-CNN\n\
+  │   ├── features.txt        # Python 3.7 — radiomic extraction\n│   └── ml.txt              # Latest\
+  \ Python — final classification model\n├── results/                # Plots, CSVs, model evaluation outputs\n\
+  ├── models/                 # Trained .pth checkpoints (gitignored, store in GCS)\n└── data/       \
+  \            # Raw datasets (gitignored, see Datasets section)\n```\n\n---\n\n## Datasets\n\n| Dataset\
+  \ | Location | Notes |\n|---------|----------|-------|\n| HAM10000 | `data/HAM10000/` (local) | Download\
+  \ from [Kaggle](https://www.kaggle.com/datasets/kmader/skin-lesion-analysis-toward-melanoma-detection).\
+  \ Includes `images/`, `masks/`, `metadata.csv`. |\n| ISIC Archive | GCS bucket (mount) | Images and\
+  \ metadata — mounted at `~/data/gcs/` via gcsfuse |\n| UDEM | GCS bucket (mount) | Custom dataset —\
+  \ mounted at a separate GCS path |\n\nExpected local structure for HAM10000:\n```\ndata/\n└── HAM10000/\n\
+  \    ├── images/         # JPEG lesion images\n    ├── masks/          # Binary PNG masks\n    └── metadata.csv\
+  \    # Ground-truth labels and demographics\n```\n\n---\n\n## Python Environments\n\nThree separate\
+  \ environments managed with **pyenv**. All are gitignored.\n\n| Environment | Python | Purpose |\n|-------------|--------|---------|\n\
+  | `.venv-mask/` | 3.12.6 | Mask R-CNN training and inference |\n| `.venv-features/` | 3.7 | Radiomic\
+  \ feature extraction (pyradiomics) |\n| `.venv/` | latest | Final ML/DL classification model |\n\nSet\
+  \ up each environment:\n```bash\n# Install pyenv: https://github.com/pyenv/pyenv\npyenv install 3.12.6\n\
+  pyenv install 3.7.17\n\n# Mask R-CNN environment\npyenv local 3.12.6\npython -m venv .venv-mask\nsource\
+  \ .venv-mask/bin/activate\npip install -r requirements/mask.txt\n\n# Feature extraction environment\
+  \ (Python 3.7 — order matters)\npyenv local 3.7.17\npython -m venv .venv-features\nsource .venv-features/bin/activate\n\
+  pip install numpy pandas opencv-python pydicom\npip install SimpleITK --only-binary :all:\npip install\
+  \ pyradiomics\n\n# ML/DL model environment\npython -m venv .venv\nsource .venv/bin/activate\npip install\
+  \ -r requirements/ml.txt\n```\n\n> **Note:** `requirements/` files are placeholders. Run `pip freeze\
+  \ > requirements/<env>.txt` on the GCP VM after installing dependencies.\n\n---\n\n## GCP Setup\n\n\
+  ### Instance Requirements\n\n| Resource | Minimum | Recommended |\n|----------|---------|-------------|\n\
+  | GPU | — | L4 |\n| vCPUs | 16 | 32 |\n| RAM | 128 GB | 128 GB |\n| Boot disk | 100 GB SSD | 200 GB\
+  \ SSD |\n| OS | Debian 11 / Ubuntu 22.04 | — |\n\nMask R-CNN training requires at least 128 GB of RAM\
+  \ due to the size of HAM10000 loaded in memory.\n\n### GCS Storage Layout\n\nAll large assets (images,\
+  \ masks, models, feature CSVs) live in a GCS bucket to avoid local storage limits and enable sharing\
+  \ between machines.\n\n```\ngs://your-bucket/scd-ml/\n├── images/           # ISIC archive images (flat,\
+  \ ~470 K JPEGs)\n├── masks/            # Segmentation masks output by apply_segmentation.py\n├── models/\
+  \           # Trained .pth checkpoints\n└── features/         # Extracted radiomic feature CSVs (500\
+  \ MB+)\n```\n\n### Mount ISIC Images with gcsfuse\n\n```bash\n# Install gcsfuse\nexport GCSFUSE_REPO=gcsfuse-$(lsb_release\
+  \ -cs)\necho \"deb https://packages.cloud.google.com/apt $GCSFUSE_REPO main\" | sudo tee /etc/apt/sources.list.d/gcsfuse.list\n\
+  curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -\nsudo apt-get update\
+  \ && sudo apt-get install -y gcsfuse\n\n# Authenticate\ngcloud auth application-default login\n\n# Mount\
+  \ buckets\nmkdir -p ~/data/gcs ~/data/gcs-masks\ngcsfuse --implicit-dirs your-bucket/images ~/data/gcs\n\
+  gcsfuse --implicit-dirs your-bucket/masks  ~/data/gcs-masks\n```\n\n### Environment Variables\n\n`src/paths.py`\
+  \ reads these to resolve all project paths:\n\n```bash\nexport SCD_DATA_DIR=/path/to/data          \
+  \  # default: repo/data/\nexport SCD_MODELS_DIR=/path/to/models        # default: repo/models/\nexport\
+  \ SCD_RESULTS_DIR=/path/to/results      # default: repo/results/\nexport SCD_HAM10000_DIR=/path/to/HAM10000\
+  \    # default: $SCD_DATA_DIR/HAM10000\nexport SCD_ISIC_DIR=~/data/gcs               # default: ~/data/gcs\n\
+  export SCD_ISIC_IMAGES_DIR=~/data/gcs        # default: $SCD_ISIC_DIR\nexport SCD_ISIC_MASKS_DIR=~/data/gcs-masks\
+  \   # default: ~/data/gcs-masks\nexport SCD_GCS_BUCKET=gs://your-bucket/scd-ml\n```\n\nAdd these to\
+  \ `~/.bashrc` or `~/.zshrc` on the GCP instance.\n\n### Sync Feature CSVs\n\n```bash\nexport SCD_GCS_BUCKET=gs://your-bucket/scd-ml\n\
+  \n# After feature extraction — upload to GCS\ngsutil -m rsync -r -x '\\.gitkeep$' results/features/\
+  \ $SCD_GCS_BUCKET/features/\n\n# On local machine — download for analysis\ngsutil -m rsync -r $SCD_GCS_BUCKET/features/\
+  \ results/features/\n```\n\n---\n\n## EDA Notebooks\n\nLaunch with:\n```bash\njupyter notebook notebooks/eda/\n\
+  ```\n\n| Notebook | Dataset | Description |\n|----------|---------|-------------|\n| `notebooks/eda/01_isic_archive.ipynb`\
+  \ | ISIC Archive | Class distribution, demographics, image dimensions |\n| `notebooks/eda/02_ham10000.ipynb`\
+  \ | HAM10000 | Class balance, demographics, mask quality |\n| `notebooks/eda/03_udem.ipynb` | UDEM |\
+  \ Custom dataset exploration |\n\n---\n\n## Scripts (Training & Inference)\n\nScripts are numbered by\
+  \ pipeline stage. Run them in a **tmux session** on GCP to survive SSH disconnections:\n\n```bash\n\
+  tmux new -s training\nsource .venv-mask/bin/activate\npython scripts/01_train_mask_rcnn.py\n```\n\n\
+  | Script | Environment | Description |\n|--------|-------------|-------------|\n| `scripts/01_train_mask_rcnn.py`\
+  \ | `.venv-mask` | Train Mask R-CNN on HAM10000 |\n| `scripts/02_apply_segmentation.py` | `.venv-mask`\
+  \ | Inference on ISIC images → save masks to GCS |\n| `scripts/03_extract_features.py` | `.venv-features`\
+  \ | Parallel radiomic extraction (resumable) |\n\n---\n\n## Results\n\nGenerated artifacts are saved\
+  \ to `results/`:\n\n```\nresults/\n├── eda/\n│   ├── ham10000/       # Class distribution, demographics\
+  \ plots\n│   └── isic/           # Class distribution, age, sex, anatomical site plots\n├── mask_rcnn/\n\
+  │   ├── training/       # Loss curves, LR schedule, training history CSV\n│   ├── evaluation/     #\
+  \ Dice, IoU, Precision, Recall per image (CSV + barplot)\n│   └── samples/        # Prediction overlay\
+  \ samples\n├── processed/          # Intermediate parquet/CSV artifacts\n└── features/           # Radiomic\
+  \ feature CSVs (gitignored — synced via GCS)\n```\n\nTrained model checkpoints (`*.pth`) are gitignored\
+  \ — store and retrieve them via GCS.\n"

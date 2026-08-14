@@ -1,0 +1,141 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: PROSECCA/prosecca-endpoint-validation
+url: https://github.com/PROSECCA/prosecca-endpoint-validation
+platform: github
+description: Reproducible construction and validation of post-radiotherapy gastrointestinal and rectal
+  adverse-event endpoints in the PROSECCA study.
+license: BSD-3-Clause
+language: Python
+keywords: []
+stars: 2
+updated_at: '2026-08-13T11:42:57Z'
+image_source: null
+heuristic_total_score: 20
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# PROSECCA post-radiotherapy gastrointestinal endpoint construction and validation workflow\n\
+  \n[![DOI](https://zenodo.org/badge/1310905807.svg)](https://doi.org/10.5281/zenodo.21534155)\n\n## Overview\n\
+  \nThis repository contains the reproducible three-stage workflow used to construct and validate post-radiotherapy\
+  \ gastrointestinal adverse-event endpoints:\n\n1. **Endpoint construction** from hospital-event records\
+  \ and the ICD-10 definitions in Supplementary Table S1.\n2. **Stability analysis** across cumulative\
+  \ 1-, 2-, 3-, 5-, and 10-year pre-radiotherapy time frames.\n3. **Statistical analysis** comparing rectal-wall\
+  \ dose-volume histogram (DVH) features between patients with and without each incident endpoint.\n\n\
+  The repository runs with constructed synthetic records by default. These records contain no real patient\
+  \ information and are intended only to test ICD-10 mapping, timing, recurrence, emergency-admission,\
+  \ baseline-exclusion, missing-data, and patient-linkage rules. Results generated from the example data\
+  \ are software-validation results and must not be interpreted as clinical estimates.\n\n## Workflow\n\
+  \n```mermaid\nflowchart LR\n    A[\"Synthetic toxicity events\"] --> C[\"Step 1: endpoint construction\"\
+  ]\n    B[\"Supplementary Table S1 ICD-10 mapping\"] --> C\n    D[\"Synthetic study cohort\"] --> C\n\
+  \    C --> E[\"01_endpoint_construction.xlsx\"]\n    E --> F[\"Step 2: stability analysis\"]\n    E\
+  \ --> G[\"Step 3: statistical analysis\"]\n    H[\"Rectal-wall DVH features\"] --> G\n    F --> I[\"\
+  02_stability_analysis.xlsx and Figure 3-style PNG\"]\n    G --> J[\"03_statistical_analysis.xlsx and\
+  \ Figure 4-style PNG\"]\n```\n\nStep 2 and Step 3 both use the patient-level `04_incident_labels` worksheet\
+  \ produced by Step 1. Step 3 does not use the aggregated Step 2 workbook as its analytical input.\n\n\
+  ## Endpoint terminology and operational definitions\n\nThe endpoint names used throughout the notebooks,\
+  \ Python modules, workbooks, and figures are:\n\n|Endpoint|Operational definition|Post-radiotherapy\
+  \ time window|Baseline exclusion|\n|-|-|-:|-|\n|`E1_broadGI`|Any selected broad gastrointestinal ICD-10\
+  \ code|Days 0–730|Corresponding E1 baseline event|\n|`E2_anorectal`|Any selected anorectal ICD-10 code|Days\
+  \ 0–730|Corresponding E2 baseline event|\n|`E3_radProctitis`|Radiation proctitis (`K62.7`)|Days 0–730|Corresponding\
+  \ E3 baseline event|\n|`E4_coreRectal`|Rectal bleeding, ulceration, or radiation proctitis (`K62.5`,\
+  \ `K62.6`, or `K62.7`)|Days 0–730|Any baseline `E4_coreRectal` event|\n|`E4_recurrent`|At least two\
+  \ distinct E4 hospital episodes no more than 90 days apart|Days 0–730|Any baseline `E4_coreRectal` event|\n\
+  |`E4_emergency`|E4 event with admission type 30–39|Days 0–730|Any baseline `E4_coreRectal` event|\n\
+  |`E4_late`|E4 event occurring from 3 to 24 months|Days 90–730|Any baseline `E4_coreRectal` event|\n\
+  |`E4_veryLate`|E4 event occurring after 24 months|Day >730|Any baseline `E4_coreRectal` event|\n\nImportant\
+  \ timing rules:\n\n* Day 0 is included in the post-radiotherapy window.\n* Pre-radiotherapy time frames\
+  \ end at day −1; day 0 is not a baseline day.\n* The pre-radiotherapy time frames are cumulative: 1,\
+  \ 2, 3, 5, and 10 years.\n* For a time frame of (y) years, baseline events are evaluated from day (-365y)\
+  \ through day −1, inclusive.\n* The `E4_coreRectal` baseline exclusion is applied to `E4_coreRectal`\
+  \ and all E4-derived endpoints.\n* Multiple eligible diagnoses recorded in the same numeric hospital\
+  \ episode count as one episode for recurrence assessment.\n\n## Repository structure\n\n```text\n.\n\
+  ├── .gitignore\n├── CITATION.cff\n├── LICENSE\n├── README.md\n├── 01_endpoint_construction.ipynb\n├──\
+  \ 02_stability_analysis.ipynb\n├── 03_statistical_analysis.ipynb\n├── endpoint_construction.py\n├──\
+  \ stability_analysis.py\n├── statistical_analysis.py\n├── requirements.txt\n├── example_data/\n│   ├──\
+  \ synthetic_toxicity_events.csv\n│   ├── synthetic_study_cohort.csv\n│   ├── synthetic_rectal_wall_dvh.csv\n\
+  │   ├── supplementary_table_s1_icd10_mapping.csv\n│   └── synthetic_endpoint_validation_inputs.xlsx\n\
+  └── outputs/\n    ├── 01_endpoint_construction.xlsx\n    ├── 02_stability_analysis.xlsx\n    ├── 02_stability_analysis_incident_counts.png\n\
+  \    ├── 03_statistical_analysis.xlsx\n    └── 03_statistical_analysis_rbc_heatmap.png\n```\n\nThe Python\
+  \ modules contain reusable validation, calculation, plotting, and export functions; the notebooks provide\
+  \ the ordered, reader-facing execution workflow.\n\n## Example data\n\n### `synthetic_toxicity_events.csv`\n\
+  \nThe supplied file contains 27 event rows for 15 fictitious patients and preserves the six-column structure\
+  \ of the original toxicity export:\n\n|Column|Description|\n|-|-|\n|`prosecca_id`|Patient identifier|\n\
+  |`toxicity_description`|Event description retained for review; it does not determine endpoint membership|\n\
+  |`admission_type`|Integer admission code; values 30–39 represent emergency admissions|\n|`episode`|Integer\
+  \ hospital episode identifier|\n|`condition`|ICD-10 code|\n|`time_to_tox`|Event day relative to radiotherapy|\n\
+  \n### `synthetic_study_cohort.csv`\n\nThis file contains the complete 15-patient denominator. Retaining\
+  \ a separate cohort file ensures that patients without a qualifying post-radiotherapy event remain in\
+  \ the patient-level output.\n\n### `supplementary_table_s1_icd10_mapping.csv`\n\nThis is the machine-readable\
+  \ ICD-10 grouping derived from Supplementary Table S1. It contains no patient records. The mapping defines\
+  \ ICD-10 eligibility for the base endpoint groups; the Python workflow subsequently applies timing,\
+  \ episode, admission-type, and baseline-exclusion rules.\n\n### `synthetic_rectal_wall_dvh.csv`\n\n\
+  This file contains one row per synthetic patient and 16 rectal-wall DVH features:\n\n* `Wall_Dmax_Gy`\n\
+  * `Wall_Dmean_Gy`\n* `Wall_V5_pct` through `Wall_V70_pct`, in 5-Gy increments\n\n### Additional validation\
+  \ files\n\n* `synthetic_endpoint_validation_inputs.xlsx` provides a review of the endpoint-validation\
+  \ inputs.\n\n## Stage 1: endpoint construction\n\n`01_endpoint_construction.ipynb`:\n\n1. loads the\
+  \ toxicity events, cohort denominator, and Supplementary Table S1 mapping;\n2. standardises patient\
+  \ identifiers and ICD-10 formatting;\n3. maps eligible ICD-10 codes to the endpoint groups;\n4. constructs\
+  \ the post-radiotherapy endpoint flags;\n5. constructs cumulative pre-radiotherapy baseline flags;\n\
+  6. applies endpoint-specific baseline exclusions; and\n7. exports patient-level labels and audit information.\n\
+  \n```mermaid\nflowchart TD\n    A[Load ICD-coded healthcare events] --> B[Clean IDs, dates, episodes,\
+  \ admission type, and ICD codes]\n    C[Load Supplementary Table S1 mapping workbook] --> D[Apply longest\
+  \ ICD-prefix match]\n    B --> D\n    D --> E[Assign event-level E1_broadGI to E4_coreRectal flags]\n\
+  \    E --> F[Apply post-RT windows]\n    F --> G[Derive E4_recurrent from distinct episodes within 90\
+  \ days]\n    F --> H[Derive E4_emergency from admission type 30-39]\n    F --> I[Derive E4_late at 3-24\
+  \ months]\n    F --> J[Derive E4_veryLate after 24 months]\n    E --> K[Build cumulative 1, 2, 3, 5,\
+  \ and 10-year baseline flags]\n    G --> L[Aggregate patient-level post-RT endpoints]\n    H --> L\n\
+  \    I --> L\n    J --> L\n    K --> M[Apply endpoint-specific baseline exclusions]\n    L --> M\n \
+  \   M --> N[Create patient-level incident endpoint labels]\n    N --> O[Save auditable Excel workbook]\n\
+  ```\n\n### Step 1 output\n\n`outputs/01_endpoint_construction.xlsx` contains:\n\n|Worksheet|Contents|\n\
+  |-|-|\n|`01_event_level`|Cleaned event-level records and ICD-10 mapping indicators|\n|`02_post_flags`|Patient-level\
+  \ post-radiotherapy endpoint flags|\n|`03_baseline_flags`|Patient-level baseline flags for each pre-radiotherapy\
+  \ time frame|\n|`04_incident_labels`|Patient-level incident endpoint labels used by Steps 2 and 3|\n\
+  |`05_audit`|Input and mapping quality-control counts|\n\nIncident-label columns follow:\n\n```text\n\
+  {endpoint}_incident_pre{years}y\n```\n\nFor example, `E4_coreRectal_incident_pre5y` is the incident\
+  \ `E4_coreRectal` label after applying the cumulative 5-year pre-radiotherapy baseline exclusion.\n\n\
+  ## Stage 2: stability analysis\n\n`02_stability_analysis.ipynb` evaluates whether incident endpoint\
+  \ counts change when the cumulative pre-radiotherapy time frame is extended from 1 to 10 years.\n\n\
+  ```mermaid\nflowchart TD\n    A[\"Patient-level incident endpoint labels\"] --> B[\"Validate identifier\
+  \ completeness and uniqueness\"]\n    B --> C[\"Validate binary endpoint/time-frame columns\"]\n   \
+  \ C --> D[\"Calculate counts and percentages\"]\n    D --> E[\"Reshape results by endpoint and time\
+  \ frame\"]\n    C --> F[\"Check cumulative 1-to-0 consistency\"]\n    E --> G[\"Create manuscript-aligned\
+  \ count figure\"]\n    E --> H[\"Add counts_wide, percentages_wide, and stability_long worksheets\"\
+  ]\n    F --> I[\"Add cumulative_consistency worksheet\"]\n    H --> J[\"Export one Excel workbook\"\
+  ]\n    I --> J\n```\n\nFor each endpoint and time frame:\n\n```text\nevent count = sum of the binary\
+  \ incident labels\ndenominator = number of unique patients\nincidence percentage = 100 × event count\
+  \ / denominator\n```\n\nBecause the time frames are cumulative, incident labels may remain unchanged\
+  \ or change from 1 to 0 as the time frame becomes longer. A 0-to-1 transition is inconsistent with the\
+  \ cumulative baseline definition and is reported by the quality-control check.\n\n### Step 2 outputs\n\
+  \n* `outputs/02_stability_analysis.xlsx` contains:\n\n  * `counts_wide`\n  * `percentages_wide`\n  *\
+  \ `stability_long`\n  * `cumulative_consistency`\n* `outputs/02_stability_analysis_incident_counts.png`\
+  \ is the 300-dpi Figure 3-style endpoint-count plot.\n\n## Stage 3: statistical analysis\n\n`03_statistical_analysis.ipynb`\
+  \ compares 16 rectal-wall DVH features between endpoint-positive and endpoint-negative patients for\
+  \ every endpoint and pre-radiotherapy time frame.\n\nFor each comparison:\n\n1. observations missing\
+  \ the current DVH feature are excluded from that feature-specific test;\n2. a **two-sided Mann–Whitney\
+  \ U test** compares the two groups;\n3. rank-biserial correlation (RBC) is calculated as:\n\n```text\n\
+  RBC = 2U / (n_event × n_non_event) - 1\n```\n\n4. positive RBC indicates higher DVH feature ranks in\
+  \ the endpoint-positive group; and\n5. Benjamini–Hochberg false-discovery-rate correction is applied\
+  \ to the 16 feature-level p-values within each endpoint and pre-radiotherapy time frame.\n\nThe analysis\
+  \ uses `alpha = 0.05`. No undocumented minimum event-count threshold is applied. A comparison is unavailable\
+  \ only when the endpoint-positive or endpoint-negative group has no valid observations for that feature.\n\
+  \n```mermaid\nflowchart TD\n    A[\"Step 1: 04_incident_labels\"] --> C[\"Validate identifiers and binary\
+  \ labels\"]\n    B[\"Rectal-wall DVH input: 16 features\"] --> D[\"Validate identifiers, ranges, and\
+  \ cumulative DVH ordering\"]\n    C --> E[\"One-to-one inner linkage by patient_id\"]\n    D --> E\n\
+  \    E --> F[\"For each endpoint and pre-radiotherapy time frame\"]\n    F --> G[\"For each of 16 DVH\
+  \ features\"]\n    G --> H[\"Mann-Whitney U test\"]\n    H --> I[\"Rank-biserial correlation\"]\n  \
+  \  I --> J[\"Benjamini-Hochberg correction within the 16-feature family\"]\n    J --> K[\"Endpoint-level\
+  \ summary\"]\n    J --> L[\"Feature-level results\"]\n    J --> M[\"Figure 4-style RBC heatmap\"]\n\
+  \    K --> N[\"03_statistical_analysis.xlsx\"]\n    L --> N\n```\n\n### Step 3 outputs\n\n* `outputs/03_statistical_analysis.xlsx`\
+  \ contains:\n\n  * `analysis_metadata`\n  * `input_qc`\n  * `summary_S3`\n  * `feature_results_S4`\n\
+  * `outputs/03_statistical_analysis_rbc_heatmap.png` is the 300-dpi Figure 4-style RBC heatmap. Non-FDR-significant\
+  \ cells are faded while their effect-size values remain visible.\n\n## Installation\n\nCreate and activate\
+  \ a Python environment using the method appropriate for the operating system, then install the dependencies:\n\
+  \n```text\npip install -r requirements.txt\n```\n\nThe workflow requires Python packages for data handling,\
+  \ Excel input/output, statistical testing, plotting, image export, and notebook execution.\n\n## Execution\n\
+  \nInstall the Python dependencies, then run the notebooks in numerical order:\n\n```text\npip install\
+  \ -r requirements.txt\njupyter nbconvert --execute --to notebook --inplace 01_endpoint_construction.ipynb\n\
+  ju"

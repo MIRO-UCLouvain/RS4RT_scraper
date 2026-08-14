@@ -1,0 +1,77 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Arjun-E-Naik/Molecular-Toxicity-Prediction
+url: https://github.com/Arjun-E-Naik/Molecular-Toxicity-Prediction
+platform: github
+description: ''
+license: GPL-3.0
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-17T14:21:53Z'
+image_source: null
+heuristic_total_score: 21
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "\n#  Quantum Machine Learning for Molecular Toxicity Prediction\n\n##  Research Objective\n\
+  \nThe primary objective of this project is to investigate whether Quantum Machine Learning (QML) models\
+  \ can improve molecular toxicity prediction compared to traditional machine learning approaches when\
+  \ working with limited, highly-compressed biochemical datasets.\n\nBy translating chemical structures\
+  \ into quantum states, this research explores if the high-dimensional feature spaces of QML algorithms\
+  \ can better capture complex biochemical relationships than classical baselines.\n\n---\n\n##  Pipeline\
+  \ Architecture\n\nThis repository contains an end-to-end pipeline that transforms raw SMILES strings\
+  \ into quantum-ready data, evaluates it across various models, and generates benchmark reports.\n\n\
+  ```text\nMolecular Dataset (Tox21 / ClinTox)\n │\n ▼ Feature Extraction (RDKit Morgan Fingerprints -\
+  \ 1024 bit)\n │\n ▼ Dimension Reduction (StandardScaler + PCA to 4-8 features)\n │\n ▼ Quantum Encoding\
+  \ (ZZFeatureMap)\n │\n ┌───────────────┐\n │ Quantum Models│\n ├───────────────┤\n │ QSVC          │\
+  \ \n │ VQC           │ \n │ EstimatorQNN  │ \n │ SamplerQNN    │ \n └───────────────┘\n │\n ▼ Performance\
+  \ Evaluation\n │\n ▼ Research Analysis\n\n```\n\n---\n\n##  Benchmark Results\n\nThe pipeline was evaluated\
+  \ on a binary toxicity classification task. Classical benchmarks (SVM, Random Forest) were tested alongside\
+  \ four Qiskit-based QML architectures.\n\n| Model | Accuracy | Precision | Recall | F1-Score | ROC-AUC\
+  \ | Time (s) |\n| --- | --- | --- | --- | --- | --- | --- |\n| **QSVC** | **0.5750** | **0.5940** |\
+  \ **0.5750** | **0.5523** | **0.5750** | 92.74 |\n| **Classical SVM (RBF)** | 0.5250 | 0.5256 | 0.5250\
+  \ | 0.5223 | 0.4500 | 0.01 |\n| **Random Forest** | 0.4500 | 0.4495 | 0.4500 | 0.4486 | 0.3988 | 0.17\
+  \ |\n| **VQC** | 0.4000 | 0.3901 | 0.4000 | 0.3862 | 0.4000 | 75.68 |\n| **SamplerQNN** | 0.3750 | 0.3575\
+  \ | 0.3750 | 0.3553 | 0.3750 | 74.83 |\n| **EstimatorQNN** | 0.3500 | 0.1609 | 0.2333 | 0.1905 | 0.4750\
+  \ | 73.08 |\n\n---\n\n## \U0001F52C Research Analysis & Observations\n\nBased on the benchmark execution,\
+  \ several key observations can be made regarding the intersection of chemistry and quantum machine learning:\n\
+  \n1. **The Quantum Kernel Advantage (QSVC):** The Quantum Support Vector Classifier (QSVC) was the best-performing\
+  \ model across all metrics, achieving an F1-Score of `0.5523` and outperforming the Classical SVM (`0.5223`).\
+  \ This suggests that the `ZZFeatureMap` successfully mapped the heavily compressed PCA data into a more\
+  \ separable Hilbert space, capturing non-linear boundaries better than the classical RBF kernel.\n2.\
+  \ **The Struggle of Variational Algorithms:** The parameterized quantum circuits (VQC, SamplerQNN, EstimatorQNN)\
+  \ underperformed compared to classical baselines, hovering around `0.35 - 0.40` Accuracy. Variational\
+  \ QNNs are notoriously sensitive to their ansatz, feature map, and classical optimizer settings. A low\
+  \ maximum iteration limit (`maxiter=80`) and potential barren plateaus likely prevented these models\
+  \ from converging on an optimal solution.\n3. **The Computational Time Trade-off:** While the QSVC achieved\
+  \ superior predictive metrics, it required **92.74 seconds** to simulate the kernel matrices locally,\
+  \ compared to the Classical SVM's **0.01 seconds**. For near-term applications, this emphasizes that\
+  \ QML is highly computationally expensive during the simulation phase and is best suited for complex\
+  \ feature sets where classical models completely fail.\n4. \n**Data Compression Bottleneck:** Extracting\
+  \ 1024-bit Morgan Fingerprints using RDKit and aggressively compressing them to just 4 features (qubits)\
+  \ via PCA  results in massive information loss. Classical Random Forest severely struggled with this\
+  \ compressed data (`0.4486` F1-Score), but the QSVC's ability to pull slightly higher accuracy from\
+  \ such limited data warrants further investigation.\n\n\n\n---\n\n## Installation & Setup\n\nThis project\
+  \ uses the modern **Qiskit 1.0** framework and relies on V1 Primitives (`Sampler` and `Estimator`).\n\
+  \n### Dependencies\n\nCreate a virtual environment and install the required packages:\n\n```bash\n#\
+  \ Install the modern Qiskit 1.0 stack\npip install qiskit==1.0.0 qiskit-machine-learning==0.7.0 qiskit-algorithms==0.3.0\n\
+  \n# Install Cheminformatics and Classical ML libraries\npip install rdkit scikit-learn pandas numpy\
+  \ tabulate\n\n# (Optional) For drawing quantum circuits in notebooks\npip install matplotlib pylatexenc\n\
+  \n```\n\n### Dataset Acquisition\n\n1. Navigate to [MoleculeNet](https://moleculenet.org/) and download\
+  \ either the **Tox21** or **ClinTox** dataset.\n\n\n2. Ensure your CSV file contains the explicit columns\
+  \ `smiles` (chemical structure) and `label` (binary toxicity).\n\n\n3. Place the file in the root directory\
+  \ and update the `filepath=\"dataset.csv\"` argument in `main.py`.\n\n\n\n---\n\n## \U0001F680 Execution\n\
+  \nRun the full pipeline from the terminal:\n\n```bash\npython src/main.py\n\n```\n\nThe script will\
+  \ handle feature extraction, dimensionality reduction, circuit construction, model training, and will\
+  \ output the benchmark table directly to your console, saving the results to `qml_benchmark_results.csv`.\n\
+  \n---\n\n## \U0001F52E Future Work\n\n* **Hyperparameter Optimization:** Increase optimizer iterations\
+  \ (e.g., `COBYLA maxiter=300`) and test complex entanglement strategies (e.g., `EfficientSU2` ansatz).\n\
+  * **Hardware Execution:** Migrate the `Statevector` simulations to run on actual IBM Quantum hardware\
+  \ using `Qiskit Runtime`.\n* **Multi-Task Learning:** Evaluate the QNNs on multiple toxicity endpoints\
+  \ simultaneously, capitalizing on the multi-dimensional output capabilities of quantum neural networks.\n"

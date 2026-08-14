@@ -1,0 +1,43 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: zt3226073/radiomics-habitat-pipeline
+url: https://github.com/zt3226073/radiomics-habitat-pipeline
+platform: github
+description: A reproducible pipeline for voxel-wise radiomics feature extraction, habitat clustering,
+  and spatial heterogeneity analysis.
+license: null
+language: Python
+keywords: []
+stars: 4
+updated_at: '2026-05-17T12:58:56Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Radiomics Habitat Pipeline\n\nThis repository contains two scripts:\n\n- `feature_map_extraction.py`:\
+  \ generates voxel-wise radiomics feature maps from medical images and ROI masks.\n- `habitat_analysis.py`:\
+  \ performs region-specific GMM-based habitat clustering and exports habitat metrics.\n\n## Project structure\n\
+  \n```text\nradiomics-habitat-pipeline/\n├── feature_map_extraction.py\n├── habitat_analysis.py\n├──\
+  \ requirements.txt\n└── README.md\n```\n\n## Installation\n\n```bash\npip install -r requirements.txt\n\
+  ```\n\n## Script 1: feature map extraction\n\nThis script expects one mask directory and one or more\
+  \ modality directories. The same file name must be shared across the corresponding image and mask files.\n\
+  \n### Example\n\n```bash\npython feature_map_extraction.py \\\n  --mask-dir \"/masks\" \\\n  --output-dir\
+  \ \"/feature_maps\" \\\n  --modality T2 \"/T2\" \\\n  --modality FLAIR \"/FLAIR\" \\\n  --modality T1CE\
+  \ \"/T1CE\" \\\n  --modality ADC \"/ADC\" \\\n  --modality CBF \"/CBF\" \\\n  --window-size 7 \\\n \
+  \ --min-valid-voxels 3\n```\n\n### Output layout\n\n```text\noutput_dir/\n└── case_id/\n    └── modality_name/\n\
+  \        ├── label_1_edema/\n        │   ├── feature_map_original_firstorder_Mean.nii.gz\n        │\
+  \   └── ...\n        └── label_3_tumor/\n            ├── feature_map_original_firstorder_Mean.nii.gz\n\
+  \            └── ...\n```\n\n### Notes\n\n- No hole filling is applied.\n- Failed voxels inside the\
+  \ ROI remain `NaN`.\n- Voxels outside the ROI are set to `0`.\n- The default ROI label convention is\
+  \ `1 = edema`, `3 = tumor`.\n\n## Script 2: habitat analysis\n\nThis script loads previously generated\
+  \ feature maps from a patient folder and performs habitat clustering separately for tumor and edema.\n\
+  \n### Example\n\n```bash\npython habitat_analysis.py \\\n  --roi-path \"C:/data/habitat/masks/Case001.nii.gz\"\
+  \ \\\n  --patient-root \"C:/data/habitat/output1/Case001\" \\\n  --modalities T2 FLAIR T1CE CBF ADC\
+  \ \\\n  --k-habitat 3\n```\n\n### Expected folder layout\n\n```text\npatient-root/\n├── T2/\n│   ├──\
+  \ feature_map_original_firstorder_Mean.nii.gz\n│   └── ...\n├── FLAIR/\n│   ├── feature_map_original_firstorder_Mean.nii.gz\n\
+  │   └── ...\n└── ...\n    \n```\n\n### Outputs\n\nFor each modality, the script saves:\n\n- `tumor_habitat_label.nii.gz`\n\
+  - `edema_habitat_label.nii.gz`\n- `habitat_label.nii.gz`"

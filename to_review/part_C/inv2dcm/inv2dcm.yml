@@ -1,0 +1,72 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: mrexodia/inv2dcm
+url: https://github.com/mrexodia/inv2dcm
+platform: github
+description: Convert InVivo .inv dental CBCT volumes to Enhanced CT DICOM.
+license: BSL-1.0
+language: Python
+keywords: []
+stars: 4
+updated_at: '2026-07-21T02:54:21Z'
+image_source: null
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# inv2dcm\n\n**inv2dcm** is a Python package and CLI for converting **InVivo `.inv` files**\
+  \ into **Enhanced CT DICOM (`.dcm`)**.\n\nIt is built for **dental CBCT / cone beam CT** data associated\
+  \ with **InVivoDentalViewer**, **CliniView**, and **Anatomage** workflows, including scans from systems\
+  \ such as **Instrumentarium Dental ORTHOPANTOMOGRAPH OP 3D Pro**.\n\nThe `.inv` files handled here use\
+  \ the **`INVFile`** XML container format, with an `AppendedData` payload containing JPEG 2000-compressed\
+  \ voxel data.\n\nIf you are searching for an **INV to DICOM converter**, **InVivo INV file reader**,\
+  \ **dental CBCT to DICOM tool**, **cone beam CT to pydicom**, or a way to convert **`.inv` to 3D Slicer\
+  \ / VolView compatible DICOM**, this package is intended for that use case.\n\n## Features\n\n- Converts\
+  \ proprietary **`.inv`** volume files to **Enhanced CT DICOM**\n- Outputs a **single multi-frame DICOM\
+  \ file**\n- Reads scan metadata from the INV XML header\n- Decodes embedded **JPEG 2000 codestreams**\
+  \ in pure Python via `imagecodecs`\n- Produces output readable by:\n  - `pydicom`\n  - **3D Slicer**\n\
+  \  - **VolView**\n  - other DICOM-capable medical imaging tools\n- Includes both a Python library API\
+  \ and a CLI command: `inv2dcm`\n\n## Installation\n\n### From PyPI\n\n```bash\npip install inv2dcm\n\
+  ```\n\n### Development install\n\n```bash\npip install -e .\n```\n\n## CLI usage\n\nAfter installation,\
+  \ the console script is available as:\n\n```bash\ninv2dcm\n```\n\n### Convert a file\n\n```bash\ninv2dcm\
+  \ scan.inv\n```\n\nThis writes `<input-stem>.dcm` next to the source file.\n\n### Convert to a specific\
+  \ output path\n\n```bash\ninv2dcm scan.inv output/scan.dcm\n```\n\n### Control DICOM window metadata\n\
+  \n```bash\ninv2dcm scan.inv output/scan.dcm --window auto\n```\n\nAvailable modes:\n\n- `auto` — derive\
+  \ a sane window center/width from the volume data\n- `source` — preserve the source INV window metadata\n\
+  - `none` — omit DICOM window center/width metadata\n\n## Python library usage\n\n`inv2dcm` is importable\
+  \ as a normal Python library, so it is suitable for publishing on **PyPI** and embedding in larger imaging\
+  \ workflows.\n\n### Simple conversion\n\n```python\nfrom pathlib import Path\nfrom inv2dcm import convert_inv_to_dicom\n\
+  \nconvert_inv_to_dicom(Path(\"scan.inv\"), Path(\"scan.dcm\"), window_mode=\"auto\")\n```\n\n### Inspect\
+  \ decoded metadata and volume data\n\n```python\nfrom pathlib import Path\nfrom inv2dcm import load_inv\n\
+  \ninv = load_inv(Path(\"scan.inv\"))\nprint(inv.metadata)\nprint(inv.volume.shape)\n```\n\n### Build\
+  \ the `pydicom` dataset yourself\n\n```python\nfrom pathlib import Path\nfrom inv2dcm import build_enhanced_ct,\
+  \ load_inv\n\ninv = load_inv(Path(\"scan.inv\"))\nds = build_enhanced_ct(inv, Path(\"scan.dcm\"))\n\
+  print(ds.SOPClassUID)\nprint(ds.NumberOfFrames)\n```\n\n### Public API\n\n- `load_inv(path)`\n- `build_enhanced_ct(inv,\
+  \ output_path, window_mode=\"auto\")`\n- `convert_inv_to_dicom(input_path, output_path, window_mode=\"\
+  auto\")`\n\n## Verify with pydicom\n\n```python\nimport pydicom\n\nds = pydicom.dcmread(\"scan.dcm\"\
+  )\nprint(ds.NumberOfFrames)\nprint(ds.Rows, ds.Columns)\nprint(ds.pixel_array.shape)\n```\n\n## View\
+  \ the converted DICOM in the browser\n\nYou can drag the generated `.dcm` file directly into **VolView**:\n\
+  \n- https://volview.kitware.app/\n\nThis is a convenient way to inspect the converted dental CBCT volume\
+  \ in the browser without installing a desktop viewer.\n\n## What kind of INV files are supported?\n\n\
+  This project targets **InVivo dental CBCT `.inv` files** using the **`INVFile`** container format.\n\
+  \nIn practice, that means files with:\n\n- an XML document rooted at `INVFile`\n- bytes that begin with\
+  \ `<INVFile`\n- an `AppendedData` block\n- JPEG 2000 codestream containers storing the voxel data\n\n\
+  That matches the structure documented by reverse-engineering work on InVivo / CliniView / Anatomage-related\
+  \ CBCT archives.\n\n## Reverse-engineering references\n\nThis package was informed by prior work on\
+  \ the InVivo / CliniView `.inv` format and related dental CBCT tooling:\n\n- holland.sh — **Digital\
+  \ CBCT scans**: https://holland.sh/post/digital-cbct-scans/\n- InvivoConvert: https://github.com/AstrisCantCode/InvivoConvert\n\
+  - InvivoExtractor: https://github.com/Bostwickenator/InvivoExtractor\n- Reverse engineering my head:\
+  \ https://dev-with-alex.blogspot.com/2018/03/reverse-engineering-my-head.html\n\n## Output format\n\n\
+  The generated DICOM file uses:\n\n- **SOP Class**: Enhanced CT Image Storage\n- **Transfer Syntax**:\
+  \ Explicit VR Little Endian\n- **Photometric Interpretation**: `MONOCHROME2`\n- **Multi-frame volume\
+  \ storage** for easy loading in Python and modern viewers\n\n## Why this package exists\n\nThe **`.inv`**\
+  \ format is awkward to use in standard Python medical imaging workflows. `inv2dcm` converts proprietary\
+  \ **InVivo CBCT** data into standard **DICOM** so it can be opened with **pydicom**, reviewed in **3D\
+  \ Slicer**, or inspected in **VolView**.\n\n## Development\n\nThe CLI entry point is:\n\n- `inv2dcm`\
+  \ → `inv2dcm.py`\n\nYou can also run it directly during development:\n\n```bash\npython inv2dcm.py scan.inv\
+  \ scan.dcm\n```\n\n## Keywords\n\nINV to DICOM, InVivo INV converter, INVFile parser, dental CBCT DICOM\
+  \ converter, cone beam CT DICOM, JPEG 2000 medical imaging, pydicom INV import, InVivoDentalViewer export,\
+  \ CliniView INV parser, Anatomage InVivo, VolView DICOM viewer.\n"

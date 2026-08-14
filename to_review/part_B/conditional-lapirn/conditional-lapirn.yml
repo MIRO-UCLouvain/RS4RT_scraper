@@ -1,0 +1,64 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: cwmok/Conditional_LapIRN
+url: https://github.com/cwmok/Conditional_LapIRN
+platform: github
+description: Conditional Deformable Image Registration with Convolutional Neural Network
+license: MIT
+language: Python
+keywords: []
+stars: 87
+updated_at: '2025-11-08T06:39:29Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# Conditional Deformable Image Registration with Convolutional Neural Network\n\nThis\
+  \ is the official Pytorch implementation of \"Conditional Deformable Image Registration with Convolutional\
+  \ Neural Network\" (MICCAI 2021), written by Tony C. W. Mok and Albert C. S. Chung.\n\n## Prerequisites\n\
+  - `Python 3.5.2+`\n- `Pytorch 1.3.0 - 1.7.1`\n- `NumPy`\n- `NiBabel`\n\nThis code has been tested with\
+  \ `Pytorch 1.7.1` and NVIDIA TITAN RTX GPU.\n\n## Inference\n```\npython Test_cLapIRN.py\n```\n\nThe\
+  \ regularization weight can be changed by appending `--reg_input {{normalized weight within [0,1]}}`\
+  \ argument to the inference script. For example,\n```\npython Test_cLapIRN.py --reg_input 0.4\n```\n\
+  is equivalent to output the solution with regularization weight set to 4.\n\n## Train your own model\n\
+  Step 1: Replace `/PATH/TO/YOUR/DATA` with the path of your training data. You may also need to implement\
+  \ your own data generator (`Dataset_epoch` in `Functions.py`).\n\nStep 2: Change the `imgshape` variable\
+  \ in `Train_cLapIRN.py` to match the resolution of your data.\n\nStep 3: `python Train_cLapIRN.py` to\
+  \ train the model. Remember the data should be normalized within [0,1]. Otherwise, set `norm=True` in\
+  \ the provided data loader.\n\n(Optional): Implement the custom validation code in line 368 at `Train_cLapIRN.py`.\
+  \ \n\n## Scalability/Out of memory error\n1. You may adjust the size of the model by manipulating the\
+  \ argument `--start_channel` in `Train_cLapIRN.py` and `Test_cLapIRN.py`\n\n2. You may modify the number\
+  \ of conditional image registration module in `resblock_seq` function (at `Functions.py`). \n\n## (Example)\
+  \ Training on the preprocessed OASIS dataset without cropping\nIf you want to train on the preprocessed\
+  \ OASIS dataset in https://github.com/adalca/medical-datasets/blob/master/neurite-oasis.md. We have\
+  \ an example showing how to train on this dataset.\n1. Download the preprocessed OASIS dataset, unzip\
+  \ it and put it in \"Data/OASIS\".\n2. To train a new conditional LapIRN model, `python Train_cLapIRN_lite.py`\
+  \ will create a conditional LapIRN model trained on all cases in the dataset.\n3. To test the model,\
+  \ `python Test_cLapIRN_lite.py --modelpath {{pretrained_model_path}} --fixed ../Data/image_A_fullsize.nii.gz\
+  \ --moving ../Data/image_B_fullsize.nii.gz` will load the assigned model and register the image \"image_A_fullsize.nii.gz\"\
+  \ and \"image_B_fullsize.nii.gz\".\n\nNote that the conditional LapIRN model in `Train_cLapIRN_lite.py`\
+  \ is a lightweight version, which reduced the number of feature maps in the original model. A pretrained\
+  \ model and its log file are available in \"Model/LDR_OASIS_NCC_unit_disp_add_fea4_reg01_10_lite_stagelvl3_54000.pth\"\
+  \ and \"Log/LDR_OASIS_NCC_unit_disp_add_fea4_reg01_10_lite_.txt\", respectively.\n\n## (Example) Training\
+  \ on 2D images\nWe demonstrate the 2D deformable image registration with 2D coronal slices extracted\
+  \ from the preprocessed OASIS dataset (available in https://github.com/adalca/medical-datasets/blob/master/neurite-oasis.md)\
+  \ as follows:\n1. Download the preprocessed OASIS dataset, unzip it and put it in \"Data/OASIS\".\n\
+  2. To train a new conditional LapIRN model, `python Train_cLapIRN_2D.py` will create a conditional LapIRN\
+  \ model trained on all cases in the dataset.\n3. To test the model, `python Test_cLapIRN_2D.py --modelpath\
+  \ {{pretrained_model_path}} --fixed ../Data/image_A_2D.nii.gz --moving ../Data/image_B_2D.nii.gz` will\
+  \ load the assigned model and register the image \"image_A_fullsize.nii.gz\" and \"image_B_fullsize.nii.gz\"\
+  .\n\nNote that the 2D images in the dataset are in resolution `(160, 192, 1)`. During training and testing,\
+  \ we drop the last dimension using `.squeeze(-1)`. The pretrained model for 2D conditional LapIRN can\
+  \ be downloaded [here](https://drive.google.com/file/d/1VJKCONzX16MAw-VHuF2pdJkKkouneDqp/view?usp=sharing).\n\
+  \n## Publication\nIf you find this repository useful, please cite:\n- **Conditional Deformable Image\
+  \ Registration with Convolutional Neural Network**  \n[Tony C. W. Mok](https://cwmok.github.io/ \"Tony\
+  \ C. W. Mok\"), Albert C. S. Chung  \nMICCAI 2021. [eprint arXiv:2106.12673](https://arxiv.org/abs/2106.12673)\n\
+  \n- **Large Deformation Diffeomorphic Image Registration with Laplacian Pyramid Networks**  \n[Tony\
+  \ C. W. Mok](https://cwmok.github.io/ \"Tony C. W. Mok\"), Albert C. S. Chung  \nMICCAI 2020. [eprint\
+  \ arXiv:2006.16148](https://arxiv.org/abs/2006.16148 \"eprint arXiv:2006.16148\")\n\n\n## Acknowledgment\n\
+  Some codes in this repository are modified from [IC-Net](https://github.com/zhangjun001/ICNet) and [VoxelMorph](https://github.com/voxelmorph/voxelmorph).\n\
+  \n\n###### Keywords\nKeywords: Conditional Image registration, Controllable Regularization, Deformable\
+  \ Image Registration\n\n"

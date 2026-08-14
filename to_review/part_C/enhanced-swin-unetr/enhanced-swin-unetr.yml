@@ -1,0 +1,90 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: islamAshraf3/enhanced-swin-unetr
+url: https://github.com/islamAshraf3/enhanced-swin-unetr
+platform: github
+description: Enhanced Swin-UNETR for LGG brain tumor segmentation — Swin-Tiny encoder (ImageNet) + ASPP
+  + Attention Gates + Residual Decoder | Dice 0.9162 · HD95 5.33mm · patient-level split
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-26T07:39:56Z'
+image_source: https://raw.githubusercontent.com/islamAshraf3/enhanced-swin-unetr/HEAD/Assets/predictions.PNG
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Enhanced Swin-UNETR — LGG Brain Tumor Segmentation\n\nA hybrid Transformer-CNN segmentation\
+  \ model that combines a Swin-Tiny encoder (ImageNet pretrained) with an ASPP bottleneck, attention-gated\
+  \ skip connections, and residual decoder blocks, trained on the Kaggle LGG MRI Segmentation dataset.\n\
+  \n![Predictions Grid](Assets/predictions.PNG)\n\n---\n\n## Results\n\n| Metric | Value |\n|--------|-------|\n\
+  | Dice | **0.9162** |\n| IoU | 0.8879 |\n| HD95 | 5.33 mm |\n| Pixel Accuracy | 0.9977 |\n\n*Evaluated\
+  \ on 778 val slices from 22 held-out patients (patient-level 80/20 split).*\n\n---\n\n## Baseline Comparison\n\
+  \n| Model | Year | Dice | IoU | HD95 | Split |\n|-------|------|------|-----|------|-------|\n| Buda\
+  \ et al. (U-Net) | 2019 | 0.8200 | — | — | patient-level |\n| Santosh et al. (ResUNet) | 2023 | 0.9056\
+  \ | 0.8293 | — | patient-level |\n| UNet++ + EfficientNet | 2024 | 0.9180 | — | — | Not Mentioned |\n\
+  | VGG19-UNet | 2025 | 0.9679 | 0.9378 | — | slice-level ⚠ |\n| HART-UNet | 2024 | 0.9700 | — | — | BraTS→Kaggle\
+  \ OOD |\n| **Enhanced Swin-UNETR (ours)** | **2026** | **0.9162** | **0.8879** | **5.33 mm** | **patient-level**\
+  \ |\n\n> VGG19-UNet and HART-UNet numbers are not directly comparable: VGG19-UNet uses a slice-level\
+  \ split (data leakage between patients), and HART-UNet was trained on BraTS 2020 and evaluated out-of-distribution\
+  \ on Kaggle LGG. Under the same strict patient-level protocol this is the best reported result.\n\n\
+  ---\n\n## Ablation Study\n\n| Model | Dice | IoU | HD95 | Accuracy |\n|-------|------|-----|------|----------|\n\
+  | A: Plain U-Net | 0.8799 | 0.8513 | 9.22 mm | 0.9961 |\n| B: Attention U-Net | 0.8649 | 0.8358 | 10.65\
+  \ mm | 0.9955 |\n| **C: Enhanced Swin-UNETR (ours)** | **0.9162** | **0.8879** | **5.33 mm** | **0.9977**\
+  \ |\n\nGains over plain U-Net: **+3.6% Dice, −3.89 mm HD95**.\n\n**Key insight:** Model B (Attention\
+  \ U-Net) performed *worse* than Model A (Plain U-Net). Attention gates require semantically rich encoder\
+  \ features to know where to attend. A CNN encoder lacks the global context those gates need, so they\
+  \ introduce noise instead of signal. The Swin Transformer encoder in Model C provides the global context\
+  \ that makes attention gates effective — the biggest single gain in the ablation (+5.1% Dice, B→C).\n\
+  \n![Ablation Chart](Assets/ablation_chart.png)\n\n---\n\n## Architecture\n\n![Pipeline](Assets/pipeline.png)\n\
+  \nEncoder: **Swin-Tiny** (`swin_tiny_patch4_window7_224`), ImageNet pretrained via `timm`, 4 hierarchical\
+  \ stages outputting features at H/4, H/8, H/16, H/32.\n\n| Component | Role |\n|-----------|------|\n\
+  | Swin-Tiny encoder | Global context; channels 96→192→384→768 |\n| ASPP bottleneck | Multi-scale context\
+  \ at bottleneck (dilations 1, 6, 12, 18) |\n| Attention Gates (AG0–AG2) | Suppress irrelevant background\
+  \ on each skip connection |\n| Residual Decoder (dec1–dec3) | Upsample + concat skip + residual conv\
+  \ blocks |\n| 4× head | Bilinear upsample from H/4 to H, then 1×1 conv → logit |\n\nNo prior work has\
+  \ applied a Transformer-based encoder to the Kaggle LGG dataset under a patient-level split. Transformer\
+  \ global attention directly benefits LGG segmentation because LGG tumors have diffuse, irregular boundaries\
+  \ that require global context which CNN receptive fields cannot efficiently model.\n\n---\n\n## Installation\n\
+  \n```bash\npip install -r requirements.txt\n```\n\nRequires Python 3.9+ and a CUDA-capable GPU (tested\
+  \ on Colab T4/A100).\n\n---\n\n## Dataset\n\n[Kaggle LGG MRI Segmentation](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)\
+  \ — 3,929 T1-weighted MRI slices from 110 patients with low-grade glioma.\n\nSplit: **patient-level\
+  \ 80/20** (no slice from the same patient appears in both splits). Train: 88 patients, Val: 22 patients,\
+  \ 778 val slices.\n\n---\n\n## Training\n\n```bash\ncd src\npython train.py\n```\n\nEdit `DATA_DIR`,\
+  \ `OUTPUT_DIR`, and `CKPT_PATH` in `CFG` before running.\n\nKey hyperparameters:\n\n| Param | Value\
+  \ |\n|-------|-------|\n| Image size | 256 × 256 |\n| Batch size | 16 |\n| Epochs | 100 |\n| Best epoch\
+  \ | 52 |\n| Optimizer | AdamW (lr=1e-4, wd=1e-3) |\n| Scheduler | CosineAnnealingLR (eta_min=1e-6) |\n\
+  | Loss | 0.5 × Dice + 0.5 × BCE |\n\n---\n\n## Evaluation\n\n```bash\ncd src\npython evaluate.py --checkpoint\
+  \ /path/to/best_model_imagenet.pth \\\n                   --data_dir   /path/to/kaggle_3m \\\n     \
+  \              --output_dir ./outputs\n```\n\nPrints Dice, IoU, HD95, and Accuracy for all-slice and\
+  \ tumor-only subsets, runs a post-processing comparison, and saves a predictions grid.\n\n---\n\n##\
+  \ Inference\n\nSingle-image inference:\n\n```bash\ncd src\npython inference.py --checkpoint /path/to/best_model_imagenet.pth\
+  \ \\\n                    --image      /path/to/slice.tif\n```\n\nOutputs a tumor burden report (area\
+  \ in mm², slice ratio, severity label) and shows a prediction overlay.\n\n```python\nfrom inference\
+  \ import load_model, predict_single\n\nmodel, device = load_model('best_model_imagenet.pth')\npred_np,\
+  \ burden, img_disp = predict_single(model, 'slice.tif')\nprint(burden)\n# {'tumor_area_px': 312, 'tumor_area_mm2':\
+  \ 312.0, 'tumor_slice_ratio': 0.0048,\n#  'severity_score': 1, 'severity_label': 'Mild'}\n```\n\nFor\
+  \ an interactive walkthrough, open [inference_demo.ipynb](inference_demo.ipynb).\n\n> **Note:** D4 TTA\
+  \ (8-view flip/rotation ensemble) did not improve performance in experiments and is not recommended.\
+  \ Use the standard single-pass inference.\n\n---\n\n## Grad-CAM\n\n```bash\ncd src\npython gradcam.py\
+  \ --checkpoint /path/to/best_model_imagenet.pth \\\n                  --data_dir   /path/to/kaggle_3m\
+  \ \\\n                  --output_dir ./outputs\n```\n\nGenerates heatmaps showing which brain regions\
+  \ drove each prediction, hooked at the last decoder block (`dec3`).\n\n---\n\n## Ablation\n\n```bash\n\
+  cd src\npython ablation.py --data_dir   /path/to/kaggle_3m \\\n                   --output_dir ./outputs\
+  \ \\\n                   --ckpt_swin  /path/to/best_model_imagenet.pth\n```\n\nTrains Plain U-Net and\
+  \ Attention U-Net from scratch, evaluates all three models, and prints the comparison table.\n\n---\n\
+  \n## Key Findings\n\n1. **ImageNet pretraining outperformed MONAI medical pretraining by +0.044 Dice**\
+  \ (0.9162 vs 0.8715). For small medical datasets, pretraining diversity matters more than domain relevance\
+  \ — ImageNet's 1.2M images outweigh MONAI's 5,000 CT/MRI scans.\n\n2. **Attention gates require transformer\
+  \ features.** Adding attention gates to a CNN encoder (Model B) actually *hurt* performance compared\
+  \ to plain U-Net (Model A, −0.015 Dice). Attention mechanisms only add value when the encoder provides\
+  \ semantically rich global features, which only the Swin Transformer delivers.\n\n3. **Higher resolution\
+  \ (384×384) did not help.** Run 2 at 384×384 achieved 0.8687 Dice vs 0.8715 at 256×256 with the MONAI\
+  \ encoder. Resolution is not the limiting factor.\n\n4. **Offline augmentation did not help.** Expanding\
+  \ from 3,929 to 10,697 slices by augmenting tumor slices gave 0.9142 Dice vs 0.9162 with the original\
+  \ data. Augmentation increases slice count but not patient diversity — the performance ceiling is determined\
+  \ by the 88 training patients, not the number of slices.\n"

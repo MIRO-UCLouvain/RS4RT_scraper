@@ -1,0 +1,47 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: CVML-CFU/MMAF
+url: https://github.com/CVML-CFU/MMAF
+platform: github
+description: Code for Multimodal Attention Fusion for Molecular Toxicity Prediction
+license: GPL-3.0
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-29T06:56:46Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# MMAF: Multimodal Attention Fusion for Molecular Toxicity Prediction\n\nThis repository\
+  \ contains the code for the paper \"MMAF: Multimodal Attention Fusion for Molecular Toxicity Prediction\"\
+  \ accepted at ICPR'26.\nThe code is organized as a standard research-code release with one `code/` directory,\n\
+  small entry-point scripts, configuration files, setup checks, and separated output folders.\n\n## Repository\
+  \ layout\n\n```text\ncode/\n  train.py              # main entry point for all datasets\n  train_tox21.py\
+  \        # Tox21 entry point\n  train_bace.py         # BACE entry point\n  train_bbbp.py         #\
+  \ BBBP entry point\n  train_hiv.py          # HIV entry point\n  train_clintox.py      # ClinTox entry\
+  \ point\n  train_sider.py        # SIDER entry point\n  run_all.py            # run all non-Tox21 datasets\n\
+  \  check_setup.py        # verify dataset files\n  dataset.py            # dataset metadata\n  graph.py\
+  \              # graph/fingerprint metadata\n  model.py              # model-family metadata\n  metrics.py\
+  \            # reported metric names\n  utility_functions.py  # command helpers\n  pipelines/      \
+  \      # experiment implementations\nconfig/\n  tox21.yaml\n  molnet_datasets.yaml\ndata/\n  README.md\n\
+  results/\noutput/\nscript/\n  train.sh\n  run_all.sh\n  check_data.sh\n```\n\n## Installation\n\n```bash\n\
+  pip install -r requirements.txt\n```\n\nFor CUDA machines, install PyTorch and PyTorch Geometric for\
+  \ the target CUDA version first if needed.\n\n## Data\n\nCreate `data/` and put the CSV files with lowercase\
+  \ names:\n\n```text\ndata/tox21.csv\ndata/bace.csv\ndata/bbbp.csv\ndata/hiv.csv\ndata/clintox.csv\n\
+  data/sider.csv\n```\n\nCheck setup:\n\n```bash\npython code/check_setup.py\n```\n\n## Training\n\nTox21:\n\
+  \n```bash\npython code/train_tox21.py --config config/tox21.yaml\n```\n\nOther datasets:\n\n```bash\n\
+  python code/train_bbbp.py --split random\npython code/train_bbbp.py --split scaffold\npython code/train_bace.py\
+  \ --split random\npython code/train_bace.py --split scaffold\npython code/train_hiv.py --split scaffold\n\
+  python code/train_hiv.py --split random\npython code/pipelines/multi_random.py --dataset clintox\npython\
+  \ code/pipelines/multi_scaffold.py --dataset clintox\npython code/pipelines/multi_random.py --dataset\
+  \ sider`\npython code/pipelines/multi_scaffold.py --dataset sider``\n\nSingle unified command:\n\n```bash\n\
+  python code/train.py --dataset bbbp --split random\npython code/train_hiv.py --split scaffold\n```\n\
+  \nRun all non-Tox21 experiments:\n\n```bash\npython code/run_all.py\n```\n\nQuick smoke test:\n\n```bash\n\
+  python code/train.py --dataset bbbp --split random --quick\n```\n\n## Outputs\n\nResults are written\
+  \ to:\n\n```text\nresults/\noutput/checkpoints/\noutput/splits/\noutput/invalid_smiles/\n```\n\n## Reproducibility\
+  \ notes\n\nUse the same dataset CSV files, the same split type, and the same environment/GPU type when\
+  \ comparing with the paper table. Small changes in PyTorch/CUDA/RDKit versions can slightly change results.\n"

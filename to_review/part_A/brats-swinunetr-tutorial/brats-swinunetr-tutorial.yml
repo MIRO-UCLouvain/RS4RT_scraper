@@ -1,0 +1,268 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: matinft7/BRaTS-SwinUNETR-Tutorial
+url: https://github.com/matinft7/BRaTS-SwinUNETR-Tutorial
+platform: github
+description: Brain Tumor Segmentation with SwinUNETR & MONAI
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 1
+updated_at: '2026-07-28T01:34:17Z'
+image_source: https://raw.githubusercontent.com/matinft7/BRaTS-SwinUNETR-Tutorial/HEAD/assets/segmentation_result.png
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: '# 3D Brain Tumor Segmentation with SwinUNETR & MONAI
+
+
+  ![Segmentation Result](assets/segmentation_result.png)
+
+  > *Figure 1: Axial slice showing the FLAIR modality, Ground Truth mask, and our Model''s Prediction.
+  (Classes: 1=WT, 2=TC, 3=ET)*
+
+
+  ## Overview
+
+  This repository contains a complete, end-to-end deep learning pipeline for 3D Brain Tumor Segmentation
+  using the **BraTS 2021 dataset**. It is designed not just as a codebase, but as an **educational tutorial**
+  to help others understand how to combine Vision Transformers (SwinUNETR) with the MONAI framework for
+  medical image analysis.
+
+
+  **Performance:** **Mean Dice Score of 0.8685** on the test set.
+
+
+  ---
+
+
+  ## Educational Tutorial: Understanding the Pipeline
+
+
+  ### 1. The Technology Stack
+
+  Before diving into the code, here is a brief explanation of the core technologies powering this project:
+
+
+  * **MONAI (Medical Open Network for AI):** A PyTorch-based framework specifically designed for deep
+  learning in healthcare imaging. Unlike standard torchvision, MONAI provides specialized transforms for
+  3D volumes (NIfTI files), handles physical spacing/orientations, and includes medical-specific loss
+  functions and metrics (like Dice Score).
+
+  * **Vision Transformers (ViT) & SwinUNETR:** Traditional 3D CNNs (like 3D U-Net) struggle to capture
+  long-range dependencies in large medical volumes. **SwinUNETR** solves this by using a Swin Transformer
+  (Shifted Window) encoder. It computes self-attention within local windows and shifts them to connect
+  features globally. This Transformer encoder is then connected to a CNN-based decoder via skip connections,
+  forming a "U" shape, giving us the best of both worlds: global context and precise local localization.
+
+
+  ### 2. The BraTS 2021 Dataset & Modalities
+
+  In MRI scans, different sequences (modalities) highlight different tissue properties. Our dataloader
+  pairs 4 input modalities to predict 3 overlapping tumor sub-regions.
+
+
+  **Inputs (4 Channels):**
+
+  1.  `T1`: Native T1-weighted
+
+  2.  `T1ce`: Post-contrast T1-weighted
+
+  3.  `T2`: T2-weighted
+
+  4.  `FLAIR`: T2 Fluid Attenuated Inversion Recovery
+
+
+  **Outputs (3 Sub-regions):**
+
+  The BraTS raw labels are (1: NCR/NET, 2: ED, 4: ET). Our custom `ConvertToMultiChannelBasedOnBratsClassesd`
+  transform converts these into clinical evaluation regions:
+
+  * **WT (Whole Tumor):** Labels 1 + 2 + 4
+
+  * **TC (Tumor Core):** Labels 1 + 4
+
+  * **ET (Enhancing Tumor):** Label 4
+
+
+  ### 3. Data Preparation & Augmentation
+
+  Training on 3D volumes requires massive memory. We use a strategic MONAI transform pipeline:
+
+  * `Orientationd(axcodes="RAS")`: Ensures all 3D scans are in the same physical orientation (Right-Anterior-Superior).
+
+  * `CropForegroundd`: Removes empty background space (air) around the brain to reduce computation.
+
+  * `RandCropByPosNegLabeld`: This is crucial! It extracts `(96, 96, 96)` 3D patches. By setting `pos=1,
+  neg=1`, it ensures the model frequently sees patches containing the tumor, mitigating the extreme class
+  imbalance of medical data.
+
+  * `NormalizeIntensityd`: Normalizes voxel values using z-scoring for stable training.
+
+
+  ### 4. Advanced Training Techniques
+
+  * **Automatic Mixed Precision (AMP):** We use `torch.amp.autocast` and `GradScaler`. This runs parts
+  of the network in 16-bit float instead of 32-bit, drastically speeding up training and reducing VRAM
+  usage without losing accuracy.
+
+  * **DataParallel:** The script automatically detects multiple GPUs and scales the batch size across
+  them.
+
+  * **Sliding Window Inference:** During validation/testing, a full MRI scan is too large to fit in memory.
+  `sliding_window_inference` moves a `96x96x96` window across the entire volume with a 50% overlap, predicts
+  patch-by-patch, and stitches them back together seamlessly.
+
+
+  ---
+
+
+  ## Getting Started
+
+
+  ### Prerequisites
+
+  Make sure you have Python 3.8+ installed. Install the required dependencies:
+
+  ```bash
+
+  pip install torch torchvision numpy matplotlib monai tqdm tensorboard
+
+  ```
+
+
+  ### Dataset
+
+
+  This project uses the BraTS 2021 Task 1 dataset. You can download it from Kaggle here:
+
+  [BraTS 2021 Task 1 Dataset on Kaggle](https://www.kaggle.com/datasets/dschettler8845/brats-2021-task1)
+
+
+  The code is configured to extract the BraTS2021_Training_Data.tar archive automatically. Ensure your
+  kaggle_input_dir and kaggle_working_dir paths in the main() function point to your local or cloud dataset
+  directories.
+
+
+  Training Logs & Results
+
+  Below is the exact output log from our training session, demonstrating the steady decrease in loss and
+  the rapid improvement in the Mean Dice Score across 10 epochs using 2 GPUs:
+
+
+  ```
+
+  Extracting /kaggle/input/datasets/dschettler8845/brats-2021-task1/BraTS2021_Training_Data.tar to /kaggle/working/brats_extracted.
+  This may take a few minutes...
+
+  Extraction complete.
+
+  Total samples: 1251 | Training: 875 | Validation: 125 | Testing: 251
+
+  Using device: cuda
+
+  Using 2 GPUs with DataParallel!
+
+  Starting training...
+
+
+  --- Epoch 1/10 ---
+
+  Epoch 1 Average Training Loss: 0.9002
+
+  Validation Mean Dice: 0.3534
+
+  Saved new best model with Mean Dice: 0.3534
+
+
+  --- Epoch 2/10 ---
+
+  Epoch 2 Average Training Loss: 0.7527
+
+  Validation Mean Dice: 0.6016
+
+  Saved new best model with Mean Dice: 0.6016
+
+
+  --- Epoch 3/10 ---
+
+  Epoch 3 Average Training Loss: 0.5894
+
+  Validation Mean Dice: 0.7371
+
+  Saved new best model with Mean Dice: 0.7371
+
+
+  --- Epoch 4/10 ---
+
+  Epoch 4 Average Training Loss: 0.4764
+
+  Validation Mean Dice: 0.7965
+
+  Saved new best model with Mean Dice: 0.7965
+
+
+  --- Epoch 5/10 ---
+
+  Epoch 5 Average Training Loss: 0.4154
+
+  Validation Mean Dice: 0.8271
+
+  Saved new best model with Mean Dice: 0.8271
+
+
+  --- Epoch 6/10 ---
+
+  Epoch 6 Average Training Loss: 0.3780
+
+  Validation Mean Dice: 0.8182
+
+
+  --- Epoch 7/10 ---
+
+  Epoch 7 Average Training Loss: 0.3482
+
+  Validation Mean Dice: 0.8521
+
+  Saved new best model with Mean Dice: 0.8521
+
+
+  --- Epoch 8/10 ---
+
+  Epoch 8 Average Training Loss: 0.3489
+
+  Validation Mean Dice: 0.8580
+
+  Saved new best model with Mean Dice: 0.8580
+
+
+  --- Epoch 9/10 ---
+
+  Epoch 9 Average Training Loss: 0.3241
+
+  Validation Mean Dice: 0.8522
+
+
+  --- Epoch 10/10 ---
+
+  Epoch 10 Average Training Loss: 0.3207
+
+  Validation Mean Dice: 0.8515
+
+
+  Training complete. Best Metric: 0.8580 achieved at epoch 8
+
+
+  --- Final Evaluation on Test Set ---
+
+  Final Test Mean Dice: 0.8685
+
+  Running final visualization on a test sample...
+
+  Visualization successfully saved to /kaggle/working/segmentation_result.png
+
+  ```'

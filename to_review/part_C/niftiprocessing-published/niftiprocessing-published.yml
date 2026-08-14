@@ -1,0 +1,141 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: makchow/NIFTIProcessing-Published
+url: https://github.com/makchow/NIFTIProcessing-Published
+platform: github
+description: This repository contains the full codebase accompanying our study on machine-learning–driven
+  prediction of post-traumatic epilepsy (PTE) using radiomic features extracted from acute CT scans in
+  patients with severe traumatic brain injury (TBI).
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-02-24T01:44:40Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 4 support term(s).
+readme_excerpt: "# NIFTIprocessing\n\n**NIFTIprocessing** is a modular Python toolkit designed for preprocessing\
+  \ NIFTI medical images and preparing them for machine learning workflows. It includes image registration,\
+  \ segmentation, patient data abstraction, radiomics feature extraction, and a training pipeline.\n\n\
+  ---\n\n## \U0001F4E6 Overview\n\nThis repository provides a complete pipeline to:\n\n- Organize and\
+  \ preprocess raw NIFTI patient scans\n- Register and segment brain images using an atlas\n- Extract\
+  \ radiomics features from whole CT and segmented regions\n- Perform robust left-right region feature\
+  \ comparison\n- Structure data for downstream ML processing\n- Train ML models using structured imaging\
+  \ datasets\n\n---\n\n## \U0001F9EA NIFTIprocessing.py\n\n`NIFTIprocessing.py` implements the preprocessing\
+  \ pipeline for raw NCCT images of the MMH cohort. It includes conversion, cleaning, registration to\
+  \ atlas space, and anatomical segmentation using a Talairach-based atlas.\n\n---\n\n### \U0001F9E0 Overview\n\
+  \nThe script performs:\n\n1. **NCCT Preparation**\n\n   * Conversion from DICOM (optional)\n   * FOV\
+  \ cropping\n   * Skull stripping (FSL BET)\n\n2. **Atlas Registration**\n\n   * Rigid registration to\
+  \ `talairach.nii` via FSL FLIRT\n   * Applies transformation and saves `SUBJID_reg.nii.gz`\n\n3. **Atlas-Based\
+  \ Segmentation**\n\n   * Maps Talairach labels from `tlabels.csv`\n   * Extracts and saves anatomical\
+  \ region masks and their CT segmentations\n   * Outputs `SUBJID_tlabels_regions.txt` for downstream\
+  \ reference\n\n---\n\n### \U0001F4C1 Folder Structure\n\nThe default output structure for each patient\
+  \ is:\n\n```\nprocessedNIFTIs/SUBJ_ID/\n├── SUBJID_reg.nii.gz                  # Skull stripped, registered\
+  \ NCCT\n├── SUBJID_tlabels_regions.txt         # List of saved regions\n├── registration/          \
+  \            # Intermediate FSL registration outputs\n├── masks/                             # Binary\
+  \ masks per anatomical region\n│   ├── SUBJID_atlas.nii.gz\n│   └── SUBJID_{region}_mask.nii.gz\n└──\
+  \ segmentation_output/              # Segmented region CT volumes\n    └── SUBJID_{region}_region.nii.gz\n\
+  ```\n\n---\n\n### ⚙️ Configuration\n\nThe script expects this structure under `BASE_FOLDER` to process\
+  \ images (OS-dependent):\n\n* `preNIFTIs/` — Raw NCCT files as `.nii.gz`, named by subject ID\n* `mmhcohort.csv`\
+  \ — Cohort file with a `subj_id` column\n* `talairach.nii` — Atlas image (in NIfTI format)\n* `tlabels.csv`\
+  \ — CSV with `index,label` mapping for atlas regions\n\nYou can change the OS-specific paths directly\
+  \ inside the `main()` function.\n\n---\n\n### \U0001F9FC Utility Functions\n\n* `dcm_nii_convert(folder)`\n\
+  \  Converts DICOMs in a folder to compressed NIfTI using `dcm2niix`.\n\n* `clean_mask(mask, min_size=50)`\n\
+  \  Removes small components in a binary mask using connected-component analysis.\n\n---\n\n### \U0001F680\
+  \ Usage\n\nRun the full pipeline with:\n\n```bash\npython NIFTIprocessing.py\n```\n\nThe script will:\n\
+  \n* Detect your platform and set paths\n* Load patient IDs from `mmhcohort.csv`\n* Register and segment\
+  \ each subject\n* Save outputs to `processedNIFTIs/`\n\n---\n\n## NIFTIPatient.py\n\n`NIFTIPatient.py`\
+  \ is the core module for patient-level data abstraction and feature engineering in the NIFTIprocessing\
+  \ pipeline. It provides classes and logic to:\n\n- Load and organize patient CT data and segmented brain\
+  \ regions\n- Extract radiomics and statistical features from both the whole scan and each anatomical\
+  \ region\n- Pair left/right brain regions for robust comparative analysis\n- Merge all features into\
+  \ a flat, ML-ready dictionary\n- Provide static evaluation utilities for patient and region assessment\n\
+  \nThis module is designed to be the main interface for downstream ML workflows, enabling both batch\
+  \ and single-patient processing.\n\n---\n\n### \U0001F9EC Core Data Classes\n\nThe `PatientNIFTI` and\
+  \ `RegionNIFTI` classes are the core abstractions for representing and processing patient imaging data\
+  \ in the NIFTIprocessing pipeline.\n\n#### `PatientNIFTI`\nRepresents a complete patient brain imaging\
+  \ study with full CT data and segmented anatomical regions.\n\n**Constructor:**\n```python\nPatientNIFTI(subj_id:\
+  \ str, patient_folder: str, metadata=None)\n```\n\n**Key Attributes:**\n- `subj_id`: Subject/patient\
+  \ identifier\n- `patient_folder`: Path to processed patient data folder\n- `metadata`: Dictionary of\
+  \ patient metadata (from cohort CSV)\n- `full_ct_data`: Numpy array of full CT image voxels\n- `atlas_data`:\
+  \ Numpy array of brain atlas for the patient\n- `regions`: Dictionary of RegionNIFTI objects (key: region\
+  \ name, value: RegionNIFTI object)\n- `left_right_pairs`: Dictionary of paired left/right regions\n\
+  - `features`: Flattened dictionary containing all extracted features and metadata\n\n**Key Capabilities:**\n\
+  - Automatically instantiates a `RegionNIFTI` object for each anatomical region\n- Extracts and merges\
+  \ features from the whole CT, each region, and left-right region comparisons into a single flat dictionary\
+  \ (`.features`) suitable for ML workflows\n- Provides methods to pair left/right regions and merge region-level\
+  \ features into the patient-level feature set\n\n#### `RegionNIFTI`\nRepresents a single segmented anatomical\
+  \ brain region (e.g., left hippocampus, right amygdala).\n\n**Constructor:**\n```python\nRegionNIFTI(parent_NIFTI:\
+  \ PatientNIFTI, region_name: str, \n            region_mask_fname: str, region_ct_fname: str)\n```\n\
+  \n**Key Attributes:**\n- `region_name`: Name of the anatomical region\n- `region_ct_data`: Numpy array\
+  \ of region-specific CT data\n- `region_mask_data`: Numpy array of binary mask for the region\n- `hemisphere`:\
+  \ \"left\", \"right\", or None\n- `base_region`: Region name without hemisphere prefix (e.g., \"hippocampus\"\
+  )\n- `features`: Dictionary of region-specific features\n- `voxel_volume`: Volume of a single voxel\
+  \ (mm³)\n\n**Key Capabilities:**\n- Loads region CT and mask from NIfTI files\n- Determines hemisphere\
+  \ and base region name for robust pairing and comparison\n- Computes region-specific features (e.g.,\
+  \ radiomics, volume, HU statistics)\n- Stores all computed features with keys prefixed by the region\
+  \ name for clarity\n\n### Features Extracted:\n\nAfter running the `Evaluator` (either directly or via\
+  \ the batch processing utilities), all features are automatically extracted and merged into the patient\
+  \ object:\n\n**Whole CT (PatientNIFTI):**\n- Radiomics features extracted from the full registered CT\
+  \ using PyRadiomics\n- Metadata from the cohort CSV (e.g., age, sex, clinical variables)\n\n**Per Region\
+  \ (RegionNIFTI):**\n- Radiomics features extracted from each segmented anatomical region\n- Region-specific\
+  \ statistics (e.g., volume, HU statistics)\n\n**Left-Right Comparison (PatientNIFTI):**\n- For each\
+  \ base region, computes the difference and ratio of features between left and right hemispheres\n- Example:\
+  \ `frontallobe_Mean_RL_diff`, `hippocampus_volume_RL_ratio`\n\n**Radiomics Feature Categories:**\nPyRadiomics\
+  \ extracts the following feature types from both whole CT and region masks:\n- **First Order Statistics**:\
+  \ mean, standard deviation, min, max, median, energy, entropy\n- **Shape-based (3D)**: volume, sphericity,\
+  \ compactness, surface area, elongation\n- **Gray Level Co-occurrence Matrix (GLCM)**: contrast, dissimilarity,\
+  \ homogeneity, correlation, energy\n- **Gray Level Run Length Matrix (GLRLM)**: short run emphasis,\
+  \ long run emphasis, run length nonuniformity\n- **Gray Level Size Zone Matrix (GLSZM)**: small area\
+  \ emphasis, large area emphasis, size zone nonuniformity\n- **Neighboring Gray Tone Difference Matrix\
+  \ (NGTDM)**: coarseness, contrast, busyness\n- **Gray Level Dependence Matrix (GLDM)**: small dependence\
+  \ emphasis, large dependence emphasis\n\n**Laterality Indices (for paired left/right regions):**\n-\
+  \ `RL_diff`: Right - Left difference\n- `RL_ratio`: Right / Left ratio\n- `RL_absdiff`: Absolute difference\n\
+  \nAll of these features are merged into the `.features` dictionary of the `PatientNIFTI` object, making\
+  \ them immediately available for downstream analysis or machine learning. You can access them as follows:\n\
+  \n\n### Example:\n\n```python\nimport NIFTIpatient\n\n# Load a single patient (with optional metadata)\n\
+  patient = PatientNIFTI(subj_id=\"MMH001\", patient_folder=\"./processedNIFTIs/MMH001\", metadata=meta)\n\
+  \n# Generate evaluations for full CT and it's segmented regions\nEvaluator.evaluate(patient)\n\n# Access\
+  \ the full feature dictionary (ready for ML)\nfeature_dict = patient.get_features()\n\n# Access a specific\
+  \ region's features\nregion = patient.get_region(\"leftcerebrum_frontallobe\")\nregion_features = region.get_features()\n\
+  ```\n\n---\n\n### \U0001F4C8 Evaluator\n\nThe `Evaluator` class is a static utility providing methods\
+  \ to compute radiomics features and regional comparisons.\n\n**Key Static Methods:**\n\n| Method | Purpose\
+  \ |\n|--------|---------|\n| `calc_radiomics_features(nifti_obj, radiomics_features=None)` | Extracts\
+  \ radiomics features using PyRadiomics library |\n| `evaluate_patient(patient)` | Computes patient-level\
+  \ radiomics features |\n| `evaluate_region(region)` | Computes region-level radiomics features |\n|\
+  \ `compare_left_right_regions(patient, feature_names=None)` | Computes laterality indices (L-R difference,\
+  \ ratio, absolute difference) |\n| `evaluate(patient)` | Runs all evaluations and aggregates results\
+  \ |\n\n**Feature Preprocessing:**\nAll evaluations automatically:\n- Exclude features with `'diagnostics'`\
+  \ in the key\n- Strip the `original_` prefix from PyRadiomics feature names\n- Support filtering to\
+  \ specific features via optional parameters\n- Merge results into the main `PatientNIFTI.features` dictionary\
+  \ for model use\n\n---\n\n#### **Radiomics Feature Extraction**\n\nThe pipeline uses **PyRadiomics**\
+  \ to extract quantitative features from both the whole CT and each segmented region.\n\n**Single Patient\
+  \ Processing:**\n```python\nfrom NIFTIpatient import Evaluator\n\n# Extract all available radiomics\
+  \ features\nfeatures = Evaluator.calc_radiomics_features(patient)\n\n# Extract only selected features\n\
+  selected = [\"original_firstorder_Mean\", \"original_shape_VoxelVolume\"]\nfeatures = Evaluator.calc_radiomics_features(patient,\
+  \ radiomics_features=selected)\n```\n\n**Feature Naming Convention:**\n- Whole CT features are prefixed\
+  \ with the CT identifier\n- Region features are prefixed with the region name (e.g., `leftcerebrum_frontallobe_firstorder_Mean`)\n\
+  - Left-right comparisons are suffixed with `_RL_diff` or `_RL_ratio`\n\nFor complete radiomics feature\
+  \ documentation, see the [PyRadiomics documentation](https://pyradiomics.readthedocs.io/en/latest/features.html)\
+  \ or the `radiomics_docs/` folder in this repository.\n\n**Example:**\n\n```python\nfrom NIFTIpatient\
+  \ import Evaluator\n\n# Extract all features (default)\nfeatures = Evaluator.calc_radiomics_features(patient)\n\
+  # Example: 'original_firstorder_Mean' from PyRadiomics becomes 'full_ct_firstorder_Mean' in the patient\
+  \ feature dict\n\n# Extract only selected features\nselected = [\"original_firstorder_Mean\", \"original_shape_VoxelVolume\"\
+  ]\nfeatures = Evaluator.calc_radiomics_features(patient, radiomics_features=selected)\n# After adding\
+  \ to the patient, keys will be 'firstorder_Mean', 'shape_VoxelVolume', etc.\n\n# Extract region features\n\
+  region = patient.get_region(\"leftcerebrum_frontallobe\")\nregion_features = Evaluator.calc_radiomics_features(region,\
+  \ radiomics_features=selected)\n# When added to the region, keys are prefixed: e.g., 'leftcerebrum_frontallobe_firstorder_Mean'\n\
+  \n# Access the region's feature dictionary\nregion_features_dict = region.get_features()\n# Example\
+  \ key: 'leftcerebrum_frontallobe_firstorder_Mean'\n\n# Comparing left/right regions\nEvaluator.compare_left_right_regions(patient,\
+  \ feature_names=selected)\n# When added to the patient, keys are suffixed: e.g., 'frontallobe_Mean_RL_diff',\
+  \ 'frontallobe_VoxelVolume_RL_ratio'\n# Where 'frontallobe' is the base region name (without 'left'\
+  \ or 'right') and '_RL_diff'/'_RL_ratio' indicate the comparison type\n```\n\n---\n\n#### **Left-Right\
+  \ Region Pairing**\n\nThe toolkit robustly pairs left/right brain regions using `base_region` and `hemisphere`\
+  \ attributes:\n\n**Automatic Pairing:**\n- Regions are paired based on their base name (e.g., `left_hippocampus`\
+  \ paired with `right_hippocampus`)\n- Supports flexible region naming conventions with left/right/center\
+  \ designations\n\n*"

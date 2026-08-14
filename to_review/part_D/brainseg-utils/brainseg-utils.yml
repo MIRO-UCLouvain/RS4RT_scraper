@@ -1,0 +1,197 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Dipendra367/brainseg-utils
+url: https://github.com/Dipendra367/brainseg-utils
+platform: github
+description: A lightweight Python library for BraTS-style brain tumor segmentation research. Provides
+  utilities for loading NIfTI volumes, extracting 2D slices, computing segmentation metrics, and building
+  PyTorch datasets — without requiring Docker or heavy dependencies.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-15T18:43:30Z'
+image_source: null
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+readme_excerpt: '# brainseg-utils
+
+
+  A lightweight Python library for BraTS-style brain tumor segmentation research.
+
+  Provides utilities for loading NIfTI volumes, extracting 2D slices, computing
+
+  segmentation metrics, and building PyTorch datasets — without requiring Docker
+
+  or heavy dependencies.
+
+
+  ---
+
+
+  ## Motivation
+
+
+  When working on brain tumor segmentation projects using the BraTS dataset,
+
+  researchers repeatedly write the same boilerplate code for every experiment:
+
+  loading .nii.gz files, normalizing intensities, extracting non-empty slices,
+
+  avoiding data leakage from slice-level splitting, and computing region-wise
+
+  Dice scores. This library consolidates those utilities into a clean, minimal API.
+
+
+  ---
+
+
+  ## Installation
+
+
+  ```bash
+
+  pip install brainseg-utils
+
+  ```
+
+
+  ---
+
+
+  ## Features
+
+
+  - NIfTI volume loading and intensity normalization (z-score, minmax)
+
+  - 2D slice extraction along any axis with empty slice filtering
+
+  - Patient-level train/val/test splitting to prevent data leakage
+
+  - Dice, IoU, and Hausdorff distance metrics
+
+  - BraTS region-wise Dice (WT, TC, ET)
+
+  - Matplotlib overlay visualization
+
+  - PyTorch Dataset class for drop-in DataLoader integration
+
+
+  ---
+
+
+  ## Usage
+
+
+  ```python
+
+  from brainseg_utils import load_brats_subject, normalize, extract_slices, brats_dice
+
+
+  # load all modalities for a subject
+
+  subject = load_brats_subject("path/to/brats/", "BraTS20_Training_001")
+
+
+  # normalize
+
+  vol = normalize(subject["flair"], method="zscore")
+
+
+  # extract non-empty axial slices
+
+  slices = extract_slices(vol, subject["seg"], skip_empty=True)
+
+
+  # compute region-wise dice
+
+  scores = brats_dice(pred, subject["seg"])
+
+  print(scores)  # {''WT'': 0.89, ''TC'': 0.76, ''ET'': 0.71}
+
+  ```
+
+
+  ### Patient-level split
+
+
+  ```python
+
+  from brainseg_utils import patient_split
+
+
+  train_ids, val_ids, test_ids = patient_split(all_subject_ids, train=0.7, val=0.15, test=0.15)
+
+  ```
+
+
+  ### PyTorch Dataset
+
+
+  ```python
+
+  from brainseg_utils.dataset import BraTSSliceDataset
+
+  from torch.utils.data import DataLoader
+
+
+  dataset = BraTSSliceDataset(root="path/to/brats", subject_ids=train_ids, modality="flair")
+
+  loader = DataLoader(dataset, batch_size=8, shuffle=True)
+
+  ```
+
+
+  ### Visualization
+
+
+  ```python
+
+  from brainseg_utils import show_slice
+
+
+  show_slice(vol[:, :, 80], mask[:, :, 80])
+
+  ```
+
+
+  ---
+
+
+  ## Dependencies
+
+
+  - nibabel
+
+  - numpy
+
+  - matplotlib
+
+  - scipy (optional, for Hausdorff distance)
+
+  - torch (optional, for Dataset class)
+
+
+  ---
+
+
+  ## Author
+
+
+  Dipendra Thapa
+
+  GitHub: https://github.com/Dipendra367
+
+  Portfolio: https://dipendra367.com.np
+
+
+  ---
+
+
+  ## License
+
+
+  MIT'

@@ -1,0 +1,116 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Dale-Black/Radiomics.jl
+url: https://github.com/Dale-Black/Radiomics.jl
+platform: github
+description: ''
+license: MIT
+language: Julia
+keywords: []
+stars: 0
+updated_at: '2026-04-14T23:05:59Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Radiomics.jl\n\n[![CI](https://github.com/Dale-Black/Radiomics.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/Dale-Black/Radiomics.jl/actions/workflows/CI.yml)\n\
+  [![codecov](https://codecov.io/gh/Dale-Black/Radiomics.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/Dale-Black/Radiomics.jl)\n\
+  \nA **pure Julia** implementation of [PyRadiomics](https://github.com/AIM-Harvard/pyradiomics) for extracting\
+  \ radiomic features from medical images.\n\n## Features\n\nRadiomics.jl provides **111+ radiomic features**\
+  \ organized into 7 feature classes:\n\n| Feature Class | Features | Description |\n|--------------|----------|-------------|\n\
+  | **First Order** | 19 | Statistical features from intensity histogram |\n| **Shape 2D** | 10 | Geometric\
+  \ features for 2D ROIs |\n| **Shape 3D** | 17 | Geometric features for 3D ROIs |\n| **GLCM** | 24 |\
+  \ Gray Level Co-occurrence Matrix texture features |\n| **GLRLM** | 16 | Gray Level Run Length Matrix\
+  \ texture features |\n| **GLSZM** | 16 | Gray Level Size Zone Matrix texture features |\n| **NGTDM**\
+  \ | 5 | Neighboring Gray Tone Difference Matrix features |\n| **GLDM** | 14 | Gray Level Dependence\
+  \ Matrix features |\n\n### Key Highlights\n\n- **Pure Julia** - No Python runtime dependencies\n- **1:1\
+  \ Parity with PyRadiomics** - Verified against PyRadiomics using comprehensive test suite\n- **IBSI\
+  \ Compliant** - Follows [Image Biomarker Standardization Initiative](https://ibsi.readthedocs.io/) standards\n\
+  - **Performant** - Type-stable, allocation-efficient code\n- **Flexible** - Configurable discretization,\
+  \ texture parameters, and feature selection\n\n## Installation\n\n```julia\nusing Pkg\nPkg.add(\"Radiomics\"\
+  )  # Once registered in General Registry\n```\n\nFor development version:\n\n```julia\nusing Pkg\nPkg.add(url=\"\
+  https://github.com/Dale-Black/Radiomics.jl\")\n```\n\n## Quick Start\n\n```julia\nusing Radiomics\n\n\
+  # Create sample data\nimage = rand(64, 64, 64)\nmask = image .> 0.5\n\n# Extract all features (default\
+  \ settings)\nfeatures = extract_all(image, mask)\n\n# Access individual features\nprintln(\"Energy:\
+  \ \", features[:firstorder_energy])\nprintln(\"GLCM Contrast: \", features[:glcm_contrast])\nprintln(\"\
+  Total features: \", length(features))\n```\n\n## Usage Examples\n\n### Extract Specific Feature Classes\n\
+  \n```julia\nusing Radiomics\n\nimage = rand(32, 32, 32)\nmask = image .> 0.5\n\n# Extract only first-order\
+  \ features\nfo_features = extract_firstorder(image, mask)\n\n# Extract only shape features (takes mask\
+  \ only, not image)\nshape_features = extract_shape_3d(mask)\n\n# Extract texture features\nglcm_features\
+  \ = extract_glcm(image, mask)\nglrlm_features = extract_glrlm(image, mask)\nglszm_features = extract_glszm(image,\
+  \ mask)\nngtdm_features = extract_ngtdm(image, mask)\ngldm_features = extract_gldm(image, mask)\n```\n\
+  \n### Using the Feature Extractor\n\n```julia\nusing Radiomics\n\n# Create a feature extractor with\
+  \ specific classes enabled\nextractor = RadiomicsFeatureExtractor(\n    enable_firstorder = true,\n\
+  \    enable_shape = true,\n    enable_glcm = true,\n    enable_glrlm = false,  # Disable GLRLM\n   \
+  \ enable_glszm = false,  # Disable GLSZM\n    enable_ngtdm = false,  # Disable NGTDM\n    enable_gldm\
+  \ = false    # Disable GLDM\n)\n\n# Extract features\nfeatures = extract(extractor, image, mask)\n```\n\
+  \n### Custom Settings\n\n```julia\nusing Radiomics\n\n# Create custom settings\nsettings = Settings(\n\
+  \    binwidth = 25,           # Gray level bin width (default: 25)\n    bincount = nothing,      # Or\
+  \ use fixed bin count\n    glcm_distance = 1,       # GLCM pixel distance\n    gldm_alpha = 0,     \
+  \     # GLDM coarseness parameter\n    ngtdm_distance = 1       # NGTDM neighborhood distance\n)\n\n\
+  # Extract with custom settings\nfeatures = extract_all(image, mask; settings=settings)\n```\n\n### Working\
+  \ with Voxel Spacing\n\n```julia\nusing Radiomics\n\n# Medical images often have non-isotropic spacing\n\
+  image = rand(128, 128, 64)\nmask = image .> 0.5\nspacing = (1.0, 1.0, 2.0)  # (x, y, z) in mm\n\n# Extract\
+  \ shape features with correct spacing\nshape_features = extract_shape_3d(mask, spacing)\n```\n\n###\
+  \ Integer Label Masks\n\n```julia\nusing Radiomics\n\n# Multi-label segmentation\nlabels = rand(0:3,\
+  \ 64, 64, 64)\nimage = rand(64, 64, 64)\n\n# Extract features for label 2 only\nfeatures = extract_all(image,\
+  \ labels; label=2)\n```\n\n### Batch Processing\n\n```julia\nusing Radiomics\n\n# Process multiple images\n\
+  images = [rand(32, 32, 32) for _ in 1:10]\nmasks = [img .> 0.5 for img in images]\n\n# Extract features\
+  \ for all images\nresults = extract_batch(images, masks)\n\n# Results is a Vector of feature dictionaries\n\
+  for (i, features) in enumerate(results)\n    println(\"Subject $i: $(length(features)) features extracted\"\
+  )\nend\n```\n\n## Feature Documentation\n\n### First-Order Features (19)\n\nStatistical features computed\
+  \ directly from the intensity histogram:\n\n- Energy, Total Energy\n- Entropy\n- Minimum, 10th Percentile,\
+  \ 90th Percentile, Maximum\n- Mean, Median\n- Interquartile Range, Range\n- Mean Absolute Deviation,\
+  \ Robust Mean Absolute Deviation\n- Root Mean Squared\n- Skewness, Kurtosis\n- Variance, Uniformity\n\
+  \n### Shape Features (27 total: 10 2D + 17 3D)\n\nGeometric features describing the ROI shape:\n\n**3D\
+  \ Features:**\n- Mesh Volume, Voxel Volume\n- Surface Area, Surface to Volume Ratio\n- Sphericity, Compactness\
+  \ 1/2, Spherical Disproportion\n- Maximum 3D/2D Diameters\n- Major/Minor/Least Axis Lengths\n- Elongation,\
+  \ Flatness\n\n**2D Features:**\n- Perimeter, Pixel Surface\n- Sphericity (Circularity)\n- Maximum Diameter,\
+  \ Axis Lengths\n- Elongation\n\n### GLCM Features (24)\n\nGray Level Co-occurrence Matrix texture features:\n\
+  \n- Autocorrelation, Joint Average\n- Cluster Prominence/Shade/Tendency\n- Contrast, Correlation\n-\
+  \ Difference Average/Entropy/Variance\n- Joint Energy, Joint Entropy\n- IMC1, IMC2\n- IDM, IDMN, ID,\
+  \ IDN\n- Inverse Variance\n- Maximum Probability\n- Sum Average/Entropy, Sum Squares\n- MCC (Maximal\
+  \ Correlation Coefficient)\n\n### GLRLM Features (16)\n\nGray Level Run Length Matrix features:\n\n\
+  - Short/Long Run Emphasis\n- Gray Level Non-Uniformity (Normalized)\n- Run Length Non-Uniformity (Normalized)\n\
+  - Run Percentage\n- Gray Level Variance, Run Variance, Run Entropy\n- Low/High Gray Level Run Emphasis\n\
+  - Short/Long Run Low/High Gray Level Emphasis\n\n### GLSZM Features (16)\n\nGray Level Size Zone Matrix\
+  \ features:\n\n- Small/Large Area Emphasis\n- Gray Level Non-Uniformity (Normalized)\n- Size Zone Non-Uniformity\
+  \ (Normalized)\n- Zone Percentage\n- Gray Level Variance, Zone Variance, Zone Entropy\n- Low/High Gray\
+  \ Level Zone Emphasis\n- Small/Large Area Low/High Gray Level Emphasis\n\n### NGTDM Features (5)\n\n\
+  Neighboring Gray Tone Difference Matrix features:\n\n- Coarseness, Contrast, Busyness\n- Complexity,\
+  \ Strength\n\n### GLDM Features (14)\n\nGray Level Dependence Matrix features:\n\n- Small/Large Dependence\
+  \ Emphasis\n- Gray Level Non-Uniformity\n- Dependence Non-Uniformity (Normalized)\n- Gray Level Variance,\
+  \ Dependence Variance, Dependence Entropy\n- Low/High Gray Level Emphasis\n- Small/Large Dependence\
+  \ Low/High Gray Level Emphasis\n\n## Configuration\n\n### Discretization Modes\n\n```julia\n# Fixed\
+  \ Bin Width (default)\nsettings = Settings(binwidth=25)  # ~10 bins for typical CT data\n\n# Fixed Bin\
+  \ Count\nsettings = Settings(bincount=32)  # Exactly 32 gray levels\n```\n\n### PyRadiomics Compatibility\n\
+  \nThe default settings match PyRadiomics defaults for maximum compatibility:\n\n```julia\nsettings =\
+  \ Settings(\n    binwidth = 25,      # Same as PyRadiomics default\n    bincount = nothing, # Use binwidth\
+  \ mode\n    glcm_distance = 1,\n    gldm_alpha = 0,\n    ngtdm_distance = 1\n)\n```\n\n## Testing\n\n\
+  The test suite verifies 1:1 parity with PyRadiomics using PythonCall.jl:\n\n```julia\nusing Pkg\nPkg.test(\"\
+  Radiomics\")\n```\n\nTests cover:\n- All 111+ features against PyRadiomics\n- Multiple random seeds\
+  \ and array sizes\n- Edge cases (small ROIs, single values, etc.)\n- 2D and 3D images\n\n## API Reference\n\
+  \n### High-Level Functions\n\n| Function | Description |\n|----------|-------------|\n| `extract_all(image,\
+  \ mask)` | Extract all features |\n| `extract_firstorder(image, mask)` | First-order features only |\n\
+  | `extract_shape_2d(mask)` | 2D shape features (mask only) |\n| `extract_shape_3d(mask)` | 3D shape\
+  \ features (mask only) |\n| `extract_glcm(image, mask)` | GLCM texture features |\n| `extract_glrlm(image,\
+  \ mask)` | GLRLM texture features |\n| `extract_glszm(image, mask)` | GLSZM texture features |\n| `extract_ngtdm(image,\
+  \ mask)` | NGTDM texture features |\n| `extract_gldm(image, mask)` | GLDM texture features |\n\n###\
+  \ Feature Extractor\n\n| Function | Description |\n|----------|-------------|\n| `RadiomicsFeatureExtractor(...)`\
+  \ | Create configurable extractor |\n| `extract(extractor, image, mask)` | Extract using extractor settings\
+  \ |\n| `enable!(extractor, class)` | Enable a feature class |\n| `disable!(extractor, class)` | Disable\
+  \ a feature class |\n\n### Settings\n\n| Parameter | Default | Description |\n|-----------|---------|-------------|\n\
+  | `binwidth` | 25 | Gray level bin width |\n| `bincount` | nothing | Fixed number of bins (overrides\
+  \ binwidth) |\n| `glcm_distance` | 1 | GLCM pixel pair distance |\n| `gldm_alpha` | 0 | GLDM coarseness\
+  \ parameter |\n| `ngtdm_distance` | 1 | NGTDM neighborhood distance |\n\n## References\n\n- [PyRadiomics](https://github.com/AIM-Harvard/pyradiomics)\
+  \ - Original Python implementation\n- [PyRadiomics Documentation](https://pyradiomics.readthedocs.io/)\
+  \ - Feature documentation\n- [IBSI](https://ibsi.readthedocs.io/) - Image Biomarker Standardization\
+  \ Initiative\n- van Griethuysen, J.J.M. et al. (2017). \"Computational Radiomics System to Decode the\
+  \ Radiographic Phenotype\". Cancer Research.\n\n## License\n\nMIT License - See [LICENSE](LICENSE) for\
+  \ details.\n\n## Contributing\n\nContributions are welcome! Please feel free to submit a Pull Request.\n\
+  \n## Acknowledgments\n\nThis package is a pure Julia port of [PyRadiomics](https://github.com/AIM-Harvard/pyradiomics)\
+  \ by the Computational Imaging and Bioinformatics Lab at Harvard Medical School.\n"

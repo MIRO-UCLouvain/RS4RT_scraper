@@ -1,0 +1,84 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: A-SHOJAEI/hierarchical-message-passing-with-curriculum-weighting-for-molecular-toxicity
+url: https://github.com/A-SHOJAEI/hierarchical-message-passing-with-curriculum-weighting-for-molecular-toxicity
+platform: github
+description: Multi-scale molecular toxicity prediction using hierarchical graph neural networks with adaptive
+  curriculum learning that prioritizes structurally complex molecules during training. Introduces a novel
+  dual-granularity message passing mechanism (atom-level and functional-group-level) combined with difficulty-aware
+  sample weighting based on molecular
+license: MIT
+language: Python
+keywords:
+- curriculum-learning
+- deep-learning
+- drug-discovery
+- hierarchical-learning
+- machine-learning
+- molecular-ml
+- python
+- pytorch
+stars: 0
+updated_at: '2026-02-21T00:16:26Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# Hierarchical Message Passing with Curriculum Weighting for Molecular Toxicity\n\nMulti-scale\
+  \ molecular toxicity prediction using hierarchical graph neural networks with adaptive curriculum learning\
+  \ that prioritizes structurally complex molecules during training. Introduces a novel dual-granularity\
+  \ message passing mechanism (atom-level and functional-group-level) combined with difficulty-aware sample\
+  \ weighting based on molecular scaffold complexity.\n\n## Installation\n\n```bash\npip install -r requirements.txt\n\
+  ```\n\n## Quick Start\n\n```python\n# Train the model\npython scripts/train.py --config configs/default.yaml\n\
+  \n# Evaluate on test set\npython scripts/evaluate.py --checkpoint models/best_model.pt\n\n# Predict\
+  \ on new molecules\npython scripts/predict.py --checkpoint models/best_model.pt --smiles \"CCO\"\n```\n\
+  \n## Usage\n\n### Training\n```bash\n# Default configuration\npython scripts/train.py\n\n# Ablation\
+  \ study (without curriculum weighting)\npython scripts/train.py --config configs/ablation.yaml\n```\n\
+  \n### Evaluation\n```bash\npython scripts/evaluate.py --checkpoint models/best_model.pt --output results/\n\
+  ```\n\n### Inference\n```bash\npython scripts/predict.py --checkpoint models/best_model.pt --input data/molecules.csv\n\
+  ```\n\n## Architecture\n\nThe model employs a hierarchical message passing architecture:\n\n1. **Atom-level\
+  \ GNN**: Standard message passing on molecular graphs\n2. **Functional Group Detection**: Automatic\
+  \ identification of chemical motifs\n3. **Group-level GNN**: Higher-order message passing on functional\
+  \ group graphs\n4. **Curriculum Weighting**: Adaptive sample weighting based on scaffold complexity\n\
+  5. **Multi-scale Fusion**: Attention-based combination of atom and group representations\n\n## Training\
+  \ Results\n\n> **Note:** The results below were obtained by training on **synthetic Tox21 molecular\
+  \ data** (randomly generated molecular graphs), not the real Tox21 benchmark. Performance metrics reflect\
+  \ this limitation and should not be compared directly to published Tox21 benchmark results.\n\n### Epoch\
+  \ Progression\n\n| Epoch | Train Loss | Val Loss | Val ROC-AUC | Val Accuracy |\n|------:|------------|----------|-------------|--------------|\n\
+  | 1     | 0.0745     | 0.6743   | 0.4991      | 0.65         |\n| 5     | 0.0708     | 0.6532   | 0.5001\
+  \      | 0.65         |\n| 10    | 0.0344     | 0.6533   | 0.5045      | 0.65         |\n| 15    | 0.0395\
+  \     | 0.6541   | 0.5027      | 0.65         |\n| 20    | 0.0402     | 0.6568   | 0.5118      | 0.65\
+  \         |\n| 25    | 0.0400     | 0.6586   | 0.4967      | 0.65         |\n| 27    | 0.0397     |\
+  \ 0.6622   | 0.5126      | 0.65         |\n\nTraining was stopped early at epoch 27 (patience of 15\
+  \ epochs without improvement on validation loss).\n\n### Best Validation Metrics\n\n| Metric       \
+  \  | Value  | Epoch |\n|----------------|--------|------:|\n| Best Val Loss  | 0.6510 | 21    |\n| Best\
+  \ Val AUC   | 0.5148 | 12    |\n| Val Accuracy   | 0.65   | --    |\n| Val PR-AUC     | 0.3761 | 12\
+  \    |\n\n### Training Observations\n\n- **Curriculum learning effect:** At epoch 10 (when curriculum\
+  \ weighting activated), train loss dropped sharply from ~0.070 to ~0.034, indicating the difficulty-aware\
+  \ sample weighting changed the loss landscape substantially.\n- **Validation plateau:** Despite the\
+  \ train loss reduction, validation loss remained flat around 0.65--0.66, and validation ROC-AUC hovered\
+  \ near 0.50 (random-chance level). The model did not generalize beyond the training set.\n- **Class\
+  \ imbalance:** The model predicted the majority class (negative/non-toxic) for all validation samples\
+  \ across all epochs (precision, recall, and F1 all equal to 0.0 on the positive class). The 65/35 class\
+  \ split (195 negatives, 105 positives) was not overcome.\n- **Hardware:** NVIDIA RTX 3090 (24 GB), mixed-precision\
+  \ training enabled.\n\nRun `python scripts/train.py` to reproduce these results.\n\n## Project Structure\n\
+  \n```\nsrc/\n  hierarchical_message_passing_with_curriculum_weighting_for_molecular_toxicity/\n    data/\
+  \          # Data loading and preprocessing\n    models/        # Model architecture and components\n\
+  \    training/      # Training loop and optimization\n    evaluation/    # Metrics and analysis\n  \
+  \  utils/         # Configuration and utilities\nscripts/\n  train.py         # Training pipeline\n\
+  \  evaluate.py      # Evaluation pipeline\n  predict.py       # Inference pipeline\nconfigs/\n  default.yaml\
+  \     # Main configuration\n  ablation.yaml    # Ablation study config\ntests/             # Unit tests\n\
+  ```\n\n## Configuration\n\nTraining configuration used for the results above (from `configs/default.yaml`):\n\
+  \n| Parameter | Value |\n|-----------|-------|\n| Hidden dim | 256 |\n| GNN layers | 4 |\n| Functional\
+  \ group vocab size | 16 |\n| Group embedding dim | 128 |\n| Group MP layers | 2 |\n| Fusion method |\
+  \ Attention |\n| Dropout | 0.2 |\n| Optimizer | Adam (lr=0.001, weight_decay=1e-5) |\n| LR scheduler\
+  \ | Cosine (min_lr=1e-5, warmup=5 epochs) |\n| Batch size | 32 |\n| Max epochs | 100 |\n| Early stopping\
+  \ patience | 15 |\n| Curriculum start epoch | 10 |\n| Curriculum warmup | 5 epochs |\n| Difficulty metric\
+  \ | Scaffold complexity |\n| Weight schedule | Linear (min=0.5, max=3.0) |\n| Data split | Scaffold\
+  \ (80/10/10) |\n| Mixed precision | Enabled |\n| Seed | 42 |\n\n## Requirements\n\n- Python 3.8+\n-\
+  \ PyTorch 2.0+\n- PyTorch Geometric 2.3+\n- DGL 1.1+\n- RDKit 2023+\n\nSee `requirements.txt` for full\
+  \ dependencies.\n\n## License\n\nMIT License - Copyright (c) 2026 Alireza Shojaei. See [LICENSE](LICENSE)\
+  \ for details.\n"

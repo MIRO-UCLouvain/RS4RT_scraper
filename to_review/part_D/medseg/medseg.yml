@@ -1,0 +1,139 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: koushik717/medseg
+url: https://github.com/koushik717/medseg
+platform: github
+description: Brain Tumor MRI Segmentation Pipeline — 3D U-Net (MONAI), FastAPI, React/TypeScript, Docker
+  (CUDA), SLURM deployment
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-19T01:59:40Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# MedSeg — Brain Tumor MRI Segmentation Pipeline\n\n> **Production-style deep learning\
+  \ pipeline for automated brain tumor segmentation from multimodal MRI scans.**\n\n[![Python](https://img.shields.io/badge/Python-3.11-blue)](https://python.org)\n\
+  [![PyTorch](https://img.shields.io/badge/PyTorch-2.3.1-orange)](https://pytorch.org)\n[![MONAI](https://img.shields.io/badge/MONAI-1.3.0-purple)](https://monai.io)\n\
+  [![FastAPI](https://img.shields.io/badge/FastAPI-0.111-green)](https://fastapi.tiangolo.com)\n[![React](https://img.shields.io/badge/React-18-61DAFB)](https://react.dev)\n\
+  [![Docker](https://img.shields.io/badge/Docker-GPU--enabled-2496ED)](https://docker.com)\n\n---\n\n\
+  ## Problem Statement\n\nBrain tumors are among the most lethal cancer types, with glioblastoma carrying\
+  \ a\nmedian survival of ~15 months. Accurate delineation of tumor sub-regions from\nmultimodal MRI is\
+  \ critical for surgical planning, radiation targeting, and\ntreatment response monitoring — yet manual\
+  \ segmentation by radiologists is\ntime-consuming and highly variable between observers.\n\nThis project\
+  \ implements an automated 3D segmentation pipeline using a\n**3D U-Net** trained on the **Medical Segmentation\
+  \ Decathlon Task01_BrainTumour**\ndataset. The model segments three clinically relevant tumor sub-regions:\n\
+  \n| Label | Region | Clinical Relevance |\n|-------|--------|--------------------|\n| 1 | Necrotic /\
+  \ non-enhancing core | Dead tissue; indicates tumor grade |\n| 2 | Peritumoral edema | Surrounding inflammatory\
+  \ region |\n| 3 | Enhancing tumor | Active, vascularized tissue; radiation target |\n\n---\n\n## Dataset\n\
+  \n**Medical Segmentation Decathlon — Task01_BrainTumour**\n\n- **Source**: [medicaldecathlon.com](http://medicaldecathlon.com)\
+  \ / [Synapse](https://www.synapse.org/#!Synapse:syn27046444)\n- **Size**: 484 training cases (~7 GB\
+  \ compressed)\n- **Format**: NIfTI (.nii.gz)\n- **Modalities**: T1, T1ce (contrast-enhanced), T2, FLAIR\
+  \ (4 channels)\n- **Labels**: 0=background, 1=necrotic core, 2=edema, 3=enhancing tumor\n- **License**:\
+  \ Creative Commons Attribution 4.0\n\n**Citation**:\n```\nAntonelli, M., et al. (2022). The Medical\
+  \ Segmentation Decathlon.\nNature Communications, 13, 4128. https://doi.org/10.1038/s41467-022-30695-9\n\
+  ```\n\n---\n\n## Architecture\n\n```\nInput: 4-channel MRI volume\n[T1 | T1ce | T2 | FLAIR]  →  shape:\
+  \ [4, 128, 128, 128]\n        │\n        ▼\n┌─────────────────────────────────────────────┐\n│     \
+  \         3D U-Net Encoder               │\n│  Conv3D → BN → PReLU (with residual units) │\n│      \
+  \                                       │\n│  Level 1: 16  ch  [128³]                   │\n│     ↓ stride\
+  \ 2                             │\n│  Level 2: 32  ch  [64³]                    │\n│     ↓ stride 2\
+  \                             │\n│  Level 3: 64  ch  [32³]                    │\n│     ↓ stride 2  \
+  \                           │\n│  Level 4: 128 ch  [16³]                    │\n│     ↓ stride 2    \
+  \                         │\n│  Bottleneck: 256 ch [8³]                   │\n└─────────────────────────────────────────────┘\n\
+  \        │  (skip connections at each level)\n        ▼\n┌─────────────────────────────────────────────┐\n\
+  │              3D U-Net Decoder               │\n│  ConvTranspose3D upsampling + skip concat  │\n│ \
+  \                                            │\n│  Level 4: 128 ch  [16³]                   │\n│  Level\
+  \ 3: 64  ch  [32³]                   │\n│  Level 2: 32  ch  [64³]                   │\n│  Level 1: 16\
+  \  ch  [128³]                  │\n└─────────────────────────────────────────────┘\n        │\n     \
+  \   ▼\nOutput: 4-class softmax logits  →  shape: [4, 128, 128, 128]\n[background | necrotic | edema\
+  \ | enhancing]\n\nTrainable parameters: ~4.8 million\n```\n\n**Why 3D U-Net?**\n- Encodes full volumetric\
+  \ context (slice-by-slice 2D models miss inter-slice structure)\n- Skip connections preserve fine-grained\
+  \ spatial detail needed for accurate boundaries\n- MONAI's `UNet` class provides residual units and\
+  \ batch norm out-of-the-box\n- The canonical architecture for BraTS benchmarks; results are directly\
+  \ comparable\n\n---\n\n## Model Performance\n\n> ⚠️ **Honest disclosure**: The Dice scores below are\
+  \ from the BraTS/MSD literature\n> for comparable 3D U-Net architectures. Actual measured scores on\
+  \ this codebase\n> depend on training duration, GPU availability, and hyperparameter tuning.\n> **Run\
+  \ training to get real numbers; never report fabricated metrics.**\n\n### Literature reference (3D U-Net,\
+  \ MSD Task01, similar config)\n\n| Region | Dice Score (DSC) |\n|--------|-----------------|\n| Necrotic\
+  \ core | 0.68 – 0.74 |\n| Peritumoral edema | 0.83 – 0.88 |\n| Enhancing tumor | 0.75 – 0.81 |\n| **Mean\
+  \ (3 classes)** | **~0.75 – 0.81** |\n\n### How to fill this table with real numbers\n\n```bash\n# After\
+  \ training completes, the best val Dice is logged to:\ncat backend/checkpoints/training_log.csv | tail\
+  \ -1\n\n# Full evaluation on the test split:\npython -c \"\nfrom data_loader import get_dataloaders\n\
+  from model import build_model\nfrom utils import load_checkpoint\nfrom monai.metrics import DiceMetric\n\
+  from monai.transforms import AsDiscrete, Compose\nimport torch\n\n_, _, test_loader = get_dataloaders('./data',\
+  \ batch_size=1, num_workers=4)\nmodel = build_model()\nload_checkpoint('./checkpoints/model_best.pth',\
+  \ model)\n# ... (see train.py validate() for full loop)\n\"\n```\n\n---\n\n## Project Structure\n\n\
+  ```\nmedseg/\n├── backend/\n│   ├── api.py              # FastAPI: /health, /predict, /mask/{id}\n│\
+  \   ├── train.py            # Training loop (mixed precision, Dice metric, CSV log)\n│   ├── data_loader.py\
+  \      # NIfTI + DICOM loaders, MONAI CacheDataset, augmentations\n│   ├── model.py            # MONAI\
+  \ 3D UNet, DiceLoss, AdamW + cosine scheduler\n│   ├── inference.py        # SlidingWindowInferer, mask→NIfTI,\
+  \ slice PNG rendering\n│   ├── utils.py            # Logging, checkpointing, z-score normalization,\
+  \ color overlay\n│   ├── requirements.txt\n│   ├── Dockerfile          # nvidia/cuda:12.1 base, GPU-enabled\n\
+  │   ├── checkpoints/        # Saved model weights (gitignored)\n│   └── tests/\n│       ├── test_data_loader.py\n\
+  │       └── test_api.py\n├── frontend/\n│   ├── src/\n│   │   ├── App.tsx                  # Main application\n\
+  │   │   ├── components/\n│   │   │   ├── FileUpload.tsx       # Drag-and-drop NIfTI upload\n│   │  \
+  \ │   ├── SliceViewer.tsx      # HTML Canvas MRI/overlay renderer\n│   │   │   └── SliceSlider.tsx \
+  \     # Z-axis navigation slider\n│   │   ├── hooks/\n│   │   │   └── useSegmentation.ts   # API state\
+  \ machine hook\n│   │   └── types/index.ts\n│   ├── vite.config.ts\n│   ├── Dockerfile          # Multi-stage:\
+  \ Vite build + nginx serve\n│   └── package.json\n├── scripts/\n│   └── train_job.slurm     # SLURM\
+  \ HPC job submission script\n├── docker-compose.yml\n├── DEPLOYMENT.md           # GPU cluster, SLURM,\
+  \ Docker GPU docs\n└── README.md\n```\n\n---\n\n## Quickstart\n\n### Option A — Local CPU (no GPU, no\
+  \ download)\n\nThe fastest way to verify the entire pipeline works:\n\n```bash\ngit clone <repo>\ncd\
+  \ medseg\n\n# Backend\ncd backend\npython -m venv .venv && source .venv/bin/activate\npip install -r\
+  \ requirements.txt\n\n# Run a 5-epoch smoke test with synthetic data\npython train.py --dummy-data --epochs\
+  \ 5 --device cpu --batch-size 1 \\\n    --checkpoint-dir ./checkpoints\n\n# Start API (model is now\
+  \ loaded from checkpoint)\nuvicorn api:app --reload --host 0.0.0.0 --port 8000\n```\n\n```bash\n# Frontend\
+  \ (new terminal)\ncd medseg/frontend\nnpm install\nnpm run dev    # → http://localhost:5173\n```\n\n\
+  Visit `http://localhost:5173` — upload any `.nii.gz` file to test the UI flow.\nThe API will handle\
+  \ it even if the checkpoint produces random predictions.\n\n### Option B — Real training (GPU required)\n\
+  \n```bash\n# Download MSD Task01_BrainTumour (~7 GB) and train for 100 epochs\npython train.py \\\n\
+  \    --data-dir ./data \\\n    --epochs 100 \\\n    --batch-size 2 \\\n    --lr 1e-4 \\\n    --device\
+  \ cuda \\\n    --checkpoint-dir ./checkpoints\n```\n\nRecommended: run on [Google Colab](https://colab.research.google.com)\
+  \ or\n[Kaggle Notebooks](https://kaggle.com) with free GPU access.\nSee [DEPLOYMENT.md](./DEPLOYMENT.md)\
+  \ for Colab instructions.\n\n### Option C — Docker (CPU)\n\n```bash\ndocker compose up\n# Backend: http://localhost:8000\n\
+  # Frontend: http://localhost:5173\n# API docs: http://localhost:8000/docs\n```\n\n### Option D — Docker\
+  \ with GPU\n\n```bash\n# Edit docker-compose.yml: uncomment the `deploy.resources` GPU section\n# Set\
+  \ MEDSEG_DEVICE=cuda\ndocker compose up\n```\n\nSee [DEPLOYMENT.md](./DEPLOYMENT.md) for full GPU runtime\
+  \ instructions.\n\n---\n\n## API Reference\n\nStart the server: `uvicorn api:app --reload`\n\nInteractive\
+  \ docs: `http://localhost:8000/docs`\n\n### `GET /health`\n\n```json\n{\n  \"status\": \"ok\",\n  \"\
+  model_loaded\": true,\n  \"device\": \"cuda\",\n  \"checkpoint\": \"./checkpoints/model_best.pth\",\n\
+  \  \"checkpoint_exists\": true,\n  \"model_epoch\": 87,\n  \"model_val_dice\": 0.7841\n}\n```\n\n###\
+  \ `POST /predict`\n\n```bash\ncurl -X POST http://localhost:8000/predict \\\n  -F \"file=@subject_001.nii.gz\"\
+  \ \\\n  | python -m json.tool\n```\n\nResponse:\n\n```json\n{\n  \"file_id\": \"3f8a1c2d-...\",\n  \"\
+  preview_slice\": \"data:image/png;base64,...\",\n  \"num_slices\": 128,\n  \"all_slices\": [\"data:image/png;base64,...\"\
+  , \"...\"],\n  \"label_distribution\": {\n    \"1\": {\"count\": 12048, \"name\": \"necrotic_core\"\
+  },\n    \"2\": {\"count\": 45320, \"name\": \"edema\"},\n    \"3\": {\"count\": 8712,  \"name\": \"\
+  enhancing_tumor\"}\n  }\n}\n```\n\n### `GET /mask/{file_id}`\n\nDownloads the full segmentation mask\
+  \ as a `.nii.gz` NIfTI file.\nThe file is deleted after download (single-use link).\n\n---\n\n## Imaging\
+  \ Formats Supported\n\n### NIfTI (primary)\n\nUsed by the MSD dataset and most research-grade MRI datasets.\n\
+  \n```python\nimport nibabel as nib\nimg = nib.load(\"subject_001.nii.gz\")\ndata = img.get_fdata() \
+  \  # numpy array: [H, W, D] or [H, W, D, T]\naffine = img.affine      # 4×4 world-coordinate transform\n\
+  ```\n\n### DICOM (utility function)\n\nDICOM is the standard in clinical radiology systems (PACS).\n\
+  A demo utility in `data_loader.py` demonstrates loading:\n\n```python\nfrom data_loader import load_dicom_sample\n\
+  pixels, ds = load_dicom_sample(\"series/IM-0001.dcm\")\nprint(ds.PatientID, ds.Modality, ds.SliceLocation)\n\
+  ```\n\nFor converting a DICOM series to NIfTI for use with this pipeline:\n\n```bash\n# Using SimpleITK\
+  \ (already in requirements.txt)\npython -c \"\nimport SimpleITK as sitk\nreader = sitk.ImageSeriesReader()\n\
+  reader.SetFileNames(sitk.ImageSeriesReader.GetGDCMSeriesFileNames('./dicom_series/'))\nimg = reader.Execute()\n\
+  sitk.WriteImage(img, 'output.nii.gz')\n\"\n```\n\n---\n\n## Running Tests\n\n```bash\ncd backend\npip\
+  \ install pytest pytest-asyncio httpx\n\n# Run all tests\npytest tests/ -v\n\n# Run specific module\n\
+  pytest tests/test_data_loader.py -v\npytest tests/test_api.py -v\n```\n\n---\n\n## Key Dependencies\n\
+  \n| Package | Version | Purpose |\n|---------|---------|---------|\n| `torch` | 2.3.1 | Deep learning\
+  \ framework |\n| `monai` | 1.3.0 | Medical imaging AI — UNet, DiceLoss, transforms, CacheDataset |\n\
+  | `nibabel` | 5.2.1 | NIfTI file I/O |\n| `pydicom` | 2.4.4 | DICOM file I/O |\n| `SimpleITK` | 2.3.1\
+  \ | Medical image processing (resampling, format conversion) |\n| `fastapi` | 0.111.0 | REST API framework\
+  \ |\n| `uvicorn` | 0.30.1 | ASGI server |\n| `Pillow` | 10.3.0 | Slice PNG encoding |\n\n---\n\n## Known\
+  \ Limitations & Honest Gaps\n\nThis section is intentional — intellectual honesty matters more than\
+  \ gap-hiding.\n\n| Limitation | Notes |\n|------------|-------|\n| **No MATLAB** | Not part of this\
+  \ project. MATLAB's SPM toolbox is used in some MRI preprocessing pipelines. This is an area for future\
+  \ learning, not a fabricated claim. |\n| **No iOS / mobile** | Not implemented. Mobile medical imaging\
+  \ apps (e.g., for remote reading) involve Swift/UIKit, which is outside this project's scope. |\n| **Dice\
+  \ scores are literature estimates** | Actual scores depend on real GPU training. The table in this README\
+  \ uses published benchmarks as placeholders; replace with real numbers after training. |\n| **SLURM\
+  \ script not submitted on real cluster** | The `train_job.slurm` script is correctly documented and\
+  \ functional, but was not submitted to an actual HPC cluster (requires cluster access). |\n| **4-channel\
+  \ input assumed** | The API currently assumes"

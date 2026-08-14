@@ -1,0 +1,71 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: azrabano23/thaakat
+url: https://github.com/azrabano23/thaakat
+platform: github
+description: 'Radiomics decision-support for endometriosis: EfficientNet + XGBoost ensemble on pelvic
+  MRI, with Grad-CAM explanations. Clinical decision support, not diagnosis.'
+license: MIT
+language: Python
+keywords:
+- deep-learning
+- endometriosis
+- medical-imaging
+- radiomics
+stars: 0
+updated_at: '2026-06-08T01:43:28Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# Thaakat — AI Clinical Decision Support for Endometriosis\n\n> **ثاقت** *(thaakat)*\
+  \ — \"strength.\" Imaging-based decision support that flags\n> pelvic MRI/ultrasound patterns consistent\
+  \ with endometriosis for specialist\n> review. **Thaakat does not diagnose** — it is clinical decision\
+  \ support only.\n\nEndometriosis affects ~190 million women worldwide (WHO 2023) with an average\ndiagnostic\
+  \ delay of **6.8–8.8 years** (scoping review 2024; Endometriosis UK\n2024) and a ~**$119B** annual U.S.\
+  \ economic burden. Thaakat surfaces early,\neasily-missed imaging findings so they reach a specialist\
+  \ sooner.\n\nBuilt by **Azra Bano** — Rutgers ECE, ex-Google SWE, Columbia quantum-ML cancer\ndetection\
+  \ research. Contact: `hello@thaakat.ai`.\n\n---\n\n## What it does\n\nA two-model ensemble that is both\
+  \ **accurate** and **explainable to clinicians**:\n\n| Model | Role | Why |\n|-------|------|-----|\n\
+  | **EfficientNet-B0** (fine-tuned) | spatial / visual patterns | learns lesion appearance directly from\
+  \ pixels |\n| **XGBoost on radiomics** | quantitative biomarkers | interpretable; strong on small medical\
+  \ datasets |\n| **Weighted ensemble** | 0.55 CNN / 0.45 XGB | higher AUC, better calibration, two failure\
+  \ modes |\n\nEvery prediction returns a **risk score (0–100)**, a **Grad-CAM heatmap**\nshowing what\
+  \ drove it, the **top radiomics features** in plain English, and a\n**risk-tiered clinical recommendation**\
+  \ — always with the decision-support\ndisclaimer.\n\n## Data\n\n- **TCGA-OV** (TCIA, DICOM) — ovarian-cancer\
+  \ pelvic imaging; used as positive\n  pelvic-pathology slices for pipeline bring-up. *(Downloaded locally.)*\n\
+  - **UT-EndoMRI** (Zenodo `10.5281/zenodo.15750762`, NIfTI) — 51 multicenter +\n  81 single-center subjects\
+  \ with **expert endometrioma segmentations**. This is\n  the clinical training target. *(Data-use agreement\
+  \ pending.)*\n- **Synthetic** — labelled synthetic T2-pelvis generator so the demo runs\n  end-to-end\
+  \ *today*, before the clinical data lands. Clearly labelled as such;\n  never reported as clinical performance.\n\
+  \nThe pipeline **auto-detects** the best available source at train time\n(UT-EndoMRI → TCGA+synthetic\
+  \ → synthetic).\n\n### Current status, stated plainly\n\nOn the **synthetic** demo data the ensemble\
+  \ scores `AUC 1.0` (see\n`models/saved/results.json`). That number is **expected and clinically\nmeaningless**:\
+  \ the synthetic positives and negatives are separable by\nconstruction, so a perfect score measures\
+  \ the generator, not the model. It is\nreported only to show the train→evaluate→inference loop runs\
+  \ end to end. **No\nclinical accuracy is claimed** until the model is trained and evaluated on\nUT-EndoMRI\
+  \ (literature benchmark for this task is ~82% Dice / comparable AUC);\nthat result will replace this\
+  \ line when the data-use agreement clears.\n\n## Quickstart\n\n```bash\npython3.11 -m venv .venv &&\
+  \ source .venv/bin/activate\npip install -r requirements.txt\n\n# Launch the demo (auto-trains a synthetic\
+  \ model on first run, ~1–2 min)\nstreamlit run src/app/app.py\n```\n\n### Train on real data\n\n```bash\n\
+  # TCGA-OV positives + synthetic negatives\npython -m src.training.train --tcga \"/path/to/TCIA_TCGA-OV_...\"\
+  \ --epochs 20\n\n# UT-EndoMRI (drop subjects in data/raw/ut_endo_mri/, auto-detected)\npython -m src.training.train\
+  \ --epochs 40\n```\n\n### Predict on one scan\n\n```bash\npython -m src.inference.predict path/to/scan.png\
+  \          # PNG/JPG/NIfTI/DICOM\npython -m src.inference.predict path/to/dicom_series_dir/  # full\
+  \ DICOM series\n```\n\n## Architecture\n\n```\nsrc/\n  ingest/      dicom_loader · nifti_loader · synthetic\n\
+  \  processing/  preprocess · augment · features (radiomics)\n  models/      efficientnet · xgboost_model\
+  \ · ensemble\n  training/    train · evaluate\n  inference/   predict\n  app/         app (Streamlit)\
+  \ · components\n```\n\n### Dependency posture (why the demo \"just works\")\nHeavy/fragile deps are\
+  \ **optional with graceful fallbacks**:\n- **PyRadiomics** absent → built-in scikit-image radiomics\
+  \ extractor\n  (first-order + GLCM + shape), same feature names.\n- **PyTorch** absent → ensemble runs\
+  \ XGBoost-only; Grad-CAM degrades to a CV\n  saliency overlay (clearly labelled).\n\nSo a fresh `pip\
+  \ install -r requirements.txt` yields a working demo even if the\noptional wheels don't build on your\
+  \ Python.\n\n## Responsible-use boundary\n\nThaakat is **clinical decision support, not a diagnostic\
+  \ device.** All outputs\nrequire review and confirmation by a qualified physician. The synthetic demo\n\
+  data exists only for pipeline development and live demonstration and does not\nrepresent clinical accuracy.\
+  \ No PHI is committed to this repository.\n\n## Roadmap\n\n- [ ] Train + report AUC on UT-EndoMRI once\
+  \ the DUA clears\n- [ ] Lesion **segmentation** head (UT-EndoMRI masks) alongside classification\n-\
+  \ [ ] Calibration (temperature scaling) + prospective reader study\n- [ ] Ultrasound modality support\n"

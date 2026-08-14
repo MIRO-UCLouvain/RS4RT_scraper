@@ -1,0 +1,58 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: SehalIqbal/Radios
+url: https://github.com/SehalIqbal/Radios
+platform: github
+description: RADIOS — AI-driven multimodal medical image analysis system. Features brain tumor segmentation
+  using Attention U-Net on BraTS 2020, automated clinical report generation via fine-tuned MedGemma 4B,
+  and chest X-ray report generation using fine-tuned CheXagent-8b. Built with React, FastAPI, and PyTorch.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-10T05:06:14Z'
+image_source: https://raw.githubusercontent.com/SehalIqbal/Radios/HEAD/images/mri_segmentation.png
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+readme_excerpt: "# RADIOS — AI-Driven Medical Image Analysis System\n\n> An AI-powered multimodal medical\
+  \ imaging platform designed to assist radiologists with automated tumor segmentation and clinical report\
+  \ generation across Brain MRI and Chest X-Ray modalities.\n\n---\n\n## What is RADIOS?\n\nRADIOS is\
+  \ a clinical diagnostic assistance platform built as a Final Year Project at FAST NUCES Karachi. It\
+  \ goes beyond traditional PACS systems by offering intelligent analysis, high-precision segmentation,\
+  \ and automated generation of structured radiology reports using state-of-the-art AI models.\n\nThe\
+  \ system accepts medical images from a radiologist, runs AI analysis, and returns annotated scans with\
+  \ a full structured clinical report — all through a clean web interface.\n\n---\n\n## Modalities Supported\n\
+  \n| Modality | Input | Output |\n|---|---|---|\n| Brain MRI | 4 NIfTI files (FLAIR, T1, T1ce, T2) |\
+  \ Segmentation overlay + Clinical report |\n| Chest X-Ray | JPEG / PNG image | Structured radiology\
+  \ report |\n\n---\n\n## MRI — Brain Tumor Analysis\n\n### How it works\n\nThe radiologist uploads all\
+  \ 4 MRI modalities. The system runs an Attention U-Net to segment the tumor into 3 subregions, extracts\
+  \ quantitative clinical facts from the mask, and passes them to MedGemma 4B-it to generate a structured\
+  \ 4-section clinical report.\n\n```\nFLAIR + T1 + T1ce + T2\n        ↓\n  Attention U-Net\n  (Tumor\
+  \ Segmentation)\n        ↓\n  extract_tumor_facts()\n  (volumes, location, clinical flags)\n       \
+  \ ↓\n  MedGemma 4B-it\n  (Structured Clinical Report)\n        ↓\n  Segmentation Overlay + Report\n\
+  ```\n\n### Segmentation Output\n\nThe system produces a side-by-side view of the original FLAIR scan\
+  \ and the segmented overlay:\n\n- \U0001F7E1 **Yellow** — Enhancing Tumor (active growing cells)\n-\
+  \ \U0001F534 **Red** — Necrotic Core (dead center)\n- \U0001F7E2 **Green** — Edema (surrounding brain\
+  \ swelling)\n\n![MRI Segmentation](images/mri_segmentation.png)\n\n### Generated Clinical Report\n\n\
+  MedGemma generates a structured 4-section report grounded entirely in quantitative segmentation facts\
+  \ — zero hallucinated values.\n\n![MRI Report](images/mri_report.png)\n\n### Frontend\n\n![RADIOS MRI\
+  \ Frontend](images/frontend_mri.png)\n\n---\n\n## Chest X-Ray Analysis\n\n### How it works\n\nThe radiologist\
+  \ uploads a chest X-ray image. CheXagent-8b (fine-tuned on Indiana University Chest X-Ray dataset) generates\
+  \ a structured radiology report covering findings, impression, and recommendations.\n\n```\nChest X-Ray\
+  \ (JPEG/PNG)\n        ↓\n  Fine-tuned CheXagent-8b\n  (Report Generation)\n        ↓\n  Structured Radiology\
+  \ Report\n```\n\n### Sample Input\n\n![Chest X-Ray Sample](images/xray_sample.png)\n\n---\n\n## System\
+  \ Architecture\n\nThe system follows a user-driven architecture. The radiologist selects the imaging\
+  \ modality through the web UI. The request is routed to the appropriate AI pipeline running on a Google\
+  \ Colab GPU backend exposed via ngrok. Results are returned as JSON and displayed in the React frontend.\n\
+  \n```\nReact Frontend (Netlify)\n        ↓  POST /analyze-mri or /analyze-xray\nFastAPI Backend (Google\
+  \ Colab + ngrok)\n        ↓\nAI Models (Attention U-Net + MedGemma / CheXagent)\n        ↓\nJSON Response\
+  \ (overlay image + report)\n        ↓\nReact Frontend displays results\n```\n\n---\n\n## Dataset\n\n\
+  | Modality | Dataset | Size |\n|---|---|---|\n| Brain MRI | BraTS 2020 | Multimodal MRI with expert\
+  \ segmentation masks |\n| Chest X-Ray | Indiana University Chest X-Ray | 3,955 paired image-report samples\
+  \ |\n\n---\n\n## Team\n\n| Name | Roll No |\n|---|---|\n| Nigarish Rehman Sarmad | 22K-8723 |\n| Aman\
+  \ Ullah Kazi | 22K-8714 |\n| Sehal Iqbal | 22I-0604 |\n\n**Supervisor:** Mahrukh Khan — Lecturer, FAST\
+  \ NUCES KHI\n\n**Co-Supervisor:** Dr. Muhammad Rafi — Professor & Department Head (AI & DS), FAST NUCES\
+  \ KHI\n\n\n*FAST NUCES Karachi — Final Year Project 2026*\n"

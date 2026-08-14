@@ -1,0 +1,326 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: mehdibenabi/Brain-Tumour-Segmentation
+url: https://github.com/mehdibenabi/Brain-Tumour-Segmentation
+platform: github
+description: This project implements a deep learning based semantic segmentation model for automatic brain
+  tumour detection and segmentation from medical imaging data. The model uses a U Net architecture trained
+  on the brain tumor dataset with various preprocessing techniques and training strategies to achieve
+  optimal performance.
+license: null
+language: Jupyter Notebook
+keywords:
+- brain-scans
+- brain-tumour-detection
+- cnn
+- image-preprocessing
+- neural-networks
+- segmentation
+- tensorflow
+- u-net
+stars: 0
+updated_at: '2026-06-20T22:29:00Z'
+image_source: null
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+readme_excerpt: '# Brain Tumour Segmentation
+
+
+  ## Overview
+
+
+  This project implements a deep learning based semantic segmentation model for automatic brain tumour
+  detection and segmentation from medical imaging data. The model uses a U Net architecture trained on
+  the brain tumor dataset with various preprocessing techniques and training strategies to achieve optimal
+  performance.
+
+
+  ## Objectives
+
+
+  The primary objectives of this project are to:
+
+
+  1. Build and train a convolutional neural network for medical image segmentation
+
+  2. Implement effective preprocessing techniques to enhance image quality
+
+  3. Develop a robust model capable of accurately identifying and segmenting brain tumours
+
+  4. Evaluate model performance using industry standard metrics
+
+  5. Compare different training strategies and their impact on model accuracy
+
+
+  ## Dataset
+
+
+  The project utilizes the `brain_tumor_dataset.h5` file, a hierarchical data format (HDF5) file containing:
+
+
+  - **Images**: Medical brain scan images at 256x256 resolution
+
+  - **Tumour Masks**: Ground truth binary segmentation masks indicating tumour locations
+
+  - **Labels**: Classification labels for each sample
+
+
+  The dataset is split into three subsets:
+
+  - Training set: 70% of the data (used for model training)
+
+  - Validation set: 10% of the data (used for hyperparameter tuning)
+
+  - Test set: 20% of the data (used for final evaluation)
+
+
+  ## Methodology
+
+
+  ### 1. Data Preprocessing
+
+
+  Image preprocessing is a crucial step to improve model performance. The implementation includes:
+
+
+  - **Median Filtering**: Removes noise and speckle artifacts using a 3x3 kernel
+
+  - **Gaussian Filtering**: Optionally applied for gradient smoothing (sigma parameter can be adjusted)
+
+  - **Normalization**: Images are normalized to 0 1 range by dividing by 65535.0 (16 bit image normalization)
+
+  - **Channel Dimension**: Added as a required input for the neural network
+
+
+  ### 2. Model Architecture
+
+
+  A U Net encoder decoder architecture is implemented with the following structure:
+
+
+  **Encoder**:
+
+  - Block 1: Conv2D(32, 3x3) + MaxPooling2D(2x2)
+
+  - Block 2: Conv2D(64, 3x3) + MaxPooling2D(2x2)
+
+  - Block 3: Conv2D(128, 3x3) + MaxPooling2D(2x2)
+
+
+  **Bottleneck**:
+
+  - Conv2D(256, 3x3)
+
+
+  **Decoder**:
+
+  - Block 3 UP: UpSampling2D(2x2) + Concatenation + Conv2D(128, 3x3)
+
+  - Block 2 UP: UpSampling2D(2x2) + Concatenation + Conv2D(64, 3x3)
+
+  - Block 1 UP: UpSampling2D(2x2) + Concatenation + Conv2D(32, 3x3)
+
+
+  **Output**: Conv2D(1, 1x1) with sigmoid activation for binary segmentation
+
+
+  ### 3. Training Strategy
+
+
+  The model is trained using the following configuration:
+
+
+  - **Loss Function**: Binary Cross Entropy + Dice Loss (BCE+DiceLoss) for improved segmentation accuracy
+
+  - **Optimizer**: Adam optimizer with learning rate 0.001 (initial) or 0.0001 (for augmented training)
+
+  - **Batch Size**: 16 samples per batch
+
+  - **Metrics**: Dice Coefficient for monitoring performance
+
+
+  **Training Callbacks**:
+
+  - Early Stopping: Monitors validation loss with patience of 5 8 epochs
+
+  - Learning Rate Reduction: Reduces learning rate by 50% if validation loss plateaus
+
+  - Model Checkpoint: Saves the best model based on validation loss
+
+
+  ### 4. Data Augmentation
+
+
+  To improve model generalization, data augmentation is applied during training:
+
+
+  - Rotation: ±15 degrees
+
+  - Width and Height Shifts: ±5%
+
+  - Zoom: ±10%
+
+  - Horizontal Flip: Random horizontal flipping
+
+  - Fill Mode: Reflect for images, nearest for masks
+
+
+  ### 5. Model Evaluation
+
+
+  The model is evaluated using multiple metrics:
+
+
+  - **Dice Coefficient**: Measures overlap between predicted and ground truth masks (0 1 scale)
+
+  - **Intersection over Union (IoU)**: Measures the ratio of intersection to union
+
+  - **Precision**: Ratio of true positive predictions to total positive predictions
+
+  - **Recall**: Ratio of true positive predictions to total actual positives
+
+
+  ## Experimental Results
+
+
+  Three training configurations were tested:
+
+
+  ### Configuration 1: 100 Epochs Without Data Augmentation
+
+  - Training without augmentation to establish baseline performance
+
+  - Direct model training on original preprocessed data
+
+
+  ### Configuration 2: 50 Epochs With Data Augmentation
+
+  - Introduction of data augmentation techniques
+
+  - Reduced epochs to observe impact of augmentation strategy
+
+
+  ### Configuration 3: 100 Epochs With Data Augmentation (Best Model)
+
+  - Extended training with data augmentation enabled
+
+  - Selected as the best performing model
+
+  - Demonstrates superior generalization with augmented data
+
+
+  ### Configuration 4: 120 Epochs With Data Augmentation
+
+  - Further extended training to explore additional epoch benefits
+
+  - Tests model stability with extended training duration
+
+
+  ## Performance Metrics Analysis
+
+
+  The evaluation includes visualization of:
+
+
+  - Segmentation results showing original images, ground truth masks, and model predictions
+
+  - Training history plots displaying loss and dice coefficient progression
+
+  - Precision Recall curves for comprehensive performance assessment
+
+  - Individual metric comparisons (Dice, Precision, Recall)
+
+
+  ## Threshold Analysis
+
+
+  Model predictions undergo threshold tuning analysis, testing multiple probability thresholds (0.3, 0.4,
+  0.5, 0.6) to determine optimal binary segmentation parameters.
+
+
+  ## Files and Artifacts
+
+
+  - `ImageAssessment2.ipynb`: Complete Jupyter notebook containing the entire pipeline
+
+  - `brain_tumor_dataset.h5`: Dataset in HDF5 format
+
+  - `tumor_segmentation_model.keras`: Trained U Net model (saved after 100 epochs without augmentation)
+
+  - `best_model.keras`: Best checkpoint model saved during training
+
+  - `training_history.png`: Visualization of training and validation losses
+
+  - `segmentation_results.png`: Sample predictions visualized
+
+  - `test_metrics.png`: Performance metrics bar chart
+
+  - `precision_recall_curve.png`: Precision Recall curve analysis
+
+
+  ## Installation and Requirements
+
+
+  The project requires the following Python packages:
+
+
+  ```
+
+  numpy
+
+  h5py
+
+  matplotlib
+
+  tensorflow
+
+  scikit learn
+
+  scipy
+
+  opencv python (cv2)
+
+  ```
+
+
+  ## Usage
+
+
+  To run the project:
+
+
+  1. Ensure all required packages are installed
+
+  2. Place the `brain_tumor_dataset.h5` file in the project directory
+
+  3. Execute the Jupyter notebook `ImageAssessment2.ipynb` cell by cell
+
+  4. Review generated visualizations and metrics
+
+  5. The trained model can be loaded and used for predictions on new data
+
+
+  ## Key Findings
+
+
+  1. Data augmentation significantly improves model generalization and performance
+
+  2. The combination of BCE and Dice loss provides better segmentation results than BCE alone
+
+  3. Learning rate scheduling and early stopping prevent overfitting
+
+  4. The optimal threshold for binary segmentation is approximately 0.5
+
+  5. Extended training (100 120 epochs) with augmentation yields the best results
+
+
+
+  ## Author
+
+
+  Mehdi Benabi
+
+  '

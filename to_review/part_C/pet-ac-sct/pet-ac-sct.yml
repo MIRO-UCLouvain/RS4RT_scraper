@@ -1,0 +1,100 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: yqx7150/PET_AC_sCT
+url: https://github.com/yqx7150/PET_AC_sCT
+platform: github
+description: Synthetic CT Generation via Invertible Network for All-digital Brain PET Attenuation Correction
+license: null
+language: Python
+keywords: []
+stars: 11
+updated_at: '2026-01-11T10:30:01Z'
+image_source: https://github.com/yqx7150/PET_AC_sCT/blob/main/samples/figure 1.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 4 support term(s).
+readme_excerpt: "# PET_AC_sCT\n\n**Paper**:   Synthetic CT Generation via Variant Invertible Network for\
+  \ Brain PET Attenuation Correction \n\n**Authors**:   Yu Guan, Bohui Shen, Shirui Jiang, Xinchong Shi,\
+  \ Xiangsong Zhang, Bingxuan Li, Qiegen Liu*       \n \nIEEE Transactions on Radiation and Plasma Medical\
+  \ Sciences    \n\nhttps://ieeexplore.ieee.org/document/10666843  \n\nDate : 9-September-2024  \nVersion\
+  \ : 1.0  \nThe code and the algorithm are for non-comercial use only.  \nCopyright 2024, School of Mathematics\
+  \ and Computer Sciences, Nanchang University.  \n\n# Abstract\nAttenuation correction (AC) is essential\
+  \ for the generation of artifact-free and quan-titatively accurate positron emission tomography (PET)\
+  \ images. Nowadays, deep-learning-based methods have been extensively applied to PET AC tasks, yielding\
+  \ promising results. Therefore, this paper develops an innovative approach to generate continuously\
+  \ valued CT images from non-attenuation corrected PET images for AC on brain PET imaging. Specifically,\
+  \ an invertible neural network combined with the variable augmentation strategy that can achieve the\
+  \ bidirectional inference processes is proposed for synthetic CT generation. On the one hand, invertible\
+  \ architecture ensures a bijective mapping between the PET and synthetic CT image spaces, which can\
+  \ potentially improve the robustness of the prediction and provide a way to validate the synthetic CT\
+  \ by checking the consistency of the inverse mapping. On the other hand, the variable augmentation strategy\
+  \ enriches the training process and leverages the intrinsic data properties more effectively. Therefore,\
+  \ the combination provides for superior performance in PET AC by preserving information throughout the\
+  \ network and by better handling of the data variability inherent PET AC. To evaluate the performance\
+  \ of the proposed algorithm, we conducted a comprehensive study on a total of 1480 2D slices from 37\
+  \ whole-body 18F-FDG clinical patients using comparative algorithms (such as Cycle-GAN and Pix2pix).\
+  \ Perceptual analysis and quantitative evaluations illustrate that the invertible network for PET AC\
+  \ outperforms other existing AC models, which demonstrates the feasibility of achieving brain PET AC\
+  \ without additional anatomical information.\n\n\n## Graphical representation\n <div align=\"center\"\
+  ><img src=\"https://github.com/yqx7150/PET_AC_sCT/blob/main/samples/figure 1.png\" width = \"800\" height\
+  \ = \"500\">  </div>\n The schematic flow diagram of the proposed method. The training phase is first\
+  \ performed with NAC PET and reference CT images, after which the well-trained network is fixed and\
+  \ ready for generating synthetic CT images for new PET data in the reconstruction phase.\n \n\n<div\
+  \ align=\"center\"><img src=\"https://github.com/yqx7150/PET_AC_sCT/blob/main/samples/Fig 3.png\" width\
+  \ = \"800\" height = \"500\"> </div>\n The pipeline of IVNAC. Invertible model is composed of both forward\
+  \ and inverse process. We illustrate the details of the invertible block on the bottom. s , t and r\
+  \ are transformations defined in the bijective functions.\n\n\n## Training Demo\n```bash\npython train_lr.py\
+  \ --task=1to1 --out_path=\"./results/new_exp/\" --root2='./data_for_training/pet_mat' --root3='./data_for_training/pet_mat'\
+  \ --root1='./data_for_training/ct_mat'\n```\n## Test Demo\n```bash\npython test.py --task=1to1 --out_path=\"\
+  ./results/exp/\" --root2='./data_for_test/pet_mat' --root3='./data_for_test/pet_mat' --root1='./data_for_test/ct_mat'\
+  \ --ckpt=\"./results/exp/1to1/checkpoint/0028.pth\"\n```\n## Checkpoints\nWe provide a pretrained checkpoint.\
+  \ You can run the above command to use the pretrained model directly\n\n\n## Synthetic CT Generation\
+  \ and Evaluation\n<div align=\"center\"><img src=\"https://github.com/yqx7150/PET_AC_sCT/blob/main/samples/figure\
+  \ 5.png\" width = \"800\" height = \"1000\"> </div>\n Examples of synthetic CT image on a patient’s\
+  \ brain. Five columns from left to right are NAC-PET, reference-CT, Cycle-GAN-CT, Pix2pix-CT and IVNAC-CT,\
+  \ respectively. The second row shows the difference images between the reference CT and the synthetic\
+  \ CT.\n\n\n## Synthetic CT to PET Attenuation Correction\n<div align=\"center\"><img src=\"https://github.com/yqx7150/PET_AC_sCT/blob/main/samples/figure\
+  \ 6.png\" width = \"800\" height = \"1000\"> </div>\n PET data reconstructed with reference and generated\
+  \ synthesized CT images alongside their voxel-wise difference map. Five columns from left to right are\
+  \ reference-CT, AC-PET, Cycle-GAN-PET, Pix2pix-PET and IVNAC-PET, respectively.\n\n\n<div align=\"center\"\
+  ><img src=\"https://github.com/yqx7150/PET_AC_sCT/blob/main/samples/figure 7.png\" width = \"800\" height\
+  \ = \"420\"> </div>\n Unique example of PET data reconstructed with reference and generated synthesized\
+  \ CT images alongside their voxel-wise difference map. Red arrows indicate region with relatively obvious\
+  \ details and textures and the intensity of residual maps is two times magnified.\n\n\n### Other Related\
+  \ Projects\n<div align=\"center\"><img src=\"https://github.com/yqx7150/PET_AC_sCT/blob/main/samples/algorithm-overview.png\"\
+  \ width = \"800\" height = \"500\"> </div>\n Some examples of invertible and variable augmented network:\
+  \ IVNAC, VAN-ICC, iVAN and DTS-INN.\n\n  * Variable Augmented Network for Invertible Modality Synthesis\
+  \ and Fusion  [<font size=5>**[Paper]**</font>](https://ieeexplore.ieee.org/abstract/document/10070774)\
+  \   [<font size=5>**[Code]**</font>](https://github.com/yqx7150/iVAN)    \n  \n * Variable augmentation\
+  \ network for invertible MR coil compression  [<font size=5>**[Paper]**</font>](https://www.sciencedirect.com/science/article/abs/pii/S0730725X24000225)\
+  \   [<font size=5>**[Code]**</font>](https://github.com/yqx7150/VAN-ICC)         \n\n * Virtual coil\
+  \ augmentation for MR coil extrapoltion via deep learning  [<font size=5>**[Paper]**</font>](https://www.sciencedirect.com/science/article/abs/pii/S0730725X22001722)\
+  \   [<font size=5>**[Code]**</font>](https://github.com/yqx7150/VCA)    \n\n * Temporal Image Sequence\
+  \ Separation in Dual-Tracer Dynamic PET With an Invertible Network  [<font size=5>**[Paper]**</font>](https://ieeexplore.ieee.org/abstract/document/10542421)\
+  \   [<font size=5>**[Code]**</font>](https://github.com/yqx7150/DTS-INN)        \n       \n  * Variable\
+  \ Augmented Network for Invertible Decolorization (基于辅助变量增强的可逆彩色图像灰度化)  [<font size=5>**[Paper]**</font>](https://jeit.ac.cn/cn/article/doi/10.11999/JEIT221205?viewType=HTML)\
+  \   [<font size=5>**[Code]**</font>](https://github.com/yqx7150/VA-IDN)        \n\n  * Invertible and\
+  \ Variable Augmented Network for Pretreatment Patient-Specific Quality Assurance Dose Prediction  [<font\
+  \ size=5>**[Paper]**</font>](https://link.springer.com/article/10.1007/s10278-023-00930-w)       \n\
+  \    \n  * Variable augmented neural network for decolorization and multi-exposure fusion [<font size=5>**[Paper]**</font>](https://www.sciencedirect.com/science/article/abs/pii/S1566253517305298)\
+  \   [<font size=5>**[Code]**</font>](https://github.com/yqx7150/DecolorNet_FusionNet_code)   [<font\
+  \ size=5>**[Slide]**</font>](https://github.com/yqx7150/EDAEPRec/tree/master/Slide)   \n   \n  * Spatial-Temporal\
+  \ Guided Diffusion Transformer Probabilistic Model for Delayed Scan PET Image Prediction [<font size=5>**[Paper]**</font>](https://ieeexplore.ieee.org/abstract/document/10980366)\
+  \   [<font size=5>**[Code]**</font>](https://github.com/yqx7150/st-DTPM)    \n\n* ALL-PET: A Low-resource\
+  \ and Low-shot PET Foundation Model in Projection Domain  [<font size=5>**[Paper]**</font>](https://github.com/yqx7150/RAYSOLUTION_PETdata/blob/main/Paper/ALL_PET_Finalx.pdf)\
+  \   [<font size=5>**[Code]**</font>](https://github.com/yqx7150/ALL-PET)\n\n* Diffusion Transformer\
+  \ Model with Compact Prior for Low-dose PET Reconstruction [<font size=5>**[Paper]**</font>](https://arxiv.org/abs/2407.00944)\
+  \     [<font size=5>**[Code]**</font>](https://github.com/yqx7150/dtm)\n\n* PET Tracer Separation using\
+  \ Conditional Diffusion Transformer with Multi-latent Space Learning [<font size=5>**[Paper]**</font>](https://arxiv.org/abs/2506.16934#:~:text=In%20this%20study%2C%20a%20multi-latent%20space%20guided%20texture,model%20%28MS-CDT%29%20is%20proposed%20for%20PET%20tracer%20separation.)\n\
+  \n* Diffusion Transformer Meets Random Masks: An Advanced PET Reconstruction Framework [<font size=5>**[Paper]**</font>](https://arxiv.org/abs/2503.08339)\
+  \  [<font size=5>**[Code]**</font>](https://github.com/yqx7150/DREAM)\n\n* RED: Residual Estimation\
+  \ Diffusion for Low-Dose PET Sinogram Reconstruction  [<font size=5>**[Paper]**</font>](https://www.sciencedirect.com/science/article/pii/S1361841525001057)\
+  \       [<font size=5>**[Code]**</font>](https://github.com/yqx7150/RED)\n       \n* Raysolution_PET_Data\
+  \ [<font size=5>**[Data]**</font>](https://github.com/yqx7150/Raysolution_PET_Data)   \n\n* Double-Constraint\
+  \ Diffusion Model with Nuclear Regularization for Ultra-low-dose PET Reconstruction  [<font size=5>**[Paper]**</font>](https://arxiv.org/pdf/2509.00395)\
+  \   [<font size=5>**[Code]**</font>](https://github.com/yqx7150/DCDM)\n\n* Positron Emission Tomography\
+  \ Tracer Conversion via Variable Augmented Invertible Network [<font size=5>**[Paper]**</font>](https://link.springer.com/article/10.1007/s12204-025-2844-2)\
+  \    \n"

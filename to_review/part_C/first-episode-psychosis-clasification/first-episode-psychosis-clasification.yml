@@ -1,0 +1,142 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: jomasator2/First-episode_Psychosis_Clasification
+url: https://github.com/jomasator2/First-episode_Psychosis_Clasification
+platform: github
+description: Machine learning models for classification of First-Episode Psychosis (FEP) vs Healthy Controls
+  using structural MRI radiomic features. Includes preprocessing, feature extraction, and explainable
+  AI techniques to enhance clinical interpretability.
+license: Apache-2.0
+language: HTML
+keywords: []
+stars: 0
+updated_at: '2025-12-03T14:44:37Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# First-Episode Psychosis Classification - Complete Workflow\n\nMachine learning models\
+  \ for classification of First-Episode Psychosis (FEP) vs Healthy Controls using structural MRI radiomic\
+  \ features. This document describes the complete execution flow from data preprocessing to results visualization.\n\
+  \n## Table of Contents\n\n1. [Overview](#overview)\n2. [Prerequisites](#prerequisites)\n3. [Step 1:\
+  \ Radiomics Feature Extraction](#step-1-radiomics-feature-extraction)\n4. [Step 2: Data Preprocessing](#step-2-data-preprocessing)\n\
+  5. [Step 3: Classification and Model Training](#step-3-classification-and-model-training)\n6. [Step\
+  \ 4: Results Visualization](#step-4-results-visualization)\n7. [Step 5: Brain 3D Visualization](#step-5-brain-3d-visualization)\n\
+  8. [Complete Pipeline Execution](#complete-pipeline-execution)\n\n---\n\n## Overview\n\nThe pipeline\
+  \ consists of five main steps:\n\n1. **Radiomics Feature Extraction**: Extract radiomic features from\
+  \ MRI images using PyRadiomics\n2. **Data Preprocessing**: Clean, normalize, and prepare features for\
+  \ machine learning\n3. **Classification**: Train and evaluate machine learning models with explainability\
+  \ techniques\n4. **Results Visualization**: Analyze and visualize model performance and interpretability\n\
+  5. **Brain 3D Visualization**: Interactive 3D visualization of most discriminative brain regions\n\n\
+  ---\n\n## Prerequisites\n\n### System Requirements\n- Python 3.11.9\n- Conda or Miniconda\n- Access\
+  \ to MRI data (FreeSurfer processed images)\n\n### Directory Structure\n```\nFirst-episode_Psychosis_Clasification/\n\
+  ├── src/\n│   ├── 1_radiomics/          # Feature extraction\n│   ├── 2_preprocess_data/     # Data\
+  \ preprocessing\n│   ├── 3_classification/      # Model training\n│   ├── 4_results_viewer/      # Results\
+  \ visualization\n│   └── 5_brain_visualization/ # 3D brain visualization\n├── README.md\n└── README_all.md\n\
+  ```\n\n---\n\n## Step 1: Radiomics Feature Extraction\n\nThis step extracts radiomic features from structural\
+  \ MRI images using PyRadiomics.\n\n### 1.1 Setup Environment\n\nNavigate to the radiomics directory:\n\
+  ```bash\ncd src/1_radiomics\n```\n\nCreate and activate the conda environment:\n```bash\nconda env create\
+  \ -f enviroment.yml\nconda activate radiomics\n```\n\n### 1.2 Input Requirements\n\n- **Input Directory**:\
+  \ FreeSurfer processed MRI images with segmentation masks\n- **Configuration**: `Params.yaml` file with\
+  \ PyRadiomics parameters\n- **Output**: CSV/TSV file with extracted radiomic features\n\n### 1.3 Run\
+  \ Feature Extraction\n\n#### Local Execution\n```bash\n./local_run_pyradiomics.sh\n```\n\nThis script\
+  \ will:\n1. Generate a CSV with subject IDs and mask paths from FreeSurfer data\n2. Extract radiomic\
+  \ features for each subject and ROI\n3. Save features to `../2_preprocess_data/data/df_processed_example.tsv`\n\
+  4. Generate logs in `logs/logfile.txt`\n\n#### HPC/SLURM Execution\n```bash\nsbatch run_radiomics.sh\n\
+  ```\n\n### 1.4 Key Scripts\n\n- **`generate_csv_freesurfer.py`**: Creates subject list from FreeSurfer\
+  \ directory\n- **`calculate.py`**: Main feature extraction script using PyRadiomics\n- **`Params.yaml`**:\
+  \ PyRadiomics configuration parameters\n\n### 1.5 Output\n\nThe output TSV file contains:\n- Subject\
+  \ identifiers\n- ROI labels\n- First-order statistics (mean, median, variance, etc.)\n- Texture features\
+  \ (GLCM, GLRLM, GLSZM, etc.)\n- Shape features (volume, surface area, sphericity, etc.)\n\n---\n\n##\
+  \ Step 2: Data Preprocessing\n\nThis step cleans and prepares the radiomic features for machine learning.\n\
+  \n### 2.1 Setup Environment\n\nNavigate to the preprocessing directory:\n```bash\ncd ../2_preprocess_data\n\
+  ```\n\nCreate and activate the conda environment:\n```bash\nconda env create -f environment.yml\nconda\
+  \ activate jupyter_venv\n```\n\n### 2.2 Run Preprocessing\n\nOpen the Jupyter notebook:\n```bash\njupyter\
+  \ notebook preprocess.ipynb\n```\n\nOr use JupyterLab:\n```bash\njupyter lab preprocess.ipynb\n```\n\
+  \n### 2.3 Preprocessing Steps\n\nThe notebook performs:\n1. **Data Loading**: Load radiomic features\
+  \ from Step 1, or use the original dataset from [Zenodo](https://zenodo.org/records/17285665) (automatically\
+  \ downloaded by `preprocess.ipynb`)\n2. **Quality Control**: Remove features with missing values or\
+  \ low variance\n3. **Feature Selection**: Select relevant features based on statistical tests\n4. **Normalization**:\
+  \ Standardize or normalize feature values\n5. **Data Splitting**: Create train/test splits\n6. **Export**:\
+  \ Save processed data for classification\n\n### 2.4 Output\n\nProcessed features are saved to:\n- `data/features_outcome_df_processed_true.tsv`\n\
+  \nThis file is used as input for the classification step.\n\n---\n\n## Step 3: Classification and Model\
+  \ Training\n\nThis step trains machine learning models and evaluates their performance with explainability\
+  \ techniques.\n\n### 3.1 Setup Environment\n\nNavigate to the classification directory:\n```bash\ncd\
+  \ ../3_classification\n```\n\nCreate and activate the conda environment:\n```bash\nconda env create\
+  \ -f environment.yml\nconda activate pyclassification\n```\n\n### 3.2 Run Classification Pipeline\n\n\
+  #### Local Execution\n```bash\n./local_run_train_and_evaluate.sh\n```\n\nThis executes the complete\
+  \ classification pipeline with:\n- Multiple ML algorithms (Random Forest, SVM, Logistic Regression,\
+  \ etc.)\n- Cross-validation\n- Hyperparameter tuning\n- Model evaluation\n- Explainability analysis\
+  \ (SHAP, LIME)\n\n#### HPC/SLURM Execution\n```bash\nsbatch sbatch_run_train_and_evaluate.sh\n```\n\n\
+  ### 3.3 Pipeline Components\n\nThe classification pipeline consists of three main scripts:\n\n#### 3.3.1\
+  \ Model Training and Evaluation (`1_train_and_evaluate.py`)\n```bash\npython 1_train_and_evaluate.py\
+  \ \\\n    --csv features_outcome_df_processed_true.tsv \\\n    --calculate_differences \\\n    --fine_tune_best_model\
+  \ \\\n    --results_base ../4_results_viewer/data \\\n    --ratios 40 \\\n    -v\n```\n\n**Parameters:**\n\
+  - `--csv`: Input features file\n- `--calculate_differences`: Compute statistical differences between\
+  \ groups\n- `--fine_tune_best_model`: Perform hyperparameter optimization\n- `--results_base`: Output\
+  \ directory for results\n- `--ratios`: Train/test split ratio (e.g., 40 = 40% test)\n- `-v`: Verbose\
+  \ output\n\n**Output:**\n- Model performance metrics (accuracy, precision, recall, F1-score, AUC)\n\
+  - Cross-validation results\n- Feature importance rankings\n- Confusion matrices\n\n#### 3.3.2 Model\
+  \ Comparison (`2_model_differences.py`)\nAnalyzes statistical differences between model performances.\n\
+  \n#### 3.3.3 Best Model Retraining (`3_retrain_best_model_and_evaluate.py`)\nRetrains the best performing\
+  \ model with optimized hyperparameters and generates:\n- Final model predictions\n- SHAP values for\
+  \ feature importance\n- LIME explanations for individual predictions\n- Calibration plots\n- ROC curves\n\
+  \n### 3.4 Supported Models\n\n- Logistic Regression\n- Support Vector Machine (SVM)\n- Random Forest\n\
+  - Gradient Boosting\n- XGBoost\n- Neural Networks\n\n### 3.5 Explainability Techniques\n\n- **SHAP (SHapley\
+  \ Additive exPlanations)**: Global and local feature importance\n- **LIME (Local Interpretable Model-agnostic\
+  \ Explanations)**: Instance-level explanations\n- **Feature Importance**: Model-specific feature rankings\n\
+  - **Partial Dependence Plots**: Feature effect visualization\n\n### 3.6 Output Files\n\nResults are\
+  \ saved to `../4_results_viewer/data/`:\n- `model_results.pkl`: Trained models and predictions\n- `feature_importance.csv`:\
+  \ Feature importance scores\n- `shap_values.pkl`: SHAP analysis results\n- `performance_metrics.csv`:\
+  \ Model evaluation metrics\n- `confusion_matrix.png`: Confusion matrix visualization\n\n---\n\n## Step\
+  \ 4: Results Visualization\n\nThis step provides interactive visualization and analysis of model results.\n\
+  \n### 4.1 Setup Environment\n\nNavigate to the results viewer directory:\n```bash\ncd ../4_results_viewer\n\
+  ```\n\nCreate and activate the conda environment:\n```bash\nconda env create -f enviroment.yml\nconda\
+  \ activate jupyter_venv\n```\n\n### 4.2 View Results\n\nOpen the results notebook:\n```bash\njupyter\
+  \ notebook results.ipynb\n```\n\nOr use JupyterLab:\n```bash\njupyter lab results.ipynb\n```\n\n###\
+  \ 4.3 Visualization Components\n\nThe notebook includes:\n\n1. **Performance Metrics**\n   - Accuracy,\
+  \ precision, recall, F1-score\n   - ROC curves and AUC scores\n   - Precision-recall curves\n   - Calibration\
+  \ plots\n\n2. **Model Comparison**\n   - Side-by-side model performance\n   - Statistical significance\
+  \ tests\n   - Cross-validation stability\n\n3. **Feature Analysis**\n   - Feature importance rankings\n\
+  \   - SHAP summary plots\n   - SHAP dependence plots\n   - Feature correlation heatmaps\n\n4. **Explainability\
+  \ Visualizations**\n   - SHAP waterfall plots for individual predictions\n   - LIME explanations\n \
+  \  - Decision boundary visualizations\n   - Feature contribution plots\n\n5. **Clinical Interpretability**\n\
+  \   - Top discriminative features\n   - ROI-specific analysis\n   - Biomarker identification\n\n###\
+  \ 4.4 Interactive Exploration\n\nThe notebook provides interactive widgets for:\n- Selecting different\
+  \ models\n- Filtering features by importance\n- Exploring individual predictions\n- Comparing feature\
+  \ effects across groups\n\n---\n\n## Step 5: Brain 3D Visualization\n\nThis step provides interactive\
+  \ 3D visualization of the most discriminative brain regions identified by the classification models.\n\
+  \n### 5.1 Setup Environment\n\nNavigate to the brain visualization directory:\n```bash\ncd ../5_brain_visualization\n\
+  ```\n\nActivate the conda environment:\n```bash\nconda activate brain_visualization\n```\n\n### 5.2\
+  \ Configuration\n\nEdit the configuration paths in the run script (`run_3_1.py`):\n\n```python\n# Data\
+  \ paths\nbrain_path = \"path/to/brain.nii\"           # MRI brain volume\nseg_path = \"path/to/aparc+aseg.nii\"\
+  \        # FreeSurfer segmentation\nlut_path = \"../4_results_viewer/freesurfer_color_LUT\"  # Color\
+  \ lookup table\njson_path = \"region_frequency_data.json\"    # Region importance data\n\n# Visualization\
+  \ parameters\nN_REGIONS = 15  # Number of top regions to display\nTITLE = \"First-Episode Psychosis:\
+  \ Brain Regions Classification Model\"\nDESCRIPTION = \"Description of your visualization...\"\nBRAIN_OPACITY\
+  \ = 0.08  # Brain surface transparency\n```\n\n### 5.3 Run Visualization\n\nExecute the visualization\
+  \ script:\n```bash\npython run_3_1.py\n```\n\n### 5.4 Features\n\nThe 3D brain visualization provides:\n\
+  \n1. **Interactive 3D Brain Model**\n   - Rotate, zoom, and pan the brain\n   - Auto-rotation toggle\n\
+  \   - Semi-transparent brain surface for anatomical context\n\n2. **Region Highlighting**\n   - Top\
+  \ N most discriminative regions colored by FreeSurfer LUT\n   - Region labels and anatomical information\n\
+  \   - Frequency/importance metrics per region\n\n3. **Context Information Panel**\n   - Study title\
+  \ and description\n   - Model information\n   - Feature importance context\n\n### 5.5 Input Requirements\n\
+  \n- **Brain Volume**: FreeSurfer processed `brain.nii` file\n- **Segmentation**: FreeSurfer `aparc+aseg.nii`\
+  \ parcellation\n- **Color LUT**: FreeSurfer color lookup table\n- **Region Data**: JSON file with region\
+  \ importance scores from classification step\n\n### 5.6 Output\n\nThe visualization generates an interactive\
+  \ HTML file in the `outputs/` directory that can be opened in any web browser.\n\n**Example**: A visual\
+  \ example of the study can be viewed at `src/5_brain_visualization/outputs/brain_v3_1.html`\n\n---\n\
+  \n## Complete Pipeline Execution\n\n### Sequential Execution (Recommended for First Run)\n\nExecute\
+  \ each step in order:\n\n```bash\n# Step 1: Feature Extraction\ncd src/1_radiomics\nconda env create\
+  \ -f enviroment.yml\nconda activate radiomics\n./local_run_pyradiomics.sh\n\n# Step 2: Preprocessing\n\
+  cd ../2_preprocess_data\nconda env create -f environment.yml\nconda activate jupyter_venv\njupyter notebook\
+  \ preprocess.ipynb\n# Run all cells in the notebook, then close\n\n# Step 3: Classification\ncd ../3_classification\n\
+  conda env create -f environment.yml\nconda activate pyclassification\n./local_run_train_and_evaluate.sh\n\
+  \n# Step 4: Results Visualization\ncd ../4_results_viewer\nconda env create -f enviroment.yml\nconda\
+  \ activate jupyter_venv\njupyter notebook results.ipynb\n# Run all cells in the notebook, then close\n\
+  \n# Step 5: Brain 3D Visualization\ncd ../5_brain_visualization\nconda activate brain_visualization\n\
+  python run_3_1.py\n```\n\n### Autom"

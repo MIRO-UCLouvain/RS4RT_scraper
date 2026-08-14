@@ -1,0 +1,138 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: LemonyMelony/MT---Research-Data
+url: https://github.com/LemonyMelony/MT---Research-Data
+platform: github
+description: Radiomic feature extraction and correlation analysis pipeline for ischemic stroke clot characterization
+  in CT and microCT
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-05-14T12:08:28Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: '# Radiomic Feature Analysis: Ischemic Stroke Clot Characterization
+
+
+  This repository contains the scripts and data used to extract and analyze radiomic features from CT
+  imaging of ischemic stroke clots, as part of a thesis project in interventional neuroradiology.
+
+
+  ## Background
+
+
+  Patients presenting with ischemic stroke and eligible for mechanical thrombectomy underwent standard
+  clinical CT imaging prior to the procedure (NCCT, CTA, CECT). Following thrombectomy, the extracted
+  clots were imaged ex vivo using high-resolution micro-CT, which serves as the reference standard. The
+  goal of this analysis is to identify which radiomic features extracted from routine clinical CT are
+  reliably correlated with their micro-CT counterparts as a prerequisite for linking imaging features
+  to histopathological clot composition and clinical outcomes.
+
+
+  The CT modalities analyzed are:
+
+  - **NCCT**: Non-contrast CT
+
+  - **CTA**: CT Angiography (registered to NCCT)
+
+  - **CECT**: Contrast-enhanced CT (registered to NCCT)
+
+  - **MicroCT**: High-resolution ex vivo micro-CT (ground truth)
+
+
+  ---
+
+
+  ## Repository Structure
+
+
+  ```
+
+  1a_radiomics_complete_extraction.ipynb   # Feature extraction pipeline
+
+  1b_Params.yaml                           # PyRadiomics extraction parameters
+
+  1c_RF_extraction_results.csv             # Extracted radiomic features (all modalities)
+
+  2a_corranalysis.R                        # Correlation analysis script
+
+  2b_correlation_results.csv               # Correlation results (all modalities, full feature set)
+
+  ```
+
+
+  ---
+
+
+  ## File Descriptions
+
+
+  ### `1a_radiomics_complete_extraction.ipynb`
+
+  Jupyter notebook that extracts radiomic features from all CT modalities for each patient using [PyRadiomics](https://pyradiomics.readthedocs.io/).
+  Handles file path resolution for each modality (including subtraction images), runs batch extraction,
+  and outputs a single feature matrix. Includes basic data quality checks and visualizations of feature
+  distributions.
+
+
+  ### `1b_Params.yaml`
+
+  PyRadiomics parameter file defining the extraction settings: image types, feature classes, resampling
+  (1×1×1 mm isotropic, BSpline interpolation), and image discretization (bin width = 25 HU). All feature
+  classes are extracted from the original image: `shape`, `firstorder`, `glcm`, `glrlm`, `glszm`, `gldm`,
+  and `ngtdm`.
+
+
+  ### `1c_RF_extraction_results.csv`
+
+  Output of `1a`. Contains the full radiomic feature matrix across all patients and modalities (559 features
+  per patient). Patient identifiers have been removed.
+
+
+  ### `2a_corranalysis.R`
+
+  R script that computes Pearson and Spearman correlations between each clinical CT modality and the micro-CT
+  reference, for every matching radiomic feature. To limit overcorrection from Benjamini-Hochberg multiple
+  testing adjustment, the analysis is run three times with progressively larger feature sets (small: `firstorder/glcm/glrlm`;
+  medium: adds `glszm/gldm`; full: adds `ngtdm`). Outputs CSV results and plots for each modality and
+  feature set.
+
+
+  ### `2b_correlation_results.csv`
+
+  Output of `2a` for the full feature set. Contains Pearson and Spearman correlation coefficients, raw
+  and BH-adjusted p-values, and significance labels for each feature and modality pair.
+
+
+  ---
+
+
+  ## Dependencies
+
+
+  **Python** (feature extraction):
+
+  - `pyradiomics`
+
+  - `SimpleITK`
+
+  - `pandas`, `numpy`
+
+
+  **R** (correlation analysis):
+
+  - `tidyverse`
+
+  - `Hmisc`
+
+  - `ggplot2`
+
+  - `corrplot`
+
+  '

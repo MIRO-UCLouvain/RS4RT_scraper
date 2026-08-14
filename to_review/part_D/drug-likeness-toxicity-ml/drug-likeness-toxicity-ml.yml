@@ -1,0 +1,106 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: KennethOdoh157/drug-likeness-toxicity-ml
+url: https://github.com/KennethOdoh157/drug-likeness-toxicity-ml
+platform: github
+description: An end-to-end cheminformatics and ML pipeline integrating Tox21 toxicity predictions with
+  Lipinski’s Rule of Five and QED to prioritize safer, drug-like molecules. Demonstrates feature engineering,
+  interpretable ML, and responsible compound prioritization in early-stage drug discovery.
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-01-20T18:11:27Z'
+image_source: https://raw.githubusercontent.com/KennethOdoh157/drug-likeness-toxicity-ml/HEAD/results/figures/summary_roc_auc.png
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# \U0001F9EA Drug-Likeness and Toxicity Prediction using Machine Learning\n\n![Python](https://img.shields.io/badge/Python-3.10-blue)\n\
+  ![RDKit](https://img.shields.io/badge/RDKit-Cheminformatics-green)\n![Machine Learning](https://img.shields.io/badge/Machine%20Learning-Random%20Forest-orange)\n\
+  ![Status](https://img.shields.io/badge/Project-Completed-success)\n\n---\n## Abstract\n\nEarly-stage\
+  \ drug discovery requires balancing **chemical developability** with **biological safety**, yet traditional\
+  \ drug-likeness heuristics alone fail to capture complex toxicity mechanisms. This project presents\
+  \ an integrated cheminformatics workflow that combines **machine learning–based toxicity prediction**\
+  \ with **medicinal chemistry metrics** to prioritize safer, drug-like compounds. Using the Tox21 dataset,\
+  \ multiple assay-specific classifiers were trained to learn structural patterns associated with toxicity\
+  \ pathways. These predictions were then unified with Lipinski’s Rule of Five and Quantitative Estimate\
+  \ of Drug-likeness (QED) to identify compounds occupying a high drug-likeness, low-toxicity region.\
+  \ The resulting framework demonstrates how interpretable machine learning models can support **risk-aware\
+  \ compound prioritization** in early drug discovery without making clinical or regulatory claims.\n\n\
+  ---\n> ### Executive Summary\n> - Built an end-to-end **cheminformatics and machine learning pipeline**\n\
+  > - Trained **12 assay-specific toxicity classifiers** using Tox21\n> - Integrated **Lipinski’s Rule\
+  \ of Five** and **QED** with ML predictions\n> - Identified **50 high-confidence, drug-like, low-toxicity\
+  \ compounds**\n> - Emphasized **interpretability, reproducibility, and responsible use**\n\n---\n##\
+  \ Table of Contents\n- [Overview](#overview)\n- [Scientific Motivation](#scientific-motivation)\n- [Dataset](#dataset)\n\
+  \  - [Tox21](#tox21)\n  - [ChEMBL 36](#chembl-36)\n- [Modeling Approach](#modeling-approach)\n- [Model\
+  \ Performance](#model-performance)\n- [Model Interpretability](#model-interpretability)\n- [Stage 9:\
+  \ Drug-Likeness & Toxicity Integration](#drug-likeness--toxicity-integration)\n- [Ranking the Top 50\
+  \ Safest Drug-Like Molecules](#ranking-the-top-50-safest-drug-like-molecules)\n- [Why the Machine Learning\
+  \ Model Was Necessary](#why-the-machine-learning-model-was-necessary)\n- [Model Scope & Limitations](#model-scope--limitations)\n\
+  - [Reproducibility](#reproducibility)\n- [Technologies](#technologies)\n- [Final Note](#final-note)\n\
+  \n---\n\n## Overview\n\nThis project integrates **machine learning–based toxicity prediction** with\
+  \ **medicinal chemistry heuristics** to prioritize **safer, drug-like small molecules**.  \nUsing the\
+  \ **Tox21 dataset**, multiple assay-specific classifiers were trained to learn structural patterns associated\
+  \ with toxicity, and their predictions were combined with **Lipinski’s Rule of Five** and **QED (Quantitative\
+  \ Estimate of Drug-likeness)**.\n\n> **Primary goal:**  \n> Learn toxicity-relevant molecular patterns\
+  \ and demonstrate how ML predictions can be integrated with drug-likeness metrics for **early-stage\
+  \ compound prioritization**, not clinical toxicity prediction.\n\n---\n\n## Scientific Motivation\n\n\
+  In early drug discovery:\n- Drug-likeness ≠ safety  \n- Toxicity is **multifactorial and non-linear**\n\
+  - Experimental screening is costly and slow  \n\nThis project demonstrates how:\n- Machine learning\
+  \ captures **latent toxicity signals**\n- Drug-likeness heuristics alone are insufficient\n- Integrated\
+  \ scoring enables rational **risk-aware prioritization**\n\n---\n\n## Dataset\n\n### Tox21\n- ~7,800\
+  \ small molecules\n- 12 binary toxicity-related assays:\n  - **Nuclear Receptor (NR)** pathways\n  -\
+  \ **Stress Response (SR)** pathways\n\nRaw and processed data are stored in:\n- [`data/raw/tox21.csv`](data/raw/tox21.csv)\n\
+  - [`data/processed/`](data/processed/)\n\n### ChEMBL 36\n- Included as [`data/raw/chembl_36.sdf`](data/raw/chembl_36.sdf)\n\
+  - Used to demonstrate **pipeline extensibility**\n- *Not used for model training or evaluation*\n\n\
+  **Note**\n\nSome of the datasets in this repository are **too large to display on GitHub**. They need\
+  \ to be downloaded separately or generated locally.\n\n### Included / Referenced Datasets\n\n1. **Tox21\
+  \ Dataset**\n   - Raw CSV: `tox21.csv`\n   - Source: [Tox21 on DeepChem](https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/tox21.csv.gz)\n\
+  \   - Processed descriptors (`tox21_descriptors.csv`) are generated locally using RDKit.\n   - Fingerprints\
+  \ (`tox21_morgan_fp.npy`) are generated locally using RDKit.\n\n2. **ChEMBL 36**\n   - SDF file: `chembl_36.sdf`\n\
+  \   - Source: [ChEMBL Database](https://www.ebi.ac.uk/chembl/)\n   - Note: This file is **too large\
+  \ to view on GitHub**.\n\n---\n\n## Modeling Approach\n\n### Molecular Representation\n- RDKit-derived\
+  \ descriptors:\n  - Physicochemical (MolWt, LogP, HBD, HBA)\n  - Electronic (EState, BCUT)\n  - Structural\
+  \ density (Morgan fingerprint density)\n\nDescriptors stored at:  \n[`data/processed/tox21_descriptors.csv`](data/processed/tox21_descriptors.csv)\n\
+  \n### Machine Learning\n- One binary classifier per assay\n- Optimized decision thresholds\n- Evaluation\
+  \ metrics:\n  - ROC-AUC\n  - Precision\n  - Recall\n  - F1-score\n\nAll model metrics are stored at:\
+  \  \n[`results/metrics/model_metrics.csv`](results/metrics/model_metrics.csv)\n\n---\n\n## Model Performance\n\
+  \n### ROC-AUC Summary Across Assays\n![ROC-AUC Summary](results/figures/summary_roc_auc.png)\n\n###\
+  \ Metrics Heatmap\n![Metrics Heatmap](results/figures/metrics_heatmap.png)\n\n**Top-performing assays:**\n\
+  - SR-MMP (ROC-AUC = 0.93)\n- NR-PPAR-gamma (ROC-AUC = 0.88)\n- NR-AhR (ROC-AUC = 0.84)\n\nLower-performing\
+  \ assays reflect biological complexity and class imbalance rather than modeling failure.\n\n---\n\n\
+  ## Model Interpretability\n\n### Feature Importance (Example)\n![Feature Importance – NR-AhR](results/figures/feature_importance_NR-AhR.png)\n\
+  \nAcross assays, consistently important features include:\n- **QED**\n- BCUT descriptors (charge, lipophilicity)\n\
+  - EState and VSA-based descriptors\n\nAggregated feature importances are stored at:  \n[`results/metrics/feature_importances.csv`](results/metrics/feature_importances.csv)\n\
+  \n---\n\n## Drug-Likeness & Toxicity Integration\n\n### Drug-Likeness Scoring\n- Lipinski’s Rule of\
+  \ Five (pass/fail)\n- Quantitative Estimate of Drug-likeness (QED)\n\n**Distribution of QED scores:**\n\
+  ![QED Distribution](results/figures/druglikeness_summary.png)\n\n---\n\n### Toxicity vs Drug-Likeness\
+  \ Overlay\n![Drug-Likeness vs Toxicity](results/figures/druglikeness_vs_toxicity_annotated.png)\n\n\
+  **Interpretation:**\n- **Safe zone:** High QED + Low predicted toxicity\n- **Caution zone:** Drug-like\
+  \ but potential toxicity signals\n- **High-risk zone:** Multiple toxicity pathway activations\n\nThis\
+  \ visualization demonstrates why **drug-likeness alone is insufficient**.\n\n---\n\n### Feature–QED\
+  \ Correlation\n![Feature vs QED Correlation](results/figures/feature_vs_qed_correlation.png)\n\nSeveral\
+  \ top toxicity-driving descriptors show **negative correlation with QED**, suggesting partial antagonism\
+  \ between toxicity drivers and developability.\n\n---\n\n## Ranking the Top 50 Safest Drug-Like Molecules\n\
+  \nFinal prioritization criteria:\n- Lipinski compliant\n- High QED\n- Zero predicted toxicity across\
+  \ all assays\n\nResults saved to:  \n[`results/top_50_safest_druglike_molecules.csv`](results/top_50_safest_druglike_molecules.csv)\n\
+  \n**Summary (Top 50):**\n- Mean QED ≈ 0.88  \n- Mean toxicity score = 0.00  \n\nMolecules are identified\
+  \ by **SMILES**, as Tox21 does not provide compound names.\n\n---\n\n## Why the Machine Learning Model\
+  \ Was Necessary\n\n> Could safer compounds be prioritized without ML?\n\n**Only superficially.**\n\n\
+  - Drug-likeness heuristics do not encode biological toxicity mechanisms\n- ML captures **non-linear\
+  \ interactions** between descriptors\n- The model enables **pattern discovery**, not simple filtering\n\
+  \n---\n\n## Model Scope & Limitations\n\n- Binary assay endpoints\n- No dose–response modeling\n- No\
+  \ clinical interpretation\n- No regulatory claims\n\nThis is an **exploratory, methodological project**\
+  \ aligned with early-stage computational screening.\n\n---\n\n## Reproducibility\n\nKey notebooks:\n\
+  - [`notebooks/01_data_exploration.ipynb`](notebooks/01_data_exploration.ipynb)\n- [`notebooks/02_descriptor_generation.ipynb`](notebooks/02_descriptor_generation.ipynb)\n\
+  - [`notebooks/03_modeling.ipynb`](notebooks/03_modeling.ipynb)\n- [`notebooks/03B_interpretation.ipynb`](notebooks/03B_interpretation.ipynb)\n\
+  - [`notebooks/05_drug_likeness_and_toxicity_integration.ipynb`](notebooks/05_drug_likeness_and_toxicity_integration.ipynb)\n\
+  \nDependencies listed in:  \n[`requirements.txt`](requirements.txt)\n\n---\n\n## Technologies\n- Python\
+  \ 3.10\n- RDKit\n- scikit-learn\n- pandas / NumPy\n- matplotlib / seaborn\n\n---\n\n## Final Note\n\n\
+  This project demonstrates:\n- End-to-end ML pipeline design\n- Domain-aware feature engineering\n- Responsible\
+  \ interpretation of predictive models\n- Integration of machine learning with medicinal chemistry principles\n\
+  \nIt reflects **industry-aligned cheminformatics practice**, not clinical prediction.\n"

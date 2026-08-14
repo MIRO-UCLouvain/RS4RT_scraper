@@ -1,0 +1,238 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: manolina-13/BRATS2020_imageSegmentation_UNet
+url: https://github.com/manolina-13/BRATS2020_imageSegmentation_UNet
+platform: github
+description: A PyTorch U-Net model for detecting brain tumors in BraTS2020 MRI scans. It features custom
+  data loading, weighted BCE loss to handle class imbalance, learning rate scheduling, model checkpointing,
+  and evaluation using the Dice Coefficient.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-24T08:38:58Z'
+image_source: https://raw.githubusercontent.com/manolina-13/BRATS2020_imageSegmentation_UNet/HEAD/val_dice%203.png
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: '# U-Net Brain Tumor Segmentation (BraTS2020)
+
+
+  This project implements a **U-Net deep learning model in PyTorch** for medical image segmentation, specifically
+  targeting brain tumor detection using 2D MRI slices from the **BraTS2020 dataset**. The model is trained
+  to perform binary segmentation—differentiating tumor regions from healthy brain tissue. To handle the
+  highly imbalanced nature of medical images (where tumors are often very small), it utilizes class-weighted
+  Binary Cross-Entropy (BCE) loss. The end-to-end pipeline includes custom data loading, dynamic learning
+  rate scheduling, model checkpointing, and evaluation using the **Dice Coefficient** to accurately measure
+  the overlap between the model''s predictions and expert-ground truth masks.
+
+
+  ## Results
+
+
+  - **Best Validation Dice Score: 0.7976**
+
+  - Trained for 200 epochs on Google Colab (T4 GPU)
+
+
+  ### Learning Curves
+
+
+  ![Learning Curves](val_dice%203.png)
+
+
+  ### Test Prediction
+
+
+  ![Test Prediction](test_prediction_visulization.png)
+
+
+  ## Architecture
+
+
+  The model uses a standard **U-Net** encoder-decoder architecture with skip connections:
+
+
+  - **Encoder**: 4 levels of `DoubleConv` (Conv2d → BatchNorm → ReLU) × 2 + MaxPool
+
+  - **Bottleneck**: DoubleConv block
+
+  - **Decoder**: 4 levels of ConvTranspose2d (upsample) + skip connection concatenation + DoubleConv
+
+  - **Output**: 1×1 Conv2d → sigmoid for binary prediction
+
+
+  | Component | Details |
+
+  |-----------|---------|
+
+  | Input | RGB MRI images (3 channels) |
+
+  | Output | Binary tumor mask (1 channel) |
+
+  | Feature sizes | [64, 128, 256, 512] |
+
+  | Loss function | BCEWithLogitsLoss (pos_weight=5.0) |
+
+  | Optimizer | Adam (lr=1e-4) |
+
+  | Scheduler | ReduceLROnPlateau (patience=5) |
+
+  | Metric | Dice Coefficient |
+
+
+  ## Dataset
+
+
+  **BraTS2020 2D Multichannel** from Kaggle:
+
+  - 368 brain MRI images with corresponding segmentation masks
+
+  - Split: 80% train / 10% validation / 10% test
+
+
+  📥 Download: [Kaggle - 2D Multichannel BraTS2020](https://www.kaggle.com/datasets/alilebanizakaria/2d-multichannel-brats2020)
+
+
+  After downloading, place the dataset folder in the project directory:
+
+  ```
+
+  Image_segmentation_unet/
+
+  ├── BraTS2020 2D Multichannel/
+
+  │   ├── Images/
+
+  │   ├── Masks/
+
+  │   └── metadata.csv
+
+  ├── unet_brain_tumor_segmentation.py
+
+  └── ...
+
+  ```
+
+
+  ## Setup
+
+
+  ### 1. Install dependencies
+
+
+  ```bash
+
+  pip install -r requirements.txt
+
+  ```
+
+
+  ### 2. Download dataset
+
+
+  Download from Kaggle and extract to the project directory. Or use the download script:
+
+
+  ```python
+
+  import kagglehub
+
+  path = kagglehub.dataset_download("alilebanizakaria/2d-multichannel-brats2020")
+
+  print("Path to dataset files:", path)
+
+  ```
+
+
+  ### 3. Run training
+
+
+  ```bash
+
+  # Default settings (100 epochs, batch_size=16)
+
+  python unet_brain_tumor_segmentation.py
+
+
+  # Custom settings
+
+  python unet_brain_tumor_segmentation.py --epochs 200 --batch_size 8 --lr 1e-4
+
+
+  # Specify dataset path
+
+  python unet_brain_tumor_segmentation.py --data_dir "path/to/BraTS2020 2D Multichannel"
+
+  ```
+
+
+  ### Command Line Arguments
+
+
+  | Argument | Default | Description |
+
+  |----------|---------|-------------|
+
+  | `--data_dir` | `BraTS2020 2D Multichannel` | Path to dataset directory |
+
+  | `--epochs` | `200` | Number of training epochs |
+
+  | `--batch_size` | `16` | Batch size |
+
+  | `--lr` | `1e-4` | Learning rate |
+
+  | `--pos_weight` | `5.0` | Positive class weight for BCE loss |
+
+  | `--model_path` | `best_unet_model.pth` | Path to save best model |
+
+
+  ## Project Structure
+
+
+  ```
+
+  Image_segmentation_unet/
+
+  ├── unet_brain_tumor_segmentation.py   # Main training script
+
+  ├── requirements.txt                    # Python dependencies
+
+  ├── README.md                           # This file
+
+  ├── .gitignore                          # Git ignore rules
+
+  ├── test_prediction_visulization.png    # Sample prediction output
+
+  └── val_dice 3.png                      # Training curves
+
+  ```
+
+
+  ## Tech Stack
+
+
+  - Python 3.8+
+
+  - PyTorch
+
+  - NumPy
+
+  - Matplotlib
+
+  - Pandas
+
+  - scikit-learn
+
+  - Pillow
+
+
+
+  ## Contact
+
+  - Email: [manolinadas2004@gmail.com]
+
+  '

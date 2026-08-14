@@ -1,0 +1,135 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: MohanadMahran/Brain_Tumor_Benchmark
+url: https://github.com/MohanadMahran/Brain_Tumor_Benchmark
+platform: github
+description: 'A comprehensive, highly-optimized, and fair benchmarking framework for comparing 3D Convolutional
+  Neural Networks (3D U-Net) and Vision Transformers (UNETR) on the complex task of brain tumor segmentation
+  using multi-modal MRI scans. '
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-22T20:12:16Z'
+image_source: null
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+readme_excerpt: "# \U0001F9E0 3D Brain Tumor Segmentation Benchmark: 3D U-Net vs UNETR\n\n[![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)\n\
+  [![PyTorch](https://img.shields.io/badge/PyTorch-2.2%2B-ee4c2c.svg)](https://pytorch.org/)\n[![MONAI](https://img.shields.io/badge/MONAI-1.3%2B-2d335c.svg)](https://monai.io/)\n\
+  [![Hugging Face 3D U-Net](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-3D%20U--Net-yellow.svg)](https://huggingface.co/MohanadKombar/brain-tumor-unet3d-brats)\n\
+  [![Hugging Face UNETR](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-UNETR-yellow.svg)](https://huggingface.co/MohanadKombar/brain-tumor-unetr-brats)\n\
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n\
+  \nA comprehensive, evidence-based benchmarking framework comparing 3D Convolutional Neural Networks\
+  \ (**3D U-Net**) and Vision Transformers (**UNETR**) for 3D multi-modal brain tumor segmentation.\n\n\
+  Models were trained on a composite, MD5-deduplicated dataset derived from **BraTS 2021** and **BraTS\
+  \ 2024 Adult Glioma** (1,560 training cases, 391 validation cases), and evaluated out-of-distribution\
+  \ on the independent **UPenn-GBM** benchmark dataset (30 cases, exclusively Glioblastoma).\n\n---\n\n\
+  ## \U0001F4D6 Table of Contents\n- [Overview](#-overview)\n- [Pre-trained Models](#-pre-trained-models)\n\
+  - [Key Features](#-key-features)\n- [Benchmark Results](#-benchmark-results)\n- [Sample Predictions](#-sample-predictions)\n\
+  - [Training Summary](#-training-summary)\n- [Installation](#-installation)\n- [Data Preparation](#-data-preparation)\n\
+  - [Project Structure](#-project-structure)\n- [Running the Pipeline](#-running-the-pipeline)\n- [Configuration](#-configuration)\n\
+  - [Experiment Tracking](#-experiment-tracking)\n- [Design Decisions](#-design-decisions)\n- [Limitations\
+  \ & Scope](#-limitations--scope)\n- [Reproducibility](#-reproducibility)\n\n---\n\n## \U0001F31F Overview\n\
+  \nThis project provides a controlled empirical comparison between 3D CNN and 3D Vision Transformer architectures\
+  \ for medical image segmentation.\n\n---\n\n## \U0001F917 Pre-trained Models\n\nBoth models are published\
+  \ on Hugging Face Hub with self-contained architecture modules, standalone inference scripts, and full\
+  \ model cards:\n\n| Architecture | Parameters | Val Dice | Hugging Face Repository | Direct Model Weights\
+  \ |\n| :--- | :---: | :---: | :---: | :---: |\n| **3D U-Net** | 19,992,603 (~19.99M) | **0.8694** |\
+  \ [`MohanadKombar/brain-tumor-unet3d-brats`](https://huggingface.co/MohanadKombar/brain-tumor-unet3d-brats)\
+  \ | [Download `pytorch_model.bin`](https://huggingface.co/MohanadKombar/brain-tumor-unet3d-brats/resolve/main/pytorch_model.bin)\
+  \ |\n| **UNETR** | 19,327,907 (~19.33M) | 0.8362 | [`MohanadKombar/brain-tumor-unetr-brats`](https://huggingface.co/MohanadKombar/brain-tumor-unetr-brats)\
+  \ | [Download `pytorch_model.bin`](https://huggingface.co/MohanadKombar/brain-tumor-unetr-brats/resolve/main/pytorch_model.bin)\
+  \ |\n\n### Quick Inference from Hugging Face Hub\n\n```python\nimport torch\nfrom huggingface_hub import\
+  \ hf_hub_download\n\n# Download and load 3D U-Net or UNETR from Hugging Face\nfrom huggingface.unet3d.inference\
+  \ import load_model, predict\n\nmodel, metadata = load_model(\"MohanadKombar/brain-tumor-unet3d-brats\"\
+  )\nprobabilities = predict(model, torch.randn(1, 4, 128, 128, 128))\n```\n\n### Evaluated Architectures\
+  \ & Parameter Parity:\n1. **3D U-Net**: Purely convolutional encoder-decoder network. Configured with\
+  \ **19,992,603 parameters** (~19.99M), utilizing `GroupNorm` (groups=4) and base channel width of 60\
+  \ progressing through `[60, 120, 240, 480]`.\n2. **UNETR (UNet Transformers)**: Vision Transformer encoder\
+  \ with CNN decoder. Configured with **19,327,907 parameters** (~19.33M), utilizing `LayerNorm`, an embedding\
+  \ dimension of 384, 6 transformer layers, 8 attention heads, and $16 \\times 16 \\times 16$ patch tokenization.\
+  \ Incorporates PyTorch gradient checkpointing.\n\n> **Core Fairness Constraint**: The parameter counts\
+  \ of both models differ by only **3.44%** ($|19.99\\text{M} - 19.33\\text{M}| / 19.33\\text{M}$), satisfying\
+  \ the project's strict $\\le 5\\%$ parameter parity tolerance constraint for fair architectural evaluation.\n\
+  \nBoth models accept 4-channel input MRI scans (T1, T1Gd, T2, FLAIR) preprocessed to $128 \\times 128\
+  \ \\times 128$ spatial patch resolution and predict 3 overlapping tumor sub-regions:\n- **Enhancing\
+  \ Tumor (ET)** — Label 4\n- **Tumor Core (TC)** — Labels 1 + 4\n- **Whole Tumor (WT)** — Labels 1 +\
+  \ 2 + 4\n\n---\n\n## ✨ Key Features\n\n- **Empirical Rigor**: Strict parameter matching (~19.3M–19.99M)\
+  \ trained under identical optimizers, schedulers, augmentations, and effective batch sizes.\n- **Hardware\
+  \ Optimization**: FP16 Mixed Precision (AMP), Gradient Checkpointing (UNETR), and 4-step Gradient Accumulation\
+  \ enable efficient execution on single GPUs.\n- **Data Integrity**: MD5-hash cross-year deduplication\
+  \ prevents data leakage between BraTS 2021 and BraTS 2024 datasets.\n- **Robust Evaluation**: Standardized\
+  \ 3D Dice score and 95th percentile Hausdorff Distance (HD95) with label remapping ($3 \\to 4$) for\
+  \ out-of-distribution benchmarks.\n- **Full Traceability**: Automated MLflow logging for metrics, hyperparameters,\
+  \ VRAM allocations, and SLURM wall-time safety checkpoints.\n\n---\n\n## \U0001F4CA Benchmark Results\n\
+  \nBoth models were evaluated on the independent **UPenn-GBM** out-of-distribution benchmark cohort (30\
+  \ cases, 4 MRI modalities each). The key quantitative metrics and generalization performance are summarized\
+  \ below:\n\n### UPenn-GBM Evaluation Performance (30 Cases)\n\n| Metric / Dimension | 3D U-Net | UNETR\
+  \ | Delta (U-Net vs UNETR) | Advantage |\n| :--- | :---: | :---: | :---: | :---: |\n| **Model Parameters**\
+  \ | 19,992,603 (~19.99M) | 19,327,907 (~19.33M) | +664,696 (+3.44%) | Parity Held (<5%) |\n| **BraTS\
+  \ Val Mean Dice (391 cases)** | **0.8694** | 0.8362 | +0.0332 (+3.32%) | **3D U-Net** |\n| **UPenn Mean\
+  \ Dice** | **0.5186 ± 0.3223** | 0.4749 ± 0.3007 | +0.0437 (+4.37%) | **3D U-Net** |\n| **UPenn ET Dice\
+  \ (Enhancing Tumor)** | **0.5188 ± 0.3809** | 0.4454 ± 0.3223 | +0.0734 (+7.34%) | **3D U-Net** |\n\
+  | **UPenn TC Dice (Tumor Core)** | 0.4855 ± 0.3658 | **0.4976 ± 0.3387** | -0.0121 (-1.21%) | **UNETR**\
+  \ |\n| **UPenn WT Dice (Whole Tumor)** | **0.5514 ± 0.2616** | 0.4818 ± 0.2887 | +0.0696 (+6.96%) |\
+  \ **3D U-Net** |\n| **UPenn Mean HD95 (mm)** | 90.58 ± 31.52 | **87.71 ± 27.26** | +2.87 mm | **UNETR**\
+  \ |\n| **UPenn ET HD95 (mm)** | **73.43 ± 54.37** | 74.94 ± 43.55 | -1.51 mm | **3D U-Net** |\n| **UPenn\
+  \ TC HD95 (mm)** | 105.50 ± 32.90 | **93.10 ± 32.62** | +12.40 mm | **UNETR** |\n| **UPenn WT HD95 (mm)**\
+  \ | **92.81 ± 20.13** | 95.08 ± 17.67 | -2.27 mm | **3D U-Net** |\n| **Generalization Gap (`dice_drop_vs_val`)**\
+  \ | **35.08%** (0.8694 → 0.5186) | 36.13% (0.8362 → 0.4749) | -1.05% drop | **3D U-Net** |\n| **Inference\
+  \ Time per Case** | 4.58s ± 0.42s | **1.84s ± 0.19s** | -2.74s (-59.8%) | **UNETR (2.48x faster)** |\n\
+  | **Evaluation Peak VRAM** | 3,718 MB (~3.72 GB) | **1,979 MB (~1.98 GB)** | -1,739 MB (-46.8%) | **UNETR**\
+  \ |\n\n### Key Scientific Findings & Interpretation:\n\n1. **Generalization Gap (Domain Shift)**:\n\
+  \   - Both models experienced severe performance degradation when evaluated out-of-distribution on UPenn-GBM\
+  \ compared to their BraTS validation scores (**>35 percentage points drop**).\n   - **3D U-Net** demonstrated\
+  \ higher domain robustness, retaining a mean Dice of **0.5186** compared to UNETR's **0.4749** (+4.37%\
+  \ absolute improvement). Its generalization gap was slightly smaller (**35.08%** vs **36.13%**).\n\n\
+  2. **Region-Specific Performance Dynamics**:\n   - **3D U-Net** outperformed UNETR substantially on\
+  \ **Enhancing Tumor (ET: 0.5188 vs 0.4454)** and **Whole Tumor (WT: 0.5514 vs 0.4818)** boundary segmentation.\
+  \ Local inductive biases of 3D convolutions preserve fine-grained spatial contrast and high-frequency\
+  \ edge details better across scanner shifts.\n   - **UNETR** achieved slightly superior performance\
+  \ on **Tumor Core (TC: 0.4976 vs 0.4855)** and produced lower boundary distance errors for the tumor\
+  \ core (**TC HD95: 93.10 mm vs 105.50 mm**), leveraging global self-attention to model long-range context\
+  \ across necrotic sub-regions.\n\n3. **Computational Efficiency**:\n   - **UNETR** proved significantly\
+  \ more computationally efficient during sliding-window inference, taking only **1.84 seconds per case**\
+  \ (**2.48x faster** than 3D U-Net's 4.58s) and consuming **46.8% less peak VRAM** (1.98 GB vs 3.72 GB).\n\
+  \n4. **Statistical Limitation**:\n   - With $N = 30$ benchmark cases, sample variance is high ($\\text{std}\
+  \ \\approx 0.30 - 0.38$). Extremely difficult clinical cases with severe tissue distortion or atypical\
+  \ scanner contrast (e.g., `UPENN-GBM-00307` and `UPENN-GBM-00388`) yielded near-zero Dice scores for\
+  \ both models.\n\n---\n\n## \U0001F5BC️ Sample Predictions\n\nBelow are the 3D axial slice traversal\
+  \ animations for case `UPENN-GBM-00307` from the UPenn-GBM benchmark, comparing Ground Truth annotations\
+  \ against 3D U-Net and UNETR model predictions:\n\n| Ground Truth (GT) | 3D U-Net Prediction | UNETR\
+  \ Prediction |\n| :---: | :---: | :---: |\n| ![Ground Truth](gifs/segm_t1.gif) | ![3D U-Net](gifs/unet3d_t1.gif)\
+  \ | ![UNETR](gifs/unetr_t1.gif) |\n| **Ground Truth Mask** | **3D U-Net Prediction** | **UNETR Prediction**\
+  \ |\n\n---\n\n## \U0001F4C8 Training Summary\n\nTraining was executed on High-Performance Computing\
+  \ (HPC) infrastructure with SLURM wall-time safety preemption.\n\n### Training Progress & Timeline\n\
+  \n| Parameter / Milestone | 3D U-Net | UNETR |\n| :--- | :---: | :---: |\n| **Configured `num_epochs`**\
+  \ | 500 | 500 |\n| **Epochs Actually Completed** | **500** (Epochs 0 to 499) | **500** (Epochs 0 to\
+  \ 499) |\n| **Early Stopping Triggered** | **No** (`early_stopped: False`) | **No** (`early_stopped:\
+  \ False`) |\n| **Patience Limit** | 30 epochs | 30 epochs |\n| **SLURM Resumes Count** | 4 Resumes (Jobs\
+  \ 1735919 → 1745082 → 1747730 → 1750715 → 1751820) | 3 Resumes (Jobs 1737596 → 1745081 → 1747729 → 1750014)\
+  \ |\n| **Peak Training VRAM** | **19,025 MiB** (~19.03 GB) | **7,026 MiB** (~7.03 GB) |\n| **Best Val\
+  \ Mean Dice (BraTS)** | **0.8694** (Achieved at **Epoch 419**) | **0.8362** (Achieved at **Epoch 469**)\
+  \ |\n| **Final Checkpoint Val Dice** | 0.8668 (Epoch 499) | 0.8361 (Epoch 499) |\n\n### Training Loss\
+  \ & Learning Rate Schedule:\n- **Loss Function**: Combined DiceCE Loss (Soft Dice Loss + Cross Entropy).\n\
+  - **Optimization**: AdamW optimizer ($1.0\\times 10^{-5}$ weight decay).\n- **3D U-Net LR**: Initial\
+  \ base $\\text{LR} = 3.0 \\times 10^{-4}$, 10-epoch linear warmup, followed by Cosine Annealing decay\
+  \ down to $\\text{min\\_lr} = 1.0 \\times 10^{-6}$ at epoch 500.\n- **UNETR LR**: Initial base $\\text{LR}\
+  \ = 1.0 \\times 10^{-4}$, 15-epoch linear warmup, followed by Cosine Annealing decay down to $\\text{min\\\
+  _lr} = 1.0 \\times 10^{-6}$ at epoch 500.\n- Both models exhibited smooth loss decay (3D U-Net: $0.60+\
+  \ \\to 0.279$; UNETR: $0.65+ \\to 0.279$) without numerical instability or gradient explosions.\n\n\
+  ---\n\n## \U0001F6E0 Installation\n\nThis project uses [Astral UV](https://github.com/astral-sh/uv)\
+  \ for fast, deterministic dependency resolution.\n\n1. **Install UV:**\n   ```bash\n   curl -LsSf https://astral.sh/uv/install.sh\
+  \ | sh\n   ```\n\n2. **Clone the Repository:**\n   ```bash\n   git clone https://github.com/MohanadMahran/Brain_Tumor_Benchmark.git\n\
+  \   cd Brain_Tumor_Benchmark\n   ```\n\n3. **Synchronize Dependencies:**\n   ```bash\n   uv sync\n \
+  \  ```\n\n---\n\n## \U0001F4C2 Data Preparation\n\nData must be structured under `data/raw/`:\n\n###\
+  \ 1. Training Set (BraTS 2021 + BraTS 2024)\n- **BraTS 2021**: 1,251 multi-modal cases.\n- **BraTS 2024\
+  \ Adult Glioma**: 700 cases.\n- **Deduplication**: Executed via MD5 hash comparison on raw `.nii.gz`\
+  \ volumes (`verify_deduplicate.py`). Yielded 1,951 unique pool cases (0 duplicates found across sets).\
+  \ Split deterministically into **1,560 training cases** and **391 validation cases** (80/20 split, seed\
+  \ 42).\n\n### 2. Independent Out-of-Distribution Benchmark (UPenn-GBM)\n- **UPenn-GBM**: 30 cases from\
+  \ the UPenn-GBM TCIA collection (exclusively Glioblastoma).\n- **Label Remapping**: UPenn-GBM encodes\
+  \ Enhancing Tumor as label"

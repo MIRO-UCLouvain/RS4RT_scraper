@@ -1,0 +1,79 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: camagnif/Realistic-MRI-CT-XCAT-Phantoms-for-Validating-MRI-Based-Deep-Learning-SynthCT-Methods
+url: https://github.com/camagnif/Realistic-MRI-CT-XCAT-Phantoms-for-Validating-MRI-Based-Deep-Learning-SynthCT-Methods
+platform: github
+description: This project addresses the lack of high-quality paired datasets for multimodal deep learning
+  in medical imaging by offering a synthetic yet realistic validation dataset. It bridges the gap between
+  synthetic and clinical data, enabling more robust and meaningful evaluation of AI models for medical
+  image synthesis.
+license: null
+language: Python
+keywords: []
+stars: 2
+updated_at: '2026-01-25T08:34:13Z'
+image_source: https://raw.githubusercontent.com/camagnif/Realistic-MRI-CT-XCAT-Phantoms-for-Validating-MRI-Based-Deep-Learning-SynthCT-Methods/HEAD/images/Graphical_Abstract_Camagni_hr.jpg
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Realistic-MRI-CT-XCAT-Phantoms-for-Validating-MRI-Based-Deep-Learning-SynthCT-Methods\n\
+  \nThis repository contains code corresponding to the implementation described in:\nCamagni, F., Nakas,\
+  \ A., & Paganelli, C. (2025). [Generation of multimodal realistic computational phantoms as a test-bed\
+  \ for validating deep learning-based cross-modality synthesis techniques.](https://doi.org/10.1007/s11517-025-03437-4)\
+  \  \nPlease refer to the paper for detailed methodology and experimental context.\n\nThis repository\
+  \ contains code for generating realistic multimodal (i.e., CT and MRI) computational phantoms to validate\
+  \ AI models. Traditional phantoms often fail to capture the continuous, noisy, and heterogeneous characteristics\
+  \ of clinical data, causing artifacts and inflated error metrics when evaluating GAN-based models trained\
+  \ on patient data.\n\nKey contributions:\n- Creation of multimodal phantom datasets using CycleGANs\
+  \ that statistically resemble clinical data while retaining known ground truth.\n- Evaluation of generated\
+  \ data through paired and unpaired assessments.\n- Providing a controlled, realistic test set for synthetic\
+  \ CT generation models trained on real abdominal MRI, bridging the gap between synthetic and real domains.\n\
+  \n#### Graphical abstract describing the work\n\n<p align=\"center\">\n  <img src=\"images/Graphical_Abstract_Camagni_hr.jpg\"\
+  \ alt=\"Workflow diagram\" width=\"900\">\n</p>\n\n---\n\n## Usage of 'prediction' folder\n\nThis repository\
+  \ allows to convert an **abdominal XCAT phantom volume** (`.mha` format) into a realistic, patient-like\
+  \ CT using a trained CycleGAN model.  \nThe network has been trained exclusively on **abdominal CT images**,\
+  \ therefore the input phantom must be cropped to this anatomical region before running the workflow.\
+  \  \nThe process consists of three main steps: **phantom preprocessing**, **HDF5 dataset creation**,\
+  \ and **generation of the realistic output**.\n\n### Repository Structure\n\nThe `prediction` folder\
+  \ contains:\n\n- `preprocessing_phantom.py` for cropping, padding, resizing, and verifying organ HU\
+  \ values.  \n- `ph_hdf5_creation.py` to store the preprocessed phantom images into a HDF5 file suitable\
+  \ for model input.  \n- `realistic_prediction.py` which divides each image into patches, runs the generator\
+  \ network on each patch and reconstructs the full realistic volume.  \n- `config.py` to set user-specific\
+  \ parameters, i.e., paths, patch size, stride, generator weights, and intensity ranges.  \n- `utils/`\
+  \ with functions for preprocessing, hdf5 storing and prediction.  \n- `model.py` which defines the network\
+  \ architecture.\n\n\n### Workflow Overview\n\n1. **Preprocessing (`pre_processing_phantom.py`)**  \n\
+  \   The phantom is cropped to remove background, padded with a 20-voxel border, resized to 320×260,\
+  \ and organ values are verified against the training set. Invalid values must be manually replaced (see\
+  \ pre_processing_phantom.py file for details).\n\n2. **HDF5 Creation (`ph_hdf5_creation.py`)**  \n \
+  \  Preprocessed slices are normalized to [-1, +1] and stored in an HDF5 file with relevant metadata\
+  \ for model inference.\n\n3. **Realistic Prediction (`realistic_prediction.py`)**  \n   Each image is\
+  \ divided into patches sized 256×256, processed through the trained generator, and recombined into full\
+  \ slices. Intensities are remapped to realistic ranges: –1000 to +1047 according to patient CTs used\
+  \ in this study.\n\n\n### MRI-specific notes\n\nThe same workflow applies to MRI data, with the following\
+  \ adjustments:\n\n1. **Phantom preparation:**  \n   Generate the corresponding MRI version of the XCAT\
+  \ phantom by assigning MRI VIBE intensity values to each organ, in accordance with the MRI sequence\
+  \ used during CycleGAN training.\n\n2. **Network weights:**  \n   Use the MRI generator weights (`generator_g_59.h5`)\
+  \ located in the `weights/MRI/` folder.\n\n3. **Value range:**  \n   In `config.py`, set the output\
+  \ remapping range to `0–100`, matching the patient MRI dataset used for training.\n\n\n### Example usage\n\
+  \nAfter having defined all user-specific parameters in `config.py`,\n\n```bash\n# 1. Preprocess the\
+  \ input phantom\npython preprocessing_phantom.py \n# 2. Store preprocessed phantom into HDF5 file\n\
+  python ph_hdf5_creation.py \n# 3. Generate realistic CT\npython realistic_prediction.py\n```\n\n###\
+  \ Example of realistic predictions\n\n<p align=\"center\">\n  <img src=\"images/Example.jpg\" alt=\"\
+  Realistic images\" width=\"900\">\n</p>\n\n---\n\n## Training and Reproduction of the Study\n\nTo replicate\
+  \ the experiments and retrain the CycleGAN model on a **custom dataset**, refer to the scripts available\
+  \ in the `main/` folder.\n\n### MRI-based pipeline\n\n- **`pzMRI_phCOMBAT_preprocessing.py`**  \n  Handles\
+  \ preprocessing for both *patient MRI VIBE* images and *phantom MRI (COMBAT)* data.  \n  It also creates\
+  \ the corresponding HDF5 files required for model training.\n\n- **`Realistic_phantoms_CycleGAN_MRI.py`**\
+  \  \n  Takes the preprocessed HDF5 training files as input, defines the CycleGAN model architecture,\
+  \ and performs the training procedure.\n\n- **`RealisticMRI_prediction.py`**  \n  Prepares the test\
+  \ HDF5 file and uses the trained model to generate the realistic MRI version of the input phantom.\n\
+  \n- **`Metrics_MRI.py`**  \n  Computes *paired* and *unpaired* evaluation metrics, as described in the\
+  \ manuscript.\n\n\n### CT-based pipeline\n\nTo train the same network on **CT data** instead of MRI:\n\
+  \n- Use **`preprocessingCT_hdf5.py`** instead of `pzMRI_phCOMBAT_preprocessing.py` for data preprocessing.\
+  \  \n- The remaining scripts for **model training**, **prediction**, and **metric computation** remain\
+  \ valid.  \n- Only update:\n  - The folder and file paths  \n  - The naming conventions  \n  - The output\
+  \ intensity range mapping:  \n    - **0–100** for MRI  \n    - **–1000 to +1047** for CT\n\n---\n\n\n"

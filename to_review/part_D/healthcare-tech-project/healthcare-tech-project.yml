@@ -1,0 +1,125 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: prajwalSatannavar623/Healthcare-Tech-Project
+url: https://github.com/prajwalSatannavar623/Healthcare-Tech-Project
+platform: github
+description: 'Brain Tumor Segmentation via ResUNet | CNNs, Medical Imaging '
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-08T18:29:13Z'
+image_source: https://raw.githubusercontent.com/prajwalSatannavar623/Healthcare-Tech-Project/HEAD/src/assest/classDistribution.png
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+readme_excerpt: "# Brain MRI Tumor Segmentation (ResUNET)\n\n## \U0001F4CC Problem Statement & Overview\n\
+  \nThe objective of this project is to automate the detection and segmentation of brain tumors from magnetic\
+  \ resonance imaging (MRI) scans. By building and training a custom ResUNET deep learning architecture,\
+  \ this tool aims to assist in the precise extraction of tumor masks, showcasing how artificial intelligence\
+  \ can be leveraged for early diagnostic monitoring and advanced healthcare imaging.\n\n## \U0001F4CA\
+  \ Dataset\n\n- **Source:** [Kaggle - LGG MRI Segmentation Dataset](https://www.kaggle.com/mateuszbuda/lgg-mri-segmentation)\n\
+  - **Description:** The dataset contains brain MRIs together with manual FLAIR abnormality segmentation\
+  \ masks.\n\n## \U0001F4DA Core Libraries & Dependencies\n\nThe project leverages a robust stack of data\
+  \ science and deep learning tools:\n\n- **Data Handling & Visualization:** `pandas`, `numpy`, `seaborn`,\
+  \ `matplotlib`\n- **Image Processing:** `cv2` (OpenCV), `skimage.io` (scikit-image)\n- **Deep Learning\
+  \ Framework:** `tensorflow.keras` (utilizing `ResNet50` and `DenseNet121` architectures)\n- **Training\
+  \ Callbacks:** `EarlyStopping`, `ModelCheckpoint`, `ReduceLROnPlateau`, `LearningRateScheduler`\n\n\
+  ## \U0001F5C2️ Dataset Structure & Metadata\n\nThe data pipeline is driven by a metadata file (`data_mask.csv`)\
+  \ consisting of **3,929 entries**. This file systematically maps each patient to their specific MRI\
+  \ scans and diagnostic masks, allowing for efficient data generator feeding during training.\n\nThe\
+  \ metadata dataframe structure is as follows:\n\n- `patient_id` (string): Unique identifier for the\
+  \ patient.\n- `image_path` (string): File path to the raw Brain MRI scan.\n- `mask_path` (string): File\
+  \ path to the corresponding ground-truth segmentation mask.\n- `mask` (integer): Binary indicator representing\
+  \ the presence or absence of a tumor in the slice.\n\n> **Environment Note:** The exploratory notebook\
+  \ was initially developed within Google Colab utilizing mounted Google Drive paths (`/content/drive/...`).\
+  \ To run this repository locally, the base directory path must be updated to point to your local `data/`\
+  \ directory.\n\n## \U0001F4C8 Exploratory Data Analysis (EDA) & Visualization\n\nBefore training the\
+  \ model, extensive visual data inspection is performed to understand the distribution and structure\
+  \ of the medical imagery.\n\nThe notebook includes three primary visualization tiers:\n\n- **Class Distribution\
+  \ (Interactive):** Utilizing `plotly.graph_objects`, an interactive bar chart displays the distribution\
+  \ of the dataset based on the `mask` variable (0 for no tumor, 1 for tumor presence).\n- **Raw Image\
+  \ Inspection:** Random sampling of the dataset plots the raw Brain MRI scans side-by-side with their\
+  \ corresponding binary masks to visually verify data integrity.\n- **Advanced Mask Overlay:** To better\
+  \ understand spatial correlations, the binary masks are applied directly onto the original MRI scans.\
+  \ Regions where the tumor mask is present (`pixel value == 255`) are isolated and highlighted in red\
+  \ (`RGB: 255, 0, 0`) over the original scan.\n\n### Visualization Samples\n\n**Class Distribution:**\n\
+  \n> ![Class Distribution](/src/assest/classDistribution.png)\n\n**Advanced Overlay (MRI + Highlighted\
+  \ Mask):**\n| Original Brain MRI | Ground Truth Mask | MRI with Red Mask Overlay |\n| :---: | :---:\
+  \ | :---: |\n| ![MRI](/src/assest/BrainMRI.png) | ![Mask](/src/assest/Mask.png) | ![Overlay](/src/assest/Overlay.png)\
+  \ |\n\n## \U0001F9E0 Phase 1: Tumor Classification (ResNet50)\n\nBefore segmenting the tumors, the pipeline\
+  \ implements a preliminary classification phase to detect the mere presence or absence of a tumor within\
+  \ a given slice. This acts as an initial filter to optimize the overall detection process.\n\n### Data\
+  \ Preprocessing & Augmentation\n\n- **Splitting:** The dataset is divided using an 85/15 Train-Test\
+  \ split. A further 15% of the training data is reserved for validation during the training loops.\n\
+  - **Image Generation:** `ImageDataGenerator` is utilized to dynamically stream the images in batches\
+  \ of 16, scaling pixel values down to a `0-1` range (`rescale=1./255.`) and standardizing the target\
+  \ image size to `256x256`.\n\n### Classifier Architecture (Transfer Learning)\n\nThe model leverages\
+  \ Transfer Learning by utilizing a pretrained **ResNet50** architecture as its foundational feature\
+  \ extractor.\n\n- **Base Model:** ResNet50 (Pretrained on ImageNet). The base convolutional layers are\
+  \ frozen to retain their learned feature-extraction capabilities.\n- **Custom Classification Head:**\
+  \ \\* `AveragePooling2D` (4x4)\n  - `Flatten`\n  - `Dense` (256 units, ReLU activation) + `Dropout`\
+  \ (30%)\n  - `Dense` (256 units, ReLU activation) + `Dropout` (30%)\n  - `Dense` (2 units, Softmax activation)\
+  \ for binary categorical output (Tumor vs. No Tumor).\n\n### Training Configuration\n\n- **Optimizer:**\
+  \ Adam\n- **Loss Function:** Categorical Crossentropy\n- **Callbacks:** \\* `EarlyStopping`: Monitors\
+  \ validation loss, halting training if no improvement is seen for 20 epochs.\n  - `ModelCheckpoint`:\
+  \ Automatically saves the best model weights (`classifier-resnet-weights.hdf5`) based on validation\
+  \ performance.\n\n### Performance & Evaluation\n\nThe preliminary classification model achieved an exceptional\
+  \ baseline on the hold-out test set, ensuring that only relevant, tumor-positive MRI slices are passed\
+  \ to the segmentation phase.\n\n**Key Metrics:**\n\n- **Overall Test Accuracy:** 98.61%\n\n**Classification\
+  \ Report:**\n| Class | Precision | Recall | F1-Score | Support |\n| :--- | :---: | :---: | :---: | :---:\
+  \ |\n| **0 (No Tumor)** | 0.98 | 0.99 | 0.99 | 355 |\n| **1 (Tumor Present)** | 0.99 | 0.97 | 0.98 |\
+  \ 221 |\n\n**Confusion Matrix:**\nVisual evaluation of the model's performance was mapped using a Seaborn\
+  \ heatmap to analyze True Positive and False Positive rates.\n\n> ![Confusion Matrix](/src/assest/ConfusionMatrix.png)\n\
+  \n## \U0001F3AF Phase 2: Tumor Segmentation (ResUNET)\n\nFollowing the initial classification, positive\
+  \ cases (MRIs containing tumors) are passed into a custom segmentation model to accurately localize\
+  \ the tumor boundary at the pixel level.\n\n### Custom Data Generation Pipeline\n\n- The dataset is\
+  \ aggressively filtered to only include images where `mask == 1`.\n- It is split into **Training (85%)**,\
+  \ **Validation (7.5%)**, and **Testing (7.5%)** sets.\n- A custom `DataGenerator` (defined in `utilities.py`)\
+  \ is implemented to handle the parallel streaming of the MRI inputs and their corresponding mask paths\
+  \ into the segmentation model.\n\n### Architecture: ResUNET\n\nThe segmentation model combines the encoder-decoder\
+  \ architecture of a standard U-Net with the skipping mechanisms of Residual Networks (ResNet). This\
+  \ hybrid approach prevents the vanishing gradient problem in deep networks while preserving spatial\
+  \ features during the upsampling process.\n\n**1. Residual Blocks (`resblock`)**\nStandard convolutional\
+  \ layers are replaced with custom Residual Blocks. These blocks compute parallel convolutions and merge\
+  \ them (`Add()`), allowing the network to learn identity functions and extract richer features without\
+  \ degradation.\n\n**2. Encoder (Downsampling)**\n\n- The input image (`256x256x3`) passes through a\
+  \ standard convolutional stage (16 filters).\n- It progresses through 3 subsequent Residual Block stages,\
+  \ followed by `MaxPool2D` layers, incrementally increasing feature depth (32 ➔ 64 ➔ 128 filters).\n\n\
+  **3. Bottleneck**\n\n- A final, deep Residual Block (256 filters) acts as the bridge between the encoding\
+  \ and decoding paths.\n\n**4. Decoder (Upsampling & Skip Connections)**\n\n- The feature maps are upsampled\
+  \ via `UpSampling2D`.\n- A custom `upsample_concat` function concatenates these upsampled features with\
+  \ the corresponding high-resolution feature maps from the Encoder phase (Skip Connections) to recover\
+  \ spatial context.\n- It passes through 4 decoding stages, decreasing feature depth (128 ➔ 64 ➔ 32 ➔\
+  \ 16 filters).\n\n**5. Output Mask**\n\n- A final `Conv2D` layer with a `sigmoid` activation function\
+  \ outputs a `256x256x1` binary array. Each pixel is independently classified as tumor (1) or non-tumor\
+  \ (0).\n- **Total Parameters:** ~1.21 Million\n\n### Segmentation Training & Custom Loss Functions\n\
+  \nTraining a segmentation model on medical imagery introduces a severe class imbalance challenge (the\
+  \ background healthy tissue vastly outnumbers the tumor pixels). To combat this, the model utilizes\
+  \ specialized custom loss functions defined in `utilities.py`:\n\n- **Metrics:** **Tversky Index**,\
+  \ which acts as a generalization of the Dice similarity coefficient to better evaluate overlap.\n- **Loss\
+  \ Function:** **Focal Tversky Loss**. This optimizes the model by focusing training heavily on hard-to-detect\
+  \ false negatives, which is critical in healthcare AI where missing a tumor boundary is highly penalized.\n\
+  - **Optimizer:** Adam (Learning Rate: `0.05`, Epsilon: `0.1`).\n\n### Training Callbacks & Checkpointing\n\
+  \nTo ensure optimal model weight retention and prevent overfitting during the heavy computational load\
+  \ of image segmentation, the training loop implements:\n\n- **EarlyStopping:** Monitors `val_loss` and\
+  \ halts training if no improvement is recorded for 20 epochs.\n- **ModelCheckpoint:** Continuously saves\
+  \ the best performing iteration of the model weights to `ResUNet-weights.hdf5`.\n- **Architecture Export:**\
+  \ The structural graph of the model is saved to `ResUNet-model.json` to allow for decoupled future inference\
+  \ without needing to rebuild the Python architecture locally.\n\n---\n\n## \U0001F50D Model Inference\
+  \ & Visual Evaluation\n\nOnce the model is trained, the pipeline restores the ResUNET architecture from\
+  \ the serialized JSON file and loads the optimal weights (`weights_seg.hdf5`). Inference is then run\
+  \ on the hold-out test set to generate the predicted tumor boundaries.\n\nTo thoroughly assess the model's\
+  \ spatial accuracy, the evaluation script generates a side-by-side comparison matrix utilizing OpenCV\
+  \ and Matplotlib. It maps both the manual annotations (Ground Truth) and the ResUNET outputs (AI Prediction)\
+  \ onto the original MRI scans.\n\n- **Ground Truth Overlay:** Highlights the original, manually annotated\
+  \ mask in Red (`RGB: 255, 0, 0`).\n- **AI Prediction Overlay:** Highlights the model's predicted boundary\
+  \ in Green (`RGB: 0, 255, 0`).\n\n### Final Results\n\n|           Raw Brain MRI           |       \
+  \      Original Mask             |              AI Predicted Mask              |           MRI (Ground\
+  \ Truth Overlay)           |            MRI (AI Predicted Overlay)             |\n| :-------------------------------:\
+  \ | :-----------------------------------: | :-----------------------------------------: | :--------------------------------------------:\
+  \ | :-----------------------------------------------: |\n| ![MRI](/src/assest/BrainMRI1.png) | ![Mask](/src/assest/OriginalMask.png)\
+  \ | ![AI Mask](/src/assest/AIPredictedMask.png) | ![GT Overlay](/src/assest/OriginalOverlay.png) | ![AI\
+  \ Overlay](/src/assest/AIPredictedOverlay.png) |\n\n---\n"

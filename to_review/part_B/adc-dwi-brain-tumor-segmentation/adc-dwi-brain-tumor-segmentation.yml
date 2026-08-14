@@ -1,0 +1,52 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: mayank-and-shrinivas-CDAC-project/adc-dwi-brain-tumor-segmentation
+url: https://github.com/mayank-and-shrinivas-CDAC-project/adc-dwi-brain-tumor-segmentation
+platform: github
+description: Deep learning framework for brain tumor segmentation from diffusion MRI (ADC & DWI) using
+  unsupervised pseudo-label generation and anomaly detection.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-08-12T15:10:25Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Brain Tumor Analysis GUI\n\nThis desktop application analyses paired ADC and DWI MRI\
+  \ DICOM images, runs a\npackaged segmentation model, and saves image, 3D, NIfTI, text, and PDF results.\n\
+  \n## Prerequisites\n\n- Windows 10/11 (the supplied commands use PowerShell).\n- Python **3.10** (the\
+  \ project was tested with Python 3.10.11).\n- A DICOM patient directory that contains both ADC and DWI\
+  \ image series.\n- The four model-weight files in `src/models/` (they are included in this\n  project):\
+  \ `swin_unetr_tuned_ge_best.pt`,\n  `swin_unetr_tuned_siemens_best.pt`, `unet_tuned_ge_best.pt`, and\n\
+  \  `unet_tuned_siemens_best.pt`.\n\nPython and PyTorch have to match your machine.  The requirements\
+  \ file is\ntested with the CPU-capable installation listed below.  NVIDIA CUDA is optional:\nthe GUI\
+  \ uses the GPU when PyTorch can see one, otherwise it runs on the CPU.\n\n## Start the GUI\n\n1. Open\
+  \ PowerShell and move to the project folder:\n\n   ```powershell\n   cd \"C:\\Users\\shrinivas404\\\
+  Desktop\\001_Project\"\n   ```\n\n2. Create a virtual environment (first run only):\n\n   ```powershell\n\
+  \   py -3.10 -m venv .venv\n   ```\n\n3. Activate it:\n\n   ```powershell\n   .\\.venv\\Scripts\\Activate.ps1\n\
+  \   ```\n\n   If PowerShell blocks activation, run the following once in that window and\n   then activate\
+  \ again:\n\n   ```powershell\n   Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass\n   ```\n\
+  \n4. Update pip and install the pinned application packages:\n\n   ```powershell\n   python -m pip install\
+  \ --upgrade pip\n   python -m pip install -r requirements.txt\n   ```\n\n5. Launch the application from\
+  \ the project root:\n\n   ```powershell\n   python app.py\n   ```\n\n## Use the application\n\n1. Select\
+  \ **Browse** and choose one patient folder. The folder must contain\n   DICOM files from both ADC and\
+  \ DWI series.\n2. Run the buttons in the enabled order: **Load Patient**, **Reconstruct**,\n   **Register**,\
+  \ **Run HD-BET Brain Extraction**, **Preprocess**, and\n   **Predict Tumor**.\n3. Select the matching\
+  \ scanner/model option before prediction (GE or Siemens;\n   Swin UNETR or U-Net).\n4. Choose **Generate\
+  \ Report** after prediction to display and save the text\n   report.\n\nPrediction results are written\
+  \ to `results/<patient-id>/`; reports are saved\nin `reports/`. The generated files include the segmentation\
+  \ (`.npy` and\n`.nii.gz`), slice images, a 3D rendering, and a PDF report.\n\n## Notes and troubleshooting\n\
+  \n- The **HD-BET** step is optional. If the HD-BET package cannot run (for\n  example, no CUDA-compatible\
+  \ GPU is available), the app automatically uses\n  its included fallback brain-mask algorithm and continues.\n\
+  - A first CPU prediction may take several minutes. CUDA-capable PyTorch can\n  make inference substantially\
+  \ faster; install the PyTorch build that matches\n  your CUDA driver from the official PyTorch installer,\
+  \ then reinstall the\n  remaining requirements.\n- If the window opens but the 3D result cannot be saved,\
+  \ update the graphics\n  driver and try again. PyVista/VTK renders the 3D PNG off-screen.\n- Run `python\
+  \ app.py` only from this project root so relative `results/` and\n  `reports/` paths are created in\
+  \ the expected location.\n"

@@ -1,0 +1,113 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ebakos/DsGammaAnalysis
+url: https://github.com/ebakos/DsGammaAnalysis
+platform: github
+description: ''
+license: null
+language: C++
+keywords: []
+stars: 0
+updated_at: '2022-07-27T15:40:38Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# DsGammaAnalysis\n\nThis repository contains files related to the DsGamma analysis.\n\
+  \n## EventGeneration\n\nContains the Pythia card for signal generation and the ATLAS Delphes card for\
+  \ detector simulation.\n\n## AnalysisTool\n\nThis program can be used for analysing Monte-Carlo samples\
+  \ generated with Madraph, Pythia8 and Delphes. The code is meant for analysing pp -> W events, where\
+  \  the W boson decays into DsGamma. The code is divided into routines: \n- Event consisteny\n- Reconstructed\
+  \ object analyzer\n- Plotter\n- Ntupler\n\n### Event consistency:\n\nThis part of the program doing\
+  \ the truth event validation. We are looking for the Ds particle, checking its sibling, what is a photon,\
+  \ checking the parents, and the sibling of a parent (both W boson). The event consistency also making\
+  \ histograms filled with some relevant variables.\n\n### Reconstructed object analyser:\n\nThis part\
+  \ of the program is looking for the reconstructed objects, most importantly the reconstructed W from\
+  \ the Ds and the photon. The progam also fills some of the relevant variables into histograms. \n\n\
+  ### Plotter:\n\nPlots the previoulsy made histograms, possibly overlays them. \n\n### Ntuples\n\nCreates\
+  \ a Root TTree named `DS`, with the variables as branches used for Machine Learning. \n\n## Program\
+  \ usage: \n\nSource Delphes and ROOT before using. Type `make` for compiling. Running the program can\
+  \ be done with some of the following commands: \n\n```\nMode analysis, operations: event_consistency,\
+  \ reco\nUsage: ./tool/bin/analyze analysis <in_file> <out_file> <operation1> [operation2]\nUsage: ./bin/analyze\
+  \ analysis <in_file> <out_file> ntupler <SignalWplus,SignalWminus,BackgroundQQ,BackgroundGG>\nMode:\
+  \ plot\nUsage #1: ./tool/bin/analyze plot <in_file1> <in_file2>\nUsage #2: ./tool/bin/analyze plot <in_file1>\n\
+  ```\n\n## PlotDifferences\n\nA simple root macro for plotting variables.\n\n\n## ML tool\n\nA python\
+  \ package to do machine learning. Run `pip install ./ml_tool` to install (including dependencies). Only\
+  \ tested on windows (there I have a graphics card). For help with commands you can now run `ml_tool\
+  \ --help` and `ml_tool subcommand --help`.\n\n### Training: \n\nTo run type `ml_tool` with the arguments:\
+  \ \n```\n  -h, --help            show this help message and exit\n  -d DATA_DIRECTORY, --data-directory\
+  \ DATA_DIRECTORY\n                        Where to load data files from\n  -m MODEL_DIRECTORY, --model-directory\
+  \ MODEL_DIRECTORY\n                        Where to store model files\n  -j CONFIG_FILE, --config-file\
+  \ CONFIG_FILE\n                        json file with config options\n```\nIf no `.json` file provided,\
+  \ the `default_model.json` will be used.\n\n**Contents of the `.json` config file: \n\n*Common run settings:*\n\
+  - `model_name`: name of the models\n- `batch_size`: training batch size\n- `training_epochs`: training\
+  \ epochs\n- `run_options`: \"dense_only\", \"leave_one_out\", \"conv_only\", \"dense_conv\" (combined\
+  \ dense and convolutional)\n- `train_qq`: train only on qq sample\n- `train_gg`: train only on gg sample\n\
+  - `test_qq`: test only with qq sample\n- `test_gg`: test only with gg sample\n\n*Dense model settings:*\n\
+  Setup for dense model, up to 3 layers.\n- `layer1_nodes`: layer nodes in layer 1\n- `layer1_activation`:\
+  \ layer 1 activation functions: `tanh`, `relu`, `softmax` etc.\n- `layer1_dropout`: use droput layer\
+  \ after layer 1, if set to `false`, rest of the dropout layer parameters ignored\n- `layer1_dropout_nodes`:\
+  \ dropout rate\n- `layer2`: if set to `false`, no second layer is present, rest of the layer 2 are options\
+  \ ignored.\n- `layer2_nodes`: layer nodes in layer 2\n- `layer2_activation`: layer 2 activation functions:\
+  \ `tanh`, `relu`, `softmax` etc.\n- `layer2_dropout`: use droput layer after layer 2, if set to `false`,\
+  \ rest of the dropout layer parameters ignored\n- `layer2_dropout_nodes`: dropout rate\n- `layer3`:\
+  \ if set to `false`, no third layer is present, rest of the layer 3 are options ignored. Note: If layer\
+  \ 2 is set to `false`, but layer 3 is `true`, layer 3 becomes layer 2.\n- `layer3_nodes`: layer nodes\
+  \ in layer 3\n- `layer3_activation`: layer 3 activation functions: `tanh`, `relu`, `softmax` etc.\n\
+  - `layer3_dropout`: use droput layer after layer 3, if set to `false`, rest of the dropout layer parameters\
+  \ ignored\n- `layer3_dropout_nodes`: dropout rate\n- `layer_output_activation`: `simoid`,`tanh`, `relu`,\
+  \ `softmax` etc.\n\n*Leave-one-out model settings:* \nWith this run option, it is possible to leave\
+  \ one ore more parameter out of the dense model training. The dense model setup is the same as it is\
+  \ defined above.\n- `excluded_keys`: list of parameters which will be left out from the training. Can\
+  \ be one or more parameter, like: `[\"p_core_1\", \"p_core_2\"]`\n\n*Convolutional model settings:*\n\
+  Setup for convolutional model, up to 3 layers.\n- `conv_layer1_nodes`: layer nodes in layer 3, where\
+  \ the first number is the number of filters, the seond and third number is the kernel size: `[16, 3,\
+  \ 3]`\n- `conv_layer1_activation`: layer 1 activation functions: `tanh`, `relu`, `softmax` etc.\n- `conv_layer1_maxpooling`:\
+  \ if set to `false`, no maxpooling layer is present after layer 1\n- `conv_layer2`:  if set to `false`,\
+  \ no second layer is present, rest of the layer 2 are options ignored.\n- `conv_layer2_nodes`: layer\
+  \ nodes in layer 2\n- `conv_layer2_activation`: layer 2 activation functions: `tanh`, `relu`, `softmax`\
+  \ etc.\n- `conv_layer2_maxpooling`: if set to `false`, no maxpooling layer is present after layer 2\n\
+  - `conv_layer3`: if set to `false`, no third layer is present, rest of the layer 3 are options ignored.\
+  \ Note: If layer 2 is set to `false`, but layer 3 is `true`, layer 3 becomes layer 2.\n- `conv_layer3_nodes`:\
+  \ layer nodes in layer 3\n- `conv_layer3_activation`: layer 3 activation functions: `tanh`, `relu`,\
+  \ `softmax` etc.\n- `conv_layer3_maxpooling`: if set to `false`, no maxpooling layer is present after\
+  \ layer 3\n- `conv_dense`: if set to `true`, a dense layer is added in the end of the convolutional\
+  \ layers. Note: Turn this to `false` if running with combined mode!\n- `conv_denselayer_nodes`: Number\
+  \ of nodes in the dense layer.\n- `conv_denselayer_activation`: dense layer activation functions: `tanh`,\
+  \ `relu`, `softmax` etc.\n- `conv_output_activation`: `simoid`,`tanh`, `relu`, `softmax` etc.\n\n*Combined\
+  \ model settings:*\nThis model takes the dense model defined above and the convolutional model defined\
+  \ above, and combines them. The combined layer settings can be set up with the parameters below. These\
+  \ layers takes the output of the dense and convolutional model as the input, and combines them to a\
+  \ single output.\n- `comb_denselayer_nodes`: dense layers nodes. This dense layer takes the output of\
+  \ the previous models as input.\n- `comb_denselayer_activation`: dense layer activation functions: `tanh`,\
+  \ `relu`, `softmax` etc.\n- `comb_output_activation`: `simoid`,`tanh`, `relu`, `softmax` etc.\n\nTo\
+  \ run multiple models at once, it is possible to define every argument as a list, for example: \n```\n\
+  {\n    \"model_name\" : \"denseOnly\",\n    \"run_options\" : \"dense_only\",\n\n    \"layer1_nodes\"\
+  \ : [10, 15, 20],\n    \"layer1_activation\" : [\"tanh\", \"relu\"],\n    \"layer1_dropout\" : [false,\
+  \ true],\n    \"layer1_dropout_nodes\" : 0.2,\n}\n```\nThis config file will configure and the program\
+  \ will run 3x2x2 = 12  models. In case, the argument is a list (for example `excluded_keys`) one needs\
+  \ to define a list of a list. In this case an integer will be placed next to the model name. The model\
+  \ parameters, together with the list of the keys (variables) used, the accuracy, loss and the model\
+  \ configuration is saved into a metadata file within the model directory. \nThis metadata is used for\
+  \ plotting.\n\n### Plot:\n\nThis will plot the ROC curve of every model from the model directory.\n\n\
+  To run type `ml_tool` with the arguments: \n```\n  -h, --help            show this help message and\
+  \ exit\n  -d DATA_DIRECTORY, --data-directory DATA_DIRECTORY\n                        Where to load\
+  \ data files from\n  -m MODEL_DIRECTORY, --model-directory MODEL_DIRECTORY\n                       \
+  \ Where to load model files\n  -p PLOT_DIRECTORY, --plot-directory PLOT_DIRECTORY\n                \
+  \        Where to store plot images\n```\n\n### Tabulate results: \nCreates a file with all the models\
+  \ listed in a folder, together with the variable values. \n\nUsage: \n```usage: ml_tool tabulate [-h]\
+  \ [-m MODEL_DIRECTORY] variable                                                          \n\npositional\
+  \ arguments:                                       \n  variable              Variable name\n\noptions: \
+  \ \n  -h, --help            show this help message and exit  \n  -m MODEL_DIRECTORY, --model-directory\
+  \ MODEL_DIRECTORY                        \n                        Where from load the model files\n\
+  ```\n\nExample: `ml_tool tabulate accuracy`\n\n### Compariplot \n\nCreates plot with all the models.\
+  \ \n\nArguments: \n- `model-directory`: Where from load model files\n- `plot-directory`: Where to store\
+  \ plot images\n- `variable`: Variable out of metadata which to put on the Y axis, for example `accuracy`\n\
+  - `range`: Y-axis range.\n- `constraint`: constraints on variables. Filter out variables, for example\
+  \ `--constraint layer2 True` will only plot models where layer 2 is present. Can be used with any variables\
+  \ from the config file.\n- `category`: Category for the X axis. \n- `color-category`: colour of points\
+  \ category. Makes it possible to plot 2 variables in the same time: one as the x-axis, the second as\
+  \ a color.\n- `filename`: output plot filename.\n- `markersize`: markersize."

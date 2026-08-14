@@ -1,0 +1,84 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: MaxKelm/Filmauswertung_ModernUI
+url: https://github.com/MaxKelm/Filmauswertung_ModernUI
+platform: github
+description: A modern WPF-based desktop application for analyzing radiochromic film data in radiation
+  dosimetry. This tool is designed for medical physics professionals and researchers working with film-based
+  dose measurement systems.
+license: null
+language: C#
+keywords:
+- dosimetry
+- film
+- opg
+- radiotherapy
+stars: 5
+updated_at: '2026-08-06T02:22:18Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "# Filmauswertung Modern UI\n\nA modern WPF-based desktop application for analyzing radiochromic\
+  \ film data in radiation dosimetry. This tool is designed for medical physics professionals and researchers\
+  \ working with film-based dose measurement systems.\n\n## Overview\n\nFilmauswertung Modern UI provides\
+  \ a comprehensive suite of tools for:\n- **Film Calibration**: Create dose-response curves using polynomial\
+  \ or hyperbola fitting models\n- **Dose Extraction**: Convert film images to calibrated dose maps\n\
+  - **Data Analysis**: Statistical analysis and visualization of dose distributions\n- **Export/Import**:\
+  \ Support for multiple file formats including JSON and OPG\n\n## Key Features\n\n### 1. Calibration\
+  \ Module\n- Import irradiated film images for calibration\n- Support for multiple fitting models:\n\
+  \  - **3rd Degree Polynomial Fit** (ESTRO expert recommendation): `dose = a0 + a1*OD + a2*OD² + a3*OD³`\n\
+  \  - **Hyperbola Fit** (vendor recommended): `dose = a2 + a1/(OD - a0)`\n- Automatic optical density\
+  \ (OD) calculation\n- Interactive calibration plots using OxyPlot\n- Time interval tracking between\
+  \ irradiation and scan\n- JSON export of calibration data\n\n### 2. Calculate/Convert Module\n- Load\
+  \ and process film images\n- Apply dose conversion using calibration curves\n- Smoothing filters (adjustable\
+  \ levels) for noise reduction\n- Statistical analysis with histogram and peak detection\n- Heatmap visualization\
+  \ of dose distributions\n- Export results in multiple formats\n\n### 3. File Management\n- **Flexible\
+  \ Import Options**:\n  - Single file import\n  - Multiple files import\n  - Batch folder processing\n\
+  - **Export Options**:\n  - Single file export with file dialogs\n  - Batch folder export with automatic\
+  \ organization\n- Support for various image formats\n\n### 4. OPG File Support\n- Parse OPG (OptiGray)\
+  \ format files\n- Extract metadata (energy, data unit, data factor)\n- Load and validate 2D pixel matrices\
+  \ with coordinate data\n- FFF (Flattening Filter Free) detection\n\n## Technology Stack\n\n- **Language**:\
+  \ C# (.NET Framework)\n- **UI Framework**: WPF (Windows Presentation Foundation)\n- **Architecture**:\
+  \ MVVM (Model-View-ViewModel)\n- **Visualization**: OxyPlot for data plotting and analysis\n- **Data\
+  \ Format**: JSON for calibration data persistence\n\n## Project Structure\n\n```\nFilmauswertung_ModernUI/\n\
+  ├── MVVM/\n│   ├── Model/              # Data models (CutModel, Segment, Marker, etc.)\n│   ├── View/\
+  \               # XAML UI views\n│   └── ViewModel/          # View logic and commands\n├── Services/\n\
+  │   ├── Exporter.cs         # Export functionality (single file, folder)\n│   ├── Importer.cs      \
+  \   # Import functionality and dialog service\n│   └── OpgLoader.cs        # OPG file parsing\n├── Core/\
+  \                   # Core interfaces and extensions\n├── Converters/             # XAML value converters\n\
+  ├── Behaviors/              # XAML attached behaviors\n├── Properties/             # Application resources\n\
+  └── Fonts/                  # Custom fonts (Poppins)\n```\n\n## Getting Started\n\n### Prerequisites\n\
+  - .NET Framework 4.7.2 or higher\n- Windows 7 or later\n- Visual Studio 2019 or later (for development)\n\
+  \n### Building\n\n1. Clone the repository:\n   ```bash\n   git clone https://github.com/MaxKelm/Filmauswertung_ModernUI.git\n\
+  \   cd Filmauswertung_ModernUI\n   ```\n\n2. Open the solution in Visual Studio:\n   ```bash\n   start\
+  \ Filmauswertung_ModernUI.sln\n   ```\n\n3. Build the project:\n   ```\n   Build > Build Solution (Ctrl+Shift+B)\n\
+  \   ```\n\n4. Run the application:\n   ```\n   Debug > Start Debugging (F5)\n   ```\n\n## Usage Guide\n\
+  \n### Creating a Calibration\n\n1. **Load Film Images**:\n   - Click the import button in the Calibration\
+  \ tab\n   - Select irradiated film images (JPG, PNG, etc.)\n   - Include a background/unirradiated scan\n\
+  \n2. **Enter Dose Values**:\n   - Input calibration dose values separated by semicolons (e.g., `0; 0.5;\
+  \ 1.0; 2.0; 5.0`)\n   - Use either ',' or '.' as decimal separator\n   - Ensure one value is zero (background\
+  \ scan)\n\n3. **Select Fitting Model**:\n   - Choose between polynomial (4 parameters) or hyperbola\
+  \ fit (3 parameters)\n   - Specify time interval between irradiation and measurement\n\n4. **Process**:\n\
+  \   - Click \"Process\" to generate the calibration curve\n   - Review the resulting plot\n\n5. **Export**:\n\
+  \   - Export calibration data as JSON for later use\n\n### Converting Film Images to Dose Maps\n\n1.\
+  \ **Load Calibration**:\n   - Import a previously saved calibration JSON file\n\n2. **Load Film Images**:\n\
+  \   - Import the film images to be analyzed\n\n3. **Apply Dose Conversion**:\n   - Click \"Calculate\
+  \ Dose\" to convert images to dose using the calibration\n   - Adjust smoothing level if needed (1 =\
+  \ no smoothing, 5 = maximum)\n\n4. **Analyze Results**:\n   - View dose statistics (peaks, median, mean,\
+  \ range)\n   - Examine the heatmap visualization\n\n5. **Export Results**:\n   - Export dose maps and\
+  \ analysis results\n\n## Data Formats\n\n### Calibration Export (JSON)\n```json\n{\n  \"CalibrationDose\"\
+  : [0, 0.5, 1.0, 2.0],\n  \"CalibrationOD\": [0, 0.1, 0.2, 0.35],\n  \"FitFunction\": \"Polynomial\"\
+  ,\n  \"FitCoefficients\": [0.1, 0.5, -0.02, 0.001],\n  \"Formula\": \"dose=a0+a1*OD+a2*OD^2+a3*OD^3\"\
+  ,\n  \"TimeInterval\": 24,\n  \"TimeUnit\": \"hours\"\n}\n```\n\n## Known Limitations\n\n- Unit selection\
+  \ for dose conversion (marked as TODO in code)\n- OPG file format support is limited to specific metadata\
+  \ tags\n- Currently Windows-only (WPF limitation)\n\n## Future Enhancements\n\n- Cross-platform support\
+  \ (WPF to MAUI migration)\n- Additional fitting models\n- Batch processing improvements\n- Advanced\
+  \ image analysis filters\n- Database support for calibration history\n\n## License\n\nThis project uses:\n\
+  - Poppins font licensed under SIL Open Font License (OFL)\n- Windows API Code Pack for common file dialogs\n\
+  \n## Contributing\n\nContributions are welcome! Please feel free to:\n- Report bugs and issues\n- Suggest\
+  \ new features\n- Submit pull requests\n\n## Author\n\nMaxKelm\n\n## Contact & Support\n\nFor questions\
+  \ or support, please open an issue on the GitHub repository.\n\n---\n\n**Last Updated**: April 29, 2026\n"

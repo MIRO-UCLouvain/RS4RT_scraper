@@ -1,0 +1,57 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ahzs645/CBCTer
+url: https://github.com/ahzs645/CBCTer
+platform: github
+description: ''
+license: MIT
+language: TypeScript
+keywords: []
+stars: 0
+updated_at: '2026-07-10T21:04:11Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 3 support term(s).
+readme_excerpt: "# CBCTer\n\nLocal-first CBCT viewer and tooth segmentation scaffold.\n\n## Current status\n\
+  \n- Browser shell for a web-first CBCT workflow.\n- Local Python validation harness for the Slicer CBCT\
+  \ tooth segmentation model.\n- The DICOM sample data remains outside this repository because it contains\
+  \ PHI-bearing metadata.\n\n## Commands\n\n```bash\nnpm install\nnpm run dev\nnpm run build\nnpm run\
+  \ segment:sample\nnpm run segment:arch\nnpm run segment:auto\nnpm run segment:curate\nnpm run segment:validate\n\
+  npm run segment:pipeline\nnpm run segment:watershed\n```\n\nThe segmentation scripts read DICOM input\
+  \ from `CBCTER_SAMPLE_DICOM_DIR`.\nSet it to a local, untracked sample directory before running sample\
+  \ generation\nor segmentation commands:\n\n```bash\nexport CBCTER_SAMPLE_DICOM_DIR=\"/path/to/dicom-folder\"\
+  \n```\n\n`npm run segment:sample` runs the downloaded Slicer model against that directory\nand writes\
+  \ outputs under `outputs/sample-segmentation`.\n\nGenerated demo data is intentionally not committed.\
+  \ These paths can be rebuilt\nfrom the local DICOM sample and model when needed:\n\n- `public/sample-cbct`:\
+  \ created by `npm run sample:build`.\n- `public/sample-dicom`: created by `npm run sample:link-dicom`.\n\
+  - `public/sample-segmentation`: created by `npm run segment:pipeline`.\n- `public/sample-segmentation-curated`:\
+  \ created by `npm run segment:pipeline`\n  or `npm run segment:curate`.\n- `public/sample-segmentation-hybrid`:\
+  \ created by `npm run segment:pipeline`.\n- `public/sample-segmentation-watershed`: created by\n  `npm\
+  \ run segment:watershed` and then copied into `public/` if you want it\n  available to the web viewer.\n\
+  \n`npm run segment:arch` runs multiple tight ROI candidates against the sample\nseries and writes separated\
+  \ instance labels under:\n\n```text\noutputs/sample-arch-segmentation\n```\n\nImportant: the downloaded\
+  \ Slicer model is an ROI-based single-tooth segmenter,\nnot a full-mouth detector. The current arch\
+  \ command is a bootstrap workflow:\ncandidate tooth crops are supplied explicitly, each accepted crop\
+  \ receives its\nown label, and rejected crops remain in `summary.json` for review. The web UI\nstill\
+  \ needs ROI drawing/editing so a user can place these crops interactively.\n\n`npm run segment:auto`\
+  \ derives candidate tooth ROIs from the CBCT volume,\nruns the ROI model over each candidate, removes\
+  \ duplicate-heavy crops, keeps the\nlargest 3D component per accepted label, applies centroid duplicate\
+  \ pruning, and\nexports separated artifacts under:\n\n```text\noutputs/sample-auto-segmentation\n```\n\
+  \nThat folder includes:\n\n- `labels.npz`: compressed uint16 instance label volume.\n- `summary.json`:\
+  \ ROI bounds, voxel counts, accepted/rejected status.\n- `summary.json`: also includes centroid, bounding-box,\
+  \ extent, assigned-ratio,\n  and duplicate-rejection metrics for QC.\n- `instances/*.png`: per-label\
+  \ visual QC previews.\n- `stl/*.stl`: per-label tooth mesh exports.\n\n`npm run segment:curate` copies\
+  \ the primary ROI-model result into\n`public/sample-segmentation-curated` and adds quality status fields\
+  \ so the web\nviewer can distinguish usable labels from labels that need review.\n\n`npm run segment:validate`\
+  \ checks the curated separation manifest and fails if\nthe expected label volume, previews, STL meshes,\
+  \ sequential label IDs, and\nminimum accepted-label count are not present.\n\n`npm run segment:pipeline`\
+  \ regenerates the primary sample tooth separation from\nthe source DICOM folder, publishes it under\
+  \ `public/sample-segmentation`,\ncreates the curated web result, and validates the curated manifest.\n\
+  \n`npm run segment:watershed` creates a secondary hard-tissue watershed\nseparation result. It is useful\
+  \ for comparison and review, but the ROI-model\npipeline remains the primary output because watershed\
+  \ tends to split\nrestorations and jaw-adjacent structures into extra fragments on this sample.\n"

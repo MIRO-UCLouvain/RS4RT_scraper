@@ -1,0 +1,80 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: yvanblanchard/ProgressiveFailureOfCompositesWithCalculix
+url: https://github.com/yvanblanchard/ProgressiveFailureOfCompositesWithCalculix
+platform: github
+description: UMAT/VMAT User Subroutines for progressive failure of composites materials with Calculix
+  FE solver
+license: null
+language: Fortran
+keywords: []
+stars: 0
+updated_at: '2026-04-28T12:00:20Z'
+image_source: https://raw.githubusercontent.com/yvanblanchard/ProgressiveFailureOfCompositesWithCalculix/HEAD/failure_comp.png
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: '# Progressive Failure of Composites with CalculiX
+
+
+  This repository adapts an **Abaqus UMAT subroutine** for use with the open-source [CalculiX](http://www.dhondt.de)
+  FEA solver to compute **progressive failure of composite materials**.
+
+
+  The key approach is to **deploy the UMAT as a Windows shared library (DLL)** loaded at runtime by CalculiX
+  — no recompilation of the CalculiX source is required.
+
+
+  ![Composite failure simulation](failure_comp.png)
+
+
+  ## Features
+
+
+  - Ported from Abaqus UMAT interface to CalculiX `umat_user` convention
+
+  - Deployed as a **Windows DLL** — drop-in, no CCX recompile needed
+
+  - Multiple failure criteria: MaxStress, MaxStrain, Tsai-Wu, Hoffman, Hashin, Hashin-Rotem, Puck
+
+  - Multiple damage evolution laws: instantaneous, recursive, exponential, constant-stress, CDM crack-band
+
+  - 58 material constants via `*USER MATERIAL`
+
+
+  ## Quick Start
+
+
+  1. Run `compile_ccx.bat` to build the UMAT DLL (`umat_pdalac.dll`).
+
+  2. Place the DLL next to your `ccx.exe` — no CCX recompilation needed.
+
+  3. Use `test_umat.py` to verify the setup against the reference model in `ccx_test_run/`.
+
+
+  ## Material Card
+
+
+  ```
+
+  *MATERIAL, NAME=PDALAC_COMPOSITE
+
+  *USER MATERIAL, CONSTANTS=58
+
+  E11, E22, E33, ANU12, ANU13, ANU23, G12, G13,
+
+  ...
+
+  *DEPVAR
+
+  14
+
+  ```
+
+
+  See `compile_ccx.bat` for the full list of constants and integration instructions.
+
+  '

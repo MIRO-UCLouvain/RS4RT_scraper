@@ -1,0 +1,51 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: RomanoLab/SemMol
+url: https://github.com/RomanoLab/SemMol
+platform: github
+description: Semantic Knowledge Improves Molecular Machine Learning for Chemical Toxicity Prediction
+license: MIT
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-06-16T02:19:58Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# SemMol\nAugmenting molecular structure representation learning using semantic biomedical\
+  \ knowledge\n\n[![DOI](https://zenodo.org/badge/870139698.svg)](https://doi.org/10.5281/zenodo.20710533)\n\
+  \n### Requirements\n- Python ≥ 3.8.0;\n- ```requirements.txt``` contains the Python packages requirements.\n\
+  \n### Data\nThe data used are made available through the following [box folder](https://upenn.box.com/v/SemMoldatasets),\
+  \ where you can find: \n- ```data/``` contains pretraining dataset, the Knowledge Graphs created with\
+  \ the relative dictionary of entities and their ids, the classification datasets (```datasets_valid_and_splits/```\
+  \ contais for each assay the tabular dataset with Smiles string, MACCS key, chemicals name and labels,\
+  \ and the training, validataion and test index for the 5 random runs), and ```tsne_2d_embeddings_all_chemicals_37tox21_emb.xlsx```,\
+  \ that is a dataframe containing chemical names, MACCS keys, physical properties and the 2D t-SNE projections\
+  \ for all the n = 8541 chemicals that belong to the set of the 37 Tox21 assays considered;\n- ```ckpt/```\
+  \ contains the pretrained GNN molecule encoder.\n\n### Models training for toxicology predictions\n\
+  - <b>Machine learning</b>: baseline ML models can be trained by running ```ML.py```. The results will\
+  \ be written in ```results/ML``` with a directory for each random runs (seed).\n```python\npython ML.py\n\
+  ``` \n- <b>Finetune MolCLR</b>: MolCLR can be finetuned by running ```MolCLR/finetune.py```. The results\
+  \ will be written in ```results/graph_structure_comptoxAI``` with a directory for each random runs (seed).\n\
+  ```python\npython MolCLR/finetune.py\n```\n- <b>Finetune HiMol</b>: HiMol can be finetuned by running\
+  \ ```HiMol/finetune/finetune.py```. The results will be written in ```results/graph_structure_comptoxAI```\
+  \ with a directory for each random runs (seed).\n```python\npython HiMol/finetune/finetune.py\n``` \n\
+  - <b>Semantic GNN</b>: Semantic GNN model can be trained by running ```semantic.py```.  The results\
+  \ will be written in ```results/semantic_gat``` with a directory for each random runs (seed).\n```python\n\
+  python semantic.py\n``` \n- <b>SemMol</b>: SemMol model can be trained by running ```SemMol.py```. \
+  \ The results will be written in ```results/semantic_and_graph``` with a directory for each random runs\
+  \ (seed).\n```python\npython SemMol.py\n```\n\n### XAI\nExplainability with LayerSaliency can be obtained\
+  \ for positive chemicals by running the ```explain.ipynb``` notebook. The results will be written in\
+  \ ```results/gnn_xai``` with a directory for each random runs.\n\n### Evaluation\nThe ```evaluation.py```\
+  \ script contains code for:\n- compute pretrained embeddings for all the chemcials involved in the Tox21\
+  \ assays considered, project them in 2D with t-SNE and colour them according to chemical and physical\
+  \ properties of the molecules (extracted from ComptoxAI or through puchem API);\n- process the classification\
+  \ results by computing the mean classification metrics for each model and for each assay, to create\
+  \ a dataframe than can be used to compute the violin plot with the mean results computedall the assay\
+  \ and the heatmap with the single assay results.\n- process the xai results, by thresholding the number\
+  \ of edges to keep, and create the images with the molecule graph and most important subgraph identified\
+  \ a specific compound in input.\n```python\npython evaluate.py\n```\n"

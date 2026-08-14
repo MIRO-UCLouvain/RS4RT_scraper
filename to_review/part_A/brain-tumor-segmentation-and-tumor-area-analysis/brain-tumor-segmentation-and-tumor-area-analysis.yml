@@ -1,0 +1,89 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: gantatharun1-debug/Brain-Tumor-Segmentation-and-Tumor-Area-Analysis
+url: https://github.com/gantatharun1-debug/Brain-Tumor-Segmentation-and-Tumor-Area-Analysis
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 1
+updated_at: '2026-07-22T05:47:17Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# \U0001F9E0 NeuroScan AI — Brain MRI Tumor Segmentation\n \nAutomated segmentation of\
+  \ low-grade glioma (LGG) tumors from brain MRI slices\nusing a 2D U-Net, with full EDA, training, evaluation,\
+  \ tumor-area estimation,\nand a professional Streamlit web app.\n \n> ⚠️ **Disclaimer:** This is a research/educational\
+  \ project. It does not provide\n> a medical diagnosis and is not a substitute for professional clinical\n\
+  > evaluation.\n \n---\n \n## \U0001F9E0 Model Used\n \n**Architecture:** 2D U-Net (encoder-decoder with\
+  \ skip connections)\n**Input:** 3-channel MRI slice, resized to 256×256\n**Output:** 1-channel tumor\
+  \ probability map\n**Parameters:** ~31 million\n**Loss function:** Combined BCE + Dice Loss\n**Optimizer:**\
+  \ Adam (lr = 1e-4) with `ReduceLROnPlateau` scheduler\n \n## \U0001F6E0️ Technology Stack\n \n| Category\
+  \ | Tools |\n|---|---|\n| Language | Python 3.10+ |\n| Deep Learning | PyTorch |\n| Image Processing\
+  \ | OpenCV, Pillow |\n| Augmentation | Albumentations |\n| Data Handling | pandas, NumPy |\n| Visualization\
+  \ | Matplotlib |\n| Web App | Streamlit |\n| Report Export | fpdf2 (PDF), JSON |\n| Environment | Google\
+  \ Colab / Jupyter Notebook |\n| Dataset Storage | Google Drive (zip extraction) |\n \n---\n \n## \U0001F4C2\
+  \ Dataset\n \n**LGG MRI Segmentation** (Kaggle, by Mateusz Buda) — derived from TCGA-LGG,\ncontaining\
+  \ brain MRI slices (`.tif`) with manually annotated tumor masks for\npatients with lower-grade glioma.\n\
+  \ \n- **Patients:** 110\n- **Total image/mask pairs:** 3,929\n- **Format:** `.tif`, 256×256, 3-channel\
+  \ (pre-contrast / FLAIR / post-contrast composite)\n\U0001F517 **Dataset link:** https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation\n\
+  \ \n---\n \n## \U0001F9ED Project Pipeline & Key Details\n \n### Project Setup & Imports\nCore Python\
+  \ libraries loaded: `torch`, `cv2`, `pandas`, `numpy`, `matplotlib`,\n`albumentations`. Random seeds\
+  \ fixed (`SEED = 42`) for reproducibility. Device\nauto-detected (`cuda` if available, else `cpu`).\n\
+  \ \n### 1. Dataset Download & Extraction\nDataset zip mounted from Google Drive and extracted in the\
+  \ Colab runtime to\n`/content/lgg-mri-segmentation`.\n \n### 2. Dataset Overview\nFolder structure scanned\
+  \ to build a master index of every image and its\ncorresponding mask path, across all 110 patient folders.\n\
+  \ \n### 3. Dataset Cleaning\nChecked for corrupted files, duplicate images (hash-based), missing masks,\n\
+  and inconsistent dimensions. Produces a clean, verified dataset before any\nfurther processing.\n \n\
+  ### 4. Exploratory Data Analysis (EDA)\nTumor vs non-tumor slice distribution, slices-per-patient counts,\
+  \ pixel\nintensity histograms, tumor pixel/mask-coverage distributions, and\nMRI+mask overlay visualizations.\n\
+  \ \n![Tumor Distribution](assets/tumor_distribution.png)\n![Slices per Patient](assets/slices_per_patient.png)\n\
+  \ \n### 5. Data Preprocessing\nAll images/masks resized to 256×256, pixel values normalized to `[0,\
+  \ 1]`,\nmasks converted to strict binary (0/1).\n \n### 6. Data Augmentation\nApplied via **Albumentations**:\
+  \ horizontal/vertical flip, rotation, shift-scale,\nbrightness/contrast jitter, elastic transform —\
+  \ image and mask transformed\nidentically.\n \n### 7. Train / Validation / Test Split\nSplit **by patient**\
+  \ (not by slice) to prevent data leakage, at roughly\n**70% / 15% / 15%**.\n \n| Split | Patients (approx.)\
+  \ | Images (approx.) |\n|---|---|---|\n| Train | 77 | ~2,750 |\n| Validation | 16 | ~590 |\n| Test |\
+  \ 17 | ~589 |\n \n*(Exact counts depend on your cleaning results — see your notebook's split\nsummary\
+  \ table for the real numbers from your run.)*\n \n### 8. DataLoader\nPyTorch `Dataset` + `DataLoader`\
+  \ classes built around the split, applying\npreprocessing and augmentation on the fly. Batch size: 16\
+  \ (train/val), 1 (test).\n \n### 9. U-Net Model Architecture\n2D U-Net defined from scratch — 4 downsampling\
+  \ stages `(64, 128, 256, 512)`,\na bottleneck, and 4 upsampling stages with skip connections.\n \n###\
+  \ 10. Model Training\nTrained for **25 epochs** using combined BCE + Dice loss. Best checkpoint\n(lowest\
+  \ validation loss) saved to `best_unet_lgg.pth`.\n \n![Training History](assets/training_history.png)\n\
+  \ \n| Metric | Sample Value* |\n|---|---|\n| Final Train Loss | 0.11 |\n| Final Val Loss | 0.14 |\n\
+  \ \n### 11. Model Evaluation\nEvaluated on the held-out test set using Dice, IoU, Precision, Recall,\
+  \ F1, and\npixel-wise Accuracy.\n \n![Evaluation Metrics](assets/evaluation_metrics.png)\n \n| Metric\
+  \ | Sample Value* |\n|---|---|\n| Accuracy | 0.97 |\n| Precision | 0.85 |\n| Recall | 0.88 |\n| F1 |\
+  \ 0.86 |\n| Dice | 0.87 |\n| IoU | 0.79 |\n| Loss (val) | 0.14 |\n \n`*` **Sample/example values shown\
+  \ for illustration — replace with the actual\nnumbers printed by your notebook's evaluation cell.**\n\
+  \ \n**Sample Predictions** — `Original MRI` → `Ground Truth Mask` → `Predicted Mask`\n \n![Sample Predictions](assets/sample_predictions.png)\n\
+  \ \n### 12. Tumor Area Calculation\nTumor pixel count converted to area (mm²/cm²), assuming 1 mm/pixel\
+  \ spacing\n(the dataset ships without DICOM metadata). An approximate multi-slice volume\nestimate is\
+  \ also included, clearly flagged as an approximation.\n \n### 13. Report Generation\nPer-slice JSON\
+  \ reports generated (tumor status, area, Dice/precision/etc.),\nexported as a CSV for the full test\
+  \ set.\n \n### 14. Streamlit Web App\n**NeuroScan AI** — a themed, animated web app where users upload\
+  \ an MRI slice\nand receive a segmentation overlay, confidence score, severity tier, and a\ndownloadable\
+  \ JSON/PDF report.\n \n![App Screenshot](assets/app_screenshot.png)\n \n**Key features:**\n- Invalid-image\
+  \ detection (rejects non-MRI uploads with a clear message)\n- Tumor detection badge, severity tier,\
+  \ confidence score, estimated area\n- Recommended next steps scaled to severity — never a specific medication\
+  \ or\n  surgical verdict, since that requires a licensed clinician's full evaluation\n- Downloadable\
+  \ digital report (JSON + PDF)\n---\n \n## ⚙️ Setup\n \n```bash\npip install -r requirements.txt\n```\n\
+  \ \nMake sure `best_unet_lgg.pth` is in the same folder as `app.py`.\n \n## ▶️ Run the App\n \n```bash\n\
+  streamlit run app.py\n```\n \nThen open the local URL Streamlit prints (usually `http://localhost:8501`).\n\
+  \ \n---\n \n## \U0001F4C1 Project Structure\n \n```\n├── Untitled10.ipynb          # Full pipeline notebook\
+  \ (Setup + Steps 1–14)\n├── app.py                    # Streamlit web app\n├── best_unet_lgg.pth   \
+  \      # Trained U-Net weights\n├── requirements.txt          # Python dependencies\n├── README.md \
+  \                # This file\n└── assets/                   # Charts & sample prediction images\n  \
+  \  ├── tumor_distribution.png\n    ├── slices_per_patient.png\n    ├── training_history.png\n    ├──\
+  \ evaluation_metrics.png\n    ├── sample_predictions.png\n    └── app_screenshot.png\n```\n \n---\n\
+  \ \n## ⚠️ Limitations\n \n- Trained on 2D slices only — no 3D/volumetric context\n- Severity tier is\
+  \ a heuristic based on segmented area in a single slice —\n  **not** a clinical grading system\n- Tumor\
+  \ area assumes 1 mm/pixel spacing, since the dataset lacks DICOM\n  metadata\n- Not validated for clinical\
+  \ use — always consult a qualified healthcare\n  professional for diagnosis and treatment planning\n"

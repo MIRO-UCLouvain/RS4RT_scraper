@@ -1,0 +1,71 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: LTSI-IMPACT/Cervix-Cancer-CBCT-Segmentator
+url: https://github.com/LTSI-IMPACT/Cervix-Cancer-CBCT-Segmentator
+platform: github
+description: 'valuation of Training Strategies for U-Net-Based Cervical Cancer CBCT Segmentation in a
+  Multi-Institutional Setting '
+license: Apache-2.0
+language: null
+keywords: []
+stars: 0
+updated_at: '2026-04-30T10:50:54Z'
+image_source: null
+heuristic_total_score: 36
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 10 support term(s).
+readme_excerpt: "# Cervix-Cancer-CBCT-Segmentator\n\n## License\nApache-2.0 license\n\n## Keywords\nCBCT,\
+  \ Automatic Segmentation, Radiotherapy, IMRT, nnU-Net v2\n\n---\n\n## Citation\n\nIf you use this model,\
+  \ please cite our manuscript:\n\n> Songyue Han*, Delphine Lebret*, Caroline Lafond*, Julie Leseur, Cedric\
+  \ Hemon, Anaïs Baratea, Jean-Claude Nunes, Karine Peignaux, Nathalie Mesgouez-Nebout, Magali Le Blanc-Onfro,\
+  \ Chantal Hanzen, Nedjla Allouach, Sophie Renard-Oldrini, Florence Le Tinier, Renaud de Crevoisier,\
+  \ Antoine Simon  \n> Evaluation of Training Strategies for U-Net-Based Cervical Cancer CBCT Segmentation\
+  \ in a Multi-Institutional Setting  \n> Physics and Imaging in Radiation Oncology, Under Review\n\n\
+  ---\n\n## Introduction\n\nCone-Beam CT (CBCT) remains the main image-of-the-day modality in cervical\
+  \ cancer photon radiotherapy. Segmentation of the Clinical Target Volume (CTV) and Organs At Risk (OARs)\
+  \ on these images enables daily treatment plan selection and adaptation. Fast and accurate automatic\
+  \ segmentation is highly needed, since the time required for manual delineation makes it clinically\
+  \ impractical.\n\nIn this codebase, we share with the community a segmentation model based on nnU-Net\
+  \ v2 (Isensee et al., https://github.com/DIAGNijmegen/nnUNet_v2) for segmentation of:\n- CTVt (the whole\
+  \ uterus)\n- OARs including the bladder and rectum\n\nThe model was trained on a single-center manually\
+  \ annotated dataset, including:\n- 23 patients\n- 73 CT images\n- 265 CBCT images\n\nTraining was performed\
+  \ using nnU-Net v2 version 2.4.2. The default 5-fold cross-validation configuration was used, and the\
+  \ five checkpoints are jointly used as an ensemble model during inference.\n\nIn our study, we found\
+  \ that fine-tuning this model with an annotated planning CT from the same patient can improve segmentation\
+  \ accuracy on that patient's CBCT images.\n\nThe accompanying model weights for this repository can\
+  \ be downloaded here at: [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.19889617-blue)](https://doi.org/10.5281/zenodo.19889617)\n\
+  \n---\n\n## Installation\n\n### 1. Install nnU-Net v2\n\n    pip install nnunetv2\n\n### 2. Clone this\
+  \ repository\n\n    git clone Cervix-Cancer-CBCT-Segmentator\n\n### 3. Set environment variables\n\n\
+  \    export nnUNet_raw = [path_of_nnUNet_raw]\n    export nnUNet_preprocessed = [path_of_nnUNet_preprocessed]\n\
+  \    export nnUNet_results = [path_to_nnUNet_results]\n\n---\n\n## Usage\n\n### Direct use of the model\n\
+  \n1. Place the model folder into:\n\n    ```bash\n    [path_of_nnUNet_results]\n    ```\n\n2. Put CBCT\
+  \ images (NIfTI) into:\n\n    ```bash\n    [dataset_in]\n    ```\n\n3. Run inference:\n\n    ```bash\n\
+  \    nnUNetv2_predict -i [dataset_in] -o [output_repository] -d Cervix-Cancer-CBCT-Segmentator -c 3d_fullres\n\
+  \    ```\n\n---\n\n### Fine-tuning with patient-specific CT\n\n1. Put planning CT into:\n\n    ```bash\n\
+  \    [path_of_nnUNet_raw]/Dataset001_CT/imagesTr\n    ```\n\n   Duplicate it once for validation.\n\n\
+  2. Put corresponding segmentation into:\n\n    ```bash\n    [path_of_nnUNet_raw]/Dataset001_CT/labelsTr\n\
+  \    ```\n\n   Duplicate it once for validation.\n\n3. Create:\n\n    ```bash\n    [path_of_nnUNet_raw]/Dataset001_CT/dataset.json\n\
+  \    ```\n\n   Content:\n\n    ```bash\n    {\n      \"labels\": {\n        \"background\": 0,\n   \
+  \     \"CTVT\": 1,\n        \"CP\": 2,\n        \"RECTUM\": 3,\n        \"VESSIE\": 4\n      },\n  \
+  \    \"channel_names\": {\n        \"0\": \"CT\"\n      },\n      \"numTraining\": 2,\n      \"file_ending\"\
+  : \".nii.gz\"\n    }\n    ```\n\n4. Run preprocessing:\n\n    ```bash\n    nnUNetv2_plan_and_preprocess\
+  \ -d 001 -c 3d_fullres --verify_dataset_integrity\n    ```\n\n5. Create:\n\n    ```bash\n    [path_of_nnUNet_preprocessed]/Dataset001_CT/splits_final.json\n\
+  \    ```\n\n   Content:\n\n    ```bash\n    [\n      { \"train\": [\"CT\", \"CT_copy\"], \"val\": [\"\
+  CT\", \"CT_copy\"] },\n      { \"train\": [\"CT\", \"CT_copy\"], \"val\": [\"CT\", \"CT_copy\"] },\n\
+  \      { \"train\": [\"CT\", \"CT_copy\"], \"val\": [\"CT\", \"CT_copy\"] },\n      { \"train\": [\"\
+  CT\", \"CT_copy\"], \"val\": [\"CT\", \"CT_copy\"] },\n      { \"train\": [\"CT\", \"CT_copy\"], \"\
+  val\": [\"CT\", \"CT_copy\"] }\n    ]\n    ```\n\n6. Modify:\n\n    ```bash\n    [path_of_nnUNet]/nnunetv2/training/nnUNetTrainer/nnUNetTrainer.py\n\
+  \    ```\n\n   Set:\n\n    ```bash\n    self.num_epochs = 10\n    ```\n\n7. Fine-tune each fold:\n\n\
+  \    ```bash\n    nnUNetv2_train Dataset001_CT 3d_fullres 0 -pretrained_weights [path_to_nnUNet_results]/fold_0/checkpoint_final.pth\n\
+  \    nnUNetv2_train Dataset001_CT 3d_fullres 1 -pretrained_weights [path_to_nnUNet_results]/fold_1/checkpoint_final.pth\n\
+  \    nnUNetv2_train Dataset001_CT 3d_fullres 2 -pretrained_weights [path_to_nnUNet_results]/fold_2/checkpoint_final.pth\n\
+  \    nnUNetv2_train Dataset001_CT 3d_fullres 3 -pretrained_weights [path_to_nnUNet_results]/fold_3/checkpoint_final.pth\n\
+  \    nnUNetv2_train Dataset001_CT 3d_fullres 4 -pretrained_weights [path_to_nnUNet_results]/fold_4/checkpoint_final.pth\n\
+  \    ```\n\n8. Run inference as in direct usage.\n\n---\n\n## Acknowledgement\n\nThis work was partly\
+  \ funded by:\n- The French Ligue contre le Cancer  \n- The French National Cancer Institute (INCa),\
+  \ under PHRC ARCOL\n"

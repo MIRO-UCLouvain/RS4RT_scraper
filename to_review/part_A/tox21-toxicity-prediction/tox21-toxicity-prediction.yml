@@ -1,0 +1,57 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: zxx0006/Tox21-Toxicity-Prediction
+url: https://github.com/zxx0006/Tox21-Toxicity-Prediction
+platform: github
+description: Molecular toxicity prediction on the Tox21 benchmark dataset — CSP571 Data Preparation &
+  Analysis Project
+license: MIT
+language: HTML
+keywords: []
+stars: 0
+updated_at: '2026-07-28T04:25:01Z'
+image_source: null
+heuristic_total_score: 19
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Tox21 Toxicity Prediction\n\nR-based biology and computer science project for predicting\
+  \ compound toxicity\nactivity from Tox21-style molecular descriptors.\n\n## Workflow\n\n- `R/`: reusable\
+  \ functions for ingestion, feature building, modeling, metrics,\n  and ggplot2 visualization\n- `scripts/`:\
+  \ command-line entrypoints for the pipeline\n- `data/example/`: a small Tox21-shaped toy dataset that\
+  \ makes the repo runnable\n- `data/raw/`: place the real Tox21 CSV data locally\n- `data/processed/`:\
+  \ generated normalized and feature matrices\n- `models/`: trained model bundles\n- `outputs/`: generated\
+  \ metrics, predictions, and plots\n- `reports/`: rendered project report\n\n## Dataset\n\nThe project\
+  \ targets the Tox21 toxicity prediction task. Each row is one\ncompound, descriptor columns are numeric\
+  \ molecular features, and assay columns\nsuch as `NR-AhR`, `NR-AR`, or `SR-p53` are binary labels:\n\
+  \n```text\ncompound_id,smiles,NR-AhR,NR-AR,SR-p53,molecular_weight,logp,...\nT21_001,CCOc1ccc(N)cc1,1,0,0,137.18,1.85,...\n\
+  ```\n\nThe default target assay is `NR-AhR`. Change `pipeline_config$target_assay` in\n`R/00_config.R`\
+  \ or pass an assay name to `scripts/01_ingest_raw_data.R`.\n\n## Running The Pipeline\n\nUse the explicit\
+  \ Rscript path if R is not on your PATH:\n\n```r\n\"C:/Program Files/R/R-4.6.1/bin/Rscript.exe\" scripts/00_download_tox21_data.R\n\
+  \"C:/Program Files/R/R-4.6.1/bin/Rscript.exe\" scripts/run_pipeline.R\n```\n\nOr, if `Rscript` is available:\n\
+  \n```r\nRscript scripts/00_install_packages.R\nRscript scripts/00_download_tox21_data.R\nRscript scripts/run_pipeline.R\n\
+  ```\n\nThe baseline pipeline runs:\n\n1. ingest Tox21 data\n2. build descriptor features\n3. train logistic\
+  \ regression\n4. evaluate predictions\n5. render `reports/tox21_report.html`\n\nRun the extended pipeline\
+  \ to add random forest:\n\n```r\nRscript scripts/run_extended_pipeline.R\n```\n\n## Using Real Tox21\
+  \ Data\n\nDownload the MoleculeNet Tox21 CSV:\n\n```r\nRscript scripts/00_download_tox21_data.R\n```\n\
+  \nOr manually put a real Tox21 CSV in:\n\n```text\ndata/raw/tox21.csv.gz\n```\n\nExpected columns:\n\
+  \n- `compound_id` or `mol_id`: unique compound identifier\n- `smiles`: optional chemical structure string\n\
+  - one or more assay labels, for example `NR-AhR`, `NR-AR`, `SR-p53`\n- numeric descriptor columns, if\
+  \ available\n\nIf the real data only contains SMILES and assay labels, the pipeline derives\nsimple\
+  \ molecular descriptors from SMILES strings using base R.\n\nThen run:\n\n```r\nRscript scripts/01_ingest_raw_data.R\
+  \ data/raw/tox21.csv.gz NR-AhR data/processed/tox21_normalized.csv\nRscript scripts/01_build_features.R\n\
+  Rscript scripts/02_train_baseline.R\nRscript scripts/03_evaluate_baseline.R\nRscript scripts/06_render_report.R\n\
+  ```\n\n## Outputs\n\n- `outputs/tox21_class_balance.png`\n- `outputs/tox21_pca.png`\n- `outputs/tox21_logistic_metrics.csv`\n\
+  - `outputs/tox21_logistic_predictions.csv`\n- `outputs/tox21_logistic_confusion_heatmap.png`\n- `outputs/tox21_logistic_roc_curve.png`\n\
+  - `outputs/tox21_logistic_precision_recall_curve.png`\n- `outputs/tox21_logistic_probability_distribution.png`\n\
+  - `reports/tox21_report.html`\n\nThe report displays the most recently generated model output, so an\
+  \ extended\nrandom-forest run will replace the logistic baseline in the report summary.\n\n## Data Source\
+  \ Notes\n\nThe included `data/example/tox21_toy.csv` is a small schema example, not a\nscientific benchmark.\
+  \ The project can use the MoleculeNet/DeepChem mirror of\nTox21 when the original DeepTox page is unavailable:\n\
+  \n```text\nhttps://deepchemdata.s3-us-west-1.amazonaws.com/datasets/tox21.csv.gz\n```\n\nFor the final\
+  \ report, cite the Tox21 source page and the MoleculeNet/DeepChem\nloader documentation:\n\nhttps://bioinf.jku.at/research/DeepTox/tox21.html\n\
+  \nhttps://deepchem.readthedocs.io/en/latest/api_reference/moleculenet.html\n"

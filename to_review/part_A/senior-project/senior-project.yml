@@ -1,0 +1,136 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: salemaker47/senior_project
+url: https://github.com/salemaker47/senior_project
+platform: github
+description: Brain tumor segmentation + classification pipeline
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-15T12:19:16Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+readme_excerpt: "# Senior Project — Brain Tumor Analysis\n\nMulti-dataset, multi-task medical imaging\
+  \ pipeline for brain MRI. The project\nbuilds end-to-end cross-validated pipelines for two tasks and\
+  \ quantifies the\ncost of using imperfect segmentation masks as input to a classifier.\n\n---\n\n##\
+  \ Tasks\n\n| task | input | output |\n|---|---|---|\n| **Segmentation** | grayscale brain MRI (256×256)\
+  \ | binary tumor mask |\n| **Classification** | tumor patch cropped from MRI via a mask | tumor class\
+  \ (meningioma / glioma / pituitary) |\n\nClassification is evaluated twice per experiment:\n\n- **Eval\
+  \ A** — patch cropped with the ground-truth mask\n- **Eval B** — patch cropped with a predicted mask\
+  \ from the best segmentation model\n\nThe gap (Eval A macro F1 − Eval B macro F1, mean ± std across\
+  \ 5 folds)\nquantifies how much classification degrades when the segmentation is imperfect.\n\n---\n\
+  \n## Datasets\n\n| dataset | size | classes | source |\n|---|---|---|---|\n| `figshare` | 3,064 images\
+  \ / 233 patients | meningioma, glioma, pituitary | KaggleHub `ashkhagan/figshare-brain-tumor-dataset`\
+  \ |\n| `brats2020` | ~57k slices / 369 patients | glioma (segmentation only) | KaggleHub `awsaf49/brats2020-training-data`\
+  \ |\n\nAdding a new dataset requires only dropping raw files into `data/<dataset>/raw/`\nand running\
+  \ NB01 + NB02 with `DATASET = \"<dataset>\"`. No source-code changes needed.\n\n---\n\n## Cross-validation\
+  \ setup\n\nAll experiments use **5-fold cross-validation**. Two split schemes are supported:\n\n- `patient_level`\
+  \ — `StratifiedGroupKFold` on `patient_id`. Used for the\n  project's final results. Guarantees no patient\
+  \ appears in more than one split.\n- `image_level` — plain `KFold` on image rows. Used to reproduce\
+  \ the FigShare\n  reference benchmark's numbers (this scheme leaks patients across folds).\n\nBecause\
+  \ classification and segmentation share the same fold CSVs, fold *k*'s\ntest set is identical for both\
+  \ tasks. This means Eval B can look up predicted\nmasks for fold *k*'s test images without any out-of-fold\
+  \ lookup.\n\n---\n\n## Folder structure\n\n```\nSenior_Project/\n├── configs/\n│   ├── seg/reference_experiments.py\
+  \    canonical seg recipes (01–07)\n│   └── cls/reference_experiments.py    canonical cls recipes (cls01–cls04)\n\
+  │\n├── data/<dataset>/\n│   ├── raw/                            original source files (.mat / .h5)\n\
+  │   ├── processed/\n│   │   ├── images/<id>.png             grayscale uint8 256×256\n│   │   ├── masks/<id>.png\
+  \              binary uint8 256×256 (0 / 255)\n│   │   ├── metadata.csv                one row per image\n\
+  │   │   └── preprocessing_config.json\n│   └── splits/<scheme>/\n│       ├── cv_split_config.json\n\
+  │       ├── cv_fold_summary.csv\n│       └── folds/fold_X_{train,val,test}.csv\n│\n├── outputs/\n│ \
+  \  ├── checkpoints/<task>/<dataset>/<exp>/fold_X/\n│   │   ├── best.ckpt                   Lightning\
+  \ checkpoint\n│   │   ├── best_model.pt               plain PyTorch state-dict for inference\n│   │\
+  \   └── experiment_config.json      full EXPERIMENT dict + repro metadata\n│   ├── logs/<task>/<dataset>/<exp>/fold_X/version_0/metrics.csv\n\
+  │   ├── predictions/segmentation/<dataset>/<seg_exp>/\n│   │   ├── prediction_manifest.json    experiment-level\
+  \ manifest\n│   │   └── fold_X/\n│   │       ├── manifest.json           per-fold manifest with SHA-256\
+  \ hashes\n│   │       └── <image_id>.png          predicted binary mask\n│   ├── tables/\n│   │   ├──\
+  \ segmentation/<dataset>/<exp>/\n│   │   │   ├── cv_results.csv, cv_summary.csv, cv_summary_enriched.csv\n\
+  │   │   │   ├── cv_by_class.csv, cv_class_summary.csv, cv_per_image.csv\n│   │   │   └── fold_X_*.csv\n\
+  │   │   └── classification/<dataset>/<cls_exp>/\n│   │       ├── eval_gt/                Eval A tables\n\
+  │   │       └── eval_pred__<seg_exp>/   Eval B tables\n│   └── figures/\n│       ├── segmentation/<dataset>/<exp>/fold_X/sample_predictions/\n\
+  │       └── classification/<dataset>/<cls_exp>/<eval_variant>/\n│\n├── notebooks/\n│   ├── setups/ \
+  \     01_data_preparation_{figshare,brats2020}\n│   ├── segmentation/ 03_train, 04_data_vis, 05_test,\
+  \ 06_seg_compare\n│   └── classification/ 06_classification_data, 07_train_cls, 08_test_cls, 09_cls_results\n\
+  │\n└── src/             see Source modules below\n```\n\nArtifacts under `data/` and `outputs/` live\
+  \ in Google Drive and are not\nversion-controlled. Code in `src/`, `configs/`, and `notebooks/` lives\
+  \ here on GitHub.\n\n---\n\n## Source modules\n\n### Shared\n\n| file | responsibility |\n|---|---|\n\
+  | `file_utils.py` | canonical path builders (`experiment_paths`, `cls_eval_paths`, `seg_predictions_dir`,\
+  \ …), JSON helpers, SHA-256 file hashing, prediction-manifest readers and verifier. Single definition\
+  \ of `PathLike`. |\n| `notebook_setup.py` | Colab bootstrap: `setup_environment` (mount Drive + git\
+  \ pull), `copy_to_local` (Drive → local SSD), `sync_outputs_to_drive` (local SSD → Drive at end of run)\
+  \ |\n| `preprocess_utils.py` | raw-file converters for figshare (.mat) and brats2020 (.h5) → 256×256\
+  \ PNGs + metadata records; `get_dataset_converter` dispatch |\n| `vis_utils.py` | shared image loaders\
+  \ (`load_grayscale_png`, `load_binary_mask_png`) and `show_class_examples` grid (NB01) |\n| `data_utils.py`\
+  \ | metadata loading/validation, patient-level and image-level fold splitting, leakage verification,\
+  \ fold CSV persistence |\n| `eval_utils.py` | `enriched_aggregate` (cross-fold mean/std/median/IQR/CI\
+  \ table); `build_fold_summary`; `add_mean_std` (shared mean/std helper used by both task aggregators)\
+  \ |\n| `optimizers.py` | string-keyed optimizer registry (adam, adamw, sgd, rmsprop) and scheduler registry\
+  \ (reduce_on_plateau, cosine, cosine_warm_restarts, step, multistep, exponential) |\n| `train_utils.py`\
+  \ | `set_global_seed`, `gather_repro_metadata` (git + GPU stamp), `TrainingTimingCallback`, `EpochSummaryPrinter`,\
+  \ `build_callbacks`, `build_trainer`, `export_plain_state_dict`, `strip_model_prefix` |\n\n### Segmentation\
+  \ (`sg_` prefix)\n\n| file | responsibility |\n|---|---|\n| `sg_data_utils.py` | `BrainTumorDataset`,\
+  \ augmentation pipelines (`build_train_transform`, `build_eval_transform`), `build_dataloaders`, `build_test_loader`.\
+  \ Source of truth for `IMAGENET_MEAN/STD`. |\n| `sg_metrics.py` | `binarize_logits`, `dice_score`, `iou_score`,\
+  \ SMP-backed `get_smp_stats` / `micro_dice_from_stats` / `micro_iou_from_stats`, full per-image metric\
+  \ suite (`compute_per_image_metrics_from_logits`), metric-kind registry (`get_metric_kind_pairs`) |\n\
+  | `sg_losses.py` | loss factory: bce, dice, focal, lovasz, dice_bce, dice_focal, combo (`CombinedLoss`)\
+  \ |\n| `sg_models.py` | SMP model factory: U-Net/ResNet34, U-Net/ResNet50, U-Net++/EfficientNet-B4,\
+  \ U-Net++/ResNet34, Linknet/ResNet34, MA-Net/ResNet34 |\n| `sg_lightning_module.py` | `BrainTumorSegModule`\
+  \ — training/validation steps, micro-pooled metric accumulation, registry-driven optimizer + scheduler\
+  \ |\n| `sg_eval_utils.py` | `micro_dice_from_counts`, `micro_iou_from_counts`, `micro_sensitivity_from_counts`,\
+  \ `micro_precision_from_counts`; `summarize_fold_results`, `aggregate_cv_results`, `aggregate_cv_per_patient`,\
+  \ `aggregate_cv_training_summary` |\n| `sg_test_utils.py` | `load_model_from_pt`, `load_model_from_ckpt`,\
+  \ `predict_mask` (single-image), `evaluate_fold` (batched inference + PNG saving + per-fold manifest),\
+  \ `write_experiment_manifest` |\n| `sg_vis_utils.py` | `show_triplet`, `show_overlay_triplet`, `show_image_gt_pred_overlay`\
+  \ |\n\n### Classification (`cls_` prefix)\n\n| file | responsibility |\n|---|---|\n| `cls_data_utils.py`\
+  \ | `extract_patch` (mask-guided ROI crop), `BrainTumorClsDataset`, cls transforms, `build_dataloaders_cls`,\
+  \ `build_test_loader_cls`. Supports both `mask_source=\"gt\"` and `mask_source=\"predicted\"`. |\n|\
+  \ `cls_models.py` | timm-based model factory: resnet50, efficientnet_b0/b4, vit_small_patch16_224 |\n\
+  | `cls_losses.py` | loss factory: cross_entropy, cross_entropy_smooth (label smoothing), focal_ce |\n\
+  | `cls_metrics.py` | `macro_f1_from_preds`, `accuracy_from_preds`, `per_class_metrics`, `confusion_matrix_from_preds`,\
+  \ `compute_per_image_metrics_cls` |\n| `cls_lightning_module.py` | `BrainTumorClsModule` — training/validation\
+  \ steps, per-epoch macro F1 + accuracy accumulation, registry-driven optimizer + scheduler |\n| `cls_test_utils.py`\
+  \ | `load_cls_model_from_pt`, `evaluate_fold_cls` (handles both mask sources, writes per-fold manifest\
+  \ and tables) |\n| `cls_eval_utils.py` | `aggregate_cv_results_cls` (cross-fold tables + enriched summary\
+  \ + confusion matrix), `aggregate_cv_confusion_from_matrix` |\n| `cls_vis_utils.py` | `plot_confusion_matrix`,\
+  \ `plot_confusion_pair`, `plot_per_class_f1`, `plot_eval_gap`, `plot_sample_patches` |\n\n---\n\n##\
+  \ Notebooks\n\n| notebook | what it does |\n|---|---|\n| `01_data_preparation_figshare` | converts figshare\
+  \ .mat files → PNGs, writes `metadata.csv` and `preprocessing_config.json` |\n| `01_data_preparation_brats2020`\
+  \ | converts brats2020 .h5 slices → PNGs (FLAIR + whole-tumor mask), same output layout |\n| `02_split`\
+  \ | generates 5-fold train/val/test CSVs using the chosen split scheme. Knobs: `DATASET`, `SPLIT_SCHEME`\
+  \ |\n| `03_train` | trains one or all 5 folds for a segmentation experiment; syncs checkpoints + logs\
+  \ to Drive |\n| `04_data_vis` | qualitative figures: sample-prediction overlays (best / worst / random\
+  \ by Dice), per-class Dice bar chart, training-curves across folds |\n| `05_test` | batched inference\
+  \ → predicted PNGs + per-fold manifests + all 6 CV tables (cv_results, cv_summary, cv_summary_enriched,\
+  \ cv_by_class, cv_class_summary, cv_per_image) |\n| `06_seg_compare` | cross-experiment comparison:\
+  \ overlay multiple `cv_summary.csv` tables, rank by Dice |\n| `06_classification_data` | QA: visualises\
+  \ patches extracted with GT masks vs predicted masks side-by-side |\n| `07_train_cls` | trains one or\
+  \ all 5 classification folds (GT masks only); syncs to Drive |\n| `08_test_cls` | Eval A (`mask_source=\"\
+  gt\"`) and Eval B (`mask_source=\"predicted\"`); prints the Eval A − Eval B macro F1 gap |\n| `09_cls_results`\
+  \ | loads saved CSVs from Drive, produces publication-ready figures: confusion matrix pair, per-class\
+  \ F1 bars, Eval A vs B gap chart, sample-patch grid |\n\n---\n\n## Experiment configuration\n\nEvery\
+  \ run is fully specified by an `EXPERIMENT` dict in Cell 3 of the relevant\nnotebook. The canonical\
+  \ recipes live in `configs/seg/reference_experiments.py`\nand `configs/cls/reference_experiments.py`.\
+  \ Changing one experiment only requires\nediting this dict — no source files are touched between runs.\n\
+  \n```python\n# Segmentation\nEXPERIMENT = get_experiment(\"03_dicebce_image_level\", fold=1)\n\n# Classification\n\
+  EXPERIMENT = get_experiment(\n    \"cls01_resnet50\",\n    dataset=\"figshare\",\n    split_scheme=\"\
+  image_level\",\n    fold=1,\n    name=\"cls01_resnet50\",    # always pass name= explicitly\n)\n```\n\
+  \nThe full config is written to `experiment_config.json` alongside each\ncheckpoint so every result\
+  \ is reproducible from the saved dict alone.\n\n---\n\n## Prediction manifests\n\nAfter NB05 runs, each\
+  \ fold writes a `manifest.json` recording:\n\n- the checkpoint path and its SHA-256 hash\n- the test\
+  \ CSV path and its SHA-256 hash\n- number of predictions, image size, threshold, model name\n\nBefore\
+  \ classification Eval B reads any predicted masks, it calls\n`verify_seg_predictions_match()` which\
+  \ recomputes the hashes and aborts if\nthey don't match. This catches the failure mode where the segmentation\
+  \ model\nis retrained and the old predictions on disk silently go stale.\n\n---\n\n## experiments\n\n\
+  ### Segmentation (figshare, image-level)\n\n| exp name | loss | architecture | Dice |\n|---|---|---|---|\n\
+  | `01_dice_image_level` | Dice | U-Net / ResNet34 | 0.8513 |\n| `02_bce_image_level` | BCE | U-Net /\
+  \ ResNet34 | 0.8575 |\n| `03_dicebce_image_level` | Dice + BCE | U-Net / ResNet34 | 0.8545 |\n| `04_dicefocal_image_level`\
+  \ | Dice + Focal | U-Net / ResNet34 | 0.8510 |\n| `05_lovasz_image_level` | Lovasz | U-Net / ResNet34\
+  \ | 0.8503 |\n| `06_clahe_dicebce_image_level` | CLAHE + Dice + BCE | U-Net / ResNet34 | 0.8533 |\n\
+  | `07_unetpp_effb4_dicebce_image_level` | Dice + BCE | U-Net++ / EfficientNet-B4 | **0.8643** |\n\n\
+  ### Segmentation (brats2020, image-level)\n\n\n| exp name | loss | architecture | Dice |\n|---|---|---|--"

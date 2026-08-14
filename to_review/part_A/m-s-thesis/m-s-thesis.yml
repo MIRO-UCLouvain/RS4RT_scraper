@@ -1,0 +1,99 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: RyanSanford13/M.S.-Thesis
+url: https://github.com/RyanSanford13/M.S.-Thesis
+platform: github
+description: Public repository containing associated MATLAB scripts and relevant data files used in the
+  completion of the thesis titled "Needle Optimization for Use in HDR GYN Brachytherapy" (Ryan Sanford,
+  Duke University 2025)
+license: null
+language: MATLAB
+keywords: []
+stars: 0
+updated_at: '2025-04-08T20:53:41Z'
+image_source: null
+heuristic_total_score: 26
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 11 support term(s).
+readme_excerpt: "# M.S.-Thesis\nPublic repository containing associated MATLAB scripts and relevant data\
+  \ files used in the completion of the thesis titled \"Needle Optimization for Use in HDR GYN Brachytherapy\"\
+  \ (Ryan Sanford, Duke University, 2025).\n\nThese scripts were created solely by Ryan Sanford in the\
+  \ completion of his M.S. Thesis. \n\nCopyright (c) 2025 Ryan Sanford\n\nList of Major Projects and Associated\
+  \ Scripts\n\t<br /> &emsp; DICOM File Conversion \n\t\t<br /> &emsp; &emsp; convertRTStructToSeg.m\n\
+  \t<br /> &emsp; Needle Path Optimization \n    \t<br /> &emsp; &emsp; comittee_sphere.m\n    \t<br />\
+  \ &emsp; &emsp; comittee_anatomy.m\n    \t<br /> &emsp; &emsp; optimize_dwell_times.m\n    \t<br />\
+  \ &emsp; &emsp; dose_calc.m\n    \t<br /> &emsp; &emsp; dose_eval.m\n    \t<br /> &emsp; &emsp; greedy_needle_selection.m\
+  \ \n    \t<br /> &emsp; &emsp; organ_mesh.m\n    \t<br /> &emsp; &emsp; createBinaryMask.m\n    \t<br\
+  \ /> &emsp; &emsp; randTri.m\n    \t<br /> &emsp; &emsp; uniformSample.m \n    \t<br /> &emsp; &emsp;\
+  \ checkIntersect.m\n    \t<br /> &emsp; &emsp; generatePointsAlongLine.m\n    \t<br /> &emsp; &emsp;\
+  \ isPointInSphere.m\n     \t<br /> &emsp; &emsp; Consensus_data.m\n<br> Associated Data Files\n\t<br\
+  \ /> &emsp; &emsp; 192ir-hdr_gammamed_plus.xls\n\nDetailed descriptions of each of the major projects\
+  \ can be found below.\n\n\n## DICOM File Conversion \nDescription: Code used to convert a DICOM RT Structure\
+  \ (RT) File into a DICOM Surface Segmentation (SEG) File. User provides an image set and the RT file.\
+  \ The script extracts the relevant information from the RT file needed to process the contour information\
+  \ and generate a triangulated mesh. Using the DICOM library in MATLAB, the mesh is written to the SEG\
+  \ file. \n<br> _convertRTStructToSeg.m_\n<br> inputs: \n\t<br> &emsp; *RT filename*.dcm - RT file exported\
+  \ from treatment planning system; linked to volume MR image set \n \t<br> &emsp; *image filepath* -\
+  \ path to folder containing associated volume MR image set that the RT file was created on \n<br> output:\n\
+  \t<br> &emsp; *SEG filename.dcm* - converted SEG file.\n\n\n## Needle Path Optimization \nDescription:\
+  \ Collection of scripts used in the two wrappers - *committee_sphere.m* and *committee_anatomy.m* -\
+  \ to facillitate optimized selection of needle paths for use in needle path planning in HDR GYN brachytherapy.\
+  \ User employs scripts to prepare data for optimization process and the wrapper scripts make use of\
+  \ support functions to accomplish repeated processes. \n<br>\n<br> **Data preparation**\n<br> _organMesh.m_\n\
+  <br> Description: Creates triangulated meshes of anatomy from provided DICOM RT file. Anatomy serves\
+  \ as base geometry that can be optimized over for needle path optimization\n<br> inputs: \n\t<br> &emsp;\
+  \ *RT filename.dcm* - RT file exported from treatment planning system; Contains anatomy contours; linked\
+  \ to <br> &emsp; volume MR image set\n \t<br> &emsp; *image filepath* - path to folder containing associated\
+  \ volume MR image set that the RT file was created on\n  <br> output:\n  \t<br> &emsp; *organ_name.mat*\
+  \ - structure containing the organ mesh (faces and vertices) and the binary mask used in the <br> &emsp;\
+  \ triangulation process\n<br> functions:\n\t<br> &emsp; *createBinaryMask.m* \n \t<br> &emsp; Description:\
+  \ Creates a 3D binary mask by concatenating 2D binary masks based on contour data from the <br> &emsp;\
+  \ provided MR volume image set and RT file\n<br>\n<br> _Consensus_data.m_\n<br> Description: Processes\
+  \ HDR source consensus data for use in TG-43 dose calculations in the needle path optimization process\n\
+  <br> inputs: \n\t<br> &emsp; *192ir-hdr_gammamed_plus.xls* - spreadsheet containing HDR source consensus\
+  \ data \n <br> output:\n \t<br> &emsp; *consensus data varaible name.mat* - structure containing the\
+  \ consensus data for the associated variable\n<br>\n<br> **Needle Path Optimization**\n<br> _committee_sphere.m_\n\
+  <br> Description: Wrapper script to perform needle path optimization over a sphere. \n<br> functions:\n\
+  \t<br> &emsp; *randTri.m*\n \t<br> &emsp; &emsp; Description: Selects a triangle from a provided mesh\
+  \ based on probability proportional to area; takes the <br> &emsp; &emsp; triangulated entry and/or\
+  \ target zone(s) and selects a triangle based on a probability distribution defined by <br> &emsp; &emsp;\
+  \ the area of the triangles within the mesh \n  \t<br> &emsp; *uniformSample.m*\n   \t<br> &emsp; &emsp;\
+  \ Description: Randomly selects a point within a provided polygon; takes the triangle chosen from the\
+  \ randTri() <br> &emsp; &emsp; function and randomly selects a point within the boundaries of the triangle\n\
+  \    \t<br> &emsp; *checkIntersect.m*\n     \t<br> &emsp; &emsp; Description: determines if a line intersects\
+  \ a trinagulated mesh; determines if the needle path, represented as <br> &emsp; &emsp; a line, intersects\
+  \ the sphere target (sphere triangulated mesh)\n\t<br> &emsp; *generatePointsAlongLine.m*\n \t<br> &emsp;\
+  \ &emsp; Description: generates points along a line a uniform distances; generates the dwell locations\
+  \ along the path <br> &emsp; &emsp; of the needle path \n  \t<br> &emsp; *isPointInSphere.m*\n   \t\
+  <br> &emsp; &emsp; Description: determines if a point lies withing a sphere mesh; determines if a dwell\
+  \ position is located within <br> &emsp; &emsp; the spherical target\n    \t<br> &emsp; *greedy_needle_selection.m*\n\
+  \     \t<br> &emsp; &emsp; Description: See entry below; Optimization script used to determine the optimal\
+  \ needle paths over a target\n\n<br> _committee_anatomy.m_\n<br> Description: Wrapper script to perform\
+  \ needle path optimization over a provided anatomical geometry \n<br> inputs:\n\t<br> &emsp; uterus.mat\n\
+  \ \t<br> &emsp; cerv_hrctv.mat\n  \t<br> &emsp; rectum.mat\n   \t<br> &emsp; vagina.mat\n    \t<br>\
+  \ &emsp; hrctv_marg.mat \n<br> functions: \n\t<br> &emsp; *randTri.m*\n \t<br> &emsp; &emsp; Description:\
+  \ Selects a triangle from a provided mesh based on probability proportional to area; takes the <br>\
+  \ &emsp; &emsp; triangulated entry and/or target zone(s) and selects a triangle based on a probability\
+  \ distribution defined by <br> &emsp; &emsp; the area of the triangles within the mesh \n  \t<br> &emsp;\
+  \ *uniformSample.m*\n   \t<br> &emsp; &emsp; Description: Randomly selects a point within a provided\
+  \ polygon; takes the triangle chosen from the randTri() <br> &emsp; &emsp; function and randomly selects\
+  \ a point within the boundaries of the triangle\n    \t<br> &emsp; *TrinagleRayIntersection.m* \n  \
+  \   \t<br> &emsp; &emsp; Description: MathWorks Exchange function available here: <br> &emsp; &emsp;\
+  \ https://www.mathworks.com/matlabcentral/fileexchange/33073-triangle-ray-intersection; determines if\
+  \ a line <br> &emsp; &emsp; intersects a triangulated mesh \n\t<br> &emsp; *generatePointsAlongLine.m*\n\
+  \ \t<br> &emsp; &emsp; Description: generates points along a line a uniform distances; generates the\
+  \ dwell locations along the path <br> &emsp; &emsp; of the needle path\n\t<br> &emsp; *inpolyhedron.m*\n\
+  \ \t<br> &emsp; &emsp; Description: MathWorks Exchange function available here: <br> &emsp; &emsp; https://www.mathworks.com/matlabcentral/fileexchange/37856-inpolyhedron-are-points-inside-a-triangulated-volume;\
+  \ determines if <br> &emsp; &emsp; a point is within a triangulated mesh\n\t<br> &emsp; *greedy_needle_selection.m*\n\
+  \     \t<br> &emsp; &emsp; Description: See entry below; Optimization script used to determine the optimal\
+  \ needle paths over a target \n\n<br> _greedy_needle_selection.m_\n<br> Description: Wrapper script\
+  \ for the needle path optimization process\n<br> functions:\n\t<br> &emsp; *dose_calc.m*\n \t<br> &emsp;\
+  \ &emsp; Description: calculates the dose distribution over a defined calculation grid given dwell times\
+  \ and needle <br> &emsp; &emsp; locations\n  \t<br> &emsp; *dose_eval.m*\n   \t<br> &emsp; &emsp; Description:\
+  \ evaluates a given dose distribution for its conformance to defined target dose objectives and <br>\
+  \ &emsp; &emsp; OAR constraints\n    \t<br> &emsp; *optimize_dwell_times.m*\n     \t<br> &emsp; &emsp;\
+  \ Description: Optimizes dwell times given defined dwell positions contained in provided needle paths\
+  \ using <br> &emsp; &emsp; MATLAB's optimization toolbox\n      \n"

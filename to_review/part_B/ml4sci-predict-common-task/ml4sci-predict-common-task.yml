@@ -1,0 +1,46 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Kashvi05agarwal/ml4sci_predict_common_task
+url: https://github.com/Kashvi05agarwal/ml4sci_predict_common_task
+platform: github
+description: GSoC 2026 application — cardiac CT radiomics pipeline using PyRadiomics, UMAP & HDBSCAN for
+  ML4SCI/CERN
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-03-06T13:44:08Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# ML4SCI GSoC 2026 — PrediCT Common Task\n\n**Author:** Kashvi Agarwal (IIT Madras) \
+  \ \n**Target Project:** PrediCT Project 2 — Radiomics Feature Extraction and Calcium Phenotype Discovery\
+  \  \n**Organization:** ML4SCI (Machine Learning for Science), Google Summer of Code 2026\n\n---\n\n\
+  ## Overview\n\nThis repository contains my submission for the Common Evaluation Task required for all\
+  \ PrediCT project applicants under ML4SCI GSoC 2026.\n\nThe notebook demonstrates a **domain-aware,\
+  \ reproducible preprocessing pipeline** for cardiac CT data from the Stanford COCA dataset, with emphasis\
+  \ on preserving data integrity for downstream radiomics analysis and coronary calcium scoring.\n\n---\n\
+  \n## How to Review\n\nOpen `common_task.ipynb` and scroll through the executed cells. All outputs (statistics,\
+  \ visualizations, tables) are visible throughout the notebook.\n\n---\n\n## Pipeline Structure\n\n|\
+  \ Section | Description |\n|---|---|\n| DICOM Loading | Reads CT series, sorts slices via `ImagePositionPatient`,\
+  \ preserves native voxel spacing |\n| HU Windowing | Conservative clipping (−1024 to 1500 HU), no intensity\
+  \ normalization |\n| Statistics | Per-series HU ranges, spacing verification, calcium voxel counts |\n\
+  | Dataset Splitting | Reproducible subject-level train/validation/test split (70/15/15) |\n| Augmentation\
+  \ | Geometric-only (flips, ±5° rotation), applied post-split to prevent data leakage |\n| Visualization\
+  \ | Central axial slices, HU distributions, split chart, augmentation demo |\n\n---\n\n## Key Domain\
+  \ Decisions\n\n- **Voxel spacing preserved** — not resampled; critical for valid Agatston score calculation\
+  \ and radiomics in physical units\n- **No intensity normalization** — CT Hounsfield Units have absolute\
+  \ physical meaning; altering them invalidates radiomics texture features\n- **Nearest-neighbor interpolation**\
+  \ — used for rotations to avoid introducing non-physical HU values\n- **Augmentation after splitting**\
+  \ — prevents any augmented training data from contaminating validation or test sets\n- **Subject-level\
+  \ splits** — all slices from a patient appear in exactly one split, preventing data leakage\n\n---\n\
+  \n## Dataset\n\n**Stanford COCA (Coronary Calcium and Chest CT)**  \nNon-contrast cardiac CT scans from\
+  \ 100 patients.\n\nThe dataset is not included in this repository due to size and licensing constraints.\
+  \  \nDownload from: https://stanfordaimi.azurewebsites.net/datasets/e8ca4aa2-3da5-4b26-ae9c-81f65c6cdeb9\n\
+  \n---\n\n## Setup\n\n```bash\npip install -r requirements.txt\n```\n\n---\n\n## Repository Structure\n\
+  \n```\nml4sci_predict_common_task/\n├── common_task.ipynb    # Fully executed preprocessing pipeline\n\
+  ├── requirements.txt\n├── .gitignore\n└── README.md\n```\n"

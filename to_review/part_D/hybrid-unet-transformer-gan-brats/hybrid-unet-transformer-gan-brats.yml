@@ -1,0 +1,119 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Samarborkar/hybrid-unet-transformer-gan-brats
+url: https://github.com/Samarborkar/hybrid-unet-transformer-gan-brats
+platform: github
+description: Hybrid U-Net + Transformer + EfficientNetV2 encoder with a Pix2Pix GAN refiner for brain
+  tumor MRI segmentation (BraTS 2020 & Figshare). Final-year major project.
+license: MIT
+language: Jupyter Notebook
+keywords:
+- brain-tumor-segmentation
+- brats
+- deep-learning
+- efficientnet
+- gan
+- image-segmentation
+- medical-imaging
+- mri
+- pix2pix
+- pytorch
+- transformer
+- unet
+stars: 0
+updated_at: '2026-07-17T11:58:12Z'
+image_source: https://raw.githubusercontent.com/Samarborkar/hybrid-unet-transformer-gan-brats/HEAD/assets/FlowDiagram.png
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+- Matched 2 AI/ML term(s) in repository name.
+readme_excerpt: "<h1 align=\"center\">Hybrid U-Net + Transformer + GAN for Brain Tumor Segmentation</h1>\n\
+  \n<p align=\"center\">\n  <em>A hybrid deep-learning pipeline that fuses a U-Net decoder, self-attention\
+  \ Transformer blocks,\n  an EfficientNetV2-S encoder, and a Pix2Pix GAN refiner for accurate brain-tumor\
+  \ segmentation from MRI.</em>\n</p>\n\n<p align=\"center\">\n  <img src=\"https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white\"\
+  \ alt=\"Python\">\n  <img src=\"https://img.shields.io/badge/PyTorch-2.x-EE4C2C?logo=pytorch&logoColor=white\"\
+  \ alt=\"PyTorch\">\n  <img src=\"https://img.shields.io/badge/Task-Medical%20Image%20Segmentation-8A2BE2\"\
+  \ alt=\"Task\">\n  <img src=\"https://img.shields.io/badge/License-MIT-green\" alt=\"License\">\n</p>\n\
+  \n<p align=\"center\">\n  <img src=\"assets/FlowDiagram.png\" alt=\"Pipeline overview\" width=\"85%\"\
+  >\n</p>\n\n> **Final-year major project (B.Tech, 8th semester).** We segment tumor sub-regions from\
+  \ brain MRI using a\n> hybrid encoder–decoder network, then apply a **Pix2Pix GAN as a learned post-processing\
+  \ step** that sharpens\n> boundaries and cleans up the coarse segmentation mask — consistently improving\
+  \ Dice and IoU on two datasets.\n\n---\n\n## Table of Contents\n\n- [Highlights](#highlights)\n- [Results](#results)\n\
+  - [Method](#method)\n- [Repository Structure](#repository-structure)\n- [Datasets](#datasets)\n- [Getting\
+  \ Started](#getting-started)\n- [Usage](#usage)\n- [Pretrained Weights](#pretrained-weights)\n- [Figures](#figures)\n\
+  - [References](#references)\n- [Authors](#authors)\n- [License](#license)\n\n---\n\n## Highlights\n\n\
+  - **Hybrid architecture** — an EfficientNetV2-S encoder feeds a U-Net decoder in which each skip stage\
+  \ is\n  enriched by a lightweight **Transformer block** (multi-head self-attention), combining CNN locality\
+  \ with\n  global context. ~10.9 M parameters.\n- **GAN-based refinement** — a **Pix2Pix** generator/PatchGAN\
+  \ discriminator takes the coarse mask + input\n  image and produces a refined mask, acting as a learned\
+  \ boundary-cleanup step.\n- **Two datasets, two pipelines** — a 2D pipeline for the Figshare dataset\
+  \ and a slice-wise 3D→2D pipeline for\n  multi-modal **BraTS 2020** volumes (FLAIR, T1ce, T2).\n- **Consistent\
+  \ gains from the GAN** — refinement improves Dice on *both* datasets (see below).\n\n## Results\n\n\
+  Test-set performance, before and after GAN refinement:\n\n| Dataset            | Model            |\
+  \ Dice ↑     | Mean IoU ↑ |\n| ------------------ | ---------------- | ---------- | ---------- |\n|\
+  \ **Figshare (2D)**  | Hybrid U-Net     | 0.909      | —          |\n| **Figshare (2D)**  | Hybrid +\
+  \ Pix2Pix | **0.967**  | —          |\n| **BraTS 2020**     | Hybrid U-Net     | 0.911      | 0.847\
+  \      |\n| **BraTS 2020**     | Hybrid + Pix2Pix | **0.942**  | **0.876**  |\n\n<p align=\"center\"\
+  >\n  <img src=\"assets/ModelComparisionWithBaselines.png\" alt=\"Comparison with baselines\" width=\"\
+  70%\">\n</p>\n\n<table>\n  <tr>\n    <td align=\"center\"><b>BraTS 2020 — qualitative</b><br><img src=\"\
+  assets/BraTSResults.png\" width=\"100%\"></td>\n    <td align=\"center\"><b>Figshare — qualitative</b><br><img\
+  \ src=\"assets/FigShareResults.png\" width=\"100%\"></td>\n  </tr>\n</table>\n\n<p align=\"center\"\
+  >\n  <img src=\"assets/ResultsAfterGAN.png\" alt=\"Effect of GAN refinement\" width=\"70%\"><br>\n \
+  \ <em>Boundary refinement produced by the Pix2Pix post-processing stage.</em>\n</p>\n\n## Method\n\n\
+  ```\n        MRI input (FLAIR / T1ce / T2)\n                    │\n        ┌───────────▼────────────┐\n\
+  \        │  EfficientNetV2-S       │   pretrained CNN encoder (timm)\n        │  encoder           \
+  \     │\n        └───────────┬────────────┘\n                    │  multi-scale features\n        ┌───────────▼────────────┐\n\
+  \        │  U-Net decoder          │   transpose-conv upsampling +\n        │  + Transformer blocks\
+  \   │   multi-head self-attention at each stage\n        └───────────┬────────────┘\n              \
+  \      │  coarse segmentation mask\n        ┌───────────▼────────────┐\n        │  Pix2Pix GAN refiner\
+  \    │   Generator (U-Net) + PatchGAN discriminator\n        │  (mask + image → mask)  │   L1 + adversarial\
+  \ loss\n        └───────────┬────────────┘\n                    ▼\n           refined segmentation\n\
+  ```\n\n**Training setup.** Images are resized to `128×128`, 4 output classes (background + 3 tumor sub-regions).\n\
+  The segmentation network is trained with a Dice loss (Adam, `lr = 1e-4`); the Pix2Pix refiner is then\
+  \ trained\nwith combined adversarial + L1 loss (`λ_L1 = 100`, Adam `lr = 2e-4`, `β1 = 0.5`) while the\
+  \ segmentation weights\nare frozen. Full layer-by-layer summaries are in [`models/summaries/`](models/summaries/).\n\
+  \n## Repository Structure\n\n```\n.\n├── notebooks/\n│   ├── 01_figshare_2d_hybrid_gan.ipynb      #\
+  \ 2D pipeline (Figshare): train hybrid U-Net + Pix2Pix, evaluate\n│   └── 02_brats2020_slicewise_gan.ipynb\
+  \     # BraTS 2020 slice-wise pipeline: train + evaluate (Dice & IoU)\n├── src/\n│   └── preprocessing/\n\
+  │       ├── prepare_brats_data.py            # normalize, crop, augment & split BraTS .nii volumes →\
+  \ .npy\n│       └── split_slices.py                  # slice 3D volumes into 2D slices for training\n\
+  ├── models/\n│   ├── best_pix2pix_generator.pth           # trained GAN generator (refiner) weights\n\
+  │   ├── best_pix2pix_discriminator.pth       # trained PatchGAN discriminator weights\n│   └── summaries/\
+  \                           # torchinfo layer-by-layer model summaries\n├── assets/                \
+  \                  # figures used in this README / thesis\n├── docs/\n│   └── thesis.pdf           \
+  \                # full project thesis\n├── requirements.txt\n└── README.md\n```\n\n> The end-semester\
+  \ presentation (`.pptx`, ~19 MB) is attached to the\n> [latest GitHub Release](../../releases) rather\
+  \ than committed to the repo.\n\n## Datasets\n\nThis project uses two publicly available datasets (not\
+  \ redistributed here — download from the source):\n\n- **BraTS 2020** — multi-modal (FLAIR, T1, T1ce,\
+  \ T2) 3D MRI volumes with expert tumor annotations.\n  Preprocessing (`src/preprocessing/`) normalizes\
+  \ each modality, crops to `128×128×128`, augments\n  (flip / rotate / intensity shift), one-hot encodes\
+  \ 4 classes, then splits into 2D slices.\n- **Figshare Brain Tumor Dataset** — 2D T1-weighted contrast-enhanced\
+  \ MRI slices with tumor masks.\n\n## Getting Started\n\n```bash\n# 1. Clone\ngit clone https://github.com/Samarborkar/hybrid-unet-transformer-gan-brats.git\n\
+  cd hybrid-unet-transformer-gan-brats\n\n# 2. Create an environment\npython -m venv .venv && source .venv/bin/activate\
+  \    # Windows: .venv\\Scripts\\activate\n\n# 3. Install dependencies\npip install -r requirements.txt\n\
+  ```\n\nA CUDA-capable GPU is strongly recommended for training.\n\n## Usage\n\n**Preprocess BraTS volumes**\
+  \ (adjust the data paths at the top of each script first):\n\n```bash\npython src/preprocessing/prepare_brats_data.py\
+  \   # .nii volumes -> normalized/augmented .npy + train/val split\npython src/preprocessing/split_slices.py\
+  \         # 3D volumes  -> 2D slices for slice-wise training\n```\n\n**Train & evaluate** — open the\
+  \ notebooks and run top to bottom:\n\n- `notebooks/01_figshare_2d_hybrid_gan.ipynb` — Figshare 2D pipeline\n\
+  - `notebooks/02_brats2020_slicewise_gan.ipynb` — BraTS 2020 slice-wise pipeline\n\n## Pretrained Weights\n\
+  \nTrained Pix2Pix refiner weights are included under [`models/`](models/):\n\n```python\nimport torch\n\
+  G = Pix2PixGenerator().to(device)                      # class defined in the notebook\nG.load_state_dict(torch.load(\"\
+  models/best_pix2pix_generator.pth\", map_location=device))\nG.eval()\n```\n\n## Figures\n\n<table>\n\
+  \  <tr>\n    <td align=\"center\"><img src=\"assets/DiceVsEpochsAfterGANBrats.png\" width=\"100%\"><br><sub>Dice\
+  \ vs. epochs — BraTS</sub></td>\n    <td align=\"center\"><img src=\"assets/TrainVsValidationLossBrats.png\"\
+  \ width=\"100%\"><br><sub>Train vs. val loss — BraTS</sub></td>\n    <td align=\"center\"><img src=\"\
+  assets/AblationBraTS.png\" width=\"100%\"><br><sub>Ablation — BraTS</sub></td>\n  </tr>\n  <tr>\n  \
+  \  <td align=\"center\"><img src=\"assets/DiceVsEpochsAfterGANFigShare.png\" width=\"100%\"><br><sub>Dice\
+  \ vs. epochs — Figshare</sub></td>\n    <td align=\"center\"><img src=\"assets/GanLossBrats.png\" width=\"\
+  100%\"><br><sub>GAN loss — BraTS</sub></td>\n    <td align=\"center\"><img src=\"assets/DataSetSizeVsDiceComparison.png\"\
+  \ width=\"100%\"><br><sub>Dataset size vs. Dice</sub></td>\n  </tr>\n</table>\n\n## References\n\n1.\
+  \ **U-Net and its variants for medical image segmentation** — a review of U-Net architectures.\n2. **Transformers\
+  \ in medical imaging** — a survey of transformer-based approaches for medical image analysis.\n\n*(Full\
+  \ survey PDFs are not redistributed here due to copyright; see the citations in the [thesis](docs/thesis.pdf).)*\n\
+  \n## Authors\n\n- **Saurav Gitte**\n- **Samar Borkar**\n- **Anubhav Chaudhary**\n\n**Supervisor:** Dr.\
+  \ Vrijendra Singh\n\n## License\n\nReleased under the [MIT License](LICENSE). Datasets and third-party\
+  \ research papers retain their original licenses.\n"

@@ -1,0 +1,70 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: opendose/opendose3d
+url: https://gitlab.com/opendose/opendose3d
+platform: gitlab
+description: This project implements a Slicer3D module aiming for molecular radiotherapy dosimetry
+license: null
+language: null
+keywords:
+- 3d-slicer-extension
+stars: 19
+updated_at: '2026-08-13T14:47:48.876Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 6 support term(s).
+readme_excerpt: "# OpenDose 3D\n\nThis is the official repository for the `Slicer` extension `OpenDose3D`.\n\
+  \nThis module performs full 3D dosimetry for molecular radiotherapy procedures using multiple time point\
+  \ 3D datasets, either SPECT/CT or PET/CT.\n\n## Workflows\n\nThe module implements two workflows, one\
+  \ for activity integration and another for absorbed dose rate integration. The general schema consist\
+  \ on:\n\n- Standardise the dicom importation: extracting relevant data and properly renaming and locating\
+  \ all files. One folder per time point is created.\n- Resample CT: If one CT per time point is provided\
+  \ then it is rescaled to the SPECT/PET resolution to avoid resolution artifacts in absorbed dose calculations.\
+  \ If only one CT is provided, it is used (copied) for all time points. Currently, at least one CT is\
+  \ needed. Further developments will allow for no CT workflows.\n- Rescale data: In this step the CT\
+  \ volumes are converted to density maps using CT calibration data (by default Schneider2000 curve),\
+  \ and the SPECT/PET volumes are converted into activity maps using camera factor. The camera factor\
+  \ can be calculated in the module Calibration if you provide a sensitivity tank acquisition.\n- Registration:\
+  \ the module provides automatic CT-CT registration using `SlicerElastix` module if it is installed and\
+  \ if one CT per time point is provided. In the case of only one CT is provided, it is the user who must\
+  \ guarantee the registration of all data by the using of the `General Ragistration (BRAINS)` module.\n\
+  - Segmentation: Slicer contains a lot of segmentation tools, it is recommended to install the `ExtraSegmentationEffects`\
+  \ and the `TotalSegmentator` modules that provides extra functionality like masking volumes and auto-segmentation.\
+  \ The `TotalSegmentator` module has an extra requirement to work, in its main interface it allows to\
+  \ install everything it needs. One segmentation must be done in the reference time point and then propagated\
+  \ using the given functionality.\n\nAfter this point each workflow differs, for activity integration\
+  \ workflow:\n\n- Extraction of activity per segment per time point: A table is created with the relevant\
+  \ information of activity, volume and mass per segment per time point. it is a completely automatic\
+  \ process\n- Integration of activity in time: the module provides PK integration in time functionality.\
+  \ A table with the integrated activity, the absorbed dose by local energy deposited (LED) in organ and\
+  \ the calculation uncertainty is reported.\n\nfor absorbed dose rate integration workflow:\n\n- Calculation\
+  \ of absorbed dose rate maps: currently 3 method are available (LED in voxel, homogeneous FFT convolution,\
+  \ and Monte Carlo).\n- In the case of Monte Carlo, a set of Gate macros are produced. The user is expected\
+  \ to run in a dedicated gate workstation or through docker command as:\n  \n  - `docker run -ti --rm\
+  \ -v $PWD:/APP opengatecollaboration/gate:9.3-docker mac/executor.mac` in linux/Mac\n  - `docker run\
+  \ -ti --rm -v $curr_path\\:/APP opengatecollaboration/gate:9.3-docker mac/executor.mac` in Windows powershell\
+  \ (You must have WSL2 activated).\n  \n- Finally, the Gate outputs can be reimported to Slicer easily\
+  \ using a dedicated button.\n- Extraction of absorbed dose per segment per time point: this method allows\
+  \ to consider organ mass/shape/volume variation in time.\n- Integration of absorbed dose rate in time:\
+  \ as described before, the module implements a PK integration in time functionality. A table with the\
+  \ absorbed dose per segment and the calculation uncertainty is reported\n\n## Ressources\n\nThe following\
+  \ link collection should facilitate understanding the code in this extension and the bigger of applied\
+  \ concepts:\n\n- [Slicer Utils](https://github.com/Slicer/Slicer/blob/master/Base/Python/slicer/util.py)\n\
+  - [DICOM Introduction](https://www.slicer.org/wiki/Documentation/Nightly/FAQ/DICOM)\n- [DICOM Structure](https://www.slicer.org/wiki/Documentation/4.0/Modules/CreateDICOMSeries)\n\
+  - [DICOM Browser](https://dicom.innolitics.com/ciods)\n- [Subject Hierarchy](https://www.slicer.org/wiki/Documentation/4.5/Modules/SubjectHierarchy)\n\
+  - [Docker installation](https://docs.docker.com/get-docker/)\n\n## Sample Data\n\nThe example data is\
+  \ part of this package and it is located in the folder `Resources`. It contains a DICOM dataset provided\
+  \ by the IAEA CRP E2.30.05 on “Dosimetry in Radiopharmaceutical therapy for personalized patient treatment”.\
+  \ It also contains a sample segmentation.\n\nThe VDK associated to convolutions are located in a public\
+  \ [gitlab repository](https://gitlab.com/opendose/opendosedvkdata). The module download only the required\
+  \ data as needed, but if you want you can clone the data repository and copy the DVK folder inside the\
+  \ folder `JSON` in the folder `Resources`. The module can compress/decompress the json data as needed.\
+  \ Be aware that the total size of DVK data is above 1GB!!\n\n## Contribute\n\nIf you'd like to contribute,\
+  \ you can find an orientation on the Slicer [documentation for developers](https://www.slicer.org/wiki/Documentation/Nightly/Developers).\n\
+  \nPlease read first the `Developers.md` file for further information on how to contribute.\n\n## License\n\
+  \nOpenDose3D is subject to the `Apache License`, which is deposited in the project's root.\n"

@@ -1,0 +1,80 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: aidevshakil/Brain-Tumor-Segmentation-using-MRI
+url: https://github.com/aidevshakil/Brain-Tumor-Segmentation-using-MRI
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-05T17:27:18Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# Medical-Image-Segmentation-Brats-MRI-Dataset-(With Knowledge Distillation) \n# Teacher-Student\
+  \ Model Architecture\n\nThis project implements a Teacher-Student model architecture, where the **Teacher\
+  \ Model** is a larger, more complex model that provides soft labels to train the **Student Model**.\
+  \ The Student Model is a smaller, more efficient model designed to mimic the Teacher Model's behavior.\
+  \ This approach leverages model distillation to reduce the computational complexity while retaining\
+  \ performance.\n\n## Table of Contents\n1. [Teacher Model Architecture](#teacher-model-architecture)\n\
+  2. [Student Model Architecture](#student-model-architecture)\n3. [Layer Descriptions](#layer-descriptions)\n\
+  4. [Training Procedure](#training-procedure)\n5. [Installation](#installation)\n6. [Usage](#usage)\n\
+  \n## Teacher Model Architecture\n\nThe Teacher Model is a deep Convolutional Neural Network (CNN) that\
+  \ uses separable convolutions, batch normalization, Leaky ReLU activation functions, max-pooling layers,\
+  \ and upsampling layers. This model is used for feature extraction and generating soft labels to teach\
+  \ the Student Model.\n\n### Layers of the Teacher Model:\n1. **Input Layer**:\n   - Shape: `(128, 128,\
+  \ 3)`\n   - Description: The model takes in images of size 128x128 pixels with 3 RGB channels.\n\n2.\
+  \ **Separable Convolutional Layers**:\n   - Uses depthwise separable convolutions to reduce parameters\
+  \ while preserving feature extraction ability.\n   - Example: `Conv2D(16, (3, 3), padding='same', activation='relu')`\n\
+  \n3. **Batch Normalization**:\n   - Applied after each convolution to stabilize the learning process.\n\
+  \   - Example: `BatchNormalization()`\n\n4. **Leaky ReLU Activation**:\n   - Prevents dead neurons by\
+  \ allowing small negative values.\n   - Example: `LeakyReLU(alpha=0.01)`\n\n5. **MaxPooling2D**:\n \
+  \  - Reduces the spatial dimensions of the feature map by taking the maximum value from each patch.\n\
+  \   - Example: `MaxPooling2D(pool_size=(2, 2))`\n\n6. **Dropout**:\n   - Regularizes the model by randomly\
+  \ setting a fraction of the input units to zero during training to prevent overfitting.\n   - Example:\
+  \ `Dropout(rate=0.5)`\n\n7. **Conv2DTranspose (Upsampling)**:\n   - Increases the spatial resolution\
+  \ of the feature map for output generation.\n   - Example: `Conv2DTranspose(128, (3, 3), strides=(2,\
+  \ 2), padding='same')`\n\n8. **Concatenate Layer**:\n   - Merges two or more feature maps to provide\
+  \ richer feature representations for the next layer.\n   - Example: `Concatenate(axis=-1)`\n9. **Params**:\n\
+  \    - Total params: 8,639,778\n    - Trainable params: 8,639,778\n    - Non-trainable params: 0\n##\
+  \ Student Model Architecture\n\nThe Student Model is a smaller, more efficient CNN designed to learn\
+  \ from the Teacher Model. It follows a similar structure but uses fewer parameters to ensure fast inference\
+  \ without sacrificing too much performance.\n\n### Layers of the Student Model:\n1. **Input Layer**:\n\
+  \   - Shape: `(128, 128, 3)`\n   - Description: The model takes in images of size 128x128 pixels with\
+  \ 3 RGB channels.\n\n2. **Separable Convolutional Layers**:\n   - Applies separable convolutions to\
+  \ reduce model complexity.\n   - Example: `Conv2D(32, (3, 3), padding='same', activation='relu')`\n\n\
+  3. **Batch Normalization**:\n   - Normalizes the activations to stabilize training.\n   - Example: `BatchNormalization()`\n\
+  \n4. **Leaky ReLU Activation**:\n   - Ensures the model does not suffer from dead neurons.\n   - Example:\
+  \ `LeakyReLU(alpha=0.01)`\n\n5. **MaxPooling2D**:\n   - Down-samples the feature map to reduce dimensionality.\n\
+  \   - Example: `MaxPooling2D(pool_size=(2, 2))`\n\n6. **Dropout**:\n   - Regularization to reduce overfitting.\n\
+  \   - Example: `Dropout(rate=0.3)`\n\n7. **Conv2DTranspose (Upsampling)**:\n   - Increases the spatial\
+  \ resolution of the feature map.\n   - Example: `Conv2DTranspose(64, (3, 3), strides=(2, 2), padding='same')`\n\
+  \n8. **Concatenate Layer**:\n   - Combines feature maps from different layers to enhance feature learning.\n\
+  \   - Example: `Concatenate(axis=-1)`\n     \n9. **Params**:\n    - Total params: 608,589\n    - Trainable\
+  \ params: 605,645\n    - Non-trainable params: 2,944\n\n## Layer Descriptions\n\n### 1. **Separable\
+  \ Convolutions**\n   - Separable convolutions are used to reduce the computational cost. They split\
+  \ the convolution into depthwise and pointwise operations, which are more efficient than standard convolutions.\n\
+  \n### 2. **Batch Normalization**\n   - Batch normalization normalizes the activations of a given layer\
+  \ by adjusting and scaling them, which speeds up training and improves performance.\n\n### 3. **Leaky\
+  \ ReLU Activation**\n   - Leaky ReLU allows a small gradient for negative values, helping to prevent\
+  \ dead neurons, especially during training in deep networks.\n\n### 4. **MaxPooling2D**\n   - MaxPooling\
+  \ is a technique to reduce the size of the feature maps while retaining the most important features.\
+  \ This is done by taking the maximum value in each pool of values.\n\n### 5. **Dropout**\n   - Dropout\
+  \ is a regularization technique that randomly sets some neurons' weights to zero during training to\
+  \ prevent overfitting.\n\n### 6. **Conv2DTranspose (Upsampling)**\n   - Conv2DTranspose is used to increase\
+  \ the spatial dimensions of the feature map, usually in tasks like image segmentation or image generation.\n\
+  \n### 7. **Concatenate Layer**\n   - Concatenate layers merge two or more feature maps along a specified\
+  \ axis, typically to combine low-level and high-level features.\n\n## Training Procedure\n\n1. **Model\
+  \ Distillation**: The Teacher Model trains first and generates soft labels. These labels are used to\
+  \ train the smaller Student Model, which learns to mimic the Teacher's predictions.\n   \n2. **Loss\
+  \ Function**: The Student Model uses a combination of Cross-Entropy loss and Kullback-Leibler (KL) Divergence\
+  \ loss to minimize the difference between the Teacher and Student predictions.\n\n3. **Optimizer**:\
+  \ The Adam optimizer is typically used for both models due to its efficiency and adaptability.\n\n4.\
+  \ **Learning Rate Scheduling**: The learning rate is adjusted during training to improve convergence\
+  \ and avoid overshooting during optimization.\n\n## Installation\n\nTo install the necessary dependencies,\
+  \ you can use the following commands:\n\n```bash\npip install -r requirements.txt\n"

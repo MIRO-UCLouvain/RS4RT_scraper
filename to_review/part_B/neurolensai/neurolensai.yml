@@ -1,0 +1,135 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: smAsifHossain/NeuroLensAI
+url: https://github.com/smAsifHossain/NeuroLensAI
+platform: github
+description: AI-powered brain tumor segmentation from multimodal MRI using the SegResNet model.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-09T18:28:47Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "<div align=\"center\">\n\n# NeuroLens AI\n\n**GPU-powered brain tumor segmentation from\
+  \ a multimodal MRI scan ZIP.**\n\nNeuroLens AI validates four MRI sequences, runs the SegResNet model\
+  \ on a managed\nNVIDIA L4 GPU, and returns color-coded tumor overlays, volume measurements, a\nNIfTI\
+  \ segmentation mask, and a downloadable PDF summary.\n\n<p>\n  <a href=\"https://smasifhossain.github.io/NeuroLensAI/\"\
+  ><img alt=\"NeuroLens AI live application\" src=\"https://img.shields.io/badge/Live%20app-Open-c7401e?style=flat&amp;logo=googlechrome&amp;logoColor=white&amp;labelColor=15130e\"\
+  ></a>\n  <a href=\"https://huggingface.co/MONAI/brats_mri_segmentation\"><img alt=\"SegResNet model\"\
+  \ src=\"https://img.shields.io/badge/Model-SegResNet-8664b5?style=flat&amp;logo=pytorch&amp;logoColor=white&amp;labelColor=15130e\"\
+  ></a>\n  <a href=\"ml/modal_app.py\"><img alt=\"Modal NVIDIA L4 worker\" src=\"https://img.shields.io/badge/GPU-Modal%20L4-55b98e?style=flat&amp;logo=nvidia&amp;logoColor=white&amp;labelColor=15130e\"\
+  ></a>\n  <a href=\"LICENSE\"><img alt=\"MIT License\" src=\"https://img.shields.io/badge/License-MIT-16a34a?style=flat&amp;logo=opensourceinitiative&amp;logoColor=white&amp;labelColor=15130e\"\
+  ></a>\n</p>\n\n[Live application](https://smasifhossain.github.io/NeuroLensAI/) | [Sample MRI scans](sample-mri-scans/)\
+  \ | [Model benchmark](https://huggingface.co/MONAI/brats_mri_segmentation/blob/main/docs/README.md#performance)\
+  \ | [Feasibility run](docs/FEASIBILITY_RUN.md) | [GPU worker](ml/README.md)\n\nIf NeuroLens AI is useful\
+  \ to you, consider [starring the repository](https://github.com/smAsifHossain/NeuroLensAI). It helps\
+  \ others discover and support the project.\n\n</div>\n\n---\n\n## What NeuroLens AI does\n\nNeuroLens\
+  \ AI is an academic brain tumor segmentation application for four-sequence\nbrain MRI studies. A user\
+  \ uploads one ZIP containing T1 contrast-enhanced, native\nT1, T2, and FLAIR NIfTI volumes. The browser\
+  \ transfers the archive directly to a\nmanaged GPU service, where the files are validated, normalized,\
+  \ and processed by\nthe SegResNet model.\n\nThe result includes predicted-mask overlays for every MRI\
+  \ sequence, tumor-region\nvolumes, model and runtime provenance, a downloadable NIfTI label map, and\
+  \ a\nmeasurement-grounded PDF summary. The PDF is generated deterministically from the\nmask measurements;\
+  \ no vision-language model is used.\n\nNeuroLens AI is an academic prototype, not diagnostic software,\
+  \ a medical device,\nor a clinical radiology reporting system.\n\n## Main features\n\n- One clear upload-to-segmentation\
+  \ workflow with no demonstration result.\n- Five downloadable sample MRI cases for users who do not\
+  \ have compatible data.\n- Direct browser transfer to a stable Modal endpoint backed by an NVIDIA L4\
+  \ GPU.\n- Safe ZIP extraction with traversal, symbolic-link, member-count, and size checks.\n- T1c,\
+  \ T1, T2, and FLAIR discovery across common NIfTI naming conventions.\n- Shape, voxel-spacing, orientation,\
+  \ and affine-geometry validation.\n- Channel-wise normalization of non-zero MRI intensities.\n- Sliding-window\
+  \ SegResNet inference using the pinned model checkpoint.\n- Predicted-mask views for the original scan\
+  \ and all four MRI sequences.\n- Whole-tumor, tumor-core, enhancing-tumor, and peritumoral-edema measurements.\n\
+  - Downloadable NIfTI mask and PDF segmentation summary.\n- Model version, checkpoint hash, mask hash,\
+  \ runtime, GPU, and memory provenance.\n- Interactive model architecture and published benchmark sections.\n\
+  - Responsive, keyboard-accessible interface with GitHub Pages deployment.\n\n## How an MRI study is\
+  \ analyzed\n\n1. **Validate the archive.** The worker accepts one ZIP, rejects unsafe paths and\n  \
+  \ oversized content, and looks for one complete four-sequence MRI study.\n2. **Check the MRI volumes.**\
+  \ T1c, T1, T2, and FLAIR files must have matching\n   dimensions, voxel spacing, orientation, and affine\
+  \ geometry.\n3. **Normalize each sequence.** Non-zero intensities are normalized independently\n   for\
+  \ each MRI channel.\n4. **Run SegResNet.** The model receives the four volumes as a 3D, four-channel\n\
+  \   input and performs GPU sliding-window inference.\n5. **Create the label map.** Tumor-core, whole-tumor,\
+  \ and enhancing-tumor\n   probability channels are thresholded and converted into one NIfTI mask.\n\
+  6. **Build the results.** NeuroLens AI renders the overlays, calculates regional\n   volumes, records\
+  \ provenance, and creates the PDF summary.\n\n## Model\n\nThe deployed model is SegResNet from the\n\
+  [`brats_mri_segmentation` bundle](https://huggingface.co/MONAI/brats_mri_segmentation),\nversion `0.5.4`,\
+  \ pinned to revision\n`370f7f9d062745fbac445e7fe6d6616d35df04ec`. The checkpoint was trained for\nadult\
+  \ glioma segmentation using BraTS 2018 data.\n\nThe bundle authors publish the following validation\
+  \ Dice scores for the checkpoint\nused by NeuroLens AI:\n\n| Region | Dice score |\n| --- | ---: |\n\
+  | Average across three target regions | 0.8518 |\n| Whole tumor | 0.9026 |\n| Tumor core | 0.8559 |\n\
+  | Enhancing tumor | 0.7905 |\n\nThe published split contains 285 studies: 200 for training, 42 for validation,\
+  \ and\n43 for held-out testing. These are model-author benchmark results, not a score for\nan individual\
+  \ uploaded scan. The complete benchmark context is available in the\n[bundle documentation](https://huggingface.co/MONAI/brats_mri_segmentation/blob/main/docs/README.md#performance).\n\
+  \n## Supported MRI study\n\nUpload one ZIP containing one complete four-sequence NIfTI study. Files\
+  \ may be in\nthe archive root or a case folder.\n\n| MRI sequence | Common accepted suffixes | Purpose\
+  \ |\n| --- | --- | --- |\n| T1 contrast-enhanced | `t1c`, `t1ce` | Highlights contrast-enhancing tissue\
+  \ |\n| T1 native | `t1`, `t1n` | Provides anatomical T1 information |\n| T2 | `t2`, `t2w` | Shows fluid-sensitive\
+  \ tissue contrast |\n| FLAIR | `flair`, `t2f` | Highlights edema and other fluid-related abnormality\
+  \ |\n\nEach file must be a `.nii` or `.nii.gz` volume. The uncompressed archive is\nlimited to 1.5 GB\
+  \ and 64 files. Upload only de-identified data that you are\nauthorized to process.\n\n### Sample MRI\
+  \ scans\n\nUsers without compatible data can download one of the five academic cases in the\n[sample\
+  \ MRI scans folder](sample-mri-scans/), return to the application, and\nupload the ZIP without modifying\
+  \ it. The included reference segmentation is kept\nfor dataset completeness and is not used as an input\
+  \ to the SegResNet model.\n\n## Architecture\n\n```text\nBrowser\n  |\n  | GitHub Pages\n  v\nReact\
+  \ frontend\n  |\n  | direct HTTPS upload\n  v\nModal web endpoint\n  |\n  | wakes on demand\n  v\nNVIDIA\
+  \ L4 container\n  |\n  v\nZIP validation -> MRI normalization -> SegResNet inference\n  |\n  v\nOverlays\
+  \ -> volume measurements -> NIfTI mask -> PDF summary\n```\n\nGitHub Pages hosts only the static interface.\
+  \ MRI archives are sent directly to\nthe Modal service and do not pass through GitHub. Modal keeps at\
+  \ most one GPU\ncontainer active and scales it to zero after one idle minute; the public endpoint\n\
+  remains stable and wakes on the next request.\n\n## Run locally\n\nRequires Node.js 22.13 or newer and\
+  \ pnpm 11.\n\n```powershell\ngit clone https://github.com/smAsifHossain/NeuroLensAI.git\ncd NeuroLensAI\n\
+  pnpm install\nCopy-Item .env.example .env.local\n```\n\nSet the stable Modal worker endpoint in `.env.local`:\n\
+  \n```env\nNEUROLENS_WORKER_URL=https://your-worker.modal.run\n```\n\nStart the local application:\n\n\
+  ```powershell\npnpm dev\n```\n\nOpen [http://localhost:3000](http://localhost:3000). The local worker\
+  \ configuration\nroute supplies the endpoint to the browser automatically.\n\n## Test with an MRI study\n\
+  \nUse a de-identified four-sequence MRI study that you are authorized to analyze.\nPlace the T1c, T1,\
+  \ T2, and FLAIR NIfTI files in one ZIP, open the application,\nchoose the archive, and select **Run\
+  \ brain tumor segmentation**.\n\nA non-medical synthetic archive for connection testing can be created\
+  \ with:\n\n```powershell\npython scripts/create_synthetic_brats.py artifacts/synthetic-brats-smoke.zip\n\
+  ```\n\nVerify the deployed worker with:\n\n```powershell\npnpm verify:worker -- https://your-worker.modal.run\
+  \ artifacts/synthetic-brats-smoke.zip\n```\n\nSynthetic data confirms the upload and service contract\
+  \ only. It does not provide\na meaningful segmentation-performance result.\n\n## Deploy the frontend\
+  \ from GitHub\n\nThe workflow in `.github/workflows/deploy-pages.yml` builds and publishes the\nfrontend\
+  \ whenever `main` is updated. It uses GitHub Pages and does not require a\nseparate frontend server.\n\
+  \n```text\nPush to main\n  -> install the dedicated static-frontend dependencies\n  -> build the static\
+  \ NeuroLens AI interface\n  -> upload the Pages artifact\n  -> publish the GitHub Pages site\n```\n\n\
+  The public worker URL is stored in `public/worker-config.json`. It is not a secret:\nthe browser must\
+  \ know the endpoint to upload a study. Access is restricted by the\nworker's CORS allowlist.\n\n## Deploy\
+  \ the GPU worker\n\nAuthenticate the Modal CLI once, then deploy from the repository root:\n\n```powershell\n\
+  modal deploy ml/modal_app.py\n```\n\nThe deployment builds an immutable Python 3.11 image with the pinned\
+  \ model bundle,\nPyTorch, MONAI, NIfTI processing, Gradio, and PDF generation dependencies. The\nworker\
+  \ uses an NVIDIA L4, permits one active container, and has a 30-minute request\ntimeout for large 3D\
+  \ studies.\n\nIf the Modal URL changes, update `public/worker-config.json` and\n`NEUROLENS_WORKER_URL`\
+  \ in the local or hosted environment.\n\n## Tests\n\nRun the frontend checks:\n\n```powershell\npnpm\
+  \ lint\npnpm test\npnpm build:pages\n```\n\nRun the Python model and worker checks from a compatible\
+  \ Python environment with\nthe package dependencies installed:\n\n```powershell\n$env:PYTHONPATH=(Resolve-Path\
+  \ 'ml').Path\npython -m unittest discover -s tests_ml -v\n```\n\nThe test suites cover server rendering,\
+  \ upload-driven result visibility, managed\nworker configuration, ZIP safety, modality discovery, geometry\
+  \ validation, tumor\nmeasurements, overlays, PDF output, and inference manifest behavior.\n\n## Repository\
+  \ layout\n\n```text\n.github/workflows/    GitHub Pages deployment\n.openai/              Existing Sites\
+  \ hosting metadata\napp/                  NeuroLens AI interface and local worker-config route\ndocs/\
+  \                 Feasibility evidence and research notes\ngithub-pages/         Static GitHub Pages\
+  \ entry point\nml/                   SegResNet pipeline, Gradio API, PDF output, and Modal app\nnotebooks/\
+  \            Reproducible Kaggle and Colab feasibility notebook\npublic/               Icons, social\
+  \ preview, and public worker configuration\nscripts/              Worker verification and synthetic-data\
+  \ utilities\ntests/                Frontend and server-route checks\ntests_ml/             MRI pipeline\
+  \ and worker tests\npackage.json          Frontend scripts and dependency definitions\npackage.pages.json\
+  \    Minimal dependency manifest for GitHub Pages\nvite.github.config.ts GitHub Pages build configuration\n\
+  ```\n\nGenerated MRI files, model bundles, local environments, build output, and secrets\nare excluded\
+  \ from Git.\n\n## Privacy and academic scope\n\nThe application has no user accounts, scan history,\
+  \ advertising, or analytics.\nUploads are processed inside an ephemeral Modal container. The public\
+  \ interface\nasks users to upload only de-identified MRI data that they have permission to use.\n\n\
+  Every result is derived from the uploaded scan and the pinned model checkpoint.\nNeuroLens AI does not\
+  \ provide a diagnosis, treatment recommendation, prognosis, or\nclinical radiology report. Results require\
+  \ review by appropriately qualified\nmedical and research professionals.\n\n## Known limitations\n\n\
+  - The model was trained for the BraTS adult-glioma task and is not validated for\n  every tumor type,\
+  \ scanner, acquisition protocol, institution, or patient group.\n- Four compatible MRI sequences are\
+  \ required; a single image or screenshot is not\n  a valid input.\n- Model-author benchmark scores do\
+  \ not establish clinical performance on new data.\n- Tumor volumes depend on the predicted mask and\
+  \ input voxel spacing.\n- GPU cold starts, upload bandwidth, and large NIfTI files can increase total\
+  \ wait\n  time.\n- The generated PDF is a structured academic summary, not a diagnostic repo"

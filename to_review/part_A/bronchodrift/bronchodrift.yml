@@ -1,0 +1,119 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: FadiZahar/BronchoDrift
+url: https://github.com/FadiZahar/BronchoDrift
+platform: github
+description: Synthetic CT-to-body divergence (CTBD) generator for bronchoscopy navigation, with an interactive
+  viewer for live tuning.
+license: null
+language: Python
+keywords: []
+stars: 2
+updated_at: '2026-07-20T07:27:22Z'
+image_source: https://raw.githubusercontent.com/FadiZahar/BronchoDrift/HEAD/docs/BronchoDrift_interface.png
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# BronchoDrift\n\n![BronchoDrift interactive viewer](docs/BronchoDrift_interface.png)\n\
+  \nPrototype for a controllable synthetic CT-to-body divergence (CTBD) generator for bronchoscopy navigation\
+  \ (catheter localization), with an interactive viewer for live tuning.\n\n## The problem\n\nBronchoscopy\
+  \ navigation systems plan a path on a pre-operative CT, but the patient's anatomy drifts during the\
+  \ procedure (respiration, atelectasis under anesthesia, scope-tissue contact). This *CT-to-body divergence*\
+  \ is the dominant source of localization error in current commercial systems — typically ~10–20 mm at\
+  \ peripheral targets. **BronchoDrift generates parameterized synthetic CTBD with ground-truth displacements**,\
+  \ intended as a benchmark / training-data factory for learned trackers and deformation priors.\n\n##\
+  \ Quickstart\n\nAll commands assume you are running them from the repo root (`BronchoDrift/`). A virtual\
+  \ environment is recommended.\n\n```bash\npython3 -m venv brdr_venv\n\n# Activate (pick the line for\
+  \ your platform):\nsource brdr_venv/bin/activate       # macOS / Linux\nbrdr_venv\\Scripts\\activate\
+  \          # Windows (cmd.exe / Git Bash)\nbrdr_venv\\Scripts\\Activate.ps1      # Windows (PowerShell)\n\
+  ```\n\n```bash\npip install -r requirements.txt\n```\n\nThe repo provides a pre-built `data/processed/centerline.pkl`\
+  \ corresponding to the original undeformed airways `data/raw/airways_filled.obj`, so you can **jump\
+  \ straight to step 3** to see the demo. Steps 1 and 2 are only needed if you want to rebuild from scratch\
+  \ or use a different input mesh.\n\n```bash\n# 1. (optional) Build the centerline graph from the input\
+  \ mesh\npython3 -m scripts.01_build_centerline \\\n    --mesh data/raw/airways_filled.obj \\\n    --out\
+  \  data/processed/centerline.pkl \\\n    --ply  data/processed/centerline.ply\n\n# 2. (optional) Apply\
+  \ a default deformation and write outputs to .ply / .obj\npython3 -m scripts.02_apply_deformation \\\
+  \n    --graph data/processed/centerline.pkl \\\n    --mesh  data/raw/airways_filled.obj \\\n    --out-graph\
+  \ data/processed/centerline_deformed.ply \\\n    --out-mesh  data/processed/airway_deformed.obj\n\n\
+  # 3. Open the interactive viewer (this is the main demo)\npython3 -m scripts.02b_interactive_deformation\
+  \ \\\n    --graph data/processed/centerline.pkl \\\n    --mesh  data/raw/airways_filled.obj\n```\n\n\
+  ## Interactive viewer\n\n`02b_interactive_deformation` opens a Polyscope window showing:\n\n- **CT mesh**\
+  \ (translucent blue) and **deformed body mesh** (red), overlaid for direct visual comparison.\n- **Centerline\
+  \ + catheter path**: the centerline as small dots (CT-frame), the demo catheter trajectory from root\
+  \ → deepest leaf as a yellow tube (body-frame), and two catheter tip markers: yellow for the body-frame\
+  \ position (where the catheter actually is) and blue for the CT-frame position (where the tracker thinks\
+  \ it is). The yellow-to-blue distance is the live tracker error.\n\n\n| Tidal breathing animation |\
+  \ Bronchoscope-eye view |\n|---|---|\n| ![tidal animation](docs/BronchoDrift_Video-Tidal_Animation.gif)\
+  \ | ![bronchoscope view](docs/BronchoDrift_Video-Catheter_Tip_View_(compressed).gif) |\n\nFull demo\
+  \ walkthrough: see the [v1.0 release](https://github.com/FadiZahar/BronchoDrift/releases/tag/v1.0).\n\
+  \n\n### Controls\n\n| Control | Effect |\n|---|---|\n| `amplitude`, `phi`, `resp_*` sliders | Respiratory\
+  \ expiratory recoil, calibrated so `amplitude=1.0` gives ~8% SI-extent peak motion at the periphery\
+  \ (literature-realistic) |\n| `atel_*` sliders + `hub generation` dropdown + `hub index` slider | Pick\
+  \ which lobar/segmental bronchus collapses; the entire ipsilateral region at-or-below the hub contracts\
+  \ toward it |\n| `apply_translation` / `apply_radius` checkboxes | Toggle each effect independently\
+  \ (e.g. show pure bronchiolar lumen narrowing without translation) |\n| `tidal mode` + `auto-animate\
+  \ phi` | Switch from one-way drift to oscillating breathing for animation |\n| **View CT / view body\
+  \ from tip** buttons | Teleport the camera to the catheter tip looking down the path tangent (bronchoscope-eye\
+  \ view), with the other mesh hidden so the lumen difference reads cleanly |\n| **Reset all parameters**\
+  \ button | Restore defaults |\n\nFor a non-interactive run, `scripts/02_apply_deformation.py` exposes\
+  \ the same parameters via CLI flags and writes a deformed centerline (`.ply`) and deformed mesh (`.obj`)\
+  \ to disk at `data/processed/`.\n\n## Tunable parameters\n\nAll parameters are exposed both through\
+  \ the CLI (`02_apply_deformation`) and as Polyscope sliders (`02b_interactive_deformation`):\n\n| Parameter\
+  \ | Effect | Default |\n|---|---|---|\n| `amplitude` | Global respiration scale (1.0 = literature-realistic,\
+  \ 0 = off) | `1.0` |\n| `phi` | Respiratory phase (0 = CT state, 1 = full deformation) | `1.0` |\n|\
+  \ `resp_base_strength` | Peak respiration contraction as fraction of tree distance | `0.08` |\n| `resp_falloff_exp`\
+  \ | Motion distribution along the tree (<1 = mid-tree, 1 = linear, >1 = periphery only) | `0.5` |\n\
+  | `resp_max_shrink` | Peak peripheral lumen narrowing from respiration | `0.25` |\n| `atel_hub_gen`\
+  \ + `atel_hub_idx` | Which bronchus is the collapse hub (gen 2 = lobar, gen 4 = sub-segmental) | `3`,\
+  \ `0` |\n| `atel_strength` | Contraction fraction toward the hub | `0.4` |\n| `atel_falloff_exp` | Falloff\
+  \ shape of the atelectasis contraction (same semantics as `resp_falloff_exp`) | `1.0` |\n| `atel_radius_shrink`\
+  \ | Lumen narrowing at the collapse periphery | `0.5` |\n| `apply_translation` / `apply_radius` | Toggle\
+  \ each effect independently (e.g. show pure bronchiolar thinning) | both on |\n| `mode` | `drift` (one-way\
+  \ CT→body, for benchmarking) or `tidal` (oscillating, for animation) | `drift` |\n| `smooth_iters` |\
+  \ Laplacian smoothing of the displacement/scale fields | `3` |\n| `gen_exp` *(advanced)* | Generation-weight\
+  \ exponent (higher = upper airways more suppressed) | `1.5` |\n| `si_exp` *(advanced)* | SI-position\
+  \ exponent (higher = motion concentrated near the diaphragm) | `2.0` |\n\n## Repo layout\n\n```\nBronchoDrift/\n\
+  ├── bronchodrift/\n│   ├── __init__.py\n│   ├── centerline.py                        # mesh -> voxel\
+  \ skeleton -> rooted networkx tree\n│   └── deformation.py                       # respiration + atelectasis\
+  \ -> deformed mesh\n├── scripts/\n│   ├── 01_build_centerline.py               # CLI: extract centerline\
+  \ from mesh\n│   ├── 02_apply_deformation.py              # CLI: apply sample deformation, export to\
+  \ disk\n│   └── 02b_interactive_deformation.py       # the main interactive demo\n├── data/\n│   ├──\
+  \ raw/\n│   │   ├── airways_filled.blend             # Blender working file (filled solid)\n│   │  \
+  \ ├── airways_filled.obj               # input mesh used by all scripts\n│   │   ├── airways_filled.mtl\
+  \               # OBJ material file for the undeformed mesh\n│   │   └── Airways 3D model/         \
+  \       # original Sketchfab download (see inner README)\n│   └── processed/\n│       ├── centerline.pkl\
+  \                   # pickled networkx.DiGraph (built by step 1, script 01)\n│       ├── centerline.ply\
+  \                   # centerline as a PLY line-set, colored by generation\n│       ├── centerline.png\
+  \                   # screenshot of the centerline (gen 0 blue -> deepest red)\n│       ├── centerline_deformed.ply\
+  \          # deformed centerline (built by step 2, script 02)\n│       ├── airway_deformed.obj     \
+  \         # deformed mesh (built by step 2, script 02)\n│       └── material.mtl                   \
+  \  # OBJ material file for the deformed mesh\n├── docs/\n│   └── BronchoDrift_interface.png\n├── requirements.txt\n\
+  ├── .gitignore\n└── README.md\n```\n\n## How the deformation works (briefly)\n\nOne mechanism, two uses:\
+  \ contract a set of nodes toward an anchor along the tree, scaled by tree distance and an optional diaphragm-gradient\
+  \ weight.\n\n- **Respiration** anchors at the carina with the whole sub-carinal tree as scope.\n- **Atelectasis**\
+  \ anchors at a chosen lobar/segmental hub with the ipsilateral-and-inferior region as scope.\n\nPer-node\
+  \ displacement and lumen-scale fields are Laplacian-smoothed to avoid bifurcation kinks, then propagated\
+  \ to mesh vertices via inverse-distance-weighted skinning: topology and face connectivity are unchanged,\
+  \ only vertex positions move.\n\nThe functional forms (linear normalizations, power-law weights, tree-anchored\
+  \ contractions) are hand-designed parametric building blocks, not biomechanics. Magnitudes are inspired\
+  \ by typical 4D-CT measurements:\n\n| Effect | Approximate magnitude | BronchoDrift default |\n|---|---|---|\n\
+  | Lower-lobe peak respiratory motion | ~15–20 mm superior-inferior (SI) displacement in a ~250 mm lung\
+  \ (vs ~5–10 mm for upper/middle lobes) | `resp_base_strength=0.08` → ~8% of SI extent peak motion at\
+  \ the periphery, with the diaphragm gradient making upper lobes move ~half as much |\n| Peripheral airway\
+  \ lumen narrowing (TLC → FRC) | ~15–25% radius reduction at small airways, near-zero at the trachea\
+  \ | `resp_max_shrink=0.25` → up to 25% peripheral radius reduction at `amplitude=1.0` |\n\nThe project's\
+  \ role is **not** to be a physical lung model. It's a controllable, parameterized CTBD generator with\
+  \ ground truth, suitable as a benchmark and a training-data factory for learned localization methods.\n\
+  \n## Potential future work\n\n- **Naive tracker + benchmark sweep** (nearest-centerline-point localizer;\
+  \ sweep amplitude × atelectasis severity; plot error growth).\n- **Learned deformation prior** trained\
+  \ on real 4D-CT data: counterfactual diffusion on CT volumes could be a good fit and would replace the\
+  \ hand-designed parametric form.\n- **Synthetic-to-real for visual pose estimation**: render synthetic\
+  \ bronchoscope views from the deformed mesh as training data for video-based catheter pose estimators.\n\
+  \n## Attribution\n\nInput mesh: \"Anatomy of the airways\" by Anna Sieben / E-learning UMCG (University\
+  \ of Groningen), CC BY-NC-SA 4.0, sourced from [Sketchfab](https://sketchfab.com/3d-models/anatomy-of-the-airways-ad7d7e16b98f421db0cda79f265fcc8d).\
+  \ \n\nThe bronchial tree was isolated and filled to a watertight solid in Blender for skeletonization.\
+  \ See `data/raw/Airways 3D model/README.md` for full attribution.\n"

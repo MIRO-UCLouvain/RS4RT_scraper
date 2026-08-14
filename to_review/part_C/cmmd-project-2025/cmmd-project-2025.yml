@@ -1,0 +1,237 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: HamzahAlawneh16/CMMD-Project-2025
+url: https://github.com/HamzahAlawneh16/CMMD-Project-2025
+platform: github
+description: Hybrid CNN-Transformer model (AI/DS Graduation Project) for multi-task breast cancer classification.
+  Fuses mammogram images & clinical data to predict malignancy and genetic subtypes, bridging the Radiogenomics
+  gap.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-01-02T19:17:39Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: '# 🎓 Graduation Project: Hybrid Radiogenomics Multi-Task Breast Cancer Classification
+
+
+  **Submitted in Partial Fulfillment of the Requirements for the Bachelor''s Degree in**
+
+  **Artificial Intelligence and Data Science**
+
+
+  The University of Jordan - School of Engineering/Science
+
+
+  ---
+
+
+  | Detail | Value |
+
+  | :--- | :--- |
+
+  | **Submitted By** | Hamza Alawneh |
+
+  | **Submission Date** | December 2025 |
+
+  | **Project Status** | Deployment Ready / Final |
+
+
+  ---
+
+
+  ### 🚫 Copyright and Intellectual Property
+
+
+  All rights reserved to Hamza Alawneh © 2025. This portfolio piece is authorized for academic evaluation
+  and professional review only. Any unauthorized reproduction, commercial sale, or use without prior express
+  written consent from the developer is strictly prohibited.
+
+
+  ---
+
+
+  ## 1. Executive Summary: The Crisis and The Breakthrough (60% to 85%)
+
+
+  This project addresses the critical need for highly accurate and multi-faceted breast cancer diagnosis
+  by fusing imaging and clinical data.
+
+
+  ### 1.1. The Critical Problem Solved
+
+
+  The project began with a baseline system facing severe technical limitations that rendered it unusable
+  for clinical application:
+
+
+  * **Initial Low Accuracy (60%):** A simple baseline Convolutional Neural Network (CNN) model struggled
+  significantly with the multi-task diagnosis, achieving a validation accuracy of only **60%**. This was
+  the primary performance failure point.
+
+  * **Training Volatility:** The training process was characterized by erratic, non-convergent loss curves,
+  specifically due to exploding gradients, indicating a fundamental instability in the optimization setup.
+
+  * **The Radiogenomics Gap:** The initial architecture failed to predict the crucial **Genetic Subtype**
+  of the tumor, which is essential for determining targeted patient treatment.
+
+
+  ### 1.2. The Technical Intervention & Outcome
+
+
+  I transformed the project by designing, implementing, and rigorously stabilizing an **Ultimate Hybrid
+  CNN-Transformer** architecture. This intervention achieved multiple critical goals simultaneously:
+
+
+  * **Performance Leap:** Successfully raised the core diagnostic accuracy from 60% to a robust, verified
+  **85%**.
+
+  * **System Stability:** Stabilized the training convergence, eliminating volatility through precise
+  optimization techniques.
+
+  * **Clinical Efficacy:** Successfully established multi-task learning to predict both the Binary Diagnosis
+  and the Molecular Subtype.
+
+
+  This outcome demonstrates proficiency in designing, stabilizing, and optimizing complex multi-modal
+  deep learning systems under multi-task constraints.
+
+
+  ---
+
+
+  ## 2. Technical Intervention: Solutions Applied to Achieve 85%
+
+
+  The final 85% accuracy hinged on advanced Machine Learning engineering applied directly to resolve the
+  initial failure points.
+
+
+  | Methodology | Technical Implementation | Impact and Result (Portfolio Value) |
+
+  | :--- | :--- | :--- |
+
+  | **1. Architecture Overhaul** | Hybrid CNN-Transformer Fusion | **Accuracy Jump:** Solved the 60% crisis
+  by fusing image features (ResNet → Transformer) with *processed clinical data*. Confirmed the superior
+  value of multi-modal data. |
+
+  | **2. Stability & Convergence** | AdamW Optimizer & **Gradient Clipping (1.0)** | **Solved Instability:**
+  Gradient Clipping successfully prevented exploding gradients, which were causing the volatile loss,
+  enabling the model to converge smoothly and consistently. |
+
+  | **3. Multi-Task Optimization** | Dual Loss + **Label Smoothing (0.1)** | **Improved Generalization:**
+  For the multi-class Subtype prediction, Label Smoothing reduced overconfidence and was key to improving
+  the reliability and generalizability of the model. |
+
+  | **4. Data Integrity** | Independent Preprocessor Object | **Mitigated Data Leakage:** A custom, dedicated
+  Preprocessor object was trained exclusively on the training data and then saved, preventing the model
+  from *spying* on the validation/test data during normalization. |
+
+
+  ---
+
+
+  ## 3. Project Execution Flow: A Cell-by-Cell Breakdown
+
+
+  The development followed a meticulous, reproducible pipeline, as demonstrated within the accompanying
+  Jupyter Notebook (`ViT_Mamo_Leakage_Single.ipynb`).
+
+
+  | Phase | Cells/Files | Technical Achievement and Implementation |
+
+  | :--- | :--- | :--- |
+
+  | **A. Setup & Environment** | CELL 1-2 | Installation of specialized libraries (`einops` for Transformer,
+  `pydicom`, `gradio` for UI). Defined `DEVICE` (CUDA/CPU) and implemented `set_seed(42)` for full reproducibility.
+  |
+
+  | **B. Data Pipeline** | CELL 3-6 | **Critical Data Engineering:** Preprocessing of clinical data (Normalization/Encoding).
+  Defined the `HybridDataset` class (CELL 5) to safely read and output **four synchronized data elements**
+  per batch (image, clinical\_data, target\_diag, target\_subtype). |
+
+  | **C. Model Architecture** | CELL 7 | **Model Construction:** Defined the `UltimateHybridModel`. Implemented
+  the feature flow: ResNet → **Transformer Encoder** → Concatenation with **Clinical Data** → Dual Prediction
+  Heads. |
+
+  | **D. Advanced Training** | CELL 8 | **Core ML Engineering:** Implemented the complex training loop.
+  Configured Dual Loss functions, applied **AdamW**, executed **Gradient Clipping (1.0)** for stabilization,
+  and integrated **Cosine Annealing** scheduling. |
+
+  | **E. Evaluation & Reporting** | CELL 9-10 | **Validation:** Loaded the best model (`final_cmmd_model.pth`).
+  Correctly implemented prediction logic (`torch.round(torch.sigmoid())` for binary output). Generated
+  and visualized formal **Classification Reports** and **Confusion Matrices** for both tasks, proving
+  the **85% accuracy**. |
+
+  | **F. Deployment** | CELL 11 | **Proof-of-Concept Deployment:** Built an interactive web application
+  using **Gradio**. Defined the single prediction function that accepts hybrid input (image + clinical
+  data) for real-time demonstration. |
+
+
+  ---
+
+
+  ## 4. Final Architecture Overview
+
+
+  The model successfully integrates multiple sophisticated components to achieve its multi-task goal:
+
+
+  1.  **Image Path:** ResNet18 Backbone → Feature Map → **Transformer Encoder**.
+
+  2.  **Clinical Path:** Preprocessed Clinical Features (Age, Grade, etc.).
+
+  3.  **Fusion Block:** Concatenates Image Features (from Transformer) and Clinical Features.
+
+  4.  **Dual Heads:** Outputs two separate predictions from the Fusion Block: Binary Diagnosis and 4-Class
+  Molecular Subtype.
+
+
+  ---
+
+
+  ## 5. Repository Files and Assets
+
+
+  | File Name | Description | Purpose |
+
+  | :--- | :--- | :--- |
+
+  | `ViT_Mamo_Leakage_Single.ipynb` | The primary Jupyter Notebook documenting the entire pipeline. |
+  **Full Project Documentation and Solution to Data Leakage.** |
+
+  | `final_cmmd_model.pth` | The final PyTorch model weights achieving 85% accuracy. | **Production-ready
+  model asset.** |
+
+  | `preprocessor_object.pkl` | The serialized clinical data preprocessor object. | **Crucial for ensuring
+  zero data leakage in production inference.** |
+
+  | `README.md` | This file. | Project overview and technical summary. |
+
+
+  ---
+
+
+  ## 6. Contact Information
+
+
+  I am open to discussing the technical challenges, advanced optimization strategies, and the successful
+  implementation of the multi-task learning paradigm and MLOps principles.
+
+
+  | Name | Hamza Alawneh |
+
+  | :--- | :--- |
+
+  | **Email** | hamzamdhatalawneh@gmail.com |
+
+  | **GitHub** | https://github.com/HamzahAlawneh16 |
+
+  '

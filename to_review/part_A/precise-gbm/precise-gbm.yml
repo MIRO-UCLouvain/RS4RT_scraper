@@ -1,0 +1,71 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: prazg/PRECISE_GBM
+url: https://github.com/prazg/PRECISE_GBM
+platform: github
+description: 'Predictive Radiomics for Evaluation of Cancer Immune SignaturE in Glioblastoma (PRECISE-GBM):
+  An AI-based pipeline integrating MRI radiomics, genomics, and immune signatures for patient stratification.'
+license: NOASSERTION
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-20T12:15:38Z'
+image_source: https://raw.githubusercontent.com/prazg/PRECISE_GBM/HEAD/PRECISE-GBM_GUI_logo%20(1).png
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "<p align=\"center\"> <b> Predictive Radiomics for Evaluation of Cancer Immune SignaturE\
+  \ in Glioblastoma | PRECISE-GBM </b> </p>\r\n\r\n<p align=\"center\">\r\n  <img src=\"PRECISE-GBM_GUI_logo%20(1).png\"\
+  \ alt=\"PRECISE-GBM Logo\">\r\n</p>\r\n\r\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\r\
+  \n\r\nThis repository contains an AI-based training and retraining pipeline for Predictive Radiomics\
+  \ for Evaluation of Cancer Immune SignaturE in Glioblastoma (PRECISE-GBM). It is the multimodal radiogenomic\
+  \ framework that integrates MRI radiomics, genomics, and immune signatures for patient stratification.\
+  \ \r\n\r\nThe paper is published in Neuro-Oncology Advances. https://doi.org/10.1093/noajnl/vdag115\r\
+  \n\r\nThe workflow is being developed into a software. So stay tuned!\r\n\r\n<b> Project: PRECISE-GBM\
+  \ - Model training & retraining helpers </b>\r\n\r\n## \U0001F4DD Overview\r\n\r\nThis repository contains\
+  \ code to train models (Gaussian Mixture labelling + SVM and ensemble classifiers) and to persist all\
+  \ artifacts required to reproduce or retrain models on new data. It includes:\r\n\r\n- `Scenario_heldout_final_PRECISE.py`\
+  \ — training pipeline producing `.joblib` models and metadata JSONs (selected features, best params,\
+  \ CV results).\r\n- `retrain_helper.py` — CLI utility to rebuild pipelines, set best params and retrain\
+  \ using saved selected-features and params JSONs. Supports JSON/YAML config files and auto-detection\
+  \ of model type.\r\n- `README_RETRAIN.md` — detailed retrain examples and a notebook cell.\r\n\r\nThis\
+  \ repo also includes helper files to make it ready for GitHub:\r\n- `requirements.txt` — Python dependencies\r\
+  \n- `.gitignore` — recommended ignores (models, caches, logs)\r\n- `LICENSE` — MIT license\r\n- GitHub\
+  \ Actions workflow for CI (pytest smoke test)\r\n\r\n## \U0001F4DD Getting started (Windows PowerShell)\r\
+  \n\r\n1) Create and activate a virtual environment\r\n\r\n```powershell\r\npython -m venv .venv\r\n\
+  .\\.venv\\Scripts\\Activate.ps1\r\n```\r\n\r\n2) Install dependencies\r\n\r\n```powershell\r\npip install\
+  \ --upgrade pip\r\npip install -r requirements.txt\r\n```\r\n\r\n3) Run training (note: the training\
+  \ script reads data from absolute paths configured in the script — adjust them or run from an environment\
+  \ where those files are present)\r\n\r\n```powershell\r\npython Scenario_heldout_final_PRECISE.py\r\n\
+  ```\r\n\r\nThe training script will create model files under `models_LM22/` and `models_GBM/` and write\
+  \ metadata JSONs next to each joblib model (selected features, params, cv results) as well as group-level\
+  \ JSON summaries.\r\n\r\n## \U0001F4DD Retraining\r\n\r\nSee `README_RETRAIN.md` for detailed CLI and\
+  \ notebook examples. Short example:\r\n\r\n```powershell\r\npython retrain_helper.py \\\r\n  --model-prefix\
+  \ \"models_GBM/scenario_1/GBM_scen1_Tcell\" \\\r\n  --train-csv \"data\\new_train.csv\" \\\r\n  --label-col\
+  \ \"label\"\r\n```\r\n\r\n## \U0001F4DDNotes\r\n\r\n- The training script contains hard-coded absolute\
+  \ paths to data files. Before running on another machine, update the `scenarios_*` file paths or place\
+  \ the datasets in the same paths.\r\n- Retrain helper auto-detects model type when `--model-type` is\
+  \ omitted by looking for `{prefix}_svm_params.json` or `{prefix}_ens_params.json`.\r\n- YAML config\
+  \ support for retrain requires PyYAML (`pip install pyyaml`).\r\n\r\n## \U0001F4DD CI\r\n\r\nA basic\
+  \ GitHub Actions workflow runs a smoke pytest to ensure the retrain helper imports and basic pipeline\
+  \ construction works. It does not run heavy training.\r\n\r\n## \U0001F4DD Contributing\r\n\r\nSee `CONTRIBUTING.md`\
+  \ for guidance on opening issues and PRs.\r\n\r\n## \U0001F4DD License\r\n\r\nThis project is released\
+  \ under the MIT License — see `LICENSE`. [MIT License](https://opensource.org/licenses/MIT).\r\n\r\n\
+  ## \U0001F4DD Citation\r\nPlease use the following citations when using the repository.\r\n\r\n2026\r\
+  \n> **Ghimire P, Li J, Yaou L, Modat M, Booth T**. *Predictive radiomics for evaluation of cancer immune\
+  \ SignaturE in glioblastoma: the PRECISE-GBM study. Neuro-Oncology Advances. Published May 2, 2026.\
+  \ https://doi.org/10.1093/noajnl/vdag115*\r\n\r\n2025\r\n\r\n> **Ghimire P, Modat M, Booth T**. *Predictive\
+  \ radiogenomic AI Model for patient stratification in brain tumor immunotherapy trials. Neuro-oncology.\
+  \  Oct 2025; 26(Suppl_3): iii58–iii59. doi: https://doi.org/10.1093/neuonc/noaf193.188*\r\n\r\n> **Ghimire\
+  \ P, Modat M, Booth T**. *Radiogenomic AI model predicts immune status in IDH wildtype glioblastoma:\
+  \ PRECISE-GBM study. RCR open. Jan 2025; 3(1): 100234*\r\n\r\n2024\r\n\r\n> **Ghimire P, Modat M, Booth\
+  \ T**. *A machine Learning bases predictive radiomics for evaluation of cancer immune signature in glioblastoma:\
+  \ the PRECISE-GBM study. Neuro-Oncology. Oct 2024; 26(suppl_5): v25.*\r\n\r\n> **Ghimire P, Modat M,\
+  \ Booth T**. *A radiogenomic machine learning based study to identify Predictive Radiomics for Evaluation\
+  \ of Cancer Immune SignaturE in IDHw Glioblastoma. Neuro-Oncology. Oct 2024; 26(suppl_7): vii3*\r\n\r\
+  \n\r\n**Contact**:\r\n\r\n**Dr Prajwal Ghimire**\r\n\r\n**MBBS MRCSEd MSc PhD'26**\r\n\r\nhttps://huggingface.co/PrazNeuro/PRECISE_GBM\r\
+  \n\r\nSchool of Biomedical Engineering & Imaging Sciences, King's College London\r\n\r\nEmail: [prajwal.1.ghimire@kcl.ac.uk](mailto:prajwal.1.ghimire@kcl.ac.uk)\r\
+  \n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n"

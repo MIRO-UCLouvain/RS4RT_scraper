@@ -1,0 +1,36 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: AImageLab-zip/CBCT-Report
+url: https://github.com/AImageLab-zip/CBCT-Report
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-08-03T19:34:47Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Ontology-Grounded Structured Prediction for Dental CBCT Reporting\n\nCode for the MICCAI\
+  \ paper \"Ontology-Grounded Structured Prediction for Dental CBCT Reporting\".\n\n## Contributions\n\
+  \n- A dental CBCT ontology for structured report labels: `ontology/ontology.ttl`.\n- A conversion pipeline\
+  \ from raw Italian reports to patient-level TTL labels.\n- An ontology-driven prediction model that\
+  \ adapts its heads to the ontology schema.\n\n## Steps\n\n1. Put raw reports in `data/ToothFairy3/reportsTr/`.\n\
+  \n2. Convert reports to structured TTL with the main script, `ontology/extract.py`:\n   ```bash\n  \
+  \ OPENAI_API_KEY=... python ontology/extract.py\n   ```\n   This combines all reports for each patient\
+  \ into one TTL. `ontology/extract_single.py` is only for one-report-per-TTL inter-agreement checks.\n\
+  \n3. Check outputs:\n   - valid TTLs: `data/ttl_reports/`\n   - generated single-report TTLs: `data/ttl_reports_single/`\n\
+  \   - SHACL/API errors: `data/shacl_errors/`\n   - schema files: `ontology/ontology.ttl`, `ontology/shapes.ttl`\n\
+  \n4. Preprocess CBCT volumes into regional tokens:\n   ```bash\n   python main.py preprocess --dataset-root\
+  \ data/ToothFairy3 --output-dir data/preprocessed_tokens\n   ```\n\n5. Train:\n   ```bash\n   python\
+  \ -m src.train --wandb_name experiment_name\n   ```\n   For a quick local run:\n   ```bash\n   python\
+  \ -m src.train --use_kfold false --max_epochs 5 --no_wandb\n   ```\n\n## Notes\n\n- TTL filenames must\
+  \ match preprocessed token patient IDs.\n- Training only uses samples with both `.pt` tokens and `.ttl`\
+  \ labels.\n- Inspect label distribution before training:\n  ```bash\n  python -m src.scripts.histogram_ttl\n\
+  \  ```\n"

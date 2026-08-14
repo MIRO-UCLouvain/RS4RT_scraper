@@ -1,0 +1,90 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Somnath1998g/brain-segmentation
+url: https://github.com/Somnath1998g/brain-segmentation
+platform: github
+description: Brain MRI tumor segmentation with PyTorch and ResNeXt50-U-Net, including augmentation, MLflow
+  tracking, and Dice/IoU evaluation.
+license: null
+language: null
+keywords: []
+stars: 0
+updated_at: '2026-04-13T09:46:42Z'
+image_source: https://raw.githubusercontent.com/Somnath1998g/brain-segmentation/HEAD/predictions_of_unet_with_resnext50_backbone.gif
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# Brain MRI Tumor Segmentation\n\nA deep learning project for **brain MRI tumor segmentation**\
+  \ using **PyTorch**, **Albumentations**, **MLflow**, and **encoder-based segmentation models** with\
+  \ a **ResNeXt50 backbone**.  \nThis repository focuses on building an end-to-end medical image segmentation\
+  \ pipeline, from data preparation and augmentation to training, evaluation, experiment tracking, and\
+  \ visual prediction analysis.\n\n---\n\n## Project Overview\n\nAccurate brain tumor segmentation from\
+  \ MRI scans is an important step in medical image analysis, as it helps identify the tumor region for\
+  \ diagnosis and treatment planning.  \nIn this project, I developed a complete segmentation workflow\
+  \ on the **LGG MRI Segmentation Dataset**, exploring multiple architectures and training strategies\
+  \ to improve overlap-based performance.\n\nThe repository includes:\n\n- MRI image and mask preprocessing\n\
+  - Dataset analysis and visualization\n- Custom segmentation architectures\n- Encoder-based segmentation\
+  \ with **ResNeXt50**\n- Strong augmentation pipeline with **Albumentations**\n- Training and validation\
+  \ monitoring\n- MLflow experiment tracking\n- Quantitative evaluation using segmentation metrics\n-\
+  \ Visualization of predictions and overlap maps\n\n---\n\n## Key Highlights\n\n- Built a complete **brain\
+  \ MRI segmentation pipeline** in **PyTorch**\n- Explored **U-Net**, **FPN**, and **ResNeXt-based segmentation\
+  \ models**\n- Applied **data augmentation** to improve model robustness\n- Tracked experiments using\
+  \ **MLflow**\n- Evaluated performance with:\n  - **Dice Score**\n  - **IoU**\n  - **Precision**\n  -\
+  \ **Recall**\n  - **Specificity**\n  - **Pixel Accuracy**\n- Generated qualitative prediction outputs\
+  \ and overlap visualizations\n- Saved trained weights and archived MLflow runs for reproducibility\n\
+  \n---\n\n## Dataset\n\nThis project uses the **LGG MRI Segmentation Dataset** available on Kaggle.\n\
+  \n- **Source:** Brain MRI images with corresponding tumor masks\n- **Task:** Binary semantic segmentation\n\
+  - **Goal:** Predict tumor region from MRI brain scans\n\nThe notebook prepares a dataframe of:\n\n-\
+  \ image paths\n- mask paths\n- diagnosis labels (positive / negative)\n\nThis also allows for class\
+  \ distribution analysis and stratified data splitting.\n\n---\n\n## Project Workflow\n\n### 1. Data\
+  \ Preparation\n- Load MRI images and corresponding segmentation masks\n- Build a structured dataframe\
+  \ for dataset management\n- Create diagnosis labels from masks\n- Split the dataset into:\n  - training\
+  \ set\n  - validation set\n  - test set\n\n### 2. Exploratory Data Analysis\n- Visualize positive and\
+  \ negative diagnosis distribution\n- Inspect patient-level data distribution\n- Display MRI images with\
+  \ corresponding tumor masks\n\n### 3. Data Augmentation\nThe training pipeline uses **Albumentations**\
+  \ for augmentation and preprocessing.\n\nExamples include:\n- random resized crop\n- horizontal / vertical\
+  \ transformations\n- normalization\n- tensor conversion\n\nThis helps the model generalize better to\
+  \ unseen MRI scans.\n\n### 4. Model Development\nThe notebook includes experimentation with multiple\
+  \ segmentation approaches:\n\n- **Custom U-Net**\n- **Custom FPN**\n- **Custom ResNeXt-based U-Net**\n\
+  - **ResNeXt50 encoder-based segmentation model**\n\nThis provides a strong comparison between classical\
+  \ encoder-decoder segmentation designs and pretrained backbone-based models.\n\n### 5. Training\nThe\
+  \ training pipeline includes:\n- batch-wise optimization\n- Dice-based monitoring\n- BCE + Dice hybrid\
+  \ loss\n- early stopping\n- multiple weight decay experiments\n- validation metric tracking across epochs\n\
+  \n### 6. Experiment Tracking\nAll experiments are logged with **MLflow**, making it easy to compare\
+  \ runs and reproduce the best model configuration.\n\n### 7. Evaluation\nThe final model is evaluated\
+  \ on the test set using multiple segmentation metrics and visual inspection of predictions.\n\n---\n\
+  \n## Model Architectures Explored\n\n### Custom U-Net\nA standard encoder-decoder segmentation architecture\
+  \ with skip connections for spatial detail preservation.\n\n### Custom FPN\nFeature Pyramid Network\
+  \ for multi-scale feature aggregation and segmentation.\n\n### ResNeXt-Based Segmentation\nA stronger\
+  \ encoder-based approach using **ResNeXt50** pretrained weights to extract more powerful image features.\n\
+  \n---\n\n## Tech Stack\n\n- **Python**\n- **PyTorch**\n- **Torchvision**\n- **Segmentation Models PyTorch**\n\
+  - **Albumentations**\n- **OpenCV**\n- **NumPy**\n- **Pandas**\n- **Matplotlib**\n- **MLflow**\n- **Scikit-learn**\n\
+  \n---\n\n## Evaluation Metrics\n\nThis repository evaluates segmentation performance using:\n\n- **Dice\
+  \ Score** – overlap quality between prediction and ground truth\n- **IoU (Intersection over Union)**\
+  \ – stricter overlap metric\n- **Precision** – ability to avoid false positives\n- **Recall** – ability\
+  \ to detect tumor pixels\n- **Specificity** – ability to identify non-tumor pixels correctly\n- **Pixel\
+  \ Accuracy** – overall pixel-wise correctness\n\nThese metrics provide a balanced understanding of segmentation\
+  \ quality.\n\n---\n\n## Results\n\nThe best saved model achieved the following test performance:\n\n\
+  - **Mean Dice of the test images:** **88%**\n- **Mean IoU of the test images:** **79%**\n\nAdditional\
+  \ tracked metrics in the notebook include:\n- Precision\n- Recall\n- Specificity\n- Pixel Accuracy\n\
+  \nThese results show strong overlap performance for the tumor segmentation task.\n\n---\n## Model Predictions\n\
+  \nTo qualitatively evaluate segmentation performance, the GIF below compares the predicted tumor regions\
+  \ with the ground truth masks across multiple MRI samples.\n\n- **Red** → Prediction  \n- **Green**\
+  \ → Ground Truth  \n\n<p align=\"center\">\n  <img src=\"predictions_of_unet_with_resnext50_backbone.gif\"\
+  \ alt=\"Predictions of UNet with ResNeXt50 backbone\" width=\"900\"/>\n</p>\n\n## Visual Outputs\n\n\
+  The notebook also includes qualitative outputs such as:\n\n- random test sample prediction\n- ground\
+  \ truth vs predicted mask comparison\n- thresholded mask visualization\n- predictive overlap plates\n\
+  - GIF-style visual outputs for easier result inspection\n\nThis helps validate not only numerical performance\
+  \ but also the visual quality of segmentation.\n\n---\n\n## Repository Structure\n\n```bash\nbrain-mri-tumor-segmentation/\n\
+  │── brain-segmentation-v2.ipynb\n│── README.md\n│── saved_models/\n│── mlruns/\n│── outputs/\n```\n\
+  ## Installation\nClone the repository:\n```bash\ngit clone https://github.com/Somnath1998g/brain-segmentation.git\n\
+  cd brain-segmentation\n```\nInstall dependencies:\n```bash\npip install -q segmentation-models-pytorch\n\
+  pip install mlflow\npip install albumentations opencv-python matplotlib pandas numpy scikit-learn\n\
+  ```\n## Why This Project Matters\n```text\nBrain tumor segmentation is a high-impact application of\
+  \ AI in healthcare.\nThis project demonstrates how deep learning can be used to assist medical image\
+  \ interpretation by automating tumor region extraction from MRI scans.\nIt combines:\n-strong deep learning\
+  \ fundamentals\n-practical experimentation\n-clean evaluation methodology\n-reproducibility practices\n\
+  -visual interpretability\n```\n"

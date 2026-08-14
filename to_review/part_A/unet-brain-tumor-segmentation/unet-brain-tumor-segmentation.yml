@@ -1,0 +1,167 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Rashacoding/unet-brain-tumor-segmentation
+url: https://github.com/Rashacoding/unet-brain-tumor-segmentation
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-30T06:12:03Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: '# U-Net Brain Tumor Segmentation
+
+
+  A PyTorch U-Net for segmenting FLAIR abnormalities (tumors) in lower-grade glioma (LGG) brain MRI scans,
+  trained on the [LGG Segmentation Dataset](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)
+  (TCGA-LGG, 110 patients). Includes a training notebook and a desktop GUI for running inference on new
+  images.
+
+
+  ## Project Structure
+
+
+  ```
+
+  brain_tumor_project/
+
+  ├── data/
+
+  │   └── kaggle_3m/            # LGG dataset: per-patient folders of MRI slices (.tif) + masks
+
+  │       ├── data.csv          # patient/genomic metadata
+
+  │       └── README.md         # dataset description
+
+  ├── models/                   # trained model checkpoints (.pth)
+
+  ├── notebooks/
+
+  │   ├── lgg_unet_segmentation.ipynb   # data loading, training, evaluation
+
+  │   └── training_history.csv          # per-epoch loss/Dice/IoU/precision/recall
+
+  ├── software/                 # inference + GUI application
+
+  │   ├── model.py               # U-Net architecture
+
+  │   ├── inference.py           # model loading + prediction
+
+  │   ├── utils.py                # mask overlay + result saving helpers
+
+  │   ├── gui_main.py             # simple Tkinter GUI
+
+  │   └── GUI_Tumor_predict.py    # extended Tkinter GUI (zoom/pan, preprocessing, history)
+
+  └── results/                  # saved prediction outputs
+
+  ```
+
+
+  ## Model
+
+
+  A standard 3-level U-Net (`software/model.py`):
+
+  - **Encoder:** 3× `DoubleConv` + max-pool blocks (64 → 128 → 256 channels)
+
+  - **Bottleneck:** 512 channels
+
+  - **Decoder:** 3× transposed-conv upsampling with skip connections
+
+  - **Output:** 1×1 conv producing a single-channel logit map (sigmoid → tumor probability)
+
+
+  Input: 256×256 RGB (3-channel MRI: pre-contrast, FLAIR, post-contrast). Output: 256×256 binary tumor
+  mask.
+
+
+  ## Training
+
+
+  Trained in `notebooks/lgg_unet_segmentation.ipynb`:
+
+  - Loss: `BCEWithLogitsLoss`
+
+  - Optimizer: Adam, lr `1e-4`
+
+  - Batch size: 8, Epochs: 15
+
+  - Metrics: Dice, IoU, precision, recall (computed each epoch on the validation split)
+
+
+  Final validation results (epoch 15, see `notebooks/training_history.csv`):
+
+
+  | Metric | Score |
+
+  |---|---|
+
+  | Dice | 0.79 |
+
+  | IoU | 0.68 |
+
+  | Precision | 0.80 |
+
+  | Recall | 0.82 |
+
+
+  Trained weights are saved to `models/`.
+
+
+  ## Setup
+
+
+  ```bash
+
+  pip install torch opencv-python numpy pandas matplotlib scikit-learn pillow
+
+  ```
+
+
+  Download the [LGG Segmentation Dataset](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)
+  and place the `kaggle_3m/` folder under `data/`.
+
+
+  ## Usage
+
+
+  **Train / explore the model:** open `notebooks/lgg_unet_segmentation.ipynb` in Jupyter and run the cells
+  top to bottom.
+
+
+  **Run the GUI:**
+
+
+  ```bash
+
+  cd software
+
+  python gui_main.py
+
+  ```
+
+
+  Select an MRI image, click **Detect Tumor**, and view the tumor overlay. `inference.py` automatically
+  loads the preferred checkpoint from `models/` (falling back to the most recently modified one if not
+  found).
+
+
+  ## Notes
+
+
+  - File paths in `inference.py` and the training notebook are currently hardcoded to a local absolute
+  path — update `MODELS_DIR`/`DATA_DIR` if running on a different machine.
+
+  - `data/`, `*.csv`, and `*.pth` files are git-ignored; the dataset and trained weights are not tracked
+  in this repository.
+
+  '

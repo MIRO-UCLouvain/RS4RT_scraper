@@ -1,0 +1,54 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: walsam00/4D_CT_reproducible_capsule
+url: https://github.com/walsam00/4D_CT_reproducible_capsule
+platform: github
+description: ''
+license: MIT
+language: PureBasic
+keywords: []
+stars: 0
+updated_at: '2024-04-24T12:46:24Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# 4D_CT_reproducible_capsule\nThis is a reproducible capsule for the code in the following\
+  \ repository: https://github.com/walsam00/4D_CT_code\n\nHow to run the code:\n1. Install Python 3.11\
+  \ (for example from the windows app store)\n2.  Install necessary packages (for example from command\
+  \ line using pip):\n    a) python3 -m pip install --upgrade pip\n    b) python3 -m pip install tensorflow==2.13.1\n\
+  \    c) python3 -m pip install h5py\n    d) python3 -m pip install numpy\n    Please note:\n    You\
+  \ may need to enable long paths in windows for the tensorflow installation to work: https://pip.pypa.io/warnings/enable-long-paths\n\
+  \    The requirements.txt file contains exact versions of these packages that this reproducible capsule\
+  \ was tested with.\n    Tensorflow runs a lot faster when it is able to run on a GPU. For tasks as small\
+  \ as the one in this reproducible capsule, the code should run in reasonable time on the CPU.\n    If\
+  \ desired, the tensorflow package can be installed to run on the GPU as detailed on the tensorflow website\
+  \ (this replaces step 2a) https://www.tensorflow.org/install/pip\n4. Unzip input image (N24_w_01_reconstructed_binned_5.zip)\
+  \ and place the unzipped image file (N24_w_01_reconstructed_binned_5.h5) in the same directory as the\
+  \ python script (UNet_inference.py) and the trained model save state (trained_model_4_layers_N1_to_N32).\n\
+  5. Run python code (file paths have to be specified differently based on operating system) with the\
+  \ following arguments to apply the trained CNN to segment the provided reconstructed CT image file:\n\
+  \   a) Windows command line (open command line at the file location of the Python script):\n      python3\
+  \ UNet_inference.py -i N24_w_01_reconstructed_binned_5.h5 -m trained_model_4_layers_N1_to_N32\\saved_model\
+  \       \n   b) Linux terminal (open the terminal at the file location of the Python script):\n    \
+  \  python3 UNet_inference.py -i N24_w_01_reconstructed_binned_5.h5 -m trained_model_4_layers_N1_to_N32/saved_model\n\
+  6. Inspect the resulting segmented recontsructed CT image file (N24_w_01_reconstructed_binned_5_segmented.h5),\
+  \ and compare it against the provided segmented file N24_w_01_reconstructed_binned_5_pre-segmented (needs\
+  \ to be unzipped). The provided file and the one the code produces should be identical. FIJI can be\
+  \ used to look at the HDF5 image files (https://imagej.net/software/fiji/downloads). Import *.h5 files\
+  \ into FIJI using the Ilastik plugin (https://www.ilastik.org/documentation/fiji_export/plugin)\n\n\
+  Users can apply the trained CNN to their own data by changing the import (-i) argument of the python\
+  \ script. Data needs to be in the HDF5 file format (*.h5) and needs to conform to the data shape that\
+  \ the CNN import expects (x: 240 px, y: 240 px, z: any). The data needs to be stored in the HDF5 file\
+  \ in a group named 'data'. The axis order of the data needs to be z,y,x,c (c is a color channel of size\
+  \ 1 - images need to be greyscale). \nThe U-Net that is applied to the data in this example segments\
+  \ images into 4 segmentation categories (mask, background, organic tablet material, inorganic tablet\
+  \ material). A version of the U-Net trained to segment images into three categories for images that\
+  \ lack inorganic material is also available (https://github.com/walsam00/4D_CT_code). The U-Net to be\
+  \ used for segmentation can be specified when running the python script using the 'model_path' (-m)\
+  \ argument.\n\nDOI link to this repository:\nhttps://zenodo.org/doi/10.5281/zenodo.11046923\n      \
+  \                  \n"

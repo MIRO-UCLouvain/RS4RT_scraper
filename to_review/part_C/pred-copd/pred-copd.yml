@@ -1,0 +1,144 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: JSmedly/pred_copd
+url: https://github.com/JSmedly/pred_copd
+platform: github
+description: Code for paper titled Prognosis of COPD outcomes using clinical, radiomics, and deep learning
+  features in a South Australian Cohort
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-07T04:21:21Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: '
+
+  # PredCopd
+
+
+  PredCopd is a research codebase for predicting COPD-related outcomes from
+
+  imaging and clinical data. It supports MIL-based training, fusion strategies,
+
+  embedding extraction, and several comparison scripts for downstream analyses.
+
+  It has been written for the paper ''Prognosis of COPD outcomes using clinical,
+
+  radiomics, and deep learning features in a South Australian Cohort''.
+
+
+  ## Setup
+
+
+  Create the conda environment from the checked-in spec:
+
+
+  ```bash
+
+  conda env create -f environment_all.yaml -n pred_copd
+
+  conda activate pred_copd
+
+  pip install -e .
+
+  ```
+
+
+  If you are running on a different machine or filesystem, update the paths under `configs/paths/` before
+  launching jobs.
+
+
+  ## Training
+
+
+  Run a training job from the repository root:
+
+
+  ```bash
+
+  python src/PredCopd/train.py deploy=local experiment=<hydra_experiment_name>
+
+  ```
+
+
+  Hydra experiment definitions live under `configs/experiment/`, while the main training configuration
+  is `configs/train.yaml`.
+
+
+  ## Utilities
+
+
+  Extract embeddings from images:
+
+
+  ```bash
+
+  python scripts/extract_embeddings.py
+
+  ```
+
+
+  Run the preconfigured comparison scripts:
+
+
+  ```bash
+
+  ./scripts/run_mil_sweep.sh
+
+  ./scripts/run_fusion_comparison.sh
+
+  ./scripts/run_ado_dose_film.sh
+
+  ./scripts/run_sex_strata_comparison.sh
+
+  ```
+
+
+  Train classical baselines and sensitivity analyses:
+
+
+  ```bash
+
+  python scripts/train_clinical_cox.py
+
+  python scripts/train_radiomics_coxnet.py
+
+  python scripts/sensitivity_analysis_lookback.py
+
+  ```
+
+
+  ## Repository Layout
+
+
+  The most important directories are:
+
+
+  ```text
+
+  configs/   Hydra configuration files for training, data, models, and experiments
+
+  scripts/   Shell and Python entry points for sweeps, baselines, and utilities
+
+  src/       The PredCopd Python package
+
+  ```
+
+
+  ## Notes
+
+
+  - The repository uses Hydra for configuration management, so most behavior is controlled through config
+  overrides.
+
+  - All workflows assume access to the original data layout and require path updates before they run correctly.
+
+
+
+  '

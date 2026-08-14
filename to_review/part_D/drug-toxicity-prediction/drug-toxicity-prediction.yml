@@ -1,0 +1,402 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Raman17089/Drug-Toxicity-Prediction
+url: https://github.com/Raman17089/Drug-Toxicity-Prediction
+platform: github
+description: Predicting drug toxicity using molecular descriptors & ML models (Random Forest, XGBoost,
+  LightGBM) trained on the Tox21 dataset and  ZINC250k Molecular dataset.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-04-03T11:08:24Z'
+image_source: null
+heuristic_total_score: 19
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: '# 🧬 Drug Toxicity Prediction (Pharmacology + AI)
+
+
+  > **Predict whether a drug compound is toxic** using molecular descriptors and machine learning — trained
+  on the **Tox21 dataset** with feature augmentation from **ZINC250k**, powered by an interactive **Streamlit**
+  interface.
+
+
+  [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://python.org)
+
+  [![Streamlit](https://img.shields.io/badge/Streamlit-1.30%2B-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io)
+
+  [![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3%2B-F7931E?logo=scikit-learn&logoColor=white)](https://scikit-learn.org)
+
+  [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+
+
+  ---
+
+
+  ## 🎯 Problem Statement
+
+
+  Drug development frequently fails due to **unexpected toxicity**. Early prediction of toxic compounds
+  can significantly reduce development costs and improve patient safety. This project builds a machine
+  learning prototype that:
+
+
+  - Processes molecular descriptor datasets from **Tox21** and **ZINC250k**
+
+  - Trains ML models to predict compound toxicity
+
+  - Identifies **key structural features** linked to toxicity risk
+
+  - Provides an **interactive prediction interface** via Streamlit
+
+
+  ---
+
+
+  ## 📁 Project Structure
+
+
+  ```
+
+  drug_toxicity_prediction/
+
+  │
+
+  ├── data/
+
+  │   ├── raw/                        ← Tox21 CSV + ZINC250k CSV (placed here)
+
+  │   └── processed/                  ← Feature matrices, predictions, importances
+
+  │
+
+  ├── src/
+
+  │   ├── data_processing.py          ← Load Tox21/ZINC, compute RDKit descriptors
+
+  │   ├── model_training.py           ← Train RF / XGBoost / LightGBM pipelines
+
+  │   ├── model_evaluation.py         ← ROC, confusion matrix, SHAP, distribution plots
+
+  │   └── predictor.py                ← Predict toxicity for new SMILES strings
+
+  │
+
+  ├── models/                         ← Saved .pkl model files
+
+  ├── visualizations/                 ← All generated plots (PNG)
+
+  ├── app/
+
+  │   └── app.py                      ← Streamlit web interface
+
+  │
+
+  ├── main.py                         ← ▶ Run the full end-to-end pipeline
+
+  ├── requirements.txt
+
+  ├── .gitignore
+
+  └── README.md
+
+  ```
+
+
+  ---
+
+
+  ## ⚙️ Setup & Installation
+
+
+  ### Prerequisites
+
+  - Python 3.10+ recommended
+
+
+  ### Step 1 — Clone the repository
+
+  ```bash
+
+  git clone https://github.com/Raman17089/Drug-Toxicity-Prediction.git
+
+  cd Drug-Toxicity-Prediction
+
+  ```
+
+
+  ### Step 2 — Create virtual environment
+
+  ```bash
+
+  python -m venv venv
+
+  venv\Scripts\activate        # Windows
+
+  # source venv/bin/activate   # macOS/Linux
+
+  ```
+
+
+  ### Step 3 — Install dependencies
+
+  ```bash
+
+  pip install -r requirements.txt
+
+  ```
+
+
+  ### Step 4 — Place datasets
+
+  Download and place these files in `data/raw/`:
+
+  - **Tox21**: [Kaggle — Tox21 Dataset](https://www.kaggle.com/datasets/epicskills/tox21-dataset) → `tox21.csv`
+
+  - **ZINC250k** *(optional)*: [Kaggle — ZINC250k](https://www.kaggle.com/datasets/basu369victor/zinc250k)
+  → `250k_rndm_zinc_drugs_clean_3.csv`
+
+
+  ### Step 5 — Run the full pipeline
+
+  ```bash
+
+  python main.py
+
+  ```
+
+
+  This will:
+
+  1. Load Tox21 (~8,000 compounds) and ZINC250k (5,000 sample)
+
+  2. Compute 200+ RDKit molecular descriptors + 128-bit Morgan fingerprints
+
+  3. Train Random Forest, XGBoost, Gradient Boosting, and LightGBM models
+
+  4. Run 5-fold stratified cross-validation
+
+  5. Generate evaluation plots (ROC, confusion matrix, SHAP, distributions)
+
+  6. Save trained models to `models/`
+
+  7. Run batch toxicity prediction on ZINC250k compounds
+
+
+  ### Step 6 — Launch the web app
+
+  ```bash
+
+  streamlit run app/app.py
+
+  ```
+
+  Open `http://localhost:8501` in your browser.
+
+
+  ---
+
+
+  ## 🔬 Key Features
+
+
+  | Feature | Detail |
+
+  |---|---|
+
+  | **Primary Dataset** | Tox21 — 8,014 compounds, 12 toxicity endpoints |
+
+  | **Secondary Dataset** | ZINC250k — 250,000 drug-like compounds for batch screening |
+
+  | **Descriptors** | 200+ RDKit physicochemical descriptors + 128-bit Morgan fingerprints |
+
+  | **Models** | Random Forest · XGBoost · Gradient Boosting · LightGBM |
+
+  | **Imbalance Handling** | `class_weight=''balanced''` + `scale_pos_weight` |
+
+  | **Evaluation** | 5-fold Stratified CV, ROC-AUC, F1, Accuracy |
+
+  | **Explainability** | SHAP TreeExplainer (beeswarm + waterfall plots) |
+
+  | **Interface** | Streamlit app — single SMILES + batch CSV prediction |
+
+
+  ---
+
+
+  ## 📊 Tox21 Endpoints
+
+
+  | Endpoint | Category | Description |
+
+  |---|---|---|
+
+  | NR-AR | Nuclear receptor | Androgen receptor binding |
+
+  | NR-AR-LBD | Nuclear receptor | Androgen receptor ligand binding domain |
+
+  | NR-AhR | Nuclear receptor | Aryl hydrocarbon receptor |
+
+  | NR-Aromatase | Nuclear receptor | Aromatase inhibition |
+
+  | NR-ER | Nuclear receptor | Estrogen receptor |
+
+  | NR-ER-LBD | Nuclear receptor | Estrogen receptor LBD |
+
+  | NR-PPAR-gamma | Nuclear receptor | PPAR-gamma activation |
+
+  | **SR-ARE** | **Stress response** | **Antioxidant response element** *(default target)* |
+
+  | SR-ATAD5 | Stress response | DNA damage / genotoxicity |
+
+  | SR-HSE | Stress response | Heat shock response |
+
+  | SR-MMP | Stress response | Mitochondrial membrane potential |
+
+  | SR-p53 | Stress response | p53 pathway (DNA damage) |
+
+
+  ---
+
+
+  ## 🧪 Example Predictions
+
+
+  | Compound | SMILES | Predicted | Confidence |
+
+  |---|---|---|---|
+
+  | Aspirin | `CC(=O)Oc1ccccc1C(=O)O` | ✅ Non-toxic | High |
+
+  | Caffeine | `CN1C=NC2=C1C(=O)N(C(=O)N2C)C` | ✅ Non-toxic | High |
+
+  | DDT | `Clc1ccc(cc1Cl)C(c2ccc(Cl)cc2Cl)C(Cl)(Cl)Cl` | ⚠️ **Toxic** | High |
+
+  | Benzene | `c1ccccc1` | ⚠️ **Toxic** | Medium |
+
+  | Formaldehyde | `C=O` | ⚠️ **Toxic** | High |
+
+
+  ---
+
+
+  ## 📈 Key Molecular Descriptors
+
+
+  The model identifies these as the most important features driving toxicity prediction:
+
+
+  - **MolLogP** — Lipophilicity (drug membrane permeability)
+
+  - **TPSA** — Topological polar surface area
+
+  - **NumHDonors / NumHAcceptors** — Hydrogen bond donors/acceptors
+
+  - **MolWt** — Molecular weight
+
+  - **NumAromaticRings** — Aromaticity (strongly linked to toxicity)
+
+  - **Morgan Fingerprints** — Structural similarity encoding (radius=2, 128 bits)
+
+
+  ---
+
+
+  ## 🚀 Python API Usage
+
+
+  ```python
+
+  from src.predictor import predict_toxicity, load_best_model
+
+
+  # Load the trained model
+
+  pipeline, model_name = load_best_model()
+
+
+  # Predict toxicity for benzene
+
+  result = predict_toxicity("c1ccccc1", pipeline, model_name)
+
+  print(result)
+
+  # {
+
+  #   ''smiles'': ''c1ccccc1'',
+
+  #   ''toxic'': 1,
+
+  #   ''probability'': 0.72,
+
+  #   ''confidence'': ''High'',
+
+  #   ''model'': ''randomforest'',
+
+  #   ''top_features'': [...]
+
+  # }
+
+  ```
+
+
+  ---
+
+
+  ## 🛠️ Tech Stack
+
+
+  | Layer | Technology |
+
+  |---|---|
+
+  | Molecular Chemistry | RDKit |
+
+  | Machine Learning | scikit-learn, XGBoost, LightGBM |
+
+  | Explainability | SHAP |
+
+  | Visualization | Matplotlib, Seaborn, Plotly |
+
+  | Web Interface | Streamlit |
+
+  | Data Handling | Pandas, NumPy |
+
+
+  ---
+
+
+  ## 📌 References
+
+
+  - **Tox21 Dataset**: https://tripod.nih.gov/tox21/
+
+  - **ZINC Database**: https://zinc.docking.org/
+
+  - **RDKit Docs**: https://www.rdkit.org/
+
+  - **SHAP**: https://shap.readthedocs.io/
+
+
+  ---
+
+
+  ## 👤 Author
+
+
+  **Raman** — [GitHub Profile](https://github.com/Raman17089)
+
+
+  ---
+
+
+  *Built as a Pharmacology + AI project demonstrating end-to-end drug toxicity prediction using machine
+  learning.*
+
+  '

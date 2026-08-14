@@ -1,0 +1,61 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: iiiodel/asil-radiomics
+url: https://github.com/iiiodel/asil-radiomics
+platform: github
+description: A Python-based pipeline for extracting and analyzing radiomic features from ovarian cancer
+  NRRD scans. This project includes scripts for data structuring, exhaustive feature extraction using
+  PyRadiomics, and interactive data visualization.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-08-20T15:16:46Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# asil-radiomics\nA Python-based pipeline for extracting and analyzing radiomic features\
+  \ from ovarian cancer NRRD scans. This project includes scripts for data structuring, exhaustive feature\
+  \ extraction using PyRadiomics, and interactive data visualization.\n\n![Python](https://img.shields.io/badge/python-3.9-blue.svg)\n\
+  \n## \U0001F9EC Proje Hakkında\n\nBu proje, yumurtalık kanserine ait medikal görüntülerden (NRRD formatında)\
+  \ kapsamlı radyomik özelliklerin çıkarılması için uçtan uca bir çözüm sunmaktadır. Pipeline, dağınık\
+  \ haldeki ham verilerin organize edilmesi, PyRadiomics kütüphanesi ile 1500'den fazla özelliğin çıkarılması\
+  \ ve sonuçların düzenlenmesi adımlarını içerir. Ayrıca, segmentasyonların doğruluğunu kontrol etmek\
+  \ için bir veri inceleme aracı da sunulmaktadır.\n\n## \U0001F4C2 Proje Yapısı\n\nProjenin ana klasör\
+  \ yapısı aşağıdaki gibidir. `data` klasörü ve içeriği, `.gitignore` dosyası ile versiyon kontrolü dışında\
+  \ tutulmuştur.\n\n```\nasil-radiomics/\n│\n├── data/\n│   ├── raw/                      # Ham verilerinizi\
+  \ buraya koyun\n│   ├── structured/               # 1. script'in oluşturduğu düzenli veri klasörü\n\
+  │   └── Radyomik_CSV_Ciktilari/   # 3. script'in oluşturduğu CSV çıktı klasörü\n│\n├── data_organizer.py\
+  \             # Ham verileri yapılandıran script\n├── radiomics_extractor.py        # Radyomik özellikleri\
+  \ çıkaran script\n├── csv_organizer.py              # Üretilen CSV'leri toplayan script\n├── mask_inspector.py\
+  \             # Tarama/maske inceleme aracı\n│\n├── .gitignore\n├── environment.yml\n└── README.md\n\
+  ```\n\n## \U0001F6E0️ Kurulum\n\n1.  **Depoyu Klonlayın:**\n    ```bash\n    git clone https://github.com/iiiodel/asil-radiomics.git\n\
+  \    cd asil-radiomics\n    ```\n\n2.  **Conda Ortamını Oluşturun:**\n    ```bash\n    conda env create\
+  \ -f environment.yml\n    ```\n\n3.  **Ortamı Aktive Edin:**\n    ```bash\n    conda activate radiomics_env\n\
+  \    ```\n\n## \U0001F4CB Ana Pipeline Kullanımı\n\n#### Adım 0: Veri Hazırlığı\n\nHam verilerinizi\
+  \ aşağıdaki yapıya uygun şekilde `data/raw/Hastalar/` klasörünün içine yerleştirin:\n\n```\ndata/\n\
+  └── raw/\n    └── Hastalar/\n        ├── Hasta_Adi_1/\n        │   ├── ...\n        │   ├── segmentasyon.seg.nrrd\n\
+  \        │   └── tarama.nrrd\n        └── ...\n```\n\n#### Adım 1: Verileri Yapılandırma\n\n`data_organizer.py`\
+  \ script'i, ham verileri okur ve `data/structured/` klasörünü analiz için hazırlar.\n\n```bash\npython\
+  \ data_organizer.py\n```\n\n#### Adım 2: Radyomik Özellik Çıkarma\n\n`radiomics_extractor.py` script'i,\
+  \ yapılandırılmış verilerden radyomik özellikleri hesaplar ve sonuçları (bireysel ve birleştirilmiş\
+  \ CSV'ler) `data/structured/` içine yazar.\n\n```bash\npython radiomics_extractor.py\n```\n\n#### Adım\
+  \ 3: CSV Çıktılarını Toplama\n\n`csv_organizer.py` script'i, üretilen tüm CSV dosyalarını `data/Radyomik_CSV_Ciktilari/`\
+  \ klasörüne taşır.\n\n```bash\npython csv_organizer.py\n```\n\n---\n\n## Ek Araçlar\n\n### Segmentasyon\
+  \ Kontrolü için İnteraktif Görüntüleyici\n\n`mask_inspector.py` script'i, ana pipeline'dan bağımsız\
+  \ bir araçtır. Bu araç, radyomik özelliklerini çıkarmadan önce ham veya yapılandırılmış verilerdeki\
+  \ `scan.nrrd` ve `segmentation.nrrd` dosyalarını interaktif bir pencerede incelemenizi sağlar. Bu sayede\
+  \ segmentasyonlarınızın doğruluğunu ve sınırlarlarını görsel olarak teyit edebilirsiniz.\n\nKullanmak\
+  \ için script içindeki hasta yolu değişkenini düzenleyip çalıştırın:\n```bash\npython mask_inspector.py\n\
+  ```\n\n## ⚖️ Lisans\n\nBu projede bir açık kaynak lisansı belirtilmemiştir. Bu nedenle, varsayılan uluslararası\
+  \ telif hakkı yasaları geçerlidir ve **tüm hakları proje sahibine aittir.** Proje sahibinden yazılı\
+  \ ve açık bir izin alınmadan bu kodun kopyalanması, dağıtılması, değiştirilmesi veya ticari/akademik\
+  \ projelerde kullanılması yasaktır.\n\n## Veri Kullanımı ve Gizliliği\n\nBu projede kullanılan medikal\
+  \ görüntü verileri (.nrrd, .csv), hasta gizliliği ve etik kurallar gereği **bu repoda bulunmamaktadır\
+  \ ve paylaşıma açık değildir.** Bu script'lerin amacı, benzer veri setlerine sahip diğer araştırmacılara\
+  \ bir metodoloji ve pipeline sunmaktır.\n"

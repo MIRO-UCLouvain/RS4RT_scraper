@@ -1,0 +1,93 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: KerenLevAri/Graph-Based-Toxicity-Prediction-for-Chemical-Compounds
+url: https://github.com/KerenLevAri/Graph-Based-Toxicity-Prediction-for-Chemical-Compounds
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-23T16:48:58Z'
+image_source: null
+heuristic_total_score: 21
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Toxicity Prediction Using Classical Machine Learning and Graph Neural Networks\n\n\
+  ## Overview\n\nPredicting chemical toxicity is a critical step in drug discovery and chemical safety\
+  \ assessment. Experimental toxicity testing is often expensive, time-consuming, and resource-intensive.\n\
+  \nThis project explores the use of both classical machine learning and graph neural networks for molecular\
+  \ toxicity prediction using the **Tox21 dataset**.\n\nWe compare three different approaches:\n\n- Random\
+  \ Forest with Morgan Fingerprints\n- Graph Convolutional Network (GCN)\n- Graph Attention Network (GAT)\n\
+  \nThe goal is to evaluate whether graph-based deep learning models can outperform traditional cheminformatics\
+  \ approaches.\n\n---\n\n## Dataset\n\nDataset: **Tox21**\n\nhttps://www.kaggle.com/datasets/epicskills/tox21-dataset\n\
+  \n### Dataset Characteristics\n\n- 7,831 chemical compounds\n- Molecular representation using SMILES\
+  \ strings\n- 12 toxicity endpoints\n- Multi-label classification problem\n- Significant class imbalance\n\
+  - Missing labels across endpoints\n\n### Toxicity Endpoints\n\n| Endpoint |\n|-----------|\n| NR-AR\
+  \ |\n| NR-AR-LBD |\n| NR-AhR |\n| NR-Aromatase |\n| NR-ER |\n| NR-ER-LBD |\n| NR-PPAR-gamma |\n| SR-ARE\
+  \ |\n| SR-ATAD5 |\n| SR-HSE |\n| SR-MMP |\n| SR-p53 |\n\n---\n\n## Exploratory Data Analysis\n\nSeveral\
+  \ characteristics of the dataset were investigated:\n\n### Missing Labels\n\nMany toxicity endpoints\
+  \ contain missing labels, requiring special handling during training.\n\n<img width=\"431\" height=\"\
+  270\" alt=\"image\" src=\"https://github.com/user-attachments/assets/ab9fb632-be7b-45d6-a132-fb426723b199\"\
+  \ />\n\n\n### Class Imbalance\n\nThe percentage of active (toxic) compounds ranges from approximately:\n\
+  \n- 2.9% (NR-PPAR-gamma)\n- 16.1% (SR-ARE)\n\nThis makes ROC-AUC a more suitable evaluation metric than\
+  \ accuracy.\n\nThe active ratio represents the percentage of compounds labeled as toxic for each endpoint.\
+  \ The results show a significant class imbalance across the dataset, with active compounds ranging from\
+  \ approximately 3% to 16% of the available samples. This indicates that most compounds are non-toxic,\
+  \ making toxicity prediction a challenging task and motivating the use of ROC-AUC instead of accuracy\
+  \ as the primary evaluation metric.\n\n<img width=\"431\" height=\"273\" alt=\"image\" src=\"https://github.com/user-attachments/assets/f6382fae-9eeb-4b54-96ec-e7f62b779a42\"\
+  \ />\n\n\n## Endpoint Correlation\nTo better understand the relationships between toxicity mechanisms,\
+  \ we computed a correlation matrix between all toxicity endpoints.\nMost endpoint pairs show weak correlations,\
+  \ indicating that they capture different biological processes. However, several related endpoints exhibit\
+  \ stronger positive correlations, suggesting shared toxicity pathways.\n\n<img width=\"398\" height=\"\
+  350\" alt=\"image\" src=\"https://github.com/user-attachments/assets/081987b1-71c1-481f-b9a6-0595d9b4c6b8\"\
+  \ />\n\n### Molecular Complexity\n\nAverage molecule statistics:\n\n| Property | Value |\n|-----------|--------|\n\
+  | Average SMILES Length | 35.6 |\n| Average Number of Atoms | 18.6 |\n| Average Molecular Weight | 276.1\
+  \ |\n\n---\n\n## Molecular Representation\n\n### Random Forest\n\nMolecules are represented using:\n\
+  \n**Morgan Fingerprints**\n\n- Radius = 2\n- 2048-bit fingerprint\n\nGenerated using RDKit.\n\n### Graph\
+  \ Neural Networks\n\nEach molecule is converted into a graph:\n\n- Atoms → Nodes\n- Bonds → Edges\n\n\
+  Node features:\n\n| Feature | Description |\n|----------|------------|\n| Atomic Number | Atom type\
+  \ |\n| Degree | Number of neighbors |\n| Aromaticity | Aromatic ring membership |\n| Hybridization |\
+  \ Bonding state |\n| Formal Charge | Atomic charge |\n\n---\n\n## Models\n\n### Random Forest\n\nPipeline:\n\
+  \n```text\nSMILES\n   ↓\nMorgan Fingerprint\n   ↓\nRandom Forest\n   ↓\n12 Toxicity Predictions\n```\n\
+  \nConfiguration:\n\n- 100 Trees\n- Balanced class weights\n\n---\n\n### Graph Convolutional Network\
+  \ (GCN)\n\nArchitecture:\n\n```text\nAtom Features\n      ↓\nGCN Layer\n      ↓\nGCN Layer\n      ↓\n\
+  GCN Layer\n      ↓\nGlobal Mean Pooling\n      ↓\n12 Outputs\n```\n\n---\n\n### Graph Attention Network\
+  \ (GAT)\n\nArchitecture:\n\n```text\nAtom Features\n      ↓\nGAT Layer\n      ↓\nGAT Layer\n      ↓\n\
+  GAT Layer\n      ↓\nGlobal Mean Pooling\n      ↓\n12 Outputs\n```\n\nConfiguration:\n\n- 64 Hidden Channels\n\
+  - 4 Attention Heads\n- 3 GAT Layers\n\n---\n\n## Training\n\n### Handling Missing Labels\n\nThe Tox21\
+  \ dataset contains missing toxicity annotations.\n\nA custom masked binary cross-entropy loss was implemented:\n\
+  \n```python\ndef masked_bce_loss(outputs, targets):\n    mask = ~torch.isnan(targets)\n\n    outputs_masked\
+  \ = outputs[mask]\n    targets_masked = targets[mask]\n\n    return F.binary_cross_entropy_with_logits(\n\
+  \        outputs_masked,\n        targets_masked\n    )\n```\n\nThis allows training only on known labels.\n\
+  \n---\n\n## Results\n\n### Training Curves:\n### GCN Training Loss\n<img width=\"353\" height=\"235\"\
+  \ alt=\"image\" src=\"https://github.com/user-attachments/assets/45a4e547-3348-4352-999f-aed92670eb1c\"\
+  \ />\n\n### GAT Training Loss\n<img width=\"353\" height=\"233\" alt=\"image\" src=\"https://github.com/user-attachments/assets/71dc7409-b806-465d-9be4-ff7a36ef0db6\"\
+  \ />\n\n### ROC-AUC Comparison Of The 3 Models For Each Endpoint \n<img width=\"577\" height=\"311\"\
+  \ alt=\"image\" src=\"https://github.com/user-attachments/assets/912d6fe6-4e6c-4f3b-8ad6-b57cf08e1b2c\"\
+  \ />\n\n### Mean ROC-AUC Comparison\n<table>\n<tr>\n<td>\n\n\n| Model | Mean ROC-AUC |\n|---------|---------|\n\
+  | Random Forest | **0.820** |\n| GAT | **0.775** |\n| GCN | **0.742** |\n\n</td>\n<td>\n\n<img width=\"\
+  400\" alt=\"Model Comparison\" src=\"https://github.com/user-attachments/assets/2e5a0823-48ba-46cc-9538-c753f449a161\"\
+  \ />\n\n</td>\n</tr>\n</table>\n\n\n### Best Performing Model\n\n**Random Forest**\n\nMean ROC-AUC:\n\
+  \n```text\n0.820\n```\n\n### Key Findings\n\n- Random Forest achieved the best overall performance.\n\
+  - GAT consistently outperformed GCN.\n- Graph Neural Networks produced competitive results but did not\
+  \ surpass the fingerprint-based baseline.\n\n---\n\n## Example Results\n\n| Endpoint | Random Forest\
+  \ |\n|-----------|-----------|\n| NR-AhR | 0.887 |\n| NR-AR-LBD | 0.860 |\n| SR-p53 | 0.859 |\n| SR-MMP\
+  \ | 0.858 |\n\n---\n\n## Why Did Random Forest Win?\n\nMorgan Fingerprints already encode rich chemical\
+  \ information and known molecular substructures.\n\nGraph Neural Networks learn directly from molecular\
+  \ graphs but typically require:\n\n- Larger datasets\n- Richer atom and bond features\n- More extensive\
+  \ hyperparameter tuning\n\n---\n\n## Technologies Used\n\n- Python\n- Pandas\n- NumPy\n- Scikit-Learn\n\
+  - PyTorch\n- PyTorch Geometric\n- RDKit\n- Matplotlib\n\n---\n\n## Future Work\n\nPotential improvements\
+  \ include:\n\n- Richer atom and bond features\n- Hyperparameter optimization\n- Message Passing Neural\
+  \ Networks (MPNN)\n- Graph Transformers\n- Larger molecular datasets\n\n---\n\n## Conclusion\n\nThis\
+  \ project demonstrates that classical machine learning remains highly competitive for molecular toxicity\
+  \ prediction.\n\nWhile Random Forest achieved the strongest performance on Tox21, Graph Attention Networks\
+  \ showed promising results and consistently outperformed Graph Convolutional Networks.\n\nThese findings\
+  \ suggest that graph-based learning remains a promising direction for future research in computational\
+  \ toxicology.\n\n---\n"

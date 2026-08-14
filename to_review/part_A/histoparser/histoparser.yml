@@ -1,0 +1,80 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: BMGLab/HistoParser
+url: https://github.com/BMGLab/HistoParser
+platform: github
+description: HistoPath is a comprehensive toolkit for extracting quantitative features from histopathology
+  images, performing feature selection, and clustering patient samples based on tissue characteristics.
+  It also integrates with MRI radiomic data.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-04-10T03:00:38Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# HistoPath: Histopathology Image Analysis and Clustering\n\nHistoPath is a comprehensive\
+  \ toolkit for analyzing histopathology images by extracting quantitative features, performing feature\
+  \ selection, and clustering patient samples based on tissue characteristics. The project uses various\
+  \ machine learning techniques to identify patterns and relationships in histopathology data.\n\n## Project\
+  \ Overview\n\nThe goal of this project is to analyze histopathology images through a pipeline that includes:\n\
+  1. Sampling tissue patches from whole slide images\n2. Extracting morphological and textural features\
+  \ from these patches\n3. Aggregating features across multiple patches per patient\n4. Selecting the\
+  \ most discriminative features\n5. Clustering patients based on selected features\n6. Visualizing and\
+  \ analyzing the clustering results\n7. Integrating with MRI radiomics features\n\n## Requirements\n\n\
+  The following Python libraries are required to run this project:\n\n```\nnumpy>=1.20.0\npandas>=1.3.0\n\
+  scikit-learn>=0.24.0\nscikit-image>=0.18.0\nmatplotlib>=3.4.0\nseaborn>=0.11.0\nopenslide-python>=1.1.0\n\
+  histomicstk>=1.0.0\numap-learn>=0.5.0\nscipy>=1.7.0\nPillow>=8.0.0\n```\n\n## Installation\n\n1. Clone\
+  \ the repository:\n```\ngit clone https://github.com/BMGLab/HistoPath.git\ncd HistoPath\n```\n\n2. Install\
+  \ the required packages:\n```\npip install -r requirements.txt\n```\n\n3. Install OpenSlide for whole\
+  \ slide image processing:\n   - For macOS: `brew install openslide`\n   - For Ubuntu: `sudo apt-get\
+  \ install openslide-tools`\n\n4. Install HistomicsTK:\n   \n   HistomicsTK requires a specific installation\
+  \ procedure due to its dependencies:\n\n   ```bash\n   # Create a conda environment (recommended)\n\
+  \   conda create -n histopath python=3.8\n   conda activate histopath\n   \n   # Install HistomicsTK\n\
+  \   pip install histomicstk\n   \n   # If issues occur with dependencies, install them individually:\n\
+  \   pip install large_image\n   pip install girder-client\n   ```\n\n   For more detailed installation\
+  \ instructions and troubleshooting, see the [HistomicsTK documentation](https://github.com/DigitalSlideArchive/HistomicsTK).\n\
+  \n## Project Structure\n\nThe project is organized into several modules, each handling a specific step\
+  \ in the analysis pipeline:\n\n```\nHistoPath/\n│\n├── Sampling/                # Extract tissue patches\
+  \ from whole slide images\n│   └── sampling.py\n│\n├── Feature_Extraction/      # Extract and aggregate\
+  \ features from images\n│   ├── feature_extraction_density.py\n│   └── mean_features.py\n│\n├── Feature_selection/\
+  \       # Select most discriminative features\n│   └── feature_selection.py\n│\n├── Clustering/    \
+  \          # Cluster samples based on selected features\n│   └── clustering_selected_features.py\n│\n\
+  ├── MR/                      # MRI radiomic features processing\n│   └── mr_feature_list.py\n│\n├──\
+  \ HistoandMR/              # Integration of histopathology and MRI features\n│   └── all_features.py\n\
+  │\n├── Cluster_result_analysis/ # Analyze clustering results\n│\n├── Outputspdf/              # Output\
+  \ visualizations and results\n│\n└── README.md\n```\n\n## Execution Order\n\nThe modules should be executed\
+  \ in the following sequence:\n\n1. **Tissue Sampling**:\n   ```\n   python Sampling/sampling.py\n  \
+  \ ```\n   This extracts tissue patches from whole slide images and saves them to the `slides/` directory.\n\
+  \n2. **Feature Extraction**:\n   ```\n   python Feature_Extraction/feature_extraction_density.py\n \
+  \  ```\n   This processes the tissue patches, extracts features, and saves them to the `output_density/`\
+  \ directory.\n\n3. **Feature Aggregation**:\n   ```\n   python Feature_Extraction/mean_features.py\n\
+  \   ```\n   This aggregates features across multiple patches and creates a combined feature file.\n\n\
+  4. **Feature Selection**:\n   ```\n   python Feature_selection/feature_selection.py\n   ```\n   This\
+  \ selects the most discriminative features using multiple methods and saves them to `selected_features.csv`.\n\
+  \n5. **Clustering and Visualization**:\n   ```\n   python Clustering/clustering_selected_features.py\n\
+  \   ```\n   This performs hierarchical clustering on the selected features and generates visualizations.\n\
+  \n6. **MRI Feature Processing**:\n   ```\n   python MR/mr_feature_list.py\n   ```\n   This processes\
+  \ MRI radiomic features from CaPTk output files.\n\n7. **Histopathology-MRI Integration**:\n   ```\n\
+  \   python HistoandMR/all_features.py\n   ```\n   This integrates histopathology features with MRI features\
+  \ for multimodal analysis.\n\n## Dataset\n\nThe toolkit is designed to work with standard histopathology\
+  \ whole slide images (WSIs) in formats supported by OpenSlide (e.g., `.svs`, `.ndpi`, `.tiff`). Sample\
+  \ images are not included in the repository due to size constraints.\n\n## Output Files\n\nThe project\
+  \ generates various output files:\n- Extracted image patches in PNG format\n- Feature CSV files for\
+  \ each image and patient\n- Combined feature matrices\n- Selected feature lists\n- Clustering visualizations\
+  \ (dendrogram, PCA, UMAP plots)\n- Heatmaps of feature patterns\n- Statistical analysis of discriminative\
+  \ features\n\n## Acknowledgements\n\nThis project makes use of several open-source libraries and tools\
+  \ that deserve acknowledgement:\n\n- [HistomicsTK](https://github.com/DigitalSlideArchive/HistomicsTK)\
+  \ for histopathology image analysis\n- [OpenSlide](https://openslide.org/) for reading whole slide image\
+  \ formats\n- [scikit-learn](https://scikit-learn.org/) for machine learning and feature selection algorithms\n\
+  - [UMAP](https://umap-learn.readthedocs.io/) for dimensionality reduction\n- [CaPTk](https://www.med.upenn.edu/cbica/captk/)\
+  \ (Cancer Imaging Phenomics Toolkit) for MRI feature extraction\n- [pandas](https://pandas.pydata.org/)\
+  \ and [NumPy](https://numpy.org/) for data manipulation\n- [Matplotlib](https://matplotlib.org/) and\
+  \ [seaborn](https://seaborn.pydata.org/) for visualization\n\nSpecial thanks to the developers and contributors\
+  \ of these libraries for making this research possible.\n\n"

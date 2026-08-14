@@ -1,0 +1,78 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: mubasharsabir/Brain-Tumor-Segmentation-using-nnU-Net
+url: https://github.com/mubasharsabir/Brain-Tumor-Segmentation-using-nnU-Net
+platform: github
+description: An AI-powered web application built with Flask and PyTorch that performs 3D brain tumor segmentation
+  on MRI scans using a MONAI U-Net model trained on the BraTS dataset.
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-22T22:31:50Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# \U0001F9E0 Brain Tumor Segmentation Web Application using nnU-Net\n\n![Python](https://img.shields.io/badge/Python-3.8%2B-blue)\n\
+  ![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-ee4c2c)\n![Flask](https://img.shields.io/badge/Flask-2.0%2B-lightgrey)\n\
+  ![nnU-Net](https://img.shields.io/badge/nnU--Net-v2-00A6B4)\n\n**Repository:** [https://github.com/mubasharsabir/Brain-Tumor-Segmentation-using-nnU-Net](https://github.com/mubasharsabir/Brain-Tumor-Segmentation-using-nnU-Net)\n\
+  \n## \U0001F4D6 Project Overview\nThis repository contains a full-stack, AI-powered web application\
+  \ designed to automate the volumetric segmentation of brain tumors from MRI scans. Built with a Flask\
+  \ backend, the inference engine is powered by **nnU-Net**—a state-of-the-art, self-configuring deep\
+  \ learning framework for biomedical image segmentation. It provides a seamless interface for medical\
+  \ professionals to upload patient scans and receive instant visual predictions.\n\nThe underlying model\
+  \ is trained on the globally recognized **BraTS (Brain Tumor Segmentation)** dataset, enabling high-precision\
+  \ identification of complex tumor sub-regions.\n\n## ✨ Key Features\n* **Multi-Modal MRI Processing:**\
+  \ Simultaneously processes four distinct NIfTI modalities (`FLAIR`, `T1`, `T1CE`, `T2`) for accurate\
+  \ tissue differentiation.\n* **Slice-by-Slice Visualization:** Allows users to input a specific Z-axis\
+  \ slice ID (0-154) to generate a 2D cross-sectional view with the segmentation mask overlaid.\n* **State-of-the-Art\
+  \ Architecture:** Utilizes the robust `nnU-Net` framework, ensuring optimal preprocessing, network architecture,\
+  \ and post-processing for the BraTS dataset.\n* **Privacy-First Design:** Implements an ephemeral storage\
+  \ mechanism where uploaded patient files and generated masks are processed in temporary directories\
+  \ and strictly deleted post-inference.\n* **Responsive Web Interface:** A clean, intuitive HTML/CSS\
+  \ frontend with dynamic loading states.\n\n## \U0001F3D7️ System Architecture\n1. **Frontend (Client):**\
+  \ HTML/CSS form accepts 4 `.nii.gz` files and a Slice ID.\n2. **Backend (Server):** Flask (`app.py`)\
+  \ securely handles file uploads and formats them for the `nnU-Net` pipeline.\n3. **Data Pipeline:**\
+  \ Uploaded files are temporarily mapped to the required nnU-Net input format (`_0000.nii.gz`, `_0001.nii.gz`,\
+  \ etc.).\n4. **Inference Engine:** The system triggers `nnUNetv2_predict` using the pre-trained model\
+  \ weights.\n5. **Output Generation:** `matplotlib` renders the specific slice overlay from the resulting\
+  \ mask, encodes it as a base64 string, and returns it to the frontend.\n\n## \U0001F6E0️ Prerequisites\n\
+  * **Operating System:** Windows (via WSL), macOS, or Linux (Linux/WSL is highly recommended for nnU-Net)\n\
+  * **Python:** Version 3.8 or higher\n* **Hardware:** Minimum 8GB RAM. A CUDA-enabled NVIDIA GPU is **highly\
+  \ recommended** for nnU-Net inference.\n\n## \U0001F680 Installation Guide\n\n### Step 1: Clone the\
+  \ Repository\n```bash\ngit clone https://github.com/mubasharsabir/Brain-Tumor-Segmentation-using-nnU-Net.git\n\
+  cd Brain-Tumor-Segmentation-using-nnU-Net\n```\n\n### Step 2: Create a Virtual Environment\n**On Linux\
+  \ / macOS / WSL:**\n```bash\npython3 -m venv venv\nsource venv/bin/activate\n```\n*(On Windows: `venv\\\
+  Scripts\\activate`)*\n\n### Step 3: Install Dependencies\nInstall the required Python packages:\n```bash\n\
+  pip install -r requirements.txt\n```\n*Note: Ensure `nnunetv2` is included in your environment.*\n\n\
+  ### Step 4: Configure nnU-Net Environment Variables\nnnU-Net requires environment variables to locate\
+  \ the model weights. Set the `nnUNet_results` path in your terminal before running the app:\n**On Linux/macOS:**\n\
+  ```bash\nexport nnUNet_results=\"/path/to/your/nnUNet_results\"\n```\n*(Ensure you have downloaded and\
+  \ placed your trained BraTS model weights inside this directory).*\n\n## \U0001F4BB Usage Instructions\n\
+  \n1. **Start the Web Server:**\n   Execute the following command in your terminal from the project root:\n\
+  \   ```bash\n   python app.py\n   ```\n2. **Access the Application:**\n   Open your web browser and\
+  \ navigate to `http://127.0.0.1:5000/`.\n3. **Run a Prediction:**\n   * Upload the corresponding `FLAIR`,\
+  \ `T1`, `T1CE`, and `T2` `.nii.gz` files for a single patient.\n   * Enter the desired **Z-Axis Slice\
+  \ ID** (e.g., `75`).\n   * Click **Upload and Predict**. The backend will process the files through\
+  \ `nnU-Net` and render the result.\n\n---\n\n## \U0001F4C1 Project Structure\n\n```text\n├── Model/\
+  \                     \n│   └── Trained nnU-Net model weights\n│\n├── Notebook/\n│   └── brain_tumor_unet.ipynb\n\
+  │       (Jupyter notebook for training and experiments)\n│\n├── Sample Patients/\n│   ├── BraTS2021_00077/\n\
+  │   │   ├── BraTS2021_00077_flair.nii.gz\n│   │   ├── BraTS2021_00077_seg.nii.gz\n│   │   ├── BraTS2021_00077_t1.nii.gz\n\
+  │   │   ├── BraTS2021_00077_t1ce.nii.gz\n│   │   └── BraTS2021_00077_t2.nii.gz\n│   │\n│   └── BraTS2021_00320/\n\
+  │       ├── BraTS2021_00320_flair.nii.gz\n│       ├── BraTS2021_00320_seg.nii.gz\n│       ├── BraTS2021_00320_t1.nii.gz\n\
+  │       ├── BraTS2021_00320_t1ce.nii.gz\n│       └── BraTS2021_00320_t2.nii.gz\n│\n├── templates/\n\
+  │   └── index.html\n│       (Frontend web interface for visualization)\n│\n├── app.py\n│   (Flask backend\
+  \ for model inference and routing)\n│\n├── requirements.txt\n│   (Python dependencies)\n│\n├── LICENSE\n\
+  │   (Open-source license)\n│\n└── README.md\n```\n*(Note: Ensure your `nnUNet_results` folder is securely\
+  \ stored either within the project or linked via environment variables).*\n\n## \U0001F9E0 Dataset Acknowledgment\n\
+  This project was trained using the [BraTS (Brain Tumor Segmentation) Dataset](http://braintumorsegmentation.org/).\
+  \ We acknowledge the researchers and institutions that collected and annotated this critical medical\
+  \ data.\n\n## \U0001F91D Contributing\nContributions, issues, and feature requests are welcome! Feel\
+  \ free to check the repository issues page if you want to contribute.\n\n## \U0001F4C4 License\nThis\
+  \ project is licensed under the MIT License, see the LICENSE file for details.\n"

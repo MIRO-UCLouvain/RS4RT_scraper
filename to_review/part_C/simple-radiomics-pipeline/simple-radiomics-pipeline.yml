@@ -1,0 +1,42 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: CCIG-Champalimaud/simple-radiomics-pipeline
+url: https://github.com/CCIG-Champalimaud/simple-radiomics-pipeline
+platform: github
+description: Super simple radiomics pipeline.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-10-16T09:22:17Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Super simple feature extraction pipeline\n\nThis is a super simple feature extraction\
+  \ pipeline for most kinds of images requiring feature extraction using SITK-readable images as input.\
+  \ It allows for the specification of patterns which filter images and masks using regular expressions,\
+  \ as well as the specification of patient/study identifiers in a similar manner and of a radiomics config\
+  \ file.\n\nIf co-registration/resampling of multimodal imaging is necessary please consult [this more\
+  \ complex pipeline](https://github.com/CCIG-Champalimaud/radiomics-pipeline).\n\n## Usage\n\n*Requires\
+  \ [`uv`](https://docs.astral.sh/uv/)*\n\n```bash\nuv run python -m src.extract_features \\\n    --input_folder\
+  \ /path/to/input/folder \\\n    --mask_folder /path/to/mask/folder \\\n    --identifier_pattern \"(.+)\"\
+  \ \\\n    --image_pattern \"(.+)\" \\\n    --mask_pattern \"(.+)\" \\\n    --config_path /path/to/config.yaml\
+  \ \\\n    --output_path /path/to/output.csv \\\n    --n_jobs 8\n```\n\nIn `pipeline.sh`, a short script\
+  \ is provided to extract features for the GliomAI dataset.\n\n## Output columns\n\nThe output format\
+  \ for columns is `<image_transform_or_diagnostics>_<feature_class>_<feature_name>.<image_type>`.\n\n\
+  ### `image_transform_or_diagnostics`\n\n* `diagnostics` - diagnostics about the image and mask, useful\
+  \ for debugging\n* `original` - original image (no transforms)\n\n### `feature_class`\n\n* `shape` -\
+  \ shape features\n* `firstorder` - first-order features\n* `glcm` - gray-level co-occurrence matrix\
+  \ features\n* `glrlm` - gray-level run-length matrix features\n* `glszm` - gray-level size-zone matrix\
+  \ features\n* `gldm` - gray-level dependence matrix features\n* `ngtdm` - neighborhood gray-tone difference\
+  \ matrix features\n\n### `image_type`\n\n* `brain_t1c` - contrast-enhanced brain T1 image\n* `brain_t1n`\
+  \ - regular brain T1 image\n* `brain_t2w` - brain T2-weighted image\n* `brain_t2f` - brain T2-fluid-attenuated\
+  \ (FLAIR) image\n\n### Additional columns\n\nThese are specified as `<column_name>.<image_type>`\n\n\
+  * error - error message (if any)\n* identifier - identifier of the image (i.e. patient ID)\n* mask_label\
+  \ - index label of the mask\n* image_path - path to the image\n* mask_path - path to the mask\n* label_sum\
+  \ - sum of the label (size in voxels)\n"

@@ -1,0 +1,52 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: qpuchen/nnUNet_att_position_correction
+url: https://github.com/qpuchen/nnUNet_att_position_correction
+platform: github
+description: 'Solution of Team sdkxd for MICCAI 2023 Challenges: STS - Tooth Segmentation Task Based on
+  3D CBCT'
+license: null
+language: Python
+keywords: []
+stars: 24
+updated_at: '2026-06-19T01:02:33Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Semi-Supervised 3D Tooth Segmentation Using nn-UNet with Axial Attention and Positional\
+  \ Correction\n\nOfficial PyTorch implementation of [Semi-Supervised 3D Tooth Segmentation Using nn-UNet\
+  \ with Axial Attention and Positional Correction](https://github.com/qpuchen/nnUNet_att_position_correction)\
+  \ (MICCAI 2023 STS).\n\n## Environments and Requirements:\nInstall nnU-Net as below. You should meet\
+  \ the requirements of nnUNet, our method does not need any additional requirements. For more details,\
+  \ please refer to https://github.com/MIC-DKFZ/nnUNet/tree/v1.7.1\n```\ngit clone https://github.com/MIC-DKFZ/nnUNet.git\n\
+  cd nnUNet\npip install -e .\n```\n\n## 1. Training nnUNet for Labeled Data\n### 1.1. Prepare Labeled\
+  \ Data of MICCAI 2023 Challenge\nFollowing nnUNet, give a TaskID (e.g. Task001) to the labeled data\
+  \ and organize them folowing the requirement of nnUNet.\n\n    nnUNet_raw_data_base/nnUNet_raw_data/Task01_Tooth/\n\
+  \    ├── dataset.json\n    ├── imagesTr\n    ├── imagesTs\n    └── labelsTr\n### 1.2. Conduct automatic\
+  \ preprocessing using nnUNet.\nHere we do use the default setting.\n```\nnnUNet_plan_and_preprocess\
+  \ -t 1 --verify_dataset_integrity\n```\n### 1.3. Training nnUNet by 5-fold Cross Validation\n```\nfor\
+  \ FOLD in 0 1 2 3 4\ndo\nCUDA_VISIBLE_DEVICES=0,1 nnUNet_train_DP 3d_fullres nnUNetTrainerV2_DP 1 $FOLD\
+  \ -gpus 2 -c --npz\ndone\n```\n\n## 2. Generate Pseudo Labels for Unlabeled Data\n\n### 2.1. Generate\
+  \ Pseudo Labels\n```\nnnUNet_predict -i $INPUTS_FOLDER -o $OUTPUTS_FOLDER -t 2 -m 3d_fullres --save_npz\n\
+  ```\n\n### 2.2. Iteratively Train Models and Generate Pseudo Labels\n- Give a new TaskID (e.g. Task002)\
+  \ and organize the Labeled Data and Pseudo Labeled Data as above.\n- Conduct automatic preprocessing\
+  \ using nnUNet as above.\n  ```\n  nnUNet_plan_and_preprocess -t 2 --verify_dataset_integrity\n  ```\n\
+  - Training new nnUNet by all training data\n  ```\n  for FOLD in 0 1 2 3 4\n  do\n  CUDA_VISIBLE_DEVICES=0,1\
+  \ nnUNet_train_DP 3d_fullres nnUNetTrainerV2_DP 2 $FOLD -gpus 2 -c --npz\n  done\n  ```\n- Generate\
+  \ new pseudo labels for unlabeled data.\n\n### 2.3. Filter Low-quality Pseudo Labels\nWe compare Pseudo\
+  \ Labels in different rounds and filter out the labels with high variants.\n```\nselect_pseudo_label.ipynb\n\
+  ```\n\n### 3. Training nnUNet-att by 5-fold Cross Validation\n### 3.1. Copy the following files in this\
+  \ repo to your nnUNet environment.\n```\n./nnunet/network_architecture/generic_UNet.py\n```\n### 3.2.\
+  \ Training nnUNet-att by 5-fold Cross Validation\n\n```\nfor FOLD in 0 1 2 3 4\ndo\nCUDA_VISIBLE_DEVICES=0,1\
+  \ nnUNet_train_DP 3d_fullres nnUNetTrainerV2_DP 3 $FOLD -gpus 2 -c --npz\ndone\n```\n\n### 3.3. Add\
+  \ the '_000' suffix to the file name of the testset data\n\n```\npyhton add_suffix.py\n```\n\n\n###\
+  \ 3.4. Do Efficient Inference with nnUNet-att\nWe modify the `generic_UNet.py` of nnunet source code\
+  \ for efficiency. Please make sure the code backup is done and then copy the whole repo to your nnunet\
+  \ environment.\n```\nnnUNet_predict -i $INPUTS_FOLDER -o $OUTPUTS_FOLDER -t 3 -m 3d_fullres --save_npz\n\
+  ```\n\n### 4. Correction of abnormal segmentation points through position correction module\n\n```\n\
+  python position_correction.py\n```"

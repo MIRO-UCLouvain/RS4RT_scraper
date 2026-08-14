@@ -1,0 +1,88 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ayoussf/VMatcher
+url: https://github.com/ayoussf/VMatcher
+platform: github
+description: 'VMatcher: State-Space Semi-Dense Local Feature Matching'
+license: MIT
+language: Python
+keywords:
+- deep-learning
+- feature-matching
+- image-matching
+- mamba
+- pose-estimation
+- transformers
+stars: 18
+updated_at: '2026-06-01T19:33:38Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "<h1 align=\"center\">\n  VMatcher: State-Space Semi-Dense Local Feature Matching\n</h1>\n\
+  \n<p align=\"center\">\n  <a href=\"https://arxiv.org/abs/2507.23371\"><img src=\"https://img.shields.io/badge/arXiv-2507.23371-b31b1b.svg\"\
+  \ alt=\"arXiv\"></a>\n  <a href=\"https://opensource.org/licenses/MIT\"><img src=\"https://img.shields.io/badge/License-MIT-green.svg\"\
+  \ alt=\"License: MIT\"></a>\n</p>\n\n<h3 align=\"center\"><a href=\"https://ayoussf.github.io/\">Ali\
+  \ Youssef</a></h3>\n\n<p align=\"center\">\n  <a href=\"#installation\">Installation</a> •\n  <a href=\"\
+  #demo\">Demo</a> •\n  <a href=\"#configurations\">Configurations</a> •\n  <a href=\"#training\">Training</a>\
+  \ •\n  <a href=\"#evaluations\">Evaluations</a> •\n  <a href=\"#checkpoints\">Checkpoints</a> •\n  <a\
+  \ href=\"#hardware-specifications\">Hardware</a> •\n  <a href=\"#reporting-issues\">Issues</a> •\n \
+  \ <a href=\"#acknowledgements\">Acknowledgements</a> •\n  <a href=\"#citation\">Citation</a>\n</p>\n\
+  \n## Overview\n\nVMatcher is a hybrid Mamba‑Transformer network for semi‑dense local feature matching.\
+  \ It combines Mamba's efficient Selective Scan Mechanism with Transformer's attention mechanism, balancing\
+  \ accuracy and computational efficiency.\n\n## Installation\n\n```bash\n# Clone the repository with\
+  \ submodules\ngit clone --recursive https://github.com/ayoussf/VMatcher.git\n\n# Install the package\n\
+  python setup.py install  # or develop for development mode\n\n# Install dependencies\npip install -r\
+  \ requirements.txt\n\n# Install Mamba\ncd third_party/mamba/\npip install .\ncd ../..\n```\n\n> [!NOTE]\n\
+  > If Mamba installation fails, try: `pip install . --no-build-isolation`\n\n> [!WARNING]\n> Triton>2.0.0\
+  \ causes slower runtime at lower resolutions. Install Triton==2.0.0 for optimal performance.\n\n## Demo\n\
+  \nTo run the demo:\n\n```bash\npython demo.py --model_type base\n```\n\nAdditional options are available,\
+  \ including the Tiny model variant, optimised inference mode, mixed precision, custom image pairs, and\
+  \ image resizing settings. For a complete list of available configurations, run:\n\n```bash\npython\
+  \ demo.py -h\n```\n\n> [!NOTE]\n> The script automatically checks for and downloads the required model\
+  \ checkpoint (`base.ckpt` or `tiny.ckpt`) into the `checkpoints/` directory if it is not already present\
+  \ locally.\n\n## Configurations\n\nThe main configuration file is located at `configs/conf_blocks.py`,\
+  \ which controls both training and testing parameters. Specialised configurations can be found in:\n\
+  - `configs/train.py` - Training specific settings\n- `configs/test.py` - Testing specific settings\n\
+  \n## Training\n\n### Quick Start\n```bash\n# Run the training script\nsh scripts/train/train.sh\n```\n\
+  \nTo train the Tiny model variant, either:\n- Change `num_layers` to 14 in `configs/conf_blocks.py`,\
+  \ or\n- Run: `python engine.py --task=train --config.train.mamba-config.num-layers=14`\n\n> [!NOTE]\n\
+  > For the Base model, the gradient accumulation factor was set to 8, while for the Tiny model, it was\
+  \ set to 32. Adjust 'gradient_accumulation_steps' in `configs/train.py` if needed.\n\n> [!NOTE]\n> Currently\
+  \ training only supports a batch size of 1, to accommodate a larger batch size, modify the [following\
+  \ lines](https://github.com/ayoussf/VMatcher/blob/46cba063cb28908750e8b56b0d4a3a6ce72c56ce/VMatch/src/VMatcher/VMatcher.py#L108C9-L155C143)\
+  \ in `VMatcher.py` to loop over batch samples, followed by stacking the outputs post the loop.\n\n###\
+  \ Training Data\n\n**MegaDepth Dataset (199GB)**\n- [Download from the MegaDepth website](https://www.cs.cornell.edu/projects/megadepth/)\n\
+  - Or run: `sh data/megadepth/download_megadepth.sh`\n\nAfter downloading, process the images:\n```bash\n\
+  python data/megadepth/process_megadepth_images.py --root_directory /path_to_megadepth/phoenix/S6/zl548/MegaDepth_v1\n\
+  ```\n\n**Training Indices**\n- [Download from Google Drive](https://drive.google.com/file/d/1O3691mkd3hwWDRJDwM3mgl9kLxmPURoe/view?usp=drive_link)\n\
+  - Or run: `gdown --id 1O3691mkd3hwWDRJDwM3mgl9kLxmPURoe`\n\n**Directory Setup**\n```bash\ncd data/megadepth\n\
+  mkdir train index\nln -sv /path_to_megadepth/phoenix path_to_VMatcher/data/megadepth/train\nln -sv /path_to_megadepth_indices\
+  \ path_to_VMatcher/data/megadepth/index\n```\n\n## Evaluations\n\nMultiple evaluation scripts are available\
+  \ in the `scripts/test` directory:\n- `scripts/test/*.sh` - Scripts for baseline model evaluation\n\
+  - `scripts/test/opt/*.sh` - Scripts for optimised variant evaluation\n- `scripts/test/tune/*.sh` - Scripts\
+  \ for evaluation with multiple RANSAC thresholds\n\n### Running Evaluations\n```bash\n# Example: Testing\
+  \ on MegaDepth\nsh scripts/test/test_megadepth.sh\n```\n\n### Test Datasets\n\n| Dataset | Download\
+  \ Link | `gdown` Command |\n|---------|---------------|-----------------|\n| **MegaDepth1500** | [Google\
+  \ Drive](https://drive.google.com/file/d/1K5hpS4xg6OLMCx0tLUXG8wqokK80fPnb/view?usp=sharing) | `gdown\
+  \ --id 1K5hpS4xg6OLMCx0tLUXG8wqokK80fPnb` |\n| **ScanNet1500** | [Google Drive](https://drive.google.com/file/d/1Ryv2YSC277ec8Ki6e34vfbqIMb5BKB-r/view?usp=sharing)\
+  \ | `gdown --id 1Ryv2YSC277ec8Ki6e34vfbqIMb5BKB` |\n| **HPatches** | [Google Drive](https://drive.google.com/file/d/1IAUC44oR0ggUPONLy_stLxRhpAMKZm2b/view?usp=sharing)\
+  \ | `gdown --id 1IAUC44oR0ggUPONLy_stLxRhpAMKZm2b` |\n   \n## Checkpoints\n\nPre-trained model checkpoints\
+  \ are available for download:\n\n| Model Variant | Download Link | `gdown` Command |\n|--------------|---------------|-----------------|\n\
+  | **VMatcher-B** (Base) | [Google Drive](https://drive.google.com/file/d/1ENP_DhAihiv5WJrRWoAXmOHUdrddJaxU/view?usp=sharing)\
+  \ | `gdown --id 1ENP_DhAihiv5WJrRWoAXmOHUdrddJaxU` |\n| **VMatcher-T** (Tiny) | [Google Drive](https://drive.google.com/file/d/1TRiKdPhGjpQ1F2_O9KJ8CyaPffWfNf61/view?usp=sharing)\
+  \ | `gdown --id 1TRiKdPhGjpQ1F2_O9KJ8CyaPffWfNf61` |\n\n## Hardware Specifications\n\nThe training and\
+  \ evaluation environment utilised:\n- **GPU**: NVIDIA GeForce RTX 3090Ti\n- **CUDA**: 11.8 (V11.8.89)\n\
+  - **Python**: 3.9.19\n- **PyTorch**: 2.2.2+cu118\n- **Triton**: 2.0.0\n\n## Reporting Issues\n\nIf you\
+  \ encounter any bugs or issues, please feel free to [open an issue](https://github.com/ayoussf/VMatcher/issues)\
+  \ or submit a pull request. Your contributions are greatly appreciated!\n\n## Acknowledgements\n\nSpecial\
+  \ thanks to the authors of [ELoFTR](https://github.com/zju3dv/ELoFTR), as a significant portion of their\
+  \ codebase was utilised in this project.\n\n## Citation\n\nIf you find this work useful, please consider\
+  \ citing the paper:\n\n```bibtex\n@misc{youssef2025vmatcherstatespacesemidenselocal,\n      title={VMatcher:\
+  \ State-Space Semi-Dense Local Feature Matching}, \n      author={Ali Youssef},\n      year={2025},\n\
+  \      eprint={2507.23371},\n      archivePrefix={arXiv},\n      primaryClass={cs.CV},\n      url={https://arxiv.org/abs/2507.23371},\
+  \ \n}\n```"

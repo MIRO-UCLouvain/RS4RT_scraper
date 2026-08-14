@@ -1,0 +1,79 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: SebastianSchmidt1986/tox21-prediction
+url: https://github.com/SebastianSchmidt1986/tox21-prediction
+platform: github
+description: Comparative study of Graph Neural Networks (GCN, GIN) against fingerprint-based baselines
+  (Random Forest, XGBoost) for multi-task binary toxicity prediction on the Tox21 dataset (https://tripod.nih.gov/tox21/challenge/).
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-03-28T22:05:48Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# GNNs vs Traditional ML for Tox21 Toxicity Prediction\n\nComparative study of Graph\
+  \ Neural Networks (GCN, GIN) against fingerprint-based baselines (Random Forest, XGBoost) for multi-task\
+  \ binary toxicity prediction on the [Tox21 dataset](https://tripod.nih.gov/tox21/challenge/).\n\n**12,707\
+  \ compounds · 12 qHTS assays · scaffold-based splitting · masked BCE loss**\n\n---\n\n## Overview\n\n\
+  | | Baselines | GNNs |\n|---|---|---|\n| Input | Morgan fingerprints (ECFP4, 2048 bits) | Molecular\
+  \ graphs (node + edge features) |\n| Models | Random Forest, XGBoost (per-task) | GCN, GIN (multi-task\
+  \ shared head) |\n| Interpretability | SHAP (TreeExplainer) | Integrated gradients (Captum) |\n\nPrimary\
+  \ metric: **PR-AUC** (average precision), given extreme class imbalance (~2–10% active rate per assay).\n\
+  \n---\n\n## Repository Structure\n\n```\n├── src/\n│   ├── data/\n│   │   ├── load.py         # Tox21\
+  \ loading from SDF/SMILES\n│   │   ├── sanitise.py     # RDKit SMILES standardisation\n│   │   ├── featurise.py\
+  \    # Morgan fingerprints + PyG graph construction\n│   │   └── split.py        # Scaffold-based splitting\
+  \ (Murcko scaffolds)\n│   ├── models/\n│   │   ├── baseline.py     # Random Forest, XGBoost wrappers\n\
+  │   │   ├── gnn.py          # GCN / GIN (PyTorch Geometric)\n│   │   └── multitask.py    # Shared multi-task\
+  \ head with masked loss\n│   ├── training/\n│   │   ├── train.py        # Training loop (masked BCE,\
+  \ pos_weight, early stopping)\n│   │   └── evaluate.py     # Per-assay PR-AUC, ROC-AUC, F1\n│   ├──\
+  \ interpret/\n│   │   ├── shap_explain.py # SHAP for fingerprint models\n│   │   └── gnn_explain.py\
+  \  # Integrated gradients for GNNs (Captum)\n│   └── utils/\n│       ├── chem.py         # RDKit helpers\n\
+  │       ├── metrics.py      # PR-AUC, ROC-AUC, threshold-tuned F1\n│       └── plotting.py     # ROC/PR\
+  \ curves, per-assay bar charts\n├── configs/\n│   ├── baseline.yaml       # RF/XGBoost hyperparameters\n\
+  │   ├── gcn.yaml            # GCN architecture + training config\n│   └── gin.yaml            # GIN\
+  \ architecture + training config\n├── data/\n│   └── raw/                # Place downloaded Tox21 files\
+  \ here (not tracked by git)\n├── outputs/                # Created automatically during training (not\
+  \ tracked by git)\n└── requirements.txt\n```\n\n---\n\n## Setup\n\n**Python 3.11+ required.**\n\n```bash\n\
+  # 1. Create and activate a virtual environment\npython3 -m venv .venv\nsource .venv/bin/activate\n\n\
+  # 2. Upgrade build tools first\npip install -U pip setuptools wheel\n\n# 3. Install numba/llvmlite as\
+  \ binary wheels (required before other deps)\npip install --only-binary=:all: numba llvmlite\n\n# 4.\
+  \ Install remaining dependencies\npip install -r requirements.txt\n```\n\n> **Note on PyTorch + PyG:**\
+  \ `torch` and `torch-geometric` may need version-specific install commands depending on your CUDA version.\
+  \ See the [PyG installation guide](https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html)\
+  \ if the above fails.\n\n---\n\n## Data\n\nDownload the Tox21 dataset from the [NIH Tox21 Data Challenge](https://tripod.nih.gov/tox21/challenge/)\
+  \ and place the files in `data/raw/`. The pipeline expects either SDF or SMILES format as provided by\
+  \ the challenge organisers.\n\n```\ndata/\n└── raw/\n    ├── tox21_10k_data_all.sdf    # or equivalent\
+  \ download\n    └── tox21_10k_data_all.csv\n```\n\nThe `data/processed/`, `data/splits/`, and `outputs/`\
+  \ directories are created automatically when you run the pipeline.\n\n---\n\n## Running the Pipeline\n\
+  \n### 1. Preprocessing\n\n```bash\npython -m src.data.sanitise    # SMILES sanitisation via RDKit\n\
+  python -m src.data.featurise   # Morgan fingerprints + graph features\npython -m src.data.split    \
+  \   # Scaffold-based 80/10/10 split\n```\n\nOutputs written to `data/processed/` and `data/splits/`.\n\
+  \n### 2. Train Baselines\n\n```bash\npython -m src.training.train --config configs/baseline.yaml\n```\n\
+  \nTrains Random Forest and XGBoost per-task classifiers. Saved to `outputs/models/`.\n\n### 3. Train\
+  \ GNNs\n\n```bash\npython -m src.training.train --config configs/gcn.yaml\npython -m src.training.train\
+  \ --config configs/gin.yaml\n```\n\nTraining uses masked BCE loss (missing labels are excluded, not\
+  \ treated as inactive) with per-task `pos_weight` to handle class imbalance. Early stopping is monitored\
+  \ on validation PR-AUC.\n\n### 4. Evaluate\n\n```bash\npython -m src.training.evaluate --model outputs/models/random_forest.pkl\n\
+  python -m src.training.evaluate --model outputs/models/gcn_best.pt\n```\n\nOutputs per-assay and mean\
+  \ PR-AUC / ROC-AUC / F1 to `outputs/results/`.\n\n### 5. Interpretability\n\n```bash\n# SHAP for Random\
+  \ Forest / XGBoost\npython -m src.interpret.shap_explain --model outputs/models/random_forest.pkl\n\n\
+  # Integrated gradients for GCN\npython -m src.interpret.gnn_explain --model outputs/models/gcn_best.pt\n\
+  ```\n\nFigures saved to `outputs/figures/`.\n\n---\n\n## Design Decisions\n\n- **Scaffold split** over\
+  \ random split — random splits inflate performance estimates because structurally similar molecules\
+  \ end up in both train and test.\n- **Masked BCE** over label imputation — missing Tox21 labels are\
+  \ unobserved, not inactive. Treating them as negatives would introduce substantial noise.\n- **`pos_weight`**\
+  \ over SMOTE — interpolating molecular fingerprints or graph features can produce chemically invalid\
+  \ samples.\n- **PR-AUC as primary metric** — ROC-AUC is misleading under extreme class imbalance; average\
+  \ precision better reflects model utility for toxicity screening.\n\n---\n\n## Tests\n\n```bash\npytest\
+  \ tests/ -v\n```\n\nTests cover SMILES sanitisation edge cases, featurisation output shapes, scaffold\
+  \ split leakage, masked loss gradients, and metric functions.\n\n---\n\n## Linting\n\n```bash\nruff\
+  \ check . && ruff format .\n```\n\n---\n\n## Dependencies\n\nCore: `rdkit`, `torch`, `torch-geometric`,\
+  \ `scikit-learn`, `xgboost`, `pandas`, `numpy`\nInterpretability: `shap`, `captum`\nVisualisation: `matplotlib`,\
+  \ `seaborn`\n"

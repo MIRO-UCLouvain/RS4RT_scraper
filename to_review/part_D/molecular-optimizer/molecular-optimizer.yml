@@ -1,0 +1,74 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: aerugo/molecular-optimizer
+url: https://github.com/aerugo/molecular-optimizer
+platform: github
+description: Experimenting with TuRBO for toxicity prediction
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2024-01-06T21:54:58Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "This model is designed to predict the aquatic toxicity of chemical compounds, aimed at\
+  \ suggesting molecular properties that result in low toxicity to marine life. It takes in eight continuous\
+  \ variables representing molecular descriptors of a compound as input and outputs a single continuous\
+  \ variable indicating the compound's aquatic toxicity effect. The model uses the Trust Region Bayesian\
+  \ Optimization (TuRBO) algorithm, which is an efficient method for optimizing functions with many local\
+  \ optima by adaptively modifying the search region. This algorithm, while not developed by the Optuna\
+  \ team, was adapted from their submission for the NeurIPS 2020 competition, demonstrating its effectiveness\
+  \ for complex problems.\n\nThe model is specifically tuned for the aquatic toxicity prediction task\
+  \ by ensuring reproducibility through random seed initialization, enhancing grid search for continuous\
+  \ spaces, and removing dependencies on outdated libraries. It's evaluated based on its ability to converge\
+  \ towards compounds with the lowest toxicity within a given chemical space, using the rank and mean\
+  \ of maximum toxicity values found across multiple tests.\n\n## Using the Model\n\nSee the implementation\
+  \ [in the Jupyter notebook](https://github.com/aerugo/molecular-optimizer/blob/main/turbo_for_QSAR_aquatic_toxicity.ipynb).\n\
+  \n## Model Description\n\n### Input\n\nThe input to this model consists of eight continuous variables\
+  \ representing molecular descriptors (x1 to x8) of a compound.\nData from https://archive.ics.uci.edu/dataset/505/qsar+aquatic+toxicity\n\
+  \n### Output\n\nThe output is a single continuous variable (y), representing the aquatic toxicity effect\
+  \ of the compound as LC50 [-LOG(mol/L)]. \n\n## Model Architecture\n\nThe model architecture is based\
+  \ on the Trust Region Bayesian Optimization (TuRBO) algorithm, which is a distinct advancement in the\
+  \ field of Bayesian optimization. TuRBO, originally proposed by Eriksson et al., is designed to efficiently\
+  \ optimize functions with many local optima by adaptively shrinking and moving the search region to\
+  \ find the global optimum.\n\nWhile TuRBO itself was not developed by the Optuna team, the Optuna Developers\
+  \ adapted it in their submission for the NeurIPS 2020 competition, demonstrating its effectiveness and\
+  \ versatility. Their implementation provided a robust, concise codebase, making it an appealing foundation\
+  \ for further adaptation and application to specific problems like predicting aquatic toxicity.\n\n\
+  The specific modifications made to adapt the Optuna Developers' TuRBO implementation to this problem\
+  \ include:\n\n* Introduction of Random Seed in __init__ Method: To ensure the reproducibility of results,\
+  \ a random seed initialization parameter was added. This feature is crucial for scientific experiments\
+  \ where repeatability is a must.\n* Modification in Handling Real Spaces in the init_grid Method: The\
+  \ original TuRBO algorithm and its subsequent adaptations typically include a grid search component,\
+  \ which is crucial for efficiently exploring the function space. However, for continuous function spaces,\
+  \ this can be challenging. In this implementation, the grid search was enhanced for real spaces by creating\
+  \ a grid with ten steps between the lower and upper bounds of each variable. This change allows for\
+  \ a more thorough and systematic exploration of the search space.\n* Removal of the from bayesmark.experiment\
+  \ import experiment_main: References to deprecated libraries were removed to streamline the code and\
+  \ ensure its operability without relying on outdated or unsupported modules. This modification doesn't\
+  \ affect the algorithm's core functionality but rather ensures that the code remains clean and maintainable.\n\
+  \n## Performance\n\nThe performance was evaluated by the rank and mean of the maximum y value found\
+  \ across 10 runs for several iteration cycle sizes (15, 30, 45, 60, 75, 90). To test the model, for\
+  \ each suggested query point, the algorithm identifies the closest known point from a pre-determined\
+  \ set of experimental results. The model's performance is judged based on the mean of the maximum y\
+  \ values of these closest known points across the 10 tests for each iteration cycle. This approach provides\
+  \ insight into the model's ability to converge towards the most promising chemical compounds (i.e.,\
+  \ those with the lowest toxicity) within the given chemical space. \n\n## Limitations\n\n- **Data-Driven:**\
+  \ The model's performance is heavily reliant on the underlying data. If the data is not representative\
+  \ or is biased, the model may not generalize well to other chemical compounds.\n- **Black-Box Nature:**\
+  \ Bayesian optimization is somewhat of a black-box optimizer, making it difficult to understand why\
+  \ certain suggestions are made.\n- **Computational Intensity:** The model may require significant computational\
+  \ resources, particularly for larger iteration cycles or more complex chemical spaces.\n\n## Trade-offs\n\
+  \n- **Accuracy vs. Speed:** Increasing the number of iterations tends to increase the accuracy of the\
+  \ model but also significantly increases computational time and resources.\n- **Exploration vs. Exploitation:**\
+  \ The model must balance between exploring new areas of the chemical space and exploiting the areas\
+  \ known to yield good results.\n\n## References and Citations\n\n* **TuRBO Algorithm:** Eriksson, D.,\
+  \ Pearce, M., Gardner, J.R., Turner, R.D., & Poloczek, M. (2019). Scalable Global Optimization via Local\
+  \ Bayesian Optimization. Advances in Neural Information Processing Systems.\n* **Optuna Implementation:**\
+  \ The NeurIPS 2020 competition submission by Optuna Developers provided a robust, compact codebase.\
+  \ This implementation of the TuRBO algorithm was adapted for the specific task of modeling aquatic toxicity.\n"

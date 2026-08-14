@@ -1,0 +1,112 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: EIDOSLAB/radiomicslab-keyword-extraction
+url: https://github.com/EIDOSLAB/radiomicslab-keyword-extraction
+platform: github
+description: Daniel Rabottini's  bachelor thesis
+license: MIT
+language: Python
+keywords: []
+stars: 2
+updated_at: '2026-07-29T07:41:05Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# radiomicslab-keyword-extraction\n\n> An end-to-end pipeline for extracting clinical\
+  \ entities and relations from radiology reports using LLMs and the RadGraph-XL schema, designed to test\
+  \ LLM performance and produce a gold-standard dataset in Italian.\n\n\n\n![Python](https://img.shields.io/badge/Python-≥3.10-3776AB?logo=python&logoColor=white)\n\
+  ![License](https://img.shields.io/badge/License-MIT-yellow?logo=opensourceinitiative&logoColor=white)\n\
+  \n---\n\n## Table of Contents\n\n- [Overview](#overview)\n- [Features](#features)\n- [Project Structure](#project-structure)\n\
+  - [Requirements / Installation](#requirements--installation)\n- [Usage](#usage)\n- [Configuration](#configuration)\n\
+  - [Data](#data)\n- [License](#license)\n- [Author](#author)\n\n---\n\n## Overview\n\nThis project is\
+  \ the Bachelor's Thesis work of **Daniel Rabottini**, developed at the **University of Turin**. It implements\
+  \ an end-to-end pipeline for extracting clinical entities and their relations  from radiology reports,\
+  \ following the **RadGraph-XL** annotation schema. The pipeline leverages large language models via\
+  \ LiteLLM, supports optional EN → IT translation of reports with token-level alignment, and provides\
+  \ integration with the **Doccano** annotation platform for gold-standard curation. An interactive CLI\
+  \ built with Rich and Questionary drives the entire workflow.\n\nThe full thesis document is available\
+  \ in the [`docs/`](docs/) directory.\n\n---\n\n## Features\n\n- **LLM-based entity & relation extraction**\
+  \ — Structured prompting (0-shot / 1-shot) against OpenAI and Google models via LiteLLM\n- **RadGraph-XL\
+  \ schema compliance** — Atomic single-token entities, certainty labels, and typed relations\n- **F1-score\
+  \ evaluation** — Micro/macro precision, recall, and F1 against gold-standard annotations with per-class\
+  \ breakdown\n- **EN → IT medical translation** — LLM-driven translation with inflection-aware token\
+  \ mapping\n- **Token-level entity mapping** — spaCy-based tokenization and alignment of extracted entities\
+  \ to character offsets\n- **Doccano integration** — Bidirectional converters: gold → Doccano import,\
+  \ Doccano export → RadGraph-like format, RadGraph inference → Doccano\n- **Interactive CLI** — Rich\
+  \ panels, progress bars, and Questionary menus for guided operation\n- **Centralized configuration**\
+  \ — Single `settings.yaml` for models, paths, prompts, and output patterns\n\n---\n\n## Project Structure\n\
+  \n```\nradiomicslab-keyword-extraction/\n├── configs/\n│   ├── prompts/             # System & user\
+  \ prompt templates (.txt)\n│   └── settings.yaml        # Centralized configuration\n├── data/     \
+  \               # Input/output data directories (see Data section)\n├── docs/                    # Thesis\
+  \ PDF\n├── logs/                    # Runtime log files\n├── src/\n│   ├── cli/                 # Interactive\
+  \ CLI (Rich + Questionary)\n│   ├── llm/                 # LLM gateway (LiteLLM) + prompt builder\n\
+  │   ├── radgraph/            # RadGraph extraction models + F1 evaluation\n│   ├── translate/      \
+  \     # EN → IT translation service\n│   ├── map/                 # Token-level entity mapper\n│   ├──\
+  \ preprocess/          # spaCy tokenizer wrapper\n│   ├── doccano/             # Doccano import/export\
+  \ converters\n│   ├── utils/               # Logger, I/O helpers\n│   └── config.py            # YAML\
+  \ loader and path constants\n├── main.py                  # Application entry point\n├── requirements.txt\n\
+  └── README.md\n```\n\n---\n\n## Requirements / Installation\n\n**Prerequisites**\n\n- Python ≥ 3.10\n\
+  - API keys set as environment variables (used by LiteLLM):\n  - `OPENAI_API_KEY` — for OpenAI models\n\
+  \  - `GOOGLE_API_KEY` — for Google Gemini models\n\n**Install dependencies**\n\n```bash\npython -m venv\
+  \ .venv\nsource .venv/bin/activate   # Windows: .venv\\Scripts\\activate\npip install -r requirements.txt\n\
+  ```\n\n---\n\n## Usage\n\nLaunch the interactive CLI:\n\n```bash\npython main.py\n```\n\nThe main menu\
+  \ presents four options:\n\n| Option | Description |\n|---|---|\n| **Extract LLM** | Run the entity\
+  \ extraction pipeline — select provider (OpenAI / Google), language (EN / IT), and number of reports\
+  \ to process |\n| **F1-Score** | Evaluate extraction predictions against gold-standard annotations —\
+  \ select a prediction file and view micro/macro metrics with per-class detail |\n| **Doccano Management**\
+  \ | Convert between formats: gold → Doccano import, Doccano export → RadGraph-like format, RadGraph\
+  \ inference → Doccano import, and more |\n| **Exit** | Quit the application |\n\n### Data Format Examples\n\
+  \n**Raw input** (`data/raw/*.jsonl`) — one JSONL record per report:\n\n```json\n{\n  \"dataset\": \"\
+  example-chest-xr\", \n  \"doc_key\": 0,\n  \"text\": \"No pleural effusion. Small nodule in the right\
+  \ lung.\"\n}\n```\n\n**Gold standard** (`data/gold/*.jsonl`) — tokenized sentences with NER spans and\
+  \ relations (RadGraph-XL schema). Each NER entry is `[start_idx, end_idx, label]`; each relation is\
+  \ `[src_start, src_end, tgt_start, tgt_end, type]`:\n\n```json\n{\n  \"dataset\": \"example-chest-xr\"\
+  ,\n  \"doc_key\": 0,\n  \"sentences\": [[\"No\", \"pleural\", \"effusion\", \".\", \"Small\", \"nodule\"\
+  , \"in\", \"the\", \"right\", \"lung\", \".\"]],\n  \"ner\": [\n    [\n      [1, 1, \"Anatomy::definitely\
+  \ present\"],\n      [2, 2, \"Observation::definitely absent\"],\n      [4, 4, \"Observation::definitely\
+  \ present\"],\n      [5, 5, \"Observation::definitely present\"],\n      [8, 8, \"Anatomy::definitely\
+  \ present\"],\n      [9, 9, \"Anatomy::definitely present\"]\n    ]\n  ],\n  \"relations\": [\n    [\n\
+  \      [2, 2, 1, 1, \"located_at\"],\n      [4, 4, 5, 5, \"modify\"],\n      [5, 5, 9, 9, \"located_at\"\
+  ],\n      [8, 8, 9, 9, \"modify\"]\n    ]\n  ]\n}\n```\n\n**LLM extraction output** (`data/extract/*.json`)\
+  \ — entity list produced by the pipeline. Each relation references a target entity by its array index:\n\
+  \n```json\n[\n  {\n    \"dataset\": \"example-chest-xr\",\n    \"doc_key\": 0,\n    \"text\": \"No pleural\
+  \ effusion. Small nodule in the right lung.\",\n    \"entities\": [\n      {\n        \"tokens\": \"\
+  pleural\",\n        \"label\": \"Anatomy::definitely present\",\n        \"relations\": [],\n      \
+  \  \"start_idx\": 1, \"end_idx\": 1\n      },\n      {\n        \"tokens\": \"effusion\",\n        \"\
+  label\": \"Observation::definitely absent\",\n        \"relations\": [[\"located_at\", 0]],\n      \
+  \  \"start_idx\": 2, \"end_idx\": 2\n      },\n      {\n        \"tokens\": \"Small\",\n        \"label\"\
+  : \"Observation::definitely present\",\n        \"relations\": [[\"modify\", 3]],\n        \"start_idx\"\
+  : 4, \"end_idx\": 4\n      },\n      {\n        \"tokens\": \"nodule\",\n        \"label\": \"Observation::definitely\
+  \ present\",\n        \"relations\": [[\"located_at\", 5]],\n        \"start_idx\": 5, \"end_idx\":\
+  \ 5\n      },\n      {\n        \"tokens\": \"right\",\n        \"label\": \"Anatomy::definitely present\"\
+  ,\n        \"relations\": [[\"modify\", 5]],\n        \"start_idx\": 8, \"end_idx\": 8\n      },\n \
+  \     {\n        \"tokens\": \"lung\",\n        \"label\": \"Anatomy::definitely present\",\n      \
+  \  \"relations\": [],\n        \"start_idx\": 9, \"end_idx\": 9\n      }\n    ],\n    \"sentences\"\
+  : [\"No\", \"pleural\", \"effusion\", \".\", \"Small\", \"nodule\", \"in\", \"the\", \"right\", \"lung\"\
+  , \".\"]\n  }\n]\n```\n\n---\n\n## Configuration\n\nAll tunable parameters are centralized in `configs/settings.yaml`:\n\
+  \n```yaml\nllm:\n  models:\n    openai:    \"gpt-5\"\n    google:    \"gemini/gemini-2.5-pro\"\n   \
+  \ translate: \"gemini/gemini-2.5-flash\"\n  default_model:       \"gpt-4o\"\n  default_temperature:\
+  \ 1.0\n\nspacy:\n  model_it: \"it_core_news_sm\"\n  model_en: \"en_core_web_sm\"\n\nradgraph:\n  model_type:\
+  \ \"modern-radgraph-xl\"\n```\n\nKey sections include LLM model identifiers, spaCy model names, RadGraph\
+  \ model type, data directory paths, prompt file paths, and output filename patterns.\n\n> **Note:**\
+  \ API keys must **not** be placed in `settings.yaml`. Set them as environment variables (`OPENAI_API_KEY`,\
+  \ `GOOGLE_API_KEY`) where LiteLLM will read them automatically.\n\n---\n\n## Data\n\n### Input / Output\
+  \ Paths\n\nAll paths are defined in `settings.yaml` and are relative to the project root:\n\n| Path\
+  \ | Description | Format |\n|---|---|---|\n| `data/raw/` | Raw radiology reports | JSONL — fields: `dataset`,\
+  \ `doc_key`, `text` |\n| `data/gold/` | Gold-standard annotations | JSONL — RadGraph-XL schema: `dataset`,\
+  \ `doc_key`, `sentences`, `ner`, `relations` |\n| `data/extract/` | LLM extraction outputs | JSON |\n\
+  | `data/doccano/export/` | Exports from Doccano | JSONL |\n| `data/doccano/import/` | Files ready for\
+  \ Doccano import | JSONL |\n| `data/doccano/radgraph-like-format/` | Gold annotations converted from\
+  \ Doccano | JSONL |\n| `data/doccano/radgraph-input-translate/` | Input for RadGraph → Doccano flow\
+  \ | JSONL — fields: `text_en`, optionally `text_it` |\n\n### RadGraph-XL Dataset\n\nThe project is designed\
+  \ to work with the RadGraph-XL annotated datasets:\n\n- **MIMIC reports** (300 samples): [Stanford AIMI\
+  \ — RadGraph-XL](https://stanfordaimi.azurewebsites.net/datasets/57816fe0-661c-4a95-8724-3f95b29568d9)\n\
+  - **Stanford reports** (2000 samples): [PhysioNet — RadGraph-XL v1.0.0](https://physionet.org/content/radgraph-xl/1.0.0/)\n\
+  \n---\n\n## Author\n\n**Daniel Rabottini**\nBachelor's Thesis — RadiomicsLab - University of Turin\n\
+  \nThe complete thesis document is available in [`docs/`](docs/)."

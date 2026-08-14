@@ -1,0 +1,45 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: csarosiek/DL-RCP
+url: https://github.com/csarosiek/DL-RCP
+platform: github
+description: Deep Learning-Refined Contour Propagation. This model is a guided auto-segmentation model
+  for MRI based off of a 2D Dense UNet architecture.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-10-21T15:38:15Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "# Deep Learning-Refined Contour Propagation\n\nThe DL-RCP tool uses a deep learning model\
+  \ to improve contour quality. It is inspired by a 2D Dense UNet model taking an MR slice and inaccurate\
+  \ contours and provides updated contours. The tool is designed to improve 7 abdominal contours (stomach,\
+  \ duodenum, small bowel, colon, liver, left kidney, right kidney) on MRI.\nThis repository holds the\
+  \ code required to 1) preprocess training data, 2) train a model, and 3) use the DL-RCP tool in production.\
+  \ \n\n## Python Dependencies:\nos\n\nnumpy\n\nrt_utils\n\nscipy\n\ntime\n\npydicom\n\ncv2\n\nmatplotlib\n\
+  \ntensorflow\n\nmultiprocessing\n\npandas\n\n\n## Preprocessing Code: PrepareData_training_multiorgan_V2.py\n\
+  \nReads the DICOM Image and RT Structure files and preprocesses them for DL-RCP training. Saves each\
+  \ slice as a .npy file. \n\nTo use, change the GT_path and Init_path variables to the paths with the\
+  \ ground truth RTSS and the inaccurate initial RTSS, respectively. Within each of these paths, there\
+  \ should be identical list of directories with the patient labels. The code will match the patients\
+  \ between each directory. \n\nEach slice is saved as a 4D numpy array with [0,x,y,0] = MR slice, [0,x,y,1]\
+  \ = inaccurate contour mask, [0,x,y,2] = GT contour mask. These can be combined later into a single\
+  \ 4D array for easy loading into model training code. \n\nYou can update the organ names in the organlist\
+  \ variable. This is currently hard-coded in each piece of code and requires manual updates in each piece\
+  \ of code if changed. \n\nUses multiprocessing to process multiple DICOM images at a time and speed\
+  \ up processing.\n\nAlso included are lines to plot the data throughout the preprocessing method that\
+  \ can be useful for troubleshooting. These are currently commented out. \n\n## Model Training Code:\
+  \ DenseUNet-v3_multiorgan-40.py\n\nDependencies: LoadData_v4_python_aug.py, DataGenerator_v4_multiorgan.py,\
+  \ DenseLayers.py\n  \nModel architecture inspired by a 2D Dense UNet model. The model uses the Adam\
+  \ Optimizer with Categorical Crossentropy loss. \n\nTo train, update the hyperparameters and directories.\
+  \ As written, the code will save the model every 100 epochs and at the Epoch with the lowest validation\
+  \ loss value. \n\n## Production Use: MOACCWorkflow_final.py\n\nDependencies: contourdata.py, denseunet.py\n\
+  \  \nReads the DICOM images and RTStructure Set, applies the trained model, and produces a second RT\
+  \ Structure Set with the updated contours.\n\nTo run, change the directories in Lines 127-128. The code\
+  \ will look for the following model './model_optimal/DLRCP_multiorgan.h5'\n"

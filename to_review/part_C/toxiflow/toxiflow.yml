@@ -1,0 +1,196 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Piyushgarg06/ToxiFlow
+url: https://github.com/Piyushgarg06/ToxiFlow
+platform: github
+description: Modular transformer pipeline for molecular toxicity prediction using SMILES and ChemBERTa.
+  Includes data cleaning, tokenization, class imbalance handling, and a PyTorch model with mean pooling.
+  Designed for extensibility across drug discovery tasks.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-05T16:21:38Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: '# 🧪 ToxiFlow
+
+
+  A modular deep learning pipeline for **drug toxicity prediction** using molecular SMILES representations
+  and transformer-based models.
+
+
+  ## Overview
+
+
+  ToxiFlow leverages **ChemBERTa** (a chemistry-focused transformer) to predict toxicity labels from the
+  [Tox21 dataset](https://tripod.nih.gov/tox21/). The pipeline handles everything from raw data ingestion
+  through model training to evaluation.
+
+
+  ## Project Structure
+
+
+  ```
+
+  ToxiFlow/
+
+  ├── data/                       # Raw datasets (gitignored)
+
+  ├── src/
+
+  │   ├── data/
+
+  │   │   ├── loader.py           # CSV ingestion with column validation
+
+  │   │   ├── cleaner.py          # SMILES validation & deduplication
+
+  │   │   ├── formatter.py        # Class weight balancing
+
+  │   │   ├── dataset.py          # PyTorch Dataset wrapper
+
+  │   │   └── dataLoader.py       # PyTorch DataLoader factory
+
+  │   ├── models/
+
+  │   │   ├── backbone.py         # ChemBERTa encoder
+
+  │   │   ├── pooling.py          # Attention-masked mean pooling
+
+  │   │   ├── head.py             # Linear prediction head
+
+  │   │   └── model.py            # End-to-end DrugModel
+
+  │   ├── representations/
+
+  │   │   └── tokenizer.py        # SMILES tokenization logic
+
+  │   ├── evaluation/
+
+  │   │   └── metrics.py          # AUC-ROC, Accuracy, Sensitivity, Specificity
+
+  │   ├── trainer/
+
+  │   │   ├── loss.py             # Weighted BCE loss implementation
+
+  │   │   └── training.py         # Batch training loop with tqdm
+
+  │   └── pipeline/
+
+  │       └── pipeline.py         # Full pipeline orchestration
+
+  ├── main.py                     # Entry point
+
+  ├── requirements.txt
+
+  └── .gitignore
+
+  ```
+
+
+  ## Pipeline Workflow
+
+
+  ```
+
+  Raw CSV → Data Loading → SMILES Cleaning → Class Balancing → Tokenization → DataLoader → Training →
+  Evaluation
+
+  ```
+
+
+  1. **Data Loading** — Reads Tox21 CSV and extracts SMILES + target columns
+
+  2. **Cleaning** — Validates SMILES strings using RDKit and removes duplicates
+
+  3. **Formatting** — Computes class weights to handle label imbalance
+
+  4. **Tokenization** — Converts SMILES to token IDs via ChemBERTa tokenizer
+
+  5. **Dataset & DataLoader** — Wraps data into PyTorch-compatible batches
+
+  6. **Training** — Runs batched training with weighted BCE loss and Adam optimizer
+
+  7. **Evaluation** — Computes AUC-ROC, Accuracy, Sensitivity, and Specificity
+
+
+  ## Model Architecture
+
+
+  - **Backbone** — ChemBERTa-77M-MLM (pretrained transformer for molecular representations)
+
+  - **Pooling** — Attention-masked mean pooling over token embeddings
+
+  - **Head** — Linear layer for binary toxicity classification
+
+  - **Loss** — Weighted Binary Cross-Entropy to handle class imbalance
+
+
+  ## Tech Stack
+
+
+  | Library | Purpose |
+
+  |---|---|
+
+  | **PyTorch** | Model architecture & training |
+
+  | **Transformers** (HuggingFace) | ChemBERTa pretrained backbone |
+
+  | **RDKit** | Molecular SMILES validation |
+
+  | **Pandas** | Data loading & manipulation |
+
+  | **scikit-learn** | Evaluation metrics |
+
+
+  ## Getting Started
+
+
+  ```bash
+
+  # Clone the repo
+
+  git clone https://github.com/Piyushgarg06/ToxiFlow.git
+
+  cd ToxiFlow
+
+
+  # Create virtual environment
+
+  python -m venv .venv
+
+  .venv\Scripts\activate   # Windows
+
+
+  # Install dependencies
+
+  pip install -r requirements.txt
+
+  ```
+
+
+  ## Usage
+
+
+  ```bash
+
+  python pipeline.py
+
+  ```
+
+
+  This runs the full pipeline — loads data, trains the model for 5 epochs, and evaluates it.
+
+
+  ## License
+
+
+  TBD
+
+  '

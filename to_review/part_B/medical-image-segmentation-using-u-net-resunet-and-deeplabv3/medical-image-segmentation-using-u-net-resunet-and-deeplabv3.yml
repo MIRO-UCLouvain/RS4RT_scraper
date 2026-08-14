@@ -1,0 +1,91 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: A-matindoust/Medical-Image-Segmentation-using-U-Net-ResUNet-and-DeepLabV3-
+url: https://github.com/A-matindoust/Medical-Image-Segmentation-using-U-Net-ResUNet-and-DeepLabV3-
+platform: github
+description: Implementation and comparison of U-Net, ResUNet, and DeepLabV3+ for brain tumor semantic
+  segmentation using PyTorch. Includes model architectures, evaluation metrics, training pipeline, and
+  performance comparison.
+license: null
+language: Jupyter Notebook
+keywords:
+- brain-tumor-segmentation
+- computer-vision
+- deeplab-v3-plus
+- medical-image-analysis
+- medical-imaging
+- resunet
+- segmentation
+- semantic-segmentation
+- unet
+stars: 0
+updated_at: '2026-07-04T18:46:15Z'
+image_source: null
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 AI/ML term(s) in repository name.
+readme_excerpt: "![Python](https://img.shields.io/badge/Python-3.10+-blue)\r\n![PyTorch](https://img.shields.io/badge/PyTorch-Deep%20Learning-red)\r\
+  \n![Task](https://img.shields.io/badge/Task-Semantic%20Segmentation-green)\r\n![Dataset](https://img.shields.io/badge/Dataset-Brain%20Tumor-orange)\r\
+  \n![License](https://img.shields.io/badge/License-MIT-lightgrey)\r\n\r\n# Medical Image Segmentation\
+  \ using U-Net, ResUNet, and DeepLabV3+\r\n\r\nThis repository implements and compares three popular\
+  \ deep learning architectures for semantic image segmentation:\r\n\r\n- U-Net\r\n- ResUNet\r\n- DeepLabV3+\r\
+  \n\r\nThe models are trained and evaluated on a Brain Tumor Segmentation dataset from Kaggle.\r\n\r\n\
+  ---\r\n\r\n# What is Image Segmentation?\r\n\r\nImage segmentation is a computer vision task in which\
+  \ the model predicts a label for every pixel in an image. Unlike image classification, where the output\
+  \ is a single class, segmentation produces an output image (mask) with the same spatial dimensions as\
+  \ the input image.\r\n\r\nSince both the input and output are images, encoder-decoder (autoencoder-like)\
+  \ architectures are commonly used. The encoder extracts high-level semantic features, while the decoder\
+  \ reconstructs a pixel-wise prediction.\r\n\r\n---\r\n\r\n# Types of Image Segmentation\r\n\r\n## Semantic\
+  \ Segmentation\r\n\r\nSemantic segmentation assigns a class label to every pixel in an image.\r\n\r\n\
+  Pixels belonging to the same object category receive the same label, regardless of how many object instances\
+  \ exist.\r\n\r\nExample:\r\n\r\n- All tumor pixels → Tumor\r\n- All background pixels → Background\r\
+  \n\r\n---\r\n\r\n## Instance Segmentation\r\n\r\nInstance segmentation not only classifies each pixel\
+  \ but also distinguishes between different instances of the same class.\r\n\r\nFor example, if an image\
+  \ contains three tumors, each tumor is assigned a separate mask.\r\n\r\n---\r\n\r\n# Evaluation Metrics\r\
+  \n\r\nSeveral metrics are commonly used to evaluate segmentation models.\r\n\r\n## Pixel Accuracy (PA)\r\
+  \n\r\nMeasures the percentage of correctly classified pixels.\r\n\r\n\\[\r\nPA = \\frac{\\text{Number\
+  \ of Correct Pixels}}{\\text{Total Number of Pixels}}\r\n\\]\r\n\r\n---\r\n\r\n## Mean Pixel Accuracy\
+  \ (MPA)\r\n\r\nMean Pixel Accuracy computes the average pixel accuracy over all classes.\r\n\r\n\\[\r\
+  \nMPA=\\frac{1}{N}\\sum_{i=1}^{N}\r\n\\frac{TP_i}{TP_i+FN_i}\r\n\\]\r\n\r\nwhere\r\n\r\n- \\(N\\) is\
+  \ the number of classes.\r\n- \\(TP_i\\) is the number of correctly predicted pixels for class \\(i\\\
+  ).\r\n- \\(FN_i\\) is the number of pixels belonging to class \\(i\\) that were predicted incorrectly.\r\
+  \n\r\n---\r\n\r\n## Mean Intersection over Union (mIoU)\r\n\r\nIntersection over Union (IoU) measures\
+  \ the overlap between the predicted mask and the ground truth mask.\r\n\r\n\\[\r\nIoU=\\frac{|Prediction\
+  \ \\cap GroundTruth|}\r\n{|Prediction \\cup GroundTruth|}\r\n\\]\r\n\r\nThe Mean IoU is simply the average\
+  \ IoU across all classes.\r\n\r\n---\r\n\r\n## Dice Coefficient\r\n\r\nThe Dice coefficient is another\
+  \ overlap metric commonly used in medical image segmentation.\r\n\r\n\\[\r\nDice=\r\n\\frac{2|A\\cap\
+  \ B|}\r\n{|A|+|B|}\r\n\\]\r\n\r\nwhere\r\n\r\n- A is the predicted mask.\r\n- B is the ground truth\
+  \ mask.\r\n\r\nA Dice score of 1 indicates perfect overlap.\r\n\r\n---\r\n\r\n# Data Augmentation\r\n\
+  \r\nData augmentation is useful for improving model generalization. However, segmentation requires special\
+  \ care because every image has a corresponding mask.\r\n\r\nThe same transformation must be applied\
+  \ to both the image and its mask.\r\n\r\nSuitable augmentations include:\r\n\r\n- Horizontal flip\r\n\
+  - Vertical flip\r\n- Rotation\r\n- Translation\r\n- Scaling\r\n- Random crop\r\n\r\nAugmentations that\
+  \ alter pixel intensities (e.g., brightness or contrast) should only be applied to the input image,\
+  \ while geometric transformations must be applied identically to both the image and its mask.\r\n\r\n\
+  ---\r\n\r\n# Implemented Models\r\n\r\n## U-Net\r\n\r\nU-Net is one of the most widely used encoder-decoder\
+  \ architectures for biomedical image segmentation.\r\n\r\n### Main characteristics\r\n\r\n- Encoder-decoder\
+  \ architecture\r\n- Skip connections between encoder and decoder\r\n- Combines low-level spatial information\
+  \ with high-level semantic information\r\n- Skip connections improve gradient flow and help recover\
+  \ fine image details\r\n\r\n---\r\n\r\n## ResUNet\r\n\r\nResUNet extends U-Net by incorporating residual\
+  \ learning.\r\n\r\nIt combines:\r\n\r\n- Skip connections (concatenation)\r\n- Residual connections\
+  \ (addition)\r\n\r\nResidual blocks help train deeper networks by improving gradient propagation and\
+  \ reducing the degradation problem.\r\n\r\n---\r\n\r\n## DeepLabV3+\r\n\r\nDeepLabV3+ is an advanced\
+  \ semantic segmentation architecture that captures multi-scale contextual information.\r\n\r\nInstead\
+  \ of relying solely on repeated downsampling, it employs **Atrous (Dilated) Convolutions**, which enlarge\
+  \ the receptive field without reducing feature map resolution.\r\n\r\n### Atrous Spatial Pyramid Pooling\
+  \ (ASPP)\r\n\r\nDeepLabV3+ uses an Atrous Spatial Pyramid Pooling module consisting of:\r\n\r\n- 1×1\
+  \ Convolution\r\n- 3×3 Atrous Convolution (Rate = 6)\r\n- 3×3 Atrous Convolution (Rate = 12)\r\n- 3×3\
+  \ Atrous Convolution (Rate = 18)\r\n- Global Average Pooling\r\n\r\nThe outputs are concatenated and\
+  \ fused using a final 1×1 convolution.\r\n\r\nThe DeepLab implementation in this repository uses a **ResNet\
+  \ backbone** as the encoder.\r\n\r\n---\r\n\r\n# Dataset\r\n\r\n**Brain Tumor Segmentation Dataset**\r\
+  \n\r\nAvailable on Kaggle.\r\n\r\nThe dataset contains brain MRI images and their corresponding segmentation\
+  \ masks.\r\n\r\n---\r\n\r\n# Repository Structure\r\n\r\n```\r\nSegmentation/\r\n│\r\n├── deeplab/\r\
+  \n│   ├── DeepLabV3+\r\n│   └── ResNet Backbone\r\n│\r\n├── unet/\r\n│   ├── U-Net\r\n│   ├── ResUNet\r\
+  \n│   └── U-Net vs ResUNet\r\n│\r\n└── README.md\r\n```\r\n\r\n---\r\n\r\n# Models Included\r\n\r\n\
+  - U-Net\r\n- ResUNet\r\n- DeepLabV3+\r\n- ResNet Backbone\r\n- U-Net vs ResUNet Comparison\r\n\r\n---\r\
+  \n\r\n# Future Improvements\r\n\r\n- Attention U-Net\r\n- UNet++\r\n- DeepLabV3+ with different backbones\r\
+  \n- Transformer-based segmentation models\r\n- More medical image datasets\r\n- Additional evaluation\
+  \ metrics and visualizations"

@@ -1,0 +1,145 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: zhkangzhkang/CAFNET-CBCT
+url: https://github.com/zhkangzhkang/CAFNET-CBCT
+platform: github
+description: CAFNET-CBCT
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-07T07:31:06Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# CAFNet-CBCT\r\n\r\n<p align=\"center\">\r\n  <b>Language:</b>\r\n  <a href=\"README.md\"\
+  >English</a> |\r\n  <a href=\"README.zh-CN.md\">中文</a>\r\n</p>\r\n\r\nCAFNet-CBCT is a semi-supervised\
+  \ 3D CBCT tooth-wise anatomical instance segmentation project. The current main pipeline implements\
+  \ an anatomy-aware complementary-teacher framework for sparse-label CBCT tooth instance segmentation.\r\
+  \n\r\n## Highlights\r\n\r\n1. **Anatomy-Aware CAF-Net Backbone**  \r\n   CAF-Net uses DSCA encoder blocks\
+  \ and an SFG3D hierarchical decoder to capture local tooth-boundary cues, cross-slice structural continuity,\
+  \ and dental-arch-level context.\r\n\r\n2. **Reliability-Calibrated Complementary Dual-Teacher Pseudo-Labeling**\
+  \  \r\n   Two EMA teachers provide complementary pseudo-label predictions. Teacher-A focuses on global-context\
+  \ views, while Teacher-B focuses on local-detail views. Their fused confidence and inter-teacher disagreement\
+  \ are used to select reliable pseudo-label regions.\r\n\r\n3. **Instance-Boundary-Aware Consistency**\
+  \  \r\n   A reliability-weighted soft-boundary consistency objective encourages the student prediction\
+  \ to preserve instance boundaries, reducing adjacent-tooth adhesion and merge/split errors.\r\n\r\n\
+  Recommended training entry:\r\n\r\n```bash\r\npython train_cafnet_cbct.py\r\n```\r\n\r\nRecommended\
+  \ single-case inference and visualization entry:\r\n\r\n```bash\r\npython infer_cafnet_case.py\r\n```\r\
+  \n\r\nAll recommended script names are English-only and avoid Chinese characters, parentheses, and shell-sensitive\
+  \ symbols such as `+`.\r\n\r\n## Table of Contents\r\n\r\n- [1. Quick Start](#1-quick-start)\r\n- [2.\
+  \ Repository Structure](#2-repository-structure)\r\n- [3. Dataset Layout](#3-dataset-layout)\r\n- [4.\
+  \ Environment Setup](#4-environment-setup)\r\n- [5. Training](#5-training)\r\n- [6. Training Logs](#6-training-logs)\r\
+  \n- [7. Output Files](#7-output-files)\r\n- [8. Validation, Testing, and Inference](#8-validation-testing-and-inference)\r\
+  \n- [9. Visualization and Paper Figures](#9-visualization-and-paper-figures)\r\n- [10. Key Arguments](#10-key-arguments)\r\
+  \n- [11. Recommended Ablation Study](#11-recommended-ablation-study)\r\n- [12. Troubleshooting](#12-troubleshooting)\r\
+  \n- [13. File Naming and Legacy Scripts](#13-file-naming-and-legacy-scripts)\r\n\r\n## 1. Quick Start\r\
+  \n\r\nIf the dataset has already been placed under `./data` and the GPU environment is ready, run the\
+  \ full method with:\r\n\r\n```bash\r\npython train_cafnet_cbct.py \\\r\n  --root \"./data\" \\\r\n \
+  \ --outdir \"runs/cafnet_full\" \\\r\n  --epochs 110 \\\r\n  --val_every 10 \\\r\n  --num_classes 49\
+  \ \\\r\n  --roi 160 160 160 \\\r\n  --batch_l 1 \\\r\n  --batch_u 1 \\\r\n  --consist_w 4.0 \\\r\n \
+  \ --boundary_w 0.5 \\\r\n  --consist_ramp 60 \\\r\n  --tau_conf 0.6 \\\r\n  --tau_disagree 0.05 \\\r\
+  \n  --ema_global 0.995 \\\r\n  --ema_detail 0.99 \\\r\n  --workers 4 \\\r\n  --amp\r\n```\r\n\r\nFor\
+  \ Windows PowerShell, use backticks for multi-line commands:\r\n\r\n```powershell\r\npython train_cafnet_cbct.py\
+  \ `\r\n  --root \".\\data\" `\r\n  --outdir \"runs\\cafnet_full\" `\r\n  --epochs 110 `\r\n  --val_every\
+  \ 10 `\r\n  --roi 160 160 160 `\r\n  --batch_l 1 `\r\n  --batch_u 1 `\r\n  --workers 4 `\r\n  --amp\r\
+  \n```\r\n\r\nMain outputs will be saved to:\r\n\r\n```text\r\nruns/cafnet_full/\r\n  best_student.pt\r\
+  \n  best_teacher_global.pt\r\n  best_teacher_detail.pt\r\n  predTs/\r\n    *_pred.nii.gz\r\n```\r\n\r\
+  \n## 2. Repository Structure\r\n\r\n```text\r\nCAFNet-CBCT/\r\n  data/\r\n    Train-Labeled/\r\n   \
+  \   Images/ or images/\r\n      Masks/  or labels/\r\n    Train-Unlabeled/\r\n    dental_CBCT_test_set/\r\
+  \n      images/\r\n      labels/\r\n    Validation-Public/\r\n\r\n  networks/\r\n    simam_hier_unet.py\
+  \              # CAFNet3D backbone: DSCA + SFG3D decoder\r\n    cafnet_ssl.py                   # dual\
+  \ teacher, reliable mask, KL loss, boundary loss\r\n    __init__.py\r\n\r\n  train_cafnet_cbct.py  \
+  \            # main training, validation, and batch test inference\r\n  infer_cafnet_case.py       \
+  \       # single-case inference and GT-vs-pred visualization\r\n  viz_cbct_compare.py              \
+  \ # high-resolution qualitative figures\r\n  visualization.py                  # NIfTI slice mosaic\
+  \ visualization\r\n  check_labels.py                   # label class inspection\r\n  mask.py       \
+  \                    # mask utility script\r\n\r\n  train1023.py                      # legacy Mean\
+  \ Teacher / UNet script\r\n  train_unet_val5_debug.py          # legacy debug script\r\n  train_unet_simam.py\
+  \               # legacy SimAM ablation script\r\n  train_unet_simam_eca_hierarchical.py\r\n  training_strategy_and_methods.docx\r\
+  \n```\r\n\r\nFor the current main method, focus on:\r\n\r\n```text\r\ntrain_cafnet_cbct.py\r\ninfer_cafnet_case.py\r\
+  \nnetworks/simam_hier_unet.py\r\nnetworks/cafnet_ssl.py\r\nREADME.md\r\nREADME.zh-CN.md\r\n```\r\n\r\
+  \n## 3. Dataset Layout\r\n\r\nThe training script reads a dataset root specified by `--root`. This root\
+  \ can be `./data` locally or a server path such as `/root/autodl-tmp/3D_CBCT`.\r\n\r\nRecommended layout:\r\
+  \n\r\n```text\r\ndata/\r\n  Train-Labeled/\r\n    Images/\r\n      STS24_Train_Labeled_0001.nii.gz\r\
+  \n      STS24_Train_Labeled_0002.nii.gz\r\n      ...\r\n    Masks/\r\n      STS24_Train_Labeled_0001_Mask.nii.gz\r\
+  \n      STS24_Train_Labeled_0002_Mask.nii.gz\r\n      ...\r\n\r\n  Train-Unlabeled/\r\n    STS24_Train_Unlabeled_0001.nii.gz\r\
+  \n    STS24_Train_Unlabeled_0002.nii.gz\r\n    ...\r\n\r\n  dental_CBCT_test_set/\r\n    images/\r\n\
+  \      STS2024_Test_Labeled_0001.nii.gz\r\n      ...\r\n    labels/\r\n      STS2024_Test_Labeled_0001_Mask.nii.gz\r\
+  \n      ...\r\n\r\n  Validation-Public/\r\n    STS24_Validation_0001.nii.gz\r\n    ...\r\n```\r\n\r\n\
+  Supported labeled-data folder names:\r\n\r\n```text\r\nTrain-Labeled/Images + Train-Labeled/Masks\r\n\
+  Train-Labeled/images + Train-Labeled/labels\r\n```\r\n\r\nLabel convention:\r\n\r\n```text\r\n0    \
+  \  background\r\n1-48   tooth-wise anatomical instance labels\r\n```\r\n\r\nTherefore, the default class\
+  \ number is:\r\n\r\n```bash\r\n--num_classes 49\r\n```\r\n\r\n## 4. Environment Setup\r\n\r\nRecommended\
+  \ software:\r\n\r\n```text\r\nPython 3.10 or 3.11\r\nCUDA-capable GPU\r\nPyTorch\r\nMONAI\r\nnibabel\r\
+  \nmatplotlib\r\nscikit-image\r\n```\r\n\r\nCreate a conda environment:\r\n\r\n```bash\r\nconda create\
+  \ -n cafnet-cbct python=3.10 -y\r\nconda activate cafnet-cbct\r\n```\r\n\r\nInstall PyTorch. Choose\
+  \ the command that matches your CUDA driver from the official PyTorch installation page:\r\n\r\n```text\r\
+  \nhttps://pytorch.org/get-started/locally/\r\n```\r\n\r\nCommon CUDA 12.1 pip example:\r\n\r\n```bash\r\
+  \npip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121\r\n```\r\
+  \n\r\nIf the official selector recommends CUDA 12.6, CUDA 12.4, or CPU wheels for your machine, use\
+  \ the selector-generated command instead.\r\n\r\nInstall the remaining dependencies:\r\n\r\n```bash\r\
+  \npip install monai nibabel numpy scipy scikit-image matplotlib tqdm\r\n```\r\n\r\nCheck CUDA and Python\
+  \ packages:\r\n\r\n```bash\r\nnvidia-smi\r\npython -c \"import torch; print(torch.__version__); print(torch.cuda.is_available())\"\
+  \r\npython -c \"import monai, nibabel; print(monai.__version__); print('nibabel ok')\"\r\n```\r\n\r\n\
+  Check that the project scripts are syntactically valid:\r\n\r\n```bash\r\npython -m py_compile networks/simam_hier_unet.py\
+  \ networks/cafnet_ssl.py train_cafnet_cbct.py infer_cafnet_case.py\r\n```\r\n\r\nIf `torch.cuda.is_available()`\
+  \ prints `False`, the current PyTorch installation cannot use CUDA. CPU execution is possible for simple\
+  \ checks, but full 3D CBCT training should be performed on a GPU.\r\n\r\n## 5. Training\r\n\r\n### 5.1\
+  \ Local Dataset\r\n\r\n```bash\r\npython train_cafnet_cbct.py \\\r\n  --root \"./data\" \\\r\n  --outdir\
+  \ \"runs/cafnet_full\" \\\r\n  --epochs 110 \\\r\n  --val_every 10 \\\r\n  --num_classes 49 \\\r\n \
+  \ --roi 160 160 160 \\\r\n  --batch_l 1 \\\r\n  --batch_u 1 \\\r\n  --workers 4 \\\r\n  --amp\r\n```\r\
+  \n\r\n### 5.2 AutoDL or Linux Server\r\n\r\n```bash\r\npython train_cafnet_cbct.py \\\r\n  --root \"\
+  /root/autodl-tmp/3D_CBCT\" \\\r\n  --outdir \"/root/autodl-tmp/CBCT/runs_cafnet_full\" \\\r\n  --epochs\
+  \ 110 \\\r\n  --val_every 10 \\\r\n  --num_classes 49 \\\r\n  --roi 160 160 160 \\\r\n  --batch_l 1\
+  \ \\\r\n  --batch_u 1 \\\r\n  --workers 4 \\\r\n  --amp\r\n```\r\n\r\n### 5.3 Low-Memory Training\r\n\
+  \r\nIf GPU memory is limited, start with:\r\n\r\n```bash\r\npython train_cafnet_cbct.py \\\r\n  --root\
+  \ \"./data\" \\\r\n  --outdir \"runs/cafnet_full_roi128\" \\\r\n  --epochs 110 \\\r\n  --val_every 10\
+  \ \\\r\n  --roi 128 128 128 \\\r\n  --batch_l 1 \\\r\n  --batch_u 1 \\\r\n  --sw_batch 1 \\\r\n  --val_sw_batch\
+  \ 1 \\\r\n  --workers 0 \\\r\n  --amp\r\n```\r\n\r\n### 5.4 Smoke Test\r\n\r\nTo verify data loading,\
+  \ preprocessing, and model forward pass, run a 1-epoch smoke test:\r\n\r\n```bash\r\npython train_cafnet_cbct.py\
+  \ \\\r\n  --root \"./data\" \\\r\n  --outdir \"runs/smoke_test\" \\\r\n  --epochs 1 \\\r\n  --val_every\
+  \ 1 \\\r\n  --roi 128 128 128 \\\r\n  --batch_l 1 \\\r\n  --batch_u 1 \\\r\n  --workers 0\r\n```\r\n\
+  \r\nThis is only for debugging. It is not a meaningful training run.\r\n\r\n## 6. Training Logs\r\n\r\
+  \nA typical training log line looks like:\r\n\r\n```text\r\n[epoch 005] iter 10 | sup 1.2345 | con 0.0321\
+  \ | bd 0.0188 | mask 0.126 | conf 0.742 | js 0.0142 | w 0.820/0.103 | 3.42s/it\r\n```\r\n\r\n| Field\
+  \ | Meaning | How to interpret it |\r\n|---|---|---|\r\n| `sup` | Supervised DiceCE loss on labeled\
+  \ data | Should generally decrease |\r\n| `con` | KL consistency on reliable pseudo-label regions |\
+  \ Very large values may indicate student-teacher mismatch |\r\n| `bd` | Instance-boundary consistency\
+  \ | Reflects boundary-level agreement |\r\n| `mask` | Ratio of reliable pseudo-label voxels | Long-term\
+  \ zero means filtering is too strict |\r\n| `conf` | Mean fused teacher confidence | Higher usually\
+  \ indicates more stable pseudo-labels |\r\n| `js` | Mean JS disagreement between Teacher-A and Teacher-B\
+  \ | Higher values indicate stronger teacher disagreement |\r\n| `w` | Current ramp-up weights for consistency\
+  \ and boundary terms | Starts small and increases during training |\r\n\r\nUseful rules:\r\n\r\n- If\
+  \ `mask` stays close to `0.000`, lower `--tau_conf` or increase `--tau_disagree`.\r\n- If `js` is high\
+  \ and predictions are unstable, decrease `--tau_disagree`.\r\n- If boundaries remain rough, increase\
+  \ `--boundary_w`.\r\n- If early training is unstable, increase `--consist_ramp` or reduce `--consist_w`.\r\
+  \n\r\n## 7. Output Files\r\n\r\nExample output directory:\r\n\r\n```text\r\nruns/cafnet_full/\r\n  best_student.pt\r\
+  \n  best_teacher_global.pt\r\n  best_teacher_detail.pt\r\n  predTs/\r\n    STS2024_Test_Labeled_0001_pred.nii.gz\r\
+  \n    ...\r\n```\r\n\r\n| File | Description |\r\n|---|---|\r\n| `best_student.pt` | Student model from\
+  \ the epoch with the best validation Dice |\r\n| `best_teacher_global.pt` | Teacher-A/global-context\
+  \ EMA model from the same best epoch |\r\n| `best_teacher_detail.pt` | Teacher-B/local-detail EMA model\
+  \ from the same best epoch |\r\n| `predTs/` | NIfTI predictions automatically generated after training\
+  \ |\r\n\r\nThe final batch inference stage first tries to load:\r\n\r\n```text\r\nbest_teacher_global.pt\r\
+  \nbest_teacher_detail.pt\r\n```\r\n\r\nIf these teacher checkpoints are unavailable but `best_student.pt`\
+  \ exists, the script falls back by copying the best student weights into both teachers for inference.\r\
+  \n\r\n## 8. Validation, Testing, and Inference\r\n\r\n### 8.1 Validation During Training\r\n\r\nIf both\
+  \ folders exist:\r\n\r\n```text\r\ndental_CBCT_test_set/images/\r\ndental_CBCT_test_set/labels/\r\n\
+  ```\r\n\r\nthe training script validates every `--val_every` epochs and reports:\r\n\r\n```text\r\n\
+  val Dice\r\nval HD95\r\n```\r\n\r\n### 8.2 Batch Test Inference After Training\r\n\r\nAfter training,\
+  \ `train_cafnet_cbct.py` automatically runs sliding-window inference on `dental_CBCT_test_set` and saves\
+  \ predictions to:\r\n\r\n```text\r\n<outdir>/predTs/\r\n```\r\n\r\nThe current batch inference uses\
+  \ a dual-teacher ensemble:\r\n\r\n```text\r\n0.5 * softmax(Teacher-A(global-context view))\r\n+ 0.5\
+  \ * softmax(Teacher-B(local-detail view))\r\n```\r\n\r\nThis matches the complementary dual-teacher\
+  \ design used during training.\r\n\r\n### 8.3 Regenerate `predTs` Only\r\n\r\nIf training has already\
+  \ finished and you only want to regenerate test predictions from existing checkpoints, run:\r\n\r\n\
+  ```bash\r\npython train_cafnet_cbct.py \\\r\n  --root \"./data\" \\\r\n  --outdir \"runs/cafnet_full\"\
+  \ \\\r\n  --epochs 0 \\\r\n  --roi 160 160 160 \\\r\n  --sw_batch 1 \\\r\n  --workers 0 \\\r\n  --amp\r\
+  \n```\r\n\r\nNote: with the current script, `--epochs 0` still performs a data/model sanity check before\
+  \ inference. Therefore, `Train-Labeled/` and `Train-Unlabeled/` should still be available.\r\n\r\n###\
+  \ 8.4 Single-Case Inference and Visualization\r\n"

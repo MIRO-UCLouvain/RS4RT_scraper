@@ -1,0 +1,86 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: yousiframazanoglu/dental-navigation-3d
+url: https://github.com/yousiframazanoglu/dental-navigation-3d
+platform: github
+description: '3B dental navigasyon: CBCT hacminden nnU-Net v2 ile anatomik segmentasyon, HoloLens 2 karma
+  gerceklik arayuzu ve 2 mm guvenlik esiginde otomatik uyari. TUBITAK 2242 arastirma projesi.'
+license: null
+language: HTML
+keywords:
+- cbct
+- dental-implant
+- dental-navigation
+- hololens2
+- medical-imaging
+- mixed-reality
+- mrtk3
+- nnunet
+- segmentation
+- surgical-navigation
+- threejs
+- tubitak
+stars: 0
+updated_at: '2026-07-28T13:17:42Z'
+image_source: https://raw.githubusercontent.com/yousiframazanoglu/dental-navigation-3d/HEAD/public/og.png
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# 3B Dental Navigasyon — Yapay Zekâ Destekli Dinamik Cerrahi Navigasyon Sistemi\n\n**Canlı\
+  \ site:** https://yousiframazanoglu.github.io/dental-navigation-3d/\n**Sunum:** https://yousiframazanoglu.github.io/dental-navigation-3d/sunum.html\
+  \ ·\n**English:** https://yousiframazanoglu.github.io/dental-navigation-3d/en.html ·\n**العربية:** https://yousiframazanoglu.github.io/dental-navigation-3d/ar.html\n\
+  \nDental implantoloji ve lokal anestezi uygulamalarında komplikasyon riskini azaltmayı hedefleyen,\n\
+  yapay zekâ destekli **dinamik cerrahi dental navigasyon sistemi**nin tanıtım sitesi ve üç boyutlu\n\
+  görselleştirme katmanı. TÜBİTAK 2242 Üniversite Öğrencileri Araştırma Proje Yarışması — 2026\nSağlık\
+  \ kategorisi. Takım **GençBiyo**.\n\n![Dental Navigasyon](public/og.png)\n\n---\n\n## Proje ne yapıyor\n\
+  \nAlt çene implant cerrahisinin en ciddi riski **alt alveoler sinir** hasarıdır: implant mandibular\n\
+  kanala 1 mm'den yakın yerleştirildiğinde nörosensöryel bozukluk kaçınılmazdır\n(Peña-Cardelles vd.,\
+  \ 2025). Buna karşın planlama halen büyük ölçüde iki boyutlu radyografiler\nüzerinden yürütülür.\n\n\
+  Bu sistem üç katmanlı bir mimariyle çalışır:\n\n| Katman | Teknoloji | İşlev |\n|---|---|---|\n| Segmentasyon\
+  \ | Python · **nnU-Net v2** | CBCT hacminden yedi anatomik yapıyı otomatik çıkarır |\n| Navigasyon |\
+  \ C++ · **NDI Polaris** | Alet ucunu 60 Hz izler, HU kemik yoğunluğu analizi, hibrit güvenlik algoritması\
+  \ |\n| Arayüz | Unity · **MRTK3** · **HoloLens 2** · WPF | Holografik katman + masaüstü klinik kontrol\
+  \ istasyonu |\n\n**Güvenlik eşikleri:** mandibular sinir kanalı 2,0 mm · maksiller sinüs 1,5 mm ·\n\
+  foramen (iğne) 3,0 mm. Eşiklerin tamamı klinik literatürden alınmıştır.\n\n---\n\n## Segmentasyon sonuçları\n\
+  \nnnU-Net v2, MICCAI 2024 **ToothFairy2** veri seti üzerinde (480 CBCT hacmi, 3d_fullres,\n100 epoch,\
+  \ RTX 5070 Ti, ~3,5 saat) eğitildi. Aşağıdaki değerler eğitimin ürettiği doğrulama\nçıktısından (`summary.json`,\
+  \ 96 vaka) okunmuştur.\n\n| Anatomik yapı | Dice | Etiketli vaka |\n|---|---:|---:|\n| Alt çene (mandibula)\
+  \ | **0,9845** | 96 |\n| Farenks | 0,9636 | 96 |\n| Alt dişler | 0,9195 | 90 |\n| Üst dişler | 0,8996\
+  \ | 69 |\n| Maksiller sinüs | 0,8742 | 13 |\n| **Alt alveoler kanal** | **0,8511** | 96 |\n| Üst çene\
+  \ (maksilla) | 0,7635 | 36 |\n| **Ortalama** | **0,8937** | — |\n\n> **Ölçüm notu.** Doğrulama kümesinin\
+  \ tamamında ham ortalama **0,7405**'tir. Fark modelden değil\n> referans etiketlerin bütünlüğünden gelir:\
+  \ ToothFairy2 hacimlerinin bir bölümü kısmi anotasyonludur\n> ve bazı yapılar hiç işaretlenmemiştir.\
+  \ Bu vakalarda model yapıyı doğru segmente etse dahi\n> karşılaştırılacak referans olmadığı için Dice\
+  \ sıfır kaydedilir — maksiller sinüs 96 vakanın yalnız\n> 13'ünde etiketlidir. Tablodaki değerler, her\
+  \ yapının **referansta bulunduğu vakalar** üzerinden\n> hesaplanmıştır; kısmi etiketli veri setlerinde\
+  \ standart yaklaşım budur. Her iki değer de\n> açıkça raporlanmaktadır.\n\n---\n\n## Bu depo ne içeriyor\n\
+  \nTanıtım sitesi ve üç boyutlu görselleştirme katmanı. **Klinik yazılımın kendisi (WPF kontrol\nistasyonu,\
+  \ Unity/HoloLens arayüzü, eğitim hattı) bu depoda değildir.**\n\nSitedeki çene modeli bir çizim ya da\
+  \ hazır varlık değil: projenin kendi segmentasyon çıktısından\n(`.mha` maskesi) marching-cubes ile üretilmiştir.\
+  \ Üretim betiği: [`scripts/build_jaw.py`](scripts/build_jaw.py).\n\n```\nindex.html         Türkçe ana\
+  \ sayfa\nen.html            İngilizce sürüm\nar.html            Arapça sürüm (dir=\"rtl\")\nsunum.html\
+  \         19 slaytlık, klavyeyle gezilen sunum (3B modeller canlı)\nsrc/scene.js       three.js sahnesi\
+  \ — kaydırmaya bağlı kamera koreografisi\nsrc/device.js      HoloLens 2 modeli (sürüklenebilir)\nsrc/rtl.css\
+  \        sağdan sola katmanı — yalnız ar.html yükler\nscripts/build_jaw.py   segmentasyon maskesinden\
+  \ GLB üretimi\nscripts/charts.cjs     grafikleri tr/en/ar olarak üretir\n```\n\n**Arapça sürüm hakkında.**\
+  \ `rtl.css`, IBM Plex Sans Arabic'i `unicode-range`\nile mevcut Latin ailelerine ekler; böylece `style.css`'teki\
+  \ hiçbir seçici\ndeğişmeden Latin glifler Inter'de, Arapça glifler Plex Arabic'te render edilir.\nArapça\
+  \ bitişik bir yazıdır: harf aralığı ve büyük harf dönüşümü kapatılır,\nsatır aralığı artırılır. Sayılar\
+  \ ve birimler (`<50 ms` gibi) `direction:ltr`\nile yalıtılır, yoksa ters okunur. Üç boyutlu sahnenin\
+  \ yatay kamera ofseti de\naynalanır — metin sağda olduğu için çene sola geçer.\n\n## Çalıştırma\n\n\
+  ```bash\nnpm install\nnpm run dev      # http://localhost:4180\nnpm run build    # dist/ — statik, her\
+  \ yere dağıtılabilir\n```\n\nTeknoloji: **three.js** · Lenis · Vite. `main` dalına her push'ta GitHub\
+  \ Actions ile\nGitHub Pages'e dağıtılır.\n\n---\n\n## Ekip\n\n- **Noor Ahmed Hussein AL-GBURİ** — Takım\
+  \ Kaptanı · Proje Yürütücüsü. Klinik gereksinim analizi,\n  cerrahi iş akışı tasarımı, anatomik etiketleme\
+  \ ve doğrulama.\n  İstanbul Gelişim Üniversitesi, Diş Hekimliği Fakültesi öğrencisi.\n- **Yousif Mustafa\
+  \ Hamid ALRAMDHAN** — Yazılım mimarisi ve geliştirme. Karma gerçeklik arayüzü,\n  klinik kontrol istasyonu,\
+  \ yapay zekâ segmentasyon hattı.\n  Bartın Üniversitesi, Bilgisayar Mühendisliği öğrencisi.\n\nTakım\
+  \ GençBiyo · Başvuru No 1139B422600916\n\n## Lisans ve atıf\n\nHoloLens 2 üç boyutlu modeli: [\"Hololens\
+  \ 2\"](https://sketchfab.com/3d-models/hololens-2-3dd665394e6f4b62ba16338e55828ddd)\n— [Faber](https://sketchfab.com/muertoHambre),\
+  \ [CC BY 4.0](http://creativecommons.org/licenses/by/4.0/).\nVeri seti: ToothFairy2 (Cipriano vd., 2022;\
+  \ MICCAI 2024), CC-BY-SA 4.0.\n\n---\n\n<sub>Anahtar kelimeler: 3D dental navigasyon, dinamik cerrahi\
+  \ navigasyon, dental implant navigasyon,\nalt alveoler kanal segmentasyonu, mandibular kanal, CBCT segmentasyon,\
+  \ nnU-Net v2, HoloLens 2,\nkarma gerçeklik, diş hekimliğinde yapay zekâ, TÜBİTAK 2242</sub>\n"

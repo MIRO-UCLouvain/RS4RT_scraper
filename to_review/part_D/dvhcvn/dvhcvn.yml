@@ -1,0 +1,71 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Duy011201/dvhcvn
+url: https://github.com/Duy011201/dvhcvn
+platform: github
+description: ''
+license: GPL-3.0
+language: TypeScript
+keywords: []
+stars: 0
+updated_at: '2024-06-26T06:35:04Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Các đơn vị hành chính Việt Nam\n\nDữ liệu được cập nhật từ trang [Danh mục hành chính](https://danhmuchanhchinh.gso.gov.vn/)\
+  \ của Tổng cục thống kê và [Hệ thống bản đồ hành chính](http://gis.chinhphu.vn) của Cổng thông tin điện\
+  \ tử Chính phủ.\n\n## Các tập dữ liệu\n\n### dvhcvn.json\n\nThông tin 3 cấp đơn vị hành chính trả về\
+  \ từ [web service của TCTK](https://danhmuchanhchinh.gso.gov.vn/DMDVHC.asmx):\n\n- Tỉnh thành:\n  -\
+  \ `level1_id`\n  - `name`\n  - `type`: Thành phố Trung ương | Tỉnh\n  - `level2s`\n- Quận huyện\n  -\
+  \ `level2_id`\n  - `name`\n  - `type`: Quận | Huyện | Thành phố | Thị xã\n  - `level3s`\n- Phường xã\n\
+  \  - `level3_id`\n  - `name`\n  - `type`: Phường | Xã | Thị trấn\n\nVí dụ:\n\n```json\n{\n  \"level1_id\"\
+  : \"56\",\n  \"name\": \"Tỉnh Khánh Hòa\",\n  \"type\": \"Tỉnh\",\n  \"level2s\": [\n    {\n      \"\
+  level2_id\": \"568\",\n      \"name\": \"Thành phố Nha Trang\",\n      \"type\": \"Thành phố\",\n  \
+  \    \"level3s\": [\n        {\n          \"level3_id\": \"22363\",\n          \"name\": \"Phường Lộc\
+  \ Thọ\",\n          \"type\": \"Phường\"\n        },\n        \"...\"\n      ]\n    },\n    \"...\"\n\
+  \  ]\n```\n\n### [gis/\\*.json](/data/gis/)\n\nThông tin địa giới trích xuất từ [Hệ thống bản đồ hành\
+  \ chính](http://gis.chinhphu.vn) cho 2 cấp: tỉnh thành và quận huyện.\n\n#### <level1_id>.json\n\nDo\
+  \ nhiều dữ liệu nên mỗi tỉnh thành được tách ra một tập riêng.\nTrong đó, mỗi đơn vị hành chính (tỉnh\
+  \ thành hoặc quận huyện) có các thông tin:\n\n- `coordinates`\n- `bbox`\n- `type`: MultiPolygon | Polygon\n\
+  \nVí dụ [tập dữ liệu của Khánh Hoà](/data/gis/56.json), có nội dung như sau:\n\n```json\n{\n  \"level1_id\"\
+  : \"56\",\n  \"name\": \"Tỉnh Khánh Hòa\",\n  \"level2s\": [\n    {\n      \"level2_id\": \"568\",\n\
+  \      \"name\": \"Thành phố Nha Trang\",\n      \"coordinates\": [\n        [\n          [[109.317273127,\
+  \ 12.1642742720001], \"... (khoảng 30 cặp toạ độ)\"],\n          \"... (khoảng 10 đa giác)\"\n     \
+  \   ]\n      ],\n      \"bbox\": [109.110859607, 12.141705888, 109.370714452, 12.3798137530001],\n \
+  \     \"type\": \"MultiPolygon\"\n    },\n    \"...\"\n  ],\n  \"coordinates\": [\"... (khoảng 50 đa\
+  \ giác)\"],\n  \"bbox\": [108.669676534, 7.89146445900019, 115.836420367, 12.86823071],\n  \"type\"\
+  : \"MultiPolygon\"\n}\n```\n\n#### level1s_bbox.json\n\nRiêng dữ liệu `bbox` của tỉnh thành được lưu\
+  \ riêng với nội dung như sau:\n\n```json\n{\n  \"01\": [\n    105.28500419,\n    20.5642508770001,\n\
+  \    106.020154616,\n    21.3855144820001\n  ],\n  \"...\"\n}\n```\n\n### [sorted.json](/data/sorted.json)\n\
+  \nThông tin 3 cấp đơn vị hành chính đã được sắp xếp theo tên riêng.\nĐể tiết kiệm dung lượng, mỗi đơn\
+  \ vị hành chính là một mảng có các thành phần theo thứ tự như sau:\n\n0. Mã đơn vị\n1. Tên riêng\n2.\
+  \ Tiền tố\n3. Tên riêng không dấu\n4. Các đơn vị trực thuộc\n\nVí dụ:\n\n```json\n[\n  [\n    \"89\"\
+  , \"An Giang\", \"Tỉnh\", \"An Giang\",\n    [\n      [\n        \"886\", \"An Phú\", \"Huyện\", \"\
+  An Phu\",\n        [\n          [\"30337\", \"An Phú\", \"Thị trấn\", \"An Phu\"],\n          [\"30373\"\
+  , \"Đa Phước\", \"Xã\", \"Da Phuoc\"],\n          [\"30340\", \"Khánh An\", \"Xã\", \"Khanh An\"],\n\
+  \          \"...\"\n        ]\n      ],\n      \"...\"\n    ]\n  ],\n  \"...\"\n]\n```\n\n## Thư viện\
+  \ hỗ trợ\n\n- Dart [pub.dev](https://pub.dev/packages/dvhcvn)\n- JavaScript [npm](https://www.npmjs.com/package/dvhcvn)\n\
+  \n## Demo\n\n- [geolocation](https://dvhcvn.vercel.app/demo/geolocation.html): xác định dvhc từ kinh\
+  \ độ, vĩ độ\n- [map](https://dvhcvn.vercel.app/demo/map.html): hiển thị dvhc trên bản đồ [Goong.io](https://goong.io)\n\
+  - [parser](https://dvhcvn.vercel.app/demo/parser.html): xác định dvhc từ địa chỉ (xem parser API bên\
+  \ dưới)\n- [parser API](https://dvhcvn.vercel.app/demo/parser/api):\n  - Cách 1: `curl https://dvhcvn.vercel.app/demo/parser/api\
+  \ -d input=hanoi` -> chỉ trả về tên các dvhc \"**Thành phố Hà Nội**\"\n  - Cách 2: `curl https://dvhcvn.vercel.app/demo/parser/api\
+  \ -H 'Content-Type: text/plain' -d hanoi` -> trả về thông tin chi tiết\n  - Ví dụ: `curl https://dvhcvn.vercel.app/demo/parser/api\
+  \ -H 'Content-Type: text/plain' -d 'trung tu, dong da, ha noi'` trả về `[{\"id\":\"00226\",\"name\"\
+  :\"Trung Tự\",\"type\":\"Phường\"},{\"id\":\"006\",\"name\":\"Đống Đa\",\"type\":\"Quận\"},{\"id\":\"\
+  01\",\"name\":\"Hà Nội\",\"type\":\"Thành phố\"}]`\n\n## Nhưng... tại sao?!\n\nBộ dữ liệu này được tạo\
+  \ ra vì các dự án tương tự trên mạng Internet cung cấp thông tin không đầy đủ hoặc không được cập nhật\
+  \ thường xuyên.\nĐể tránh việc tương tự xảy ra với dự án này, một [daily cron](/firebase/functions/src/cron.ts)\
+  \ sẽ đối chiếu ngày hiệu lực của [nghị định mới nhất](https://danhmuchanhchinh.gso.gov.vn/NghiDinh.aspx)\
+  \ và ngày cập nhật dữ liệu để cảnh báo qua [Telegram group](https://t.me/dvhcvn).\n\n## Tự tải về\n\n\
+  Nếu vì lý do nào đó bạn không muốn dùng dữ liệu có sẵn tại đây và muốn tự tải về trực tiếp từ nguồn,\
+  \ thực hiện các câu lệnh như sau:\n\n```bash\ngit clone https://github.com/daohoangson/dvhcvn.git\n\
+  cd dvhcvn\n\n# xoá dữ liệu có sẵn\nrm -rf ./data/*\n\n# bắt đầu tải\n./downloader/download.sh\n\n# chạy\
+  \ các đoạn mã chuyển đổi\n./transformers/transform-all.sh\n```\n\n## Nguồn tham khảo\n\n- Tổng cục thống\
+  \ kê https://danhmuchanhchinh.gso.gov.vn\n- Cổng thông tin điện tử chính phủ http://gis.chinhphu.vn\n\
+  - https://github.com/linhmtran168/vietnam-gis-crawler\n- https://github.com/madnh/hanhchinhvn\n"

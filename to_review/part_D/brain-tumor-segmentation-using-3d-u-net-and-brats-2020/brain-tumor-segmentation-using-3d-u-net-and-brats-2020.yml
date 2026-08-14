@@ -1,0 +1,77 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: SadeepM/Brain-Tumor-Segmentation-using-3D-U-Net-and-BraTS-2020
+url: https://github.com/SadeepM/Brain-Tumor-Segmentation-using-3D-U-Net-and-BraTS-2020
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-08-04T15:08:50Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# \U0001F9E0 Brain Tumor Segmentation using 3D U-Net and BraTS 2020\n\nA PyTorch implementation\
+  \ of a **3D U-Net** for volumetric brain tumor segmentation, trained on the **BraTS 2020** dataset using\
+  \ four MRI modalities. The model segments three tumor sub-regions from 3D MRI volumes across 4 input\
+  \ channels.\n\n---\n\n## \U0001F4CC Overview\n\nThis project implements an end-to-end 3D medical image\
+  \ segmentation pipeline — from raw NIfTI MRI loading and preprocessing to model training, validation,\
+  \ and prediction visualization. The model is trained to segment brain tumors into three biologically\
+  \ meaningful sub-regions using multi-modal MRI data.\n\n---\n\n## \U0001F5C2️ Dataset\n\n- **Dataset:**\
+  \ [BraTS 2020](https://www.kaggle.com/datasets/awsaf49/brats20-dataset-training-validation)\n- **Input\
+  \ Modalities (4 channels):** FLAIR, T1, T1CE, T2\n- **Segmentation Classes (4):**\n\n| Label | Region\
+  \ |\n|-------|--------|\n| 0 | Background |\n| 1 | Necrotic / Non-enhancing Tumor Core (NCR/NET) |\n\
+  | 2 | Peritumoral Edema (ED) |\n| 3 | Enhancing Tumor (ET) *(relabeled from 4)* |\n\n- **Data split:**\n\
+  \  - Training: ~72%\n  - Validation: ~13%\n  - Test: ~15%\n\n> ⚠️ Subject `BraTS20_355` is skipped due\
+  \ to inconsistent file naming.\n\n---\n\n## \U0001F3D7️ Model Architecture — 3D U-Net\n\nA custom 3D\
+  \ U-Net built from scratch with skip connections and transposed convolution upsampling.\n\n```\nUNET3D(\n\
+  \  in_channels  = 4   (FLAIR, T1, T1CE, T2)\n  out_channels = 4   (background + 3 tumor regions)\n \
+  \ features     = [32, 64, 128, 256]\n)\n```\n\n- **Encoder:** 4× DoubleConv3d blocks + MaxPool3d\n-\
+  \ **Bottleneck:** DoubleConv3d(256 → 512)\n- **Decoder:** ConvTranspose3d upsampling + skip connections\
+  \ + DoubleConv3d\n- **Output:** Conv3d(32 → 4) with softmax\n\nEach `DoubleConv3d` block: `Conv3d →\
+  \ BatchNorm3d → ReLU → Conv3d → BatchNorm3d → ReLU`\n\n---\n\n## ⚙️ Training Configuration\n\n| Parameter\
+  \ | Value |\n|-----------|-------|\n| Epochs | 50 |\n| Batch Size | 1 |\n| Optimizer | Adam (lr=1e-4,\
+  \ weight_decay=1e-5) |\n| Loss Function | DiceCELoss (MONAI) |\n| Scheduler | ReduceLROnPlateau (factor=0.5,\
+  \ patience=5) |\n| Validation Metric | Mean Dice Score (MONAI DiceMetric) |\n| Inference | Sliding Window\
+  \ (64×64×64 patches) |\n| Validation Interval | Every 2 epochs |\n| Device | GPU (CUDA) / CPU |\n\n\
+  ---\n\n## \U0001F504 Checkpoint-Based Resumable Training\n\n> **Training was done in sessions due to\
+  \ GPU time limits on Google Colab's free tier.**\n\nTo work around Colab's GPU session limits, a **best-model\
+  \ checkpoint strategy** was implemented:\n\n- After every validation step, if the current mean Dice\
+  \ score improves over all previous epochs, the model weights are **automatically saved to Google Drive**\
+  \ (`best_brats_model.pth`)\n- In the next available GPU session, the saved checkpoint is **reloaded\
+  \ and training resumes** from where it left off\n- This ensures **no training progress is lost** between\
+  \ sessions\n\n```python\n# Save best model to Google Drive\nif mean_metric > best_metric:\n    best_metric\
+  \ = mean_metric\n    torch.save(model.state_dict(), \"/content/drive/MyDrive/best_brats_model.pth\"\
+  )\n\n# Resume in next session\nmodel.load_state_dict(torch.load(\"/content/drive/MyDrive/best_brats_model.pth\"\
+  ))\n```\n\nThis approach simulates **continuous training across multiple interrupted sessions**, making\
+  \ it practical for anyone working under free-tier GPU constraints.\n\n---\n\n## \U0001F6E0️ Preprocessing\
+  \ Pipeline (MONAI Transforms)\n\n- `LoadImaged` — Load NIfTI volumes\n- `EnsureChannelFirstd` — Reorder\
+  \ to channel-first format\n- `NormalizeIntensityd` — Per-channel, non-zero voxel normalization\n- `Lambdad`\
+  \ — Relabel class 4 → 3 for contiguous label indexing\n- `RandCropByPosNegLabeld` — Random 64×64×64\
+  \ crops (pos:neg ratio = 3:1)\n- `EnsureTyped` — Convert to PyTorch tensors\n\n---\n\n## \U0001F4E6\
+  \ Requirements\n\n```bash\npip install torch torchvision monai torchmetrics mlxtend kagglehub matplotlib\n\
+  ```\n\nOr in Google Colab:\n\n```bash\n!pip install -q torchmetrics mlxtend monai kagglehub\n```\n\n\
+  ---\n\n## \U0001F680 How to Run\n\n1. Clone the repository:\n   ```bash\n   git clone https://github.com/SadeepM/Brain-Tumor-Segmentation-using-3D-UNet-and-BraTS2020.git\n\
+  \   ```\n\n2. Open the notebook in [Google Colab](https://colab.research.google.com/):\n   ```\n   BraTS2020.ipynb\n\
+  \   ```\n\n3. Mount Google Drive (for checkpoint saving):\n   ```python\n   from google.colab import\
+  \ drive\n   drive.mount('/content/drive')\n   ```\n\n4. Run all cells from top to bottom.\n   - To **resume\
+  \ training** from a saved checkpoint, run the checkpoint loading cell before the training loop.\n\n\
+  ---\n\n## \U0001F4CA What's Covered\n\n- ✅ Downloading BraTS 2020 dataset via KaggleHub\n- ✅ Loading\
+  \ and preprocessing 3D NIfTI MRI volumes with MONAI\n- ✅ Multi-modal input stacking (FLAIR, T1, T1CE,\
+  \ T2)\n- ✅ Label relabeling for contiguous class indexing\n- ✅ Visualizing MRI slices and segmentation\
+  \ masks per modality\n- ✅ Building 3D U-Net from scratch with skip connections\n- ✅ Training with DiceCELoss\
+  \ and Adam optimizer\n- ✅ Per-class and mean Dice Score validation\n- ✅ Learning rate scheduling with\
+  \ ReduceLROnPlateau\n- ✅ Sliding window inference for large 3D volumes\n- ✅ Checkpoint saving to Google\
+  \ Drive after every best epoch\n- ✅ Resuming training from saved checkpoint across GPU sessions\n- ✅\
+  \ Prediction visualization overlaid on MRI slices\n\n---\n\n## \U0001F6E0️ Built With\n\n- [PyTorch](https://pytorch.org/)\n\
+  - [MONAI](https://monai.io/) — Medical imaging transforms, losses, metrics, and inference\n- [KaggleHub](https://github.com/Kaggle/kagglehub)\
+  \ — Dataset download\n- [Matplotlib](https://matplotlib.org/)\n- Google Colab (T4 GPU)\n- Google Drive\
+  \ — Checkpoint storage and training resumption\n\n---\n\n## \U0001F4C1 Project Structure\n\n```\n\U0001F4E6\
+  \ repo\n ┗ \U0001F4D3 BraTS2020.ipynb\n ┗ \U0001F4C4 README.md\n```\n\n---\n\n## \U0001F4DD License\n\
+  \nThis project is open source and available under the [MIT License](LICENSE).\n"

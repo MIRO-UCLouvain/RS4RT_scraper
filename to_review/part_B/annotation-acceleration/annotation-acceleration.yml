@@ -1,0 +1,33 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hhaentze/Annotation-Acceleration
+url: https://github.com/hhaentze/Annotation-Acceleration
+platform: github
+description: Image inversion step to transform MR images to synthetical CT
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 1
+updated_at: '2025-06-13T11:24:41Z'
+image_source: https://raw.githubusercontent.com/hhaentze/Annotation-Acceleration/HEAD/sample_images.png
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# Annotation-Acceleration\n> Image inversion step to transfrom MR images to synthetical\
+  \ CT\n\nMRI segmentation tools are significantly less common compared to those available for CT imaging.\
+  \ However, many CT-based tools can also be applied to MR images, often yielding results that, while\
+  \ not perfect, serve as a reliable foundation for creating annotations. These annotations can then be\
+  \ used to train MRI-specific models with minimal adjustments.\n\nOne effective technique to improve\
+  \ compatibility is inverting MR images before further processing. This inversion creates a pseudo-synthetic\
+  \ CT representation, making the images more interpretable by CT-based models.\n\nHere we provide example\
+  \ code for image inversion and demonstrates how to integrate it effectively with TotalSegmentor. Further\
+  \ details and findings will be shared in an upcoming publication.\n\n![Sample Image](sample_images.png)\n\
+  (a : raw T1w-MRI | b : inverted T1w-MRI | c : inverted T1w-MRI with black background)\n\n\n## Sample\
+  \ Code\n```python\ndef invert(img, keep_background=True):\n    img = img.clip(0, 3000)\n    _max = img.max()\n\
+  \    _min = img.min()\n    img = _max - img + _min\n\n    if keep_background:\n        th = (_max -\
+  \ _min) * 0.99 + _min\n        img[img >= th] = 0\n\n    return img\n```\n\n## Inference\n```bash\n\
+  pip install TotalSegmentator\npip install monai\n\npython main.py <path_to_image> # invert image\nTotalSegmentator\
+  \ -i <inverted_image> -o segmentations --ml --fast # fast option yields best results for MRI\n```"

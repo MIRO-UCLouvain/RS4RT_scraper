@@ -1,0 +1,135 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: BergenParticleTherapy/DVHToolkit
+url: https://github.com/BergenParticleTherapy/DVHToolkit
+platform: github
+description: A GUI toolkit for visualizing and performing toxicity modelling using Dose Volume Histogram
+  files
+license: null
+language: Python
+keywords: []
+stars: 17
+updated_at: '2026-06-14T19:57:00Z'
+image_source: https://raw.githubusercontent.com/BergenParticleTherapy/DVHToolkit/master/figures/mainwindow.PNG
+heuristic_total_score: 32
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 particle-therapy term(s).
+- Matched 4 support term(s).
+readme_excerpt: "# DVHToolkit\nA GUI toolkit for visualizing and performing toxicity modelling and bootstrapping\
+  \ using Dose Volume Histogram files.\n\nExtract information from Dose Volume Histogram files, calculate\
+  \ metrics such as D%, V% and fitting to NTCP models with methods of calculating the confidence intervals\
+  \ of the resulting parameters.\nBy Helge Egil Seime Pettersen, Haukeland University Hospital, 2019.\n\
+  \nThe program consists of a single window with some dialog options. Most of the buttons and options\
+  \ are documented with a tooltip, accessed by holding the pointer above the wanted option. All settings\
+  \ are saved upon exiting.\n\nCurrent version: 1.67\n\n![main window](https://raw.githubusercontent.com/BergenParticleTherapy/DVHToolkit/master/figures/mainwindow.PNG)\n\
+  \n# FILE options\nBefore loading any patient / cohort folders containing CVS or ECLIPSE DVH files, the\
+  \ files to be opened has to be configured using the «FILE OPTIONS» part of the window. First, the file\
+  \ type has to be selected:\n- CSV files: A simple CSV file is a DVH file that is either comma or semicolon\
+  \ separated, containing the columns «Dose» and «Volume». It is configured by choosing whether it is\
+  \ comma separated with period decimals (x.y, x.y), or semicolon separated with comma decimals (x,y;\
+  \ x,y): the autodetect option chooses semicolon if any are detected in the first line. Then, the columns\
+  \ has to be chosen. Use a comma-separated list without whitespace. The two columns «Dose» and «Volume»\
+  \ are read out from the CSV file, so if they are the 3. and 4. columns you can write «,,Dose,Volume»\
+  \ or «DoseWrong,VolumeWrong,Dose,Volume» etc. The dose unit is chosen below, either cGy or Gy. If the\
+  \ autodetect options is used, then cGy is chosen if any of the entries in the dose column exceeds «1000».\
+  \ If the CSV file contains a header row, skip this by choosing the correct options (skip = 1).\n- ECLIPSE\
+  \ files: Most of the options here are similar, but in addition the program supports different organ\
+  \ structures. The file is read out, and all found structures are listed in a dialog when choosing the\
+  \ Load patient folder button. Write a string that matches the wanted structures («Brain\\*» matches\
+  \ «Brain», «Whole Brain», «Brain L» etc.): Use a wildcard **\\*** to match several structures, and a\
+  \ pipe **|** to include several structures.\n![Structure choice](https://raw.githubusercontent.com/BergenParticleTherapy/DVHToolkit/master/figures/structurechoice.PNG)\n\
+  \nThe patient toxicity can either be given as another CVS file (to be called «cohort_tox.csv» in the\
+  \ folder above the cohort folder): This file should contain each patient by their filename and toxicity\
+  \ grade. If the patient contained in 1234.csv has grade 3, write a line «1234,3» in the file. Then,\
+  \ choose the wanted toxicity threshold in the program. (2 -> all patients with grade ≥2 are defined\
+  \ as having complications). It is also possible to load the toxicity from the filenames, so that any\
+  \ file with «tox» in the filename is defined as having toxicity. In that case, use toxicity limit 1.\n\
+  \nAfter these settings have been configured, load one or more patient cohorts using the Load patient\
+  \ folder button. This will open a file dialog, where you choose the folder containing the CSV files.\
+  \ The cohort name will be the name of the folder. All the added cohorts will be pooled to a single dataset.\
+  \ The validity of the loaded data may be controlled with the **Show DVHs** button: patients with tox\
+  \ are shown in red.\n\nThe loaded patient sets can be displayed with a range of options and groupings\
+  \ (per plan, per structure) etc. The **show DVHs** button displays the following menu:\n![dvhoptions](https://raw.githubusercontent.com/BergenParticleTherapy/DVHToolkit/master/figures/dvhoptions.PNG)\n\
+  \nThe **Show Aggregated DVH Plot** button opens a window where all patients within a certain group (structure,\
+  \ plan) can be added together, showing the median / mean DVH for the given plan / structure.\n\nIn addition,\
+  \ certain % Dose or % Volume values can be calculated for each patient and stored in output CSV files\
+  \ for further use with the **Save DVH values** button. \n\nIf the LKB model is to be used for calculations,\
+  \ a set of look-up-tables for the gEUD values must be calculated after loading the patient cohorts.\
+  \ This is only performed once per patient (per structure), and is done by clicking the **Calculate gEUD\
+  \ splines** button. The look-up-tables are stored as cubic splines in the cohort folder (subfolder gEUD),\
+  \ ensuring high interpolation accuracy for all values of n. \n\nThe **Show gEUD/n** button can subsequently\
+  \ be used to display the different gEUD values as functions of n.\n\n# AUROC\nIn order to identify the\
+  \ strength of different n values for the dataset, it is possible to calculate the AUROC: For each n\
+  \ value, check how many patients are correctly modelled with toxicity using a dose threshold based on\
+  \ their gEUD values (gEUD < threshold -> no tox; gEUD > threshold -> tox). The AUROC for this sensitivity\
+  \ and specificity for this n value calculated, and the n values are varied according to the limits chosen\
+  \ [2]. \n![main window](https://raw.githubusercontent.com/BergenParticleTherapy/DVHToolkit/master/figures/auroc.PNG)\n\
+  \n# Choice of NTCP Model\nTwo methods for calculating the NTCP are supported: \n- The logit model ![](https://latex.codecogs.com/svg.latex?\\\
+  mathrm{NTCP}&space;=&space;1&space;-&space;(1&space;&plus;&space;e^{a&plus;bD})^{-1}), where D is calculated\
+  \ as the dose at a given volume fraction. In that case, choose the % value below, e.g. D20% or D1%.\
+  \ For each patient, this value is calculated from the DVH files.\n- The Lyman-Kutcher-Burman (LKB) model\
+  \ [3], [4], in which a the DVH is aggregated to a gEUD value ![](https://latex.codecogs.com/svg.latex?\\\
+  mathrm{gEUD}&space;=&space;\\left[&space;D_i&space;^{1/n}&space;\\Delta&space;V_i&space;\\right&space;]^n)\
+  \ as calculated from a (here created) differential DVH. The n value describes whether the organ is serial\
+  \ or parallel. Then, the two parameters m (population variance) and TD50 (dose giving a 50% probability\
+  \ of toxicity) are used in a cumulative density function (CDF)\n\n![](https://latex.codecogs.com/svg.latex?\\\
+  mathrm{NTCP}&space;=&space;\\frac{1}{2\\pi}\\int_{\\infty}^{t}e^{-x^2/2}&space;\\mathrm{d}x,&space;\\\
+  qquad&space;t=\\frac{\\mathrm{gEUD}-\\mathrm{TD50}}{m\\cdot&space;\\mathrm{TD50}})\n\nIn this program,\
+  \ the CDF is substituted by a homotopy perturbation method to increase the computational efficiency\
+  \ [5]:\n\n![](https://latex.codecogs.com/svg.latex?\\mathrm{NTCP}&space;=&space;\\left[&space;1&space;&plus;&space;\\\
+  exp\\left(&space;-\\frac{238}{23}t&space;&plus;&space;111\\&space;\\mathrm{atan}\\left(\\frac{37}{294}t&space;\\\
+  right&space;)\\right&space;)&space;\\right]^{-1},&space;\\qquad&space;t=\\frac{\\mathrm{gEUD}-\\mathrm{TD50}}{m\\\
+  cdot&space;\\mathrm{TD50}})\n\n# Finding the model parameters of the NTCP model\nThe main part of the\
+  \ program is to find the model parameters of the chosen NTCP model: a,b for the Logit model, and n,m,TD50\
+  \ for the LKB model. The bounds of the parameters are defined (or the default values can be kept). Two\
+  \ methods are supplied for the optimization procedure:\n- Matrix Minimization: A grid of a given size\
+  \ (matrix size option) is made in 2 (logit) or 3 (LKB) dimensions. For each cell, the error between\
+  \ the calculated NTCP model and the truth (toxicity) is summed over all patient, and the parameters\
+  \ corresponding to the cell containing the lowest error are stored. This is time demanding, especially\
+  \ for the LKB model with large matrix sizes (high granularity of the output parameters).\n- Gradient\
+  \ Descent Optimization: Here, an algorithm applying the truncated Newton algorithm [6] for unconstrained\
+  \ optimization of the parameters, together with a basin jumping procedure for locating the global minimum\
+  \ from any identified local minima [7]. The methods are implemented using the scipy.optimize.basinhopping\
+  \ routine [8]. It is substantially quicker compared to the matrix minimization, and can also locate\
+  \ minima with a higher accuracy. This method is configured with a certain number of «basin hoppings»,\
+  \ or perturbations from a located minimum. The «temperature» is the expected change in error between\
+  \ minima and the «jump lengths» define the limits of a random variable defining the perturbation for\
+  \ a given parameter.\n\nWith each optimization method, the error calculation can be as least squares\
+  \ or a Maximum Log Likelihood\n\n![](https://latex.codecogs.com/svg.latex?\\mathrm{LS}&space;=&space;\\\
+  min&space;\\sum_i&space;\\left(\\mathrm{tox}_i&space;-&space;\\mathrm{NTCP}_i\\right)^2),\n\n![](https://latex.codecogs.com/svg.latex?\\\
+  mathrm{LLH}&space;=&space;\\max&space;\\left[\\sum_{\\mathrm{tox}}&space;\\ln&space;\\mathrm{NTCP}_i&space;&plus;&space;\\\
+  sum_{\\mathrm{not\\&space;tox}}&space;\\ln&space;(1&space;-&space;\\mathrm{NTCP}_1)\\right])\n\nthe\
+  \ latter being more adopted [3]. The chosen method is applied by using the Calculate NTCP button, in\
+  \ which a plot as shown below is displayed (here with D1% and logit):\n\n![NTCP example](https://raw.githubusercontent.com/BergenParticleTherapy/DVHToolkit/master/figures/ntcpexample.PNG)\n\
+  \n# Calculating the confidence limits of the models\nIn this part of the program, several approaches\
+  \ have been attempted and compared. In [3], three methods are described:\n- Profile likelihood: For\
+  \ each parameter, a 1D scan is performed. The Log Likelihood value is drawn as a function of the parameter,\
+  \ with its maximum at the fitted value. Then, the two locations where ![](https://latex.codecogs.com/svg.latex?\\\
+  mathrm{LLH}&space;=&space;\\mathrm{LLH}_{\\max}&space;-&space;\\chi^2&space;(1)/2)\nare identified,\
+  \ where ![](https://latex.codecogs.com/svg.latex?\\chi^2&space;(1)/2) is the critical ![](https://latex.codecogs.com/svg.latex?\\\
+  chi^2) value with 1 DoF. A 95% confidence interval corresponds to ![](https://latex.codecogs.com/svg.latex?\\\
+  chi^2&space;(1)/2=1.92)\n![Profile likelihood](https://raw.githubusercontent.com/BergenParticleTherapy/DVHToolkit/master/figures/profilelikelihood.png)\n\
+  - Non-parametric Bootstrap: This statistical method originates from [9], and is a Monte Carlo-type method\
+  \ to increase the statistical power of a sample. With n patients in the cohort, n patients are chosen\
+  \ at random (with replacement). For each synthetic cohort, a parameter optimization is performed to\
+  \ obtain a new set of parameters a,b or n,m,TD50. The resulting distribution of parameters is used to\
+  \ calculate the statistics such as 95% confidence interval, median parameters etc. This process is repeated\
+  \ 1000-2000 times (chosen as the Number of CI bootstrapping iterations). If the «Use CI median as parameters»\
+  \ is chosen, the median value of this new distribution substitutes the former found optimal parameter\
+  \ set in future NTCP plots (calculate NTCP model after Calculate Confidence Intervals)\n- Parametric\
+  \ bootstrap: Similar to the non-parametric bootstrap. Instead of choosing a synthetic cohort, now the\
+  \ cohort it kept but for each patient a random number ![](https://latex.codecogs.com/svg.latex?r_n)\
+  \ is generated. If the NTCP calculated from the model fitted paramateters is lower than this value,\
+  \ no complication is assumed, and if ![](https://latex.codecogs.com/svg.latex?r_n<\\mathrm{NTCP}) complication\
+  \ is assumed. Then, a parameter set is found from this new toxicity cohort: to be repeated 1000-2000\
+  \ times.\n\nThe black lines are bias corrected confidence, intervals, while the green ones are uncorrected.\n\
+  \n![Bootstrap distributions](https://raw.githubusercontent.com/BergenParticleTherapy/DVHToolkit/master/figures/bootstrapdistributions.PNG)\n\
+  \nUsing the bootstrap methods, a «pivot» interval can be used as improved CI [10, p. 11], and it is\
+  \ calculated as\n![](https://latex.codecogs.com/svg.latex?[\\hat\\theta_L,&space;\\hat\\theta_U]&space;\\\
+  to&space;[2\\hat\\theta&space;-&space;\\hat\\theta_U,&space;2\\hat\\theta&space;-&space;\\hat\\theta_L]),\n\
+  Where ![](https://latex.codecogs.com/svg.latex?\\hat\\theta_{L,U}) are the upper and lower limits, respectively,\
+  \ and ![](https://latex.codecogs.com/svg.latex?\\hat\\theta) is the best estimate value from"

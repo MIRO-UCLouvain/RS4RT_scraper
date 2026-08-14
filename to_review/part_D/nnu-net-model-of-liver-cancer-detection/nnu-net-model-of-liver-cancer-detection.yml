@@ -1,0 +1,147 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: sushanthari/nnu-net-model-of-liver-cancer-detection
+url: https://github.com/sushanthari/nnu-net-model-of-liver-cancer-detection
+platform: github
+description: '**Automated liver & tumor segmentation** on abdominal CT scans using nnU-Net v2, trained
+  on the LiTS dataset (131 volumes; 105 for 5-fold CV, 26 held out for testing). Achieved mean Dice of
+  0.938 (liver) and 0.525 (tumor) across folds, using a 5-fold ensemble for final inference. Built with
+  PyTorch, NiBabel, and SimpleITK.'
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-08-02T11:53:00Z'
+image_source: null
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 AI/ML term(s) in repository name.
+readme_excerpt: '# Liver & Tumor Segmentation using nnU-Net v2
+
+
+  Automated liver and tumor segmentation from abdominal CT scans using [nnU-Net v2](https://github.com/MIC-DKFZ/nnUNet),
+  a self-configuring deep learning framework for biomedical image segmentation. Trained and evaluated
+  on the [LiTS Challenge](https://competitions.codalab.org/competitions/17094) dataset.
+
+
+  ## Overview
+
+
+  End-to-end 3D medical image segmentation pipeline — from raw NIfTI CT volumes to a trained, cross-validated,
+  and independently evaluated model that segments liver and liver tumors in a single forward pass.
+
+
+  - 3D low-resolution U-Net (`3d_lowres`) via nnU-Net v2
+
+  - 5-fold cross-validation on 105 volumes
+
+  - Independent evaluation on 26 held-out test volumes
+
+  - 5-fold ensemble inference for final predictions
+
+
+  ## Dataset
+
+
+  131 labeled CT volumes (LiTS Challenge): 105 for training/CV (84 train / 21 validation per fold), 26
+  held out entirely for final testing. Labels: background, liver, tumor.
+
+
+  ## Methodology
+
+
+  1. Data conversion to NIfTI, label geometry repair, integrity checks
+
+  2. Automatic preprocessing via nnU-Net''s `ExperimentPlanner`
+
+  3. Training: `3d_lowres`, 100 epochs/fold, 5 folds
+
+  4. Per-fold validation with automatic Dice scoring
+
+  5. Final 5-fold ensemble inference on held-out test set
+
+
+  ## Results
+
+
+  **5-Fold Cross-Validation**
+
+
+  | Fold | Liver Dice | Tumor Dice |
+
+  |------|-----------|-----------|
+
+  | 0 | 0.9608 | 0.4867 |
+
+  | 1 | 0.9151 | 0.4962 |
+
+  | 2 | 0.9404 | 0.5203 |
+
+  | 3 | 0.9319 | 0.4107 |
+
+  | 4 | 0.9438 | 0.7100 |
+
+  | **Mean ± Std** | **0.9384 ± 0.0167** | **0.5248 ± 0.1114** |
+
+
+  **Held-Out Test Set (n=26, 5-fold ensemble)**
+
+
+  | Metric | Mean | Std | Median | Min | Max |
+
+  |--------|------|-----|--------|-----|-----|
+
+  | Liver Dice | 0.9578 | 0.0212 | 0.9633 | 0.8953 | 0.9827 |
+
+  | Liver Jaccard | 0.9198 | 0.0379 | 0.9293 | 0.8104 | 0.9659 |
+
+  | Liver Precision | 0.9535 | 0.0272 | 0.9590 | 0.8798 | 0.9939 |
+
+  | Liver Recall | 0.9628 | 0.0280 | 0.9671 | 0.8831 | 0.9930 |
+
+  | Tumor Dice | 0.6251 | 0.2799 | 0.7287 | 0.0000 | 0.9497 |
+
+  | Tumor Jaccard | 0.5063 | 0.2680 | 0.5735 | 0.0000 | 0.9043 |
+
+  | Tumor Precision | 0.8294 | 0.1700 | 0.9266 | 0.3750 | 0.9987 |
+
+  | Tumor Recall | 0.5708 | 0.3045 | 0.6202 | 0.0000 | 0.9482 |
+
+
+  Liver segmentation is strong and highly consistent (Dice 0.96 on independent test data). Tumor segmentation
+  shows greater variance — expected given how much tumor size, count, and contrast differ across patients;
+  two test cases had no tumor present at all, contributing to the wider spread.
+
+
+  ## Tech Stack
+
+
+  nnU-Net v2, PyTorch, NiBabel, SimpleITK, NumPy, Pandas — trained on Kaggle (NVIDIA T4).
+
+
+  ## Usage
+
+
+  ```bash
+
+  pip install nnunetv2
+
+  nnUNetv2_plan_and_preprocess -d 27 -c 3d_lowres --verify_dataset_integrity
+
+  nnUNetv2_train 27 3d_lowres 0 -tr nnUNetTrainer_100epochs -device cuda
+
+  nnUNetv2_predict -i <input> -o <output> -d 27 -c 3d_lowres -f 0 1 2 3 4 -tr nnUNetTrainer_100epochs
+
+  ```
+
+
+  ## Citation
+
+
+  Isensee, F. et al. (2021). nnU-Net: a self-configuring method for deep learning-based biomedical image
+  segmentation. *Nature Methods*, 18(2), 203-211.
+
+  '

@@ -1,0 +1,62 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: githupmohamedashour/VMAT_QA_Console
+url: https://github.com/githupmohamedashour/VMAT_QA_Console
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-08T00:26:37Z'
+image_source: null
+heuristic_total_score: 25
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 9 support term(s).
+readme_excerpt: "# VMAT Plan QA Console\n\nA desktop application for analyzing a single patient's exported\
+  \ VMAT case:\nplan complexity (MCSv, MFC, SAS), dose/DVH, structure volumes, setup shifts,\nand — the\
+  \ core feature — **comparing the planned beam delivery against what\nthe treatment machine actually\
+  \ recorded**, to verify delivery accuracy.\n\n## What it reads\n\nPoint it at a folder containing a\
+  \ patient's exported DICOM files (CT, RTPLAN,\nRTDOSE, RTSTRUCT, REG, RTRECORD, RTIMAGE — any mix).\
+  \ It automatically sorts\nfiles by modality; you don't need to rename or organize anything first.\n\n\
+  ## Setup\n\nRequires Python 3.10+.\n\n```bash\ncd vmat_qa_app\npip install -r requirements.txt\npython\
+  \ main.py\n```\n\nOn Linux, if you see a Qt platform plugin error, also install:\n```bash\nsudo apt-get\
+  \ install libxcb-cursor0\n```\n\n## Tabs\n\n- **Overview** — patient, plan, prescription, and file inventory\
+  \ at a glance\n- **Plan Complexity** — MCSv, MFC, SAS per arc, with the modulation profile\n  plotted\
+  \ across each arc (AAV \\u00d7 LSV)\n- **Delivery QA** — the comparison tab. It will ask you to provide\
+  \ the\n  treatment record file (RTRECORD, exported from the linac after the\n  session) before it can\
+  \ run. Once provided, it shows per-beam gantry\n  trajectory (planned vs. delivered), aperture-area\
+  \ deviation over the arc,\n  and flags whether the delivery was within tolerance.\n- **Dose / DVH**\
+  \ — click any structure to compute and plot its DVH plus\n  dose statistics (mean, max, D95, D2cc)\n\
+  - **Structures** — table of contoured structures and their display colors\n- **Setup Shifts** — per-fraction\
+  \ translation shifts extracted from any\n  registration (REG) files in the case\n\n## Notes on the Delivery\
+  \ QA comparison\n\n- It matches beams between the plan and the record by **Beam Number**, so\n  the\
+  \ record must come from the same plan.\n- Gantry and aperture-area series are resampled onto a common\
+  \ 0–100%\n  beam-progress axis (using cumulative meterset weight) before comparing,\n  since the plan\
+  \ and the record don't necessarily share the same control\n  point timing.\n- If the record is missing\
+  \ gantry or MLC data at some points, the app flags\n  this explicitly under that beam's card rather\
+  \ than silently guessing.\n- Tolerance thresholds (currently: gantry warn at 1\\u00b0/fail at 3\\u00b0\
+  \ max error;\n  aperture area warn at 5%/fail at 15%) are a reasonable starting point but\n  **should\
+  \ be reviewed and adjusted to match your department's own QA\n  protocol** — edit `core/delivery_comparison.py`,\
+  \ function `deviation_flag`\n  calls in `ui/tabs/delivery_qa_tab.py`.\n\n## Known limitations / things\
+  \ to verify before clinical use\n\n- The MCSv/LSV formula uses a standard published implementation,\
+  \ but several\n  slightly different versions exist in the literature. If your department\n  uses a specific\
+  \ reference, this should be checked against it.\n- DVH rasterization uses nearest-slice contour-to-grid\
+  \ mapping, adequate for\n  routine review but not a substitute for your TPS's own DVH for final\n  reporting.\n\
+  - RTRECORD completeness (which fields are populated) varies by vendor and\n  software version. This\
+  \ app is defensive about missing fields but can only\n  compare what the file actually contains.\n-\
+  \ **This tool is for QA review support, not a certified medical device.**\n  Treat all outputs as decision\
+  \ support alongside your existing QA process.\n\n## Project structure\n\n```\nvmat_qa_app/\n  main.py\
+  \                       # app entry point, main window, navigation\n  core/\n    dicom_loader.py   \
+  \          # folder scanning + modality classification\n    complexity.py               # MCSv / MFC\
+  \ / SAS calculations\n    dose_analysis.py            # RTDOSE + RTSTRUCT -> DVH\n    delivery_comparison.py\
+  \      # RTPLAN vs RTRECORD comparison engine\n  ui/\n    theme.py                    # visual style\
+  \ (colors, fonts, stylesheet)\n    widgets.py                  # metric cards, gantry dial, status pills\n\
+  \    plot_canvas.py              # matplotlib styling helpers\n    tabs/\n      overview_tab.py\n  \
+  \    complexity_tab.py\n      delivery_qa_tab.py\n      dose_tab.py\n      structures_tab.py\n     \
+  \ setup_tab.py\n```\n"

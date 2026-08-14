@@ -1,0 +1,138 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: shreddedlines/dental-cbct-segmentation-pipeline
+url: https://github.com/shreddedlines/dental-cbct-segmentation-pipeline
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-09T22:17:31Z'
+image_source: https://raw.githubusercontent.com/shreddedlines/dental-cbct-segmentation-pipeline/HEAD/assets/images/cbct_overlay.png
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# Dental CBCT Segmentation Pipeline using nnU-Net v2\n\n<!-- Badges -->\n![Python 3.10](https://img.shields.io/badge/Python-3.10-blue.svg)\n\
+  ![nnU-Net v2](https://img.shields.io/badge/nnU--Net-v2-green.svg)\n![CUDA 11.8+](https://img.shields.io/badge/CUDA-11.8%2B-orange.svg)\n\
+  ![Platform: Linux](https://img.shields.io/badge/Platform-Ubuntu%20Linux-lightgrey.svg)\n\n> End-to-end\
+  \ 3D dental CBCT segmentation pipeline using nnU-Net v2 on the ToothFairy3 dataset with 532 CBCT volumes\
+  \ and 77 anatomical classes.\n\n<p align=\"center\">\n  <img src=\"assets/images/cbct_overlay.png\"\
+  \ alt=\"CBCT segmentation example showing original volume, predicted segmentation, and overlay\" width=\"\
+  800\">\n</p>\n\n---\n\n## Overview\n\nCone-Beam Computed Tomography (CBCT) is the standard 3D imaging\
+  \ modality in modern dentistry, producing volumetric scans of the craniofacial region. Accurate automated\
+  \ segmentation of dental structures from CBCT volumes is critical for treatment planning (implant placement,\
+  \ orthodontics, oral surgery), 3D reconstruction, and computer-aided diagnosis.\n\nThis repository implements\
+  \ a **complete, reproducible segmentation pipeline** for 77 dental and maxillofacial classes — including\
+  \ individual teeth, jawbones, dental restorations (crowns, bridges, implants), pulp chambers, root canals,\
+  \ maxillary sinuses, and the inferior alveolar canal (IAC). The pipeline is built on [nnU-Net v2](https://github.com/MIC-DKFZ/nnUNet),\
+  \ the self-configuring framework that has achieved state-of-the-art results across 23+ medical image\
+  \ segmentation benchmarks.\n\n### Key Features\n\n- **77-class multi-label segmentation** of dental\
+  \ CBCT volumes (FDI notation teeth, anatomical structures, restorations)\n- **Self-configuring pipeline**\
+  \ via nnU-Net v2 — automatic fingerprinting, preprocessing, architecture search, and training\n- **Modular\
+  \ Python package** (`dental_pipeline`) with clean separation of concerns\n- **YAML-driven configuration**\
+  \ — single config file controls the entire pipeline\n- **Dataset validation** — structural, format,\
+  \ and label integrity checks before training\n- **Post-processing** — connected component analysis and\
+  \ minimum-size filtering for anatomically plausible predictions\n- **Comprehensive evaluation** — per-class\
+  \ Dice, HD95, sensitivity, precision, and category-aggregated metrics\n- **Interactive visualization**\
+  \ — multi-slice overlays with Plotly for qualitative assessment\n- **Read-only dataset handling** —\
+  \ symlinks preserve original data; all outputs go to separate directories\n- **Reproducibility** — fixed\
+  \ seeds, deterministic training, full logging\n\n---\n\n## Repository Structure\n\n```\ndental-cbct-segmentation-pipeline/\n\
+  │\n├── README.md                          # This file\n├── Report.pdf                         # Technical\
+  \ report\n├── requirements.txt                   # Python dependencies\n├── setup.py               \
+  \            # Package installation\n│\n├── configs/\n│   └── pipeline_config.yaml           # Central\
+  \ YAML configuration\n│\n├── src/\n│   └── dental_pipeline/\n│       ├── __init__.py               \
+  \ # Package init + version\n│       ├── config.py                  # Configuration dataclass + loader\n\
+  │       ├── dataset_validator.py       # Dataset structure & label validation\n│       ├── label_remapping.py\
+  \         # nnU-Net label ID remapping\n│       ├── nnunet_setup.py            # nnU-Net directory setup\
+  \ + dataset.json\n│       ├── postprocessing.py          # Connected-component post-processing\n│  \
+  \     ├── metrics.py                 # Dice, HD95, per-class evaluation\n│       └── visualization.py\
+  \          # Plotly-based volume visualization\n│\n├── scripts/\n│   ├── 01_validate_dataset.py    \
+  \     # Step 1: Validate ToothFairy3 dataset\n│   ├── 02_setup_nnunet.py             # Step 2: Create\
+  \ nnU-Net directory structure\n│   ├── 03_preprocess.py               # Step 3: Run nnU-Net preprocessing\n\
+  │   ├── 04_train.py                    # Step 4: Launch nnU-Net training\n│   ├── 05_evaluate.py   \
+  \              # Step 5: Predict + compute metrics\n│   └── 06_visualize.py               # Step 6:\
+  \ Generate visualizations\n│\n├── assets/\n│   └── images/                        # Project visualizations\
+  \ for README\n│\n└── outputs/                           # All pipeline outputs\n    ├── label_mapping.json\
+  \             # Label ID mapping (original to contiguous)\n    ├── nnunet_env.sh                  #\
+  \ nnU-Net environment variable exports\n    ├── validation_report/             # Dataset validation\
+  \ results\n    ├── nnunet_results/                # Trained model checkpoints\n    ├── predictions/\
+  \                   # Inference outputs\n    ├── metrics/                       # Evaluation CSVs +\
+  \ visualizations\n    ├── visualizations/                # Plotly HTML + PNG slices\n    └── logs/ \
+  \                         # Pipeline execution logs\n```\n\n---\n\n## Quick Start\n\n```bash\n# 1. Clone\
+  \ and navigate to the repository\ngit clone https://github.com/shreddedlines/dental-cbct-segmentation-pipeline.git\n\
+  cd dental-cbct-segmentation-pipeline\n\n# 2. Create environment and install\nconda create -n dental\
+  \ python=3.10 -y\nconda activate dental\npip install -e \".[dev]\"\n\n# 3. Configure — set your dataset\
+  \ path\n#    Edit configs/pipeline_config.yaml:\n#      paths.dataset_root: \"/path/to/ToothFairy3\"\
+  \n\n# 4. Validate the dataset\npython scripts/01_validate_dataset.py\n\n# 5. Setup, preprocess, and\
+  \ train\npython scripts/02_setup_nnunet.py\npython scripts/03_preprocess.py\npython scripts/04_train.py\n\
+  ```\n\n---\n\n## Detailed Setup\n\n### System Requirements\n\n| Component     | Minimum            \
+  \      | Recommended              |\n|---------------|--------------------------|--------------------------|\n\
+  | **OS**        | Ubuntu 20.04 LTS         | Ubuntu 22.04 LTS         |\n| **GPU**       | NVIDIA GPU,\
+  \ 12 GB VRAM   | NVIDIA RTX A5000, 24 GB  |\n| **RAM**       | 32 GB                    | 64 GB    \
+  \                |\n| **Storage**   | 200 GB free              | 500 GB SSD               |\n| **CUDA**\
+  \      | 11.8                     | 12.1                     |\n| **Python**    | 3.10             \
+  \        | 3.10                     |\n\n### Python Environment\n\n```bash\n# Create a fresh conda environment\n\
+  conda create -n dental python=3.10 -y\nconda activate dental\n\n# Install PyTorch with CUDA support\n\
+  pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118\n\n# Install\
+  \ the pipeline package in editable mode\npip install -e \".[dev]\"\n\n# Verify installation\npython\
+  \ -c \"import dental_pipeline; print(dental_pipeline.__version__)\"\npython -c \"import torch; print(f'CUDA\
+  \ available: {torch.cuda.is_available()}')\"\n```\n\n### nnU-Net v2 Setup\n\nnnU-Net v2 is installed\
+  \ automatically as a dependency. The pipeline sets the required environment variables programmatically\
+  \ via `nnunet_setup.py`, but you can also export them manually:\n\n```bash\nexport nnUNet_raw=\"$(pwd)/outputs/nnunet_raw\"\
+  \nexport nnUNet_preprocessed=\"$(pwd)/outputs/nnunet_preprocessed\"\nexport nnUNet_results=\"$(pwd)/outputs/nnunet_results\"\
+  \n```\n\n### Dataset Preparation\n\n1. **Download** the ToothFairy3 dataset from the [official source](https://ditto.ing.unimore.it/toothfairy3/).\n\
+  2. **Extract** the archive — do **not** modify the original data.\n3. **Set the path** in `configs/pipeline_config.yaml`:\n\
+  \   ```yaml\n   paths:\n     dataset_root: \"/path/to/ToothFairy3\"\n   ```\n4. **Run validation** to\
+  \ confirm dataset integrity:\n   ```bash\n   python scripts/01_validate_dataset.py\n   ```\n\nThe dataset\
+  \ should have the following structure:\n```\nToothFairy3/\n├── dataset.json\n├── imagesTr/         \
+  \ # 532 CBCT volumes (.nii.gz)\n└── labelsTr/          # 532 segmentation masks (.nii.gz)\n```\n\n---\n\
+  \n## Usage\n\nThe pipeline consists of six sequential scripts. Each script loads configuration from\
+  \ `configs/pipeline_config.yaml` and writes outputs to the `outputs/` directory.\n\n### Step 1: Validate\
+  \ Dataset\n\n```bash\npython scripts/01_validate_dataset.py\n```\n\nChecks dataset structure, verifies\
+  \ all volumes have corresponding labels, validates NIfTI headers (affine consistency, shape matching),\
+  \ and audits label IDs against the expected 77-class schema. Produces a JSON validation report in `outputs/validation_report/`.\n\
+  \n### Step 2: Setup nnU-Net Directory Structure\n\n```bash\npython scripts/02_setup_nnunet.py\n```\n\
+  \nCreates the nnU-Net-compatible directory layout under `outputs/nnunet_raw/`, generates `dataset.json`\
+  \ with the full 77-class label mapping, and creates symlinks to the original dataset (preserving read-only\
+  \ access). Sets nnU-Net environment variables.\n\n### Step 3: Preprocess\n\n```bash\npython scripts/03_preprocess.py\n\
+  ```\n\nInvokes `nnUNetv2_plan_and_preprocess` to run dataset fingerprinting, compute target spacing,\
+  \ determine normalization statistics, and preprocess all volumes. This step is compute-intensive and\
+  \ may take several hours.\n\n### Step 4: Train\n\n```bash\npython scripts/04_train.py\n```\n\nLaunches\
+  \ `nnUNetv2_train` for the configured fold(s) and configuration (default: `3d_fullres`, fold 0). Training\
+  \ runs for 1000 epochs with SGD + polynomial LR decay, Dice + Cross-Entropy loss, and deep supervision.\
+  \ Checkpoints are saved to `outputs/nnunet_results/`.\n\nTo resume interrupted training:\n```yaml\n\
+  # In pipeline_config.yaml:\ntraining:\n  continue_training: true\n```\n\n### Step 5: Evaluate\n\n```bash\n\
+  python scripts/05_evaluate.py\n```\n\nRuns `nnUNetv2_predict` on the validation set, applies post-processing\
+  \ (connected component analysis), and computes per-class Dice, HD95, sensitivity, and precision. Results\
+  \ are saved as CSVs and visualizations in `outputs/metrics/`.\n\n### Step 6: Visualize\n\n```bash\n\
+  python scripts/06_visualize.py\n```\n\nGenerates interactive Plotly HTML visualizations with axial/coronal/sagittal\
+  \ slice overlays for qualitative inspection. Outputs are saved to `outputs/visualizations/`.\n\n---\n\
+  \n## Pipeline Overview\n\n```\n┌─────────────────────────────────────────────────────────────────────────┐\n\
+  │                    Dental CBCT Segmentation Pipeline                    │\n└─────────────────────────────────────────────────────────────────────────┘\n\
+  \n  ToothFairy3 Dataset (532 CBCT volumes, 77 classes)\n         │\n         ▼\n  ┌──────────────┐ \
+  \    Structural checks, NIfTI validation,\n  │  01 Validate  │───▶ label audit → validation_report.json\n\
+  \  └──────┬───────┘\n         │\n         ▼\n  ┌──────────────┐     Symlinks, dataset.json generation,\n\
+  \  │  02 Setup     │───▶ nnU-Net env variables\n  └──────┬───────┘\n         │\n         ▼\n  ┌──────────────┐\
+  \     Fingerprinting, resampling,\n  │  03 Preprocess│───▶ normalization, cropping\n  └──────┬───────┘\n\
+  \         │\n         ▼\n  ┌──────────────┐     3D U-Net, 1000 epochs, SGD,\n  │  04 Train     │───▶\
+  \ Dice+CE loss, deep supervision\n  └──────┬───────┘\n         │\n         ▼\n  ┌──────────────┐   \
+  \  Inference, connected components,\n  │  05 Evaluate  │───▶ per-class Dice & HD95\n  └──────┬───────┘\n\
+  \         │\n         ▼\n  ┌──────────────┐     Axial/coronal/sagittal overlays,\n  │  06 Visualize\
+  \ │───▶ interactive Plotly HTML\n  └──────────────┘\n```\n\n---\n\n## Sample Results\n\n### Qualitative\
+  \ Overlay\n\n<p align=\"center\">\n  <img src=\"assets/images/cbct_overlay.png\" alt=\"CBCT segmentation\
+  \ overlay showing original volume, segmentation mask, and overlay\" width=\"800\">\n</p>\n\n<p align=\"\
+  center\"><em>Example axial CBCT slice showing the original scan, predicted segmentation mask, and overlay\
+  \ visualization.</em></p>\n\n### Interactive 3D Segmentation\n\n<p align=\"center\">\n  <img src=\"\
+  assets/images/segmentation_3d_plotly.png\" alt=\"Interactive 3D visualization of segmented dental structures\"\
+  \ width=\"800\">\n</p>\n\n<p align=\"center\"><em>Interactive Plotly-based 3D visualization of segmented\
+  \ anatomical structures generated from the predicted segmentation.</em></p>\n\n---\n\n## Configuration\
+  \ Reference\n\nAll pipeline behavior is controlled by `configs/pipeline_config.yaml`. Key sections:\n\
+  \n| Section           | Key                        | Description                                   \
+  \ | Default              |\n|-------------------|----------------------------|------------------------------------------------|----------------------|\n\
+  | `project`         | `name`            "

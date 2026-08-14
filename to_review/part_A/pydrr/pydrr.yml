@@ -1,0 +1,62 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: farrell236/PyDRR
+url: https://github.com/farrell236/PyDRR
+platform: github
+description: Python DRR renderer for CT/CBCT using Siddon-Jacobs ray-tracing projection
+license: GPL-3.0
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-05-14T04:48:39Z'
+image_source: https://raw.githubusercontent.com/farrell236/PyDRR/HEAD/assets/drr_orbit_00.png
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# python-drr\n\nPython DRR renderer using a Siddon/Jacobs-style projector.\n\n<p align=\"\
+  center\">\n  <img src=\"assets/drr_orbit_00.png\" width=\"18%\" />\n  <img src=\"assets/drr_orbit_06.png\"\
+  \ width=\"18%\" />\n  <img src=\"assets/drr_single.png\" width=\"18%\" />\n  <img src=\"assets/orbit_z_rotation.gif\"\
+  \ width=\"18%\" />\n</p>\n\n## Requirements\n\nPython packages:\n\n```text\nnumpy\nSimpleITK\ntqdm\n\
+  scipy\nimageio\n````\n\nOptional for CUDA backend:\n\n```text\ncupy-cuda12x\n```\n\nExample install:\n\
+  \n```bash\npip install numpy SimpleITK tqdm scipy imageio\npip install cupy-cuda12x\n```\n\nCUDA backend\
+  \ requires:\n\n* NVIDIA GPU\n* CUDA 12-compatible driver/runtime\n* NVRTC (`libnvrtc.so.12`) available\
+  \ on the system\n\n## Basic Usage\n\nSingle lateral-like DRR:\n\n```bash\n(user@machine python-drr)$\
+  \ python get_drr_siddon_jacobs.py --help\nusage: get_drr_siddon_jacobs.py [-h] [-v] [-res ROW_MM COL_MM]\
+  \ [-size H W] [-scd SCD] [-t TX TY TZ] [-rx RX] [-ry RY] [-rz RZ] [-2dcx COL ROW] [-iso IX IY IZ] [-rp\
+  \ RP] [-threshold THRESHOLD] -o OUTPUT [--invert] [--no-clamp-negative]\n                          \
+  \      [--p-lo P_LO] [--p-hi P_HI] [--n-cores N_CORES] [--mp-chunksize MP_CHUNKSIZE] [--backend {cpu,cuda}]\n\
+  \                                input\n\nCalculate a Digitally Reconstructed Radiograph from a CT/CBCT\
+  \ image using a Siddon/Jacobs-style ray-tracing projector.\n\npositional arguments:\n  input       \
+  \          Input 3D image filename readable by SimpleITK\n\noptional arguments:\n  -h, --help      \
+  \      show this help message and exit\n  -v, --verbose         Verbose output (default: False)\n  -res\
+  \ ROW_MM COL_MM    DRR pixel spacing in the isocenter plane in mm (default: (0.51, 0.51))\n  -size H\
+  \ W             DRR size in pixels (default: (512, 512))\n  -scd SCD              Source to isocenter\
+  \ distance in mm (default: 1000.0)\n  -t TX TY TZ           Volume translation in x, y, z in mm (default:\
+  \ (0.0, 0.0, 0.0))\n  -rx RX                Volume rotation about x axis in degrees (default: 0.0)\n\
+  \  -ry RY                Volume rotation about y axis in degrees (default: 0.0)\n  -rz RZ          \
+  \      Volume rotation about z axis in degrees (default: 0.0)\n  -2dcx COL ROW         Central axis\
+  \ detector position in continuous pixel indices (col row) (default: None)\n  -iso IX IY IZ         CT\
+  \ isocenter in continuous voxel indices (x y z) (default: None)\n  -rp RP                Projection\
+  \ angle in degrees (default: 0.0)\n  -threshold THRESHOLD  Ignore CT values below this threshold (default:\
+  \ 0.0)\n  -o OUTPUT, --output OUTPUT\n                        Output image filename (default: None)\n\
+  \  --invert              Invert grayscale when saving display-oriented formats like PNG (default: False)\n\
+  \  --no-clamp-negative   Do not clamp negative intensities to zero above the threshold (default: False)\n\
+  \  --p-lo P_LO           Lower percentile for PNG-style normalization (default: 1.0)\n  --p-hi P_HI\
+  \           Upper percentile for PNG-style normalization (default: 99.5)\n  --n-cores N_CORES     Number\
+  \ of CPU cores/processes for parallel rendering. Omit for serial rendering. (default: None)\n  --mp-chunksize\
+  \ MP_CHUNKSIZE\n                        Row chunksize for multiprocessing work scheduling in drr.renderer.\
+  \ (default: 1)\n  --backend {cpu,cuda}  Rendering backend. 'cpu' uses the Python projector, 'cuda' uses\
+  \ CuPy RawKernel. (default: cpu)\n```\n\nExample CPU render:\n\n```bash\npython get_drr_siddon_jacobs.py\
+  \ input.nii.gz -rz 30 --invert --n-cores 8 -o drr_cpu.png --backend cpu\n```\n\nExample CUDA render:\n\
+  \n```bash\npython get_drr_siddon_jacobs.py input.nii.gz -rz 30 --invert -o drr_cuda.png --backend cuda\n\
+  ```\n\n## Notes\n\n* assumes the volume is axis-aligned\n* SimpleITK direction matrix is currently ignored\n\
+  * `-res` is interpreted as spacing at the **isocenter plane**\n* supports multiprocessing with `--n-cores`\
+  \ for CPU backend\n* rotations/translations are applied to the **volume**\n* `--invert` only changes\
+  \ saved display appearance for formats like PNG\n* rendering cost scales with detector size (`-size`)\
+  \ and smaller spacing (`-res`)\n* `-threshold` and negative clamping affect background / air contribution\n\
+  * `--backend cuda` uses CuPy `RawKernel`\n* CPU multiprocessing is disabled if CUDA backend is used\n\
+  \n## Acknowledgement\n\nChatGPT (GPT-5.4 Thinking, web interface) and Codex were used to assist with\
+  \ coding, debugging, and documentation for this project."

@@ -1,0 +1,83 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: aghcv/FakeCT
+url: https://github.com/aghcv/FakeCT
+platform: github
+description: Generate realistic synthetic CT volumes from closed 3D surface meshes — voxelize, assign
+  Hounsfield units, and simulate imaging blur/noise for AI and visualization demos.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-20T03:18:47Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# FakeCT — Minimal synthetic CT / voxelization toolkit\n\nInstructions shows how to load\
+  \ a mesh, voxelize it into a CT-like grid,\ncreate in/on/out masks and inspect the result with a simple\
+  \ viewer.\n\nThis README includes instructions for installing prerequisites (VS Code, Git, Conda),\n\
+  cloning the repo, creating an environment, installing runtime dependencies, and running the demo.\n\n\
+  ## Current Version\n<img width=\"1899\" height=\"991\" alt=\"Screenshot 2025-10-13 at 13 20 37\" src=\"\
+  https://github.com/user-attachments/assets/5df4d975-da4d-40c0-a29c-85d6af4d81eb\" />\n\n\n## Next Version\
+  \ - Stenosis Tool\n<img width=\"3095\" height=\"1615\" alt=\"image\" src=\"https://github.com/user-attachments/assets/7513c9f2-93ba-4769-968e-10bfc146692f\"\
+  \ />\n\n\n\n## Your Tasks:\n```bash\n1- Install the prerequisites\n2- Follow the quick start to try\
+  \ the demo examples: cube, sphere, and carotid\n3- Identify user inputs you think is needed needed for\
+  \ the stenosis tool\n```\n\n## Prerequisites\n\nBefore following the quick start, make sure you have\
+  \ these tools installed. The links go to official installers and the one-liners work on macOS (zsh).\n\
+  \n- Visual Studio Code — editor and debugging UI\n\t- Website: https://code.visualstudio.com/\n\t- macOS\
+  \ (Homebrew):\n\n\t\t```bash\n\t\tbrew install --cask visual-studio-code\n\t\t```\n\n- Git — version\
+  \ control\n\t- Website: https://git-scm.com/\n\t- macOS one-liners (choose one):\n\n\t\t```bash\n\t\t\
+  # Install Xcode command-line tools (includes git)\n\t\txcode-select --install\n\n\t\t# or via Homebrew\n\
+  \t\tbrew install git\n\t\t```\n\n- Conda (Miniconda recommended) — environment and package manager\n\
+  \t- Miniconda: https://docs.conda.io/en/latest/miniconda.html\n\t- macOS (Homebrew) one-liner:\n\n\t\
+  \t```bash\n\t\tbrew install --cask miniconda\n\t\t# initialize conda for zsh and reload your shell\n\
+  \t\tconda init zsh\n\t\texec $SHELL\n\t\t```\n\n\tIf you prefer Anaconda, use the Anaconda installer\
+  \ instead. Follow the official installer pages for platform-specific guidance.\n\n## Quick start\n\n\
+  1. Clone the repository:\n\n```bash\ngit clone https://github.com/aghcv/FakeCT.git\ncd FakeCT\n```\n\
+  \n2. Create and activate a Conda environment:\n\n```bash\nconda create -n fakect python=3.10 -y\nconda\
+  \ activate fakect\n```\n\n3. Install the runtime dependencies:\n\n```bash\nconda install -c conda-forge\
+  \ python-igl trimesh scipy scikit-image plotly dash -y\n```\n\nIf you prefer a pip-based environment\
+  \ for the pure Python packages, use:\n\n```bash\npip install --upgrade pip\npip install trimesh scipy\
+  \ scikit-image plotly dash\n```\n\n`igl` is typically easiest to install from `conda-forge`.\n\n\n4.\
+  \ Run the demo:\n\n```bash\n# cube\npython src/fakect.py --in data/cube.stl --n 8 --out outputs\n\n\
+  # sphere\npython src/fakect.py --in data/sphere.stl --n 8 --out outputs\n\n# carotid\npython src/fakect.py\
+  \ --in data/carotid.stl --n 9 --margin 0.10 --out outputs\n```\n\nTo skip opening the Dash viewer, add\
+  \ `--no-show`.\n\n`--out` now expects a directory path. The tool auto-generates an NPZ filename from\
+  \ the input name (for example, `cube_masks.npz` or `vti_masks.npz`) inside that directory.\n\nYou can\
+  \ inspect the available CLI options with:\n\n```bash\npython src/fakect.py --help\n```\n\n## VTI Import\
+  \ Test\n\nYou can start testing VTI import now. The CLI supports both a single `.vti` file and a directory\
+  \ of tiled `.vti` files.\n\nThe bundled `data/vti/activity_grid_000_000_000.vti` is `CellData` named\
+  \ `activity` with `Float32`\nvalues from about `-1011` to `2213`, so the tool treats it as scalar/range\
+  \ data rather than\ninteger anatomy labels. Scalar VTI files keep their sampled value volume in the\
+  \ saved NPZ as\n`scalar_values` and open in a volume-rendering workflow.\n\n```bash\n# Directory of\
+  \ VTI tiles (uses the sample folder in this repo)\npython src/fakect.py --in data/vti --out outputs\
+  \ --no-show\n\n# Optional: full-resolution sampling (can be much heavier)\npython src/fakect.py --in\
+  \ data/vti --vti-max-dim 0 --out outputs --no-show\n\n# Single VTI file example\npython src/fakect.py\
+  \ --in data/vti/activity_grid_000_000_000.vti --out outputs --no-show\n```\n\nUseful VTI-specific flags:\n\
+  \n```bash\n--vti-array <name>          # choose a DataArray by name\n--vti-background <value>    # set\
+  \ the background label/scalar value\n--vti-background-eps <eps>  # tolerance for floating-point background\
+  \ matching\n--vti-max-dim <int>         # browser-friendly downsampling cap (0 = full resolution)\n\
+  --vti-max-labels <int>      # max number of discrete labels split into layers\n```\n\nIn the 3D panel,\
+  \ discrete integer-label VTI files use per-label visibility and opacity controls.\nScalar/range VTI\
+  \ files use a ParaView-style transfer map: choose one color scheme for the full\nrange, add or remove\
+  \ opacity points, type exact opacity values, and drag points horizontally on the\nmap to reposition\
+  \ them.\n\nBy default the Dash viewer opens with three orthogonal slices and a linked 3D view. Use `--no-show`\n\
+  for a headless import/export smoke test.\n\n## Developer instructions (make changes & run tests)\n\n\
+  1. Make code changes in `src/fakect.py` using your editor of choice.\n\n2. There is currently no packaged\
+  \ test suite in this repository. Use the CLI directly to validate changes:\n\n```bash\npython src/fakect.py\
+  \ --in data/cube.stl --n 8 --out outputs --no-show\n```\n\n3. If you change runtime dependencies, update\
+  \ this README with the revised install command.\n\n4. To try your changes interactively, run `python\
+  \ src/fakect.py --help` or one of the demo commands above.\n\n5. Linting and formatting are not configured\
+  \ in this repository yet. If you add them later, document the commands here.\n\n## Continuous integration\
+  \ (notes for maintainers)\n\n- There is no CI or `tests/` directory in the current repository state.\n\
+  - Recommended CI steps:\n\t- Set up a Python 3.10 runner\n\t- Install the runtime dependencies listed\
+  \ above\n\t- Run `python src/fakect.py --help` as a smoke test\n\t- Add targeted automated tests before\
+  \ relying on CI for behavior changes\n\n## Contact / contributing\n\nOpen an issue or submit a pull\
+  \ request. Keep changes small and add tests for new behavior.\n\n---\nSmall, clear, and focused so students\
+  \ can follow the flow from clone → run → edit → test.\n\n# Relevant Papers \nDouglass, M. J. J., et\
+  \ al. (2025). “An open-source tool for converting 3D mesh volumes into synthetic DICOM CT images for\
+  \ medical physics research.” (LINK:https://doi.org/10.1007/s13246-025-01599-x)\n"

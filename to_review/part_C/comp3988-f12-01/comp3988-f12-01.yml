@@ -1,0 +1,65 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: COMP3988/COMP3988_F12_01
+url: https://github.com/COMP3988/COMP3988_F12_01
+platform: github
+description: COMP3988 (Advanced Computer Science Capstone Unit) - P34 Medical Image Synthesis for Radiotherapy
+  Planning
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-10-29T05:26:16Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# Medical Image Synthesis for Radiotherapy Planning\n\n## Project Overview\n\nThis project\
+  \ implements a **Pix2Pix conditional GAN** for converting MRI brain images to CT images for radiotherapy\
+  \ planning. The system uses deep learning to generate synthetic CT images from MRI inputs, reducing\
+  \ the need for additional radiation exposure in medical imaging.\n\n**Key Features:**\n- MRI-to-CT image\
+  \ conversion using Pix2Pix GAN\n- Automated data preprocessing and pairing\n- Comprehensive quality\
+  \ assessment with medical imaging metrics\n- Fast inference (< 1 second per image)\n- Reproducible training\
+  \ pipeline\n\n## Quick Start Guide\n\n### Prerequisites\n- Python 3.9+\n- PyTorch 2.4+\n- MacBook Air\
+  \ M1 (or compatible system)\n\n### Installation\n\n1. **Clone the repository:**\n```bash\ngit clone\
+  \ https://github.com/COMP3988/COMP3988_F12_01\ncd COMP3988_F12_01/pytorch-CycleGAN-and-pix2pix\n```\n\
+  \n2. **Install dependencies:**\n```bash\npip install torch torchvision\npip install scikit-image pillow\
+  \ matplotlib numpy\n```\n\n### Running the Code\n\n#### Step 1: Prepare Your Data\n```bash\n# Create\
+  \ paired MRI-CT dataset (20 samples)\npython create_paired_sample.py\n```\n\n#### Step 2: Resize Images\
+  \ (if needed)\n```bash\n# Resize all images to 256x256\npython resize_sample.py\n```\n\n#### Step 3:\
+  \ Train the Model\n```bash\n# Train Pix2Pix model for 30 epochs\npython train.py --dataroot ./paired_sample\
+  \ --name mri_to_ct_30epochs --model pix2pix --direction AtoB --n_epochs 30 --batch_size 1\n```\n\n####\
+  \ Step 4: Test the Model\n```bash\n# Generate CT images from MRI inputs\npython test.py --dataroot ./paired_sample\
+  \ --name mri_to_ct_30epochs --model pix2pix --direction AtoB --epoch 30\n```\n\n#### Step 5: Analyze\
+  \ Results\n```bash\n# Calculate quality metrics and generate visualizations\npython analyze_results.py\n\
+  ```\n\n## Expected Results\n\nAfter running the complete pipeline, you should see:\n\n- **Training Progress**:\
+  \ Loss curves showing generator and discriminator training\n- **Generated Images**: CT images created\
+  \ from MRI inputs in `results/mri_to_ct_30epochs/test_latest/images/`\n- **Quality Metrics**: \n  -\
+  \ SSIM: ~0.301 ± 0.136\n  - PSNR: ~10.38 ± 1.17 dB  \n  - MAE: ~0.191 ± 0.050\n- **Visualizations**:\
+  \ Training curves and quality metric distributions\n\n## File Structure\n\n```\npytorch-CycleGAN-and-pix2pix/\n\
+  ├── create_paired_sample.py    # Data preprocessing and pairing\n├── resize_sample.py           # Image\
+  \ resizing utility\n├── analyze_results.py         # Quality assessment and visualization\n├── train.py\
+  \                   # Model training script\n├── test.py                    # Model testing script\n\
+  ├── paired_sample/             # Processed dataset\n│   ├── trainA/               # CT images (training)\n\
+  │   ├── trainB/               # MRI images (training)\n│   ├── testA/                # CT images (testing)\n\
+  │   └── testB/                # MRI images (testing)\n└── results/                   # Generated outputs\n\
+  \    └── mri_to_ct_30epochs/\n        └── test_latest/\n            └── images/       # Generated CT\
+  \ images\n```\n\n## Model Architecture\n\n- **Generator**: U-Net with 54.414M parameters\n- **Discriminator**:\
+  \ PatchGAN with 2.769M parameters  \n- **Input/Output**: 256×256×3 RGB images\n- **Training**: 30 epochs,\
+  \ Adam optimizer (lr=0.0002)\n\n## Troubleshooting\n\n**Common Issues:**\n\n1. **Memory Error**: Reduce\
+  \ batch size to 1 (already set as default)\n2. **Dataset Not Found**: Ensure `paired_sample` folder\
+  \ exists with proper structure\n3. **CUDA Error**: Code runs on CPU by default (MacBook Air M1 compatible)\n\
+  \n**Getting Help:**\n- Check the training output for error messages\n- Ensure all dependencies are installed\
+  \ correctly\n- Verify dataset structure matches expected format\n\n## Project Context\n\nThis project\
+  \ was developed for **COMP3988 - Software Development Project** at the University of Sydney, in collaboration\
+  \ with PhD researcher Chengbo Wang. The system addresses the critical need for synthetic CT generation\
+  \ in radiotherapy planning while reducing patient radiation exposure.\n\n## Technical Details\n\n- **Framework**:\
+  \ PyTorch with pytorch-CycleGAN-and-pix2pix\n- **Dataset**: MRI-CT Brain Dataset (20 paired samples)\n\
+  - **Evaluation**: SSIM, PSNR, MAE metrics\n- **Performance**: Sub-second inference time\n- **Reproducibility**:\
+  \ Fixed random seeds (seed=42)\n\n---\n\n*For detailed technical documentation, see the group report\
+  \ and individual reports in the project repository.*\n\n### Viewing .mha files\n\nThere are many tools\
+  \ to view .mha files\n\nA simple lightweight one is `napari`\n\nInstall the cli\n\n```bash\npip install\
+  \ \"napari[all]\"\n```\n\nThen to view\n\n```bash\nnapari <mha-filename>\n```\n"

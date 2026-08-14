@@ -1,0 +1,205 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: rebeccasegre/radiomics-explainability
+url: https://github.com/rebeccasegre/radiomics-explainability
+platform: github
+description: ''
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-16T08:40:25Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: '# Radiomics Explainability Tool
+
+
+  Code and analysis pipeline for my second PhD study, which develops and evaluates of a domain-specific
+  explainability framework for an in-house developed radiomics-based AI model for clinically significant
+  prostate cancer detection on biparametric MRI. The pipeline covers data preparation, feature extraction,
+  feature selection, correlation-based feature grouping, and final evaluation on phantoms and independent
+  test patients.
+
+
+  ## What This Repository Contains
+
+
+  This project is organized as a sequential pipeline:
+
+
+  1. Model inference (performed before running this repository pipeline)
+
+  2. Preprocessing
+
+  3. Feature selection
+
+  4. Correlation analysis and feature grouping
+
+  5. Validation on digital phantoms
+
+  6. Evaluation on independent test patients
+
+
+  ## Before You Start
+
+
+  1. Ensure model inference outputs exist and are available to this project.
+
+  2. Review and update [params.py](params.py) with correct paths and experiment settings.
+
+  3. Provide a patList Excel file: column names must be dataset names, and each column should contain
+  the corresponding patient IDs.
+
+  4. Run scripts from the repository root unless a script explicitly requires another working directory.
+
+
+  Example execution:
+
+
+  ```bash
+
+  python path/to/script.py
+
+  ```
+
+
+  ## Pipeline Overview
+
+
+  ### 1. Model Inference
+
+
+  Inference is a prerequisite and is not executed by scripts in this repository.
+
+
+  ### 2. Preprocessing
+
+
+  Run these scripts to prepare directories, transform maps, build masks, and create aligned inputs for
+  downstream analysis:
+
+
+  Note: these preprocessing steps were developed for the specific input structure and data conventions
+  used in this study. Other users will likely need to adapt paths, naming assumptions, spacing/resampling
+  logic, and mask-generation details to match their own datasets.
+
+
+  Important: patList is expected as an Excel file where each column header is a dataset name and the values
+  in that column are patient IDs.
+
+
+  1. [makeDataDirs.py](makeDataDirs.py)
+
+  2. [detectionMaps/getDetMaps.py](detectionMaps/getDetMaps.py)
+
+  3. [detectionMaps_processingSpace/getDetMapsProcSpace.py](detectionMaps_processingSpace/getDetMapsProcSpace.py)
+
+  4. [detectionMapsBinary/detectionMapsBinary.py](detectionMapsBinary/detectionMapsBinary.py)
+
+  5. [FeatMaps/getFeatMaps.py](FeatMaps/getFeatMaps.py)
+
+  6. [GroundTruthMasks/getMasks.py](GroundTruthMasks/getMasks.py)
+
+  7. [GroundTruthMasksCleaned/GroundTruthMasksCleaned.py](GroundTruthMasksCleaned/GroundTruthMasksCleaned.py)
+
+  8. [GroundTruthMasksCleaned_processingSpace/Resample.py](GroundTruthMasksCleaned_processingSpace/Resample.py)
+
+  9. [FNlesions/FNlesions.py](FNlesions/FNlesions.py)
+
+  10. [probMaps_processingSpace/getProbMaps.py](probMaps_processingSpace/getProbMaps.py)
+
+  11. [prostateMasks_processingSpace/getProstateMasks.py](prostateMasks_processingSpace/getProstateMasks.py)
+
+
+  ### 3. Feature Selection
+
+
+  Goal: rank/select the most informative features (based on SHAP importance), then update [params.py](params.py)
+  with the chosen number of features.
+
+
+  1. [featSelection/01-metrics.py](featSelection/01-metrics.py)
+
+  2. [featSelection/02-calcSHAP.py](featSelection/02-calcSHAP.py)
+
+  3. [featSelection/03-shapAnalysis.py](featSelection/03-shapAnalysis.py)
+
+
+  ### 4. Correlation Analysis
+
+
+  Goal: identify correlated feature groups (clusters) for explainability and redundancy analysis.
+
+
+  1. [CorrAnalysis/01-featMean.py](CorrAnalysis/01-featMean.py)
+
+  2. [CorrAnalysis/02-corrAnalysis.py](CorrAnalysis/02-corrAnalysis.py)
+
+  3. [CorrAnalysis/03-featGroupsPlot.py](CorrAnalysis/03-featGroupsPlot.py)
+
+
+  ### 5. Evaluation on Digital Phantoms
+
+
+  Phantom generation and analysis scripts:
+
+
+  1. [TestPhantoms/phantoms/heterogeneityPhantoms1.m](TestPhantoms/phantoms/heterogeneityPhantoms1.m)
+
+  2. [TestPhantoms/phantoms/heterogeneityPhantoms2.py](TestPhantoms/phantoms/heterogeneityPhantoms2.py)
+
+  3. [TestPhantoms/phantoms/intensityPhantoms.py](TestPhantoms/phantoms/intensityPhantoms.py)
+
+  4. [TestPhantoms/featMaps_phantoms/featMaps_phantoms.py](TestPhantoms/featMaps_phantoms/featMaps_phantoms.py)
+
+  5. [TestPhantoms/CorrAnalysis_phantoms/01-featMean_phantoms.py](TestPhantoms/CorrAnalysis_phantoms/01-featMean_phantoms.py)
+
+  6. [TestPhantoms/CorrAnalysis_phantoms/02-spearmanCorr_phantoms.py](TestPhantoms/CorrAnalysis_phantoms/02-spearmanCorr_phantoms.py)
+
+
+  ### 6. Evaluation on Independent Test Patients
+
+
+  1. [TestPatients/01-groupsImp.py](TestPatients/01-groupsImp.py)
+
+  2. [TestPatients/02-PCA.py](TestPatients/02-PCA.py)
+
+  3. [TestPatients/03-rangeAnalysis.py](TestPatients/03-rangeAnalysis.py)
+
+
+  ## Additional Utility Scripts
+
+
+  1. [GroundTruthMasksCleaned_processingSpace/GabrielsFunct.py](GroundTruthMasksCleaned_processingSpace/GabrielsFunct.py)
+
+  2. [TestPhantoms/featMaps_phantoms/FunctionAnalysis.py](TestPhantoms/featMaps_phantoms/FunctionAnalysis.py)
+
+
+  ## Recommended Run Strategy
+
+
+  1. Run one stage at a time in the order listed above.
+
+  2. Validate generated outputs before moving to the next stage.
+
+  3. Keep [params.py](params.py) synchronized with current experiment settings.
+
+  4. Record key outputs and plots from feature selection, correlation analysis, and test evaluation for
+  reproducibility.
+
+
+  ## Troubleshooting
+
+
+  1. If a script cannot find data, first verify paths and filenames in [params.py](params.py).
+
+  2. If downstream scripts fail, re-check completion of all prior preprocessing steps.
+
+  3. If shape or spacing mismatches appear, verify all processing-space conversion/resampling scripts
+  completed successfully.'

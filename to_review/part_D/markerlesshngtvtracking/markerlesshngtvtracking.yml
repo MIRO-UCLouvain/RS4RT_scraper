@@ -1,0 +1,49 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Image-X-Institute/MarkerlessHNGTVTracking
+url: https://github.com/Image-X-Institute/MarkerlessHNGTVTracking
+platform: github
+description: Code used to create the results described in the paper "A conditional generative adversarial
+  network approach for segmenting head and neck tumors in kV images acquired during radiation therapy"
+license: MIT
+language: MATLAB
+keywords: []
+stars: 2
+updated_at: '2025-09-02T04:26:27Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# MarkerlessHNGTVTracking\nCode used to create the results described in the paper \"\
+  A conditional generative adversarial network approach for segmenting head and neck tumors in kV images\
+  \ acquired during radiation therapy\"\n\nFor a more general version of the CT Head Deformation code\
+  \ see the the repository click [here](https://github.com/ACRF-Image-X-Institute/CTHeadDeformation) \n\
+  \nFor any questions email mark.gardner@sydney.edu.au\n\n## Setup/installation\n\n- Install Matlab (tested\
+  \ with version >= 2018b).\n- Install [elastix](https://elastix.lumc.nl/index.php) and add the path to\
+  \ the elastix.exe command to the system environment path.\n- Install the python module [platipy](https://pyplati.github.io/platipy/)\
+  \ using the command:\n```\npip install platipy\n```\n- Clone the [pix2pix](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix)\
+  \ repository.\n- Install [visdom](https://github.com/fossasia/visdom) using the command:\n```\npip install\
+  \ visdom\n```\n- Install [RTK](https://github.com/SimonRit/RTK). Include the compiled applications when\
+  \ installing\n- Add the path RTK applications folder the system enviroment path. \n\n## Acquiring the\
+  \ data\nThe data for this project was downloaded from the cancer imaging archive [(TCIA)](https://www.cancerimagingarchive.net/).\
+  \ The database used was the HNSCC database which requires permission to download the data from. The\
+  \ list of patient data that was acquired is found in the [PatientList.txt](https://github.com/ACRF-Image-X-Institute/MarkerlessHNGTVTracking/blob/main/PatientList.txt)\
+  \ file.\n\n## How to generate training/testing data\n\n- Run 'GenerateMultipleVolumes.m' with the variable\
+  \ 'BaseFile' as the directory where the HNSCC data is saved. \n\n- Run 'GenerateDRRs.m', with the input\
+  \ file as the directory for each patient. \n\n## How to train and test the network\n\nIn a command prompt\
+  \ run visdom using the command \n```\npython -m visdom.server\n```\n\nIn a seperate command prompt navigate\
+  \ to the pix2pix repository and train the network using:\n\n```\npython train.py --dataroot <Location\
+  \ of Training data just created> --load_size 550 --crop_size 512 --input_nc 1 --output_nc 1 --netG unet_256\
+  \ --dataset_mode aligned --batch_size 8 --no_flip --save_epoch_freq 1 --n_epochs 10\npython test.py\
+  \ --dataroot <Location of Training data just created> --load_size 512 --crop_size 512 --input_nc 1 --output_nc\
+  \ 1 --netG unet_256 --dataset_mode aligned --batch_size 8 --no_flip --save_epoch_freq 1 --n_epochs 10\n\
+  ```\nMore info on the pix2pix repository can be found [here](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix)\n\
+  \n## How to analyse and generate test results\n\n- Run 'DeepLearningRandEvaluation.m' for each patient\
+  \ with the inputvariable the directory where the images from test.py were saved\n- Run 'DeepLearningSummaryMultiVol.m'\
+  \ to combine the results for all patients. Input should be a cell array with the location of the output\
+  \ from the 'DeepLearningRandEvaluation.m' file as each index in the input.\n- Plot the results by running\
+  \ the jupyter notebooks worksheet 'TumoutMotionPlots.ipynb'\n"

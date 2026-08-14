@@ -1,0 +1,92 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: JoSM89/radiomics-agreement
+url: https://github.com/JoSM89/radiomics-agreement
+platform: github
+description: Segmentation evaluation and radiomic agreement analysis (ICC, CCC, Bland-Altman) for 3D medical
+  images
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-28T07:52:28Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# radagree\n\n**Does a radiomic feature computed on an automatic segmentation mean the\
+  \ same thing as\nthe one computed on a manual tracing?**\n\nA segmentation model that reaches an acceptable\
+  \ Dice is not automatically good enough to\nreplace a human tracing in a quantitative study: a small,\
+  \ systematic boundary bias barely\nmoves the overlap but can shift a texture feature far more than the\
+  \ biological effect\nbeing looked for. `radagree` is the evaluation half of that question — it scores\
+  \ the\nmasks, extracts features from both, and reports whether the two feature sets are\ninterchangeable.\n\
+  \n```\nreference mask ─┐                 ┌─ overlap / distance / volume metrics   (evaluate)\n     \
+  \           ├─ image volume ──┤\npredicted mask ─┘                 └─ radiomic features per region \
+  \         (features)\n                                            │\n                              \
+  \              └─ ICC(2,1), CCC, Bland-Altman (agreement)\n                                        \
+  \       → the features you may actually use\n```\n\nIt is deliberately framework-free: NumPy, SciPy,\
+  \ pandas, SimpleITK and PyRadiomics, no\ndeep-learning dependency, so it installs on a laptop and runs\
+  \ in CI. The segmentation\nmodel that produces the masks is somebody else's business — including yours.\n\
+  \n---\n\n## What it does\n\n**`evaluate`** — per case and per region: Dice, Jaccard, sensitivity, precision,\n\
+  specificity, reference/predicted volume, signed and relative volume difference,\n95th-percentile Hausdorff\
+  \ distance and average symmetric surface distance (ASSD).\nDistances are in millimetres whenever the\
+  \ image header carries a voxel size.\n\n**`features`** — PyRadiomics features (107 by default: first\
+  \ order, shape, GLCM, GLRLM,\nGLDM, GLSZM, NGTDM) for every region of every case, from the reference\
+  \ mask or from the\npredicted one.\n\n**`agreement`** — joins two feature tables on `subject`/`region`\
+  \ and reports, per\nfeature: ICC(2,1), Lin's concordance correlation, Pearson and Spearman correlation,\
+  \ and\nBland-Altman bias with limits of agreement — plus a test for proportional bias, because\nlimits\
+  \ of agreement quoted under a magnitude-dependent bias are misleading. The list of\nfeatures passing\
+  \ an ICC threshold is written next to the table.\n\n## Design decisions worth knowing about\n\nThese\
+  \ are the choices that change published numbers, so they are explicit rather than\nburied:\n\n- **An\
+  \ undefined metric is `nan`, never 0.** Dice on two empty masks is undefined; a\n  distance to an empty\
+  \ mask is undefined. Silently returning 0 or 1 for those cases\n  deflates or inflates a cohort mean,\
+  \ and it happens often enough that `summarise()`\n  excludes empty-reference regions by default and\
+  \ says how many it dropped.\n- **A missed structure is still a zero.** Empty *prediction* against a\
+  \ non-empty\n  reference scores Dice 0 — that is a real failure, not a missing value.\n- **Regions are\
+  \ explicit.** A mask holding two structures is split (`--split axis`,\n  `label`, `components`) before\
+  \ anything is measured; features averaged over two\n  structures describe neither.\n- **Empty regions\
+  \ stay in the table** with `present = 0`, instead of being dropped into a\n  row-misalignment bug when\
+  \ two exports are compared side by side.\n- **Feature tables are joined on keys, not row order.**\n\
+  - **ICC(2,1), not ICC(3,1).** Absolute agreement, so a constant offset between the manual\n  and the\
+  \ automatic measurement counts as disagreement — which is the point.\n- **The discretisation is a parameter.**\
+  \ `--bin-width` must match the intensity scale of\n  the input; the default (0.02) assumes images normalised\
+  \ to [0, 1]. Texture features\n  extracted with a mismatched bin width are not comparable across subjects.\n\
+  \n## Installation\n\n```bash\ngit clone https://github.com/JoSM89/radiomics-agreement.git\ncd radiomics-agreement\n\
+  pip install -e \".[dev]\"\n```\n\nPython ≥ 3.9. Tested with PyRadiomics 3.x / SimpleITK 2.x.\n\n## Quickstart\n\
+  \nThe example generator writes a synthetic cohort — an image, a reference mask and a\ndeliberately imperfect\
+  \ \"prediction\" — so the whole workflow runs without any data:\n\n```bash\npython tests/make_example_data.py\
+  \ --output-dir data/example --n 12\n\nradagree evaluate --input-dir data/example --output out/metrics.csv\
+  \ \\\n    --split axis --region-names R L\n\nradagree features --input-dir data/example --output out/features_ref.csv\
+  \  --mask reference\nradagree features --input-dir data/example --output out/features_pred.csv --mask\
+  \ prediction \\\n    --binarise 0.5\n\nradagree agreement --reference-table out/features_ref.csv \\\n\
+  \    --prediction-table out/features_pred.csv --output out/agreement.csv\n```\n\n```\nregion       \
+  \   dice       jaccard   sensitivity     precision  hausdorff_95          assd\n     L 0.760 +/- 0.040\
+  \ 0.615 +/- 0.052 0.756 +/- 0.058 0.772 +/- 0.076 1.295 +/- 0.186 0.430 +/- 0.091\n     R 0.801 +/-\
+  \ 0.069 0.673 +/- 0.095 0.835 +/- 0.089 0.777 +/- 0.099 1.197 +/- 0.259 0.376 +/- 0.143\n\n8/109 feature(s)\
+  \ reach ICC(2,1) >= 0.75\n```\n\nEight out of 109, from segmentations averaging Dice 0.78 — which is\
+  \ the whole reason this\npackage exists.\n\n## Input layout\n\nA flat directory, one prefix per case:\n\
+  \n```\ndata/cohort/\n├── CASE001_image.nii     # --image-suffix\n├── CASE001_label.nii     # --reference-suffix\
+  \   (manual tracing)\n├── CASE001_pred.nii      # --prediction-suffix  (model output, binary or probability)\n\
+  └── ...\n```\n\nAny suffix works, and `.nii`, `.nii.gz`, `.nrrd`, `.mha` (anything SimpleITK reads)\
+  \ and\n`.npy` are accepted. Cases missing a file are skipped and counted in the log rather than\ndropped\
+  \ in silence.\n\n## Python API\n\n```python\nfrom radagree import all_metrics, agreement_summary\nfrom\
+  \ radagree.io import find_cases, read_volume\nfrom radagree.features import extract_cases\n\ncases =\
+  \ find_cases(\"data/cohort\")\nreference, spacing = read_volume(cases[0].reference, spacing=True)\n\
+  prediction = read_volume(cases[0].prediction)\n\nall_metrics(reference, prediction, spacing)      #\
+  \ -> dict of scalars\nextract_cases(cases, mask_role=\"reference\")      # -> tidy DataFrame\nagreement_summary(manual_volumes,\
+  \ auto_volumes)  # -> ICC / CCC / Bland-Altman\n```\n\n## Tests\n\n```bash\npytest -q\n```\n\nThe metrics\
+  \ are checked against overlaps that can be computed by hand (a half-overlapping\ncube has Dice 2/3),\
+  \ the agreement statistics against cases with a known answer (a constant\noffset must leave Pearson\
+  \ at 1.0 while ICC drops), and the region splitting against\nhand-built masks.\n\n## Background\n\n\
+  Written while validating a 3D deep-learning segmentation model against manual tracings on\na clinical\
+  \ brain MRI archive, and separated out because the evaluation logic is\nindependent of the model and\
+  \ of the anatomy. No patient data, no trained weights and no\nmodel code are part of this repository.\n\
+  \n## License\n\nMIT — see [LICENSE](LICENSE).\n\nRadiomic features are computed with [PyRadiomics](https://github.com/AIM-Harvard/pyradiomics)\n\
+  (van Griethuysen et al., *Cancer Research* 2017), following the\n[IBSI](https://theibsi.github.io/)\
+  \ definitions. The ICC form and the 0.75 reliability cut\nfollow Koo & Li, *J Chiropr Med* 2016; the\
+  \ limits of agreement follow Bland & Altman,\n*Lancet* 1986; the concordance correlation follows Lin,\
+  \ *Biometrics* 1989.\n"

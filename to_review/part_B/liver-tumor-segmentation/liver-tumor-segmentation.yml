@@ -1,0 +1,72 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: TranDucThien-0509/Liver-Tumor-Segmentation
+url: https://github.com/TranDucThien-0509/Liver-Tumor-Segmentation
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-08T13:46:29Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# **Medical Image Segmentation: Advanced Structural Enhancements in Vision Mamba UNet**\n\
+  \nThis repository contains the official implementation of VM-UNet, introducing advanced structural enhancements\
+  \ to the pure State Space Model (SSM) architecture for medical image segmentation. It includes Method\
+  \ 1 (SDI + CBAM + Deep Supervision) and Method 2 (SC_Att_Bridge), engineered to bridge the semantic\
+  \ gap and enhance multi-scale feature interactions\n\n```\nVM-UNet/\n│\n├── VMUNetV2_Train.ipynb   \
+  \      ← Main orchestration notebook (execution framework only)\n│\n├── configs/\n│   ├── __init__.py\n\
+  │   └── config.py                ← Centralized configuration: ALL hyperparameters & paths\n│\n├── models/\n\
+  │   ├── __init__.py\n│   └── vmunet/\n│       ├── __init__.py\n│       ├── vmamba_v1.py\n│       ├──\
+  \ vmunet_v1.py         ← Original VM-UNet baseline architecture\n│       ├── vmamba_v2.py         ←\
+  \ Method 1 primitives: VSSM + CBAM + SDI modules\n│       ├── vmunet_v2.py         ← Method 1 wrapper\
+  \ + Deep Supervision integration\n│       └── vmunet_v3.py         ← Method 2 wrapper: VM-UNet with\
+  \ Spatial-Channel Attention Bridge\n│\n├── data/\n│   ├── __init__.py\n│   └── dataset.py          \
+  \     ← DataBlock pipeline, patient-level splitters, and label functions\n│\n├── dataset/          \
+  \           ← Local dataset directory\n│   ├── train/\n│   │   ├── images/\n│   │   └── masks/\n│  \
+  \ ├── val/\n│   │   ├── images/\n│   │   └── masks/\n│   └── test/\n│       ├── images/\n│       └──\
+  \ masks/\n│\n├── pre_trained_weights/\n│   └── vmamba_small_e238_ema.pth ← Pretrained backbone weights\
+  \ from the baseline model\n│\n├── preparation/\n│   ├── Convert_3D_to_Slices.ipynb\n│   └── Convert_dicom_to_nifties.ipynb\n\
+  │\n├── utils/\n│   ├── __init__.py\n│   ├── losses.py                ← MultiClassDiceLoss, CombinedLoss,\
+  \ DeepSupervisionLoss\n│   ├── metrics.py               ← Evaluation metrics: foreground_acc, DSAwareDiceMulti\n\
+  │   ├── checkpoint.py            ← Weight loaders for pre-trained VMamba states\n│   └── visualize.py\
+  \             ← Verification helpers: show_sample, find_tumor_images, show_predictions\n│\n└── scripts/\n\
+  \    ├── __init__.py\n    ├── build_model.py           ← Model Factory: Instantiates requested VM-UNet\
+  \ variant from Config\n    ├── evaluation.py            ← Evaluation suite: Comprehensive multi-metric\
+  \ test validation\n    ├── train.py                 ← End-to-end training execution pipeline\n    └──\
+  \ predict.py               ← Production inference and prediction visualization\n\n```\n\nUsage Guide\n\
+  1. Environment Installation\nCreate the dedicated virtual environment and install the required foundational\
+  \ dependencies:\n```bash\nconda create -n vmunet python=3.8\nconda activate vmunet\npip install torch==1.13.0\
+  \ torchvision==0.14.0 torchaudio==0.13.0 --extra-index-url https://download.pytorch.org/whl/cu117\n\
+  pip install mamba-ssm[causal-conv1d] --no-build-isolation\npip install fastai\n```\n\n2. Executing via\
+  \ Command Line Script\nTo launch the end-to-end training pipeline directly using the script subsystem,\
+  \ run:\n```bash\ncd /workspace/VM-UNet-V2\npython scripts/train.py\n```\n\n3. Executing via Jupyter\
+  \ Notebook\nOpen and run VMUNet_Train.ipynb. The notebook acts as an execution framework; you can completely\
+  \ control the pipeline workloads solely by adjusting settings inside Section 2 (Config).\n\n4. Dynamic\
+  \ Code Configuration Overrides\nYou can instantiate a custom configuration object and inject it directly\
+  \ into the execution script programmatically:\n```python\nfrom configs import Config, PathConfig, DataConfig,\
+  \ TrainConfig\nfrom scripts.train import train\n\n# Customize configuration parameters programmatically\n\
+  custom_cfg = Config(...)\n\n# Launch the training routine\nlearn = train(custom_cfg)\n```\n\nCommon\
+  \ Configuration Overrides\nAll operational parameters should be managed within configs/config.py by\
+  \ targeting the corresponding configuration class scope:\n\n| Target Modification | Configuration Scope\
+  \ |\n|---|---|\n| Data Paths / Pretrained Weights | `configs/config.py` → `PathConfig` |\n| Batch size,\
+  \ image size | `configs/config.py` → `DataConfig` |\n| Architecture Scale (Depths / Dims) | `configs/config.py`\
+  \ → `ModelConfig` |\n| Total Epochs, LR, Weight Decay | `configs/config.py` → `TrainConfig` |\n| Deep\
+  \ Supervision Loss Weights | `configs/config.py` → `TrainConfig.ds_weights` |\n| Data Augmentation Parameters\
+  \ | `configs/config.py` → `DataConfig` (do_flip, max_rotate...) |\n| Class Topology / Target Cardinality\
+  \ | `DataConfig.num_classes` + `DataConfig.class_names` |\n\n\nDeep Supervision Mechanism\nWhen configured\
+  \ in Training Mode, Method 1 of VM-UNet V2 utilizes auxiliary segmentation heads to generate an output\
+  \ array consisting of 4 distinct tensors scaled to various spatial resolutions:\n```\n[aux1 (H/16),\
+  \ aux2 (H/8), aux3 (H/4), final (H)]\n```\n`DeepSupervisionLoss`\n\nThe custom DeepSupervisionLoss module\
+  \ manages both execution paths automatically:  \n- Training Mode: Processes the array of predicted outputs,\
+  \ interpolates intermediate feature scales, and executes a weighted summary loss computation using your\
+  \ defined configuration parameters.  \n- Inference Mode: Detects standard singleton tensors automatically,\
+  \ isolates the fine-resolution final_prediction tensor, and measures standard objective criteria while\
+  \ bypassing raw auxiliary branches cleanly.  \n"

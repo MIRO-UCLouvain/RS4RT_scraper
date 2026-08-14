@@ -1,0 +1,113 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: aliikord/xray-panoramic
+url: https://github.com/aliikord/xray-panoramic
+platform: github
+description: Browser-based dental panoramic (OPG) reconstruction from CBCT DICOM — drop in a .dcm, get
+  a clinical-quality pano with a live depth slider
+license: null
+language: HTML
+keywords: []
+stars: 0
+updated_at: '2026-04-24T15:47:49Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: '# X-ray Panoramic
+
+
+  Browser-based dental panoramic (OPG) reconstruction from a CBCT DICOM volume. Drop in a `.dcm`, get
+  a clinical-quality panoramic radiograph — all in your browser, nothing uploaded.
+
+
+  ## What''s included
+
+
+  ### `pano.html` — single-purpose panoramic viewer
+
+  Open in any browser. Drop a dental CBCT `.dcm` file. Get:
+
+  - Auto-detected dental arch (connected-component tooth segmentation → PCA → parabolic fit)
+
+  - True Digitally Reconstructed Radiograph (ray-sum attenuation)
+
+  - Live **Depth slider** (−20mm to +20mm) — scrub through buccal → center → lingual focal planes with
+  zero lag (pre-rendered depth stack)
+
+  - Live **Contrast** and **Gamma** sliders
+
+  - **Slab** control (5–40mm)
+
+  - **Flip ↔** (L/R) and **Flip ↕** (vertical) — with auto-detected Z orientation
+
+  - **Save PNG** export
+
+
+  ### `viewer.html` — full multi-planar MPR viewer
+
+  - 4 synchronized panels: Axial · Coronal · Sagittal · MIP/Panoramic
+
+  - Crosshair-synced slice navigation
+
+  - Window/Level presets (Bone · Soft tissue · Teeth)
+
+  - Manual arch drawing and curved panoramic mode
+
+
+  ### `pano_render.py` — headless Python renderer
+
+  CLI equivalent of `pano.html`. Reads a DICOM, writes a tonemapped PNG, opens it.
+
+
+  ```bash
+
+  pip install pydicom numpy pillow scipy
+
+  python3 pano_render.py input.dcm [output.png]
+
+  ```
+
+
+  ## How the panoramic reconstruction works
+
+
+  1. **Find tooth-crown slice** — scan axial slices, pick the one where high-HU voxels form many small
+  compact blobs (teeth) rather than one large mass (bone).
+
+  2. **Segment individual teeth** — threshold at ~2000 HU (enamel), 3×3 erosion to kill noise, connected-component
+  analysis, keep only tooth-sized components (40–5000 voxels).
+
+  3. **Fit the dental arch** — PCA on tooth centroids to find the arch''s principal axis, then fit a parabola
+  `y = ax² + bx + c` in the rotated frame.
+
+  4. **Arc-length uniform resampling** of the curve — control points equally spaced in millimeters, not
+  in index.
+
+  5. **Render the DRR** — for each column on the arch and each Z row, sample voxels along the slab-thick
+  perpendicular with bilinear interpolation; accumulate `max(0, HU + 1000)` to simulate X-ray attenuation.
+
+  6. **Tonemap** — 1st/99.5th percentile auto-windowing, gamma correction, sigmoid contrast curve, unsharp
+  mask.
+
+  7. **Auto-detect Z orientation** by comparing cortical bone density above/below the crown slice (mandible
+  side has much denser bone).
+
+
+  ## Privacy
+
+
+  DICOM files often contain patient names, IDs, and other PHI. **This repo does not include any DICOM
+  files or rendered panoramas** — `.gitignore` excludes them. Never commit DICOM files or panoramas from
+  real patients to a public repository.
+
+
+  ## License
+
+
+  MIT
+
+  '

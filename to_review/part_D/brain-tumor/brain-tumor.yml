@@ -1,0 +1,416 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: karim13adel/Brain-Tumor
+url: https://github.com/karim13adel/Brain-Tumor
+platform: github
+description: Brain tumor segmentation on BraTS 2020 using a from-scratch U-Net with Dice loss — 0.847
+  mean Dice, 97% slice-level accuracy across 4,871 validation slices.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-05-28T20:28:25Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+readme_excerpt: '# Brain Tumor Segmentation with U-Net on BraTS 2020
+
+
+  This project implements pixel-level brain tumor segmentation on multimodal MRI scans using a U-Net architecture
+  trained on the BraTS 2020 dataset. The task is non-trivial for several compounding reasons: MRI volumes
+  are high-dimensional (240×240×155 voxels per modality), tumor boundaries are diffuse and irregular,
+  class imbalance is severe (tumor pixels constitute a small fraction of any given slice), and standard
+  cross-entropy loss fails here because it treats all pixels equally — misclassifying background pixels
+  costs the same as missing the tumor entirely. The project addresses this through a pure Dice loss formulation,
+  tumor-only slice filtering to manage the imbalance, and a vanilla U-Net implementation built entirely
+  from primitives rather than pretrained encoders, making every architectural decision explicit and auditable.
+  The result is a segmentation system that produces per-slice binary masks and per-patient diagnostic
+  summaries with spatial localization from a single FLAIR modality.
+
+
+  ---
+
+
+  ## Repository Structure
+
+
+  ```
+
+  brain-tumor-segmentation/
+
+  │
+
+  ├── Brain_tumor.ipynb          # Full pipeline: data loading, model definition,
+
+  │                              #   training loop, evaluation, and report generation
+
+  │
+
+  └── README.md                  # This file
+
+  ```
+
+
+  > The project is self-contained in a single notebook designed to run on Kaggle with GPU acceleration.
+  All intermediate outputs (model checkpoint, evaluation plots) are written to `/kaggle/working/`.
+
+
+  ---
+
+
+  ## How the System Works
+
+
+  ### Data
+
+
+  The dataset is [BraTS 2020](https://www.kaggle.com/datasets/awsaf49/brats20-dataset-training-validation),
+  the standard benchmark for brain tumor segmentation. Each patient directory contains four MRI modalities
+  (T1, T1ce, T2, FLAIR) plus a ground truth segmentation mask. This project uses only the FLAIR modality
+  — the sequence most sensitive to tumor edema and infiltration — which keeps the input dimensionality
+  minimal and makes the model''s learned representations easier to interpret.
+
+
+  Annotations in BraTS 2020 use a multi-class scheme: label 1 (necrotic core), label 2 (edema), label
+  4 (enhancing tumor). This project collapses all non-zero labels into a binary foreground mask, treating
+  the whole tumor region as a single segmentation target. The rationale is that whole-tumor segmentation
+  is the harder generalization problem and is clinically meaningful for initial screening workflows.
+
+
+  ### Dataset Class and Slice Filtering
+
+
+  MRI volumes are 3D, but the model operates on 2D axial slices. The `BraTSDataset` class iterates over
+  all 155 axial slices per patient and, when `tumor_only=True` (the default), discards slices whose segmentation
+  mask is entirely zero. This filtering step is a deliberate design choice: including background-only
+  slices would cause the model to learn a trivial solution — predict all-zero — and achieve high pixel
+  accuracy while completely failing at segmentation. By restricting training to slices that contain tumor
+  tissue, the effective class balance is substantially improved without reweighting or oversampling.
+
+
+  Each `__getitem__` call loads the FLAIR and mask volumes fresh from disk, extracts the requested slice,
+  normalizes the FLAIR image by dividing by its per-slice maximum (handling zero-maximum slices with a
+  guard), binarizes the mask, and returns both as single-channel float tensors of shape `(1, H, W)`.
+
+
+  ### Architecture
+
+
+  The model is a vanilla U-Net with no pretrained components, built from three composable block types:
+
+
+  **ConvBlock** — two sequential 3×3 convolutions, each followed by BatchNorm and ReLU. The double-convolution
+  pattern is standard U-Net; BatchNorm is added here (not in the original 2015 paper) to improve training
+  stability on a diverse medical dataset.
+
+
+  **EncoderBlock** — wraps a ConvBlock with a 2×2 MaxPool, returning both the pooled output (passed to
+  the next encoder stage) and the pre-pool feature map (stored as a skip connection).
+
+
+  **DecoderBlock** — upsamples via transposed convolution (stride 2), concatenates the corresponding skip
+  connection along the channel dimension, then applies a ConvBlock to the merged representation. Using
+  `ConvTranspose2d` rather than bilinear upsampling preserves spatial information and keeps the number
+  of learned parameters explicit.
+
+
+  The full network encodes through four stages (1→64, 64→128, 128→256, 256→512 channels), processes the
+  bottleneck at 512→1024 channels, then mirrors the encoder in four decoder stages back to 64 channels.
+  A final 1×1 convolution projects to a single output channel, and sigmoid activation maps logits to a
+  probability in [0, 1].
+
+
+  The model has approximately 31 million parameters. No pretrained backbone is used.
+
+
+  ### Loss Function and Metrics
+
+
+  The training objective is the Dice loss:
+
+
+  ```
+
+  L_dice = 1 - (2 * |P ∩ T| + ε) / (|P| + |T| + ε)
+
+  ```
+
+
+  where `P` is the flattened prediction, `T` is the flattened target, and `ε = 1e-6` is a smoothing term
+  to prevent division by zero when both prediction and target are empty. Dice loss directly optimizes
+  the overlap coefficient and is invariant to class imbalance in a way that cross-entropy is not.
+
+
+  Evaluation uses the hard Dice score, computed after thresholding predictions at 0.5 to obtain binary
+  masks. This is a stricter metric than soft Dice: a prediction that is uniformly uncertain at 0.4 would
+  score well on soft Dice but zero on hard Dice.
+
+
+  ### Training Protocol
+
+
+  - **Optimizer**: Adam, learning rate `1e-4`
+
+  - **LR schedule**: `ReduceLROnPlateau` with `mode=''max''` (monitors validation Dice), factor 0.5, patience
+  2. The scheduler reduces the learning rate when improvement stalls, avoiding aggressive decay on a fixed
+  schedule.
+
+  - **Batch size**: 8
+
+  - **Maximum epochs**: 30
+
+  - **Early stopping**: patience 3 on validation Dice, with best-checkpoint saving. The model saved to
+  disk is the one with the highest validation Dice seen during training, not the final epoch.
+
+  - **Train/val split**: 80/20 random split at the slice level.
+
+
+  ### Inference and Diagnosis Logic
+
+
+  At inference time, the model produces a probability map over the slice. A pixel is classified as tumor
+  if its probability exceeds 0.5. The number of positive pixels is then used to bucket the prediction
+  into one of three diagnostic categories:
+
+
+  - `< 100 pixels`: NO TUMOR DETECTED, confidence 0%
+
+  - `100–499 pixels`: POSSIBLE TUMOR — LOW CONFIDENCE, confidence = mean activation of above-threshold
+  pixels
+
+  - `≥ 500 pixels`: TUMOR DETECTED, confidence = mean activation of above-threshold pixels
+
+
+  The 100 and 500 pixel thresholds are heuristic. The confidence score is not a calibrated probability;
+  it is the mean sigmoid output over predicted-positive pixels, which tends to be high when the model
+  is certain and lower when predictions are marginal.
+
+
+  The `generate_report` function extends this with spatial localization: it finds the bounding rows and
+  columns of the predicted binary mask, computes the centroid, and classifies the result as left/right
+  hemisphere and upper/lower region based on image coordinate midpoints (column 120 and row 120 of a 240×240
+  slice). This is a geometric approximation that does not account for anatomical registration.
+
+
+  ---
+
+
+  ## Results and Metrics
+
+
+  All metrics are computed on the held-out 20% validation split (4,871 slices) with a binary threshold
+  of 0.5.
+
+
+  ### Dice Score
+
+
+  | Metric | Value |
+
+  |---|---|
+
+  | Mean Dice | **0.847** |
+
+
+  The distribution is strongly left-skewed: the bulk of slices cluster between 0.85 and 1.0, with a secondary
+  spike near 0.0 corresponding to slices where the model and ground truth disagree completely — typically
+  boundary slices at the edge of the tumor volume where the mask is sparse.
+
+
+  ### Pixel-Level Confusion Matrix
+
+
+  Evaluated over every pixel across all validation slices.
+
+
+  |  | Predicted No Tumor | Predicted Tumor |
+
+  |---|---|---|
+
+  | **Actual No Tumor** | 99.9% | 0.1% |
+
+  | **Actual Tumor** | 5.5% | 94.5% |
+
+
+  Background pixels are classified with near-perfect specificity (99.9%). The model misses 5.5% of true
+  tumor pixels (false negatives), which is the dominant error mode — consistent with the class imbalance
+  inherent in the task.
+
+
+  ### Slice-Level Confusion Matrix
+
+
+  Each slice is classified as tumor-present or tumor-absent based on whether the predicted binary mask
+  contains ≥ 100 pixels above threshold.
+
+
+  |  | Predicted No Tumor | Predicted Tumor |
+
+  |---|---|---|
+
+  | **Actual No Tumor** | 90.9% | 9.1% |
+
+  | **Actual Tumor** | 2.6% | 97.4% |
+
+
+  The model correctly identifies tumor-present slices with 97.4% recall. The 9.1% false positive rate
+  on tumor-absent slices reflects the heuristic 100-pixel threshold: low-confidence diffuse activations
+  on non-tumor slices occasionally exceed it.
+
+
+  ### Slice-Level Classification Report
+
+
+  Evaluated on 4,871 validation slices (471 no-tumor, 4,400 tumor).
+
+
+  | Class | Precision | Recall | F1 | Support |
+
+  |---|---|---|---|---|
+
+  | No Tumor | 0.79 | 0.91 | 0.84 | 471 |
+
+  | Tumor | 0.99 | 0.97 | 0.98 | 4,400 |
+
+  | **Accuracy** | | | **0.97** | 4,871 |
+
+  | Macro avg | 0.89 | 0.94 | 0.91 | 4,871 |
+
+  | Weighted avg | 0.97 | 0.97 | 0.97 | 4,871 |
+
+
+  The gap between No Tumor precision (0.79) and Tumor precision (0.99) reflects the class imbalance in
+  the validation set: false positives on the minority class pull precision down disproportionately. The
+  macro-average F1 of 0.91 is the more meaningful aggregate given the imbalance.
+
+
+  ---
+
+
+  ## Stack
+
+
+  | Component | Tool / Library |
+
+  |---|---|
+
+  | Deep learning framework | PyTorch |
+
+  | MRI file I/O | NiBabel |
+
+  | Data pipeline | `torch.utils.data.Dataset`, `DataLoader` |
+
+  | Model | Custom U-Net (PyTorch `nn.Module`) |
+
+  | Optimizer | Adam (`torch.optim.Adam`) |
+
+  | LR scheduler | `ReduceLROnPlateau` |
+
+  | Evaluation metrics | Custom Dice, scikit-learn confusion matrix / classification report |
+
+  | Dataset | BraTS 2020 (via `kagglehub`) |
+
+  | Visualization | Matplotlib, Seaborn |
+
+  | Environment | Kaggle Notebooks (NVIDIA GPU, Python 3) |
+
+
+  ---
+
+
+  ## Quickstart
+
+
+  ### Prerequisites
+
+
+  This notebook is designed for Kaggle. Running it locally requires:
+
+
+  - Python 3.8+
+
+  - A CUDA-capable GPU (or patience — CPU training at this scale is slow)
+
+  - The BraTS 2020 dataset
+
+
+  ### On Kaggle (recommended)
+
+
+  1. Create a new Kaggle notebook and upload `Brain_tumor.ipynb`.
+
+  2. Add the dataset: search for `awsaf49/brats20-dataset-training-validation` and attach it to the notebook.
+
+  3. Enable GPU accelerator under Settings → Accelerator.
+
+  4. Run all cells. The notebook will train, evaluate, and save results to `/kaggle/working/`.
+
+
+  ### Locally
+
+
+  ```bash
+
+  # Install dependencies
+
+  pip install torch torchvision nibabel kagglehub scikit-learn matplotlib seaborn numpy
+
+
+  # Authenticate with Kaggle (if using kagglehub for download)
+
+  # Requires ~/.kaggle/kaggle.json with your API credentials
+
+
+  # Then run the notebook
+
+  jupyter notebook Brain_tumor.ipynb
+
+  ```
+
+
+  If you already have the dataset locally, update `DATA_PATH` in the second data-loading cell to point
+  to the directory containing the `BraTS2020_TrainingData` folder. The `kagglehub.login()` and download
+  cells can be skipped.
+
+
+  ---
+
+
+  ## Requirements
+
+
+  | Package | Purpose |
+
+  |---|---|
+
+  | `torch` | Model, training, tensors |
+
+  | `torchvision` | (imported transitively; not directly used) |
+
+  | `nibabel` | Reading `.nii` MRI files |
+
+  | `numpy` | Array operations |
+
+  | `matplotlib` | Visualization |
+
+  | `seaborn` | Heatmap / confusion matrix plots |
+
+  | `scikit-learn` | `confusion_matrix`, `classification_report` |
+
+  | `kagglehub` | Dataset download |
+
+  | Python | 3.8+ |
+
+  | CUDA | 11.x+ recommended |
+
+
+  No specific version pins are declared in the notebook. The code uses stable APIs and should run on any
+  reasonably recent version of the above libraries (circa 2023–2025).
+
+
+
+  '

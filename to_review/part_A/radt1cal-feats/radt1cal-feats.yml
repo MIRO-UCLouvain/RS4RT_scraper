@@ -1,0 +1,78 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: overjoyroy/RadT1cal_Feats
+url: https://github.com/overjoyroy/RadT1cal_Feats
+platform: github
+description: A pipeline to preprocess T1w Structural MRIs then output volume and first order radiomics
+  features per ROI.
+license: MIT
+language: Python
+keywords:
+- mri
+- neuroimaging
+- radiomics-feature-extraction
+- t1
+stars: 2
+updated_at: '2026-04-19T22:58:13Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# RadT1cal_Feats\n\nRadT1cal_Feats is a pipeline designed to preprocess T1-weighted (T1w)\
+  \ Structural MRIs for visualization and further analysis. This tool extracts radiomics features for\
+  \ each region of interest (ROI) based on a provided anatomical atlas. It is intended for command-line\
+  \ use.\n\n## Overview\n\nThe preprocessing pipeline includes four primary steps:\n\n1. **Reorientation**\
+  \ - Aligning the MRI images to a standard orientation.\n2. **Skull Stripping** - Removing non-brain\
+  \ tissues from the MRI images.\n3. **Bias Correction** - Correcting intensity non-uniformities in the\
+  \ MRI images.\n4. **Registration** - Aligning an atlas to the patient space for standardized anatomical\
+  \ referencing.\n5. **Volume and Radiomic Feature Calculation** - Calculating and collecting volume and\
+  \ first order radiomics features per ROI\n\n## Features\n\n- Written primarily in Python.\n- Utilizes\
+  \ the Nipype library for workflow management.\n- Employs tools such as FSL and ANTs for processing tasks.\n\
+  - Compatible with the Brain Imaging Data Structure (BIDS) Standard.\n\n## Inputs and Outputs\n\n###\
+  \ Inputs\nAt minimum:\n- **Parent Data Directory**: The directory containing the MRI data.\n- **Subject\
+  \ ID**: Identifier for the subject/patient.\n- **Output Directory**: Directory where the processed outputs\
+  \ will be saved.\n\n### Outputs\n\n1. **Preprocessed Patient T1 MRI**: The MRI after all preprocessing\
+  \ steps.\n2. **Atlas in Patient Space**: An atlas registered to the patient’s anatomical space.\n3.\
+  \ **Volume and Radiomics Features**: Volume and Radiomics features per ROI\n\n## Usage Instructions\n\
+  \n### Running the Tool Directly\n\nTo use this tool directly, run the following command:\n```\npython3\
+  \ t1_preproc.py -p [data_dir_path] -sid [subject-id] -o [output_path] -tem [template_path] -seg [segment_path]\n\
+  ```\n\n### Using Docker (Recommended)\n\nUsing Docker is recommended to simplify the installation of\
+  \ necessary dependencies (including FSL, ANTs, and relevant Python libraries). There are two ways to\
+  \ use Docker: building and running the container locally, or using a prebuilt Docker image from Docker\
+  \ Hub.\n\n**Option 1: Building and Running the Container Locally**\n1. Clone the Git repository and\
+  \ navigate to the directory containing the Dockerfile.\n2. Build the Docker container:\n```\ndocker\
+  \ build -t my_RadT1cal_Feats_container .\n```\n3. Run the Docker container:\n```\ndocker run -v [data_dir_path]:/data/my_data\
+  \ -v [output_path]:/data/output --rm -u $UID:$UID my_RadT1cal_Feats_container -p /data/my_data -sid\
+  \ [subject-id] -o [output_path] \n```\n\nExplanation of Docker Flags:\n\n```--rm```: Automatically removes\
+  \ the container after it exits. <br>\n```-v```: Mounts your data and output directories into the Docker\
+  \ container.<br>\n```-u``` $UID:$UID: Runs the Docker container as the same user as on the host machine\
+  \ to avoid file permission issues.\n\n*Notes:\nIf the output directory is a subdirectory of the data\
+  \ directory (e.g., \\[data_dir_path\\]/derivatives), you only need to mount the data directory once\
+  \ and provide the output path relative to the mounted data directory (e.g., /data/my_data/derivatives).\
+  \ Output files will be accessible on the host machine from where the output path was mounted. Default\
+  \ anatomical templates and atlas (MNI152 and AALv3_CombinedThalami respectively) are included so the\
+  \ -tem and -seg flags are optional.*\n\n**Option 2: Using a Prebuilt Docker Image**\n1. Pull the prebuilt\
+  \ Docker image from Docker Hub:\n```\ndocker pull jor115/RadT1cal_Feats\n```\n2. Run the Docker container\
+  \ using the pulled image:\n```\ndocker run -v [data_dir_path]:/data/my_data -v [output_path]:/data/output\
+  \ --rm -u $UID:$UID my_RadT1cal_Feats_container -p /data/my_data -sid [subject-id] -o [output_path]\
+  \ \n```\n*Note: The docker run command is identical to the one used for running a locally built container,\
+  \ but you do not need to download the source code or build the container locally.*\n\n## Expected Runtimes\n\
+  \nThe table below shows approximate per-step runtimes for a standard T1w scan with the AALv2 atlas (120\
+  \ ROIs). Times were measured using `--testmode`, which reduces ANTs iterations significantly — full-mode\
+  \ registration will be longer.\n\n| Step | Approximate Time (`--testmode`) |\n|------|---------------------------------|\n\
+  | Reorientation | ~1s |\n| Bias correction (FSL FAST) | ~5–6 min |\n| Skull stripping (FSL BET) | ~7s\
+  \ |\n| Affine registration (FSL FLIRT) | ~8s |\n| Nonlinear registration (ANTs SyN) | ~2 min |\n| Atlas\
+  \ warp (ANTs ApplyTransforms) | ~2s |\n| Radiomic feature extraction (120 ROIs) | ~3 min |\n| **Total\
+  \ (`--testmode`)** | **~11 min** |\n\n> **Note:** In full mode, the ANTs nonlinear registration step\
+  \ runs up to 1500 iterations and will take considerably longer. FAST bias correction and pyradiomics\
+  \ extraction are the other main time costs and are unaffected by `--testmode`.\n\n## Development Status\n\
+  \nThis tool is a work in progress. It is currently fully functional but is undergoing refinement to\
+  \ enhance user flexibility and input handling.\n\n## Feedback and Contributions\n\nIf you have any concerns\
+  \ or suggestions regarding the code or its implementation, please contact the authors at pirc@chp.edu.\n\
+  \n## Acknowledgement\n\nThe primary authors of this work are Joy Roy and Rafael Ceschin, both members\
+  \ of the Department of Biomedical Informatics, University of Pittsburgh School of Medicine and the Pediatric\
+  \ Imaging Research Center, Department of Radiology, Children's Hospital of Pittsburgh.\n"

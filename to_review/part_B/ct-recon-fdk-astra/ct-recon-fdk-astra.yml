@@ -1,0 +1,67 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: aaichert/ct_recon_fdk_astra
+url: https://github.com/aaichert/ct_recon_fdk_astra
+platform: github
+description: Python 3D Cone-Beam CT (CBCT) reconstruction, with a tiny exampe data set.
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-07-16T12:58:21Z'
+image_source: https://raw.githubusercontent.com/aaichert/ct_recon_fdk_astra/HEAD/ct_recon_fdk_astra/data/youtube_preview.jpg
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# 3D Cone-Beam CT Reconstruction\n\nThis repository contains a python tool for 3D Cone-Beam\
+  \ CT (CBCT) reconstruction, with a tiny example data set.\n\n\n### Video Tutorial\n\nFor a visual walkthrough\
+  \ of the project and reconstruction process, watch the video tutorial:\n\n[![Video Tutorial](ct_recon_fdk_astra/data/youtube_preview.jpg)](https://www.youtube.com/watch?v=znY13qPe3qA)\n\
+  \n\n\n## Project Structure & Reference Data\n\n- **`ct_recon_fdk_astra/`**: Main package directory:\n\
+  \  - **`reconstruct.py`**: Python script for performing Feldkamp-Davis-Kress (FDK) cone-beam reconstruction\
+  \ using the ASTRA toolbox.\n  - **`recon_coverage.py`**: Estimates useful reconstruction volumes from\
+  \ a CT trajectory.\n  - **`data/example_data/`**: Package data directory containing the scan data and\
+  \ metadata:\n    - **`pumpkin_3D_voxels_u8.nrrd`**: The 3D reference scan of a green pumpkin.\n    -\
+  \ **`fullscan_<N>views_<W>x<H>.zip`**: Zip archive containing projection data.\n    - **`*.ompl`**:\
+  \ Projection geometry matrices for the FD-CT views.\n    - **`*.json`**: Config file containing settings\
+  \ for reconstructing the example data.\n\n\n\n## Visualizations\n\n### Reconstructed CT Volume Slice\
+  \ 172\n\nComparison at slice 172 along the Z-axis of the reference volume (`pumpkin_3D_voxels_u8.nrrd`),\
+  \ the 90-view reconstruction, and the 180-view reconstruction:\n\n![Comparison of Slice 172](ct_recon_fdk_astra/data/comparison_slice_172.png)\n\
+  \n### Raw X-ray Projection Data\n\nThree projection views (at indices 0, 15, and 30) from the 90-view\
+  \ raw projection stack (`fullscan_90views_600x400.nrrd`), resized to half resolution:\n\n![Raw Projection\
+  \ Views](ct_recon_fdk_astra/data/views_0_15_30.png)\n\n\n## Getting Started\n\n### Prerequisites\nThis\
+  \ project requires a CUDA-enabled GPU for GPU-accelerated reconstruction via the ASTRA Toolbox.\n\n\
+  For the **ASTRA Toolbox** (CUDA-enabled), refer to the official [ASTRA Toolbox Installation Guide](https://www.astra-toolbox.com/docs/install.html).\n\
+  \n> [!NOTE]\n> The core reconstruction command-line script `ct_recon_fdk_astra/reconstruct.py` works\
+  \ independently and **does not require** any graphical/Qt dependencies. If you only want to perform\
+  \ headless reconstructions, install without extras:\n> ```bash\n> pip install .\n> ```\n\n\n### Installation\n\
+  \nQt (`PyQt6`) and the SVG utilities (`svg_snip`) are **optional** — they are only needed for the two\
+  \ GUI applications. The package is therefore split into a core install and a `[gui]` extra.\n\n**Core\
+  \ only** (headless reconstruction, no Qt required):\n```bash\npip install .\n```\n\n**With GUI** (includes\
+  \ `PyQt6` and `svg_snip`):\n```bash\npip install \".[gui]\"\n```\n\nFor development, use the editable\
+  \ flag:\n```bash\n# Headless\npip install -e .\n\n# With GUI\npip install -e \".[gui]\"\n```\n\nAll\
+  \ three command-line entry points are registered in your PATH in either case:\n- `reconstruct` — headless\
+  \ FDK reconstruction (no Qt needed)\n- `ReconstructionGUIPy` — trajectory/geometry GUI (requires `[gui]`\
+  \ extra)\n- `NrrdView3D` — 3D NRRD volume viewer (requires `[gui]` extra)\n\n\n### Running the Reconstruction\
+  \ (Headless / Command-line)\nTo run the reconstruction script with a configuration file:\n```bash\n\
+  python ct_recon_fdk_astra/reconstruct.py ct_recon_fdk_astra/data/example_data/fullscan_90views_600x400.json\n\
+  ```\nThis runs the selected algorithm on the raw projection stack and saves the output to `ct_recon_fdk_astra/data/example_data/reconstruction.nrrd`.\n\
+  \n### Reconstruction Modes & Configuration\n\nYou can configure the reconstruction algorithm by adding/modifying\
+  \ the following parameters in your configuration JSON file (e.g., `fullscan_90views_600x400.json`):\n\
+  \n*   **`algorithm`**: (Optional) String specifying the reconstruction algorithm. Supported values:\n\
+  \    *   `\"FDK\"` (Default): Feldkamp-Davis-Kress analytical cone-beam filtered backprojection. Fast,\
+  \ sharp details, but sensitive to noise.\n    *   `\"SIRT\"`: Simultaneous Iterative Reconstruction\
+  \ Technique. High noise reduction, excellent for sparse/noisy projection data, but converges slowly.\n\
+  \    *   `\"CGLS\"`: Conjugate Gradient Least Squares. Faster convergence iterative method.\n*   **`iterations`**:\
+  \ (Optional) Integer specifying the number of iterations for iterative algorithms (SIRT, CGLS). Default\
+  \ is `100`.\n\nExample configuration snippet:\n```json\n{\n  \"ompl_file\": \"fullscan_90views_600x400.ompl\"\
+  ,\n  \"image_files\": [ \"proj_0.tif\", \"proj_1.tif\" ],\n  \"algorithm\": \"SIRT\",\n  \"iterations\"\
+  : 150\n}\n```\n\n\n\n## Graphical User Interfaces (GUIs)\n\nThis project includes two GUI tools to interactively\
+  \ explore and visualize your data:\n1. **ReconstructionGUIPy**: Inspect the X-ray projection trajectory\
+  \ and detector geometry in 3D.\n2. **NrrdView3D**: Slice through, zoom, and inspect physical voxel dimensions\
+  \ of the reconstructed 3D NRRD volume.\n\nHere is the Reconstruction GUI showing the 3D trajectory view:\n\
+  ![Reconstruction GUI Trajectory View](gui/ReconstructionGUI.png)\n\nHere is the 3D NRRD Volume Viewer:\n\
+  ![NrrdView3D Volume Viewer](gui/NrrdView3D.png)\n\n\n\n\n\n"

@@ -1,0 +1,51 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: vishvp06/brain_tumor_segmentation_and_classify
+url: https://github.com/vishvp06/brain_tumor_segmentation_and_classify
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-26T17:08:32Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# Brain Tumor Detection System\n\nThis project provides a complete PyTorch and Streamlit\
+  \ workflow for brain tumor segmentation and classification from MRI images. It uses:\n\n- U-Net for\
+  \ tumor segmentation\n- A CNN classifier for tumor type prediction\n- Streamlit for the web interface\n\
+  - nibabel for `.nii` / `.nii.gz` MRI files\n- CUDA automatically when available\n\n## Project Structure\n\
+  \n```text\nbrain_tumor_segmentation_and_classify/\n|-- dataset/\n|   |-- brats2021/\n|   `-- classification/\n\
+  |-- models/\n|   |-- segmentation_model.pth\n|   `-- classification_model.pth\n|-- common/\n|   `--\
+  \ data_utils.py\n|-- segmentation/\n|   `-- unet.py\n|-- classification/\n|   `-- cnn_model.py\n|--\
+  \ training/\n|   |-- train_segmentation.py\n|   `-- train_classifier.py\n|-- inference/\n|   `-- predict.py\n\
+  |-- frontend/\n|   `-- app.py\n|-- requirements.txt\n`-- README.md\n```\n\n## Dataset Layout\n\n###\
+  \ Segmentation dataset\n\nThe segmentation script is built for the BraTS directory structure already\
+  \ present in this workspace:\n\n```text\ndataset/brats2021/\n`-- BraTS2021_00000/\n    |-- BraTS2021_00000_flair.nii\n\
+  \    |-- BraTS2021_00000_t1.nii\n    |-- BraTS2021_00000_t1ce.nii\n    |-- BraTS2021_00000_t2.nii\n\
+  \    `-- BraTS2021_00000_seg.nii\n```\n\nThe training pipeline uses 2D axial slices resized to `240x240`\
+  \ and learns a binary tumor mask from the selected modality. By default it uses `flair`.\n\n### Classification\
+  \ dataset\n\nBraTS 2021 supports segmentation well, but it does **not** provide the four labels required\
+  \ for this classifier (`Glioma`, `Meningioma`, `Pituitary`, `No Tumor`). For the classification model,\
+  \ place a labeled MRI dataset in this layout:\n\n```text\ndataset/classification/\n|-- glioma/\n|--\
+  \ meningioma/\n|-- pituitary/\n`-- no_tumor/\n```\n\nEach folder may contain `.nii`, `.nii.gz`, `.png`,\
+  \ `.jpg`, or `.jpeg` MRI images.\n\n## Installation\n\n```bash\npython -m venv .venv\n.venv\\Scripts\\\
+  activate\npip install -r requirements.txt\n```\n\n## Train the Segmentation Model\n\n```bash\npython\
+  \ training/train_segmentation.py --data-dir dataset/brats2021 --batch-size 2 --epochs 20\n```\n\nOutput:\n\
+  \n```text\nmodels/segmentation_model.pth\n```\n\n## Train the Classification Model\n\n```bash\npython\
+  \ training/train_classifier.py --data-dir dataset/classification --batch-size 2 --epochs 20\n```\n\n\
+  Output:\n\n```text\nmodels/classification_model.pth\n```\n\n## Run Inference from the Command Line\n\
+  \n```bash\npython inference/predict.py path\\to\\mri_image.nii.gz\n```\n\n## Run the Streamlit Web Application\n\
+  \n```bash\nstreamlit run frontend/app.py\n```\n\n## Streamlit Features\n\n- Upload MRI image or `.nii.gz`\
+  \ volume\n- Show original MRI slice\n- Show tumor segmentation mask\n- Show segmented tumor overlay\n\
+  - Show tumor classification result\n- Show confidence score\n\n## Training Defaults\n\n- Image size:\
+  \ `240x240`\n- Batch size: `2`\n- Optimizer: `Adam`\n- Epochs: `20`\n- GPU: enabled automatically with\
+  \ CUDA when available\n\n## Notes\n\n- The Streamlit app loads model checkpoints from `models/` and\
+  \ does not retrain on startup.\n- The inference pipeline selects the slice with the strongest predicted\
+  \ tumor region when a 3D MRI volume is uploaded.\n- If you want to train on a different modality, pass\
+  \ `--modality t1`, `--modality t1ce`, or `--modality t2` to `training/train_segmentation.py`.\n"

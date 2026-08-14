@@ -1,0 +1,72 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hani-rahmoune/toxicity-multiclass
+url: https://github.com/hani-rahmoune/toxicity-multiclass
+platform: github
+description: Tox21 Multi-Label Toxicity Prediction
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-02-04T18:08:13Z'
+image_source: https://raw.githubusercontent.com/hani-rahmoune/toxicity-multiclass/HEAD/plot/model_comparison_test_metrics.png
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "<details>\r\n<summary><strong>Project structure</strong></summary>\r\ntoxicity-multiclass/\r\
+  \n├── data/\r\n│ ├── raw/ # Raw Tox21 data (original files)\r\n│ ├── processed/ # Cleaned / split datasets\r\
+  \n│ └── features/ # Precomputed features (Morgan fingerprints)\r\n│\r\n├── notebooks/\r\n│ ├── 01_exploring_cleaning_data.ipynb\r\
+  \n│ ├── 02_xgboost_baseline.ipynb\r\n│ ├── 05_chemberta_training.ipynb\r\n│ └── 06_evaluation_base_against_transformers.ipynb\r\
+  \n│\r\n├── src/\r\n│ └── toxicity/\r\n│ ├── data/ # Downloading, cleaning, featurization code\r\n│ ├──\
+  \ models/ # XGBoost, MLP, ChemBERTa implementations\r\n│ └── training/ # Training loops\r\n│\r\n├──\
+  \ results/ # Metrics, scores, plots\r\n├── models/ # Saved trained models\r\n├── scripts/ # Small helper\
+  \ / launch scripts\r\n│\r\n├── app.py # Flask API for deployment\r\n└── README.md\r\n</details>\r\n\r\
+  \n\r\n\r\n## Tox21 Multi-Label Toxicity Prediction\r\n\r\nThis project implements an end-to-end machine\
+  \ learning pipeline to predict molecular toxicity across 12 biological assays from SMILES representations.\r\
+  \n\r\nClassical machine learning models (XGBoost, MLP) are compared with a domain-specific Transformer\
+  \ (ChemBERTa) to assess their effectiveness for computer-aided toxicology in a realistic, data-constrained\
+  \ setting.\r\n\r\n\r\n## Project Motivation\r\n\r\nDrug discovery suffers from high failure rates, often\
+  \ driven by late-stage toxicity. Experimental *in vivo* testing is costly, slow, and ethically sensitive,\
+  \ making early computational screening increasingly important.\r\n\r\nThis project focuses on:\r\n-\
+  \ Accelerating safety screening through in-silico toxicity prediction\r\n- Reducing experimental costs\
+  \ by filtering toxic compounds early\r\n- Comparing modern Transformer-based models with strong classical\
+  \ baselines on chemical data\r\n\r\n\r\n## Dataset\r\n\r\nThe project uses the **Tox21 (Toxicology in\
+  \ the 21st Century)** dataset.\r\n\r\n- Approximately 6,000 molecules after cleaning  \r\n- 12 toxicity\
+  \ targets per compound (e.g. Nuclear Receptors such as NR-AR and Stress Response pathways such as SR-p53)\
+  \  \r\n- Multi-label setting with missing labels and strong class imbalance  \r\n\r\nThese properties\
+  \ reflect real-world toxicology challenges and require careful modeling and evaluation choices.\r\n\r\
+  \n\r\n## Models\r\n\r\n## XGBoost (Morgan Fingerprints)\r\n- Molecules are represented using 2048-bit\
+  \ Morgan fingerprints  \r\n- One classifier is trained per assay (binary relevance)  \r\n- Provides\
+  \ strong and stable performance on tabular chemical features  \r\n\r\n## ChemBERTa (Transformer)\r\n\
+  - Pretrained on large-scale SMILES corpora  \r\n- Fine-tuned for multi-label toxicity prediction  \r\
+  \n- Uses masked loss so missing labels do not affect optimization  \r\n- Particularly effective at ranking\
+  \ compounds by toxicity risk  \r\n\r\n## MLP (Multi-Layer Perceptron)\r\n- Neural baseline trained on\
+  \ the same fingerprint features as XGBoost  \r\n- Serves as a reference point between tree-based models\
+  \ and Transformers  \r\n\r\n\r\n## Training Objective\r\n\r\nModels are trained using binary cross-entropy\
+  \ loss in a multi-label setting.\r\n\r\nFor ChemBERTa, a label mask is applied so missing assay labels\
+  \ are ignored during loss computation, with optional positive class weighting to mitigate class imbalance.\r\
+  \n\r\nThis loss formulation is standard for multi-label toxicity prediction and aligns with the structure\
+  \ of the Tox21 dataset.\r\n\r\n\r\n## Evaluation\r\n<p align=\"center\">\r\n  <img src=\"plot/model_comparison_test_metrics.png\"\
+  \ width=\"500\">\r\n</p>\r\n\r\nEvaluation focuses on **macro F1 score**, with precision, recall, and\
+  \ ROC-AUC reported as complementary metrics.\r\n\r\n- Macro F1 reflects balanced decision quality across\
+  \ all assays and penalizes trivial all-negative predictions  \r\n- ROC-AUC captures ranking performance\
+  \ independently of decision thresholds  \r\n\r\nA single global decision threshold is used, with a conservative\
+  \ value of **0.7** applied for deployment.  \r\n\r\nAll reported statistics and comparisons are computed\
+  \ in **Notebook 06** (`06_evaluation_base_against_transformers.ipynb`).\r\n\r\n\r\n## Performance Summary\
+  \ \r\n\r\n| Model       | Macro F1 (Test) | Macro ROC-AUC (Test) |\r\n|-------------|-----------------|----------------------|\r\
+  \n| XGBoost     | 0.4523          | 0.7944               |\r\n| ChemBERTa   | 0.4109          | 0.8320\
+  \               |\r\n| MLP         | 0.3596          | 0.7505               |\r\n\r\nXGBoost achieves\
+  \ the highest decision-level performance (**macro F1**), while ChemBERTa provides superior ranking ability\
+  \ (**ROC-AUC**).  \r\n\r\nThese results highlight the trade-off between ranking and classification performance\
+  \ in imbalanced multi-label settings.\r\n\r\n\r\n## Installation and Usage\r\n\r\npip install rdkit\
+  \ xgboost transformers torch pandas numpy scikit-learn matplotlib\r\n\r\n\r\n## Pipeline Execution\r\
+  \n\r\n1. **Data cleaning**  \r\nRun `01_exploring_cleaning_data.ipynb` (or `prepare_data.py`) to process\
+  \ and standardize raw SMILES.\r\n\r\n2. **Featurization**  \r\nExecute `make_fingerprints.py` to generate\
+  \ 2048-bit Morgan fingerprints.\r\n\r\n3. **Model training**  \r\n    - **XGBoost:** `02_xgboost_baseline.ipynb`\
+  \  \r\n    - **MLP:** `03_mlp_baseline.ipynb`  \r\n    - **ChemBERTa:** `05_chemberta_training.ipynb`\r\
+  \n\r\n4. **Evaluation and comparison**  \r\nAnalyze and reproduce all reported metrics using `06_evaluation_base_against_transformers.ipynb`.\r\
+  \n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n"

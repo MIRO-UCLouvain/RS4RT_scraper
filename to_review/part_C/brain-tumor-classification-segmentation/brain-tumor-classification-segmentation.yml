@@ -1,0 +1,41 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: gmzsefer/brain-tumor-classification-segmentation
+url: https://github.com/gmzsefer/brain-tumor-classification-segmentation
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-03T10:05:04Z'
+image_source: null
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Brain Tumor Classification & Segmentation\n\nTwo-stage deep learning pipeline for brain\
+  \ tumor MRI analysis:\n1. **Classification** — MobileNetV2 embeddings + ML classifier (No Tumor / Glioma\
+  \ / Meningioma / Pituitary)\n2. **Segmentation** — EfficientNetB3 encoder + U-Net decoder (256×256)\n\
+  \nIf the classifier detects a tumor, the segmentation model automatically generates a pixel-level mask.\
+  \ Otherwise segmentation is skipped.\n\n---\n\n## Dataset\n\n[Brain Tumor Segmentation Dataset](https://www.kaggle.com/)\
+  \ — 4237 MRI images across 4 classes with paired masks.\n\nFolder structure expected:\n```\nBrain Tumor\
+  \ Segmentation Dataset/\n├── image/\n│   ├── 0/   ← No Tumor\n│   ├── 1/   ← Glioma\n│   ├── 2/   ←\
+  \ Meningioma\n│   └── 3/   ← Pituitary\n└── mask/\n    ├── 1/\n    ├── 2/\n    └── 3/\n```\n\n---\n\n\
+  ## Pipeline\n\n```\nInput MRI\n    │\n    ▼\nMobileNetV2 (128×128) → Feature Embedding\n    │\n    ▼\n\
+  ML Classifier (SVM / RF / LR)\n    │\n    ├── No Tumor → Done\n    │\n    └── Tumor Detected\n     \
+  \       │\n            ▼\n    EfficientNetB3-UNet (256×256)\n            │\n            ▼\n    Segmentation\
+  \ Mask + Overlay\n```\n\n---\n\n## Results (expected)\n\n| Task | Metric | Score |\n|------|--------|-------|\n\
+  | Classification | Accuracy | ~92% |\n| Classification | F1-macro | ~90% |\n| Classification | AUC-OVR\
+  \ | ~0.98 |\n| Segmentation | Dice | ~0.85 |\n| Segmentation | IoU | ~0.76 |\n\n---\n\n## Key Improvements\
+  \ over baseline\n\n- **Data matching**: regex + fuzzy matching (difflib) increases paired samples from\
+  \ ~1595 → ~3500+\n- **Resolution**: 128×128 → 256×256 for segmentation\n- **Encoder**: scratch U-Net\
+  \ → EfficientNetB3 pretrained on ImageNet\n- **Training**: 2-phase (frozen encoder → fine-tune), ReduceLROnPlateau,\
+  \ EarlyStopping\n- **Augmentation**: RandomFlip, RandomRotation, RandomZoom, RandomContrast, GaussianNoise\n\
+  \n---\n\n## Usage (Google Colab)\n\n1. Upload the notebook to Colab\n2. Mount Google Drive and set the\
+  \ `ROOT` path in cell 1\n3. Run cells top to bottom\n4. Final cell: `full_pipeline(\"path/to/mri.jpg\"\
+  )` for single-image inference\n\n---\n\n## Requirements\n\n```\npip install -r requirements.txt\n```\n\
+  \n> Note: EfficientNetB3 is included in `tf.keras.applications` (TensorFlow ≥ 2.12), no extra install\
+  \ needed.\n"

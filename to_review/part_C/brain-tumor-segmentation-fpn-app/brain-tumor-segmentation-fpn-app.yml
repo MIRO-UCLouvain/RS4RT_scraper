@@ -1,0 +1,75 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: evadomcal/brain-tumor-segmentation-fpn-app
+url: https://github.com/evadomcal/brain-tumor-segmentation-fpn-app
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-22T17:58:54Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# Brain Tumor UNet Segmentation App\n\n[![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://python.org)\n\
+  [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io)\n[![Dagster](https://img.shields.io/badge/Dagster-1.5+-green.svg)](https://dagster.io)\n\
+  [![UNet](https://img.shields.io/badge/Architecture-UNet-orange.svg)](https://arxiv.org/abs/1505.04597)\n\
+  [![uv](https://img.shields.io/badge/uv-Package%20Manager-cyan.svg)](https://docs.astral.sh/uv)\n\n>\
+  \ **Trabajo académico** - Aplicación web para segmentación de tumores cerebrales en resonancias magnéticas\
+  \ (MRI) con evaluación de urgencia médica.\n\n## Tabla de Contenidos\n- [Descripción General](#descripción-general)\n\
+  - [Características](#características)\n- [Requisitos Previos](#requisitos-previos)\n- [Instalación](#instalación)\n\
+  - [Configuración de Kaggle](#configuración-de-kaggle)\n- [Estructura del Proyecto](#estructura-del-proyecto)\n\
+  - [Entrenamiento del Modelo](#entrenamiento-del-modelo)\n- [Uso de la Aplicación](#uso-de-la-aplicación)\n\
+  - [Autor](#autor)\n- [Licencia](#licencia)\n\n\n## Descripción General\n\nEsta aplicación permite la\
+  \ segmentación automática de tumores cerebrales a partir de imágenes de resonancia magnética (MRI) en\
+  \ formato .tif. Utilizando una arquitectura UNet, el sistema genera:\n\n- Máscara de segmentación del\
+  \ tumor\n- Características tumorales (tamaño, forma, ubicación)\n- Nivel de urgencia basado en análisis\
+  \ de imagen + datos clínicos\n\nLa aplicación incluye un formulario médico donde se pueden ingresar\
+  \ datos clínicos del paciente (edad, grado histológico, etc.) que se combinan con el análisis de la\
+  \ imagen para predecir un nivel de urgencia más preciso.\n\n## Características\n\n- Segmentación UNet\
+  \ de tumores en MRI cerebrales\n- Interfaz web interactiva con Streamlit\n- Formulario clínico para\
+  \ mejorar predicción de urgencia\n- Orquestación con Dagster para flujos de trabajo reproducibles\n\
+  - Procesamiento paralelo con Dask para grandes volúmenes de datos\n- Análisis estadístico integrado\
+  \ con R\n- Ficha técnica automática con métricas del modelo\n\n## Requisitos Previos\n\n- Python 3.12\
+  \ o superior\n- Git\n- uv\n- Cuenta de Kaggle para descargar los datos\n- R\n- GPU recomendada (funciona\
+  \ con CPU pero es más lento)\n\n## Instalación\n\n1. Clonar el repositorio:\n\ngit clone https://github.com/evadomcal/brain-tumor-segmentation-fpn-app.git\n\
+  cd brain-tumor-segmentation-unet-app\n\n2. Instalar uv:\n\npip install uv\n\n3. Crear entorno virtual\
+  \ e instalar dependencias:\n\nuv venv\n\nActivar entorno (Windows):\n.venv\\Scripts\\activate\n\nInstalar\
+  \ dependencias:\nuv sync\n\n## Configuración de Kaggle\n\nPara descargar los datos necesitas una API\
+  \ key de Kaggle:\n\n1. Ve a Kaggle Settings (https://www.kaggle.com/settings)\n2. En la sección \"API\"\
+  , haz clic en \"Create New Token\"\n3. Se descargará kaggle.json\n4. Coloca el archivo en la raíz del\
+  \ proyecto\n\nEnlace del dataset: [https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation/data]\n\
+  \n## Estructura del Proyecto\n\nbrain-tumor-segmentation-unet-app/  \nsrc/  \n &ensp; datos.py   &emsp;\
+  \                      # Importación de datos desde Kaggle  \n &ensp; mapeo_archivos.py  &emsp;    \
+  \          # Generación del catálogo de trabajo  \n &ensp; transformar_datos.py   &emsp;          #\
+  \ Adaptación y preprocesamiento de imágenes  \n &ensp; Analisis/  \n &ensp;&ensp;   Analisis_imagen.py\
+  \    &emsp;   # Mini-modelo para predicción de urgencia  \n &ensp;&ensp;   Analisis_test.py    &emsp;\
+  \     # Análisis del conjunto de test  \n &ensp;&ensp;   Metricas_modelo.py    &emsp;   # Métricas de\
+  \ calidad de segmentación  \n &ensp;&ensp;   Script_R_1.R    &emsp;         # Análisis estadístico en\
+  \ R  \n &ensp; Aplicacion/  \n &ensp;&ensp;   streamlit.py    &emsp;         # Página principal de la\
+  \ app  \n &ensp;&ensp;   cliente.py   &emsp;            # Comunicación con Dagster  \n &ensp;&ensp;\
+  \   pages/  \n &ensp;&ensp;&ensp;     Ficha_tecnica.py   &emsp;     # Ficha técnica del modelo  \n &ensp;\
+  \ orquestador/  \n &ensp;&ensp;   activos.py   &emsp;                   # Activos de Dagster para el\
+  \ flujo de trabajo  \n &ensp; procesamiento_datos/  \n &ensp;&ensp;   procesador_dask.py  &emsp;   \
+  \         # Transformación paralela con Dask  \n &ensp;&ensp;   modelo/  \n &ensp;&ensp;&ensp;     modelo_fpn.py\
+  \    &emsp;       # Arquitectura FPN  \n &ensp;&ensp;&ensp;     entrenar_modelo.py    &emsp;  # Entrenamiento\
+  \ del modelo  \n &ensp;&ensp;&ensp;     segmentar.py   &emsp;         # Lógica de segmentación  \n &ensp;&ensp;&ensp;\
+  \     caracteristicas.py  &emsp;    # Extracción de características tumorales  \n.gitignore  \npyproject.toml\
+  \  \nuv.lock  \nREADME.md  \n\n\n## Entrenamiento del Modelo\n\nPara entrenar el modelo, se utiliza\
+  \ Dagster como orquestador. Debes ejecutar los activos en el siguiente orden:\n\n1. Catalogo_maestro\n\
+  2. imagenes_procesadas\n3. dividir_dataset_balanceado\n4. modelo_fpn_entrenado\n5. mejor_umbral\n6.\
+  \ segmentaciones_test\n7. caracteristicas_tumorales\n8. analisis_datos\n9. calidad_modelo_segmentacion\n\
+  10. entrenar_modelo_urgencia\n\n### Ejecución con Dagster\n\n```bash\ndagster dev\n```\n\nLuego accede\
+  \ a la interfaz web de Dagster (http://localhost:3000) y materializa los activos en el orden indicado.\n\
+  \n\n## Uso de la Aplicación\n\nIniciar la aplicación Streamlit:\n\nstreamlit run Aplicacion/streamlit.py\n\
+  \nLa aplicación se abrirá en el navegador (normalmente http://localhost:8501).\n\nFlujo de uso:\n\n\n\
+  1. Rellenar y subir formulario clínico\n2. Subir imagen MRI\n3. Ejecutar análisis\n4. Resultados: máscara\
+  \ de segmentación, características del tumor, nivel de urgencia, archivo .zip con los resultados\n\n\
+  \n## Autor\n\nAlejandro y Eva  \n- https://github.com/alejandrooam  \n- https://github.com/evadomcal\
+  \  \n\n## Licencia\n\nEste proyecto es un trabajo académico de uso educativo. Para uso comercial, contactar\
+  \ al autor.\n"

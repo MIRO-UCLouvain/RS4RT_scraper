@@ -1,0 +1,123 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ahwtsang/nnUNet_BraTS2023_demo
+url: https://github.com/ahwtsang/nnUNet_BraTS2023_demo
+platform: github
+description: nnUNet with brain tumor segmentation dataset demo project
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-07-02T03:21:10Z'
+image_source: null
+heuristic_total_score: 7
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# nnU-Net BraTS 2023 — 5-Fold Cross-Validation on RunPod (RTX PRO 4500 Blackwell) with\
+  \ W&B\n\nA reproducible MLOps portfolio project: train **nnU-Net v2** (`3d_fullres`,\nregion-based)\
+  \ for brain-tumor segmentation on **BraTS 2023 Adult Glioma**, run a\nproper **5-fold cross-validation\
+  \ at 250 epochs/fold**, track everything in\n**Weights & Biases**, all on a single **RTX PRO 4500 Blackwell**\
+  \ rented from **RunPod**.\n\n```\nnnUNet_BraTS2023_demo/\n├── env.sh                          # nnU-Net\
+  \ paths + W&B config (source it)\n├── requirements.txt\n├── nnunet_trainer/\n│   └── nnUNetTrainerWandb250.py\
+  \    # custom trainer: 250 epochs + W&B logging\n├── scripts/\n│   ├── 00_setup.sh                 #\
+  \ install deps + register the trainer\n│   ├── 01_convert_dataset.py       # BraTS 2023 -> nnU-Net raw\
+  \ format\n│   ├── 02_preprocess.sh            # plan + preprocess (3d_fullres)\n│   ├── 03_train_folds.sh\
+  \           # 5 folds x 250 epochs, resume-aware\n│   ├── 04_find_best_config.sh      # CV evaluation\
+  \ + postprocessing\n│   ├── 05_aggregate_wandb.py       # mean ± std Dice summary -> W&B\n│   ├── prepare_inference_inputs.py\
+  \ # BraTS cases -> channel-named inputs\n│   ├── 06_predict.sh               # 5-fold ensemble inference\n\
+  │   ├── 07_export_model.sh          # package the shareable model .zip\n│   ├── export_pytorch_model.py\
+  \     # standalone .pth / TorchScript export\n│   └── overlay_prediction.py       # prediction overlay\
+  \ PNG\n├── Dockerfile                      # for a pinned environment\n├── Dockerfile.inference    \
+  \        # inference-only image (bakes in model .zip)\n├── docker/\n│   └── entrypoint_predict.sh  \
+  \     # entrypoint for the inference image\n```\n\n---\n\n## Step 1 — Create the RunPod pod\n\n1. **GPU:**\
+  \ RTX PRO 4500 Blackwell (32 GB). Standard `3d_fullres` for BraTS fits\n   comfortably.\n2. **Template:**\
+  \ any official **PyTorch** template (CUDA 12.x, PyTorch 2.x).\n   For this project, the template runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04\
+  \ was used\n3. **Persistent storage — important:** attach a **Network Volume (100 GB)**\n   mounted\
+  \ at **`/workspace`**. BraTS raw is ~30–40 GB and preprocessing roughly\n   doubles it. Putting everything\
+  \ on `/workspace` means data, checkpoints\n   and results survive pod stops and spot interruptions.\
+  \ (Network volumes are\n   region-locked, so the pod needs to be created in the volume's region.)\n\
+  4. **Access:** enable the Web Terminal (and SSH).\n\n## Step 2 — Get the code and data onto the pod\n\
+  \n```bash\ncd /workspace\ngit clone <your-repo-url> project && cd project\n```\n\nThe BraTS 2023 datasets\
+  \ are available to all registered Synapse users who accept the post-challenge terms and conditions.\
+  \ The training and validation sets were downloaded from Synapse and rsync to get the data to the pod.\
+  \ The training dataset contains 1251 cases, each case is a subfolder that contains 4 modality images\
+  \ and segmentation as:\n```\n├── BraTS-GLI-00000-000/\n│   ├──BraTS-GLI-00000-000-t1c.nii.gz\n│   ├──BraTS-GLI-00000-000-t1n.nii.gz\n\
+  │   ├──BraTS-GLI-00000-000-t2f.nii.gz\n│   ├──BraTS-GLI-00000-000-t2w.nii.gz\n│   ├──BraTS-GLI-00000-000-seg.nii.gz\n\
+  ```\nThe validation dataset contains 219 cases with similar folder structure as the training dataset.\n\
+  \n## Step 3 — One-time environment setup\n\n```bash\nbash scripts/00_setup.sh        # installs nnU-Net\
+  \ + W&B, registers the trainer\nsource env.sh                   # sets nnUNet_raw / _preprocessed /\
+  \ _results\nwandb login                     # paste your W&B API key (or set WANDB_API_KEY)\n```\n\n\
+  Add W&B API key to `WANDB_API_KEY` in `env.sh`.\nRe-run `source env.sh` at the start of every new session.\n\
+  \n## Step 4 — Convert BraTS → nnU-Net format\n\n```bash\npython scripts/01_convert_dataset.py --brats_dir\
+  \ /workspace/raw_brats2023/train\n```\n\nThis writes `Dataset137_BraTS2023` with channels `_0000.._0003`\n\
+  (T1 / T1ce / T2 / FLAIR), region-based labels (WT / TC / ET), and a\n`dataset.json`. It auto-remaps\
+  \ enhancing-tumor label `4 → 3` if the data version uses the older encoding.\n\n## Step 5 — Plan and\
+  \ preprocess\n\n```bash\nbash scripts/02_preprocess.sh 137\n```\n\nFingerprinting + preprocessing for\
+  \ `3d_fullres` only (skips 2d / 3d_lowres to\nsave time and disk). Takes roughly 1–3 hours, mostly CPU-bound.\n\
+  \n## Step 6 — Train the 5 folds (250 epochs each)\n\n```bash\nbash scripts/03_train_folds.sh 137 BraTS2023\n\
+  ```\n\n- Trains folds 0–4 with `nnUNetTrainerWandb250` (250 epochs, `--npz` for later\n  ensembling).\n\
+  - **Resume-aware:** completed folds are skipped; an interrupted fold continues\n  from its latest checkpoint.\
+  \ If a spot pod is reclaimed, start a new pod,\n  `source env.sh`, and run this same command again.\n\
+  - Each fold streams to W&B as its own run, grouped under `Dataset137_BraTS2023`,\n  with a deterministic\
+  \ run id so a resumed fold reconnects to the same run.\n\n**Rough timing/cost:** nnU-Net runs a fixed\
+  \ 250 iterations/epoch, so per-epoch\ntime is roughly constant. On the RTX PRO 4500, timing is approx.\
+  \ 50s/epoch, 4 hr/fold,\n**20 GPU-hours** for all five folds. The RunPod rate for RTX PRO 4500 is\n\
+  ($0.74/hr) so total cost is approx. **$15** plus a few dollars of preprocessing and storage.\n\n## Step\
+  \ 7 — Cross-validation summary\n\n```bash\nbash scripts/04_find_best_config.sh 137      # CV ensemble\
+  \ + postprocessing\npython scripts/05_aggregate_wandb.py         # mean ± std Dice -> W&B summary\n\
+  ```\n\n`05_aggregate_wandb.py` reads each fold's `validation/summary.json` and logs a\nper-fold/per-region\
+  \ table plus mean ± std Dice (WT / TC / ET) and an overall\nmean to a dedicated `cv_summary` W&B run.\n\
+  \n## Step 8 — Run inference\n\nPredict on new / held-out cases with the full 5-fold ensemble. Input\
+  \ is a folder\nof BraTS-style case subfolders (each holding the 4 modality `.nii.gz` files; a\nseg is\
+  \ not needed for inference).\n\n```bash\nbash scripts/06_predict.sh /workspace/raw_brats2023/val /workspace/preds\
+  \ 137 BraTS2023\n```\n\nThis (1) copies each case's modalities into nnU-Net channel naming\n(`CASEID_0000.._0003`),\
+  \ (2) runs `nnUNetv2_predict` with `-f 0 1 2 3 4` so all\nfive folds are ensembled, then (3) applies\
+  \ the postprocessing from Step 7 if its\n`postprocessing.pkl` exists. Outputs land in `…/predictions/`\
+  \ (and\n`…/predictions_postprocessed/`).\n\n## Step 9 — Create the model file\n\nTraining already wrote\
+  \ a PyTorch checkpoint (`checkpoint_final.pth`) for **each\nfold** under `nnUNet_results`. This step\
+  \ packages those into portable artifacts.\n\n**Shareable nnU-Net model (recommended)** — bundles plans,\
+  \ `dataset.json` and all\nfive fold checkpoints into one `.zip` you can attach to a GitHub Release:\n\
+  \n```bash\nbash scripts/07_export_model.sh 137 nnunet_brats2023_3dfullres_model.zip\n# import elsewhere:\
+  \  nnUNetv2_install_pretrained_model_from_zip <file>.zip\n```\n\n**Standalone PyTorch file (optional)**\
+  \ — a clean weights-only `.pth`, plus an\noptional TorchScript `.ts.pt`, built straight from a fold\
+  \ via `nnUNetPredictor`:\n\n```bash\npython scripts/export_pytorch_model.py --fold 0 --out model_brats2023_fold0\
+  \ --torchscript\n```\n\n> Note: the standalone files contain only the network weights/graph. nnU-Net's\n\
+  > preprocessing and sliding-window inference are **not** inside them, so for real\n> end-to-end inference\
+  \ on raw MRI use Step 8 or the exported `.zip`. The\n> standalone export is for demonstrating a framework-agnostic\
+  \ deployment artifact.\n\n## Step 10 — Prediction visual: prediction overlay over FLAIR or T1CE\n\n\
+  Render the figure to show — MRI, prediction, ground truth (if available)\nside by side on the most informative\
+  \ slice.\n\n```bash\npython scripts/overlay_prediction.py \\\n    --image /workspace/preds/_nnunet_inputs/<CASEID>_0003.nii.gz\
+  \ \\\n    --pred  /workspace/preds/predictions/<CASEID>.nii.gz \\\n    --gt    /workspace/nnUNet_raw/Dataset137_BraTS2023/labelsTr/<CASEID>.nii.gz\
+  \ (optional) \\\n    --out   overlay_<CASEID>.png\n```\n\nUse channel `_0003` (FLAIR) as the background\
+  \ to show the whole tumor, or `_0001`\n(T1ce) to emphasize the enhancing core. The script derives the\
+  \ three nested\nregions correctly from each source: the ground truth from its sub-region labels\n(NCR/ED/ET)\
+  \ and the prediction from nnU-Net's ordinal region encoding (≥1 WT,\n≥2 TC, ≥3 ET), so the panels are\
+  \ directly comparable. Drop `--gt` for inference\ncases with no ground truth. Note: The BraTS-GLI 2023\
+  \ Validation dataset does not \ninclude the segmentation ground truth.\n\n## Step 11 — Inference-only\
+  \ Docker image\n\nPackage the exported model (`.zip` from Step 9) into a self-contained image that\n\
+  runs prediction with no setup.\n\n```bash\n# build (model zip must be in the build context)\ndocker\
+  \ build -f Dockerfile.inference \\\n    --build-arg MODEL_ZIP=nnunet_brats2023_3dfullres_model.zip \\\
+  \n    -t brats-nnunet-infer .\n\n# run: mount a folder of BraTS cases and an output folder\ndocker run\
+  \ --gpus all -v /path/to/cases:/input -v /path/to/out:/output brats-nnunet-infer\n```\n\nThe image installs\
+  \ the model with `nnUNetv2_install_pretrained_model_from_zip`\nat build time; the entrypoint auto-prepares\
+  \ channel-named inputs and runs the\n5-fold ensemble. `WANDB_DISABLED=true` is set so nothing tries\
+  \ to log.\n\n## Step 12 — Publish\n\n- Images and weights are **not** committed to the repository, i.e.\
+  \ \n  `.gitignore` excludes `*.nii.gz`, `*.pth`, `nnUNet_*`, `wandb/`.\n- W&B link for the 5-fold training\
+  \ and cross-validation summary: https://wandb.ai/adrianhwtsang-none/nnunet-brats2023-5fold\n- The model\
+  \ `.zip` is large — added in parts to **model_storage** repo (https://github.com/ahwtsang/model_storage).\n\
+  \n---\n\n### Quick reference\n\n| Step | Command |\n|------|---------|\n| Setup | `bash scripts/00_setup.sh\
+  \ && source env.sh && wandb login` |\n| Convert | `python scripts/01_convert_dataset.py --brats_dir\
+  \ <dir>` |\n| Preprocess | `bash scripts/02_preprocess.sh 137` |\n| Train (5 folds) | `bash scripts/03_train_folds.sh\
+  \ 137 BraTS2023` |\n| CV summary | `bash scripts/04_find_best_config.sh 137` |\n| Aggregate to W&B |\
+  \ `python scripts/05_aggregate_wandb.py` |\n| Inference | `bash scripts/06_predict.sh <cases_dir> <out_dir>\
+  \ 137 BraTS2023` |\n| Export model .zip | `bash scripts/07_export_model.sh 137 model.zip` |\n| Standalone\
+  \ .pth | `python scripts/export_pytorch_model.py --fold 0 --out model_fold0` |\n| Overlay PNG | `python\
+  \ scripts/overlay_prediction.py --image <flair> --pred <pred> --gt <gt> --out fig.png` |\n| Inference\
+  \ image | `docker build -f Dockerfile.inference -t brats-nnunet-infer .` |\n\n### Notes & knobs\n- **Fewer/more\
+  \ epochs:** change `self.num_epochs` in `nnUNetTrainerWandb250.py`\n  (re-run `00_setup.sh` to reinstall),\
+  \ then retrain.\n- **Disable tracking:** `export WANDB_DISABLED=true` (training still runs).\n- Tune\
+  \ `nnUNet_n_proc_DA` in `env.sh` to the pod's vCPU count (24 for the RTX Pro 4500).\n"

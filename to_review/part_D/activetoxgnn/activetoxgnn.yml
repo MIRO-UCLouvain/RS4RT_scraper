@@ -1,0 +1,91 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: KaterinaM2006/ActiveToxGNN
+url: https://github.com/KaterinaM2006/ActiveToxGNN
+platform: github
+description: Uncertainty-aware graph neural networks for ADMET and toxicity prediction. Can molecular
+  graph models predict toxicity while staying calibrated on genuinely novel chemical scaffolds? Multi-task
+  GNNs, scaffold-split evaluation, conformal prediction, interpretability, and an active-learning loop
+  for autonomous compound triage.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-02T17:06:04Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# ActiveToxGNN\n\n**Uncertainty-aware graph neural networks for ADMET & toxicity prediction\
+  \ — built to know when *not* to trust themselves.**\n\n![Tests](https://github.com/KaterinaM2006/ActiveToxGNN/actions/workflows/tests.yml/badge.svg)\n\
+  ![Python](https://img.shields.io/badge/python-3.11+-blue.svg)\n![License](https://img.shields.io/badge/license-MIT-green.svg)\n\
+  \n> ⚠️ **Learning-by-building project, actively developed.** The classical\n> baselines and data pipeline\
+  \ are built and benchmarked (see *Built so far*).\n> The graph models and trustworthiness methods are\
+  \ the current work (see\n> *Planned*). This README distinguishes the two throughout.\n\n> **Research\
+  \ question:** Can molecular graph models predict ADMET and toxicity\n> properties while staying *calibrated\
+  \ on genuinely novel chemical scaffolds* —\n> can they tell us when to trust them, and when to abstain,\
+  \ on chemistry they've\n> never seen?\n\nStrong toxicity classifiers already exist — a fingerprint +\
+  \ Random Forest\nbaseline reaches **~0.83 macro ROC-AUC** on Tox21, and this project reproduces\nthat\
+  \ (0.826). Raw accuracy on a standard benchmark is not the interesting\nproblem. The hard and genuinely\
+  \ useful part — the focus of this project — is\nwhat happens at the edges: staying accurate on structurally\
+  \ novel molecules\n(scaffold splits, not random splits), producing *honest* uncertainty estimates\n\
+  (calibration, conformal prediction), and knowing when a molecule is too far\noutside the training distribution\
+  \ to trust at all. These are the properties a\nreal drug-discovery screening system needs before anyone\
+  \ acts on its\npredictions.\n\n## Built so far\n\n- **Reproducible infrastructure:** virtual env, pinned\
+  \ dependencies, pytest +\n  GitHub Actions CI on every push, Weights & Biases experiment tracking.\n\
+  - **Data pipeline & EDA:** Tox21 (7,831 molecules, 12 endpoints); confirmed\n  ~17% label sparsity and\
+  \ severe class imbalance (positive rates 2.9%–16.2%),\n  which motivate the masked loss and ROC-AUC\
+  \ metric.\n- **Classical baselines:** ECFP/Morgan fingerprints; Random Forest and XGBoost\n  per task,\
+  \ masked labels, evaluated across 3 seeds (mean ± std). RF macro\n  ROC-AUC **0.826**, XGBoost **0.784**.\n\
+  \n## Planned\n\n- **Multi-task GNN** (GIN / MPNN) over the 12 endpoints, vs. the classical\n  baselines\
+  \ and vs. single-task GNNs.\n- **Honest evaluation:** Bemis-Murcko scaffold splits + an out-of-distribution\n\
+  \  test on molecules from ChEMBL / Therapeutics Data Commons.\n- **Trustworthy predictions:** MC-dropout\
+  \ & deep-ensemble uncertainty,\n  calibration metrics, conformal prediction with abstention, applicability-domain\n\
+  \  estimation.\n- **Interpretability:** GNNExplainer + contrastive explanations checked against\n  known\
+  \ toxicophores.\n- **Active-learning loop** simulating budget-limited, autonomous compound triage.\n\
+  - **Deployment:** config-driven experiments, Dockerised environment, REST API +\n  interactive demo.\n\
+  - **ADMET extension:** solubility (ESOL), blood-brain-barrier penetration\n  (BBBP), clinical toxicity\
+  \ (ClinTox).\n\n## Why this matters\n\nToxicity is one of the leading reasons drug candidates fail in\
+  \ clinical trials,\noften after earlier stages looked promising. A structure-based model that flags\n\
+  likely toxicity *with a trustworthy confidence estimate* is a cheap early\nfilter — but only if it's\
+  \ honest about its own limits. A confident wrong answer\non a novel scaffold is worse than no answer\
+  \ at all.\n\n## Design choices, backed by literature\n\nEvery non-obvious decision here is traceable\
+  \ to a specific paper and finding,\nnot convention:\n\n- **Scaffold splits, not random splits** — random\
+  \ splits leak near-duplicate\n  scaffolds between train and test, inflating apparent accuracy. Scaffold\n\
+  \  splitting forces a structurally novel test set — a far more honest\n  generalization test (MoleculeNet,\
+  \ Wu et al. 2018).\n- **One shared multi-task model, not 12 separate ones** — multitask networks\n \
+  \ outperform single-task and improve as more tasks/data are added; the same work\n  finds transfer to\
+  \ *unseen* tasks is limited, which tempers expectations for the\n  ADMET-extension phase (Ramsundar\
+  \ et al. 2015).\n- **Masked loss for missing labels** — Tox21 labels are ~17% missing (confirmed\n \
+  \ in this repo's EDA); untested (compound, task) pairs are masked out rather than\n  imputed.\n- **Message-passing\
+  \ encoder** — GCN, MPNN and relatives unify under one\n  message-passing framework (Gilmer et al. 2017).\n\
+  - **GIN over plain GCN** — GIN is provably more expressive than GCN-style\n  aggregation, which cannot\
+  \ distinguish certain molecular graphs (Xu et al. 2018).\n- **MC-dropout for uncertainty** — dropout\
+  \ left active at inference approximates\n  Bayesian posterior sampling: cheap, grounded uncertainty\
+  \ before the more\n  expensive deep-ensemble comparison (Gal & Ghahramani 2016).\n- **Contrastive interpretability**\
+  \ — explanations report both present (pertinent\n  positive) and absent (pertinent negative) substructures,\
+  \ checked against known\n  toxicophores, rather than saliency alone (Ying et al. 2019; Sharma et al.\
+  \ 2022).\n\n## Engineering practices\n\n- **Reproducible:** pinned dependencies, seeded runs reported\
+  \ as mean ± std\n  (never single lucky runs). YAML-configured experiments and Docker are planned.\n\
+  - **Tested:** pytest suite; CI runs on every push via GitHub Actions.\n- **Tracked:** experiments logged\
+  \ to Weights & Biases.\n\n## Repo structure\n\n    src/          data, models, training, evaluation,\
+  \ uncertainty, interpretability\n    configs/      YAML experiment configs\n    notebooks/    exploration\
+  \ and results write-ups\n    tests/        pytest suite\n    data/         raw/ and processed/ (git-ignored)\n\
+  \    papers/       annotated reading list\n\n## Setup\n\n    python3 -m venv .venv\n    source .venv/bin/activate\n\
+  \    pip install -r requirements.txt\n\n---\n\n## Current results\n\n**Phase 1 — classical baselines\
+  \ (in progress).**\nECFP/Morgan fingerprints (radius 2, 2048 bits); 7,823/7,831 molecules featurized\n\
+  (8 dropped on invalid valence). RF & XGBoost per task, masked labels, 3 seeds:\n\n| Task | RF | XGBoost\
+  \ |\n|---|---|---|\n| NR-AR | 0.798 ± 0.008 | 0.760 ± 0.022 |\n| NR-AR-LBD | 0.869 ± 0.024 | 0.822 ±\
+  \ 0.011 |\n| NR-AhR | 0.903 ± 0.003 | 0.887 ± 0.009 |\n| NR-Aromatase | 0.816 ± 0.007 | 0.780 ± 0.018\
+  \ |\n| NR-ER | 0.727 ± 0.019 | 0.683 ± 0.027 |\n| NR-ER-LBD | 0.821 ± 0.006 | 0.789 ± 0.017 |\n| NR-PPAR-gamma\
+  \ | 0.788 ± 0.017 | 0.720 ± 0.032 |\n| SR-ARE | 0.812 ± 0.013 | 0.772 ± 0.001 |\n| SR-ATAD5 | 0.871\
+  \ ± 0.033 | 0.806 ± 0.029 |\n| SR-HSE | 0.776 ± 0.025 | 0.734 ± 0.016 |\n| SR-MMP | 0.882 ± 0.007 |\
+  \ 0.862 ± 0.008 |\n| SR-p53 | 0.843 ± 0.012 | 0.794 ± 0.025 |\n| **Macro-average** | **0.826** | **0.784**\
+  \ |\n\n**Finding:** untuned RF beats untuned XGBoost on all 12/12 tasks, consistently\nacross seeds\
+  \ — XGBoost's sequential boosting is far more hyperparameter-sensitive\nthan RF's bagging. Hyperparameter\
+  \ tuning (RandomizedSearchCV, 3-fold CV) is\nunderway to test whether this closes the gap. Given the\
+  \ class imbalance, PR-AUC\nwill be reported alongside ROC-AUC.\n\n**Next:** finish tuning, add Logistic\
+  \ Regression baseline + fingerprint sweep,\nthen the graph pipeline (SMILES → graph)."

@@ -1,0 +1,87 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: biao-ma/ProTox3-Automation
+url: https://github.com/biao-ma/ProTox3-Automation
+platform: github
+description: 自动化批量处理化合物毒性预测的完整工具套件 - Automated toxicity prediction pipeline for chemical compounds
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-01-15T12:21:15Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# ProTox3-Automation\n\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n\
+  [![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)\n\
+  [![ProTox-3](https://img.shields.io/badge/ProTox-3.0-green.svg)](https://tox.charite.de/protox3/)\n\n\
+  **Languages**: [English](README.md) | [中文](README.zh-CN.md) | [日本語](README.ja.md)\n\n**ProTox3-Automation**\
+  \ is a comprehensive automation toolkit for batch processing toxicity predictions of chemical compounds,\
+  \ with a focus on extracting **Cytotoxicity** prediction results.\n\n## ✨ Core Features\n\n- \U0001F504\
+  \ **SMILES Conversion** - Automatically convert SMILES to Canonical format\n- \U0001F916 **Batch Prediction**\
+  \ - Automated access to ProTox-3 website for toxicity predictions\n- \U0001F4CA **Data Extraction**\
+  \ - Extract Cytotoxicity data from prediction results\n- \U0001F4C8 **Results Aggregation** - Consolidate\
+  \ all results into a single CSV file\n- \U0001F680 **Efficient Processing** - Support for batch processing\
+  \ and background execution\n\n## \U0001F3AF Use Cases\n\n- Toxicity assessment in drug development\n\
+  - Safety screening of chemical compounds\n- Toxicity prediction in academic research\n- Large-scale\
+  \ toxicity analysis of compound libraries\n\n## \U0001F4CB System Requirements\n\n- Python 3.7+\n- Chrome/Chromium\
+  \ browser\n- Stable internet connection\n- At least 1GB available disk space\n\n## \U0001F680 Quick\
+  \ Start\n\n### One-Click Installation (Recommended)\n\n```bash\n# 1. Clone the repository\ngit clone\
+  \ https://github.com/biao-ma/ProTox3-Automation.git\ncd ProTox3-Automation\n\n# 2. One-time setup (installs\
+  \ all dependencies)\nbash setup.sh\n\n# 3. Prepare your input data\ncp data/example_input.csv data/input.csv\n\
+  # Edit data/input.csv with your compounds\n\n# 4. Run the complete workflow (fast start, no installation)\n\
+  bash run_protox.sh\n```\n\n**Note**: `setup.sh` only needs to be run once. Subsequent runs of `run_protox.sh`\
+  \ will start immediately without reinstalling dependencies (~5 seconds vs ~2 minutes).\n\n### Manual\
+  \ Installation\n\n```bash\n# 1. Clone the repository\ngit clone https://github.com/biao-ma/ProTox3-Automation.git\n\
+  cd ProTox3-Automation\n\n# 2. Create virtual environment\npython3 -m venv venv\nsource venv/bin/activate\n\
+  \n# 3. Install dependencies\npip install -r requirements.txt\n\n# 4. Prepare data\n# Place your CSV\
+  \ file in the data/ directory with PubChem_ID and SMILES columns\n\n# 5. Run the script\npython3 src/protox_full_automation.py\n\
+  ```\n\n## \U0001F4CA Usage Examples\n\n### Process All Compounds\n\n```bash\npython3 src/protox_full_automation.py\n\
+  ```\n\n### Process Specific Range of Compounds\n\n```bash\n# Process compounds 0-10\npython3 src/protox_full_automation.py\
+  \ 0 10\n\n# Process compounds 10-20\npython3 src/protox_full_automation.py 10 20\n```\n\n### Run in\
+  \ Background\n\n```bash\nnohup python3 src/protox_full_automation.py > protox.log 2>&1 &\n```\n\n##\
+  \ \U0001F4C1 Project Structure\n\n```\nProTox3-Automation/\n├── README.md                      # Project\
+  \ documentation (English)\n├── README.zh-CN.md               # Chinese documentation\n├── README.ja.md\
+  \                  # Japanese documentation\n├── LICENSE                        # License\n├── requirements.txt\
+  \               # Python dependencies\n├── setup.sh                       # One-click installation script\n\
+  ├── run_protox.sh                  # Quick start script\n├── data/                          # Data directory\n\
+  │   └── example_input.csv         # Example input file\n├── src/                           # Source\
+  \ code directory\n│   ├── protox_full_automation.py # Main automation script\n│   ├── extract_cytotoxicity.py\
+  \   # Results aggregation script\n│   └── convert_smiles.py         # SMILES conversion script\n├──\
+  \ results/                       # Output directory\n│   ├── CID_*.csv                 # Individual\
+  \ compound reports\n│   └── cytotoxicity_summary.csv  # Final aggregated file\n└── docs/           \
+  \               # Documentation directory\n    ├── QUICK_START.md            # Quick start guide\n \
+  \   ├── INSTALLATION.md           # Detailed installation guide\n    ├── USER_GUIDE.md             #\
+  \ User guide\n    └── TROUBLESHOOTING.md        # Troubleshooting guide\n```\n\n## ⏱️ Time Estimates\n\
+  \n| Task | Time |\n|------|------|\n| Single compound | 5-10 minutes |\n| 10 compounds | 1-2 hours |\n\
+  | 100 compounds | 8-16 hours |\n\n## \U0001F4CA Output Format\n\n### Individual Compound Report (CID_*.csv)\n\
+  \n```csv\nClassification,Target,Shorthand,Prediction,Probability\nOrgan toxicity,Hepatotoxicity,dili,Active,0.62\n\
+  Organ toxicity,Neurotoxicity,neuro,Active,0.61\n...\nToxicity end points,Cytotoxicity,cyto,Inactive,0.62\n\
+  ...\n```\n\n### Aggregated File (cytotoxicity_summary.csv)\n\n```csv\nPubChem_ID,Classification,Target,Shorthand,Prediction,Probability\n\
+  311434,Toxicity end points,Cytotoxicity,cyto,Inactive,0.62\n54576693,Toxicity end points,Cytotoxicity,cyto,Active,0.71\n\
+  ...\n```\n\n## \U0001F527 Configuration Options\n\nCustomize the following options in `config.py`:\n\
+  \n```python\n# ProTox-3 website URL\nPROTOX_URL = 'https://tox.charite.de/protox3/index.php?site=compound_input'\n\
+  \n# Input file path\nINPUT_FILE = 'data/input.csv'\n\n# Output directory\nOUTPUT_DIR = 'results/'\n\n\
+  # Timeout setting (seconds)\nMAX_WAIT_TIME = 900  # 15 minutes\n```\n\n## \U0001F4DA Documentation\n\
+  \n- [Quick Start Guide](docs/QUICK_START.md)\n- [Detailed Installation Guide](docs/INSTALLATION.md)\n\
+  - [User Guide](docs/USER_GUIDE.md)\n- [Troubleshooting](docs/TROUBLESHOOTING.md)\n- [API Documentation](docs/API.md)\n\
+  \n## \U0001F91D Contributing\n\nContributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md)\
+  \ for details on how to participate.\n\n### How to Contribute\n\n1. Fork this repository\n2. Create\
+  \ your feature branch (`git checkout -b feature/AmazingFeature`)\n3. Commit your changes (`git commit\
+  \ -m 'Add some AmazingFeature'`)\n4. Push to the branch (`git push origin feature/AmazingFeature`)\n\
+  5. Open a Pull Request\n\n## \U0001F4DD License\n\nThis project is licensed under the MIT License -\
+  \ see the [LICENSE](LICENSE) file for details\n\n## ⚠️ Disclaimer\n\n- This tool is for research and\
+  \ educational purposes only\n- Please comply with ProTox-3 website terms of use\n- Data should not be\
+  \ used for commercial purposes\n- Prediction results are for reference only and should not be used as\
+  \ the sole basis for decision-making\n\n## \U0001F64F Acknowledgments\n\n- [ProTox-3](https://tox.charite.de/protox3/)\
+  \ - Providing toxicity prediction services\n- [RDKit](https://www.rdkit.org/) - Cheminformatics toolkit\n\
+  - [Selenium](https://www.selenium.dev/) - Browser automation tool\n\n## \U0001F4DE Contact\n\n- Issue\
+  \ Reports: [GitHub Issues](https://github.com/biao-ma/ProTox3-Automation/issues)\n- Feature Requests:\
+  \ [GitHub Discussions](https://github.com/biao-ma/ProTox3-Automation/discussions)\n\n## \U0001F31F Star\
+  \ History\n\nIf this project helps you, please give us a ⭐️!\n\n---\n\n**Last Updated**: 2026-01-08\
+  \  \n**Version**: 1.0.0\n"

@@ -1,0 +1,135 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: FeuFoller/MolecularToxicityPrediction
+url: https://github.com/FeuFoller/MolecularToxicityPrediction
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-08-12T19:03:55Z'
+image_source: https://raw.githubusercontent.com/FeuFoller/MolecularToxicityPrediction/HEAD/figures/FeatureImportance.png
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "\n# Molecular Toxicity Prediction\n\nA machine learning project for predicting **NR-ER\
+  \ (Nuclear Receptor Estrogen Receptor) activity** from molecular structure.\n\nThe project uses molecular\
+  \ data from the **Tox21 dataset**, RDKit-based feature engineering, machine learning models, and an\
+  \ interactive Streamlit application.\n\n## Live Demo\n\nTry the deployed application here:\n\n[Molecular\
+  \ Toxicity Predictor] (https://moleculartoxicityprediction.streamlit.app/)\n\n---\n\n## Overview\n\n\
+  Predicting potential molecular toxicity is an important problem in drug discovery and chemical safety.\
+  \ Traditional experimental testing can be expensive and time-consuming, making machine learning a useful\
+  \ tool for prioritizing compounds for further investigation.\n\nThis project focuses on predicting activity\
+  \ in the **NR-ER toxicity assay** using molecular structure information.\n\nThe workflow includes:\n\
+  \n* Exploratory data analysis\n* Missing-value analysis\n* Molecular descriptor generation with RDKit\n\
+  * Morgan fingerprint generation\n* Logistic Regression baseline modeling\n* Random Forest modeling\n\
+  * Hyperparameter tuning\n* Model evaluation using metrics appropriate for an imbalanced dataset\n* Saving\
+  \ the final trained model\n* Deployment through a Streamlit web application\n\n---\n\n## Dataset\n\n\
+  The project uses the **Tox21 dataset**, containing molecular SMILES representations and multiple toxicity-related\
+  \ biological assay endpoints.\n\nThe original dataset contains:\n\n* **7,831 molecules**\n* **12 toxicity\
+  \ assay targets**\n* A molecular identifier (`mol_id`)\n* Molecular structures represented as SMILES\n\
+  \nThe available toxicity targets include:\n\n```text\nNR-AR\nNR-AR-LBD\nNR-AhR\nNR-Aromatase\nNR-ER\n\
+  NR-ER-LBD\nNR-PPAR-gamma\nSR-ARE\nSR-ATAD5\nSR-HSE\nSR-MMP\nSR-p53\n```\n\nThis project focuses specifically\
+  \ on:\n\n```text\nNR-ER\n```\n\n---\n\n## Exploratory Data Analysis\n\nThe dataset was examined to understand:\n\
+  \n* Dataset structure\n* Missing values\n* Class distributions\n* Positive and negative toxicity rates\n\
+  \nThe NR-ER target contains missing values, so rows without an NR-ER label were removed before model\
+  \ development.\n\nAfter preprocessing, the modeling dataset contained approximately:\n\n```text\n6,186\
+  \ molecules\n```\n\nThe NR-ER dataset was imbalanced:\n\n* Approximately **87% inactive**\n* Approximately\
+  \ **13% active**\n\nThis imbalance made accuracy alone an unsuitable metric for evaluating model performance.\n\
+  \n---\n\n## Feature Engineering\n\nTwo approaches were explored for representing molecular structures.\n\
+  \n### 1. RDKit Molecular Descriptors\n\nThe first approach used physicochemical and structural descriptors\
+  \ generated with RDKit:\n\n* Molecular Weight\n* MolLogP\n* Topological Polar Surface Area (TPSA)\n\
+  * Number of Hydrogen Bond Acceptors\n* Number of Hydrogen Bond Donors\n* Number of Rotatable Bonds\n\
+  * Heavy Atom Count\n* Number of Aromatic Rings\n* Number of Aliphatic Rings\n\nExample descriptive statistics:\n\
+  \n| Feature          |   Mean |\n| ---------------- | -----: |\n| Molecular Weight | 261.18 |\n| MolLogP\
+  \          |   2.20 |\n| TPSA             |  57.87 |\n| H-Bond Acceptors |   3.36 |\n| H-Bond Donors\
+  \    |   1.20 |\n| Rotatable Bonds  |   4.14 |\n\n### 2. Morgan Fingerprints\n\nThe second approach\
+  \ used **Morgan molecular fingerprints**, which provide a structural representation of molecules suitable\
+  \ for machine learning.\n\nThe final fingerprint configuration used:\n\n```text\nRadius: 2\nFingerprint\
+  \ size: 2048 bits\n```\n\nMorgan fingerprints were generated using RDKit's modern `MorganGenerator`\
+  \ implementation.\n\n---\n\n## Train-Test Split\n\nThe data was split using stratified sampling to preserve\
+  \ the class distribution.\n\n### Training set\n\n```text\nInactive: 87.21%\nActive:   12.79%\n```\n\n\
+  ### Test set\n\n```text\nInactive: 87.24%\nActive:   12.76%\n```\n\nThis ensured that both training\
+  \ and testing data reflected the original class imbalance.\n\n---\n\n## Machine Learning Models\n\n\
+  ### Logistic Regression Baseline\n\nA Logistic Regression model was used as the baseline.\n\nResults:\n\
+  \n| Metric    | Score |\n| --------- | ----: |\n| Accuracy  | 0.868 |\n| Precision | 0.000 |\n| Recall\
+  \    | 0.000 |\n| F1 Score  | 0.000 |\n| ROC-AUC   | 0.667 |\n\nAlthough the model achieved relatively\
+  \ high accuracy, it predicted no positive cases.\n\nThis demonstrates an important issue with imbalanced\
+  \ classification:\n\n> A model can achieve high accuracy simply by predicting the majority class.\n\n\
+  For this reason, additional metrics such as precision, recall, F1 score, and ROC-AUC were used to evaluate\
+  \ the models.\n\n---\n\n## Random Forest with Molecular Descriptors\n\nA Random Forest model using RDKit\
+  \ molecular descriptors was trained and evaluated.\n\nInitial results showed:\n\n| Metric    | Score\
+  \ |\n| --------- | ----: |\n| Accuracy  | 0.875 |\n| Precision | 0.528 |\n| Recall    | 0.177 |\n| F1\
+  \ Score  | 0.265 |\n| ROC-AUC   | 0.685 |\n\nHyperparameter tuning was then performed.\n\nBest parameters:\n\
+  \n```python\n{\n    \"max_depth\": 10,\n    \"min_samples_leaf\": 1,\n    \"n_estimators\": 200\n}\n\
+  ```\n\nBest cross-validation F1 score:\n\n```text\n0.405\n```\n\n### Final Descriptor Random Forest\n\
+  \n| Metric    | Score |\n| --------- | ----: |\n| Accuracy  | 0.841 |\n| Precision | 0.387 |\n| Recall\
+  \    | 0.424 |\n| F1 Score  | 0.405 |\n| ROC-AUC   | 0.716 |\n\nConfusion matrix:\n\n```text\n[[974\
+  \ 106]\n [ 91  67]]\n```\n\n---\n\n## Random Forest with Morgan Fingerprints\n\nA second Random Forest\
+  \ model was trained using Morgan fingerprints.\n\nInitial results:\n\n| Metric    | Score |\n| ---------\
+  \ | ----: |\n| Accuracy  | 0.873 |\n| Precision | 0.507 |\n| Recall    | 0.228 |\n| F1 Score  | 0.314\
+  \ |\n| ROC-AUC   | 0.694 |\n\nHyperparameter tuning identified the following configuration:\n\n```python\n\
+  {\n    \"max_depth\": 20,\n    \"min_samples_leaf\": 2,\n    \"n_estimators\": 300\n}\n```\n\nBest cross-validation\
+  \ F1 score:\n\n```text\n0.430\n```\n\n---\n\n# Final Model\n\nThe final model was a tuned **Random Forest\
+  \ classifier using Morgan fingerprints**.\n\n### Final Test Results\n\n| Metric    |     Score |\n|\
+  \ --------- | --------: |\n| Accuracy  |     0.855 |\n| Precision |     0.426 |\n| Recall    |     0.399\
+  \ |\n| F1 Score  | **0.412** |\n| ROC-AUC   | **0.718** |\n\nThe final Morgan fingerprint model was\
+  \ selected because it achieved a stronger balance between identifying active compounds and controlling\
+  \ false positives.\n\nWhile the accuracy was lower than the baseline, the model provided substantially\
+  \ better performance on the minority active class.\n\nThis highlights why **accuracy should not be used\
+  \ alone when evaluating imbalanced datasets**.\n\n---\n\n## Model Comparison\n\n| Model            \
+  \                   |  Accuracy | Precision | Recall |        F1 |   ROC-AUC |\n| -----------------------------------\
+  \ | --------: | --------: | -----: | --------: | --------: |\n| Logistic Regression                \
+  \ |     0.868 |     0.000 |  0.000 |     0.000 |     0.667 |\n| Random Forest — Descriptors        \
+  \ |     0.841 |     0.387 |  0.424 |     0.405 |     0.716 |\n| Random Forest — Morgan Fingerprints\
+  \ | **0.855** | **0.426** |  0.399 | **0.412** | **0.718** |\n\n---\n\n## Feature Importance\n\nThe\
+  \ descriptor-based Random Forest model was also used to investigate which molecular properties contributed\
+  \ most to predictions.\n\n![Feature Importance](figures/FeatureImportance.png)\n\nThis analysis provides\
+  \ interpretability for the descriptor-based approach, although the final deployed model uses Morgan\
+  \ fingerprints.\n\n---\n\n## ROC Curve\n\nThe models were evaluated using ROC-AUC to measure their ability\
+  \ to distinguish between active and inactive molecules across classification thresholds.\n\n\n---\n\n\
+  # Streamlit Application\n\nThe project includes an interactive Streamlit application that allows users\
+  \ to enter a molecular SMILES representation and receive a prediction.\n\n[Open the live Molecular Toxicity\
+  \ Predictor] (https://moleculartoxicityprediction.streamlit.app/)\n\nThe application:\n\n* Accepts molecular\
+  \ SMILES input\n* Validates the molecular structure using RDKit\n* Generates a Morgan fingerprint\n\
+  * Uses the trained Random Forest model\n* Predicts NR-ER activity\n* Displays the predicted probability\
+  \ of activity\n* Shows molecular properties including:\n\n  * Molecular Weight\n  * LogP\n  * Topological\
+  \ Polar Surface Area (TPSA)\n* Handles invalid SMILES input without crashing\n\nThe prediction pipeline\
+  \ is:\n\n```text\nSMILES\n   ↓\nRDKit Molecular Parsing\n   ↓\nMorgan Fingerprint\n   ↓\nRandom Forest\
+  \ Model\n   ↓\nNR-ER Activity Probability\n   ↓\nActive / Inactive Prediction\n```\n\n---\n\n## Project\
+  \ Structure\n\n```text\nMolecularToxicityPrediction/\n│\n├── app.py\n├── readme.md\n├── requirements.txt\n\
+  ├── .gitignore\n│\n├── data/\n│   ├── raw/\n│   │   └── tox21.csv\n│   │\n│   └── processed/\n│    \
+  \   ├── modelcomparison.csv\n│       ├── nr-erdescriptors.csv\n│       └── nr-ertoxicity.csv\n│\n├──\
+  \ figures/\n│   ├── FeatureImportance.png\n│   └── ROC Curve.png\n│\n├── models/\n│   ├── model_config.json\n\
+  │   ├── nr-er morganrandomforest.joblib\n│   └── nr-er randomforest.joblib\n│\n└── notebook/\n    └──\
+  \ 01 data exploration.ipynb\n```\n\n---\n\n## Installation\n\nClone the repository:\n\n```bash\ngit\
+  \ clone https://github.com/FeuFoller/MolecularToxicityPrediction.git\ncd MolecularToxicityPrediction\n\
+  ```\n\nCreate and activate a virtual environment:\n\n```bash\npython -m venv .venv\n```\n\nWindows PowerShell:\n\
+  \n```powershell\n.venv\\Scripts\\Activate\n```\n\nInstall the dependencies:\n\n```bash\npip install\
+  \ -r requirements.txt\n```\n\nRun the application:\n\n```bash\nstreamlit run app.py\n```\n\n---\n\n\
+  ## Usage\n\nEnter a valid SMILES string into the application.\n\nFor example:\n\n```text\nCCO\n```\n\
+  \nThen click:\n\n```text\nPredict NR-ER Activity\n```\n\nThe application will generate a Morgan fingerprint\
+  \ and return:\n\n* Predicted classification\n* Probability of NR-ER activity\n* Molecular Weight\n*\
+  \ LogP\n* TPSA\n\n---\n\n## Technologies\n\nThis project uses:\n\n* Python\n* Pandas\n* NumPy\n* RDKit\n\
+  * Scikit-learn\n* Matplotlib\n* Joblib\n* Streamlit\n* Git\n* GitHub\n\n---\n\n## Limitations\n\nThis\
+  \ project has several limitations:\n\n* The dataset is significantly imbalanced.\n* The model predicts\
+  \ activity for a single endpoint: **NR-ER**.\n* Predictions are based only on the molecular information\
+  \ available in the dataset.\n* The model should not be interpreted as a complete toxicity assessment.\n\
+  * Machine learning predictions should not replace experimental validation.\n* Performance may vary for\
+  \ molecules that differ substantially from those seen during training.\n\n---\n\n## Future Improvements\n\
+  \nPossible next steps include:\n\n* Exploring additional toxicity endpoints\n* Building multi-label\
+  \ toxicity prediction models\n* Testing gradient boosting methods\n* Using class weighting or advanced\
+  \ imbalance-handling techniques\n* Performing more extensive hyperparameter optimization\n* Adding applicability-domain\
+  \ analysis\n* Adding molecular structure visualizations to the application\n* Comparing Morgan fingerprints\
+  \ with additional molecular representations\n* Deploying a model capable of predicting multiple Tox21\
+  \ assay endpoints\n\n---\n\n## Disclaimer\n\nThis application predicts the likelihood of activity in\
+  \ the **NR-ER assay** based on a machine learning model.\n\nIt is intended for educational and research\
+  \ purposes only and should **not** be used as a clinical, diagnostic, regulatory, or definitive toxicity\
+  \ assessment. Experimental validation and professional scientific judgment remain necessary.\n\n---\n\
+  \n"

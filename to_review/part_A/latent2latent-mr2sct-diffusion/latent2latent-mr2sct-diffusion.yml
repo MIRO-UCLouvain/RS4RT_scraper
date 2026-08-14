@@ -1,0 +1,43 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: sCT-Masters-Project/latent2latent-MR2sCT-diffusion
+url: https://github.com/sCT-Masters-Project/latent2latent-MR2sCT-diffusion
+platform: github
+description: Latent MR to Latent synthetic CT translation via DDIM
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-01-23T09:19:47Z'
+image_source: https://raw.githubusercontent.com/sCT-Masters-Project/latent2latent-MR2sCT-diffusion/HEAD/assets/l2l-tikz-diagram.png
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# Latent2Latent MR→sCT Diffusion\n\nTraining and inference code for DDIM model translating\
+  \ latent MR volumes to latent CT volumes. This forms the core of a synthetic CT (sCT) generation pipeline\
+  \ and is trained on MAISI’s VAE to produce high-fidelity synthetic latent CTs. See the [MaisiVAE](https://github.com/sCT-Masters-Project/MaisiVAE)\
+  \ repository for more information about encoding and decoding latent volumes.\n\nThis project is developed\
+  \ as part of a master's project at the University of Zurich (UZH) with guidance and resources from UZH\
+  \ and University Hospital of Zurich (Universitätsspital Zürich / USZ).\n\n## What is Latent2Latent?\n\
+  \nThis project implements a DDIM-based latent diffusion model that learns a direct mapping from MAISI-encoded\
+  \ MR latents to MAISI-style CT latents. It enables efficient MR-to-sCT translation entirely in latent\
+  \ space, avoiding expensive voxel-space training. The resulting latent CTs can then be decoded via the\
+  \ MAISI VAE to yield synthetic CT volumes with realistic HU values.\n\n> [!WARNING]\n> This repository\
+  \ does not perform decoding into HU-space CTs. Use the [MaisiVAE](https://github.com/sCT-Masters-Project/MaisiVAE)\
+  \ wrapper for that step.\n\n![Figure: Model Architecture](assets/l2l-tikz-diagram.png)\nFigure: Architecture\
+  \ diagram for Latent-DDIM Model. \n\n## Features\n\n- DDIM-based latent diffusion for MR-to-CT translation\n\
+  - Modular scripts for preprocessing, training, inference, and volume stitching\n- Easily adjustable\
+  \ config\n- Pre-trained weights with below performance (on SynthRAD2025 Validation-Set)\n\n\n| Model\
+  \ | MAE ↓ | PSNR (dB) ↑ | MS-SSIM ↑ | DICE ↑ |\n|:------|-------:|-------------:|-----------:|--------:|\n\
+  | L2L DDIM |  158.80 ± 34.62 | 23.7751  | 0.8186 | 0.5145 |\n\n## Install\n\nThis process uses [uv](https://docs.astral.sh/uv/)\n\
+  \n```bash\ngit clone git@github.com:sCT-Masters-Project/latent2latent-MR2sCT-diffusion.git\n\ncd latent2latent-MR2sCT-diffusion\n\
+  uv sync\nsource .venv/bin/activate\n```\n\n## Usage\n\n```bash\n# => make sure to adjust the latent-data\
+  \ path in the config first\n\n# run training\n## preprocess latent volumes and run training\npython\
+  \ -m ddim.preprocess\npython -m ddim.train\n\n# run inference\n## make sure to update the weights path\
+  \ in the config file after training\npython -m ddim.infer\n\n# stitch slices to volumes\n## assuming\
+  \ 25 ddim steps in inference, check config\npython ddim/utils/stitch_nii.py output_latent_ct/ 25 \n\
+  # results are in \"output_latent_ct/full_volumes\" directory\n```\n\n---\n\nThis implementation was\
+  \ adopted from [ddim_sct](https://github.com/sCT-Masters-Project/ddim_sct).\n"

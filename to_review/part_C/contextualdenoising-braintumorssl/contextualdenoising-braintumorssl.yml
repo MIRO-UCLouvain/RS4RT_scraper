@@ -1,0 +1,69 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Nafi14078/ContextualDenoising-BrainTumorSSL
+url: https://github.com/Nafi14078/ContextualDenoising-BrainTumorSSL
+platform: github
+description: Self-supervised transfer learning for cross-dataset brain tumor segmentation using multi-modal
+  MRI and contextual denoising.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-08T16:51:08Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# Thesis Project — STS-UVD Pretraining + BraTS-PED Segmentation\n\n## Overview\nTwo-stage\
+  \ pipeline:\n1. **Pretraining** — Self-supervised denoising on BraTS2021 (STS-UVD adapted for 2D MRI\
+  \ slices)\n2. **Fine-tuning** — Transfer pretrained encoder to Swin UNETR for BraTS-PED tumor segmentation\n\
+  \n**Goals:**\n- Pretraining  : PSNR > 38 dB, SSIM > 0.95 on BraTS2021 slices\n- Fine-tuning  : SOTA\
+  \ Dice WT/TC/ET on BraTS-PED pediatric tumor segmentation\n\n---\n\n## Project Structure\n\n```\nthesis_project/\n\
+  ├── configs/\n│   ├── pretrain_config.yaml      ← all pretraining hyperparameters\n│   └── finetune_config.yaml\
+  \      ← all fine-tuning hyperparameters\n├── scripts/\n│   ├── preprocess_brats2021.py   ← 3D NIfTI\
+  \ → 2D .npy slices (pretraining)\n│   └── preprocess_bratsped.py    ← 3D NIfTI → 2D .npy slices + masks\
+  \ (finetune)\n├── pretraining/\n│   ├── dataset.py                ← slice window dataset loader\n│ \
+  \  ├── sts_kernel.py             ← Weighted Temporal (T) + Spatial (S) kernels\n│   ├── unet_denoiser.py\
+  \          ← U-Net denoiser backbone (G_phi + D_theta)\n│   ├── losses.py                 ← L1 + slice\
+  \ consistency loss\n│   └── train_pretrain.py         ← recurrent training loop\n├── finetuning/\n│\
+  \   ├── dataset.py                ← BraTS-PED slice dataset with augmentation\n│   ├── swin_unetr_2d.py\
+  \          ← 2D Swin UNETR + weight injection\n│   ├── losses.py                 ← Dice + Focal loss\n\
+  │   └── train_finetune.py         ← two-phase training loop\n└── evaluation/\n    ├── metrics.py   \
+  \             ← PSNR, SSIM, Dice WT/TC/ET, HD95\n    └── visualize.py              ← denoising plots\
+  \ + segmentation overlays\n```\n\n---\n\n## Setup\n\n### 1. Install dependencies (run once on Kaggle)\n\
+  ```bash\npip install monai nibabel scikit-image scipy pyyaml tqdm matplotlib\n```\n\n### 2. Preprocess\
+  \ BraTS2021 (run once, save output as Kaggle Dataset)\n```bash\npython scripts/preprocess_brats2021.py\
+  \ \\\n  --root /kaggle/input/brats2021/BraTS2021_Training_Data \\\n  --out  /kaggle/working/brats2021_slices\
+  \ \\\n  --skip 10 \\\n  --min_brain 0.05\n```\nThen upload `/kaggle/working/brats2021_slices/` as a\
+  \ new Kaggle Dataset called `brats2021-preprocessed`.\n\n### 3. Preprocess BraTS-PED (run once, save\
+  \ output as Kaggle Dataset)\n```bash\npython scripts/preprocess_bratsped.py \\\n  --root /kaggle/input/bratsped/BraTS-PED_Training_Data\
+  \ \\\n  --out  /kaggle/working/bratsped_slices \\\n  --skip 10 \\\n  --min_tumor 0.01\n```\nThen upload\
+  \ as `bratsped-preprocessed`.\n\n---\n\n## Stage 1 — Pretraining\n\n### Update config\nEdit `configs/pretrain_config.yaml`:\n\
+  ```yaml\ndata:\n  brats2021_root:  \"/kaggle/input/brats2021/BraTS2021_Training_Data\"\n  output_slices:\
+  \   \"/kaggle/input/brats2021-preprocessed/slices\"\ntraining:\n  checkpoint_dir:  \"/kaggle/working/checkpoints/pretrain\"\
+  \n```\n\n### Run\n```bash\ncd thesis_project\npython pretraining/train_pretrain.py --config configs/pretrain_config.yaml\n\
+  ```\n\n### Output\n- Best model: `/kaggle/working/checkpoints/pretrain/best_model.pth`\n- Encoder weights\
+  \ for transfer: `/kaggle/working/checkpoints/pretrain/pretrain_encoder.pth`\n\nUpload `pretrain_encoder.pth`\
+  \ as a Kaggle Dataset called `pretrained-weights`.\n\n---\n\n## Stage 2 — Fine-tuning\n\n### Update\
+  \ config\nEdit `configs/finetune_config.yaml`:\n```yaml\ndata:\n  bratsped_root:      \"/kaggle/input/bratsped/BraTS-PED_Training_Data\"\
+  \n  output_slices:      \"/kaggle/input/bratsped-preprocessed/slices\"\nmodel:\n  pretrained_encoder:\
+  \ \"/kaggle/input/pretrained-weights/pretrain_encoder.pth\"\ntraining:\n  checkpoint_dir:     \"/kaggle/working/checkpoints/finetune\"\
+  \n```\n\n### Run\n```bash\npython finetuning/train_finetune.py --config configs/finetune_config.yaml\n\
+  ```\n\n---\n\n## Training Strategy (Kaggle Free Tier)\n\n| Stage | Sessions needed | Tip |\n|---|---|---|\n\
+  | Preprocessing | 1 session each | Upload outputs as Kaggle Dataset immediately |\n| Pretraining | 3–5\
+  \ sessions | Save checkpoint every 5 epochs, resume from last |\n| Fine-tuning | 4–6 sessions | Phase\
+  \ 1 and Phase 2 can be separate sessions |\n\n**Always save to `/kaggle/working/` and upload as dataset\
+  \ — runtime resets lose `/tmp/`.**\n\n---\n\n## Expected Results\n\n| Metric | Target | SOTA (for reference)\
+  \ |\n|---|---|---|\n| PSNR (pretraining) | > 38 dB | ~41 dB (STS-UVD paper) |\n| SSIM (pretraining)\
+  \ | > 0.95 | ~0.984 (STS-UVD paper) |\n| Dice WT | > 0.88 | ~0.90 (BraTS-PED leaderboard) |\n| Dice\
+  \ TC | > 0.82 | ~0.85 |\n| Dice ET | > 0.78 | ~0.82 |\n| HD95 WT | < 10 mm | ~7 mm |\n\n---\n\n## Thesis\
+  \ Ablation Experiments\n\nRun these 4 experiments to support your thesis claim:\n\n| Experiment | Command\
+  \ change |\n|---|---|\n| **Ours (full)** | pretrained_encoder = pretrain_encoder.pth |\n| **Scratch\
+  \ baseline** | Set pretrained_encoder to null in config |\n| **No temporal kernel** | Set sts.N = 1\
+  \ in pretrain_config.yaml |\n| **No spatial kernel** | Set sts.replace_ratio = 0.0 |\n\n---\n\n## Citation\n\
+  \nIf you use this work in your thesis, cite the STS-UVD paper:\n```\nAiyetigbo et al., \"Generalizable\
+  \ Unsupervised Microscopy Video Denoising\nvia Weighted SpatioTemporal Sampling\", CVPR Workshop 2024.\n\
+  ```\n"

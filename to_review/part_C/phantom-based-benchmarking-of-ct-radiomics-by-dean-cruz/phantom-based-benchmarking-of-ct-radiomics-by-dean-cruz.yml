@@ -1,0 +1,67 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ideanuodo/Phantom-Based-Benchmarking-of-CT-Radiomics-by-Dean-Cruz
+url: https://github.com/ideanuodo/Phantom-Based-Benchmarking-of-CT-Radiomics-by-Dean-Cruz
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-05-24T02:16:23Z'
+image_source: null
+heuristic_total_score: 18
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 4 support term(s).
+readme_excerpt: "# Phantom-Based CT Radiomics Robustness and Generalizability\n\nThis repository contains\
+  \ the analysis notebooks and PyRadiomics parameter file used for the study:\n\n**Phantom-Based Benchmarking\
+  \ of Computed Tomography Radiomics Robustness and Generalizability Under Kernel, Exposure, and Edge\
+  \ Distortion**\n\nThe workflow evaluates CT radiomic feature robustness using the CC-Radiomics-Phantom-2\
+  \ dataset, identifies stable radiomic features using coefficient of variation (CV) and Susceptibility\
+  \ Index (SI), quantifies kernel-associated volumetric edge distortion, and transfers the resulting feature\
+  \ subsets to the NSCLC-Radiomics Lung1 dataset for downstream machine learning evaluation.\n\n## Repository\
+  \ Contents\n\n| File | Description |\n|---|---|\n| `1_updated_phantom_cv_si.ipynb` | Main phantom robustness\
+  \ notebook. Builds or loads the CCR phantom DICOM metadata index, defines layer-specific phantom ROIs,\
+  \ performs registration-based mask propagation and HU-based refinement, extracts radiomic features,\
+  \ computes CV and SI, identifies Stable features, summarizes feature-class composition, generates robustness\
+  \ plots, and performs volumetric edge-distortion analysis. |\n| `2_updated_lung1_extraction_clean.ipynb`\
+  \ | Lung1 extraction notebook. Audits local Lung1 DICOM and RTSTRUCT files, joins clinical and imaging\
+  \ metadata, applies the same PyRadiomics extraction settings used in the phantom phase, and exports\
+  \ the cleaned Lung1 radiomic feature matrix for machine learning. |\n| `3_updated_ml_lda.ipynb` | Machine\
+  \ learning notebook. Loads phantom-derived stability results and Lung1 radiomic features, constructs\
+  \ the All, Stable, and Stable no-shape feature sets, evaluates Logistic Regression, SVM (RBF), Random\
+  \ Forest, and MLP under baseline, kernel-shift, and vendor-shift settings, and generates performance\
+  \ plots. LDA is included only as an optional exploratory visualization and is not part of the final\
+  \ manuscript results. |\n| `params_clean_updated.yaml` | PyRadiomics parameter file used consistently\
+  \ for phantom and Lung1 feature extraction. Settings include Original image features only, 25 HU fixed\
+  \ bin width, 3D extraction, -700 to +2000 HU resegmentation, and 1 × 1 × 1 mm³ isotropic resampling.\
+  \ |\n\n## Public Datasets\n\nThe raw imaging datasets are not included in this repository. They are\
+  \ publicly available from The Cancer Imaging Archive (TCIA):\n\n1. **CC-Radiomics-Phantom-2**  \n  \
+  \ Used for phantom-based robustness screening, CV/SI analysis, and volumetric edge-distortion analysis.\
+  \  \n   https://doi.org/10.7937/TCIA.2019.4l24tz5g\n\n2. **NSCLC-Radiomics (Lung1)**  \n   Used for\
+  \ downstream clinical radiomics extraction and machine learning evaluation.  \n   https://doi.org/10.7937/K9/TCIA.2015.PF0M9REI\n\
+  \n## Required Software\n\nThe analysis was developed using Python 3.10.11. The main Python packages\
+  \ used include:\n\n- NumPy\n- pandas\n- matplotlib\n- seaborn\n- scikit-learn\n- PyRadiomics 3.0.1\n\
+  - SimpleITK\n- pydicom\n- rt-utils\n- tqdm\n\nThe notebooks assume that the raw TCIA datasets have been\
+  \ downloaded locally and that the path variables near the beginning of each notebook have been updated\
+  \ to match the local directory structure.\n\n## Workflow Summary\n\n1. Download the CC-Radiomics-Phantom-2\
+  \ and NSCLC-Radiomics Lung1 datasets from TCIA.\n2. Update the local path configuration cells in each\
+  \ notebook.\n3. Run `1_updated_phantom_cv_si.ipynb` to generate the CCR phantom metadata index, extracted\
+  \ phantom features, CV/SI robustness tables, Stable feature list, and volumetric edge-distortion outputs.\n\
+  4. Run `2_updated_lung1_extraction_clean.ipynb` to generate the Lung1 radiomic feature matrix using\
+  \ the same PyRadiomics settings.\n5. Run `3_updated_ml_lda.ipynb` to evaluate the All, Stable, and Stable\
+  \ no-shape feature sets under baseline, reconstruction-kernel shift, and vendor-shift machine learning\
+  \ settings.\n\n## Feature Sets\n\n- **All features:** Complete 107-feature PyRadiomics feature matrix.\n\
+  - **Stable:** Phantom-derived features satisfying both CV and SI stability criteria.\n- **Stable no-shape:**\
+  \ Stable feature subset after removing all shape descriptors.\n\n## Notes on Reproducibility\n\n- The\
+  \ Stable and Stable no-shape feature sets are derived only from the CCR phantom dataset.\n- Lung1 outcome\
+  \ labels are not used during phantom-based feature selection.\n- Median imputation and Z-score scaling\
+  \ in machine learning are fitted only on the training fold or training split, then applied to validation\
+  \ or test data.\n- The workflow is IBSI-aligned through fixed and documented extraction settings, but\
+  \ it was not formally IBSI-validated against benchmark reference values.\n\n## Citation\n\nIf using\
+  \ this repository, please cite the associated manuscript once available, as well as the original TCIA\
+  \ datasets.\n"

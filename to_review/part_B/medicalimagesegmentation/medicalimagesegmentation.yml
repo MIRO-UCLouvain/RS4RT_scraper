@@ -1,0 +1,163 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: SakuraMochiii/MedicalImageSegmentation
+url: https://github.com/SakuraMochiii/MedicalImageSegmentation
+platform: github
+description: U-Net brain tumor segmentation from MRI scans (91.7% DSC) — PyTorch, Dice+BCE loss, residual
+  architecture variant
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-05-19T05:59:17Z'
+image_source: null
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+readme_excerpt: '# Medical Image Segmentation
+
+
+  U-Net and Residual U-Net models for brain tumor segmentation from MRI scans, trained on the [LGG Segmentation
+  Dataset](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation). Achieves **91.7% Dice Similarity
+  Coefficient** on the validation set.
+
+
+  ## Architecture
+
+
+  Two model variants implemented from scratch in PyTorch:
+
+
+  - **U-Net** — Standard encoder-decoder with skip connections, 4 downsampling stages, BatchNorm + ReLU
+  activations
+
+  - **Residual U-Net** — Same structure with residual (identity shortcut) connections in each block for
+  improved gradient flow
+
+
+  Both output a single-channel sigmoid mask for binary segmentation.
+
+
+  ## Loss Functions
+
+
+  Multiple loss functions implemented and compared:
+
+
+  | Loss | Description |
+
+  |------|-------------|
+
+  | Dice Loss | Directly optimizes the DSC metric |
+
+  | Dice + BCE | Hybrid combining pixel-wise BCE with Dice |
+
+  | Tversky Loss | Generalized Dice with tunable FP/FN weighting |
+
+  | Focal Loss | Down-weights easy examples to focus on hard pixels |
+
+
+  ## Dataset & Preprocessing
+
+
+  - **Source**: LGG MRI Segmentation (110 patients, FLAIR MRI volumes)
+
+  - **Pipeline**: Crop to brain region, pad to square, resize to 256x256, per-channel normalization
+
+  - **Sampling**: Weighted slice sampling — slices with more tumor area are sampled more frequently during
+  training
+
+  - **Caching**: Preprocessed volumes are pickled to disk for fast reload
+
+
+  ## Project Structure
+
+
+  ```
+
+  ├── unet.py          # UNet and UNetResidual model definitions
+
+  ├── dataset.py       # BrainSegmentationDataset with preprocessing pipeline
+
+  ├── loss.py          # Dice, DiceBCE, Tversky, and Focal loss functions
+
+  ├── transform.py     # Data augmentation transforms
+
+  ├── train.ipynb      # Training loop with logging and checkpointing
+
+  ├── inference.ipynb  # Visualization of predictions vs ground truth
+
+  ├── logger.py        # Training metric logger
+
+  └── utils.py         # Crop, pad, resize, normalize utilities
+
+  ```
+
+
+  ## Results
+
+
+  | Model | Loss | Optimizer | Dice Score |
+
+  |-------|------|-----------|-----------|
+
+  | U-Net | Dice | Adam | 81.2% |
+
+  | U-Net | Dice + BCE | AdamW | **91.7%** |
+
+
+  ## Usage
+
+
+  ### Requirements
+
+
+  ```
+
+  torch
+
+  numpy
+
+  scikit-image
+
+  tqdm
+
+  ```
+
+
+  ### Training
+
+
+  ```bash
+
+  # Run train.ipynb — configure hyperparameters in the first cell
+
+  # Dataset path, batch size, learning rate, loss function, and model variant
+
+  ```
+
+
+  ### Inference
+
+
+  ```bash
+
+  # Run inference.ipynb — loads a trained checkpoint and visualizes predictions
+
+  # Overlays predicted mask on MRI slices alongside ground truth
+
+  ```
+
+
+  ## Tech Stack
+
+
+  ![PyTorch](https://img.shields.io/badge/-PyTorch-EE4C2C?style=flat-square&logo=pytorch&logoColor=white)
+
+  ![NumPy](https://img.shields.io/badge/-NumPy-013243?style=flat-square&logo=numpy&logoColor=white)
+
+  ![scikit-image](https://img.shields.io/badge/-scikit--image-F7931E?style=flat-square&logo=scikitlearn&logoColor=white)
+
+  '

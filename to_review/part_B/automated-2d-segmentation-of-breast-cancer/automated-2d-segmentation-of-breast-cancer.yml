@@ -1,0 +1,79 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Surakshajain06/Automated-2D-segmentation-of-Breast-cancer
+url: https://github.com/Surakshajain06/Automated-2D-segmentation-of-Breast-cancer
+platform: github
+description: Automated patient-specific breast tumor segmentation from MRI using a 2D U-Net architecture
+  implemented with MONAI, featuring preprocessing, normalization, and post-processing for accurate multi-class
+  segmentation.
+license: null
+language: Python
+keywords:
+- breast
+- iitm
+- monai
+- mri
+- segmentation
+- tumor
+stars: 0
+updated_at: '2026-06-15T06:05:40Z'
+image_source: https://raw.githubusercontent.com/Surakshajain06/Automated-2D-segmentation-of-Breast-cancer/HEAD/DOCUMENTATION/images/intro.png
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "<div align=\"center\">\n\n# Breast Tumor Segmentation Using 2D U-Net and MONAI\n\n![Python](https://img.shields.io/badge/Python-3.10-blue)\n\
+  ![PyTorch](https://img.shields.io/badge/PyTorch-2.2-red)\n![MONAI](https://img.shields.io/badge/MONAI-1.5-green)\n\
+  ![MRI](https://img.shields.io/badge/Medical%20Imaging-Breast%20MRI-purple)\n![Task](https://img.shields.io/badge/Task-Multi--Class%20Segmentation-blueviolet)\n\
+  \n</div>\n\n## Introduction\n![Introduction](DOCUMENTATION/images/intro.png)\n\n## Workflow\n![Workflow](DOCUMENTATION/images/workflow.png)\n\
+  \n## Final Results\n\n![Final Results](DOCUMENTATION/images/final%20results.png)\n\n## Dissertation\n\
+  \n\U0001F4C4 [Read Full Dissertation](DOCUMENTATION/Automated_2D_segmentation_of_Breast_cancer.pdf)\n\
+  \n## Overview\n\nThis project presents an automated breast tumor segmentation framework using a 2D U-Net\
+  \ architecture implemented with the MONAI (Medical Open Network for AI) framework. The system processes\
+  \ breast MRI scans and generates multi-class segmentation masks containing:\n\n* Background\n* Tumor\n\
+  * Glandular Tissue\n* Skin\n\nThe primary objective is to provide an efficient and computationally lightweight\
+  \ segmentation pipeline suitable for systems with limited GPU resources while maintaining clinically\
+  \ relevant segmentation performance.\n\n---\n\n## Features\n\n* Automated breast MRI tumor segmentation\n\
+  * 2D U-Net implementation using MONAI\n* NIfTI (.nii/.nii.gz) medical image support\n* Voxel spacing\
+  \ standardization through resampling\n* Slice-based preprocessing pipeline\n* Multi-class segmentation\n\
+  * Data augmentation support\n* Multiple intensity normalization strategies\n* Post-processing to reduce\
+  \ false positives\n* Quantitative evaluation using standard segmentation metrics\n\n---\n\n## Dataset\n\
+  \nThe project utilizes the Duke Breast Cancer MRI Dataset derived from the multicenter breast DCE-MRI\
+  \ benchmark dataset.\n\n### Training Dataset\n\n* 30 MRI volumes\n\n### Testing Dataset\n\n* 10 MRI\
+  \ volumes\n\n### Segmentation Classes\n\n| Label ID | Class            |\n| -------- | ----------------\
+  \ |\n| 0        | Background       |\n| 1        | Tumor            |\n| 2        | Glandular Tissue\
+  \ |\n| 3        | Skin             |\n\n---\n\n## Project Workflow\n\n### 1. Data Preparation\n\n* Load\
+  \ MRI volumes and corresponding labels\n* Pair image-label volumes\n* Volume-level train-validation\
+  \ split\n* Prevent patient-level data leakage\n\n### 2. Preprocessing\n\n* Voxel spacing resampling\n\
+  * Axial slice extraction\n* Padding to 400 × 400 pixels\n* Intensity normalization\n\n### 3. Data Augmentation\n\
+  \n* Random rotations\n* Random flipping\n\n### 4. Model Training\n\n* MONAI-based 2D U-Net\n* Dice Cross-Entropy\
+  \ Loss\n* Validation monitoring using Dice Score\n\n### 5. Inference\n\n* Segmentation prediction on\
+  \ unseen MRI volumes\n\n### 6. Post-Processing\n\n* Remove tumor regions smaller than 377.89 mm³\n*\
+  \ Remove anatomically isolated tumor regions using centroid-distance analysis\n\n---\n\n## Directory\
+  \ Structure\n\n```text\nAutomated_Breast_Segmentation/\n│\n├── Data/\n│   ├── Training_data/\n│   │\
+  \   ├── imagesTr/\n│   │   └── labelsTr/\n│   │\n│   ├── Testing_data/\n│   │   └── imagesTs/\n│   │\n\
+  │   ├── 2d_slices/\n│   └── Predicted_mask/\n│\n├── Scripts/\n│   ├── 2d_slices.py\n│   ├── train_2d_unet.py\n\
+  │   └── inference.py\n│\n├── best_model.pth\n│\n└── README.md\n```\n\n---\n\n## Intensity Normalization\
+  \ Methods Evaluated\n\nThe following normalization approaches were investigated:\n\n1. No Normalization\n\
+  2. Min-Max Normalization\n3. Min-Max Normalization (Background Excluded)\n4. Z-Score Normalization\n\
+  \n---\n\n## Training Environment\n\n### Software\n\n* Python 3.10\n* PyTorch 2.2\n* MONAI 1.5\n* NumPy\n\
+  * NiBabel\n* SimpleITK\n* SciPy\n* OpenCV\n* Matplotlib\n* Pandas\n* Scikit-learn\n\n### Hardware\n\n\
+  * NVIDIA T1000 GPU\n* 4 GB VRAM\n* CUDA 11.8\n\n---\n\n## Evaluation Metrics\n\nModel performance is\
+  \ evaluated using:\n\n* Dice Similarity Coefficient (DSC)\n* Intersection over Union (IoU)\n* Precision\n\
+  * Recall\n\n---\n\n## Results\n\nKey observations from the study:\n\n* Z-score normalization achieved\
+  \ the highest validation Dice score.\n* Min-Max normalization achieved the best independent test Dice\
+  \ score.\n* Post-processing effectively reduced false-positive detections.\n* The 2D slice-based approach\
+  \ provided a favorable balance between computational efficiency and segmentation accuracy.\n\n---\n\n\
+  ## Applications\n\nThe generated tumor segmentation masks can be used for:\n\n* Breast cancer analysis\n\
+  * Tumor localization\n* Treatment planning\n* Medical image research\n* Image-guided microwave-based\
+  \ breast cancer therapy systems\n\n---\n\n## Citation\n\n```bibtex\n@mastersthesis{jain2026breastsegmentation,\n\
+  \  author       = {K. S. Suraksha Jain},\n  title        = {Automation of Patient Specific Breast Cancer\
+  \ Image Segmentation Using 2D U-Net MONAI},\n  school       = {Indian Institute of Technology Madras},\n\
+  \  year         = {2026},\n  type         = {M.Tech Dissertation}\n}\n```\n\n---\n\n## Acknowledgements\n\
+  \n* Indian Institute of Technology Madras (IIT Madras)\n* Prof. Kavitha Arunachalam\n* MONAI Development\
+  \ Team\n* Duke Breast Cancer MRI Dataset Contributors\n\n---\n\n## License\n\nThis project is intended\
+  \ for academic and research purposes only.\n\nUsers are responsible for complying with the licensing\
+  \ terms and usage restrictions of the original datasets and associated resources.\n"

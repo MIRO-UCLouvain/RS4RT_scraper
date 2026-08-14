@@ -1,0 +1,89 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Munzareenkhasab/brain-mri-segmentation-mvp
+url: https://github.com/Munzareenkhasab/brain-mri-segmentation-mvp
+platform: github
+description: A lightweight deep learning pipeline for brain MRI tumor segmentation using U-Net, PyTorch,
+  and OpenCV with preprocessing, model training, inference, and visualization.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-14T20:08:04Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# Brain MRI Tumor Segmentation - U-Net (PyTorch)\n\nA minimal, fully working MVP that\
+  \ demonstrates the **complete deep-learning\npipeline** for binary brain-tumor segmentation: data loading\
+  \ -> preprocessing &\naugmentation -> U-Net training -> evaluation -> inference -> visualization.\n\n\
+  > Goal: a clean, runnable portfolio project - **not** SOTA performance.\n\n> Medical disclaimer: this\
+  \ educational project is not a medical device and\n> must not be used for diagnosis or clinical decision-making.\n\
+  \n---\n\n## 1. Project Overview\n\n| Stage         | Implementation                                \
+  \              |\n| ------------- | ----------------------------------------------------------- |\n\
+  | Data          | PNG / JPG / NIfTI (`.nii`, `.nii.gz`) image + mask pairs    |\n| Preprocessing | Resize,\
+  \ min-max normalize, flip, rotation, random crop      |\n| Model         | Lightweight U-Net (base 32,\
+  \ ~7.8M params, 1-channel logits) |\n| Loss          | Dice Loss + Binary Cross Entropy            \
+  \                |\n| Optimizer     | Adam + `ReduceLROnPlateau` scheduler                        |\n\
+  | Metrics       | Dice score, IoU, pixel accuracy (printed every epoch)       |\n| Inference     | Loads\
+  \ best checkpoint, saves binary mask + red overlay      |\n| Visualization | Matplotlib panel: MRI /\
+  \ GT / Prediction / Overlay           |\n\n## Fastest Way to Try It\n\nAfter installing the requirements,\
+  \ one command exercises every public CLI:\n\n```bash\npython demo.py\n```\n\nThe default demo generates\
+  \ 24 paired samples, trains a small U-Net for two\nepochs, predicts one mask, and writes the final panel\
+  \ to:\n\n```text\ndemo_outputs/predictions/case_000_panel.png\n```\n\nIt is deliberately small so another\
+  \ developer can verify the whole workflow\non a CPU. Demo files are isolated in `demo_data/` and `demo_outputs/`,\
+  \ so the\ncommand will not mix generated cases with your own dataset. It demonstrates\nfunctionality,\
+  \ not model quality.\n\n## 2. Installation\n\n```bash\n# Python 3.11 recommended\npython -m venv .venv\n\
+  source .venv/bin/activate        # Windows: .venv\\Scripts\\activate\npip install -r requirements.txt\n\
+  python utils/check_environment.py\npython -m unittest discover tests\n```\n\nFor CUDA, install the correct\
+  \ PyTorch build for your system from the official\nPyTorch installation selector before installing the\
+  \ remaining requirements.\n\n## 3. Folder Structure\n\n```\nbrain-mri-segmentation/\n|-- data/\n|  \
+  \ |-- images/                  # MRI slices  (case_000.png, ...)\n|   `-- masks/                   #\
+  \ binary masks with the SAME filename\n|-- models/unet.py               # U-Net (encoder / bridge /\
+  \ decoder / skips)\n|-- dataset/dataset.py           # BrainMRIDataset (PNG, JPG, NIfTI)\n|-- preprocessing/preprocess.py\
+  \  # paired transforms + augmentation\n|-- training/train.py            # training + validation loop\n\
+  |-- inference/predict.py         # checkpoint loading + mask prediction\n|-- visualization/visualize.py\
+  \   # matplotlib result panels\n|-- utils/\n|   |-- metrics.py               # DiceBCELoss, Dice, IoU,\
+  \ pixel accuracy\n|   `-- generate_synthetic_data.py  # demo dataset generator\n|-- outputs/       \
+  \              # checkpoints, logs, predictions\n|-- tests/test_pipeline.py       # model, metric, and\
+  \ loader smoke tests\n|-- demo.py                      # one-command end-to-end demonstration\n|-- train.py\
+  \                     # convenient training entry point\n|-- predict.py                   # convenient\
+  \ inference entry point\n|-- requirements.txt\n|-- LICENSE\n`-- README.md\n```\n\n## 4. Quick Start\
+  \ (zero downloads)\n\n```bash\n# 1) Create a synthetic demo dataset (120 image/mask pairs)\npython utils/generate_synthetic_data.py\
+  \ --num 120\n\n# 2) Train (prints Dice / IoU / PixAcc each epoch, saves best checkpoint)\npython train.py\
+  \ --epochs 20 --batch-size 8\n\n# 3) Predict + visualize one case\npython predict.py --image data/images/case_000.png\n\
+  ```\n\nUse `python demo.py` instead if you want those three steps automated.\n\n### Using a real dataset\n\
+  \nPlace grayscale MRI slices in `data/images/` and binary masks in\n`data/masks/` with **matching basenames**\
+  \ (PNG/JPG or NIfTI). Image and mask\nextensions may differ, so `case_001.jpg` can pair with `case_001.png`.\
+  \ For example the\n[LGG Brain MRI dataset (Kaggle)](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)\n\
+  works after flattening its folders. Then run the same commands.\n\nFor a 3-D NIfTI file, this MVP uses\
+  \ its middle axial slice. The current model is\n2-D and does not write a segmented NIfTI volume.\n\n\
+  ## 5. Training\n\n```bash\npython train.py --epochs 30 --batch-size 8 --lr 1e-3 --image-size 128\n```\n\
+  \nCPU-friendly training:\n\n```bash\npython train.py --epochs 10 --batch-size 4 --base-channels 16 --device\
+  \ cpu\n```\n\nResume training for five more epochs:\n\n```bash\npython train.py --epochs 5 --resume\
+  \ outputs/checkpoints/last_model.pth\n```\n\n* Best checkpoint (highest val Dice): `outputs/checkpoints/best_model.pth`\n\
+  * Last checkpoint: `outputs/checkpoints/last_model.pth`\n* Log file: `outputs/train_log.txt`\n\nExample\
+  \ log line:\n\n```\nEpoch 012/020 | train_loss 0.1873 | val_loss 0.1541 | Dice 0.9124 | IoU 0.8402 |\
+  \ PixAcc 0.9911 | lr 1.00e-03 | 6.4s\n```\n\n## 6. Inference\n\n```bash\n# Single image with visualization\
+  \ window\npython predict.py --image data/images/case_007.png\n\n# Whole folder, headless\npython predict.py\
+  \ --image data/images --no-show\n```\n\nCustom paths and threshold:\n\n```bash\npython predict.py \\\
+  \n  --image /path/to/images \\\n  --masks /path/to/masks \\\n  --checkpoint outputs/checkpoints/best_model.pth\
+  \ \\\n  --output-dir outputs/my_predictions \\\n  --threshold 0.5 \\\n  --no-show\n```\n\nOutputs per\
+  \ case in `outputs/predictions/`:\n`<name>_pred.png` (binary mask), `<name>_overlay.png` (red overlay),\n\
+  `<name>_panel.png` (4-panel matplotlib figure).\n\n## 7. Screenshots\n\n> _Add your own results here\
+  \ after training:_\n>\n> ![Example prediction panel](outputs/predictions/case_000_panel.png)\n\n## 8.\
+  \ Sanity Checks\n\nEvery module runs standalone:\n\n```bash\npython models/unet.py            # forward-pass\
+  \ shape check\npython preprocessing/preprocess.py\npython utils/metrics.py\npython dataset/dataset.py\
+  \        # requires data/ to exist\npython visualization/visualize.py  # requires a trained checkpoint\n\
+  ```\n\nAll CLIs expose their options with `--help`:\n\n```bash\npython demo.py --help\npython train.py\
+  \ --help\npython predict.py --help\n```\n\n## 9. Future Improvements\n\n* 3-D U-Net over full NIfTI\
+  \ volumes instead of 2-D slices\n* Multi-class segmentation (edema / enhancing / necrotic core)\n* Mixed-precision\
+  \ training + early stopping\n* Test-time augmentation and sliding-window inference\n* Experiment tracking\
+  \ (TensorBoard / Weights & Biases)\n* Proper patient-level train/val/test splits for real datasets\n\
+  \n## Sharing the Project\n\nThe repository includes an MIT license and a `.gitignore` that excludes\
+  \ local\ndatasets, checkpoints, and generated predictions. This prevents private MRI\ndata and large\
+  \ model files from being committed accidentally. Share trained\nweights separately if collaborators\
+  \ need them.\n"

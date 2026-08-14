@@ -1,0 +1,78 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: eyalatiri/breast_cancer
+url: https://github.com/eyalatiri/breast_cancer
+platform: github
+description: Multi-modal clinical decision support system for breast oncology — integrating morphological,
+  clinical, and radiomic data (MRI) across 6 ML objectives including diagnosis, treatment selection, and
+  pCR prediction.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 1
+updated_at: '2026-05-14T17:25:33Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "\U0001FA7A **Clinical Decision Support System in Breast Oncology**\n\nThis repository\
+  \ implements an integrated clinical decision support system designed to assist clinicians throughout\
+  \ the breast cancer patient journey, from diagnosis to treatment response prediction.\nThe system follows\
+  \ the CRISP-DM methodology and combines machine learning, clinical data, and radiomics to provide interpretable\
+  \ and high-performance predictions.\n\n\n**\U0001F680 Live Demo (End-to-End System)** https://youtu.be/qLT5tav2XTw\
+  \ \n\n\n\U0001F9E0 **Project Overview**\n\nBreast cancer management involves multiple complex decisions\
+  \ under uncertainty. This project addresses these challenges by proposing six complementary modelling\
+  \ objectives (Objectives 1–5 and 7) that support:\n\n-Early and reliable diagnosis\n\n-Treatment strategy\
+  \ selection\n\n-Risk stratification\n\n-Prediction of response to neoadjuvant chemotherapy\n\nThe system\
+  \ is designed as a clinical decision support tool, not as a replacement for medical expertise.\n\n\U0001F4CA\
+  \ **Datasets Used**\n\nThe system was developed and validated using three complementary datasets:\n\n\
+  -**Wisconsin Diagnostic Breast Cancer (WDBC)**:569 samples/30 numerical morphological features/Used\
+  \ for tumour classification benchmarking\n\n-**METABRIC**:1,904 patients/Longitudinal clinical and biological\
+  \ data/Used for therapeutic decisions and risk modelling\n\n-**MAMA-MIA**:277 patients/1,448 DCE-MRI\
+  \ images/Multi-modal (clinical + imaging)/Used for neoadjuvant treatment response (pCR) prediction\n\
+  \n\U0001F504 **CRISP-DM Methodology**\n\nThe project follows the six phases of CRISP-DM:\n\n-**Business\
+  \ Understanding** – Clinical problem definition and objectives\n\n-**Data Understanding** – Exploration\
+  \ of clinical, biological, and imaging data\n\n-**Data Preparation** – Cleaning, normalization, feature\
+  \ engineering, radiomics extraction\n\n-**Modeling** – Evaluation of multiple ML and DL models per objective\n\
+  \n-**Evaluation** – Clinical-oriented metrics (AUC, recall, calibration)\n\n-**Deployment** – Flask-based\
+  \ applications with isolated environments\n\n\U0001F916 **Machine Learning Models & Objectives**\n\n\
+  **Objective 1 – Tumour Diagnostic Model (Classification)**\n\nObjective: Distinguish between malignant\
+  \ and benign tumours using morphological features for early and objective diagnosis.\n\nModels Evaluated:Softmax\
+  \ Regression, L2-SVM, k-Nearest Neighbors, Linear Regression (Perceptron), Deep MLP\n\nChosen Model:\
+  \ Deep Multilayer Perceptron (MLP)\n\nPerformance:\n\nAccuracy: 98.83%\n\nAUC-ROC: 0.9947\n\n**Objective\
+  \ 2 – Therapeutic Decision Support Model**\n\nObjective: Predict the probability of prescribing chemotherapy,\
+  \ hormone therapy, or radiotherapy, acting as a triage tool (YES / NO / UNCERTAIN).\n\nModels Evaluated:\
+  \ MultiOutput Logistic Regression\n\nChosen Model: MultiOutput Logistic Regression\n\nPerformance:\n\
+  \nAUC (Chemotherapy): 0.904\n\nRationale: High interpretability and calibrated probabilities, essential\
+  \ for clinical safety.\n\n**Objective 3 – Intensity of Therapy Estimation Model**\n\nObjective: Estimate\
+  \ a latent treatment intensity score reflecting the global burden of a therapeutic plan.\n\nModels Evaluated:\n\
+  \nItem Response Theory (IRT – 2PL)\n\nRidge Regression\n\nk-Nearest Neighbors\n\nChosen Pipeline: IRT\
+  \ 2PL + Ridge + k-NN\n\nPerformance:\n\nCorrelation with observed outcomes: 0.508\n\nInnovation: Creation\
+  \ of a latent clinical score not explicitly present in raw data.\n\n**Objective 4 – Hormonal Resistance\
+  \ Risk Model**\n\nObjective: Identify patients at high risk of relapse under hormone therapy, serving\
+  \ as a proxy for hormonal resistance.\n\nModels Evaluated: XGBoost\n\nChosen Model: Calibrated XGBoost\n\
+  \nPerformance:\n\nRecall: 0.763\n\nRationale: Prioritizes sensitivity to avoid missing high-risk patients.\n\
+  \n**Objective 5 – Post-Treatment Relapse Risk Model**\n\nObjective: Estimate the probability of cancer\
+  \ recurrence after treatment, enabling risk-based follow-up strategies.\n\nModels Evaluated:Random Forest/XGBoost/LightGBM\n\
+  \nChosen Model: Stacking Ensemble with Logistic Regression meta-model\n\nPerformance:\n\nRecall: 0.751\n\
+  \n**Objective 6 – Pathological Complete Response (pCR) Prediction Model**\n\nObjective: Predict before\
+  \ surgery whether a patient will achieve a Pathological Complete Response (pCR) after neoadjuvant chemotherapy.\n\
+  \nModels Evaluated: ANN, XGBoost, LightGBM\n\nAUC-ROC:\n-ANN: 0.692\n-XGBoost :\t0.775\n-LightGBM (retained)\t\
+  : 0.799\n\n\n**Feature Extraction & Fusion**\n\n-Radiomics:4,043 features extracted from DCE-MRI using\
+  \ PyRadiomics\n\n-Reduced to 100 features via:Variance Threshold/ANOVA F-test/Random Forest importance\n\
+  \n-Clinical Data: Biomarkers (ER, PR, HER2), age, tumour stage\n\n-Final Balance: 70% radiomics / 30%\
+  \ clinical\n\n\U0001F9E9 **System Architecture & Deployment Strategy**\nWhy Two Virtual Environments?\n\
+  The project integrates heterogeneous libraries with incompatible dependency requirements, particularly\
+  \ involving NumPy and PyRadiomics C-extensions.\n\nComponent\tConstraint:\n-PyRadiomics\tRequires NumPy\
+  \ < 2.0\n-TensorFlow (MLP)\tRequires newer NumPy\n-LightGBM / XGBoost\tCompatible with modern NumPy\n\
+  \nA single environment causes:DLL load failures/NumPy C-extension crashes/Runtime instability\n\n-Adopted\
+  \ Solution: Dual Flask Architecture\n\n\U0001F9E0 **Environment 1 – Clinical & Tabular Models**\n\n\
+  Flask application\n\nDiagnosis, therapy decision, risk models\n\nTensorFlow, XGBoost, LightGBM\n\nNumPy\
+  \ ≥ 2.0\n\n\U0001F9EC **Environment 2 – Radiomics & pCR**\n\nFlask application\n\nRadiomics feature\
+  \ extraction + pCR prediction\n\nPyRadiomics, SimpleITK\n\nNumPy 1.23.x\n\n->Each application runs on\
+  \ a different port and communicates via URL redirection, ensuring stability and reproducibility.\n\n\
+  \U0001F6E0 **Technologies**\n\nLanguage: Python 3.9\n\nFramework: Flask\n\nLibraries:\nScikit-learn,\
+  \ Pandas, NumPy, TensorFlow, PyRadiomics, XGBoost, LightGBM, SimpleITK\n"

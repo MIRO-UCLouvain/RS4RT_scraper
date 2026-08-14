@@ -1,0 +1,68 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Pasinduteshan7/Pancreascan
+url: https://github.com/Pasinduteshan7/Pancreascan
+platform: github
+description: AI-based detection of pancreatic tumors from CT imaging. Converts 3D NIfTI volumes into 2D/2.5D
+  slices and applies deep learning (U-Net/CNN) to segment and detect abnormalities. Built on the Medical
+  Segmentation Decathlon dataset.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-04T07:47:31Z'
+image_source: null
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+readme_excerpt: "# PancreaScan\n\nAn AI-based system for detecting pancreatic tumors from CT imaging.\
+  \ This project \nprocesses volumetric CT data (NIfTI format) from the Medical Segmentation Decathlon\
+  \ \n(Task07_Pancreas) dataset, converts 3D volumes into 2D slices, and applies deep \nlearning to detect\
+  \ and segment pancreatic tumors.\n\n## Project Structure\n\nproject/\n├── data/ # dataset (not committed\
+  \ - see setup below)\n├── notebooks/ # exploration and visualization scripts\n├── src/ # core pipeline\
+  \ code\n│ ├── config.py # dataset path configuration\n│ ├── preprocessing.py # CT windowing/normalization\n\
+  │ ├── extract_slices.py # 3D -> 2D slice extraction\n│ └── create_splits.py # patient-level train/val\
+  \ split\n├── outputs/ # generated images, results\n└── requirements.txt\n\n\n## Setup\n\n1. Download\
+  \ the Medical Segmentation Decathlon Task07_Pancreas dataset:\n   http://medicaldecathlon.com/\n\n2.\
+  \ Update `src/config.py` with your local dataset path.\n\n3. Install dependencies:\n\npip install -r\
+  \ requirements.txt\n\n\n4. Run the pipeline:\n\ncd src\npython extract_slices.py\npython create_splits.py\n\
+  \n\n## Dataset\nMedical Segmentation Decathlon — Task07_Pancreas  \n281 CT scans with pancreas + tumor\
+  \ segmentation labels (CC-BY-SA 4.0)\n\n## Data Processing Concepts\n\nIf you are new to medical imaging\
+  \ or computer vision, here is a breakdown of the core concepts underlying our data pipeline:\n\n###\
+  \ 1. What is a digital image, fundamentally?\nA regular photo has 3 numbers per pixel (Red, Green, Blue\
+  \ — RGB), each 0-255. A grayscale image has just 1 number per pixel — its brightness.\nOur CT scan is\
+  \ a **3D grid of numbers** — a grayscale value at every point in a 3D volume, not just a flat 2D grid.\
+  \ All \"image processing\" is really just math operations on arrays of numbers.\n\n### 2. Loading the\
+  \ NIfTI file\n```python\nimg = nib.load(...)\nvolume = img.get_fdata()\n```\n- **Voxels vs pixels**:\
+  \ In a 3D volume, the smallest unit is a voxel (volume element) — it represents a tiny cube of real\
+  \ physical space inside the patient's body, holding one number: how dense that tissue is.\n- **Hounsfield\
+  \ Units (HU)**: CT scanners measure physical density calibrated to a scale where water = 0, air = -1000,\
+  \ bone = 1000+. These numbers have real physical meaning.\n\n### 3. Extracting a 2D slice\n```python\n\
+  ct_slice = image_data[:, :, slice_idx]\n```\n- **Array slicing**: We select one 2D layer out of a 3D\
+  \ array (like pulling one page out of a stack). This gives a flat 512×512 grid of HU values behaving\
+  \ like an ordinary grayscale image.\n\n### 4. Windowing\n```python\ndef apply_window(slice_2d, center=40,\
+  \ width=400):\n    low, high = center - width//2, center + width//2\n    windowed = np.clip(slice_2d,\
+  \ low, high)\n    normalized = (windowed - low) / (high - low)\n```\n- **Contrast/intensity mapping**:\
+  \ Raw data spans ~4000 possible values, but soft tissue is only a tiny sliver (-160 to +240). Displaying\
+  \ the whole range compresses soft tissue into near-identical gray shades.\n- **Clipping**: `np.clip()`\
+  \ discards information outside our area of interest, thresholding the image to isolate the relevant\
+  \ signal (organs).\n- **Normalization**: Rescaling the remaining range to `0.0–1.0`. Neural networks\
+  \ train far better on small, consistent numeric ranges.\n\n### 5. Finding useful slices\n```python\n\
+  useful_slices = np.where(np.any(label_data > 0, axis=(0, 1)))[0]\n```\n- **Masks and boolean arrays**:\
+  \ `label_data > 0` creates a binary mask (True/False values indicating the presence of pancreas or cancer).\
+  \ \n- **Reduction**: We collapse dimensions to intelligently select which slices actually contain anatomy\
+  \ worth training on, ignoring empty slices.\n\n### 6. Building the Dataset class\n```python\nimage =\
+  \ torch.from_numpy(image).float().unsqueeze(0)\n```\n- **Tensors**: PyTorch's multidimensional arrays\
+  \ with GPU support.\n- **Channels**: Computer vision requires a channel dimension `(channels, height,\
+  \ width)`. `unsqueeze(0)` explicitly adds a dimension of size 1 for our grayscale slice to satisfy PyTorch's\
+  \ convolution layers.\n\n### 7. Batching\nBatching stacks multiple independent samples together into\
+  \ one larger array `(batch, channels, height, width)`. This allows the GPU to process several images\
+  \ simultaneously for hardware efficiency.\n\n### The Full Transformation Summary\n1. **Raw CT scan**\
+  \ (3D array, HU values -1024 to 3071)\n2. **2D slice** via array indexing (512×512, still raw HU)\n\
+  3. **Windowing** via clip + normalize (512×512, values 0.0-1.0, soft tissue contrast enhanced)\n4. **Filter\
+  \ by mask** to keep only slices with anatomy present\n5. **Tensor conversion** and channel dimension\
+  \ addition → `(1, 512, 512)`\n6. **Batching** via DataLoader → `(4, 1, 512, 512)` ready for the neural\
+  \ network.\n\n## Status\n\U0001F6A7 In progress — data pipeline complete, model training next.\n\n##\
+  \ License\nCC-BY-SA 4.0 (dataset). Code license TBD."

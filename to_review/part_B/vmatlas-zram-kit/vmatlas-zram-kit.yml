@@ -1,0 +1,85 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: gustarmartins/vmatlas-zram-kit
+url: https://github.com/gustarmartins/vmatlas-zram-kit
+platform: github
+description: A collection of portable ZRAM management scripts with custom profiles and an auto-installer.
+license: MIT
+language: Shell
+keywords:
+- gradle
+- linux
+- linux-app
+- linux-desktop
+- linux-kernel
+- zram
+- zram-devices
+- zram-generator
+- zram-monitor
+- zram-swap
+- zram-tools
+stars: 0
+updated_at: '2026-08-13T06:07:14Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# vmatlas-zram-kit\n\nA ZRAM profile kit for Linux desktops running Android development\
+  \ workloads: Gradle, emulators, browsers, IDEs — everything fighting for RAM at once.\n\n## What you\
+  \ get\n\n| Feature | What it does |\n| --- | --- |\n| ZRAM swap | zstd-compressed RAM swap, scaled to\
+  \ your host |\n| VM tuning | swappiness, dirty-write caps, cache pressure — tuned for build I/O |\n\
+  | MGLRU | Multi-gen LRU for smarter page reclaim (if your kernel supports it) |\n| Tiered recompression\
+  \ | Cold ZRAM pages re-compressed with deeper zstd for better ratios |\n| Writeback | Cold pages offloaded\
+  \ to a dedicated raw partition on your NVMe |\n\nEach feature is **individually opt-in** during install.\
+  \ The installer shows your current system state and asks Y/N for every step.\n\n## Quick start\n\nRequires:\
+  \ systemd, `zram-generator` (install via your package manager first).\n\n```bash\ngit clone https://github.com/gustarmartins/vmatlas-zram-kit.git\n\
+  cd vmatlas-zram-kit\n./install.sh\n```\n\nThe installer walks you through each step interactively. To\
+  \ auto-accept defaults:\n\n```bash\n./install.sh -y\n```\n\nTo apply immediately without rebooting:\n\
+  \n```bash\n./install.sh --apply-now\n```\n\n## Full profile: tiered compression + writeback\n\nThis\
+  \ is the end-goal for maximum benefit on Android builds — deeper ZRAM compression for cold pages and\
+  \ NVMe-backed writeback for the coldest ones.\n\n### Step 1: Install the base profile\n\n```bash\n./install.sh\n\
+  ```\n\nReboot (or use `--apply-now`), then verify:\n\n```bash\nvmatlas-zram status\nvmatlas-zram preflight\n\
+  ```\n\n### Step 2: Enable tiered compression\n\nAfter one successful boot, the installer can verify\
+  \ your kernel supports multi-compressor ZRAM:\n\n```bash\n./install.sh --tiered\n```\n\nThis adds a\
+  \ zstd level 12 secondary compressor for idle-page recompression.\n\n### Step 3: Enable writeback\n\n\
+  You need a **dedicated, empty, unmounted raw partition** (typically on your NVMe). Find it:\n\n```bash\n\
+  lsblk -o NAME,SIZE,FSTYPE,MOUNTPOINTS,TYPE\n```\n\nPick a partition that shows no FSTYPE and no MOUNTPOINTS.\
+  \ Use its stable path:\n\n```bash\nls -la /dev/disk/by-partuuid/\n```\n\nThen install with writeback:\n\
+  \n```bash\n./install.sh --tiered \\\n  --writeback-device /dev/disk/by-partuuid/YOUR-PARTUUID \\\n \
+  \ --confirm-writeback-device\n```\n\nThe installer validates the device is safe (empty, unmounted, not\
+  \ active swap, no filesystem). It will reject anything risky.\n\n### Step 4 (optional): Enable automatic\
+  \ cold-page writeback timer\n\nBy default writeback is manual. To enable hourly automated passes for\
+  \ pages idle > 24 hours:\n\n```bash\n./install.sh --tiered \\\n  --writeback-device /dev/disk/by-partuuid/YOUR-PARTUUID\
+  \ \\\n  --confirm-writeback-device \\\n  --enable-cold-writeback-timer\n```\n\n### Using recompression\
+  \ and writeback after install\n\n```bash\n# Check status anytime\nvmatlas-zram status\n\n# Manual recompression\
+  \ (requires tiered profile)\nsudo vmatlas-zram recompress idle\n\n# Manual cold-page writeback (requires\
+  \ writeback device)\nsudo vmatlas-zram writeback cold\n```\n\n## Profiles\n\n| Profile | Compression\
+  \ | Writeback | Use case |\n| --- | --- | --- | --- |\n| `android-dev-safe` | zstd level 3 | off | Default\
+  \ baseline |\n| `android-dev-tiered` | zstd 3 + zstd 12 | off | + idle recompression |\n| `android-dev-tiered-writeback`\
+  \ | zstd 3 + zstd 12 | dedicated partition | Full profile |\n\nAll profiles scale automatically to your\
+  \ host RAM:\n\n| Host RAM | RAM reserve | Dirty bg/fg | MGLRU TTL |\n| --- | ---: | ---: | ---: |\n\
+  | ≤ 8 GiB | 64 MiB | 32 / 128 MiB | 1000 ms |\n| 9–32 GiB | 128 MiB | 64 / 256 MiB | 2000 ms |\n| >\
+  \ 32 GiB | 128 MiB | 128 / 512 MiB | 2000 ms |\n\nZRAM virtual size is `min(ram × 2, 32 GiB)` with a\
+  \ resident cap of `ram / 2`.\n\n## Uninstall\n\n```bash\nsudo ./uninstall.sh\n# Reboot when convenient\n\
+  ```\n\nRemoves only kit-owned files. Does not touch live ZRAM or active swap.\n\n---\n\n## Additional\
+  \ topics\n\n### What it installs\n\n```\n/etc/systemd/zram-generator.conf.d/90-vmatlas-zram.conf\n/etc/sysctl.d/90-vmatlas-zram.conf\n\
+  /etc/vmatlas-zram/\n/etc/systemd/system/vmatlas-zram-mglru.service\n/usr/local/bin/vmatlas-zram\n/usr/local/libexec/vmatlas-zram-mglru\n\
+  /usr/local/libexec/vmatlas-zram-process\n```\n\n### Process memory controls\n\nTarget-scoped helpers\
+  \ to page out or warm individual processes you own:\n\n```bash\nvmatlas-zram process inspect PID\nvmatlas-zram\
+  \ process pageout PID --dry-run\nvmatlas-zram process pageout PID\nvmatlas-zram process warm PID --dry-run\n\
+  vmatlas-zram process warm PID\n```\n\nThese are single-PID, caller-owned operations — not global swap\
+  \ controls. See [docs/OPERATIONS.md](docs/OPERATIONS.md).\n\n### Safety model\n\nThe installer refuses\
+  \ unsafe conditions: missing systemd, missing zram-generator, existing unrecognized ZRAM configs, writeback\
+  \ to non-dedicated partitions, live ZRAM resets. It never runs `swapoff`, removes disk swap, or reboots\
+  \ automatically. Full details in [docs/SAFETY.md](docs/SAFETY.md).\n\n### Dry run\n\nPreview everything\
+  \ without changing your system:\n\n```bash\n./install.sh --dry-run\n./install.sh --tiered --dry-run\n\
+  ```\n\n### Real-world data\n\nThe source machine's two-day snapshot: 13.87 GiB stored in ZRAM using\
+  \ 4.38 GiB RAM (3.17× reduction), with 3.79 GiB on a dedicated NVMe backing device. See [docs/REAL-WORLD-SNAPSHOT.md](docs/REAL-WORLD-SNAPSHOT.md).\n\
+  \n### Why ZRAM is not magic\n\nZRAM is compressed RAM, not extra physical memory. Compression ratios,\
+  \ CPU cost, and the point where swap becomes painful depend on your workload and machine. Treat this\
+  \ as a tested starting point, validate with your builds, and keep the rollback command handy.\n\n##\
+  \ License\n\nMIT. See [LICENSE](LICENSE).\n"

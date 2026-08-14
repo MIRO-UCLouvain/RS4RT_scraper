@@ -1,0 +1,81 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: TingruiZh/PET-CT-Radiomics-Classifier
+url: https://github.com/TingruiZh/PET-CT-Radiomics-Classifier
+platform: github
+description: A comprehensive pipeline for multi-model classification of PET/CT radiomics data, including
+  individual classifiers and decision-level fusion via soft voting. ROC curves are used to evaluate performance
+  on both individual models and the ensemble.
+license: null
+language: Jupyter Notebook
+keywords:
+- deep-learning
+- machine-learning
+- ml
+- radiomics
+- radiomics-feature-extraction
+- tabpfn
+- ticl
+stars: 4
+updated_at: '2025-05-30T20:30:08Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# PET-CT-Radiomics-Classifier\n\nA comprehensive pipeline for multi-model classification\
+  \ of PET/CT radiomics data, including individual classifiers and decision-level fusion via soft voting.\
+  \ ROC curves are used to evaluate performance on both individual models and the ensemble.\n\n---\n\n\
+  ## \U0001F4CC Project Overview\n\nThis project performs binary classification (progression and death\
+  \ prediction) based on radiomics features extracted from PET and CT scans. We compare **9 classic machine\
+  \ learning models**, **4 advanced tabular models**, and a **fusion ensemble**. The pipeline includes:\n\
+  \n- Feature selection\n- Train/test split\n- Model training and ROC evaluation\n- Soft-voting fusion\n\
+  - Visualization with ROC curves and SHAP values\n\n---\n\n## \U0001F9EC Radiomics Feature Extraction\n\
+  \nWe extract 3D radiomics features from CT and PET scans using [PyRadiomics](https://github.com/AIM-Harvard/pyradiomics).\
+  \ Each scan is paired with a patient-specific binary or labeled segmentation mask.\n\n### \U0001F5C2\
+  \ Input Folders\n\n- `/H/ROI/` — contains patient masks in `.nii` format\n- `/H/converted_nii/` — contains\
+  \ CT and PET images in NIfTI format (suffix `_CT`, `_PET`)\n- `tumor.yaml` — PyRadiomics parameter configuration\
+  \ file\n\n### ⚙️ Process Overview\n\nFor each patient:\n- Extract patient name from the folder\n- Match\
+  \ corresponding CT and PET images using the name fragment\n- Load images using `SimpleITK` (fallback\
+  \ to `nibabel` if needed)\n- Resample CT and PET images to align with the mask resolution\n- Extract\
+  \ features using PyRadiomics with YAML configuration\n- Save features separately for CT and PET\n\n\
+  ### \U0001F4C1 Output Files\n\n| File                        | Description                         \
+  \              |\n|-----------------------------|---------------------------------------------------|\n\
+  | `radiomics_features_all.xlsx` | Excel file with `CT` and `PET` feature sheets     |\n| `failed_cases_all.csv`\
+  \      | Log of patients with missing or invalid data      |\n\n---\n\n## \U0001F9EA Classification\
+  \ Models Used\n\n- Random Forest\n- Logistic Regression\n- SVM (RBF Kernel)\n- Decision Tree\n- K-Nearest\
+  \ Neighbors\n- Gaussian Naive Bayes\n- Gradient Boosting\n- AdaBoost\n- XGBoost\n- **Fusion Model (Soft\
+  \ Voting)**\n- MotherNet\n- TabPFNv2\n- GAMformer\n- Tabflex\n\n---\n\n## \U0001F4CA Tasks\n\nFour classification\
+  \ tasks are implemented:\n\n- PET — Progression Prediction\n- PET — Death Prediction\n- CT — Progression\
+  \ Prediction\n- CT — Death Prediction\n\nEach task uses **10 selected radiomics features**.\n\n---\n\
+  \n## \U0001F4C8 Visualizations\n\n- ROC curves per task (train set)\n- Annotated AUC values per model\n\
+  - Fusion model included in each plot\n- Optional SHAP value plots (coming soon)\n\n---\n\n## \U0001F4D0\
+  \ Index Calculation\n\n- **Precision**:  \n  `Precision = TP / (TP + FP)`\n\n- **Recall**:  \n  `Recall\
+  \ = TP / (TP + FN)`\n\n- **F1-Score**:  \n  `F1 = 2 * (Precision * Recall) / (Precision + Recall)`\n\
+  \n- **Accuracy**:  \n  `Accuracy = (TP + TN) / (TP + TN + FP + FN)`\n\n- **AUC (Area Under the Curve)**:\
+  \  \n  AUC is calculated from the ROC curve, which plots the True Positive Rate (TPR) against the False\
+  \ Positive Rate (FPR).  \n  - TPR (Recall) = `TP / (TP + FN)`\n  - FPR = `FP / (FP + TN)`\n\n---\n\n\
+  ## \U0001F3AF Prediction Output\n\nAfter training on all valid patient samples for each task, the **fusion\
+  \ model (soft-voting VotingClassifier)** outputs individual prediction probabilities.\n\n### \U0001F4C4\
+  \ Output File\n\n| File                                  | Description                             \
+  \               |\n|---------------------------------------|--------------------------------------------------------|\n\
+  | `fusion_patient_probabilities.xlsx`   | Predicted probabilities per patient using the fusion model\
+  \ |\n\n### \U0001F4D1 Columns in Output Excel\n\n| Column              | Description               \
+  \                                    |\n|---------------------|---------------------------------------------------------------|\n\
+  | `patient`           | Patient ID extracted from the Excel sheet                      |\n| `dataset`\
+  \           | PET or CT                                                      |\n| `label`          \
+  \   | Target label: `progression` or `death`                         |\n| `true_label`        | Ground\
+  \ truth (0 or 1)                                          |\n| `fusion_probability` | Predicted probability\
+  \ of the positive class (label = 1)       |\n\n#### Example (NOT THE REAL ONE):\n\n| patient | dataset\
+  \ | label       | true_label | fusion_probability |\n|---------|---------|-------------|------------|---------------------|\n\
+  | P001    | PET     | progression | 1          | 0.84                |\n| P001    | PET     | death\
+  \       | 0          | 0.21                |\n| P001    | CT      | progression | 1          | 0.75\
+  \                |\n| P001    | CT      | death       | 0          | 0.32                |\n\nThis result\
+  \ can be used for **patient-level risk stratification** and **decision support**.\n\n---\n\n## \U0001F4DA\
+  \ References\n\n- [TICL (Tabular In-Context Learning) - Microsoft](https://github.com/microsoft/ticl)\n\
+  - [TabPFN - PriorLabs](https://github.com/PriorLabs/tabpfn)\n- [PyRadiomics - AIM-Harvard](https://github.com/AIM-Harvard/pyradiomics)\n\
+  \n---\n\n## \U0001F6E0 Requirements\n\n```bash\npip install pandas matplotlib scikit-learn xgboost openpyxl\n\
+  pip install pyradiomics SimpleITK nibabel numpy tqdm\n"

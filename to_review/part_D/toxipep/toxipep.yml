@@ -1,0 +1,113 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: lueasf/toxipep
+url: https://github.com/lueasf/toxipep
+platform: github
+description: Peptide Toxicity Prediction with pLM Embeddings.
+license: null
+language: Jupyter Notebook
+keywords:
+- embeddings
+- protein-language-model
+- reimplementation
+stars: 0
+updated_at: '2026-03-06T16:53:36Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# ToxiPep: Peptide Toxicity Prediction with pLM Embeddings\n\nRe-implementation of peptide\
+  \ toxicity prediction using **protein Language Model (pLM) embeddings** with a novel deep learning architecture.\n\
+  \n## Results\n\n| Metric | Value |\n|--------|-------|\n| **Accuracy** | 75.54% |\n| **Sensitivity**\
+  \ | 69.57% |\n| **Specificity** | 81.43% |\n| **MCC** | 0.5138 | (MCC = Matthews Correlation Coefficient)\n\
+  | **AUC** | 0.7550 |\n\n*Dataset: 1388 sequences (694 toxic, 694 non-toxic) — Train: 1110, Val: 139,\
+  \ Test: 139*\n\n## Overview\n\nThis project predicts whether a peptide sequence is **toxic** or **non-toxic**.\
+  \ Instead of learning embeddings from scratch, we leverage pre-trained protein language models that\
+  \ have learned meaningful representations from millions of protein sequences.\n\n### Why pLM Embeddings?\n\
+  \nTraditional approach (original paper):\n```\nAmino acid sequence → Learned embedding (nn.Embedding)\
+  \ → Model → Prediction\n```\n\nOur approach:\n```\nAmino acid sequence → Pre-trained pLM (ESM-2 + ProtT5)\
+  \ → Model → Prediction\n```\n\n**Advantages:**\n- pLMs have seen millions of proteins during pre-training\n\
+  - They capture evolutionary, structural, and functional information\n- Transfer learning: leverage knowledge\
+  \ from large-scale pre-training\n\n## Architecture\n\n### Original Paper Architecture\n```\n       \
+  \         Input Sequence\n                /           \\\n    [Learned Embedding]    [Molecular Graph]\n\
+  \           |                      |\n        BiGRU                  2D CNN\n           |          \
+  \            |\n     Transformer              Linear\n           |                      |\n        \
+  \   └──── Cross-Attention ─┘\n                      |\n                  Classifier\n```\n\n### Our\
+  \ Architecture: Early Fusion + Transformer\n```\n            Input Sequence\n            /         \
+  \   \\\n       ESM-2           ProtT5\n       (480D)         (1024D)\n            \\            /\n\
+  \             Concatenate\n                  |\n            Linear (1504 → 512)\n                  |\n\
+  \         Positional Encoding\n                  |\n          Transformer Encoder\n             (2 layers)\n\
+  \                  |\n            Mean Pooling\n                  |\n               MLP\n          \
+  \        |\n           [Toxic / Non-toxic]\n```\n\n### Key Differences\n\n| Aspect | Original Paper\
+  \ | Our Implementation |\n|--------|----------------|-------------------|\n| Sequence embedding | Learned\
+  \ (nn.Embedding) | Pre-trained ESM-2 |\n| Structure encoding | Molecular graphs + 2D CNN | Pre-trained\
+  \ ProtT5 |\n| Fusion strategy | Cross-attention (late) | Concatenation (early) |\n| Architecture | Dual\
+  \ branch | Single unified pathway |\n| Recurrent layers | BiGRU | None |\n\n## Embeddings Explained\n\
+  \n### ESM-2 (Evolutionary Scale Modeling)\n- Model used: `esm2_t12_35M_UR50D` (lightweight version,\
+  \ 35M parameters)\n- Trained on ~250 million protein sequences\n- Captures **sequence patterns** and\
+  \ **evolutionary information**\n- Output: **480-dimensional** vector per amino acid\n\n### ProtT5 (Protein\
+  \ T5)\n- Model used: `prot_t5_xl_uniref50`\n- Based on T5 architecture, trained on protein sequences\
+  \ from UniRef50\n- Captures **contextual sequence information** via encoder-decoder pre-training\n-\
+  \ Output: **1024-dimensional** vector per amino acid\n\n### Why Both?\n- ESM-2: Captures evolutionary\
+  \ patterns via masked language modeling\n- ProtT5: Captures contextual patterns via T5 sequence-to-sequence\
+  \ pre-training\n- Combined: More robust and diverse representation of the peptide\n\n## Project Structure\n\
+  \n```\nsrc/\n├── embeddings.py   # Extract ESM and ProstT5 embeddings\n├── model.py        # Neural\
+  \ network architecture\n├── dataset.py      # Data loading and preprocessing\n└── main.py         #\
+  \ Training pipeline\n```\n\n### File Descriptions\n\n#### `embeddings.py`\nExtracts pre-trained embeddings\
+  \ from pLM models.\n\n```python\nextractor = EmbeddingExtractor()\nesm_emb = extractor.extract_esm(sequences)\
+  \      # List of (seq_len, 480) tensors\nprostt5_emb = extractor.extract_prostt5(sequences)  # List\
+  \ of (seq_len, 1024) tensors\n```\n\n**Key functions:**\n- `load_esm()`: Loads ESM-2 model (`esm2_t12_35M_UR50D`)\
+  \ from Facebook's library\n- `load_prostt5()`: Loads ProtT5 (`prot_t5_xl_uniref50`) from HuggingFace\n\
+  - `pad_embeddings()`: Pads variable-length sequences to fixed size\n- `precompute_and_save()`: CLI to\
+  \ precompute embeddings once\n\n#### `model.py`\nDefines the neural network architecture.\n\n**Classes:**\n\
+  - `PositionalEncoding`: Adds position information (Transformers have no inherent order)\n- `TransformerEncoder`:\
+  \ Self-attention layers to model residue interactions\n- `FocalLoss`: Loss function for class imbalance\
+  \ (down-weights easy examples)\n- `ToxiPepModel`: Main model combining all components\n\n**Model forward\
+  \ pass:**\n```python\n# 1. Concatenate embeddings\ncombined = concat([esm, prostt5], dim=-1)  # (batch,\
+  \ seq_len, 1504)\n\n# 2. Project to lower dimension\nx = Linear(1504 → 512)(combined)\n\n# 3. Add positional\
+  \ encoding\nx = x + positional_encoding\n\n# 4. Transformer layers (self-attention)\nx = transformer_encoder(x)\n\
+  \n# 5. Pool over sequence (mean)\nx = mean(x, dim=1)  # (batch, 512)\n\n# 6. Classify\noutput = MLP(x)\
+  \  # (batch, 2)\n```\n\n#### `dataset.py`\nHandles data loading and preprocessing.\n\n**Key functions:**\n\
+  - `load_sequences_from_fasta()`: Parse FASTA files, extract sequences and labels\n- `EmbeddingDataset`:\
+  \ PyTorch Dataset for pre-computed embeddings (ESM: 480D, ProtT5: 1024D)\n- `create_data_splits()`:\
+  \ Split data into train/val/test with stratification\n- `get_class_weights()`: Compute weights for imbalanced\
+  \ classes\n\n**Why stratified splits?**\n```\nWithout stratification:\n  Train: 90% negative, 10% positive\n\
+  \  Test:  70% negative, 30% positive  ← Different distribution!\n\nWith stratification:\n  Train: 80%\
+  \ negative, 20% positive\n  Test:  80% negative, 20% positive  ← Same distribution\n```\n\n#### `main.py`\n\
+  Training pipeline with proper methodology.\n\n**Training flow:**\n```\n1. Load pre-computed embeddings\n\
+  2. Split: 80% train, 10% val, 10% test\n3. For each epoch:\n   - Train on train_loader\n   - Evaluate\
+  \ on val_loader\n   - Save model if val improves\n   - Early stopping if no improvement\n4. Final evaluation\
+  \ on test_loader (once!)\n5. Print metrics: ACC, Sensitivity, Specificity, MCC, AUC\n```\n\n**Why validation\
+  \ set?**\n- Original code only had train/test\n- Problem: If you tune hyperparameters based on test\
+  \ performance, you're \"cheating\"\n- Solution: Use validation set for tuning, test set only for final\
+  \ evaluation\n\n## Usage\n\n### Step 1: Install Dependencies\n```bash\npip install torch fair-esm transformers\
+  \ scikit-learn\n```\n\n### Step 2: Precompute Embeddings\n```bash\npython src/embeddings.py -i data/train.fasta\
+  \ -o data/train_embeddings.pt\n```\n\nThis step is slow (requires running pLMs) but only needs to be\
+  \ done once.\n\n### Step 3: Train Model\n```bash\npython src/main.py --data data/train_embeddings.pt\
+  \ --epochs 100\n```\n\n**Arguments:**\n| Argument | Default | Description |\n|----------|---------|-------------|\n\
+  | `--data` | required | Path to embeddings file |\n| `--batch_size` | 32 | Batch size |\n| `--epochs`\
+  \ | 100 | Maximum epochs |\n| `--lr` | 1e-4 | Learning rate |\n| `--patience` | 10 | Early stopping\
+  \ patience |\n| `--loss` | focal | Loss function (focal or ce) |\n\n### Step 4: Results\nThe script\
+  \ outputs:\n- `best_model.pth`: Trained model weights\n- `best_model_results.pt`: Predictions and metrics\n\
+  \n## Handling Class Imbalance\n\nPeptide datasets are often imbalanced (more non-toxic than toxic).\n\
+  \n### Problem\n```\nDataset: 900 non-toxic, 100 toxic\nNaive model: Predict all non-toxic → 90% accuracy!\n\
+  But: 0% sensitivity (misses all toxic peptides)\n```\n\n### Solutions Implemented\n\n**1. Focal Loss**\n\
+  ```\nFL = -α(1-pt)^γ * log(pt)\n\n- pt high (easy example) → (1-pt)^γ small → low loss\n- pt low (hard\
+  \ example) → (1-pt)^γ large → high loss\n```\nForces model to focus on hard-to-classify examples.\n\n\
+  **2. Class Weights**\n```\nweight[class] = total_samples / (n_classes × count[class])\n\nExample:\n\
+  - weight_negative = 1000 / (2 × 900) = 0.56\n- weight_positive = 1000 / (2 × 100) = 5.0\n```\nPositive\
+  \ class contributes 9× more to the loss.\n\n## Evaluation Metrics\n\n| Metric | Formula | Interpretation\
+  \ |\n|--------|---------|----------------|\n| Accuracy | (TP+TN)/Total | Overall correctness |\n| Sensitivity\
+  \ | TP/(TP+FN) | How well we detect toxic |\n| Specificity | TN/(TN+FP) | How well we detect non-toxic\
+  \ |\n| MCC | See below | Balanced metric (-1 to +1) |\n| AUC | Area under ROC | Ranking quality |\n\n\
+  **Why MCC?**\n- Accuracy is misleading with imbalanced data\n- MCC considers all four confusion matrix\
+  \ values\n- MCC = 0: random predictions\n- MCC = 1: perfect predictions\n- MCC = -1: completely wrong\n\
+  \n## Avoiding Data Leakage\n\n**Data leakage**: When information from test set influences training.\n\
+  \n### Common Mistakes (Avoided Here)\n1. ❌ Computing class weights on full dataset → ✅ Compute only\
+  \ on train set\n2. ❌ Tuning hyperparameters on test set → ✅ Use validation set\n3. ❌ Evaluating on test\
+  \ every epoch → ✅ Only at the end\n4. ❌ Random split without stratification → ✅ Stratified split\n\n\
+  ## Requirements\n\n- Python 3.8+\n- PyTorch 2.0+\n- fair-esm (for ESM-2)\n- transformers (for ProstT5)\n\
+  - scikit-learn (for metrics and splits)\n"

@@ -1,0 +1,47 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: DavidJeffrey04/Harmonized-MIL-IDH-Glioma-MRI
+url: https://github.com/DavidJeffrey04/Harmonized-MIL-IDH-Glioma-MRI
+platform: github
+description: Radiogenomics pipeline for predicting IDH mutation status from glioma MRI using attention-based
+  multiple instance learning (TransMIL) over MedMAE patch embeddings, with ComBat site harmonization
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-08-01T00:32:25Z'
+image_source: https://raw.githubusercontent.com/DavidJeffrey04/Harmonized-MIL-IDH-Glioma-MRI/HEAD/results/Attention_Visualization.png
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# IDH Mutation Classification in Glioma MRI via TransMIL/ABMIL\n\nRadiogenomics pipeline\
+  \ for predicting IDH mutation status from glioma MRI using\nattention-based multiple instance learning\
+  \ (TransMIL / ABMIL) over MedMAE patch\nembeddings, with ComBat site harmonization and MONAI-based tumor\
+  \ segmentation.\n\n## Overview\n\n- **Task**: Binary IDH mutation status classification (mutant vs.\
+  \ wild-type) from MRI.\n- **Architecture**: TransMIL / ABMIL over patch-level embeddings extracted with\
+  \ MedMAE.\n- **Harmonization**: ComBat (and prospective / out-of-sample ComBat) to remove\n  scanner/site\
+  \ batch effects prior to classification.\n- **Segmentation**: MONAI-based tumor masks (compared against\
+  \ dataset-provided masks\n  as an ablation axis).\n- **Datasets**: UCSF-PDGM, UTSW-Glioma.\n- **Compute**:\
+  \ Turing HPC cluster, SLURM-managed, node02 (4x RTX 6000 Ada).\n\n## Key findings so far\n\n- Site information\
+  \ is strongly linearly decodable from raw embeddings\n  (domain-shift diagnostic AUC ≈ 0.978), dropping\
+  \ to ≈ 0.506 after ComBat —\n  consistent with a low-magnitude-per-dimension linear site effect that\
+  \ doesn't\n  show up as visible clustering in UMAP despite being easily separable by a\n  linear classifier.\n\
+  - Attention weights (TransMIL) and Integrated Gradients attributions show\n  essentially no correlation\
+  \ (mean Spearman ρ ≈ -0.011), suggesting attention\n  mass is not a reliable proxy for feature importance\
+  \ in this setting.\n\n## Datasets\n\n- **UCSF-PDGM** — public glioma MRI dataset with IDH/MGMT/1p19q\
+  \ labels.\n- **UTSW-Glioma** — secondary site used for cross-site generalization / domain\n  shift analysis.\n\
+  \nNeither dataset is committed to this repo.\n\n## Main results\n\nIDH mutation classification performance\
+  \ vs. baselines (5-fold CV):\n\n| Method       | AUC       | AUPRC     | ACC      | SPE      | SEN \
+  \     |\n|--------------|-----------|-----------|----------|----------|----------|\n| Radiomics    |\
+  \ 92.6      | 81.4      | 88.0     | **93.0** | 73.0     |\n| DSFEAnet     | 87.72     | 80.55     |\
+  \ 82.35    | 83.13    | 81.13    |\n| MFEFnet      | 85.64     | --        | 80.32    | 77.62    | 83.78\
+  \    |\n| BrainDINO    | 90.1      | --        | --       | --       | --       |\n| ABMIL        |\
+  \ 90.2      | 85.77     | 85.0     | **93.0** | 70.0     |\n| HAB-MIL      | 91.7      | --        |\
+  \ 90.4     | 92.1     | **85.8** |\n| **TransMIL** | **94.87** | **88.13** | **91.0** | **93.0** | 84.0\
+  \     |\n\nTransMIL achieves the best AUC, AUPRC, and accuracy among all compared methods,\nmatching\
+  \ the top specificity while maintaining strong sensitivity.\n\n## Attention visualization\n\n![Attention\
+  \ visualization](results/Attention_Visualization.png)\n\nTop row: FLAIR slices across four representative\
+  \ cases. Bottom row: TransMIL\nattention weights overlaid on the tumor region (normalized 0–1).\n"

@@ -1,0 +1,176 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: baysquire/Tox21-GNN-Property-Prediction
+url: https://github.com/baysquire/Tox21-GNN-Property-Prediction
+platform: github
+description: A robust PyTorch Geometric implementation of Graph Neural Networks (MPNN) for classifying
+  chemical toxicity on the highly imbalanced Tox21 dataset, featuring NaN-target masking and RDKit featurization.
+license: null
+language: Python
+keywords:
+- cheminformatics
+- deep-learning
+- drug-discovery
+- graph-neural-networks
+- pytorch-geometric
+- rdkit
+stars: 0
+updated_at: '2026-05-05T20:26:22Z'
+image_source: https://raw.githubusercontent.com/baysquire/Tox21-GNN-Property-Prediction/HEAD/training_curve.png
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: '# Tox21 Toxicity Prediction using Graph Neural Networks
+
+
+  [![DOI](https://img.shields.io/badge/DOI-10.5281/zenodo.19921854-blue.svg)](https://doi.org/10.5281/zenodo.19921854)
+
+
+  This repository implements a Message Passing Neural Network (MPNN) using PyTorch Geometric to predict
+  the toxicity of chemical compounds across the Tox21 dataset''s 12 biological assays. The model handles
+  missing labels (NaN masking), severe class imbalance, and multi-label binary classification.
+
+
+  ## Architecture
+
+
+  ```
+
+  ┌─────────────────────────────────────────────────────┐
+
+  │              GNN Toxicity Predictor                  │
+
+  │                                                      │
+
+  │  Input: Molecular Graph (atoms + bonds)              │
+
+  │      │                                               │
+
+  │      ▼                                               │
+
+  │  ┌──────────────────────────────────┐                │
+
+  │  │  3x GCNConv Layers              │                │
+
+  │  │  (Message Passing + Aggregation) │                │
+
+  │  └──────────────┬───────────────────┘                │
+
+  │                 │                                    │
+
+  │                 ▼                                    │
+
+  │       Global Mean Pooling                            │
+
+  │                 │                                    │
+
+  │                 ▼                                    │
+
+  │  ┌──────────────────────────────────┐                │
+
+  │  │  2-Layer MLP Classifier          │                │
+
+  │  │  Hidden: 64 → 12 (tasks)        │                │
+
+  │  │  Activation: ReLU → Sigmoid     │                │
+
+  │  └──────────────────────────────────┘                │
+
+  │                 │                                    │
+
+  │                 ▼                                    │
+
+  │   12 Binary Toxicity Predictions                     │
+
+  │   (one per biological assay)                         │
+
+  └─────────────────────────────────────────────────────┘
+
+  ```
+
+
+  - **Node Features:** Atom-level features (atomic number, degree, etc.)
+
+  - **Edge Features:** Bond connectivity
+
+  - **Convolution:** 3 layers of `GCNConv` with ReLU activation
+
+  - **Pooling:** Global Mean Pooling over the entire molecular graph
+
+  - **Classifier:** 2-layer MLP with Sigmoid output for multi-label prediction
+
+
+  ## Results
+
+
+  | Metric | Value |
+
+  |---|---|
+
+  | **Test ROC-AUC** | **0.7142** (average across 12 assays) |
+
+  | Training Epochs | 20 |
+
+  | Optimizer | Adam (lr=0.001, weight_decay=1e-5) |
+
+  | Loss Function | BCE with NaN masking |
+
+
+  ### Training Curve
+
+
+  ![Training Loss Curve](training_curve.png)
+
+
+  *Training loss across epochs showing stable convergence of the GNN on the Tox21 multi-label classification
+  task.*
+
+
+  ## Key Technical Challenges Solved
+
+
+  1. **NaN Masking:** Tox21 has missing labels across its 12 assays. The training loop masks out NaN targets
+  before computing BCE loss (`is_valid = data.y == data.y`).
+
+  2. **Class Imbalance:** Most assays have highly skewed positive/negative ratios. ROC-AUC is used instead
+  of accuracy for robust evaluation.
+
+  3. **Multi-Label Classification:** Each molecule is evaluated independently against 12 different biological
+  assays, requiring per-task AUC calculation with validity checks.
+
+
+  ## Quickstart
+
+
+  ```bash
+
+  pip install -r requirements.txt
+
+  python train.py    # Train the GNN
+
+  python eval.py     # Evaluate on test set
+
+  ```
+
+
+  ## Requirements
+
+  * `torch>=2.0.0`
+
+  * `torch-geometric>=2.3.0`
+
+  * `scikit-learn>=1.2.0`
+
+  * `numpy>=1.24.0`
+
+
+  ## License
+
+
+  This project is licensed under the MIT License.
+
+  '

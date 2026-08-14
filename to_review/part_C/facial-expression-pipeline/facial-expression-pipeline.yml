@@ -1,0 +1,118 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: davidegiamb/facial-expression-pipeline
+url: https://github.com/davidegiamb/facial-expression-pipeline
+platform: github
+description: Binary classification pipeline (Serious vs Smiling) following a Radiomics/CAD workflow. PCA-based
+  dimensionality reduction, model benchmarking with cross-validation, and LDA saliency mapping for explainability.
+license: MIT
+language: Jupyter Notebook
+keywords:
+- computer-aided-diagnosis
+- eigenfaces
+- image-classification
+- machine-learning
+- pca
+- python
+- saliency-map
+- scikit-learn
+stars: 0
+updated_at: '2026-04-10T14:50:30Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: '# Facial Expression Recognition Pipeline
+
+
+  ![Python](https://img.shields.io/badge/Python-3.10-blue)
+
+  ![Scikit-Learn](https://img.shields.io/badge/Library-Scikit_Learn-orange)
+
+  ![Status](https://img.shields.io/badge/Status-Completed-green)
+
+
+  ## What this is
+
+
+  A binary classification pipeline ("Serious" vs "Smiling") built from raw image data. The project follows
+  a standard Radiomics/CAD workflow: preprocessing, dimensionality reduction, classification with model
+  comparison, and explainability via saliency mapping.
+
+
+  The dataset contains 100 subjects with paired images (one serious, one smiling), resized to 64×64 grayscale.
+
+
+  ## Method
+
+
+  The pipeline has four steps:
+
+
+  **Preprocessing** — grayscale conversion, downsampling to 64×64, z-score normalization.
+
+
+  **PCA (Eigenfaces)** — 4096 pixel features compressed to 50 principal components. This handles the curse
+  of dimensionality given the small sample size (N=200) and produces a compact latent representation of
+  the faces.
+
+
+  **Classification** — three classifiers benchmarked on the PCA features:
+
+
+  | Model | AUC |
+
+  |-------|-----|
+
+  | Logistic Regression | 0.96 |
+
+  | SVM (RBF Kernel) | 0.92 |
+
+  | Naive Bayes | 0.88 |
+
+
+  The fact that Logistic Regression outperforms SVM-RBF suggests the classes are already linearly separable
+  in the PCA space. Evaluation is done with Stratified 5-Fold Cross-Validation to avoid bias from a single
+  split on a small dataset.
+
+
+  **Saliency map** — LDA fitted on the raw pixel space, with the discriminant weights reshaped back to
+  64×64. The resulting heatmap highlights the perioral and periocular regions (zygomaticus major, orbicularis
+  oculi) as the most discriminative areas, which is consistent with the known anatomy of facial expressions.
+
+
+  ## How to run
+
+
+  ```bash
+
+  git clone https://github.com/davidegiamb/facial-expression-pipeline.git
+
+  cd facial-expression-pipeline
+
+  pip install -r requirements.txt
+
+  jupyter notebook facial_expression_recognition.ipynb
+
+  ```
+
+
+  ## Files
+
+
+  - `facial_expression_recognition.ipynb` — full pipeline
+
+  - `dataset_faces/` — paired images (Na.jpg = serious, Nb.jpg = smiling)
+
+  - `requirements.txt` — dependencies
+
+
+  ## Author
+
+
+  Davide Giambarbara — M.Sc. Neuroengineering, University of Genoa
+
+  '

@@ -1,0 +1,136 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: s9988766-creator/MICCAI-2026-iMIMIC-Workshop
+url: https://github.com/s9988766-creator/MICCAI-2026-iMIMIC-Workshop
+platform: github
+description: Do CNNs Learn Radiomic Concepts? A Feature-Space and Attention-Based Audit for Brain Tumor
+  MRI Classification
+license: null
+language: null
+keywords: []
+stars: 0
+updated_at: '2026-06-21T09:14:29Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# MICCAI-2026-iMIMIC-Workshop\n\n# Brain Tumor MRI Classification — Experimental Results\n\
+  \n> **Do CNNs Learn Radiomic Concepts? A Feature-Space and Attention-Based Audit\n> for Brain Tumor\
+  \ MRI Classification**\n---\n\n## \U0001F4D6 The Story Arc\n\nThe paper follows a four-act narrative\
+  \ recommended by our advisor:\n\n```\nAct 1.  \"Try radiomics first\"\n        → Hand-crafted radiomic\
+  \ features should suffice — they're the\n          clinical gold standard.\n\nAct 2.  \"It is insufficient\"\
+  \n        → Radiomics supervised classifier caps around 89 %.\n          Unsupervised clustering recovers\
+  \ diagnostic classes only\n          weakly (ARI ≈ 0.27).\n        → Conclusion: radiomic features carry\
+  \ signal but lack\n          multi-factor non-linear integration.\n\nAct 3.  \"Switch to CNN\"\n   \
+  \     → Fine-tuned ResNet-50 reaches 99 % accuracy and the\n          feature space cleanly partitions\
+  \ into the three diagnostic\n          classes (ARI 0.96).\n\nAct 4.  \"Audit the CNN — is it learning\
+  \ the right things or cheating?\"\n        → Verify with concept alignment + spatial attention + multi-\n\
+  \          architecture replication.\n```\n\nEvery result table and figure below answers one specific\
+  \ question\nwithin this arc.\n\n---\n\n## \U0001F4D1 Table of Contents\n\n- [Section 1 — Dataset and\
+  \ preprocessing](#section-1)\n- [Section 2 — Radiomics supervised baseline (Act 2a)](#section-2)\n-\
+  \ [Section 3 — Clustering and dimension-reduction (Acts 2b & 3)](#section-3)\n- [Section 4 — CNN classification\
+  \ (Act 3)](#section-4)\n- [Section 5 — CNN ↔ Radiomic concept alignment (Act 4a)](#section-5)\n- [Section\
+  \ 6 — Grad-CAM++ attention audit (Act 4b)](#section-6)\n- [Section 7 — Multi-architecture verification\
+  \ (Act 4c)](#section-7)\n- [Section 8 — Bootstrap confidence intervals (statistical robustness)](#section-8)\n\
+  - [Appendix — Full file inventory](#appendix)\n\n---\n\n<a id=\"section-1\"></a>\n## Section 1 — Dataset\
+  \ and Preprocessing\n\n### Dataset\n\n- **Source**: pkdarabi's Kaggle redistribution of Cheng et al.\
+  \ 2015\n  (PLOS ONE) brain tumor MRI dataset, 233 patients × multiple slices.\n- **Total images**: 3,063\
+  \ (after cleaning one degenerate label).\n- **Classes**: glioma (1,427), meningioma (707), pituitary\
+  \ (929).\n- **Split**: 80 / 20 / 10 → train (2,143) / valid (612) / test (308).\n- **Sequence**: T1-weighted\
+  \ post-contrast (T1+C).\n- **Format**: 640 × 640 grayscale, YOLOv8 segmentation labels.\n\n### ROI design\
+  \ — 3×3 grid centred crop\n\nEach tumor's bounding box is expanded by 2.0× margin in both width\nand\
+  \ height, producing a 3 × 3-grid ROI in which the **tumor occupies\nexactly the center cell**. This\
+  \ preserves peritumoral anatomical\ncontext that radiologists rely on. The polygon mask is rasterised\n\
+  from YOLO polygon labels (not Otsu thresholding).\n\n### Data-leakage check ([data_leakage_summary.txt](results/data_leakage_summary.txt))\n\
+  \nWe verified the dataset has no augmentation-level leakage:\n\n```\nTotal samples:           3063\n\
+  Unique original IDs:     3063\nAvg augmentations / ID:  1.00\nSamples in leaked prefixes (>= 2 splits):\
+  \ 0 / 3063 (0.0%)\nInterpretation: PASS — no prefix appears in multiple splits.\n```\n\n**Caveat (limitation)**:\
+  \ This only verifies *slice-level* uniqueness.\nPatient-level leakage cannot be ruled out because the\
+  \ Roboflow\nredistribution does not expose patient IDs.\n\n### Single-tumor verification\n\nProgrammatic\
+  \ check of all 3,063 YOLO label files confirms:\n- ✅ Each image has exactly **one bounding box**\n-\
+  \ ✅ **No multi-focal tumor** samples\n- ✅ **No negative samples** (every image has a tumor)\n\n---\n\
+  \n<a id=\"section-2\"></a>\n## Section 2 — Radiomics Supervised Baseline (Act 2a)\n\n> **Question:**\
+  \ With 19 hand-crafted radiomic features, how good can\n> classical machine learning get?\n\n### Feature\
+  \ extraction\n- **Library**: scikit-image (PyRadiomics conflicts with Python 3.12)\n- **Categories**:\
+  \ 16 first-order intensity + 10 shape-2D + 12 GLCM texture = 38 features\n- **Selection**: greedy removal\
+  \ at \\|r\\| > 0.9 → **19 features kept**\n\nThe selection step is visualised in\n[correlation_analysis.png](results/correlation_analysis.png)\
+  \ (the\n\"before\" panel shows highly redundant blocks; \"after\" is much\nsparser).\n\n### Table 1\
+  \ — Six supervised classifiers on 19 radiomic features\n*Source: [supervised_baseline_results.csv](results/supervised_baseline_results.csv)*\n\
+  \n| Classifier        | Test Acc | 95 % CI         | Macro F1 |\n|-------------------|---------:|-----------------|---------:|\n\
+  | KNN (k = 5)       | 0.834    | [0.795, 0.873]  | 0.800    |\n| KNN (k = 15)      | 0.851    | [0.808,\
+  \ 0.886]  | 0.824    |\n| **SVM (RBF)**     | **0.896**| **[0.860, 0.929]** | **0.881** |\n| SVM (linear)\
+  \      | 0.883    | [0.847, 0.919]  | 0.862    |\n| Random Forest     | 0.860    | [0.818, 0.896]  |\
+  \ 0.834    |\n| Logistic Reg.     | 0.877    | [0.841, 0.912]  | 0.856    |\n\n### How to read\n\n-\
+  \ The best radiomic classifier — **SVM with RBF kernel** — caps at\n  **89.6 %** test accuracy.\n- The\
+  \ 95 % CI upper bound is **92.9 %**, falling short of the >95 %\n  threshold typical for clinical deployment.\n\
+  - All six classifiers span the spectrum of model complexity (linear,\n  non-parametric, ensemble, non-linear\
+  \ kernel) — **none breaks 90 %**.\n\n### What it proves\n\n> **Radiomic features carry signal (≈ 90\
+  \ %) but reach a representational\n> ceiling.** This ceiling is a property of the 19 features themselves,\n\
+  > not of the classifier — even an SVM-RBF kernel cannot extract more.\n> This motivates the switch to\
+  \ deep learning in Act 3.\n\n---\n\n<a id=\"section-3\"></a>\n## Section 3 — Clustering and Dimension-Reduction\
+  \ Analysis\n\n> **Question (Act 2b):** Can radiomic features *naturally* separate\n> the three classes\
+  \ without supervision?\n>\n> **Question (Act 3):** Does a fine-tuned CNN's feature space cleanly\n>\
+  \ partition into the three diagnostic classes?\n\n### Table 2 — Unsupervised clustering on three feature\
+  \ spaces\n*Source: [clustering_metrics.csv](results/clustering_metrics.csv)\nvisualised in [clustering_metrics.png](results/clustering_metrics.png)*\n\
+  \n| Feature space              | n_features | Silhouette | Calinski-H | **ARI** | **NMI** |\n|---------------------------|-----------:|-----------:|-----------:|--------:|--------:|\n\
+  | Radiomics (selected)       | 19         | 0.15       | 196.2      | 0.272   | 0.296   |\n| CNN, pretrained\
+  \ (ImageNet) | 585 (PCA)  | 0.06       | 38.5       | 0.249   | 0.219   |\n| **CNN, fine-tuned**   \
+  \     | 374 (PCA)  | 0.31       | 360.4      | **0.960** | **0.925** |\n\n### How to read\n\n- **ARI**\
+  \ (Adjusted Rand Index): 0 = random, 1 = perfect agreement\n  with ground truth. 0.27 means \"weakly\
+  \ aligned with diagnosis\"; 0.96\n  means \"almost perfectly aligned\".\n- **NMI** (Normalized Mutual\
+  \ Information): similar scale to ARI.\n- Higher Silhouette and Calinski-Harabasz indicate tighter, more\n\
+  \  separated clusters in the feature space.\n\n### Key contrast\n\n| Comparison                    \
+  \               | Verdict                                     |\n|----------------------------------------------|---------------------------------------------|\n\
+  | Radiomics (0.272) ≈ Pretrained CNN (0.249)   | Both \"task-unaware\" representations cap at the same\
+  \ level |\n| Fine-tuned CNN (0.960) ≫ both above          | 3.5× improvement from task-specific training\
+  \ |\n\n### What it proves\n\n> Pretrained CNN and radiomics, despite using completely different\n> representations,\
+  \ both yield ARI ≈ 0.25 — a known characteristic\n> of task-unaware features. **Fine-tuning is the variable\
+  \ that\n> unlocks diagnostic separability**, not the choice of representation\n> family. The fine-tuned\
+  \ 0.96 is partly *by design* (the GAP layer is\n> trained for linear separation), so the relevant comparison\
+  \ is\n> radiomics vs pretrained CNN, both well below.\n\n### Dimension-reduction visualisation\n*Figure:\
+  \ [dim_reduction_scatter.png](results/dim_reduction_scatter.png)*\n\nThe 3 × 3 figure plots PCA / t-SNE\
+  \ / UMAP × pretrained / fine-tuned /\nradiomics. **Fine-tuned CNN shows three cleanly isolated clusters\n\
+  across all three methods**, confirming the high ARI is not an artefact\nof a single dimension-reduction\
+  \ algorithm.\n\n### Stranded-sample (outlier) analysis\n*Source: [umap_outliers.csv](results/umap_outliers.csv)*\n\
+  \nFor each val + test sample (n = 920) we compute\n`stranded_score = d_own_class − d_nearest_other_class`.\
+  \ Positive scores\nindicate the sample lies closer to a *different* class in UMAP than\nto its own.\n\
+  \n- **13 / 920 (1.4 %) samples are \"stranded\"**.\n- **4 of these are in the test set**.\n- **Only\
+  \ 1 is misclassified by the CNN**.\n- For all 13, Grad-CAM++ still attends to the polygon tumor body.\n\
+  \n**What this proves**: stranded samples are atypical tumor presentations\n(edge-cases that would challenge\
+  \ even an experienced radiologist), not\nevidence of CNN attention drift.\n\n---\n\n<a id=\"section-4\"\
+  ></a>\n## Section 4 — CNN Classification (Act 3)\n\n> **Question:** Once we switch to a fine-tuned CNN,\
+  \ how good is the\n> classifier?\n\n### Architecture\n- **Backbone**: ResNet-50, IMAGENET1K_V2 pretrained\
+  \ weights\n- **Final layer**: `Sequential(Dropout(0.5), Linear(2048, 3))`\n- **Training**: full fine-tune,\
+  \ AdamW lr = 1e-4, 20 epochs, batch 32,\n  cosine annealing\n- **Augmentation**: horizontal flip + ±15°\
+  \ rotation\n- **Selection**: best validation-accuracy checkpoint\n\n### Headline numbers (n = 308 test\
+  \ samples)\n\n| Metric           | Value     | 95 % CI         |\n|------------------|----------:|-----------------|\n\
+  | Test accuracy    | **0.9903**| [0.977, 1.000]  |\n| Macro F1         | 0.9887    | [0.973, 1.000]\
+  \  |\n| F1 (glioma)      | 0.9937    | [0.984, 1.000]  |\n| F1 (meningioma)  | 0.9836    | [0.955, 1.000]\
+  \  |\n| F1 (pituitary)   | 0.9886    | [0.970, 1.000]  |\n\n→ **3 errors out of 308 test samples.**\n\
+  \n### Contrast vs radiomic baseline\n\n| Method            | Test Acc | 95 % CI         |\n|-------------------|---------:|-----------------|\n\
+  | Best radiomic (SVM-RBF) | 0.896 | [0.860, 0.929] |\n| ResNet-50 fine-tuned    | **0.990** | **[0.977,\
+  \ 1.000]** |\n\nThe CIs **do not overlap** → the gap of 9.4 percentage points is\n**statistically significant**\
+  \ (not coincidental).\n\n### What it proves\n\n> Within the same dataset and split, a fine-tuned CNN\
+  \ clears the\n> radiomic ceiling by ≈ 9 points. **The story arc moves from \"good\n> enough\" to \"\
+  clinically aspirational\"**. But high accuracy alone is\n> not enough — Acts 4a–4c verify that the CNN\
+  \ is learning the right\n> things.\n\n---\n\n<a id=\"section-5\"></a>\n## Section 5 — CNN ↔ Radiomic\
+  \ Concept Alignment (Act 4a)\n\n> **Question:** Are the CNN's individual dimensions correlated with\n\
+  > known radiomic concepts, or has it learned something entirely\n> orthogonal (= possibly shortcut)?\n\
+  \n### Method (computed on val + test, n = 920)\n\nFor each CNN dimension $i$ we compute\n$p_i = \\max_j\
+  \ |M_{ij}|$ where $M$ is the 2048 × 19 Spearman matrix\nbetween CNN dims and radiomic features. We report:\n\
+  \n- **median($p$)** — the typical CNN dim's best radiomic correlation\n- **max($p$)** — the strongest\
+  \ single alignment\n- **frac($p > 0.5$)** — fraction of CNN dims with a strong alignment\n\n### Table\
+  \ 3 — Overall alignment (Spearman)\n*Source: [best_cnn_per_radiomic.csv](results/best_cnn_per_radiomic.csv),\n\
+  visualised in [correlation_analysis.png](results/correlation_analysis.png)*\n\n| Statistic         \
+  \     | Pretrained                | Fine-tuned                |\n|------------------------|---------------------------|---------------------------|\n\
+  | median \\|r\\|           | 0.234 [0.232, 0.251]      | **0.473** [0.459, 0.492]  |\n| max \\|r\\|\
+  \              | 0.820 [0.796, 0.842]      | 0.777 [0.750, 0.802]      |\n| frac \\|r\\| > 0.5     \
+  \  | 4.93 % [4.0, 6.2]         | **41.06 %** [37.6, 47.4]  |\n\n### How to read\n\n- **Median jumps\
+  \ from 0.23 → 0.47** (≈ 2× broadening). The \"typical\"\n  CNN dim becomes much more radiomic-like after\
+  \ fine-tuning.\n- **frac \\|r\\| > 0.5 jumps from 5 % to 41 %** — roughly 841 of 2048\n  fine-tuned\
+  \ dims align strongly with some radiomic concept (vs 101\n  before).\n- **Counter-intuitive: max \\\
+  |r\\| slightly *decreases*** (0.820 →\n  0.777). Fine-tuning is not producing one super-aligned super-neuron;\n\
+  \  it is recruiting *many* dimensions to be moderately radiomic-like.\n\n### W"

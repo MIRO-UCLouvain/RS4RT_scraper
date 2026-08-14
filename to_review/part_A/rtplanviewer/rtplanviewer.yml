@@ -1,0 +1,73 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: dmdavidj/RTplanViewer
+url: https://github.com/dmdavidj/RTplanViewer
+platform: github
+description: plan check for RTplan(DICOM)
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-21T06:28:21Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 5 support term(s).
+readme_excerpt: "# DICOM RTPlan Viewer\n\nA lightweight Windows GUI tool that scans a folder (including\
+  \ all sub‑folders)\nfor DICOM **RT Plan** files, extracts the key plan/beam information, and lists it\n\
+  in a sortable, copyable table. Built with Python + Tkinter and shipped as a\nsingle stand‑alone `.exe`\
+  \ — no Python installation required on the target\nmachine.\n\n## Features\n\n- **Folder scan** — pick\
+  \ a folder and search it recursively for RT Plan files.\n- **One row per file** — each DICOM RT Plan\
+  \ file becomes exactly one row.\n  Beam‑level values that differ within a file are merged (e.g. energies\
+  \ of a\n  two‑beam plan show as `6, 10`).\n- **`# Beams` column** — shows how many beams each plan file\
+  \ contains.\n- **Verify checkbox** — a `✓` column next to the row number. Click a cell to\n  mark a\
+  \ row as verified; checked rows are highlighted. Click the `✓` header to\n  toggle all, or use the **Check\
+  \ All / Uncheck All** buttons.\n- **Copy** — **Copy Selected** (or `Ctrl+C`) copies the checked rows\
+  \ (or the\n  highlighted selection if none are checked) to the clipboard as tab‑separated\n  text, ready\
+  \ to paste into Excel. The checkbox column is excluded from the copy.\n- **Delete file(s)** — **Delete\
+  \ Selected File(s)** permanently deletes the\n  underlying files from disk after a confirmation dialog.\
+  \ **This cannot be\n  undone.**\n- **Machine‑name mapping** — map a DICOM Treatment Machine Name to\
+  \ a friendly\n  display name. Add / edit / delete mappings in the Config window.\n- **Default search\
+  \ folder** — configure a fixed folder so **Browse** loads it\n  directly; if the configured folder is\
+  \ missing, it is reset and reported.\n- **English UI.**\n\n## Columns\n\n| Column                  |\
+  \ DICOM Tag                     | Notes |\n|-------------------------|-------------------------------|-------|\n\
+  | `✓`                     | —                             | User \"verified\" checkbox |\n| Number \
+  \                 | —                             | Sequential row index |\n| # Beams              \
+  \   | Beam Sequence count           | Number of beams in the file |\n| Treatment machine name  | `(300A,00B2)`\
+  \                 | Remapped via Config if a mapping matches |\n| ID                      | `(0010,0020)`\
+  \                 | Patient ID |\n| Name                    | `(0010,0010)`                 | Patient\
+  \ Name |\n| Plan name               | `(300A,0003)`                 | RT Plan Name |\n| Prescribed dose\
+  \         | `(300A,0026)`                 | Target Prescription Dose; multiple values for SIB (TOMO/CyberKnife)\
+  \ are joined, e.g. `60, 54, 51` |\n| Fraction                | `(300A,0078)`                 | Number\
+  \ of Fractions Planned |\n| Method                  | `(300D,10A4)` or `(300A,0009)`| First non‑empty\
+  \ value |\n| Energy                  | `(300A,0114)`                 | Nominal Beam Energy (distinct\
+  \ values per beam) |\n| Radiation type          | `(300A,00C6)`                 | Radiation Type |\n\
+  | Fluence Mode            | `(3002,0052)`                 | Falls back to `(3002,0051)` when empty |\n\
+  \nMissing values are shown as blank.\n\n## Requirements\n\n- Python 3.9+ (developed on 3.12)\n- [`pydicom`](https://pydicom.github.io/)\n\
+  - [`pyinstaller`](https://pyinstaller.org/) (only needed to build the `.exe`)\n\n```bash\npip install\
+  \ pydicom pyinstaller\n```\n\n> `numpy` is intentionally **not** required. RT Plan files contain no\
+  \ pixel\n> data, so pydicom reads them without it — and excluding numpy keeps the built\n> executable\
+  \ small (~24 MB instead of ~240 MB).\n\n## Running from source\n\n```bash\npython rtplan_viewer.py\n\
+  ```\n\n## Building the .exe\n\nThe build is driven by `RTPlanViewer.spec`, which excludes heavy unused\
+  \ packages\n(numpy/MKL, matplotlib, pandas, …) so the onefile executable stays small and\nextracts reliably\
+  \ at startup.\n\n```bash\npyinstaller --noconfirm --clean RTPlanViewer.spec\n```\n\nThe stand‑alone\
+  \ executable is produced at `dist/RTPlanViewer.exe`. Distribute\nthat single file — nothing else is\
+  \ needed on the target machine.\n\n## Usage\n\n1. Launch `RTPlanViewer.exe` (or `python rtplan_viewer.py`).\n\
+  2. Click **Browse…** and select a folder (or configure a default folder in\n   **Config**), then click\
+  \ **Search**. All sub‑folders are scanned recursively.\n3. Review the listed plans. Click the `✓` column\
+  \ to mark rows you have checked.\n4. **Copy Selected** to copy rows to the clipboard, or **Delete Selected\n\
+  \   File(s)** to remove files from disk (with confirmation).\n5. **Exit** closes the program.\n\n###\
+  \ Configuration\n\nOpen the **Config** window to:\n\n- Set the **Default search folder**.\n- Manage\
+  \ **Machine‑name mappings**: add, edit (double‑click a row to load it),\n  or delete entries. When a\
+  \ DICOM machine name matches a mapping, the mapped\n  display name is shown instead.\n\nSettings are\
+  \ stored in:\n\n```\n%USERPROFILE%\\.dicom_rtplan_viewer\\config.json\n```\n\n## Notes\n\n- **Deletion\
+  \ is permanent.** The Delete action uses a hard file delete, not the\n  Recycle Bin. A confirmation\
+  \ dialog (defaulting to *No*) is shown first.\n- The tool identifies RT Plans by Modality `RTPLAN`;\
+  \ files without a Modality\n  are still considered if they contain a Beam Sequence.\n\n## Project layout\n\
+  \n```\nrtplan_viewer.py        Application source (GUI + DICOM parsing)\nRTPlanViewer.spec       PyInstaller\
+  \ build spec\ndist/RTPlanViewer.exe   Built stand-alone executable (after building)\nREADME.md     \
+  \          This file\n```\n\n## License\n\nMIT\n"

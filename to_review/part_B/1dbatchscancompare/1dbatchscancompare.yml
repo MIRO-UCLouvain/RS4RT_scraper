@@ -1,0 +1,81 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Mighty-Raindeer/1dBatchScanCompare
+url: https://github.com/Mighty-Raindeer/1dBatchScanCompare
+platform: github
+description: Python tool for batch 1D beam-profile comparison using gamma analysis, automated profile
+  matching, and PDF reporting.
+license: null
+language: Python
+keywords:
+- beam-profile
+- dosimetry
+- gamma-analysis
+- medical-physics
+- pymedphys
+- python
+- quality-assurance
+- radiation-oncology
+stars: 0
+updated_at: '2026-08-06T18:10:34Z'
+image_source: null
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+- Matched 6 support term(s).
+readme_excerpt: "# 1D Batch Scan Compare\n\nAnnual or baseline-versus-current beam-profile QA often means\
+  \ comparing many 1D scans one file at a time. This Python application batch-compares radiation beam\
+  \ profiles exported from IBA dosimetry software (OmniPro / MyQA Accept ASCII 6.x), matches corresponding\
+  \ scans automatically, runs gamma analysis, and writes a single consolidated PDF report.\n\n## What\
+  \ it compares\n\n- **Reference datasets**: baseline or prior-year 1D profiles (OmniPro / MyQA Accept\
+  \ ASCII)\n- **Evaluation datasets**: current measurements in the same ASCII format\n- **Matching keys**:\
+  \ energy, beam type, field size, scan type (inline/crossline), and depth (±10 mm tolerance)\n- **Analysis**:\
+  \ global gamma by default (2%/2 mm, 50% low-dose cutoff; configurable in `main.py`)\n- **Report**: one\
+  \ PDF containing, for each matched pair, metadata comparison, dose-profile overlay, gamma-index plot,\
+  \ histogram, and color-coded pass rate\n\n> **Screenshot placeholder**  \n> *Insert an application window\
+  \ screenshot here (reference/measurement loaded, Run Gamma enabled). Do not commit a fabricated image.*\n\
+  \n> **Example report placeholder**  \n> *Insert one representative PDF report page here (or link a checked-in\
+  \ example). Do not commit a fabricated image.*\n\nFFF and flattened beams are not distinguished in ASCII\
+  \ exports; keep those measurement sets in separate files before loading.\n\n## Features\n\n- Batch gamma\
+  \ analysis across all matched profile pairs in the loaded files\n- Automatic matching of reference and\
+  \ measurement datasets by energy, beam type, field size, scan type, and depth\n- User-selectable PDF\
+  \ output location\n- GUI status indicators when reference and measurement files load successfully\n\
+  - Per-pair pass/fail reporting with color-coded pass rates (green ≥95%, orange ≥90%, red <90%)\n- Continues\
+  \ through the batch when individual pairs fail so remaining matches still produce report pages\n- PDF\
+  \ figures with spaced axis labels for readability\n\n## Installation\n\n1. Clone this repository\n2.\
+  \ Install dependencies:\n```bash\npip install -r requirements.txt\n```\n\n## Usage\n\n1. **Export your\
+  \ data**: Export profiles from OmniPro/MyQA Accept as 6.x.x ASCII format\n   - **Important**: Energies\
+  \ with and without flattening filter (FFF) are not automatically separated - save them as separate ASCII\
+  \ files\n\n2. **Run the application**:\n```bash\npython main.py\n```\n\n3. **Load files**:\n   - Click\
+  \ \"Open Reference\" to load your baseline/reference measurements\n   - Click \"Open Measurement\" to\
+  \ load your evaluation measurements\n   - Status indicators will show when files are successfully loaded\n\
+  \n4. **Run analysis**:\n   - Click \"Run Gamma\" (enabled only when both files are loaded)\n   - Choose\
+  \ where to save the output PDF\n   - The tool will automatically match corresponding profiles and perform\
+  \ gamma analysis\n\n5. **Review results**:\n   - A summary dialog shows how many analyses succeeded/failed\n\
+  \   - The PDF contains detailed reports for each matched pair including:\n     - Measurement metadata\
+  \ comparison\n     - Dose profile overlay\n     - Gamma index plot\n     - Histogram distribution\n\
+  \     - Color-coded pass rate\n\n## Configuration\n\nGamma analysis parameters can be modified in `main.py`\
+  \ in the `GammaAnalysisApp.__init__()` method:\n\n```python\nself.gamma_config = {\n    'dose_percent_threshold':\
+  \ 2,        # Dose difference criterion (%)\n    'distance_mm_threshold': 2,         # Distance-to-agreement\
+  \ criterion (mm)\n    'lower_percent_dose_cutoff': 50,   # Low dose cutoff (%)\n    'interp_fraction':\
+  \ 10,\n    'max_gamma': 2,\n    'local_gamma': False,               # False = global gamma\n}\n```\n\
+  \n## Requirements\n\n- Python 3.7+\n- numpy\n- matplotlib\n- pandas\n- pymedphys\n\n## Testing\n\nThe\
+  \ project includes test data and validation scripts for development and verification.\n\n### Run Tests\n\
+  \n**Headless test** (no GUI, automated):\n```bash\npython test_headless.py\n```\n\n**Validate test data\
+  \ format**:\n```bash\npython validate_test_data.py\n```\n\n**Test files included**:\n- `test_data_reference.txt`\
+  \ - Sample reference measurements\n- `test_data_measurement.txt` - Sample evaluation measurements\n\
+  - See `TEST_DATA_README.md` for detailed test data documentation\n\n## Notes\n\n- The tool automatically\
+  \ matches profiles based on: energy, beam type, field size, scan type, and depth\n- Only matched pairs\
+  \ are analyzed - unmatched measurements are skipped\n- Pass rate threshold: Green ≥95%, Orange ≥90%,\
+  \ Red <90%\n- PDF output includes properly spaced axis labels for clear readability\n\n## Clinical-use\
+  \ notice\n\nThis software is provided for research, education, and development. It is not a medical\
+  \ device and has not been validated for clinical decision-making.\n\nUsers are responsible for independent\
+  \ code review, testing, commissioning, verification of calculations and outputs, and compliance with\
+  \ applicable institutional policies before using any portion of the software in a clinical environment.\n\
+  \nNo patient information or protected health information is included in this repository. Examples and\
+  \ test data are synthetic or de-identified unless explicitly documented otherwise.\n\n## Future Improvements\n\
+  \n- [ ] GUI controls for gamma parameters\n- [ ] Support for additional file formats\n- [ ] Statistical\
+  \ summary across all measurements\n- [ ] Trend analysis for longitudinal QA\n"

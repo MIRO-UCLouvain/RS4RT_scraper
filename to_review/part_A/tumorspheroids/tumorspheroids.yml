@@ -1,0 +1,51 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: pejmanshojam31/TumorSpheroids
+url: https://github.com/pejmanshojam31/TumorSpheroids
+platform: github
+description: We deploy a dataset consisting of time-series radiomics features for predicting the treatment
+  response of tumor spheroids.
+license: MIT
+language: Jupyter Notebook
+keywords:
+- cancer-research
+- prediction
+- spheroids
+stars: 2
+updated_at: '2026-08-06T09:13:53Z'
+image_source: null
+heuristic_total_score: 6
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: " # Predicting Treatment Response of Tumor Spheroids from AI-Driven Image Analysis of\
+  \ Post-Treatment Dynamics\n contact: pejman.shojaee@tu-dresden.de\n pejman.shojaee@htw-dresden.de\n\
+  \ \n Affiliation: TU Dresden\n \n HTW Dresden – University of Applied Sciences\n\n## Background\n\n\
+  The project implements an AI-driven image analysis pipeline for predicting long-term relapse of tumor\
+  \ spheroids from early post-treatment brightfield image data.\n\n\nIt contains:\n\n- **`MLTimeSeriesModel.py`**\
+  \ – a configurable ML pipeline with variance filtering, scaling, **SMOTE**, multiple **feature-selection**\
+  \ strategies, and a zoo of classifiers; includes cross-validation with **95% CIs**, bootstrapped evaluation,\
+  \ probability-based ROC utilities, and global seed helpers for reproducibility.\n- **`Visualization.py`**\
+  \ – a plotting suite for confusion matrices, ROC curves (with optimal threshold), probability distributions,\
+  \ **accuracy vs. Day-of-Relapse (DoR)** with weighted exponential fits, and stacked **SCP** (Share of\
+  \ Controlled Proportion) bar charts for treatment arms (dose, temperature, time).\n- **`Manuscript_codes_fixed2.ipynb`**\
+  \ – an analysis notebook (used in the manuscript).\n\n\nHere, we present an end-to-end machine learning\
+  \ framework that predicts whether individual spheroids relapse or remain controlled, based solely on\
+  \ early post-treatment imaging features.\nOur workflow integrates AI image analysis, feature extraction,\
+  \ feature selection, and classification models to infer long-term treatment outcomes.\n\n## \U0001F4E6\
+  \ Installation\n\n```bash\n# Python 3.10+ recommended\npip install -U numpy pandas scikit-learn imbalanced-learn\
+  \ xgboost matplotlib seaborn statsmodels\n# Optional (for deterministic seeding)\npip install torch\n\
+  ```\n\nNotes:\n- All CSVs in data/ are exactly those used in the manuscript models (training and test).\n\
+  - Splits used in the paper are under data/splits/.\n\n## Quick start\nYou can easily use the uploaded\
+  \ time range data and use it to visualize the results. You can also use your own data and the pipeline\
+  \ to calculate the classified target, such as relapsed and controlled cases.\n\n```bash\nfrom MLTimeSeriesModel\
+  \ import MLTimeSeriesModel\nfrom Visualization import Visualization\nimport pandas as pd\n\n# Load your\
+  \ dataset\ndf = pd.read_csv(\"data/short_final_with_updated_diagnosis.csv\")\nX = df.drop(columns=[\"\
+  diagnosis\"])\ny = df[\"diagnosis\"]\n\n# Initialize pipeline\nmodel = MLTimeSeriesModel()\nmodel.select_feature_selection(\"\
+  SelectKBest_f_classif\")\nmodel.select_model(\"RandomForest\")\nmodel.build_pipeline()\n\n# Cross-validation\n\
+  results = model.cross_validate(X, y)\nprint(results[\"mean_auc\"], results[\"auc_confidence_interval\"\
+  ])\n\n# Visualization example\nviz = Visualization(output_dir=\"results\", y_true=y, y_pred=None)\n\
+  viz.plot_confusion_matrix()\n```\n\n## maintainers\n- Pejman Shojaee ([@pejmanshojam31](https://github.com/pejmanshojam31))\
+  \ — lead\n- Tom Bischopink ([@tomb556](https://github.com/tombk556))\n"

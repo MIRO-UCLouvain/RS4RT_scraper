@@ -1,0 +1,65 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Peiwei-Wu/RAMIS-Net
+url: https://github.com/Peiwei-Wu/RAMIS-Net
+platform: github
+description: 'RAMIS-Net: Hierarchical Collaborative Distillation for Brain Tumor Segmentation with Incomplete
+  Modality'
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-07T01:42:30Z'
+image_source: null
+heuristic_total_score: 5
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+readme_excerpt: "<!-- 徽章区域（项目状态、版本、依赖等） -->\n\n<p align=\"center\">\n  <img src=\"https://img.shields.io/badge/PyTorch-1.12%2B-EE4C2C?logo=pytorch&logoColor=white\"\
+  \ alt=\"PyTorch\">\n  <img src=\"https://img.shields.io/badge/Python-3.8%2B-3776AB?logo=python&logoColor=white\"\
+  \ alt=\"Python\">\n  <img src=\"https://img.shields.io/badge/License-MIT-yellow.svg\" alt=\"License:\
+  \ MIT\">\n  <img src=\"https://img.shields.io/badge/Version-1.0-blue\" alt=\"Version\">\n  <img src=\"\
+  https://img.shields.io/badge/Status-Active-brightgreen\" alt=\"Status\">\n</p>\n\n# \U0001F9E0 RAMIS-Net:\
+  \ Hierarchical collaborative distillation for brain tumor segmentation with incomplete modality\n\n\
+  > *A PyTorch implementation of RAMIS‑Net for medical image segmentation with support for missing modalities.*\
+  \  \n> RAMIS‑Net improves brain tumor segmentation under incomplete MRI conditions, especially in the\
+  \ **TC** and **ET** regions, by hierarchically distilling complete modality knowledge into missing modality\
+  \ paths through **RARA**, **MISA**, and task‑level alignment.\n\n---\n\n## \U0001F4F7 Overview\n\n<img\
+  \ width=\"2014\" height=\"1249\" alt=\"image\" src=\"https://github.com/user-attachments/assets/f57f4590-920a-46c7-a5a8-9ddc0a284636\"\
+  \ />\n\n---\n\n## \U0001F4C2 Project Structure\n\n```\nRAMIS-Net/\n├── configs/\n│   ├── __init__.py\n\
+  │   └── args.py                 # Training arguments configuration\n├── models/\n│   ├── __init__.py\n\
+  │   ├── base_modules.py         # Foundational layers (conv, FFN, etc.)\n│   ├── mamba_blocks.py   \
+  \      # Mamba-based components\n│   ├── encoder.py              # Multi-stage encoder\n│   ├── decoder.py\
+  \              # Decoder layers\n│   ├── linear_former.py        # RoPE and attention mechanisms\n│\
+  \   └── ramis_net.py            # Main model\n├── functions/\n│   ├── adamw.py                # AdamW\
+  \ optimizer\n│   └── DropPath.py             # Stochastic depth\n├── train.py                    # Training\
+  \ script\n├── dataset.py                  # Data loading and preprocessing\n├── losses.py          \
+  \         # Loss functions\n├── utils.py                    # Utility functions\n├── eval_utils.py \
+  \              # Evaluation metrics\n└── validate.py                 # Validation script\n```\n\n---\n\
+  \n## ⚙️ Installation & Dependencies\n\nInstall the required packages:\n\n```bash\npip install -r requirements.txt\n\
+  ```\n\n---\n\n## \U0001F680 Usage\n\n### Training\n\n```bash\npython train.py \\\n    --task_name RAMIS-Net\
+  \ \\\n    --path_to_data ./datasets/MICCAI_BraTS2020_TrainingData/ \\\n    --datasets BRATS\\ 2020 \\\
+  \n    --n_epochs 300 \\\n    --batch_size_tr 1 \\\n    --batch_size_va 1 \\\n    --lr 0.0003\n```\n\n\
+  ### Configuration\n\nAll training arguments are defined in `configs/args.py`. Key parameters:\n\n| Parameter\
+  \ | Description | Default |\n|-----------|-------------|---------|\n| `--task_name` | Project name |\
+  \ `RAMIS-Net` |\n| `--datasets` | Dataset type – `'BRATS 2018'` or `'BRATS 2020'` | `'BRATS 2020'` |\n\
+  | `--path_to_data` | Path to dataset directory | – |\n| `--n_epochs` | Number of training epochs | `300`\
+  \ |\n| `--batch_size_tr` | Training batch size | `1` |\n| `--batch_size_va` | Validation batch size\
+  \ | `1` |\n| `--lr` | Learning rate | `0.0003` |\n| `--modalities` | Input modalities | `flair t1 t1ce\
+  \ t2` |\n\n### Evaluation\n\n```bash\npython validate.py \\\n    --saved_model_path ./new_results/RAMIS-Net/weights/best_model_weights.pth\
+  \ \\\n    --datasets BRATS\\ 2020 \\\n    --path_to_data ./datasets/MICCAI_BraTS2020_TrainingData/\n\
+  ```\n\n---\n\n## \U0001F5C2️ Data Format\n\nExpected directory structure:\n\n```\nMICCAI_BraTS2020_TrainingData/\n\
+  ├── BraTS20_Training_001/\n│   ├── BraTS20_Training_001_flair.nii\n│   ├── BraTS20_Training_001_t1.nii\n\
+  │   ├── BraTS20_Training_001_t1ce.nii\n│   ├── BraTS20_Training_001_t2.nii\n│   └── BraTS20_Training_001_seg.nii\n\
+  ├── BraTS20_Training_002/\n└── ...\n```\n\n**Label mapping** in segmentation files:\n\n- `0` – Background\n\
+  - `1` – Necrotic/Non‑enhancing tumor (NCR/NET)\n- `2` – Peritumoral edema (ED)\n- `4` – Enhancing tumor\
+  \ (ET)\n\n---\n\n## \U0001F4CA Output\n\nAfter training, the model saves the following files:\n\n- `./new_results/RAMIS-Net/weights/model_weights.pth`\
+  \ – Latest checkpoint  \n- `./new_results/RAMIS-Net/weights/best_model_weights.pth` – Best validation\
+  \ model  \n- `./new_results/RAMIS-Net/[timestamp]_log.txt` – Training logs\n\n---\n\n## \U0001F4C4 License\n\
+  \nThis project is open source and available under the **MIT License**.\n\n---\n\n## \U0001F91D Acknowledgments\n\
+  \n- Built with [PyTorch](https://pytorch.org/)\n- Uses [Mamba](https://github.com/state-spaces/mamba)\
+  \ state‑space models\n- Inspired by the [timm](https://github.com/rwightman/pytorch-image-models) library\n\
+  - [MONAI](https://monai.io/) for medical imaging utilities\n\n---\n\n## \U0001F4EC Support\n\nFor issues\
+  \ and questions, please refer to the project documentation or contact the authors.\n\n---\n\n**Last\
+  \ Updated**: July 2026  \n**Version**: 1.2\n"
