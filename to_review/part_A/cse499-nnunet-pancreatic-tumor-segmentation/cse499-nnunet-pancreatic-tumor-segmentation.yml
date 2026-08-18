@@ -1,0 +1,109 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Tremor1337/CSE499--nnUNet-Pancreatic-Tumor-Segmentation
+url: https://github.com/Tremor1337/CSE499--nnUNet-Pancreatic-Tumor-Segmentation
+platform: github
+description: A research-oriented pancreatic tumor segmentation framework built on 3D nnU-Net using the
+  PANTHER Challenge MRI dataset. The project explores supervised and semi-supervised learning with pseudo-label
+  filtering and introduces a component-guided fusion strategy to reduce catastrophic tumor segmentation
+  failures and improve inference reliability.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-05-25T10:24:05Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# PANTHER-SSL-Fusion\n\nDeep learning–based pancreatic tumor segmentation in diagnostic\
+  \ MRI using 3D nnU-Net, semi-supervised pseudo-label learning, and component-guided fusion.\n\n---\n\
+  \n# Deep Learning-Based Pancreatic Tumor Segmentation in Diagnostic MRI with Semi-Supervised Enhancements\n\
+  \n---\n\n## Overview\n\nThis repository contains the implementation and experimental analysis of a pancreatic\
+  \ tumor segmentation framework using diagnostic T1-weighted MRI scans from the PANTHER Challenge dataset.\
+  \ The project explores supervised and semi-supervised deep learning approaches using 3D nnU-Net and\
+  \ introduces a component-guided fusion strategy to improve segmentation reliability and recover difficult\
+  \ tumor cases.\n\nThe framework focuses on:\n\n- Supervised 3D nnU-Net training\n- Semi-supervised retraining\
+  \ using filtered pseudo-labels\n- Cross-fold evaluation\n- Component-guided fusion\n- Reliability-focused\
+  \ inference analysis\n\n---\n\n# Dataset\n\nDataset Source: PANTHER Challenge  \nhttps://panther.grand-challenge.org/\n\
+  \nThe project uses:\n\n- Diagnostic T1-weighted MRI scans\n- Labeled MRI data\n- Unlabeled MRI data\n\
+  - Pancreas and tumor segmentation masks\n\nFinal evaluation was conducted on **92 labeled T1 MRI cases**.\n\
+  \n---\n\n# Repository Structure\n\n```text\nPANTHER-SSL-Fusion/\n│\n├── 3-fold evaluation.ipynb\n├──\
+  \ fin analysis.ipynb\n├── multiclass-psuedomask.ipynb\n├── train2.ipynb\n├── weighted_nnUNet.ipynb\n\
+  │\n├── results/\n├── figures/\n├── README.md\n└── LICENSE\n```\n\n---\n\n# Notebook Descriptions\n\n\
+  ## train2.ipynb\n\nMain supervised training notebook for 3D nnU-Net segmentation on labeled T1 MRI scans.\n\
+  \nMain tasks:\n\n- Data loading\n- MRI preprocessing\n- nnU-Net training\n- Cross-validation setup\n\
+  - Baseline segmentation experiments\n\n---\n\n## multiclass-psuedomask.ipynb\n\nPseudo-label generation\
+  \ and filtering pipeline for semi-supervised learning.\n\nMain tasks:\n\n- Pseudo-mask generation\n\
+  - Connected-component filtering\n- Pancreas-guided tumor filtering\n- Removal of noisy tumor predictions\n\
+  - Semi-supervised dataset preparation\n\n---\n\n## weighted_nnUNet.ipynb\n\nWeighted and fusion-based\
+  \ nnU-Net experiments.\n\nMain tasks:\n\n- Weighted prediction fusion\n- Component-guided fusion\n-\
+  \ Reliability-focused tumor recovery\n- Failure case correction\n- Ensemble refinement\n\n---\n\n##\
+  \ 3-fold evaluation.ipynb\n\nCross-fold quantitative evaluation notebook.\n\nMain tasks:\n\n- Dice evaluation\n\
+  - IoU computation\n- Precision and recall analysis\n- Hausdorff Distance evaluation\n- Fold-wise performance\
+  \ comparison\n\n---\n\n## fin analysis.ipynb\n\nFinal qualitative and quantitative analysis notebook.\n\
+  \nMain tasks:\n\n- Per-case evaluation\n- Failure-case visualization\n- Axial, sagittal, and coronal\
+  \ comparisons\n- Error map generation\n- Final result analysis\n\n---\n\n# Methodology\n\nThe proposed\
+  \ pipeline consists of the following stages:\n\n1. MRI preprocessing and normalization\n2. Supervised\
+  \ 3D nnU-Net training\n3. Pseudo-label generation on unlabeled MRI scans\n4. Pseudo-label filtering\n\
+  5. Semi-supervised retraining\n6. Component-guided fusion\n7. Cross-fold evaluation\n8. Qualitative\
+  \ and quantitative analysis\n\n---\n\n# Pseudo-Label Filtering\n\nTo improve pseudo-label quality, a\
+  \ filtering process was applied before semi-supervised retraining.\n\nThe filtering pipeline includes:\n\
+  \n- Majority voting across folds\n- Largest connected component selection\n- Pancreas-guided tumor gating\n\
+  - Removal of anatomically implausible regions\n- Small tumor component suppression\n\nThis process reduces\
+  \ noisy pseudo-labels and stabilizes semi-supervised training.\n\n---\n\n# Component-Guided Fusion\n\
+  \nThe final segmentation is generated using a component-guided fusion algorithm.\n\nInstead of simple\
+  \ averaging, the fusion strategy:\n\n- Preserves reliable supervised tumor regions\n- Recovers missed\
+  \ tumors from semi-supervised predictions\n- Removes noisy false positives\n- Applies connected-component\
+  \ analysis\n- Produces more stable and reliable inference\n\nThe fusion framework significantly reduces\
+  \ catastrophic tumor omission cases.\n\n---\n\n# Evaluation Metrics\n\nThe following metrics were used:\n\
+  \n- Dice Similarity Coefficient\n- Intersection over Union\n- Precision\n- Recall\n- F1-score\n- Hausdorff\
+  \ Distance 95\n- Average Surface Distance\n- Normalized Surface Dice\n- Boundary Error\n- Relative Volume\
+  \ Difference\n- Relative Absolute Volume Difference\n\n---\n\n# Main Results\n\nEvaluation was performed\
+  \ on 92 labeled T1 MRI cases.\n\n| Model | Class | Dice | IoU | Precision | Recall | F1 |\n|---|---|---:|---:|---:|---:|---:|\n\
+  | old_fold2 | Tumor | 0.8508 | 0.7520 | 0.8479 | 0.8655 | 0.8566 |\n| new_fold2 | Tumor | 0.8076 | 0.6829\
+  \ | 0.8237 | 0.8143 | 0.8189 |\n| unionF2 | Tumor | 0.8423 | 0.7441 | 0.8406 | 0.8619 | 0.8511 |\n|\
+  \ guidedF2 | Tumor | 0.8561 | 0.7534 | 0.8451 | 0.8794 | 0.8619 |\n\nThe component-guided fusion model\
+  \ achieved the most reliable tumor segmentation performance.\n\n---\n\n# Key Findings\n\n- Supervised\
+  \ models achieved strong average Dice scores but occasionally failed on difficult tumor cases.\n- Semi-supervised\
+  \ retraining reduced catastrophic tumor omission cases.\n- Pseudo-label filtering improved pseudo-mask\
+  \ quality.\n- Component-guided fusion recovered missed tumors while suppressing noisy predictions.\n\
+  - Reliability improved even when average Dice improvements were modest.\n\n---\n\n# Qualitative Analysis\n\
+  \nThe framework demonstrated:\n\n- Recovery of tumors missed by supervised models\n- Reduction of noisy\
+  \ tumor boundaries\n- Better overlap with ground truth\n- Improved robustness across difficult cases\n\
+  \nRepresentative examples include:\n\n- Supervised model completely missing the tumor while semi-supervised\
+  \ learning recovered it\n- Fusion correcting fragmented tumor predictions\n- Improved anatomical consistency\
+  \ across axial, sagittal, and coronal planes\n\n---\n\n# Releases\n\nThe repository releases section\
+  \ contains:\n\n- Real-time inference application\n- Web-based summary and visualization application\n\
+  - Experimental model outputs\n- Demo files and utilities\n\nThese applications are provided separately\
+  \ as compressed release packages.\n\n---\n\n# Main Dependencies\n\n```text\npython\npytorch\nnnunetv2\n\
+  numpy\npandas\nscipy\nsimpleitk\nnibabel\nmatplotlib\nscikit-image\ntqdm\n```\n\n---\n\n# Installation\n\
+  \nClone the repository:\n\n```bash\ngit clone https://github.com/your-username/PANTHER-SSL-Fusion.git\n\
+  cd PANTHER-SSL-Fusion\n```\n\nCreate virtual environment:\n\n```bash\npython -m venv venv\n```\n\nActivate\
+  \ environment:\n\n```bash\n# Windows\nvenv\\Scripts\\activate\n\n# Linux/macOS\nsource venv/bin/activate\n\
+  ```\n\nInstall dependencies:\n\n```bash\npip install -r requirements.txt\n```\n\n---\n\n# Running the\
+  \ Notebooks\n\nLaunch Jupyter Notebook:\n\n```bash\njupyter notebook\n```\n\nRun notebooks in the following\
+  \ order:\n\n1. train2.ipynb\n2. multiclass-psuedomask.ipynb\n3. weighted_nnUNet.ipynb\n4. 3-fold evaluation.ipynb\n\
+  5. fin analysis.ipynb\n\n---\n\n# Contributions\n\nMain contributions of this project include:\n\n-\
+  \ Semi-supervised pancreatic tumor segmentation\n- Pseudo-label filtering for reliable retraining\n\
+  - Component-guided fusion strategy\n- Reliability-focused evaluation\n- Failure-case recovery analysis\n\
+  \n---\n\n# Limitations\n\n- Only diagnostic T1 MRI data were used\n- No external clinical validation\
+  \ dataset\n- Semi-supervised performance depends on pseudo-label quality\n- Fusion increases computational\
+  \ complexity\n- Intended for research use only\n\n---\n\n# Future Work\n\nPotential future improvements\
+  \ include:\n\n- Multi-modal MRI integration\n- Transformer-based segmentation models\n- Uncertainty-aware\
+  \ pseudo-labeling\n- Faster inference optimization\n- External clinical validation\n- Real-time clinical\
+  \ deployment\n\n---\n\n# References\n\n[1] P. Rawla, T. Sunkara, and V. Gaduputi, “Epidemiology of pancreatic\
+  \ cancer: Global trends, etiology and risk factors,” *World Journal of Oncology*, vol. 10, no. 1, pp.\
+  \ 10–27, 2019.\n\n[2] O. Ronneberger, P. Fischer, and T. Brox, “U-Net: Convolutional Networks for Biomedical\
+  \ Image Segmentation,” *MICCAI*, 2015.\n\n[3] F. Isensee et al., “nnU-Net: A self-configuring method\
+  \ for deep learning-based biomedical image segmentation,” *Nature Methods*, 2021.\n\n[4] W. Liang et\
+  \ al., “Deep learning for segmentation of pancreatic tumors on multi-parametric MRI,” *International\
+  \ Journal of Radiation Oncology, Biology, Physics*, 2020.\n\n[5] PANTHER Challenge. Available: https://panther.grand-challenge.org/\n\
+  \n[6] DIAGNijmegen PANTHER Baselines. Available: https://github.com/DIAGNijmegen/PANTHER_baseline\n\n\
+  ---\n\n# Citation\n\nIf you use this repository or build upon this project, please cite the PANTHER\
+  \ Challenge dataset and nnU-Net framework.\n\n---\n\n# Disclaimer\n\nThis repository is intended for\
+  \ academic and research purposes only. It is not a clinically approved medical system.\n"

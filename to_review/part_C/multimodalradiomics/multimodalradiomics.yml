@@ -1,0 +1,74 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: xzhu2692/multimodalradiomics
+url: https://github.com/xzhu2692/multimodalradiomics
+platform: github
+description: Multimodal Radiomics and Medical Image Segmentation
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-24T22:00:21Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "# Multimodal Radiomics and Medical Image Segmentation\n\nThis repository provides a complete\
+  \ practical template for multimodal radiomics analysis, including image preprocessing, segmentation,\
+  \ radiomics feature extraction, machine-learning modeling, and statistical visualization.\n\nThe code\
+  \ is designed for research use with CT, MRI, PET, ultrasound-derived images, or other NIfTI-compatible\
+  \ medical imaging data.\n\nAll code comments are written in English.\n\n## Main modules\n\n- DICOM to\
+  \ NIfTI conversion\n- NIfTI image quality check\n- Image resampling\n- Intensity normalization\n- Bias\
+  \ field correction for MRI\n- Multimodal image registration\n- Classical segmentation templates\n- Deep-learning\
+  \ segmentation with MONAI 3D U-Net\n- Inference for trained segmentation models\n- Radiomics feature\
+  \ extraction using PyRadiomics\n- Feature harmonization and batch correction template\n- Feature selection\n\
+  - Machine-learning classification and regression\n- Survival modeling template\n- Explainability with\
+  \ permutation importance and SHAP-like workflow placeholder\n- R visualization and statistical analysis\n\
+  - R survival analysis\n- Reporting checklist for radiomics manuscripts\n\n## Recommended project structure\n\
+  \n```text\nproject/\n├── data/\n│   ├── raw_dicom/\n│   │   ├── patient_001/CT/\n│   │   ├── patient_001/T1/\n\
+  │   │   └── patient_001/T2/\n│   ├── nifti/\n│   │   ├── images/\n│   │   │   ├── patient_001_CT.nii.gz\n\
+  │   │   │   ├── patient_001_T1.nii.gz\n│   │   │   └── patient_001_T2.nii.gz\n│   │   └── masks/\n│\
+  \   │       └── patient_001_mask.nii.gz\n│   ├── clinical/\n│   │   └── clinical_outcomes.csv\n│   └──\
+  \ splits/\n│       └── train_test_split.csv\n├── results/\n├── Python/\n├── R/\n├── configs/\n└── docs/\n\
+  ```\n\n## Example clinical table\n\nSave as `data/clinical/clinical_outcomes.csv`.\n\n```csv\npatient_id,label,survival_time,event,age,sex,batch\n\
+  patient_001,1,25.4,1,65,M,scanner_A\npatient_002,0,48.2,0,59,F,scanner_B\n```\n\n## Example image manifest\n\
+  \nSave as `data/image_manifest.csv`.\n\n```csv\npatient_id,modality,image_path,mask_path\npatient_001,CT,data/nifti/images/patient_001_CT.nii.gz,data/nifti/masks/patient_001_mask.nii.gz\n\
+  patient_001,T1,data/nifti/images/patient_001_T1.nii.gz,data/nifti/masks/patient_001_mask.nii.gz\npatient_001,T2,data/nifti/images/patient_001_T2.nii.gz,data/nifti/masks/patient_001_mask.nii.gz\n\
+  ```\n\n## Python environment\n\n```bash\nbash Python/00_create_conda_env.sh\nconda activate radiomics_seg_env\n\
+  ```\n\nOr install packages with pip:\n\n```bash\npip install -r Python/requirements.txt\n```\n\n## R\
+  \ environment\n\n```r\nsource(\"R/00_install_packages.R\")\n```\n\n## Typical workflow\n\n### 1. Convert\
+  \ DICOM to NIfTI\n\n```bash\npython Python/01_dicom_to_nifti.py \\\n  --input-dir data/raw_dicom \\\n\
+  \  --output-dir data/nifti/images\n```\n\n### 2. Run image quality check\n\n```bash\npython Python/02_nifti_qc_summary.py\
+  \ \\\n  --manifest data/image_manifest.csv \\\n  --output results/02_qc_summary\n```\n\n### 3. Preprocess\
+  \ multimodal images\n\n```bash\npython Python/03_preprocess_nifti_multimodal.py \\\n  --manifest data/image_manifest.csv\
+  \ \\\n  --output-dir results/03_preprocessed \\\n  --target-spacing 1 1 1 \\\n  --reference-modality\
+  \ CT\n```\n\n### 4. Register moving image to fixed image\n\n```bash\npython Python/04_registration_sitk.py\
+  \ \\\n  --fixed data/nifti/images/patient_001_CT.nii.gz \\\n  --moving data/nifti/images/patient_001_T2.nii.gz\
+  \ \\\n  --output-image results/04_registration/patient_001_T2_to_CT.nii.gz \\\n  --output-transform\
+  \ results/04_registration/patient_001_T2_to_CT.tfm\n```\n\n### 5. Classical segmentation\n\n```bash\n\
+  python Python/05_classical_segmentation_sitk.py \\\n  --image data/nifti/images/patient_001_CT.nii.gz\
+  \ \\\n  --output-mask results/05_segmentation/patient_001_mask_otsu.nii.gz \\\n  --method otsu\n```\n\
+  \n### 6. Prepare MONAI segmentation dataset\n\n```bash\npython Python/06_prepare_monai_dataset_json.py\
+  \ \\\n  --manifest data/image_manifest.csv \\\n  --output-json results/06_monai_dataset/dataset.json\
+  \ \\\n  --modalities CT T1 T2\n```\n\n### 7. Train MONAI 3D U-Net\n\n```bash\npython Python/07_train_monai_3d_unet.py\
+  \ \\\n  --dataset-json results/06_monai_dataset/dataset.json \\\n  --output-dir results/07_monai_unet\
+  \ \\\n  --epochs 100\n```\n\n### 8. Run segmentation inference\n\n```bash\npython Python/08_infer_monai_3d_unet.py\
+  \ \\\n  --model results/07_monai_unet/best_model.pt \\\n  --input-json results/06_monai_dataset/dataset.json\
+  \ \\\n  --output-dir results/08_inference_masks\n```\n\n### 9. Extract radiomics features\n\n```bash\n\
+  python Python/09_extract_pyradiomics_features.py \\\n  --manifest data/image_manifest.csv \\\n  --params\
+  \ configs/pyradiomics_params.yaml \\\n  --output results/09_radiomics_features.csv\n```\n\n### 10. Build\
+  \ predictive model\n\n```bash\npython Python/11_radiomics_ml_modeling.py \\\n  --features results/10_selected_features.csv\
+  \ \\\n  --clinical data/clinical/clinical_outcomes.csv \\\n  --patient-id-col patient_id \\\n  --target-col\
+  \ label \\\n  --task classification \\\n  --output-dir results/11_ml_model\n```\n\n### 11. R analysis\
+  \ and visualization\n\n```r\nsource(\"R/01_radiomics_visualization.R\")\nsource(\"R/02_feature_selection_modeling_R.R\"\
+  )\nsource(\"R/03_survival_analysis_R.R\")\n```\n\n## Important scientific notes\n\n1. Radiomics features\
+  \ are highly sensitive to segmentation, voxel spacing, image reconstruction, intensity normalization,\
+  \ and scanner differences.\n2. For MRI, intensity values are not standardized across scanners and usually\
+  \ require careful normalization.\n3. For CT, use consistent HU clipping and resampling when appropriate.\n\
+  4. For PET, SUV normalization and acquisition protocol details are important.\n5. Segmentation quality\
+  \ should be reviewed by trained experts before feature extraction.\n6. Feature selection must be performed\
+  \ inside cross-validation to avoid information leakage.\n7. External validation is strongly recommended\
+  \ for radiomics studies.\n8. This repository is a research template and does not provide medical diagnosis.\n"

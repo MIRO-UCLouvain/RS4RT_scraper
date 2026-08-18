@@ -1,0 +1,121 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: GaetanOff/GlioVision
+url: https://github.com/GaetanOff/GlioVision
+platform: github
+description: 3D Brain tumor segmentation on MRI scans using PyTorch/MONAI
+license: GPL-3.0
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-06-24T08:14:54Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# GlioVision — Medical AI \U0001F9E0\n\n\U0001F9E0 **An open-source pipeline for automatic\
+  \ 3D segmentation of brain gliomas from multi-modal MRI. Trains a 3D U-Net / SegResNet on BraTS 2021\
+  \ and provides a Streamlit interface to compare AI predictions against neuroradiologist-validated ground-truth\
+  \ masks.**\n\n## \U0001F4CC Features\n\n✅ **Multi-modal MRI input** — T1, T1ce, T2, and FLAIR volumes\
+  \ in NIfTI format  \n✅ **3D volumetric segmentation** — 3D U-Net or SegResNet with sliding-window inference\
+  \ on consumer GPUs  \n✅ **BraTS 2021 protocol** — Dice and Hausdorff 95% metrics for ET, TC, and WT\
+  \ sub-regions  \n✅ **Clinical ground-truth audit** — predictions displayed alongside expert masks, never\
+  \ overwriting annotations  \n✅ **Interactive visualization** — Streamlit UI with slice navigation and\
+  \ false-positive / false-negative overlays  \n✅ **Reproducible training** — centralized `config.yaml`,\
+  \ TensorBoard logging, Docker support  \n\n> **Disclaimer**: GlioVision is a research tool. It is **not**\
+  \ approved for clinical diagnosis or treatment decisions.\n\n## \U0001F52C Clinical & Scientific Approach\n\
+  \n### Clinical context\n\nGliomas are the most common primary malignant brain tumors. Accurate delineation\
+  \ of tumor sub-regions — the **enhancing tumor (ET)**, **tumor core (TC)**, and **whole tumor (WT)**\
+  \ — is critical for surgical planning, radiotherapy targeting, and longitudinal monitoring. Manual segmentation\
+  \ by neuroradiologists is time-consuming and subject to inter-rater variability.\n\nGlioVision automates\
+  \ this segmentation using deep learning while exposing every prediction alongside its clinical ground\
+  \ truth, so clinicians can audit false positives and false negatives slice by slice.\n\n### Segmentation\
+  \ pipeline\n\n```\nMRI Volumes (NIfTI)\nT1 · T1ce · T2 · FLAIR\n        │\n        ▼\n┌──────────────┐\
+  \    ┌─────────────────┐    ┌──────────────────┐\n│ Preprocessing│───▶│  3D Segmentation│───▶│  Post-processing\
+  \   │\n│  (MONAI)     │    │  Network        │    │  & Visualization   │\n│  · NIfTI load│    │  · 3D\
+  \ U-Net or  │    │  · Overlay masks   │\n│  · Z-score   │    │    SegResNet     │    │  · FP/FN maps\
+  \      │\n│  · Crop/Pad  │    │  · Sliding-win  │    │  · Streamlit UI    │\n│  · Aug 3D    │    │ \
+  \   inference    │    │                    │\n└──────────────┘    └─────────────────┘    └──────────────────┘\n\
+  \                               │\n                    ┌──────────▼──────────┐\n                   \
+  \ │  Evaluation          │\n                    │  · Dice (ET, TC, WT) │\n                    │  · Hausdorff\
+  \ 95%     │\n                    │  · Sens. / Spec.     │\n                    └─────────────────────┘\n\
+  ```\n\n**Key design decisions:**\n- Ground-truth masks are **read-only clinical annotations** from BraTS\
+  \ — never modified by the pipeline.\n- Inference uses a **sliding-window** strategy with overlap to\
+  \ handle full 3D volumes on limited VRAM.\n- Metrics are computed **per-case** then aggregated, matching\
+  \ the BraTS challenge evaluation protocol.\n\n### BraTS 2021 dataset\n\n| Property | Value |\n|----------|-------|\n\
+  | Subjects | 1,251 training cases |\n| Modalities | T1, T1ce, T2, FLAIR |\n| Format | NIfTI (`.nii.gz`)\
+  \ |\n| Labels | 0 background, 1 NCR/NET, 2 edema, 4 enhancing tumor |\n| Resolution | 240×240×155 voxels,\
+  \ 1 mm isotropic |\n\nThe BraTS dataset is subject to its own [usage agreement](https://www.synapse.org/#!Synapse:syn27046444/wiki/616571).\
+  \ Academic and non-commercial use only.\n\n### Evaluation metrics\n\n| Metric | Description | Target\
+  \ (BraTS 2021 winner) |\n|--------|-------------|----------------------------|\n| **Dice Score (ET)**\
+  \ | Overlap on Enhancing Tumor | ≥ 0.82 |\n| **Dice Score (TC)** | Overlap on Tumor Core | ≥ 0.87 |\n\
+  | **Dice Score (WT)** | Overlap on Whole Tumor | ≥ 0.92 |\n| **HD95 (ET)** | 95th-percentile Hausdorff\
+  \ distance (mm) | ≤ 4.0 |\n| **HD95 (TC)** | 95th-percentile Hausdorff distance (mm) | ≤ 6.0 |\n| **HD95\
+  \ (WT)** | 95th-percentile Hausdorff distance (mm) | ≤ 5.0 |\n\n## \U0001F4E6 Installation\n\n### 1️⃣\
+  \ Clone the project\n\n```bash\ngit clone https://github.com/GaetanOff/GlioVision.git\ncd GlioVision\n\
+  ```\n\n### 2️⃣ Set up Python environment\n\n```bash\npython -m venv .venv\nsource .venv/bin/activate\
+  \  # Linux/macOS\n# .venv\\Scripts\\activate   # Windows PowerShell\n\npip install -r requirements.txt\n\
+  ```\n\n### 3️⃣ Verify GPU availability\n\n**Prerequisites:** Python 3.10+, CUDA-capable GPU (≥ 8 GB\
+  \ VRAM recommended; 16 GB for full 3D training), [CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit)\
+  \ 11.8 or 12.x.\n\n```bash\npython -c \"import torch; print(torch.cuda.is_available())\"\n```\n\n###\
+  \ 4️⃣ Download the dataset\n\n```bash\n# Option A — Kaggle (recommended)\npython src/data/download_brats.py\
+  \ --source kaggle\n\n# Option B — Local path (if already downloaded)\npython src/data/download_brats.py\
+  \ --source local --data-dir /path/to/BraTS2021\n```\n\nFor Kaggle, set your credentials first:\n\n```bash\n\
+  export KAGGLE_USERNAME=<your_username>\nexport KAGGLE_KEY=<your_api_key>\n```\n\n### 5️⃣ Preprocess\
+  \ and train\n\n```bash\npython src/data/preprocess.py --config configs/config.yaml\n\npython src/training/train.py\
+  \ --config configs/config.yaml\n```\n\n### 6️⃣ Evaluate and launch the UI\n\n```bash\npython src/evaluation/evaluate.py\
+  \ --config configs/config.yaml --checkpoint outputs/best_model.pth\n\nstreamlit run app.py\n```\n\n\
+  Open `http://localhost:8501` in your browser.\n\n## \U0001F3CB️ Training\n\n```bash\npython src/training/train.py\
+  \ \\\n  --config configs/config.yaml \\\n  --model unet3d \\\n  --epochs 300 \\\n  --batch-size 2 \\\
+  \n  --lr 1e-4\n```\n\nUse `--model segresnet` for SegResNet instead of 3D U-Net.\n\nTraining artifacts\
+  \ are written to `outputs/`:\n\n```\noutputs/\n├── best_model.pth           # Checkpoint with best validation\
+  \ Dice\n├── last_model.pth\n└── tensorboard/             # TensorBoard event files\n```\n\nMonitor training:\n\
+  \n```bash\ntensorboard --logdir outputs/tensorboard\n```\n\n### Example evaluation output\n\n```bash\n\
+  python src/evaluation/evaluate.py \\\n  --config configs/config.yaml \\\n  --checkpoint outputs/best_model.pth\
+  \ \\\n  --output-dir outputs/eval_results\n```\n\n| Subject | Dice ET | Dice TC | Dice WT | HD95 ET\
+  \ | HD95 TC | HD95 WT |\n|---------|---------|---------|---------|---------|---------|---------|\n|\
+  \ BraTS2021_00001 | 0.84 | 0.88 | 0.91 | 3.2 | 4.1 | 5.7 |\n| … | … | … | … | … | … | … |\n| **Mean**\
+  \ | **0.79** | **0.85** | **0.90** | … | … | … |\n\n## \U0001F5A5️ Web Interface\n\n```bash\nstreamlit\
+  \ run app.py\n```\n\n**Features:**\n- Upload a NIfTI `.nii.gz` volume (T1ce recommended for best contrast)\n\
+  - Select axial / coronal / sagittal view and scroll through slices\n- Side-by-side display: raw MRI\
+  \ | ground-truth mask | AI prediction\n- False-positive (red) and false-negative (blue) overlay map\n\
+  - Per-slice Dice score indicator\n\n## \U0001F433 Docker Deployment\n\n### Build and train\n\n```bash\n\
+  docker build -t gliovision:latest .\n\ndocker run --gpus all \\\n  -v $(pwd)/data:/app/data \\\n  -v\
+  \ $(pwd)/outputs:/app/outputs \\\n  gliovision:latest \\\n  python src/training/train.py --config configs/config.yaml\n\
+  ```\n\n### Web interface\n\n```bash\ndocker-compose up app\n```\n\n## ⚙️ Configuration\n\nAll hyper-parameters\
+  \ live in [`configs/config.yaml`](configs/config.yaml):\n\n| Section | Key | Default | Description |\n\
+  |---------|-----|---------|-------------|\n| `data` | `raw_dir` | `data/raw` | Raw BraTS NIfTI files\
+  \ |\n| `data` | `processed_dir` | `data/processed` | Preprocessed volumes |\n| `data` | `train_ratio`\
+  \ | `0.80` | Training split ratio |\n| `model` | `name` | `unet3d` | `unet3d` or `segresnet` |\n| `model`\
+  \ | `in_channels` | `4` | T1, T1ce, T2, FLAIR |\n| `model` | `out_channels` | `4` | Background + 3 tumor\
+  \ sub-regions |\n| `training` | `epochs` | `300` | Training iterations |\n| `training` | `batch_size`\
+  \ | `2` | Mini-batch size |\n| `training` | `learning_rate` | `1.0e-4` | Optimizer learning rate |\n\
+  | `training` | `roi_size` | `[128, 128, 128]` | Training patch size |\n| `inference` | `sw_batch_size`\
+  \ | `4` | Sliding-window batch size |\n| `inference` | `overlap` | `0.5` | Sliding-window overlap |\n\
+  \n## \U0001F4C2 Project structure\n\n```\nGlioVision/\n├── specs/                        # \U0001F4DC\
+  \ Single source of truth (SDD)\n│   ├── sdd.md                    #   Software Design Document\n│  \
+  \ └── decisions/\n│       └── ADR-001-architecture.md\n├── configs/\n│   └── config.yaml           \
+  \    # ⚙️ Hyper-parameters and paths\n├── src/\n│   ├── data/\n│   │   ├── download_brats.py     # \U0001F4E5\
+  \ Dataset acquisition\n│   │   ├── preprocess.py         # \U0001F527 NIfTI loading, normalization\n\
+  │   │   └── dataset.py            # \U0001F4CA PyTorch Dataset / DataLoader\n│   ├── models/\n│   │\
+  \   └── model.py              # \U0001F9E0 3D U-Net & SegResNet\n│   ├── training/\n│   │   └── train.py\
+  \              # \U0001F3CB️ Training loop + TensorBoard\n│   ├── evaluation/\n│   │   └── evaluate.py\
+  \           # \U0001F4C8 Dice, Hausdorff, sens./spec.\n│   └── visualization/\n│       └── postprocess.py\
+  \        # \U0001F3A8 Overlay generation (FP/FN maps)\n├── app.py                        # \U0001F310\
+  \ Streamlit web interface\n├── requirements.txt              # \U0001F4E6 Dependencies\n├── pyproject.toml\
+  \                # \U0001F4E6 Project config\n├── Dockerfile                    # \U0001F433 Container\
+  \ image\n├── docker-compose.yml            # \U0001F433 Full stack\n├── .gitignore\n└── README.md\n\
+  ```\n\n## \U0001F9EA Testing\n\n```bash\n# All tests\npytest -v\n\n# With coverage (recommended before\
+  \ PR)\npytest -v --cov=src\n```\n\nEnsure Dice metrics do not regress on the validation split before\
+  \ submitting changes.\n\n## \U0001F4DD License\n\nAll the code is licensed under GPL v3. Feel free to\
+  \ modify and improve it!\n\n## \U0001F64C Contributing\n\n1. Fork the repository.\n2. Create a feature\
+  \ branch: `feat/<ticket>-description`.\n3. Write or update the relevant spec in `specs/` before touching\
+  \ code.\n4. Ensure `pytest` passes and validation metrics do not regress.\n5. Submit a PR with a description\
+  \ referencing the spec change.\n\nSee [CLAUDE.md](CLAUDE.md) for the full Spec Driven Development workflow.\n\
+  \n\U0001F4A1 Ideas, suggestions, or bugs?\nOpen an issue or submit a pull request!\n\n## \U0001F4EC\
+  \ Contact\n\n\U0001F4E7 contact@gaetandev.fr  \n\U0001F30D [Website](https://gaetandev.fr)  \n\U0001F4AC\
+  \ Discord: GaetanDev  \n\n## \U0001F389 Thank you for using GlioVision!\n\nIf you have any questions\
+  \ or suggestions, let me know! \U0001F680\U0001F603\n"

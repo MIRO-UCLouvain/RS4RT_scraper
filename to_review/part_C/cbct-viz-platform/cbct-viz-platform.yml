@@ -1,0 +1,143 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: aramelheni/CBCT-Viz-Platform
+url: https://github.com/aramelheni/CBCT-Viz-Platform
+platform: github
+description: Integration of Automated CBCT Segmentation for Dental Education.
+license: MIT
+language: TypeScript
+keywords:
+- 3d-models
+- cbct-images
+stars: 0
+updated_at: '2026-03-11T16:22:09Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# CBCT Segmentation and Visualization Platform\n\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)\n\
+  [![Code of Conduct](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)\n\
+  \nIntegration of Automated CBCT Segmentation for Dental Education\n\n## Project Overview\n\nThis platform\
+  \ enables:\n\n- Upload and visualize **DENTAL CBCT scans** in 3D (non-dental scans are automatically\
+  \ rejected)\n- Interactive 3D navigation (rotate, pan, zoom)\n- Automated segmentation of dental structures\
+  \ (enamel, dentin, pulp, bone)\n- Individual visualization of segmented parts\n- AI-based prediction\
+  \ of internal structures from STL files\n\n> **⚠️ Important**: This system **ONLY** processes dental/maxillofacial\
+  \ CBCT scans. Scans of other anatomical regions (spine, chest, abdomen, head, extremities) will be automatically\
+  \ rejected during upload.\n\n## Architecture\n\n- **Frontend**: React + TypeScript + Three.js (react-three-fiber)\n\
+  - **Backend**: Python FastAPI + PyTorch + SimpleITK\n- **Segmentation Models**: nnU-Net, DHU-Net\n\n\
+  ## Project Structure\n\n```text\n├── backend/                 # Python FastAPI server\n│   ├── app/\n\
+  │   │   ├── api/            # API endpoints\n│   │   ├── models/         # AI segmentation models\n\
+  │   │   ├── services/       # Business logic\n│   │   └── utils/          # Utilities\n│   ├── requirements.txt\n\
+  │   └── main.py\n├── frontend/               # React application\n│   ├── src/\n│   │   ├── components/\
+  \     # React components\n│   │   ├── services/       # API services\n│   │   ├── utils/          #\
+  \ Utilities\n│   │   └── App.tsx\n│   ├── package.json\n│   └── tsconfig.json\n└── README.md\n```\n\n\
+  ## Setup Instructions\n\n### Backend Setup\n\n```bash\ncd backend\npython -m venv venv\nsource venv/bin/activate\
+  \  # On Windows: venv\\Scripts\\activate\npip install -r requirements.txt\npython main.py\n```\n\n###\
+  \ Frontend Setup\n\n```bash\ncd frontend\nnpm install\nnpm start\n```\n\n## Docker Deployment\n\n###\
+  \ Prerequisites\n\n- Docker 20.10 or higher\n- Docker Compose 2.0 or higher\n\n### Quick Start with\
+  \ Docker Compose\n\nThe easiest way to run the entire platform:\n\n```bash\n# Build and start both services\n\
+  docker-compose up --build\n\n# Or run in detached mode\ndocker-compose up -d\n\n# View logs\ndocker-compose\
+  \ logs -f\n\n# Stop services\ndocker-compose down\n```\n\n**Access the application:**\n\n- Frontend:\
+  \ <http://localhost:3000>\n- Backend API: <http://localhost:8000>\n- API Documentation: <http://localhost:8000/docs>\n\
+  \n### Building Individual Containers\n\n#### Backend Container\n\n```bash\ncd backend\ndocker build\
+  \ -t cbct-backend .\ndocker run -p 8000:8000 -v $(pwd)/uploads:/app/uploads cbct-backend\n```\n\n####\
+  \ Frontend Container\n\n```bash\ncd frontend\ndocker build -t cbct-frontend .\ndocker run -p 3000:3000\
+  \ cbct-frontend\n```\n\n### Environment Variables\n\nCreate a `.env` file in the root directory:\n\n\
+  ```env\n# Backend\nPYTHONUNBUFFERED=1\nMAX_FILE_SIZE_MB=500\nMODEL_PATH=/app/models\n\n# Frontend\n\
+  REACT_APP_API_URL=http://localhost:8000\n```\n\n### Data Persistence\n\nUpload data is persisted using\
+  \ Docker volumes:\n\n```bash\n# List volumes\ndocker volume ls\n\n# Inspect uploads volume\ndocker volume\
+  \ inspect untitled-folder_uploads\n\n# Backup uploads\ndocker run --rm -v untitled-folder_uploads:/data\
+  \ -v $(pwd):/backup ubuntu tar czf /backup/uploads-backup.tar.gz /data\n\n# Restore uploads\ndocker\
+  \ run --rm -v untitled-folder_uploads:/data -v $(pwd):/backup ubuntu tar xzf /backup/uploads-backup.tar.gz\
+  \ -C /\n```\n\n### Docker Commands Reference\n\n```bash\n# Rebuild after code changes\ndocker-compose\
+  \ up --build\n\n# View running containers\ndocker-compose ps\n\n# Access backend shell\ndocker-compose\
+  \ exec backend bash\n\n# Access frontend shell\ndocker-compose exec frontend sh\n\n# View backend logs\n\
+  docker-compose logs backend\n\n# View frontend logs\ndocker-compose logs frontend\n\n# Restart specific\
+  \ service\ndocker-compose restart backend\n\n# Remove all containers and volumes\ndocker-compose down\
+  \ -v\n```\n\n### Memory Optimization for Docker\n\nAdd resource limits to `docker-compose.yml`:\n\n\
+  ```yaml\nservices:\n  backend:\n    mem_limit: 4g\n    mem_reservation: 2g\n    cpus: 2.0\n```\n\n###\
+  \ Troubleshooting Docker Issues\n\n**Port already in use:**\n\n```bash\n# Find process using port 8000\n\
+  lsof -ti:8000 | xargs kill -9\n\n# Or change port in docker-compose.yml\nports:\n  - \"8001:8000\"\n\
+  ```\n\n**Permission denied on volumes:**\n\n```bash\n# Fix permissions\nsudo chown -R $USER:$USER backend/uploads\n\
+  ```\n\n**Container won't start:**\n\n```bash\n# Check logs\ndocker-compose logs backend\n\n# Rebuild\
+  \ from scratch\ndocker-compose down\ndocker-compose build --no-cache\ndocker-compose up\n```\n\n**Out\
+  \ of disk space:**\n\n```bash\n# Clean up Docker\ndocker system prune -a\ndocker volume prune\n```\n\
+  \n## Production Deployment\n\n### Using Docker in Production\n\nFor production deployment, create a\
+  \ `docker-compose.prod.yml`:\n\n```yaml\nversion: '3.8'\n\nservices:\n  backend:\n    build:\n     \
+  \ context: ./backend\n      dockerfile: Dockerfile\n    restart: always\n    ports:\n      - \"8000:8000\"\
+  \n    volumes:\n      - uploads:/app/uploads\n      - models:/app/models\n    environment:\n      -\
+  \ PYTHONUNBUFFERED=1\n      - MAX_FILE_SIZE_MB=500\n      - MODEL_PATH=/app/models\n    mem_limit: 4g\n\
+  \    cpus: 2.0\n\n  frontend:\n    build:\n      context: ./frontend\n      dockerfile: Dockerfile.prod\n\
+  \    restart: always\n    ports:\n      - \"80:80\"\n    environment:\n      - REACT_APP_API_URL=https://your-api-domain.com\n\
+  \    depends_on:\n      - backend\n\n  nginx:\n    image: nginx:alpine\n    restart: always\n    ports:\n\
+  \      - \"443:443\"\n    volumes:\n      - ./nginx.conf:/etc/nginx/nginx.conf\n      - ./ssl:/etc/nginx/ssl\n\
+  \    depends_on:\n      - frontend\n      - backend\n\nvolumes:\n  uploads:\n  models:\n```\n\n### Security\
+  \ Considerations\n\n1. **Enable HTTPS**: Use Let's Encrypt or SSL certificates\n2. **Set environment\
+  \ variables**: Never commit secrets to git\n3. **Configure CORS**: Restrict allowed origins in production\n\
+  4. **Add authentication**: Implement user authentication for uploads\n5. **Rate limiting**: Add rate\
+  \ limiting to prevent abuse\n6. **File validation**: Already implemented - max 500MB, DICOM/NIfTI only\n\
+  \n### Performance Optimization\n\n1. **Memory limits**: Set container memory limits (4GB backend recommended)\n\
+  2. **Auto-downsampling**: Already enabled for files > 256³ voxels\n3. **CDN**: Use CDN for frontend\
+  \ static assets\n4. **Database**: Replace in-memory storage with PostgreSQL/MongoDB\n5. **Caching**:\
+  \ Implement Redis for session/result caching\n\n### Monitoring\n\n```bash\n# Container health\ndocker-compose\
+  \ ps\n\n# Resource usage\ndocker stats\n\n# Application logs\ndocker-compose logs -f --tail=100\n```\n\
+  \n### Backup Strategy\n\n```bash\n# Automated backup script\n#!/bin/bash\nDATE=$(date +%Y%m%d_%H%M%S)\n\
+  docker run --rm \\\n  -v untitled-folder_uploads:/data \\\n  -v $(pwd)/backups:/backup \\\n  ubuntu\
+  \ tar czf /backup/uploads_$DATE.tar.gz /data\n\n# Keep last 7 days\nfind ./backups -name \"uploads_*.tar.gz\"\
+  \ -mtime +7 -delete\n```\n\n## Features\n\n### Current Implementation\n\n- ✅ CBCT file upload (DICOM,\
+  \ NIfTI formats)\n- ✅ Dental scan validation (prevents processing non-dental scans)\n- ✅ 3D volume rendering\
+  \ with adjustable windowing\n- ✅ Interactive 3D controls (rotate, pan, zoom)\n- ✅ Automated segmentation\
+  \ with deep learning\n- ✅ Multi-class visualization (color-coded)\n- ✅ Individual segment isolation\
+  \ and viewing\n\n### Planned Features\n\n- \U0001F504 STL to CBCT prediction\n- \U0001F504 CBCT-IOS\
+  \ co-registration\n- \U0001F504 Haptic simulation integration\n- \U0001F504 Partial edentulous case\
+  \ handling\n\n## \U0001F512 Dental Scan Validation\n\nThe platform includes a comprehensive validation\
+  \ system that automatically verifies uploaded scans are dental/maxillofacial CBCT scans. This prevents\
+  \ processing of inappropriate scan types and ensures data quality.\n\n### What Gets Rejected:\n- ❌ Spine/vertebral\
+  \ scans\n- ❌ Chest/thoracic scans\n- ❌ Abdominal scans\n- ❌ Head/brain CT scans\n- ❌ Extremity scans\
+  \ (arms, legs, hands, feet)\n- ❌ Any other non-dental anatomy\n\n### Validation Checks:\n1. **Field\
+  \ of View (FOV)**: Dental CBCTs have 30-250mm FOV (cubic/spherical)\n2. **Voxel Spacing**: Isotropic\
+  \ voxels (0.075-0.6mm resolution)\n3. **Intensity Distribution**: Presence of enamel-density structures\
+  \ (2000-3500 HU)\n4. **Dental Structures**: Detection of discrete tooth-like objects (3-50 teeth expected)\n\
+  5. **Anatomical Features**: Air cavities (oral cavity, sinuses) and appropriate aspect ratios\n\nThe\
+  \ system requires **≥75% confidence** across all validation checks to accept a scan.\n\n## Technology\
+  \ Stack\n\n- **Frontend**: React 18, Three.js, react-three-fiber, TypeScript, Tailwind CSS\n- **Backend**:\
+  \ FastAPI, PyTorch, SimpleITK, NumPy, OpenCV\n- **AI Models**: nnU-Net for segmentation\n- **File Formats**:\
+  \ DICOM, NIfTI (.nii, .nii.gz), STL\n- **Deployment**: Docker, Docker Compose\n- **DevOps**: Automated\
+  \ memory optimization, file size validation\n\n## Usage\n\n### Option 1: Using Docker (Recommended)\n\
+  \n```bash\ndocker-compose up\n```\n\nThen open <http://localhost:3000>\n\n### Option 2: Manual Setup\n\
+  \n1. Start the backend server (default: <http://localhost:8000>)\n2. Start the frontend development\
+  \ server (default: <http://localhost:3000>)\n\n### Using the Platform\n\n1. Upload a CBCT scan (DICOM\
+  \ series or NIfTI file)\n   - Maximum file size: 500MB\n   - Large files will be auto-downsampled to\
+  \ prevent crashes\n2. Interact with the 3D visualization (rotate, pan, zoom)\n3. Click \"Segment\" to\
+  \ perform automated segmentation\n4. Toggle individual segments to view specific structures\n\n## API\
+  \ Endpoints\n\n- `POST /api/upload` - Upload CBCT scan\n- `POST /api/segment` - Perform segmentation\n\
+  - `GET /api/volume/{id}` - Get volume data\n- `GET /api/segments/{id}` - Get segmentation results\n\n\
+  ## Contributing\n\nSee [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on how to contribute\
+  \ to this project.\n\nPlease review our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing. We\
+  \ are committed to providing a welcoming and inclusive environment for all contributors.\n\nCo-advised\
+  \ by Prof. Ana Messias, Dentistry School, University of Coimbra\n\n## CI/CD Pipeline\n\nThis project\
+  \ uses GitHub Actions for continuous integration and deployment.\n\n### Automated Workflows\n\n####\
+  \ \U0001F504 Continuous Integration (CI)\n\nRuns on every push and pull request:\n\n- **Backend Tests**:\
+  \ Python linting, type checking, unit tests\n- **Frontend Tests**: TypeScript checking, ESLint, React\
+  \ tests\n- **Docker Builds**: Validates both development and production Dockerfiles\n- **Security Scans**:\
+  \ Trivy vulnerability scanning, secret detection\n\n#### \U0001F680 Docker Publishing\n\nAutomatically\
+  \ builds and publishes Docker images:\n\n- Triggers on pushes to `main` branch and version tags\n- Publishes\
+  \ to GitHub Container Registry (ghcr.io)\n- Multi-architecture support (amd64, arm64)\n- Automated tagging:\
+  \ `latest`, `v1.0.0`, `main-<sha>`\n\n#### \U0001F512 Code Quality\n\nWeekly automated checks:\n\n-\
+  \ **Python**: flake8, black, isort, pylint, mypy\n- **TypeScript**: ESLint, Prettier, TypeScript compiler\n\
+  - **Security**: Trivy, Safety (Python), npm audit\n- **CodeQL**: Advanced security analysis\n\n####\
+  \ \U0001F4E6 Dependency Management\n\n- **Dependabot**: Automated weekly dependency updates\n- Separate\
+  \ PRs for backend (pip), frontend (npm), Docker, and GitHub Actions\n- Automatic security patches\n\n\
+  ### Workflow Status\n\n![CI Status](https://github.com/aramelheni/CBCT-Viz-Platform/workflows/CI%20-%20Build%20and%20Test/badge.svg)\n\
+  ![Docker](https://github.com/aramelheni/CBCT-Viz-Platform/workflows/Docker%20Build%20and%20Publish/badge.svg)\n\
+  ![Code Quality](https://github.com/aramelheni/CBCT-Viz-Platform/workflows/Code%20Quality/badge.svg)\n\
+  \n### Manual Deployment\n\nProduction deployment requires manual approval:\n\n```bash\n# Trigger via\
+  \ GitHub Actions UI\n# Go to Actions → Deploy to Production → Run workflow\n```\n\n### Setting Up CI/CD\n\
+  \n1. **Fork the repository**\n2. **Enable GitHub Actions** in your repository settings\n3. **Configure\
+  \ secrets** (if using external deployments):\n   - `DEPLOY_HOST`: Your server hostname\n   - `DEPLOY_USER`:\
+  \ SSH username\n   - `DEPLOY_SSH_KEY`: SSH private key\n   - `DOCKERHUB_USERNAME`: Docker Hub username\
+  \ (optional)\n   - `DOCKERHUB_TOKEN`: Docker Hub access token (optional)\n\n4. **Update configu"

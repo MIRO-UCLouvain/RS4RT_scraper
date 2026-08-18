@@ -1,0 +1,94 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: muhammad112229/brain-tumor-segmentation-3d-transunet-flask
+url: https://github.com/muhammad112229/brain-tumor-segmentation-3d-transunet-flask
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-03T17:50:22Z'
+image_source: https://raw.githubusercontent.com/muhammad112229/brain-tumor-segmentation-3d-transunet-flask/HEAD/static/images/report/model_comparison/final_model_performance_comparison.png
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Brain Tumor Segmentation Using 3D TransUNet with Flask-Based Visualization\n\n## Project\
+  \ Overview\n\nThis repository contains a completed research and educational Flask application for multiclass\
+  \ brain tumor segmentation on BraTS-style MRI volumes. The application loads portable inference packages\
+  \ for a trained 3D TransUNet model and a 3D U-Net Baseline, validates uploads, runs inference, computes\
+  \ optional ground-truth metrics, and renders downloadable visualizations.\n\nThe project is inference-only.\
+  \ It does not retrain models and does not include the raw BraTS dataset or processed full dataset.\n\
+  \n## Key Features\n\n- Flask web interface for uploading MRI cases and reviewing segmentation results.\n\
+  - Default 3D TransUNet inference with optional 3D U-Net Baseline comparison.\n- Secure upload handling,\
+  \ case-isolated output directories, and traversal-safe downloads.\n- Support for processed NPZ input\
+  \ or four aligned NIfTI modality files.\n- Optional ground-truth metric calculation when a mask is supplied.\n\
+  - Axial, coronal, sagittal, modality, mask, overlay, and comparison visualizations.\n- JSON API endpoints\
+  \ for health checks, model metadata, prediction, and result lookup.\n- Windows batch scripts for setup,\
+  \ testing, demo checks, and app startup.\n\n## BraTS 2023 Modalities\n\nThe application expects four\
+  \ BraTS 2023 MRI modalities in this order:\n\n| Modality | Meaning |\n|---|---|\n| T1N / T1 | Native\
+  \ T1-weighted MRI for anatomical structure |\n| T1C / T1ce | Contrast-enhanced T1-weighted MRI for enhancing\
+  \ tissue |\n| T2W / T2 | T2-weighted MRI for fluid-sensitive tissue contrast |\n| T2F / FLAIR | Fluid-attenuated\
+  \ MRI for edema-related signal |\n\nInternal segmentation labels are `0` for background and `1`, `2`,\
+  \ `3` for tumor classes. These internal labels are not presented as direct replacements for official\
+  \ BraTS region groupings.\n\n## Model Architecture\n\n### 3D TransUNet\n\nThe default model is 3D TransUNet.\
+  \ It uses a 3D CNN encoder for local volumetric feature extraction, a transformer bottleneck for long-range\
+  \ token interaction across the cropped 3D volume, and a skip-connected CNN decoder for dense voxel prediction.\n\
+  \nVerified architecture settings:\n\n- Input shape: `[4, 32, 128, 128]`\n- Output classes: `4`\n- Base\
+  \ channels: `12`\n- Transformer embedding dimension: `96`\n- Transformer heads: `4`\n- Transformer layers:\
+  \ `2`\n\n### 3D U-Net Baseline\n\nThe comparison model is a 3D U-Net Baseline using a fully convolutional\
+  \ encoder-decoder with GroupNorm, GELU activations, skip connections, and transposed-convolution upsampling.\
+  \ It is included to compare the 3D TransUNet result against a conventional volumetric CNN baseline.\n\
+  \n## Verified Model Metrics\n\nThese are verified saved test-set metrics from the provided portable\
+  \ model packages.\n\n| Model | Test Dice | Test IoU | Voxel accuracy |\n|---|---:|---:|---:|\n| 3D TransUNet\
+  \ | 0.8383 | 0.7237 | 0.9698 |\n| 3D U-Net Baseline | 0.8436 | 0.7314 | 0.9709 |\n\nRepresentative Flask\
+  \ case result, measured on one uploaded processed case only:\n\n| Case type | Mean foreground Dice |\
+  \ Mean foreground IoU | Voxel accuracy |\n|---|---:|---:|---:|\n| Single representative Flask case |\
+  \ 0.8049 | 0.7103 | 0.9788 |\n\nThe representative Flask result is a single-case application check,\
+  \ not full test-set performance.\n\n## Flask Application Features\n\n- Upload page for processed NPZ\
+  \ cases or four raw aligned NIfTI volumes.\n- Optional ground-truth upload for Dice and IoU calculation.\n\
+  - Default inference with 3D TransUNet.\n- Optional model selection for 3D U-Net Baseline comparison.\n\
+  - Optional post-processing controls for connected components and hole filling.\n- Downloadable `prediction.npy`,\
+  \ `probabilities.npy`, `logits.npy`, metrics, and generated visualization files.\n- API routes:\n  -\
+  \ `GET /health`\n  - `GET /api/model-info`\n  - `POST /api/predict`\n  - `GET /api/results/<case_id>`\n\
+  \n## Project Structure\n\n```text\napp.py                         Flask app factory, routes, upload\
+  \ flow, and API\nconfig.py                      Application paths and runtime limits\nrun.py       \
+  \                  Local Flask entry point\nsrc/                           Models, preprocessing, inference,\
+  \ metrics, visualization\ntemplates/                     Flask HTML templates\nstatic/             \
+  \           CSS, JavaScript, and report images\ntests/                         Pytest coverage for paths,\
+  \ security, models, metrics, and routes\ndocs/                          Technical notes, model cards,\
+  \ user guide, validation report\nmodels/3d_transunet/           Portable 3D TransUNet inference package\n\
+  models/3d_unet/                Portable 3D U-Net Baseline inference package\nartifacts/            \
+  \         Verified summaries and saved result tables\nuploads/                       Runtime upload\
+  \ directory; contents ignored except `.gitkeep`\noutputs/                       Runtime output directory;\
+  \ contents ignored except `.gitkeep`\n*.bat                          Windows setup, test, demo, and\
+  \ Flask startup scripts\nrequirements.txt               Python dependencies\n```\n\nRequired portable\
+  \ inference packages:\n\n- `models/3d_transunet/best_3d_transunet_inference_package.pth`\n- `models/3d_unet/best_3d_unet_inference_package.pth`\n\
+  \n## Windows Setup\n\nFrom the project root:\n\n```bat\nsetup_windows.bat\n```\n\nThe script creates\
+  \ or reuses `.venv`, installs dependencies from `requirements.txt`, and prepares the local Python environment.\n\
+  \n## Start the Flask App\n\n```bat\nrun_flask_windows.bat\n```\n\nThen open:\n\n```text\nhttp://127.0.0.1:5000\n\
+  ```\n\nYou can also run:\n\n```bat\n.venv\\Scripts\\python run.py\n```\n\n## Testing\n\nRun the full\
+  \ test suite:\n\n```bat\npytest -q\n```\n\nor:\n\n```bat\nrun_tests_windows.bat\n```\n\nThe completed\
+  \ project is expected to pass 17 tests.\n\n## Supported Upload Formats\n\n### Processed NPZ\n\nA compatible\
+  \ `.npz` file should contain:\n\n- `image` with shape `[4, 32, 128, 128]`\n- optional `mask` with shape\
+  \ `[32, 128, 128]`\n- preprocessing metadata such as original shape, crop start, and modality order\n\
+  \n### Raw NIfTI\n\nUpload all four aligned 3D NIfTI files:\n\n- T1N / T1\n- T1C / T1ce\n- T2W / T2\n\
+  - T2F / FLAIR\n\nOptional ground-truth masks may be uploaded as `.nii` or `.nii.gz` files with labels\
+  \ `0`, `1`, `2`, and `3`.\n\n## Screenshots and Result Images\n\nThe repository includes saved report\
+  \ images under `static/images/report/`.\n\n![Model performance comparison](static/images/report/model_comparison/final_model_performance_comparison.png)\n\
+  \n![Class-wise Dice comparison](static/images/report/model_comparison/classwise_dice_model_comparison.png)\n\
+  \n![3D TransUNet prediction examples](static/images/report/transunet3d/transunet3d_test_prediction_examples.png)\n\
+  \n![3D TransUNet training validation Dice](static/images/report/transunet3d/transunet3d_training_validation_dice.png)\n\
+  \n## Limitations\n\n- This project is not a clinical diagnostic system.\n- Raw NIfTI uploads without\
+  \ a segmentation mask use a deterministic brain-centered fallback crop because the original tumor-centered\
+  \ crop cannot be known without ground truth.\n- The application does not perform full-volume sliding-window\
+  \ inference.\n- Metrics shown in the README are verified saved results and should not be mixed with\
+  \ single-case Flask upload metrics.\n- Performance depends on matching the expected modality order,\
+  \ shape, and preprocessing.\n- The raw BraTS dataset, processed full dataset, checkpoints, optimizer\
+  \ states, runtime uploads, and generated outputs are intentionally not committed.\n\n## Research-Only\
+  \ Disclaimer\n\nThis software is for research and educational use only. It is not a medical device and\
+  \ must not be used for diagnosis, treatment planning, or clinical decision-making.\n"

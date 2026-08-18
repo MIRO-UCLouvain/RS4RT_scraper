@@ -1,0 +1,71 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: zman007-save/resonance-mcmc
+url: https://github.com/zman007-save/resonance-mcmc
+platform: github
+description: 'Resonance MCMC: Detect spatial frequencies of probability landscapes and propose at harmonics
+  for faster mode discovery. Includes radiation therapy beam optimization application.'
+license: MIT
+language: Python
+keywords:
+- mcmc
+- medical-physics
+- monte-carlo
+- optimization
+- python
+- radiation-therapy
+- sampling
+stars: 1
+updated_at: '2026-04-13T03:03:07Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Resonance MCMC\n\nA Markov chain Monte Carlo sampler that detects the characteristic\
+  \ spatial frequencies of a probability distribution and proposes at harmonics of those frequencies.\n\
+  \n**Status:** Experimental — seeking collaborators and feedback\n\n## The idea\n\nStandard MCMC methods\
+  \ explore probability landscapes by random walking (Metropolis-Hastings), following gradients (HMC),\
+  \ or adjusting a single step size (adaptive MCMC). None of them ask: *what is the wavelength of this\
+  \ distribution?*\n\nResonance MCMC does. It tracks the distances of accepted jumps, detects the characteristic\
+  \ spacing between modes, and proposes at integer multiples (harmonics) of that spacing. This lets it\
+  \ jump directly between modes instead of random-walking across the gaps.\n\n## Performance\n\nOn multimodal\
+  \ distributions with well-separated modes:\n\n| Method | Samples to find all modes | Speedup |\n|--------|--------------------------|---------|\n\
+  | Standard random walk | ~13,000 | 1x |\n| Resonance MCMC | ~280 | **47x** |\n| Hybrid (local + resonance)\
+  \ | ~400 | 33x |\n\nOn mixed-scale problems (nearby + distant modes):\n\n| Method | Samples | Speedup\
+  \ |\n|--------|---------|---------|\n| Standard | ~19,000 | 1x |\n| Resonance | ~320 | **60x** |\n\n\
+  ## Usage\n\n```python\nimport numpy as np\nfrom resonance_mcmc import ResonanceSampler, HybridResonanceSampler\n\
+  \n# Define your target (log probability)\ndef log_target(x):\n    centers = [np.array([3,3]), np.array([3,-3]),\
+  \ np.array([-3,3]), np.array([-3,-3])]\n    p = sum(np.exp(-np.sum((x-c)**2) / 0.5) for c in centers)\n\
+  \    return np.log(max(p, 1e-300))\n\n# Pure resonance sampler\nsampler = ResonanceSampler(log_target,\
+  \ ndim=2, n_harmonics=5)\nresult = sampler.sample(10000)\n\nprint(f\"Accept rate: {result.accept_rate:.3f}\"\
+  )\nprint(f\"Modes found: {result.modes_visited}\")\n\n# Hybrid sampler (recommended for unknown distributions)\n\
+  hybrid = HybridResonanceSampler(log_target, ndim=2, jump_fraction=0.3)\nresult = hybrid.sample(10000)\n\
+  ```\n\n## When to use\n\n**Use resonance MCMC when:**\n- Your distribution has well-separated modes\n\
+  - Standard MCMC gets stuck in one mode\n- Mode spacing is roughly regular or has detectable scales\n\
+  \n**Use hybrid when:**\n- You don't know the mode structure\n- Modes are at mixed scales (some close,\
+  \ some far)\n\n**Stick with standard MCMC when:**\n- Modes are close together (random walk reaches them\
+  \ fine)\n- The distribution is unimodal\n\n## How it works\n\n1. Start sampling with a default wavelength\n\
+  2. Track the distances of all accepted jumps\n3. Detect the median jump distance as the characteristic\
+  \ wavelength\n4. Propose new positions at `harmonic × wavelength` for random harmonics 1 through `n_harmonics`\n\
+  5. Accept/reject via standard Metropolis criterion\n6. Update the wavelength estimate as more jumps\
+  \ accumulate\n\nThe hybrid version alternates between local random-walk proposals (for within-mode exploration)\
+  \ and resonance jumps (for between-mode exploration).\n\n## Installation\n\n```bash\npip install -e\
+  \ .\n```\n\n## Tests\n\n```bash\ncd tests && python test_sampler.py\n```\n\n## Applications\n\n### Radiation\
+  \ Therapy Beam Optimization\n\nThe resonance sampler applied to optimizing beam angles in external beam\
+  \ radiation therapy. On a simplified patient model, the resonance optimizer reduces spinal cord dose\
+  \ by up to **23%** compared to simulated annealing.\n\nSee `examples/radiation_therapy/` for full details\
+  \ and code.\n\n| Beams | SA Cord Dose | Resonance Cord Dose | Reduction |\n|-------|-------------|-------------------|-----------|\n\
+  | 5     | 0.306       | 0.266             | **13%**   |\n| 7     | 0.500       | 0.387             |\
+  \ **23%**   |\n\n### Drug Discovery / Molecular Sampling\n\nMultimodal sampling of molecular configurations\
+  \ is a bottleneck in computational drug design. The resonance sampler's 47x speedup on mode discovery\
+  \ directly applies to exploring conformational landscapes.\n\n### General Multimodal Optimization\n\n\
+  Any problem with multiple well-separated optima — protein folding, materials design, hyperparameter\
+  \ tuning — benefits from resonance-based proposals.\n\n## Origin\n\nThis algorithm was inspired by the\
+  \ observation that probability distributions with well-separated modes have characteristic spatial frequencies\
+  \ — the distances between modes form a detectable pattern. Proposing at harmonics of those frequencies\
+  \ is a natural and efficient sampling strategy.\n\n## Author\n\nZachary Lafer — zach.lafer@gmail.com\n\
+  \n## License\n\nMIT License. See LICENSE file.\n"

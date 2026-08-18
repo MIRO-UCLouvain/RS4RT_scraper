@@ -1,0 +1,83 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: vboussot/Synthrad2025_Task_2
+url: https://github.com/vboussot/Synthrad2025_Task_2
+platform: github
+description: SynthRAD2025 Challenge – Task 2 solution for synthetic CT generation from CBCT images.
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 3
+updated_at: '2026-07-05T15:39:59Z'
+image_source: https://raw.githubusercontent.com/vboussot/Synthrad2025_Task_2/HEAD/MICCAI_POSTER.png
+heuristic_total_score: 20
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "[![Grand Challenge](https://img.shields.io/badge/Grand%20Challenge-SynthRad_2025-blue)](https://synthrad2025.grand-challenge.org/)\
+  \ [![Hugging Face](https://img.shields.io/badge/\U0001F917%20Hugging%20Face-Synthrad_2025-orange)](https://huggingface.co/VBoussot/Synthrad2025)\
+  \  [![Poster](https://img.shields.io/badge/\U0001F4CC%20Poster-MICCAI%202025-blue)](./MICCAI_POSTER.pdf)\
+  \ [![Paper](https://img.shields.io/badge/\U0001F4CC%20Paper-BreizhCT-blue)](https://arxiv.org/abs/2510.21358)\
+  \ [![Hugging Face](https://img.shields.io/badge/\U0001F917%20Hugging%20Face-IMPACT-orange)](https://huggingface.co/datasets/VBoussot/synthrad2025-impact-registration)\n\
+  # SynthRAD2025 – Task 2 (\U0001F949 3rd place)\n\nThis repository provides everything needed to build\
+  \ the Docker image and reproduce our solution ranked **3rd** in the **SynthRAD 2025 – Task 2** challenge\
+  \ on synthetic CT generation from CBCT.\n\nOur approach is based on a **2.5D U-Net++** with a ResNet-34\
+  \ encoder, trained in two phases:\n- Phase 1: joint pretraining on all anatomical regions (AB, TH, HN)\n\
+  - Phase 2: fine-tuning separately on **AB-TH** and **HN**\n\nThe method was implemented using [KonfAI](https://github.com/vboussot/KonfAI),\
+  \ our modular deep learning framework. Training combines pixel-wise L1 loss with **perceptual losses**\
+  \ derived from **SAM** features.\n\nFinal predictions use **test-time augmentation** and **5-fold ensembling**,\
+  \ with a total of **10 models**:  \n**5 trained for Abdomen/Thorax (AB-TH)** and **5 for Head & Neck\
+  \ (HN)**.  \nModels were selected based on validation MAE.\n\n\U0001F3C6 **3rd place overall** \n(Related\
+  \ leaderboard: [SynthRAD Task 2 leaderboard](https://synthrad2025.grand-challenge.org/evaluation/test-task-1-cbct/leaderboard/))\n\
+  \n\n| Rank | MAE ↓             | PSNR ↑            | MS-SSIM ↑        | DICE ↑           | HD95 ↓  \
+  \         | Dose MAE photon ↓ | Dose MAE proton ↓ | DVH error photon ↓ | DVH error proton ↓ | GPR 2mm/2%\
+  \ photon ↑ | GPR 2mm/2% proton ↑ |\n|------|-------------------|-------------------|------------------|------------------|------------------|-------------------|-------------------|---------------------|---------------------|----------------------|----------------------|\n\
+  | 3    | 53.092 ± 17.347 (3)| 32.490 ± 2.292 (2)| 0.966 ± 0.025 (2)| 0.843 ± 0.079 (3)| 5.082 ± 3.359\
+  \ (4)| 0.005 ± 0.004 (4) | 0.020 ± 0.014 (4) | 0.015 ± 0.019 (4)   | 0.036 ± 0.019 (2)   | 99.308 ±\
+  \ 1.102 (2)   | 86.407 ± 8.415 (4)   |\n\n---\n\n## \U0001F4D0 Registration (IMPACT vs Baseline)\n\n\
+  Accurate sCT synthesis depends on good **inter-modal alignment**. We provide **precomputed IMPACT registrations**\
+  \ (MR↔CT and CBCT↔CT) to ensure consistent training/evaluation.\n\n### IMPACT setup used in this work\n\
+  The following IMPACT configuration was used for **Task 2 (CBCT→CT synthesis)**:\n- **Feature extractor:**\
+  \ TS/M730  \n- **Layers:** 2-Layers (**Early layer**)  \n- **Mode:** **Jacobian** \n- **Multi-resolution:**\
+  \ 3-level pyramid  \n- **Final B-spline grid spacing:** **10 mm**\n\n### Why it matters\n\n- \U0001F9ED\
+  \ **Alignment quality drives supervised sCT performance**\n- \U0001F9E9 **IMPACT** → better anatomical\
+  \ alignment than **Elastix-MI**\n  - Local set (75 pts): **MAE 56.61 → 48.57 HU**, ↑ PSNR / ↑ SSIM \
+  \ \n  - Sharper, more realistic CTs\n- \U0001F4CA Public set (148 pts): **Elastix-MI lower MAE (52.87\
+  \ vs 56.05 HU)**  \n  → due to **pipeline bias** (leaderboard uses Elastix registrations)\n\n### Get\
+  \ the registrations\n- \U0001F449 **Hugging Face (prealigned pairs):** https://huggingface.co/datasets/VBoussot/synthrad2025-impact-registration\n\
+  \n---\n\n## \U0001F680 Inference instructions\n\nFor more implementation details and a minimal working\
+  \ example, see the KonfAI synthesis example:  \nhttps://github.com/vboussot/KonfAI/tree/main/examples/Synthesis\n\
+  \n### 1. Install KonfAI\n\n```bash\npip install konfai[itk]==1.5.9\n```\n\n---\n\n### 2. Download pretrained\
+  \ weights\n\nDownload the pretrained models from Hugging Face:\n\n\U0001F449 https://huggingface.co/VBoussot/Synthrad2025\n\
+  \nYou should obtain:\n\n```\nTask_2/\n├── AB-TH/\n│   ├── CV_0.pt\n│   ├── CV_1.pt\n│   ├── CV_2.pt\n\
+  │   ├── CV_3.pt\n│   ├── CV_4.pt\n│   └── Prediction.yml\n│\n└── HN/\n    ├── CV_0.pt\n    ├── CV_1.pt\n\
+  \    ├── CV_2.pt\n    ├── CV_3.pt\n    ├── CV_4.pt\n    └── Prediction.yml\n```\n\n---\n\n### 3. Dataset\
+  \ structure\n\nYour dataset should be structured as follows:\n\n```\n./Dataset/\n├── AB/\n│   ├── 2ABA002/\n\
+  │   │   ├── CBCT.mha\n│   │   └── MASK.mha\n│   ├── 2ABA003/\n│   │   ├── CBCT.mha\n│   │   └── MASK.mha\n\
+  │   └── ...\n├── TH/\n│   └── ...\n├── HN/\n│   ├── 2HNA001/\n│   │   ├── CBCT.mha\n│   │   └── MASK.mha\n\
+  │   └── ...\n```\n\n### 4. Run inference\n\nCopy `UNetpp.py` and `UnNormalize.py` next to your working\
+  \ directory — the prediction config\nreferences them through the `UNetpp:` and `UnNormalize:` classpaths:\n\
+  \n```bash\ncp KonfAI/UNetpp.py KonfAI/UnNormalize.py .\n```\n\nYour directory should then look like\
+  \ this:\n\n    .\n    ├── Dataset/\n    ├── Task_2/            # weights + Prediction.yml (from Hugging\
+  \ Face)\n    ├── UNetpp.py\n    └── UnNormalize.py\n\n**AB-TH example:**\n\n```bash\nkonfai PREDICTION\
+  \ -y --gpu 0 \\\n  --config Task_2/AB-TH/Prediction.yml \\\n  --models Task_2/AB-TH/CV_0.pt Task_2/AB-TH/CV_1.pt\
+  \ Task_2/AB-TH/CV_2.pt Task_2/AB-TH/CV_3.pt Task_2/AB-TH/CV_4.pt\n```\n\nFor **Head & Neck**, use the\
+  \ HN config and weights:\n\n```bash\nkonfai PREDICTION -y --gpu 0 \\\n  --config Task_2/HN/Prediction.yml\
+  \ \\\n  --models Task_2/HN/CV_0.pt Task_2/HN/CV_1.pt Task_2/HN/CV_2.pt Task_2/HN/CV_3.pt Task_2/HN/CV_4.pt\n\
+  ```\n\nPredictions are written to `./Predictions/Out/Dataset/<case>/sCT.mha`.\n\n> The Docker pipeline\
+  \ (`run.py`) performs exactly these steps automatically, routing each case to the\n> AB-TH or HN model\
+  \ family based on the anatomical region.\n\n---\n## \U0001F6E0️ How to Reproduce Training\n\n> Training\
+  \ additionally requires TensorBoard: `pip install konfai[itk,tensorboard]==1.5.9`.\n> The perceptual\
+  \ loss is `SAM_Perceptual` (SAM2.1 features); the `Statistics` transform on the CT\n> target group feeds\
+  \ it the required intensity statistics.\n\nTraining is performed in **two phases**:\n\n---\n\n### \U0001F539\
+  \ Phase 1 — Pretraining on all regions\n\nTrain a generic model on the full dataset (AB, TH, HN combined)\
+  \ (Fold 0 example):\n\n```bash\nkonfai TRAIN -y --gpu 0 --config KonfAI/Plan/Phase_1/Config0.yml\n```\n\
+  \n---\n\n### \U0001F539 Phase 2 — Region-specific fine-tuning\n\nFine-tune the Phase 1 model separately\
+  \ for each anatomical region.\n\n#### Abdomen/Thorax (AB-TH) — Fold 0 example:\n\n```bash\nkonfai RESUME\
+  \ -y --gpu 0 \\\n  --config KonfAI/Plan/Phase_2/AB-TH/Config0.yml \\\n  --model Phase1.pt\n```\n\n####\
+  \ Head & Neck (HN) — Fold 0 example:\n\n```bash\nkonfai RESUME -y --gpu 0 \\\n  --config KonfAI/Plan/Phase_2/HN/Config0.yml\
+  \ \\\n  --model Phase1.pt\n```\n\n> Replace `Phase1.pt` with the checkpoint from Phase 1 (best model\
+  \ from Fold 0).\n\n## \U0001F4CC Poster presented at MICCAI 2025, Daejeon\n\n[![Poster](./MICCAI_POSTER.png)](./MICCAI_POSTER.pdf)\n"

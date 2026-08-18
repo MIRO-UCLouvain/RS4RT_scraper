@@ -1,0 +1,104 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: wmshxf/4dct-strain-analysis
+url: https://github.com/wmshxf/4dct-strain-analysis
+platform: github
+description: 4D-CT strain analysis for lung motion quantification
+license: MIT
+language: Python
+keywords: []
+stars: 1
+updated_at: '2025-07-14T07:55:50Z'
+image_source: null
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 6 support term(s).
+readme_excerpt: "# 4D-CT Strain Analysis\n\n[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)\n\
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n\
+  [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)\n\
+  \nA comprehensive Python toolkit for analyzing respiratory motion and strain from 4D-CT imaging data.\
+  \ This application provides automated lung segmentation, displacement field calculation, and strain\
+  \ parameter analysis for medical imaging research.\n\n## Features\n\n- **Multi-phase 4D-CT Data Processing**:\
+  \ Automated loading and preprocessing of respiratory-gated CT datasets\n- **Advanced Lung Segmentation**:\
+  \ Threshold-based segmentation with morphological post-processing\n- **Motion Analysis**: Optical flow-based\
+  \ displacement field calculation using Farneback algorithm\n- **Strain Parameter Calculation**: Principal\
+  \ strain analysis with comprehensive statistical metrics\n- **Lesion Exclusion**: Automated exclusion\
+  \ of tumor regions with configurable safety margins\n- **Comprehensive Visualization**: Multi-view motion\
+  \ vector and strain field visualizations\n- **Detailed Reporting**: Automated generation of analysis\
+  \ reports in multiple formats (TXT, CSV, JSON)\n\n## Technical Specifications\n\n### Core Analysis Parameters\n\
+  \n- **PSmax (Maximum Principal Strain)**: Peak deformation capacity within functional lung tissue\n\
+  - **PSmean (Mean Principal Strain)**: Average strain level across analyzed lung regions\n- **Speedmax\
+  \ (Maximum Displacement Speed)**: Peak velocity of respiratory motion in mm/s\n\n### Processing Pipeline\n\
+  \n1. **Data Validation and Loading**: DICOM series validation and multi-phase data loading\n2. **Lung\
+  \ Segmentation**: Automated threshold-based segmentation (-400 HU) with region filtering\n3. **Lesion\
+  \ Exclusion**: Optional tumor region exclusion with 10mm safety margin\n4. **Displacement Calculation**:\
+  \ Farneback optical flow algorithm for inter-phase motion analysis\n5. **Strain Analysis**: Principal\
+  \ eigenvalue analysis of deformation tensor fields\n6. **Statistical Extraction**: Comprehensive parameter\
+  \ calculation from functional lung regions\n\n## Installation\n\n### Prerequisites\n\n- Python 3.8 or\
+  \ higher\n- 8GB+ RAM recommended for processing full-resolution 4D-CT datasets\n- CUDA-compatible GPU\
+  \ (optional, for accelerated processing)\n\n### Standard Installation\n\n```bash\ngit clone https://github.com/yourusername/4dct-strain-analysis.git\n\
+  cd 4dct-strain-analysis\npip install -r requirements.txt\n```\n\n### Development Installation\n\n```bash\n\
+  git clone https://github.com/yourusername/4dct-strain-analysis.git\ncd 4dct-strain-analysis\npip install\
+  \ -e .\npip install -r requirements-dev.txt\n```\n\n## Quick Start\n\n### Command Line Interface\n\n\
+  ```bash\n# Basic analysis\npython main.py --data-dir /path/to/4dct/data --patient-id PATIENT001\n\n\
+  # Analysis with lesion exclusion\npython main.py --data-dir /path/to/data --patient-id PATIENT001 \\\
+  \n               --lesion-center 50,100,120 --lesion-radius 15 \\\n               --output-dir /path/to/output\n\
+  ```\n\n### Programmatic Usage\n\n```python\nfrom main import FourDCTStrainAnalyzer\n\n# Initialize analyzer\n\
+  analyzer = FourDCTStrainAnalyzer(\n    data_directory=\"/path/to/4dct/data\",\n    patient_id=\"PATIENT001\"\
+  ,\n    output_directory=\"./output\"\n)\n\n# Execute complete analysis\nresults = analyzer.run_complete_analysis(\n\
+  \    lesion_center=(50, 100, 120),  # z, y, x coordinates\n    lesion_radius=15\n)\n\n# Access results\n\
+  print(f\"PSmax: {results['PSmax_all']:.6f}\")\nprint(f\"PSmean: {results['PSmean_all']:.6f}\")\nprint(f\"\
+  Speedmax: {results['Speedmax_all']:.4f} mm/s\")\n```\n\n## Data Structure Requirements\n\n### Input\
+  \ Directory Structure\n\n```\ndata_directory/\n├── phase_0/\n│   ├── IM_0001.dcm\n│   ├── IM_0002.dcm\n\
+  │   └── ...\n├── phase_1/\n│   ├── IM_0001.dcm\n│   └── ...\n└── phase_N/\n    └── ...\n```\n\n### DICOM\
+  \ Compatibility\n\n- Standard DICOM format compliance required\n- Multi-slice CT series with consistent\
+  \ spacing\n- Respiratory-gated acquisition (4D-CT) with 10+ phases recommended\n- Axial slice orientation\
+  \ preferred\n\n## Configuration Options\n\n### Analysis Parameters\n\n| Parameter | Default | Description\
+  \ |\n|-----------|---------|-------------|\n| `num_phases` | 11 | Number of respiratory phases |\n|\
+  \ `resample_factor` | 0.5 | Memory optimization resampling factor |\n| `lung_threshold` | -400 HU |\
+  \ Lung segmentation threshold |\n| `exclusion_margin` | 10 mm | Lesion exclusion safety margin |\n|\
+  \ `baseline_phase_idx` | 0 | Reference phase for strain calculation |\n\n### Advanced Configuration\n\
+  \n```python\n# Custom configuration example\nanalyzer = FourDCTStrainAnalyzer(\n    data_directory=\"\
+  /path/to/data\",\n    patient_id=\"PATIENT001\",\n    num_phases=11,\n    resample_factor=0.5,\n   \
+  \ lung_threshold=-400,\n    exclusion_margin=10,\n    baseline_phase_idx=0\n)\n```\n\n## Output Files\n\
+  \n### Generated Reports\n\n- **Text Report**: `{patient_id}_4dct_strain_analysis_report.txt`\n- **CSV\
+  \ Summary**: `{patient_id}_strain_summary.csv`\n- **JSON Results**: `{patient_id}_results.json`\n\n\
+  ### Visualization Outputs\n\n- **Motion Vectors**: `{patient_id}_motion_vectors.png`\n- **Strain Fields**:\
+  \ `{patient_id}_strain_field.png`\n\n## Clinical Applications\n\n### Research Applications\n\n- Pulmonary\
+  \ function assessment in respiratory disease\n- Treatment response monitoring in lung cancer patients\n\
+  - Regional lung compliance analysis\n- Radiation therapy planning optimization\n\n### Quality Assurance\
+  \ Considerations\n\n- Results should be interpreted alongside clinical presentation\n- Motion artifacts\
+  \ and patient compliance may affect measurement accuracy\n- Correlation with pulmonary function tests\
+  \ recommended when available\n- Temporal resolution limited by 4D-CT acquisition parameters\n\n## API\
+  \ Reference\n\n### Core Classes\n\n#### `FourDCTStrainAnalyzer`\nPrimary interface for complete analysis\
+  \ workflow\n\n#### `FourDCTDataLoader`\nHandles DICOM data loading and preprocessing\n\n#### `LungSegmentationProcessor`\n\
+  Automated lung region segmentation\n\n#### `OpticalFlowProcessor`\nDisplacement field calculation using\
+  \ optical flow\n\n#### `StrainAnalyzer`\nStrain parameter computation and analysis\n\n### Module Structure\n\
+  \n```\n4dct_strain_analysis/\n├── config.py           # Configuration parameters\n├── data_loader.py\
+  \      # Data loading functionality\n├── segmentation.py     # Image segmentation methods\n├── motion_analysis.py\
+  \  # Motion and strain analysis\n├── visualization.py    # Visualization utilities\n├── report_generator.py\
+  \ # Report generation tools\n└── main.py            # Main analysis pipeline\n```\n\n## Development\n\
+  \n### Running Tests\n\n```bash\npytest tests/\npytest tests/ --cov=src/ --cov-report=html\n```\n\n###\
+  \ Code Formatting\n\n```bash\nblack src/\nflake8 src/\n```\n\n### Contributing\n\n1. Fork the repository\n\
+  2. Create a feature branch (`git checkout -b feature/new-feature`)\n3. Commit changes (`git commit -am\
+  \ 'Add new feature'`)\n4. Push to branch (`git push origin feature/new-feature`)\n5. Create Pull Request\n\
+  \n## Performance Considerations\n\n### Memory Optimization\n\n- Default resampling factor (0.5) reduces\
+  \ memory usage by 87.5%\n- Processing time scales with dataset size and number of phases\n- Recommended\
+  \ minimum 8GB RAM for standard datasets\n\n### Computational Requirements\n\n- CPU-based processing\
+  \ with OpenCV acceleration\n- Typical processing time: 5-15 minutes per patient (11 phases)\n- GPU acceleration\
+  \ not currently implemented but planned for future releases\n\n## Limitations\n\n- Analysis excludes\
+  \ tumor region and surrounding tissue (10mm margin)\n- Temporal resolution limited by 4D-CT acquisition\
+  \ parameters\n- Results represent relative rather than absolute strain measurements\n- Requires consistent\
+  \ patient positioning across respiratory phases\n\n## Citation\n\nIf you use this software in your research,\
+  \ please cite:\n\n```bibtex\n@software{4dct_strain_analysis,\n  title={4D-CT Strain Analysis: A Python\
+  \ Toolkit for Respiratory Motion Assessment},\n  author={Your Name},\n  year={2024},\n  url={https://github.com/yourusername/4dct-strain-analysis}\n\
+  }\n```\n\n## License\n\nThis project is licensed under the MIT License - see the [LICENSE](LICENSE)\
+  \ file for details.\n\n## Support\n\n- **Issues**: [GitHub Issues](https://github.com/yourusername/4dct-strain-analysis/issues)\n\
+  - **Documentation**: [Project Wiki](https://github.com/yourusername/4dct-strain-analysis/wiki)\n- **Email**:\
+  \ your.email@institution.edu\n\n## Acknowledgments\n\n- Medical Imaging Research Center\n- Radiation\
+  \ Oncology Department\n- Open-source scientific Python community\n\n---\n\n**Note**: This software is\
+  \ intended for research purposes only and should not be used for clinical decision-making without appropriate\
+  \ validation and regulatory approval.\n"

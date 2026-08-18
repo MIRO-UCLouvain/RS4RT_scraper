@@ -1,0 +1,81 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Poojaagadhe/Capstone-Project
+url: https://github.com/Poojaagadhe/Capstone-Project
+platform: github
+description: MRI-to-Synthetic CT Brain Scan Translation Using Deep Learning
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 1
+updated_at: '2026-05-11T15:09:26Z'
+image_source: https://raw.githubusercontent.com/Poojaagadhe/Capstone-Project/HEAD/results/pix2pix_unet/test_sample_1.png
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 5 support term(s).
+readme_excerpt: "# MRI → CT Image Translation using Deep Learning\n\n![Python](https://img.shields.io/badge/Python-3.10-blue)\n\
+  ![PyTorch](https://img.shields.io/badge/PyTorch-DeepLearning-red)\n![Streamlit](https://img.shields.io/badge/Streamlit-App-orange)\n\
+  ![Medical Imaging](https://img.shields.io/badge/Medical-Imaging-green)\n\n---\n\n## Student Information\n\
+  \n**Student:** Pooja Vilas Gadhe  \n**Student Code:** IITMCS_24061184  \n**Institution:** IIT Mandi\
+  \ (Online Minor - Degree Program)  \n**Project:** MRI-to-CT Image Translation using Deep Learning\n\n\
+  ---\n\n# Project Overview\n\nRadiotherapy treatment planning typically requires **both MRI and CT scans**.\n\
+  \nCT scans provide **electron density information** needed for dose calculation, while MRI provides\
+  \ **better soft tissue contrast**.\n\nThis project investigates **MRI-only radiotherapy planning** by\
+  \ generating **synthetic CT (sCT)** images directly from MRI scans using deep learning.\n\n### Goals\n\
+  \n• Eliminate CT acquisition  \n• Reduce patient radiation exposure  \n• Avoid MRI–CT registration errors\
+  \  \n• Improve radiotherapy workflow efficiency  \n\n---\n\n# Interactive Demo\n\nThe project includes\
+  \ an **interactive Streamlit application**.\n\nUsers can:\n\n• Upload MRI slices (.png)  \n• Upload\
+  \ MRI volumes (.nii)  \n• Generate synthetic CT images  \n• Compare MRI vs CT using an interactive slider\
+  \  \n• Visualize model performance metrics  \n\n### Demo Interface\n\n    Upload MRI\n    ↓\n    Model\
+  \ Inference\n    ↓\n    Synthetic CT\n    ↓\n    Interactive Comparison\n\n\n---\n\n## Example Results\n\
+  \n| MRI | Ground Truth CT | Generated CT |\n|-----|-----------------|--------------|\n| ![](results/pix2pix_unet/test_sample_1.png)\
+  \ | ![](results/pix2pix_unet/test_sample_2.png) | ![](results/pix2pix_unet/test_sample_3.png) |\n---\n\
+  \n# Dataset\n\n**Dataset**\n\n181 paired brain MRI–CT scans.\n\n**Medical imaging format**\n     \n\
+  \     NIfTI (.nii)\n\n \n### Processed Dataset\n\n21,183 2D slices extracted from MRI–CT pairs.\n\n\
+  ### Data Split\n\n| Split | Percentage |\n|-------|------------|\n| Training | 70% |\n| Validation |\
+  \ 15% |\n| Test | 15% |\n\nSplitting was performed **patient-wise** to avoid data leakage.\n\n---\n\n\
+  # Preprocessing Pipeline\n\n    MRI Volume\n    ↓\n    Slice Extraction\n    ↓\n    Resize to 256×256\n\
+  \    ↓\n    Intensity Clipping\n    ↓\n    Normalization [-1,1]\n\n\n---\n\n# Model Architectures\n\n\
+  Three deep learning architectures were implemented.\n\n---\n\n## 1. U-Net with Local Decoder\n\nImproves\
+  \ **fine anatomical detail reconstruction**.\n\n### Architecture\n\n    Encoder → Bottleneck → Local\
+  \ Decoder → CT Output\n\n**Loss**\nL1 Loss\n+\nSSIM Loss\n\n\n**Parameters**\n  - 31M\n\n---\n\n## 2.\
+  \ Pix2Pix U-Net with PatchGAN\n\nGAN-based model for **high perceptual realism**.\n\n### Architecture\n\
+  \n    MRI → U-Net Generator → Synthetic CT\n    ↑\n    PatchGAN Discriminator\n\n**Loss**\nL1 Loss\n\
+  Feature Matching\nGradient Difference Loss\n\n\n**Parameters**\n - 31M\n\n---\n\n## 3. Turbo U-Net\n\
+  \nLightweight architecture optimized for **efficiency**.\n\n### Architecture\n\n    Residual Encoder\
+  \ → Efficient Decoder → CT\n\n**Loss**\nL1 + SSIM + MS-SSIM + Adversarial\n\n\n**Parameters**\n  - 8M\n\
+  \n---\n\n# Performance Evaluation\n\nModels were evaluated on **3,120 test slices**.\n\n### Evaluation\
+  \ Metrics\n\n• SSIM  \n• PSNR  \n• MAE (Hounsfield Units)\n\n| Model | SSIM | PSNR | MAE  |\n|-------|------|------|------|\n\
+  | U-Net + Local Decoder | 0.8725 | 25.17 | 69 HU |\n| Pix2Pix PatchGAN | **0.93–0.95** | **26.04** |\
+  \ **39.07 HU** |\n| Turbo U-Net | 0.8118 | 22.88 | 95.13 HU |\n\n---\n\n# Performance Insights\n\n**Best\
+  \ Detail Preservation**\n\nU-Net + Local Decoder achieved the highest structural similarity.\n\n**Most\
+  \ Reliable**\n\nPix2Pix PatchGAN achieved the **lowest MAE**.\n\n**Most Efficient**\n\nTurbo U-Net reduced\
+  \ parameters by **75%** while maintaining acceptable accuracy.\n\n---\n\n# Project Structure\n\n   \
+  \ Capstone-Project\n    │\n    ├── app\n    │ └── app.py # Streamlit application\n    │\n    ├── src\n\
+  \    │ ├── model.py # Model architectures\n    │ ├── inference.py # Model inference\n    │ └── preprocess.py\
+  \ # Data preprocessing\n    │\n    ├── models\n    │ └── best_model_G.pth # Trained model\n    │\n \
+  \   ├── results\n    │ ├── pix2pix_unet\n    │ │ ├── test_sample_1.png\n    │ │ ├── test_sample_2.png\n\
+  \    │ │ └── ...\n    │ │\n    │ ├── training_history.json\n    │ └── test_set_results.json\n    │\n\
+  \    ├── notebooks # Training notebooks\n    ├── requirements.txt\n    └── README.md\n\n\n---\n\n# Running\
+  \ the Application\n\n### Clone repository\n    git clone https://github.com/yourusername/capstone-project.git\n\
+  cd capstone-project\n\n### Install dependencies\n    pip install -r requirements.txt\n\n### Launch the\
+  \ demo\n    streamlit run app/app.py\n\n### deploy app link\n     https://capstone-project-nstcmnn9pf4qum29hf55ys.streamlit.app/\n\
+  \n\n---\n\n# Future Work\n\nTo translate these research results into clinical practice:\n\n### Clinical\
+  \ Validation\n\nEvaluate performance within real radiotherapy treatment workflows.\n\n### Dosimetric\
+  \ Validation\n\nVerify that synthetic CT images produce acceptable dose distributions.\n\n### Multi-Institution\
+  \ Training\n\nImprove generalization using larger datasets.\n\n### Multi-Region Extension\n\nExtend\
+  \ the method to:\n\n• pelvis  \n• abdomen  \n• thorax  \n\n---\n\n# Technologies Used\n\n| Tool | Purpose\
+  \ |\n|------|---------|\n| PyTorch | Deep learning framework |\n| Streamlit | Interactive web application\
+  \ |\n| Nibabel | Medical image processing |\n| NumPy | Numerical computation |\n| Matplotlib | Visualization\
+  \ |\n\n---\n\n# Acknowledgements\n\nThis project was developed as part of the **IIT Mandi Online Minor\
+  \ - Degree Capstone Project**.\n\nThe work demonstrates the potential of deep learning for improving\
+  \ **medical imaging workflows in radiotherapy planning**.\n\n## Pipeline\n\n<p align=\"center\">\n \
+  \ <img src=\"assets/pipeline.png\" width=\"800\">\n</p>\n\n<p align=\"center\">\n<b>Figure 1:</b> End-to-end\
+  \ pipeline for generating synthetic CT from MRI.\n</p>\n\n## Model Architecture\n\n<p align=\"center\"\
+  >\n  <img src=\"assets/model_architecture.png\" width=\"800\">\n</p>\n\n<p align=\"center\">\n<b>Figure\
+  \ 2:</b> Generator–discriminator architecture used for MRI-to-CT translation.\n</p>\n\n## Example Results\n\
+  \n<p align=\"center\">\n  <img src=\"assets/sample_results.png\" width=\"800\">\n</p>\n\n<p align=\"\
+  center\">\n<b>Figure 3:</b> Example MRI input, ground truth CT, and generated synthetic CT.\n</p>\n"

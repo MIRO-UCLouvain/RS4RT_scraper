@@ -1,0 +1,178 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: zainulaabdin01/BrainTumorSegmentation
+url: https://github.com/zainulaabdin01/BrainTumorSegmentation
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-28T16:03:36Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: '# BraTS 2020: Multi-Modal Brain Tumor Segmentation Using U-Net
+
+
+  A deep learning pipeline that segments brain tumors from multi-modal MRI scans, built on the [BraTS
+  2020](https://www.kaggle.com/datasets/awsaf49/brats2020-training-data) dataset.
+
+
+  ## Overview
+
+
+  Gliomas — the tumor type this project targets — aren''t a single uniform region. They''re made up of
+  three clinically distinct sub-regions, each of which matters for radiotherapy planning and surgical
+  decisions:
+
+
+  - **NCR/NET** — Necrotic and Non-Enhancing Tumor Core
+
+  - **ED** — Peritumoral Edema (swelling)
+
+  - **ET** — GD-Enhancing Tumor (the actively growing part)
+
+
+  This pipeline takes 4-modality MRI scans (FLAIR, T1, T1ce, T2) and outputs a pixel-wise segmentation
+  map classifying every pixel as background or one of the three tumor sub-regions above, using a 2D U-Net
+  trained end-to-end in TensorFlow/Keras.
+
+
+  ## Pipeline
+
+
+  The notebook is organized into seven phases:
+
+
+  1. **Data Acquisition** — Download the BraTS2020 dataset (HDF5 slice files + metadata CSVs) via `kagglehub`.
+
+  2. **Exploratory Data Analysis** — Inspect file structure, label distributions, class imbalance, and
+  per-patient tumor burden.
+
+  3. **Volumetric & 3D Visualization** — Reconstruct 2D slices into 3D volumes; render axial/coronal/sagittal
+  views and interactive 3D tumor meshes via marching cubes.
+
+  4. **Preprocessing** — Patient-level stratified train/val/test splits (no data leakage), brain-tissue-only
+  z-score normalization per modality, background-slice downsampling to address class imbalance, and a
+  `tf.data` input pipeline with resizing and one-hot mask encoding.
+
+  5. **Model Architecture** — A standard U-Net (encoder-decoder with skip connections), trained with a
+  combined categorical cross-entropy + Dice loss, and custom per-region Dice metrics tracked separately
+  for NCR, edema, and enhancing tumor.
+
+  6. **Training** — Mixed-precision training with checkpointing, crash-recovery (resumes from the latest
+  saved epoch), early stopping, and learning-rate reduction on plateau.
+
+  7. **Evaluation** — Held-out test-set scoring (patients never seen during training), confusion matrix,
+  tumor-volume regression plot, and best/median/worst case qualitative comparisons.
+
+
+  ## Key Design Choices
+
+
+  - **Patient-level splits**: Splitting happens on patient IDs, not individual slices, so no patient''s
+  scans appear in more than one split — preventing leakage.
+
+  - **Brain-masked normalization**: Z-score normalization is computed using only brain tissue (excluding
+  background zeros) to avoid skewing per-modality statistics.
+
+  - **Downsampling, not oversampling**: Background-only slices are downsampled to a fixed ratio relative
+  to tumor-positive slices, keeping some healthy tissue in training without letting it dominate the gradient.
+
+  - **Combined loss**: Cross-entropy for pixel-wise accuracy + Dice loss for volumetric shape overlap,
+  since Dice alone can be unstable early in training.
+
+  - **Global (not batch-averaged) Dice metrics**: Evaluation metrics accumulate intersection/union across
+  the entire test set rather than averaging per-batch scores, giving a more robust final number.
+
+
+  ## Results
+
+
+  Test-set Dice scores, evaluated on held-out patients never seen during training:
+
+
+  | Region | Test Dice |
+
+  |---|---|
+
+  | Whole Tumor (WT) | 0.833 |
+
+  | Enhancing Tumor (ET) | 0.751 |
+
+  | Edema (ED) | 0.722 |
+
+  | Tumor Core (TC) | 0.699 |
+
+  | Necrotic/Non-Enhancing Core (NCR/NET) | 0.545 |
+
+
+  The model recovers the overall tumor boundary reliably but is noticeably weaker on the necrotic core
+  specifically. This is an expected pattern in BraTS work, not a flaw unique to this pipeline: NCR is
+  the smallest and most sparsely distributed sub-region, present in only ~62% of tumor-positive slices
+  versus ~99% for edema, giving the model far fewer examples to learn from.
+
+
+  For context, top BraTS leaderboard solutions (3D, full-resolution, ensembled, heavily post-processed)
+  typically report WT Dice in the 0.90–0.92 range. A 0.833 WT score from a single lightweight 2D U-Net,
+  trained on a patient subset at reduced resolution, is a solid result for the constraints this pipeline
+  operated under — not a like-for-like comparison to those systems.
+
+
+  ## Limitations
+
+
+  - **2D, not 3D** — Each slice is segmented independently, with no information from adjacent slices above
+  or below. Real tumors are continuous 3D structures, and this architecture has no mechanism to enforce
+  or benefit from that continuity.
+
+  - **Partial training set** — Trained on a 50-patient subset of the ~295 available training-split patients,
+  for compute/time reasons. Performance numbers reflect that constraint, not the ceiling of this approach.
+
+  - **Reduced resolution** — Trained at 128×128 rather than the native 240×240, trading some fine boundary
+  detail for memory and training speed.
+
+  - **Single run, no ensembling or test-time augmentation** — No averaging across multiple trained models
+  or augmented inference passes, both of which reliably improve Dice scores in segmentation literature.
+
+  - **No post-processing** — Predictions are used as-is, with no connected-component filtering to remove
+  small, likely-spurious disconnected regions.
+
+
+  ## Future Work
+
+
+  - Train a full 3D U-Net (or a 2.5D approach using a small stack of neighboring slices as input channels)
+  to give the model access to inter-slice spatial context.
+
+  - Train on the full patient set at native 240×240 resolution.
+
+  - Add test-time augmentation and/or a small ensemble of independently trained models.
+
+  - Apply connected-component post-processing to remove small false-positive predictions, informed by
+  the confusion matrix and worst-case analysis.
+
+  - Specifically target NCR performance — e.g., a higher loss weight on that class, or oversampling slices
+  where it''s present.
+
+
+  ## Tech Stack
+
+
+  TensorFlow/Keras · h5py · scikit-learn · scikit-image (marching cubes) · Plotly · Matplotlib/Seaborn
+  · pandas/NumPy
+
+
+  ## Dataset
+
+
+  [BraTS 2020 Training Data](https://www.kaggle.com/datasets/awsaf49/brats2020-training-data) (Kaggle)
+  — 2D HDF5 slices derived from the BraTS 2020 Challenge, with 4-modality MRI images and expert-annotated
+  segmentation masks.
+
+  '

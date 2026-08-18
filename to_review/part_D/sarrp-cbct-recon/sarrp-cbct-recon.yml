@@ -1,0 +1,51 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: gcappellini/SARRP_CBCT_recon
+url: https://github.com/gcappellini/SARRP_CBCT_recon
+platform: github
+description: Repo to recunstruct 3D images from raw CBCT SARRP data
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-01-16T17:39:56Z'
+image_source: null
+heuristic_total_score: 18
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# SARRP CBCT Reconstruction\n\nGPU-accelerated cone-beam CT reconstruction for Small\
+  \ Animal Radiation Research Platform (SARRP).\n\n## Features\n\n- **Geometry handling**: Full SARRP\
+  \ geometry specification from config files\n- **CPU implementation**: Reference implementation with\
+  \ NumPy\n- **GPU acceleration**: CuPy-based GPU implementation for ~50-100x speedup\n- **Voxel-driven\
+  \ backprojection**: Efficient reconstruction algorithm\n- **Bilinear interpolation**: Sub-pixel accuracy\
+  \ for detector sampling\n\n## Requirements\n\n```bash\npip install numpy scipy pyyaml matplotlib SimpleITK\
+  \ cupy-cuda12x  # for CUDA 12.x\n# OR\npip install numpy scipy pyyaml matplotlib SimpleITK cupy-cuda11x\
+  \  # for CUDA 11.x\n```\n\n## Data Files\n\n**Note**: The projection data files (`projections.raw`,\
+  \ `projections.mhd`) are not included in this repository due to their large size (5.6 GB total, exceeds\
+  \ GitHub LFS 2GB limit). \n\nTo use this code:\n1. Obtain the SARRP projection data from your institution\
+  \ or collaborators\n2. Place `projections.mhd` and `projections.raw` in the repository root\n3. Ensure\
+  \ the `conf.yaml` matches your dataset geometry\n\n## Usage\n\n### Quick Test (Smoke Test)\n\nRun a\
+  \ quick validation test with synthetic data:\n\n```bash\npython test_backproject_smoke.py\n```\n\nThis\
+  \ creates a small test volume and verifies the geometry is correct.\n\n### Full Reconstruction\n\nRun\
+  \ GPU-accelerated reconstruction on the full dataset:\n\n```bash\npython main.py\n```\n\nOptions:\n\
+  - `--config CONFIG`: Path to configuration YAML (default: `conf.yaml`)\n- `--projections PROJ`: Path\
+  \ to projections MHD file (default: `projections.mhd`)\n- `--output-dir DIR`: Output directory (default:\
+  \ `output`)\n- `--no-gpu`: Force CPU mode (useful for debugging)\n\nExample:\n```bash\npython main.py\
+  \ --config conf.yaml --output-dir results/\n```\n\n## Project Structure\n\n```\n├── geometry.py    \
+  \          # Geometry dataclass and YAML loader\n├── projector.py             # CPU forward projector\n\
+  ├── backproject.py           # CPU backprojector\n├── gpu_ops.py               # GPU-accelerated implementations\n\
+  ├── main.py                  # Main reconstruction pipeline\n├── test_backproject_smoke.py # Validation\
+  \ test\n├── conf.yaml                # Geometry configuration\n└── calibration_received.cal # Original\
+  \ calibration file\n```\n\n## Geometry Configuration\n\nThe `conf.yaml` file contains all geometry parameters:\n\
+  \n- **Source geometry**: SOD (Source-to-Object Distance), SDD (Source-to-Detector Distance)\n- **Detector**:\
+  \ pixel counts, physical size, pixel spacing\n- **Rotation**: angles, COR (Center of Rotation) offset,\
+  \ axis direction\n- **Volume**: dimensions, voxel spacing\n\n## Output\n\nThe reconstruction produces:\n\
+  \n- `recon_volume.npy`: NumPy array of reconstructed volume\n- `recon_volume.mhd/raw`: SimpleITK format\
+  \ for visualization\n- `recon_axial.png`, `recon_coronal.png`, `recon_sagittal.png`: Central slice visualizations\n\
+  \n## Performance\n\nOn a modern GPU (e.g., RTX 4090), full reconstruction of 1440 projections (1024×1024)\
+  \ into a 271×438×438 volume takes approximately 5 mins.\n\n## Contact\n\nGuglielmo Cappellini\n\n"

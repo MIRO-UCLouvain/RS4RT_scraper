@@ -1,0 +1,135 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: anselmomancini/tcc-dvh-prediction
+url: https://github.com/anselmomancini/tcc-dvh-prediction
+platform: github
+description: Repositório do TCC em Data Science e Analytics sobre predição de curvas DVH em radioterapia
+  pulmonar com SBRT/VMAT, integrando extração de variáveis geométricas, análise fatorial, XGBoost e SHAP.
+license: null
+language: C#
+keywords: []
+stars: 1
+updated_at: '2026-04-24T14:08:47Z'
+image_source: https://raw.githubusercontent.com/anselmomancini/tcc-dvh-prediction/HEAD/results/figures/corr_dthin_arvore_bronquica.png
+heuristic_total_score: 30
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 4 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Aplicação de machine learning explicável para predição de dose em órgãos adjacentes\
+  \ na radioterapia pulmonar\n\nEste repositório reúne os códigos desenvolvidos no Trabalho de Conclusão\
+  \ de Curso em Data Science e Analytics voltado à predição de curvas DVH (*Dose-Volume Histogram*) de\
+  \ órgãos adjacentes ao tumor em radioterapia pulmonar com técnica SBRT/VMAT.\n\nO projeto foi estruturado\
+  \ em três módulos complementares:\n\n- `doseprofiles`: extração, a partir do sistema de planejamento\
+  \ Eclipse, de perfis de dose utilizados na definição qualitativa dos intervalos dos DTHs;\n- `dataextractor`:\
+  \ extração, a partir do sistema de planejamento Eclipse, de variáveis geométricas e dosimétricas dos\
+  \ casos selecionados;\n- `dvhprediction`: pipeline de modelagem preditiva em Python com análise fatorial,\
+  \ XGBoost e SHAP.\n\n## Objetivo\n\nDesenvolver um pipeline de machine learning explicável para estimar\
+  \ curvas DVH de órgãos adjacentes ao alvo em pacientes submetidos à radioterapia pulmonar, sintetizando\
+  \ a relação espacial entre alvo e órgãos e acrescentando transparência às predições do modelo.\n\n##\
+  \ Estrutura do repositório\n\n```text\ntcc-dvh-prediction/\n├── README.md\n├── CITATION.cff\n├── .gitignore\n\
+  ├── requirements.txt\n├── results/\n│   └── figures/\n│       ├── corr_dthin_arvore_bronquica.png\n\
+  │       ├── corr_dthout_arvore_bronquica.png\n│       ├── loadings_dthin_arvore_bronquica.png\n│   \
+  \    ├── loadings_dthout_arvore_bronquica.png\n│       ├── dvh_caso_173.png\n│       └── shap_caso_173_dose_10.png\n\
+  ├── doseprofiles/\n├── dataextractor/\n└── dvhprediction/\n    ├── inputs/\n    └── outputs/\n```\n\n\
+  ## Visão geral dos módulos\n\n### `doseprofiles`\n\nAplicação em C# com ESAPI para extração de perfis\
+  \ de dose axial e longitudinal a partir da borda do alvo. Esses perfis foram utilizados como referência\
+  \ qualitativa para definição dos intervalos adotados na discretização dos histogramas DTH.\n\n### `dataextractor`\n\
+  \nAplicação em C# com ESAPI para extração automática das variáveis do estudo, incluindo:\n\n- volume\
+  \ do alvo;\n- histogramas DTH-In e DTH-Out;\n- pontos da curva DVH cumulativa.\n\nAs saídas são organizadas\
+  \ em arquivos CSV estruturados para uso posterior na modelagem.\n\n### `dvhprediction`\n\nPipeline em\
+  \ Python para:\n\n- estatística descritiva;\n- análise de correlação;\n- redução de dimensionalidade\
+  \ por análise fatorial;\n- normalização das variáveis;\n- treinamento com XGBoost;\n- validação cruzada\
+  \ por grupo;\n- avaliação global e por faixa de dose;\n- comparação entre DVHs reais e preditos;\n-\
+  \ interpretabilidade local com SHAP.\n\n## Metodologia resumida\n\nO pipeline foi desenvolvido para\
+  \ dados de pacientes tratados com SBRT pulmonar com técnica VMAT.\n\nAs variáveis explicativas iniciais\
+  \ incluem descritores baseados em *Distance-to-Target Histogram* (DTH), subdividido em duas componentes:\n\
+  \n- **DTH-In**: fração do órgão presente nos mesmos planos axiais do alvo;\n- **DTH-Out**: fração do\
+  \ órgão presente em planos axiais que não contêm o alvo.\n\nAs variáveis DTH foram submetidas à redução\
+  \ de dimensionalidade por análise fatorial. Os constructos obtidos foram combinados ao volume do alvo\
+  \ e à variável `dose_perc`, compondo a entrada do modelo de regressão com XGBoost. A interpretabilidade\
+  \ das estimativas foi analisada com SHAP.\n\n## Base de dados e escopo do estudo\n\nO estudo foi conduzido\
+  \ com dados retrospectivos de 350 pacientes tratados com SBRT pulmonar, técnica VMAT.\n\nForam analisados\
+  \ quatro órgãos adjacentes ao alvo:\n\n- árvore brônquica;\n- coração;\n- esôfago;\n- medula espinhal.\n\
+  \n## Fluxo geral do projeto\n\nDe forma resumida, o projeto seguiu as etapas abaixo:\n\n1. extração\
+  \ de perfis médios de dose em C# via ESAPI;\n2. definição qualitativa dos intervalos dos DTHs;\n3. extração\
+  \ automática das variáveis geométricas e dosimétricas;\n4. organização dos dados em arquivos CSV;\n\
+  5. separação treino-teste por caso;\n6. redução de dimensionalidade por análise fatorial;\n7. normalização\
+  \ das variáveis explicativas;\n8. treinamento e ajuste do modelo XGBoost;\n9. avaliação global e estratificada\
+  \ por faixa de dose;\n10. análise de interpretabilidade local com SHAP.\n\n## Resultados e discussão\n\
+  \nAs figuras a seguir apresentam resultados representativos para a **árvore brônquica**, utilizada como\
+  \ exemplo visual do comportamento observado no estudo.\n\n### Correlação e redução de dimensionalidade\n\
+  \nAs variáveis dos histogramas **DTH-In** e **DTH-Out** apresentaram correlações positivas elevadas\
+  \ entre faixas de distância próximas, indicando redundância de informação e justificando o uso de **análise\
+  \ fatorial** como etapa de redução de dimensionalidade, como ilustrado nas **Figuras 1** e **2**.\n\n\
+  <p align=\"center\">\n  <img src=\"results/figures/corr_dthin_arvore_bronquica.png\" width=\"49%\" alt=\"\
+  Figura 1. Matriz de correlação DTH-In para a árvore brônquica\" />\n  <img src=\"results/figures/corr_dthout_arvore_bronquica.png\"\
+  \ width=\"49%\" alt=\"Figura 2. Matriz de correlação DTH-Out para a árvore brônquica\" />\n</p>\n\n\
+  <p align=\"center\">\n  <em>Figura 1. Matriz de correlação DTH-In para a árvore brônquica. &nbsp;&nbsp;\
+  \ Figura 2. Matriz de correlação DTH-Out para a árvore brônquica.</em>\n</p>\n\nA análise fatorial mostrou\
+  \ adequação para os dados (**Bartlett p &lt; 0,001** em todos os órgãos). Para o **DTH-In**, foram retidos\
+  \ **três fatores** com rotação varimax, interpretados como **axial_adjacente**, **axial_media** e **axial_periferica**.\
+  \ Para o **DTH-Out**, foi retido **um fator**, interpretado como **long_adjacente**. A estrutura das\
+  \ cargas fatoriais, apresentada nas **Figuras 3** e **4**, sustenta essa interpretação espacial dos\
+  \ constructos.\n\n<p align=\"center\">\n  <img src=\"results/figures/loadings_dthin_arvore_bronquica.png\"\
+  \ width=\"49%\" alt=\"Figura 3. Cargas fatoriais do DTH-In para a árvore brônquica\" />\n  <img src=\"\
+  results/figures/loadings_dthout_arvore_bronquica.png\" width=\"49%\" alt=\"Figura 4. Cargas fatoriais\
+  \ do DTH-Out para a árvore brônquica\" />\n</p>\n\n<p align=\"center\">\n  <em>Figura 3. Cargas fatoriais\
+  \ do DTH-In para a árvore brônquica. &nbsp;&nbsp; Figura 4. Cargas fatoriais do DTH-Out para a árvore\
+  \ brônquica.</em>\n</p>\n\nEsses resultados indicam que a estrutura original dos DTHs pôde ser representada\
+  \ de forma mais compacta e interpretável, com pequena perda de informação.\n\n### Desempenho preditivo\
+  \ do modelo\n\nO modelo baseado em **XGBoost** apresentou desempenho consistente para os quatro órgãos\
+  \ avaliados, com boa estabilidade entre conjunto de teste e validação cruzada.\n\n| Órgão | R² (teste)\
+  \ | MAE | RMSE | R² CV (média ± DP) |\n|---|---:|---:|---:|---:|\n| Árvore brônquica | 0.954 | 0.922\
+  \ | 2.899 | 0.937 ± 0.020 |\n| Coração | 0.937 | 0.343 | 1.612 | 0.958 ± 0.011 |\n| Esôfago | 0.942\
+  \ | 0.528 | 1.661 | 0.931 ± 0.009 |\n| Medula espinhal | 0.941 | 0.361 | 1.362 | 0.920 ± 0.030 |\n\n\
+  Na análise estratificada por faixa de dose, os maiores erros ocorreram em **0–20% da dose**, com **MAE\
+  \ entre 1.602 e 3.992** e **RMSE entre 3.162 e 6.603**. A partir de 20%, houve redução progressiva do\
+  \ erro, em linha com a menor variabilidade da resposta nas regiões de dose mais alta.\n\nA comparação\
+  \ entre curvas **DVH reais e preditas** mostrou boa concordância global, como exemplificado na **Figura\
+  \ 5** para o caso 173 do conjunto de teste.\n\n<p align=\"center\">\n  <img src=\"results/figures/dvh_caso_173.png\"\
+  \ width=\"72%\" alt=\"Figura 5. Comparação entre DVH real e predito para o caso 173\" />\n</p>\n\n<p\
+  \ align=\"center\">\n  <em>Figura 5. Comparação entre DVH real e predito para o caso 173 do conjunto\
+  \ de teste.</em>\n</p>\n\nDe forma pontual, observaram-se pequenas inconsistências locais, como discretas\
+  \ violações de monotonicidade e valores ligeiramente negativos, sem comprometer a tendência geral das\
+  \ curvas.\n\n### Explicabilidade do modelo\n\nA análise com **SHAP** reforçou a coerência física das\
+  \ predições. Na **Figura 6**, referente ao caso 173 no nível de dose de 10%, a predição é decomposta\
+  \ em contribuições individuais das variáveis explicativas, a partir do valor médio esperado do modelo\
+  \ até o valor final estimado.\n\n<p align=\"center\">\n  <img src=\"results/figures/shap_caso_173_dose_10.png\"\
+  \ width=\"88%\" alt=\"Figura 6. Explicabilidade local com SHAP para o caso 173 na dose de 10%\" />\n\
+  </p>\n\n<p align=\"center\">\n  <em>Figura 6. Explicabilidade local com SHAP para o caso 173 na dose\
+  \ de 10%. À esquerda, o gráfico de distribuição normalizada que situa os valores das variáveis explicativas\
+  \ do caso (círculo preto) em relação à base de treino, com coloração correspondente aos valores SHAP\
+  \ no nível de dose analisado (10%). À direita, o gráfico waterfall decompõe a predição a partir do valor\
+  \ médio esperado do modelo para o nível de dose de 10%, E[f(X)] = 15,038, até o valor estimado, f(X)\
+  \ = 47,129.</em>\n</p>\n\nAo longo das curvas DVH, observou-se uma transição no padrão explicativo:\
+  \ em **baixas doses**, a predição tende a ser mais influenciada por **axial_periferica** e **axial_media**;\
+  \ em **doses mais altas**, a contribuição se concentra progressivamente em **axial_adjacente**, refletindo\
+  \ a maior importância da proximidade imediata entre órgão e alvo. Em casos específicos, a variável **long_adjacente**\
+  \ também pode assumir papel relevante, indicando influência da relação espacial na região *out-of-field*.\n\
+  \n### Discussão breve\n\nEm conjunto, os resultados indicam que a combinação de descritores geométricos\
+  \ baseados em **DTH**, redução de dimensionalidade por **análise fatorial**, modelagem com **XGBoost**\
+  \ e interpretação por **SHAP** constitui uma abordagem eficaz e interpretável para predição de **DVH**\
+  \ em radioterapia pulmonar. Além do bom desempenho preditivo, o modelo mostrou comportamento compatível\
+  \ com a lógica espacial da distribuição de dose, o que reforça seu potencial de apoio ao planejamento\
+  \ e à avaliação radioterápica.\n\n## Dados disponibilizados\n\nDevido a restrições institucionais, os\
+  \ dados brutos utilizados neste estudo não podem ser disponibilizados publicamente.\n\n## Tecnologias\
+  \ utilizadas\n\n### `doseprofiles` e `dataextractor`\n\n- C#\n- .NET Framework 4.6.2\n- Varian Eclipse\n\
+  - ESAPI 16.1\n\n### `dvhprediction`\n\n- Python 3\n- NumPy\n- pandas\n- matplotlib\n- seaborn\n- scikit-learn\n\
+  - XGBoost\n- SHAP\n- factor-analyzer\n- joblib\n\n## Instalação do ambiente Python\n\n```bash\npip install\
+  \ -r requirements.txt\n```\n\n## Execução\n\nA execução do pipeline preditivo é realizada no módulo\
+  \ `dvhprediction`, utilizando os arquivos de entrada que devem estar na pasta `inputs/`.\n\nExemplo:\n\
+  \n```bash\npython dvh_prediction.py\n```\n\n> Observação: os módulos `doseprofiles` e `dataextractor`\
+  \ dependem de ambiente institucional autorizado, com acesso ao Eclipse/ESAPI.\n\n## Saídas do pipeline\n\
+  \nO pipeline em Python foi desenvolvido para gerar, entre outros artefatos:\n\n- métricas globais de\
+  \ desempenho;\n- métricas por faixa de dose;\n- modelos ajustados;\n- escalonador;\n- objetos da análise\
+  \ fatorial;\n- metadados da execução;\n- gráficos de comparação entre DVHs reais e preditos;\n- gráficos\
+  \ de interpretabilidade com SHAP.\n\n## Uso e citação\n\nEste repositório é disponibilizado publicamente\
+  \ para fins acadêmicos e apresentação metodológica.\n\nSe você for referenciar este material, utilize\
+  \ as informações disponíveis em `CITATION.cff`.\n\nNenhuma licença open source está sendo concedida\
+  \ neste momento para reutilização, modificação ou redistribuição do código.\n\n## Autor\n\n**Anselmo\
+  \ Mancini**\n\nUniversidade de São Paulo – USP/ESALQ\n"

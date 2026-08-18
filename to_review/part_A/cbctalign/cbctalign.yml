@@ -1,0 +1,118 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: elmoubarakijamila/CBCTAlign
+url: https://github.com/elmoubarakijamila/CBCTAlign
+platform: github
+description: ''
+license: MIT
+language: C++
+keywords: []
+stars: 1
+updated_at: '2026-06-28T20:58:57Z'
+image_source: https://raw.githubusercontent.com/elmoubarakijamila/CBCTAlign/HEAD/docs/images/image1_1.png
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# CBCTAlign\n\nAutomated spatio-temporal alignment of longitudinal CBCT scans for maxillofacial\
+  \ bone regeneration assessment, in a few clicks.\n\n[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)\n\
+  [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.cppreference.com/w/cpp/17)\n\
+  [![Qt 5.15](https://img.shields.io/badge/Qt-5.15-green.svg)](https://www.qt.io/)\n[![ITK 5.2](https://img.shields.io/badge/ITK-5.2-orange.svg)](https://itk.org/)\n\
+  [![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Windows-lightgrey.svg)]()\n\n**CBCTAlign**\
+  \ is an open-source C++/Qt desktop application for the spatio-temporal alignment of longitudinal cone-beam\
+  \ computed tomography (CBCT) volumes. It provides a guided workflow — from cephalometric landmark import\
+  \ to validated 2D slice comparison — for the quantitative follow-up of maxillofacial bone regeneration\
+  \ after implant placement, sinus lifting, alveolar grafting, or Guided Bone Regeneration (GBR) procedures.\n\
+  \n---\n\n## Table of Contents\n \n- [Software Architecture](#software-architecture)\n- [Key Features](#key-features)\n\
+  - [Dependencies](#dependencies)\n- [Getting Started](#getting-started)\n- [Usage](#usage)\n- [Configuration](#configuration)\n\
+  - [Output Structure](#output-structure)\n- [Contributing](#contributing)\n- [License](#license)\n\n\
+  ---\n\n## Software Architecture\n\nCBCTAlign adopts a modular architecture that cleanly separates the\
+  \ **graphical user interface** (Qt Widgets), the **core image-processing pipeline** (registration, slice\
+  \ extraction, FOV normalization), the **validation module** (MCAGPC metric), and the **output generation\
+  \ layer** (aligned NIfTI volumes, PNG slice series, CSV reports). This design enables independent development\
+  \ of each component and future extension to additional registration methods, landmarks, or metrics.\n\
+  \nThe processing pipeline executes five sequential stages:\n\n1. **Loading & preprocessing** — DICOM/NIfTI\
+  \ loading via DCMTK and ITK I/O, isotropic resampling, and median filtering.\n2. **Landmark detection\
+  \ / import** — in-application detection via the integrated ALI_CBCT process, or parsing of existing\
+  \ ALI_CBCT JSON markup files, with optional manual refinement.\n3. **Landmark-initialized rigid registration**\
+  \ — translation initialized from cephalometric landmarks, then refined by Mattes Mutual Information\
+  \ over a 3-level multi-resolution pyramid.\n4. **2D slice extraction & FOV normalization** — axial,\
+  \ coronal, and sagittal slices centered on the reference landmark, normalized across heterogeneous CBCT\
+  \ protocols.\n5. **MCAGPC validation & export** — composite quality metric (SSIM, NCC, landmark displacement)\
+  \ and structured output.\n\n### Key Components\n\n1. **CBCT I/O:** DICOM and NIfTI loading via DCMTK\
+  \ and ITK.\n2. **Registration Engine:** ITK-based landmark-initialized multi-resolution rigid registration\
+  \ (Mattes MI).\n3. **Validation Module:** MCAGPC composite metric combining structural similarity, cross-correlation,\
+  \ and anatomical landmark displacement.\n4. **Interactive GUI:** Qt-based five-step interface with a\
+  \ synchronized multi-timepoint viewer.\n\n---\n\n## Key Features\n\n- **Landmark-initialized rigid registration**\
+  \ — uses cephalometric landmarks (ANS, Sella, Nasion, PNS), detected in-application via the integrated\
+  \ [ALI_CBCT](https://github.com/lucanchling/ALI_CBCT) process or imported from JSON markup files, to\
+  \ initialize Mattes Mutual Information optimization, preventing convergence to local minima.\n- **Multi-resolution\
+  \ 3D rigid registration** — ITK-based pipeline with a 3-level pyramid (shrink factors 4, 2, 1).\n- **Automatic\
+  \ FOV normalization** — handles heterogeneous CBCT acquisition protocols (large craniofacial FOV vs.\
+  \ reduced dental FOV).\n- **Anatomically guided 2D slice extraction** — axial, coronal, and sagittal\
+  \ slices centered on a user-selected reference landmark.\n- **MCAGPC composite validation metric** —\
+  \ combines SSIM, normalized cross-correlation (NCC), and post-registration landmark displacement.\n\
+  - **Synchronized multi-timepoint viewer** — interactive 3×N grid view (3 orientations × N timepoints)\
+  \ for longitudinal inspection.\n- **Structured PNG export** — ready-to-use 2D slice series for downstream\
+  \ deep learning pipelines.\n\n---\n\n## Dependencies\n\n| Library  | Version | Role |\n|----------|---------|------|\n\
+  | ITK      | 5.2     | Image registration, resampling, Mattes MI metric, multi-resolution pyramid |\n\
+  | Qt       | 5.15    | Graphical user interface (Widgets, Core, GUI modules) |\n| VTK      | 9.0   \
+  \  | 3D volume visualization (optional) |\n| DCMTK    | 3.6     | DICOM file I/O |\n| Eigen    | 3.4\
+  \     | Linear algebra for transformation matrices |\n| CMake    | ≥ 3.16  | Cross-platform build system\
+  \ |\n\n**Compilers tested:** GCC 9+ (Linux), MSVC 2019+ (Windows)\n**Operating systems tested:** Ubuntu\
+  \ 20.04+, Ubuntu 24.04, Windows 10+\n\n---\n\n## Getting Started\n\n### Prerequisites\n\n1. **Git**\
+  \ — install from [git-scm.com](https://git-scm.com/) if needed.\n2. **Build tools** — a C++17 compiler\
+  \ (GCC 9+ or MSVC 2019+) and CMake ≥ 3.16.\n3. **Libraries** — Qt 5.15, ITK 5.2, VTK 9.0, DCMTK 3.6,\
+  \ Eigen 3.4.\n4. **Landmark detection** — the [ALI_CBCT](https://github.com/lucanchling/ALI_CBCT) Python\
+  \ process is integrated directly into the CBCTAlign interface, so cephalometric landmark coordinates\
+  \ can be detected from within the application. Alternatively, existing landmark JSON files can be imported\
+  \ directly.\n\n### Steps\n\n**Linux (Ubuntu 20.04+)**\n\n```bash\n# 1. Clone and install system dependencies\n\
+  git clone https://github.com/elmoubarakijamila/CBCTAlign.git\ncd CBCTAlign\nchmod +x install_dependencies.sh\n\
+  ./install_dependencies.sh\n\n# 2. Build with CMake\nmkdir build && cd build\ncmake ..\nmake -j$(nproc)\n\
+  \n# 3. Run\n./CBCTAlign\n```\n\n**Windows 10+**\n\n```bash\n# Requires Qt 5.15, ITK 5.2, VTK 9.0, DCMTK\
+  \ 3.6, CMake 3.16+ (via vcpkg or manual install)\ngit clone https://github.com/elmoubarakijamila/CBCTAlign.git\n\
+  cd CBCTAlign\nmkdir build && cd build\ncmake .. -G \"Visual Studio 16 2019\"\ncmake --build . --config\
+  \ Release\n```\n\n---\n\n## Usage\n\nCBCTAlign is organized as five sequential steps shown in the left-hand\
+  \ sidebar.\n\n### Step 1 — Load CBCT Volumes\nImport the longitudinal acquisitions via **File → Open\
+  \ NIfTI** (or **Open DICOM**), one file per timepoint. Each loaded volume appears in a summary table\
+  \ showing its shape (voxels), spacing (mm), origin, and field of view. Volumes are labeled T0, T1, T2,\
+  \ … in acquisition order.\n\n![Step 1 — Load CBCT](docs/images/image1_1.png)\n\n![Step 1 — File selection\
+  \ dialog](docs/images/image1_2.png)\n\n### Step 2 — Cephalometric Landmarks\nDetect the landmarks directly\
+  \ within CBCTAlign by running the integrated ALI_CBCT process (select the model and reference landmark),\
+  \ **or** import existing ALI_CBCT JSON markup files via **File → Load Landmarks JSON**, one per timepoint.\
+  \ CBCTAlign extracts the landmark coordinates and populates a color-coded table with the name, abbreviation,\
+  \ and (x, y, z) position in millimeters for each timepoint.\n\n![Step 2 — Landmarks](docs/images/image2.png)\n\
+  \n### Step 3 — Rigid Registration\nSelect the reference anchor (default: ANS at T0) and click **Run\
+  \ Registration**. Each moving volume is initialized from the landmark displacement, then refined by\
+  \ maximizing Mattes Mutual Information over a 3-level multi-resolution pyramid. The results table reports\
+  \ convergence status, final Mutual Information, and registration time per timepoint.\n\n![Step 3 — Registration](docs/images/image3.png)\n\
+  \n### Step 4 — Slice Extraction\nSet the number of slices per orientation and the range (± mm) around\
+  \ the anchor, then click **Run Extraction**. CBCTAlign extracts axial, coronal, and sagittal slices\
+  \ centered on the reference landmark for every timepoint, then normalizes the field of view across timepoints.\
+  \ A summary reports the number of timepoints, slices per orientation, and total slices saved.\n\n![Step\
+  \ 4 — Extraction](docs/images/image4.png)\n\n### Step 5 — Validation & Visualization\nThe synchronized\
+  \ grid viewer displays the aligned 2D slices (three orientations × N timepoints). Each orientation has\
+  \ an independent slice index, Window/Level controls adjust contrast, and any panel can be opened in\
+  \ a zoom dialog. The MCAGPC metric is computed per orientation to quantify alignment quality.\n\n![Step\
+  \ 5 — Validation](docs/images/image5.png)\n\n---\n\n## Configuration\n\nCBCTAlign reads two optional\
+  \ environment variables so that no machine-specific paths are hard-coded:\n\n| Variable | Purpose |\
+  \ Default if unset |\n|----------|---------|------------------|\n| `CBCTALIGN_DATA_DIR` | Folder where\
+  \ file dialogs open by default (your CBCT data and results). | `~/CBCTAlign_data` |\n| `ALI_CBCT_HOME`\
+  \ | Folder containing your ALI_CBCT install (only needed for in-app landmark detection). | `~/ALI_CBCT_home`\
+  \ |\n\n```bash\nexport CBCTALIGN_DATA_DIR=\"$HOME/path/to/your/data\"\nexport ALI_CBCT_HOME=\"$HOME/path/to/your/ALI_CBCT\"\
+  \n```\n\nIf unset, CBCTAlign still runs — dialogs simply open at the default locations.\n\n---\n## Output\
+  \ Structure\n\nAfter extraction, results are written under your chosen output folder using a structured\
+  \ naming scheme:\n\nresults/\n\n├── T0_aligned.nii.gz\n\n├── T1_aligned.nii.gz\n\n├── T0/\n\n│   ├──\
+  \ Axial/slice_000.png\n\n│   ├── Coronal/slice_000.png\n\n│   └── Sagittal/slice_000.png\n\n├── T1/\n\
+  \n└── ...\n\n\nAligned volumes are saved in NIfTI format; 2D slices are saved as PNG series with consistent\
+  \ naming, ready for downstream deep learning pipelines.\n\n---\n\n## Contributing\n\nContributions are\
+  \ welcome. Please fork the repository and submit a pull request.\n\n### Contributors\n\n- Jamila Elmoubaraki\
+  \ ([ORCID](https://orcid.org/))\n- Omar Boutkhoum ([ORCID](https://orcid.org/0000-0002-0945-7520))\n\
+  - Hamid El Byad ([ORCID](https://orcid.org/))\n\nDeveloped at the **LAROSERI Laboratory**, Department\
+  \ of Computer Science, Faculty of Sciences, Chouaib Doukkali University, El Jadida, Morocco, in collaboration\
+  \ with the Dental Clinic, Casablanca.\n\n---\n\n## License\n\nThis project is licensed under the **MIT\
+  \ License**. See the [LICENSE](LICENSE) file for details.\n\nFor questions, contact **elmoubaraki.jamila@ucd.ac.ma**\
+  \ or open an issue on the [GitHub repository](https://github.com/elmoubarakijamila/CBCTAlign/issues).\n"

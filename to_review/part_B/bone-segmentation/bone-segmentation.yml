@@ -1,0 +1,77 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: rapcampos/bone-segmentation
+url: https://github.com/rapcampos/bone-segmentation
+platform: github
+description: This project is designed for the segmentation of the multiple bone tissues within dental
+  CBCT images through deep neural networks.
+license: null
+language: Python
+keywords: []
+stars: 2
+updated_at: '2026-07-08T12:09:26Z'
+image_source: https://raw.githubusercontent.com/rapcampos/bone-segmentation/HEAD/results-tcc.png
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# \U0001F9B7 Jaw Bone Tissue Segmentation in Dental CBCT\n\n> Deep-learning segmentation\
+  \ of jaw bone tissues in cone-beam CT (CBCT), grading bone density by **Rebaudi's classification** with\
+  \ a U-Net.\n\n<sub>*Application of convolutional neural networks for jaw bone tissue segmentation in\
+  \ tomographies.*</sub>\n\n![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)\n\
+  ![PyTorch](https://img.shields.io/badge/PyTorch-U--Net-EE4C2C?logo=pytorch&logoColor=white)\n![Task](https://img.shields.io/badge/task-semantic%20segmentation-8A2BE2)\n\
+  \n---\n\n## Overview\n\nBone quality is a key factor in planning dental implants. This project automatically\
+  \ identifies and segments the bone tissues in dental CBCT scans, labelling each pixel by density according\
+  \ to **Rebaudi's classification**. It converts raw DICOM slices into calibrated Hounsfield-unit (HU)\
+  \ maps, derives per-pixel tissue labels, and trains a U-Net to reproduce that segmentation directly\
+  \ from the imagery.\n\nThe network predicts **six classes**: background, the four Rebaudi tissue grades,\
+  \ and a catch-all for very high-density material such as metal restorations.\n\n| Class | Tissue   \
+  \                     |      HU range |   Color   |\n|------:|-------------------------------|--------------:|:---------:|\n\
+  |     0 | Background                    |       `< 148` | ⬛ black  |\n|     1 | Soft — low density \
+  \           |   `148 – 667` | \U0001F7E6 blue   |\n|     2 | Normal — intermediate density |  `668 –\
+  \ 1000` | \U0001F7E9 green  |\n|     3 | Hard — high density           | `1001 – 1770` | \U0001F7E8\
+  \ yellow |\n|     4 | Enamel                        | `1771 – 2850` | \U0001F7E7 orange |\n|     5 |\
+  \ Other — metal / restorations  |      `≥ 2851` | \U0001F7E5 red    |\n\n<sub>Thresholds and colors\
+  \ are defined once in `constants.py` and shared across preprocessing, training and visualization.</sub>\n\
+  \n## How it works\n\n```mermaid\nflowchart LR\n    A[\"DICOM CBCT slices\"] --> B[\"Modality LUT<br/>→\
+  \ Hounsfield units\"]\n    B --> C[\"Rebaudi HU thresholds<br/>→ class masks\"]\n    C --> D[\"Patient-level<br/>train\
+  \ / test split\"]\n    D --> E[\"U-Net<br/>CE + Dice loss\"]\n    E --> F[\"Per-class Dice +<br/>colorized\
+  \ predictions\"]\n```\n\n- **Calibrated inputs.** Each slice is converted to Hounsfield units via the\
+  \ DICOM modality LUT and stored as a float `.npy`, preserving the full dynamic range (no 8-bit quantization).\n\
+  - **Honest evaluation.** The dataset is split by **patient**, so slices from the same scan never leak\
+  \ between training and test.\n- **Imbalance-aware training.** A combined **cross-entropy + Dice** loss\
+  \ keeps the model from collapsing onto the dominant background class.\n- **Reproducible.** Runs are\
+  \ seeded end to end; the best epoch by validation mean Dice is checkpointed automatically.\n\n## Repository\
+  \ structure\n\n```\n├── preProcessing.py   # DICOM → HU .npy inputs + class-index masks, patient split\n\
+  ├── dataset.py         # PyTorch Dataset: loads HU arrays + masks\n├── model.py           # U-Net architecture\n\
+  ├── losses.py          # Combined cross-entropy + Dice loss\n├── constants.py       # Class definitions,\
+  \ HU thresholds, colors\n├── utils.py           # Loaders, checkpointing, metrics, prediction export\n\
+  ├── train.py           # Training loop\n└── requirements.txt\n```\n\n## Installation\n\n```bash\npip\
+  \ install -r requirements.txt\n```\n\n> For a CUDA build of PyTorch, install it from [pytorch.org](https://pytorch.org/)\
+  \ first, then `pip install -r requirements.txt` for the rest.\n\n## Usage\n\n### 1. Preprocess the DICOM\
+  \ data\n\nPoint the script at a directory that holds one subdirectory per patient of DICOM slices. It\
+  \ converts each exam slice into a float HU `.npy` input and an integer class-index mask PNG, then splits\
+  \ **patients** (not slices) into `data/train` and `data/test`:\n\n```bash\npython preProcessing.py --input\
+  \ /path/to/dicom_root --output data\n```\n\n| Flag | Default | Description |\n|------|---------|-------------|\n\
+  | `--img-size` | `512` | Output slice size (px) |\n| `--test-fraction` | `0.2` | Fraction of patients\
+  \ held out for test |\n| `--seed` | `42` | Split reproducibility |\n| `--save-previews` | off | Also\
+  \ write colorized masks for visual inspection |\n\n### 2. Train the model\n\n```bash\npython train.py\n\
+  ```\n\nTraining uses a 6-class U-Net with a combined cross-entropy + Dice loss (`losses.py`). Each epoch\
+  \ reports **per-class Dice** and writes side-by-side prediction / ground-truth previews to `saved_images/`.\
+  \ The best epoch by validation mean Dice is saved to `best_checkpoint.pth.tar` (the latest epoch is\
+  \ always in `last_checkpoint.pth.tar`).\n\n## Results\n\n![Segmentation results: original CBCT slice,\
+  \ ground-truth mask, and model prediction across four cases](results-tcc.png)\n\nEach column is a validation\
+  \ CBCT slice. **Top:** the original axial view. **Middle (GT):** the Rebaudi tissue labels derived in\
+  \ preprocessing. **Bottom (Ours):** the U-Net prediction. The model recovers the tooth and bone density\
+  \ structure closely on clean scans (columns 1–2) and stays reasonable on harder cases with metal-restoration\
+  \ artifacts and thin cortical bone (columns 3–4). Colors follow the [class palette](#overview) — \U0001F7E6\
+  \ soft, \U0001F7E9 normal, \U0001F7E8 hard, \U0001F7E7 enamel, \U0001F7E5 high-density.\n\nPer-class\
+  \ and mean Dice are printed each epoch, and `saved_images/` holds prediction / ground-truth pairs for\
+  \ the full validation set.\n\n## References\n\n- O. Ronneberger, P. Fischer, T. Brox. *U-Net: Convolutional\
+  \ Networks for Biomedical Image Segmentation*. MICCAI 2015. [arXiv:1505.04597](https://arxiv.org/abs/1505.04597)\n\
+  - Rebaudi et al. — bone density classification used for the tissue grades. *(add full citation)*\n\n\
+  ## Acknowledgments\n\n- [Professor Dr. Adair Santa Catarina](http://lattes.cnpq.br/7041836941307184)\n\
+  - [Dr. Sreenivas Bhattiprolu](https://github.com/bnsreenu/python_for_microscopists)\n"

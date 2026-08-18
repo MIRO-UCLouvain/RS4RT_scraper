@@ -1,0 +1,80 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: JaskRendix/dicom2ply
+url: https://github.com/JaskRendix/dicom2ply
+platform: github
+description: Converts DICOM RTSTRUCT contours into 3D ROI outputs. Reconstructs geometry from CT metadata
+  and exports each ROI as PLY, STL, OBJ, NIfTI masks, PNG slices, JSON stats, or voxel coordinates. Modern
+  Python rewrite with a modular architecture and full test suite.
+license: GPL-3.0
+language: Python
+keywords:
+- dicom
+- geometry-processing
+- medical-imaging
+- nift
+- obj
+- ply
+- point-cloud
+- radiotherapy
+stars: 0
+updated_at: '2026-08-15T12:05:50Z'
+image_source: null
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 5 support term(s).
+readme_excerpt: "# dicom2ply\n\ndicom2ply converts DICOM RT Structure Set (RTSTRUCT) contours into geometric\
+  \ data.  \nEach ROI can be exported as point clouds, meshes, masks, slices, voxel coordinates, metadata,\
+  \ and geometry summaries.\n\nModern rewrite of the original project by Christopher M. Poole (<https://github.com/christopherpoole/dicom2ply>).\n\
+  \n---\n\n## Features\n\n- Extract ROI contours from RTSTRUCT  \n- Reconstruct 3D coordinates using CT\
+  \ slice geometry  \n- Export one binary PLY point cloud per ROI  \n\n### ROI selection\n- --names  \n\
+  - --filter-name  \n- --filter-pattern  \n\n### ROI inspection\n- --list-rois  \n- --ct-summary  \n-\
+  \ --dump-ct-index  \n\n### Export formats\n- Binary mask NIfTI (--nifti)  \n- Float32 mask NIfTI (--float-nifti)\
+  \  \n- ROI statistics JSON (--json)  \n- Minimal metadata JSON (--save-metadata)  \n- Consolidated metadata\
+  \ JSON (--meta-all)  \n- PNG mask slices (--png-slices)  \n- Marching-cubes meshes: PLY, STL, OBJ (--mesh,\
+  \ --stl, --obj)  \n- Voxel coordinates (--coords)  \n- Bounding box JSON (--bbox)  \n\n### Extended\
+  \ exporters\n- HU→RGB PLY (--ply-rgb)  \n- LAS/LAZ point clouds (--las)  \n- Triangulated contour meshes\
+  \ (--tri-mesh)  \n\n### Utility\n- Dry-run mode (--dry-run)  \n- Batch processing via YAML (--config)\
+  \  \n- Structured logging (--debug)  \n- Progress indicator [1/3] Exporting ROI 'GTV'  \n\n### Python\
+  \ API\n- ROI statistics  \n- ROI voxel coordinates  \n- ROI bounding box  \n- ROI mask stack  \n- ROI\
+  \ mesh generation  \n\n### Project\n- src/ layout  \n- Modular codebase  \n- Full test suite  \n- Python\
+  \ 3.10+  \n\n---\n\n## Installation\n\n```\npip install -e .\n```\n\nOptional dependencies:\n\n```\n\
+  pip install dicom2ply[imageio]\npip install dicom2ply[nifti]\npip install dicom2ply[yaml]\npip install\
+  \ dicom2ply[laspy]\npip install dicom2ply[opencv]\npip install dicom2ply[test]\n```\n\n---\n\n## Command-line\
+  \ usage\n\n```\ndicom2ply <dicom_dir> <output_dir> [options]\n```\n\n### Required arguments\n\n- dicom_dir:\
+  \ directory containing CT slices and one RTSTRUCT  \n- output_dir: directory for output files  \n\n\
+  ---\n\n## ROI selection\n\n```\n--names ROI1 ROI2\n--filter-name ROI1\n--filter-pattern \"*GTV*\"\n\
+  ```\n\nIf no selection flags are provided, all ROIs are exported.\n\n---\n\n## ROI inspection\n\n```\n\
+  --list-rois\n--ct-summary\n--dump-ct-index\n```\n\n--list-rois prints ROI names and basic statistics.\
+  \  \n--ct-summary prints CT geometry summary.  \n--dump-ct-index writes CT slice index to ct_index.json.\n\
+  \n---\n\n## Export options\n\n| Flag | Output |\n|------|--------|\n| --nifti | Binary mask NIfTI |\n\
+  | --float-nifti | Float32 mask NIfTI |\n| --json | ROI statistics JSON |\n| --save-metadata | Minimal\
+  \ metadata JSON |\n| --meta-all | Consolidated metadata JSON |\n| --png-slices | PNG mask slices |\n\
+  | --mesh | PLY mesh |\n| --stl | STL mesh |\n| --obj | OBJ mesh |\n| --coords | Voxel coordinates (.npy)\
+  \ |\n| --bbox | Bounding box JSON |\n| --ply-rgb | HU→RGB PLY |\n| --las | LAS/LAZ point cloud |\n|\
+  \ --tri-mesh | Triangulated contour mesh PLY |\n\n---\n\n## Utility\n\n```\n--dry-run\n```\n\nShows\
+  \ selected ROIs and exits without writing files.\n\n---\n\n## Batch processing\n\n```\n--config config.yaml\n\
+  ```\n\nExample:\n\n```yaml\n- dicom_dir: ./dicom\n  output_dir: ./out\n  filter_name: [\"GTV\"]\n  mesh:\
+  \ true\n```\n\n---\n\n## Logging\n\n```\n--debug\n```\n\nEnables detailed logging.\n\nProgress indicator:\n\
+  \n```\n[1/3] Exporting ROI 'GTV'\n```\n\n---\n\n## Examples\n\n### Export multiple formats\n\n```\n\
+  dicom2ply ./dicom ./out \\\n    --filter-pattern \"*TV\" \\\n    --json --mesh --png-slices --save-metadata\
+  \ \\\n    --ply-rgb --las --tri-mesh\n```\n\n### Inspect geometry\n\n```\ndicom2ply ./dicom ./out --ct-summary\n\
+  ```\n\n### Export CT slice index\n\n```\ndicom2ply ./dicom ./out --dump-ct-index\n```\n\n### Export\
+  \ bounding boxes\n\n```\ndicom2ply ./dicom ./out --bbox\n```\n\n### Dry-run mode\n\n```\ndicom2ply ./dicom\
+  \ ./out --dry-run\n```\n\n### Export all metadata\n\n```\ndicom2ply ./dicom ./out --meta-all\n```\n\n\
+  ---\n\n## Python API\n\n```python\nfrom dicom2ply.patient import Patient\n\np = Patient(\"/path/to/dicom\"\
+  )\n\np.dump_ply(directory=\"/path/to/out\")\np.dump_exporters(directory=\"/path/to/out\", export_ply_rgb=True,\
+  \ export_las=True)\n\nroi = p.get_roi(\"GTV\")\nroi.export_mask_nifti_float(\"GTV_float.nii.gz\")\n\
+  roi.export_all_slices_png(\"GTV_slices\")\nroi.export_mesh_ply(\"GTV_mesh.ply\")\n\ncoords = roi.get_voxel_coordinates()\n\
+  bbox = roi.bounding_box\nstats = roi.export_json()\n```\n\n---\n\n## Project structure\n\n```\nsrc/dicom2ply/\n\
+  \    cli.py\n    contour.py\n    ct_cache.py\n    geometry.py\n    masking.py\n    patient.py\n    exporters.py\n\
+  \    roi.py\ntests/\n.github/workflows/tests.yml\npyproject.toml\nREADME.md\n```\n\n---\n\n## Tests\n\
+  \n```\npytest\n```\n\nCovers:\n\n- ROI geometry reconstruction  \n- Contour parsing  \n- CT slice lookup\
+  \  \n- PLY writing  \n- Extended exporters  \n- CLI execution  \n- ROI filtering and listing  \n- Metadata\
+  \ export  \n- Bounding box export  \n- CT summary and CT index export  \n- YAML config  \n- Logging\
+  \ and error propagation  \n\n---\n\n## Assumptions\n\n- Axial CT slices with consistent spacing  \n\
+  - Standard RTSTRUCT contour encoding  \n- No gantry tilt  \n- No interpolation between missing slices\
+  \  \n- Mesh export requires a non-empty mask volume  \n"

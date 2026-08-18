@@ -1,0 +1,63 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: faycalbouchama1997-ctrl/ai-powered-tumor-segmentation
+url: https://github.com/faycalbouchama1997-ctrl/ai-powered-tumor-segmentation
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-16T15:41:03Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# Tumor Segmentation -- Multi-Paradigm Comparison\n\nComparing CNN, Vision Transformer,\
+  \ and Foundation Model for automatic Whole Tumor segmentation in 3D MRI volumes (NIfTI format).\n\n\
+  ---\n\n## What this project does\n\nThree segmentation models run on the same MRI upload and produce\
+  \ side-by-side results. The goal is not to pick a winner upfront, but to see how differently these three\
+  \ paradigms handle the same task.\n\n| Model | Paradigm |\n|---|---|\n| SegResNet | CNN |\n| Swin-UNETR\
+  \ | Vision Transformer |\n| MedSAM | Foundation Model |\n\nThe web interface runs fully offline. No\
+  \ data leaves the local machine.\n\n---\n\n## Features\n\n- Parallel inference with all three models\
+  \ on a single NIfTI upload\n- Three-view visualization (axial, sagittal, coronal) with red Whole Tumor\
+  \ contour overlay\n- Dice Score and Sensitivity computed against ground truth mask\n- PDF report generation\
+  \ with patient data, segmentation images, and metrics\n- REST API backend (FastAPI) and web frontend\
+  \ (Streamlit)\n\n---\n\n## Architecture\n\n```\nStreamlit Frontend\n  Upload NIfTI  ->  Results (3 models)\
+  \  ->  PDF\n\nFastAPI Backend\n  main.py  ->  segresnet.py\n           ->  swinunetr.py\n          \
+  \ ->  medsam.py\n  preprocessing.py  .  visualization.py\n```\n\n---\n\n## Project structure\n\n```\n\
+  project/\n|-- backend/\n|   |-- main.py               FastAPI endpoints\n|   |-- segresnet.py      \
+  \    SegResNet inference\n|   |-- swinunetr.py          Swin-UNETR inference\n|   |-- medsam.py    \
+  \         MedSAM inference\n|   |-- preprocessing.py      Z-score normalization, resampling, slice selection\n\
+  |   `-- visualization.py      Red WT contour, 3-view images\n|-- frontend/\n|   `-- app.py         \
+  \       Streamlit UI\n|-- models/\n|   `-- weights/              Place .pth files here (not included\
+  \ in repo)\n|-- training/\n|   `-- train_segresnet.py    Training script (SegResNet on BraTS Task01)\n\
+  |-- requirements.txt\n|-- install.bat\n`-- README.md\n```\n\n---\n\n## Dataset\n\n**BraTS Task01** --\
+  \ Brain Tumor Segmentation\n\n- 484 training cases, NIfTI format (.nii.gz)\n- Volume dimensions: 240\
+  \ x 240 x 155 x 4 (four MRI sequences: FLAIR, T1, T1ce, T2)\n- Labels: Whole Tumor (WT), Tumor Core\
+  \ (TC), Enhancing Tumor (ET)\n- This project segments the Whole Tumor (WT) region only\n\nDownload:\
+  \ [Medical Segmentation Decathlon](http://medicaldecathlon.com/)\n\n---\n\n## Model selection\n\n###\
+  \ Why these three?\n\nFour criteria, applied in order:\n\n1. One model per AI paradigm (CNN / Transformer\
+  \ / Foundation Model)\n2. Reproducible training and evaluation through MONAI\n3. Native 3D processing\
+  \ (MedSAM is a deliberate exception for comparison purposes)\n4. Best-documented performance on BraTS\
+  \ within each paradigm\n\n\n---\n\n## Installation\n\n```bash\ngit clone https://github.com/faycalbouchama1997-ctrl/ai-powered-tumor-segmentation.git\n\
+  cd ai-powered-tumor-segmentation\npip install -r requirements.txt\npip install git+https://github.com/facebookresearch/segment-anything.git\n\
+  ```\n\nOr run `install.bat` on Windows for a guided setup.\n\n### Model weights\n\nPlace the following\
+  \ files in `models/weights/`:\n\n| File | Source |\n|---|---|\n| `segresnet.pth` | Trained in this project\
+  \ on BraTS Task01 (484 cases) |\n| `swinunetr.pth` | [MONAI research-contributions (SwinUNETR)](https://github.com/Project-MONAI/research-contributions/tree/main/SwinUNETR/)\
+  \ |\n| `medsam_vit_b.pth` | [MedSAM GitHub](https://github.com/bowang-lab/MedSAM) |\n\n---\n\n## Usage\n\
+  \nStart backend and frontend in two separate terminals.\n\n**Terminal 1 -- Backend**\n```bash\npython\
+  \ -m uvicorn backend.main:app --host 127.0.0.1 --port 8000\n```\n\n**Terminal 2 -- Frontend**\n```bash\n\
+  streamlit run frontend/app.py --server.port 8501\n```\n\nOpen http://localhost:8501, upload a `.nii.gz`\
+  \ file, and click Analyze.\n\nIf port 8501 is already in use, pass a different port: `--server.port\
+  \ 8502`.\n\n---\n\n## Evaluation\n\n```bash\npython evaluation/evaluate_models.py\n```\n\nOutput: `evaluation/results.xlsx`\
+  \ with Dice Score and Sensitivity per model and per case.\n\n---\n\n## Results\n\n| Model | Dice Score\
+  \ | Sensitivity | Paradigm |\n|---|---|---|---|\n| Swin-UNETR | 0.659 | 0.633 | Vision Transformer |\n\
+  | SegResNet | 0.520 | 0.538 | CNN |\n| MedSAM | 0.152 | 0.186 | Foundation Model |\n\nMedSAM's lower\
+  \ score reflects its 2D slice-wise processing. Without 3D context across the volume, it consistently\
+  \ undersegments or misses the tumor region. This is an architectural limitation, not a failure of the\
+  \ model in its intended use case.\n\n---\n\n## License\n\nFor academic and research use.\n\n---\n\n\
+  ## Author\n\nProject developed by Faycal Bouchama.\n"

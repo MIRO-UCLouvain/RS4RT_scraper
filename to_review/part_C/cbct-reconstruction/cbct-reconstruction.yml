@@ -1,0 +1,94 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: thmspllgr/CBCT-Reconstruction
+url: https://github.com/thmspllgr/CBCT-Reconstruction
+platform: github
+description: A cone beam computerized tomography reconstruction algorithm written in Python.
+license: MIT
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-04-14T10:53:13Z'
+image_source: https://raw.githubusercontent.com/thmspllgr/CBCT-Reconstruction/HEAD/assets/napari_vis.gif
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# CBCT-Reconstruction\r\n\r\n![Python](https://img.shields.io/badge/Python-3.x-blue.svg)\r\
+  \n![NumPy](https://img.shields.io/badge/NumPy-Optimized-green.svg)\r\n![License](https://img.shields.io/badge/License-MIT-lightgrey.svg)\r\
+  \n\r\n> A 3D volume reconstruction algorithm from 2D x-ray projections, written in Python.\r\n\r\n<p\
+  \ align=\"center\">\r\n  <img src=\"assets/napari_vis.gif\" width=\"75%\" alt=\"CBCT 3D Reconstruction\"\
+  >\r\n</p>\r\n\r\n<p align=\"center\">\r\n  <em>3D CBCT reconstruction (FDK algorithm, napari visualization)</em>\r\
+  \n</p>\r\n\r\n<p align=\"center\">\r\n  <img src=\"assets/sample.jpeg\" height=\"300\" alt=\"Object\
+  \ photo\">&nbsp;&nbsp;&nbsp;&nbsp;\r\n  <img src=\"assets/sinogram125.png\" height=\"300\" alt=\"Sample\
+  \ sinogram\">\r\n</p>\r\n\r\n<p align=\"center\">\r\n  <em>Test object (left) and one sample sinogram\
+  \ (right)</em>\r\n</p>\r\n\r\n\r\n## About this project\r\n\r\nThis project was started as part of my\
+  \ second year of Master's degree. It aims at reconstructing 3D volumes from 2D projections of a rotating\
+  \ sample obtained via x-rays imaging. \r\n\r\nIt is an extension of the classical CT Filtered Back Projection\
+  \ (FBP) algorithm: instead of considering x-rays parallel to the detector (with an x-ray source at infinity),\
+  \ we consider a point source that emits x-rays in all directions with a detector of finite size placed\
+  \ at finite distance. The x-rays thus arrive following a cone shape. This is the mathematical principle\
+  \ of **Cone Beam Computerized Tomography (CBCT)**.\r\n\r\nThe data already available in the repo was\
+  \ acquired experimentally using a custom CT-scan setup, requiring an initial physical calibration to\
+  \ determine the exact geometric parameters (source-to-object and object-to-detector distances) used\
+  \ in the reconstruction pipeline.\r\n\r\n\r\n## Brief introduction\r\n\r\nCone Beam Computerized Tomography\
+  \ is an advanced medical and industrial imaging modality where a divergent cone-shaped X-ray beam acquires\
+  \ 2D projections of an object over a 360-degree rotation. Unlike conventional fan-beam CT, CBCT captures\
+  \ a volumetric dataset in a single rotation, significantly reducing acquisition time.\r\n\r\nThis repository\
+  \ implements the **Feldkamp-Davis-Kress (FDK) algorithm**, which is an analytical 3D reconstruction\
+  \ method that extends the 2D FBP to a cone-beam geometry. The reconstruction pipeline consists of four\
+  \ main steps: \r\n\r\n### 1. Attenuation conversion (Beer-Lambert law)\r\nX-ray photons are attenuated\
+  \ exponentially as they pass through the object. The measured transmitted intensity $I$ is converted\
+  \ into line integrals of the linear attenuation coefficient $\\mu$:\r\n\r\n$$\\large p(u,v,\\beta)=-\\\
+  ln\\left(\\frac{I(u,v,\\beta)}{I_0}\\right)=\\int\\mu(x,y,z)ds$$\r\n\r\nWhere $I_0$ is the unattenuated\
+  \ (air) intensity and $\\beta$ is the projection angle.\r\n\r\n### 2. Cone-beam cosine weighting\r\n\
+  To account for the divergent nature of the X-ray beam, the planar projection data is pre-weighted by\
+  \ the cosine of the ray angle:\r\n\r\n$$\\large p_w(u,v,\\beta)=p(u,v,\\beta)\\frac{D}{\\sqrt{D^2+u^2+v^2}}$$\r\
+  \n\r\nWhere $D$ is the experimentally calibrated source-to-object distance (assuming a virtual detector\
+  \ plane scaled to the isocenter), and $u$ and $v$ are the orthogonal coordinates on this virtual 2D\
+  \ detector.\r\n\r\n### 3. Ramp filtering\r\nTo suppress the $1/r$ low-frequency blurring artifact inherent\
+  \ to the back-projection process, the weighted projections are filtered row-by-row in the frequency\
+  \ domain using a **Ram-Lak filter** (or ramp filter):\r\n\r\n$$\\large P_f(\\omega,v,\\beta)=P_w(\\\
+  omega,v,\\beta)\\cdot|\\omega|$$\r\n\r\nThe inverse Fourier transform yields the filtered sinograms\
+  \ $p_f(u, v, \\beta)$.\r\n\r\n### 4. Voxel-driven back-projection\r\nFinally, the filtered 2D projections\
+  \ are smeared back into the 3D object space $(x, y, z)$. Because our experimental rotation axis is horizontal,\
+  \ the volume is reconstructed slice by slice along the X-axis of the images. A distance-dependent magnification\
+  \ weight $1/U^2$ is applied during the back-projection to correct for the divergent geometry:\r\n\r\n\
+  $$\\large f(x,y,z)=\\int_{0}^{2\\pi}\\frac{D^2}{U^2(x,y,\\beta)}p_f(u',v',\\beta)d\\beta$$\r\n\r\nWhere\
+  \ $U$ is the orthogonal distance from the X-ray source to the voxel $(x,y,z)$ projected along the central\
+  \ ray.\r\n\r\n\r\n## Repository structure\r\n\r\n```Plaintext\r\nCBCT-Reconstruction\r\n├── data   \
+  \                  # directory for subdirectories containing the projection images\r\n│   ├── 360  \
+  \                # 360 projections of a sample object (cylinder with internal and external structures)\r\
+  \n│   ├── 15                   # 15 sparse projections of the same object\r\n│   └── 4             \
+  \       # 4 extremely sparse projections\r\n├── LICENSE.md               # MIT license\r\n├── README.md\
+  \                # this documentation\r\n└── reconstruction.py        # entry point and main algorithm\r\
+  \n```\r\n\r\n\r\n## Installation & dependencies\r\n\r\nTo run this project, you will need the following\
+  \ Python libraries: `numpy`, `matplotlib`, `tifffile`, `scikit-image`, and `scipy`.\r\n\r\n```bash\r\
+  \ngit clone https://github.com/thmspllgr/CBCT-Reconstruction.git\r\ncd CBCT-Reconstruction\r\npip install\
+  \ numpy matplotlib tifffile scikit-image scipy\r\n```\r\n\r\n\r\n## Usage\r\n\r\n1. **Prepare your data:**\
+  \ \\\r\n   Place your 2D projection images (e.g., `.png`, `.tif`) in the data directory. By default,\
+  \ the script looks for files in `CBCT-Reconstruction/data/360`, and the directory already contains some\
+  \ data. The script automatically sorts files sequentially (e.g., `img1.png`, `img2.png`, ...) so try\
+  \ to name them in the right order.\r\n\r\n2. **Configure geometry:** \\\r\n   If you are using a different\
+  \ hardware setup, update the geometric parameters at the top of `reconstruction.py` to match your physical\
+  \ acquisition system:\r\n   ```python\r\n   D = 30.87        # source-to-object distance (cm)\r\n  \
+  \ d = 14.9         # object-to-detector distance (cm)\r\n   pixel_size = ... # detector pixel pitch\
+  \ (cm)\r\n   ```\r\n\r\n3. **Run the reconstruction:** \\\r\n   Execute the Python script:\r\n   ```bash\r\
+  \n   python reconstruction.py\r\n   ```\r\n   \r\n4. **Analyze the output:** \\\r\n   The process will\
+  \ write its progress every 50 slice in the terminal. Upon completion, the reconstructed 3D volume will\
+  \ be saved in the root directory as `reconstruction.tif`. This 3D TIFF file can be opened and analyzed\
+  \ using scientific visualization softwares (**ImageJ/Fiji**, **3D Slicer**, **ParaView**...). I personally\
+  \ use **napari**, by simply running:\r\n   ```bash\r\n   pip install \"napari[all]\"\r\n   napari reconstruction.tif\r\
+  \n   ```\r\n\r\n\r\n## Notes\r\n\r\n1. **Extracting a sinogram** \\\r\nIf you want to get a sample sinogram,\
+  \ just add this inside the reconstruction loop:\r\n\r\n```Python\r\nif x == 125:    # or any other slice\
+  \ index\r\n    tifffile.imwrite(\"sinogram.tif\", norm.astype(np.float32))\r\n```\r\n\r\n2. **Extracting\
+  \ a 2D slice** \\\r\nTo get a 2D slice from the 3D reconstruction, add this inside the loop:\r\n\r\n\
+  ```Python\r\nif x == 125:\r\n    tifffile.imwrite(\"slice.tif\", reconstructed.astype(np.float32))\r\
+  \n```\r\n\r\n3. **Benchmarking with skimage** \\\r\nTo compare this implementation with the standard\
+  \ iradon function from `scikit-image` (which uses the Ram-Lak filter by default), replace the filtering\
+  \ and backprojection calls with:\r\n\r\n```Python\r\nfrom skimage.transform import iradon\r\nreconstructed\
+  \ = iradon(density.T, theta=theta, circle=True)\r\n```\r\n"

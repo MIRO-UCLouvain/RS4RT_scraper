@@ -1,0 +1,74 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Kiragroh/RTScope_DicomRT-PlanViewer
+url: https://github.com/Kiragroh/RTScope_DicomRT-PlanViewer
+platform: github
+description: Fast RT DICOM plan viewer and research QA workbench with 2D/3D dose visualization, DVH constraint
+  evaluation, target metrics, MLC/BEV review, and offline constraint tables.
+license: null
+language: Python
+keywords: []
+stars: 2
+updated_at: '2026-08-17T05:11:03Z'
+image_source: https://raw.githubusercontent.com/Kiragroh/RTScope_DicomRT-PlanViewer/HEAD/docs/anonGif.gif
+heuristic_total_score: 27
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 10 support term(s).
+readme_excerpt: "# PlanEval RT Viewer\n\nFast desktop viewer and research QA workbench for radiotherapy\
+  \ DICOM plans.\n\n![RTScope PlanEval Viewer anonymized workflow](docs/anonGif.gif)\n\n## Screenshot\n\
+  \nThe MLC/BEV view provides beam, control-point and gantry review:\n\n![RTScope MLC and BEV view](docs/Screenshot_2.png)\n\
+  \nPlanEval RT Viewer loads local RT DICOM folders and combines plan inspection,\nDVH review, constraint\
+  \ checking, target metrics and MLC/BEV inspection in one\nPySide6 application. The current code is research\
+  \ software and is not clinically\nvalidated for direct treatment decisions.\n\n> **Independent project:**\
+  \ This repository is a personal open-source project,\n> not an official publication, product, approval,\
+  \ or support service of any\n> employer, healthcare provider, university, or vendor. Examples and paths\
+  \ are\n> synthetic. Users remain responsible for local validation, security,\n> licensing, and clinical\
+  \ governance. See [DISCLAIMER.md](DISCLAIMER.md).\n\n## Features\n\n- Load DICOM folders with CT, RTSTRUCT,\
+  \ RTDOSE and optional RTPLAN.\n- Handle CT/RTSTRUCT/RTDOSE cases even when no RTPLAN is available.\n\
+  - Ask which RTPLAN variant to load when a folder contains multiple plans.\n- Switch between axial, sagittal,\
+  \ coronal and embedded 3D views.\n- Inspect 3D CT body/bone surfaces or volume rendering with dose overlay.\n\
+  - Toggle 3D PTV/target and OAR structure groups independently.\n- Navigate slices with scroll bar, mouse\
+  \ wheel and `Ctrl` + mouse wheel zoom.\n- Show dose overlays, prescription-relative isodose lines and\
+  \ editable dose\n  display ranges.\n- Compute DVHs for visible ROIs and control DVH line visibility\
+  \ from the ROI\n  panel.\n- Evaluate selectable RefDB/Hub constraint tables against computed DVHs.\n\
+  - Use manual structure mappings and export the mapping database as JSON.\n- Compute target metrics including\
+  \ Paddick-style CI, GI and HI.\n- Summarize plan information, monitor units and geometric PAM complexity.\n\
+  - Inspect RTPLAN MLC apertures by beam/control point with BEV playback.\n- Browse DICOM tags with recursive\
+  \ sequence expansion and value search.\n\n## Offline RefDB Fallback\n\nWhen configured, the app first\
+  \ queries a RefDB/Hub API and stores successful\nresponses in the local cache:\n\n```text\n%LOCALAPPDATA%/PlanEvalViewer/refdb_lookup_cache.json\n\
+  ```\n\nIf the Hub is unreachable or returns incomplete constraint table data, the app\nfalls back to\
+  \ bundled example tables under:\n\n```text\nplaneval_viewer/refdb/offline_examples/stereotaxie_tables.json\n\
+  ```\n\nThe bundled fallback contains synthetic stereotaxy example tables named `STX1`,\n`STX3`, `STX5`\
+  \ and `STX8`. These tables are only seed data for demos and tests;\nthey are not institutional standards\
+  \ and must not be used for clinical review.\n\n## Installation\n\nFor normal Windows use, download the\
+  \ latest compiled ZIP from the\n[GitHub Releases page](https://github.com/Kiragroh/RTScope_DicomRT-PlanViewer/releases/latest).\n\
+  Extract it and run `RTScopePlanEvalViewer.exe`.\n\nFor source use, use Python 3.13 or a recent Python\
+  \ 3.11+ environment on Windows.\n\n```powershell\npython -m pip install -r requirements.txt\npython\
+  \ app.py\n```\n\nFor local development:\n\n```powershell\npython -m pytest -q\npython -m compileall\
+  \ -q planeval_viewer app.py\n```\n\nFor a guided first run, see [Getting Started](docs/getting_started.md).\n\
+  \n## Portable Windows build\n\nPortable Windows builds can be extracted to any normal local or protected\n\
+  shared folder. Start the application with:\n\n```text\nRTScopePlanEvalViewer.exe\n```\n\nDo not place\
+  \ patient data inside the source checkout or public release folder.\nUse a locally approved data location\
+  \ and retention policy.\n\n## DICOM Folder Layout\n\nSelect a folder that contains one patient case.\
+  \ Subfolders are allowed.\n\nRecommended contents:\n\n- CT image series from one `SeriesInstanceUID`\n\
+  - one RTSTRUCT referencing the CT frame of reference\n- one RTDOSE aligned to the plan/CT geometry\n\
+  - optional one or more RTPLAN files\n\nWhen multiple RTPLAN files are found, the app asks which variant\
+  \ to load first.\nOther variants remain available through `Plan waehlen` in the toolbar.\n\nFor RTDOSE,\
+  \ a complete `DoseSummationType=PLAN` dose is preferred. If no plan\ndose is available, compatible beam/field\
+  \ dose files on the same grid are summed\non the fly.\n\n## RefDB / Hub Configuration\n\nSet one or\
+  \ more Hub endpoints with `PLANEVAL_REFDB_URLS`:\n\n```powershell\n$env:PLANEVAL_REFDB_URLS = \"http://hub-host:5001;http://fallback-host:5001\"\
+  \npython app.py\n```\n\nThe app uses `POST /api/refdb/lookup/batch` and client-side fraction filtering\n\
+  by default. Matching is combined from live Hub data, the local cache and bundled\noffline examples.\n\
+  \n## Acknowledgements\n\nThis project is built with respect for the open radiotherapy tooling ecosystem.\n\
+  Special thanks to [dicompyler-core](https://github.com/dicompyler/dicompyler-core),\nwhich has been\
+  \ a reliable companion for DICOM-RT work for many years, and to\n[PyRTEva-Engine](https://github.com/PanMar86/PyRTEva-Engine/tree/main),\
+  \ whose\nviewer/evaluation direction is highly inspiring.\n\n## Data Protection\n\nDo not commit patient\
+  \ data, DICOM files, screenshots with identifiable anatomy,\nDICOM UIDs, names, MRNs, accession numbers\
+  \ or free-text clinical notes. The\nrepository should only contain source code, synthetic tests, documentation\
+  \ and\nnon-patient example metadata.\n\n## Status\n\nThis project is under active development. It is\
+  \ designed for local research,\nmedical physics review and software prototyping, not as a validated\
+  \ clinical\ndecision support system.\n"

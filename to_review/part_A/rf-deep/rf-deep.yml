@@ -1,0 +1,101 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: aneesh3108/RF-Deep
+url: https://github.com/aneesh3108/RF-Deep
+platform: github
+description: Codebase for "Tumor-anchored deep feature random forests for out-of-distribution detection
+  in lung cancer segmentation"
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-16T20:20:30Z'
+image_source: https://raw.githubusercontent.com/aneesh3108/RF-Deep/HEAD/docs/readme_assets/figure1_outline.png
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# RF-Deep\n### Tumor-anchored deep feature random forests for out-of-distribution detection\
+  \ in lung cancer segmentation\n[![TMLR](https://img.shields.io/badge/TMLR%202026-Paper-blue)](https://openreview.net/pdf/7f251a3aa132bc70c737dff687e3be728f1e96c8.pdf)\n\
+  \n<p align=\"center\">\n  <img src=\"docs/readme_assets/figure1_outline.png\" alt=\"Figure 1 Method\
+  \ Outline\" width=\"90%\">\n</p>\n\nResearch codebase for post-hoc out-of-distribution detection in\
+  \ 3D CT lung tumor segmentation. The repository accompanies our work on using tumor-anchored deep features\
+  \ from pretrained-then-finetuned segmentation backbones, together with lightweight random forests and\
+  \ limited outlier exposure, to detect unsafe inputs at scan level.\n\n## Overview\n\nModern segmentation\
+  \ models can remain highly accurate on in-distribution data while failing confidently on clinically\
+  \ mismatched scans. RF-Deep is designed to detect those failures without modifying the underlying segmentation\
+  \ architecture. Instead of relying only on logits or architecture-specific uncertainty heads, RF-Deep\
+  \ extracts hierarchical deep features from regions of interest anchored to predicted tumor segmentations\
+  \ and uses them for downstream OOD detection.\n\n<p align=\"center\">\n  <img src=\"docs/readme_assets/figure2_examples.png\"\
+  \ alt=\"Figure 2 Qualitative Examples\" width=\"90%\">\n</p>\n\nRepresentative in-distribution and out-of-distribution\
+  \ examples from the paper, illustrating how uncertainty maps can appear concentrated, diffuse, or misaligned\
+  \ across different deployment scenarios.\n\nIn the paper, RF-Deep is evaluated on 2,056 CT scans spanning\
+  \ in-distribution lung cancer, near-OOD chest CT datasets, and far-OOD abdominal datasets. It achieves\
+  \ strong near-OOD detection and near-perfect far-OOD detection while remaining simple, lightweight,\
+  \ and architecture-agnostic.\n\n## Highlights\n\n- Post-hoc OOD detection for segmentation, without\
+  \ changing the segmentation network\n- Tumor-anchored feature extraction from predicted regions of interest\n\
+  - Support for RF-Deep, radiomics, Mahalanobis, and logit-based baselines\n- Metadata-aware and scanner-aware\
+  \ analysis utilities\n- Figure-generation and analysis scripts used for the paper\n\n## Repository at\
+  \ a Glance\n\n- [`ood_rfdeep.py`](ood_rfdeep.py): main RF-Deep experiment entrypoint\n- [`extract_features.py`](extract_features.py):\
+  \ deep-feature extraction from segmentation backbones\n- [`ood_maha.py`](ood_maha.py): Mahalanobis deep-feature\
+  \ baseline (with optional ReAct/ASH transforms)\n- [`logit_baselines.py`](logit_baselines.py): logit-derived\
+  \ OOD baselines and analysis\n- [`roi_logit_baselines.py`](roi_logit_baselines.py): ROI-restricted logit\
+  \ baselines using the same crop protocol as RF-Deep\n- [`ood_metadata_holdout.py`](ood_metadata_holdout.py):\
+  \ metadata-stratified holdout evaluation\n- [`segmentation_inference.py`](segmentation_inference.py):\
+  \ segmentation inference utility for supported backbones\n\n## Getting Started\n\nThis codebase targets\
+  \ Python 3.9.\n\n```bash\npip install -r requirements.txt\npython -m scripts.smoke_check\n```\n\n##\
+  \ Pretrained Checkpoints\n\nSegmentation backbone weights used in the paper are released separately.\
+  \ Place them under `models/finetuned_weights/` and `models/pretrained_weights/`, or override the locations\
+  \ with the `FINETUNED_WEIGHTS_ROOT` and `PRETRAINED_WEIGHTS_ROOT` environment variables.\n\nDownload\
+  \ here: **[MSKBox RF-Deep](https://mskcc.box.com/s/qb40xi64828hpp97nn7sa1xqk9atja0l)**  \n(If the above\
+  \ link does not work at any point, please open an issue on GitHub and it will be addressed promptly.)\n\
+  \n## Datasets\n\nRF-Deep is evaluated on public CT collections; this repository redistributes none of\
+  \ them. Obtain each from its original source:\n\n- **NSCLC-Radiomics** — [TCIA](https://www.cancerimagingarchive.net/collection/nsclc-radiomics/)\n\
+  - **NSCLC-Radiogenomics (LRAD)** — [TCIA](https://www.cancerimagingarchive.net/collection/nsclc-radiogenomics/)\n\
+  - **RSNA-STR Pulmonary Embolism Detection (RSNA PE)** — [Kaggle](https://www.kaggle.com/competitions/rsna-str-pulmonary-embolism-detection)\n\
+  - **MIDRC COVID-19 negative CT (MIDRC C19<sup>-</sup>)** — [TCIA](https://www.cancerimagingarchive.net/collection/midrc-ricord-1b/)\n\
+  - **MIDRC COVID-19 positive CT (MIDRC C19<sup>+</sup>)** — [TCIA](https://www.cancerimagingarchive.net/collection/midrc-ricord-1a/)\n\
+  - **KiTS** — [kits-challenge.org](https://kits-challenge.org/kits23/)\n- **PancreasCT** — [medicaldecathlon.com](https://drive.google.com/file/d/1YZQFSonulXuagMIfbJkZeTFJ6qEUuUxL/view?usp=drive_link)\n\
+  - **Breast cancer CT** — institutional internal dataset, not publicly redistributed\n\n## What Can Be\
+  \ Reproduced Publicly\n\nUsing the public datasets listed below together with the released checkpoints,\
+  \ users can reproduce the main RF-Deep workflow: segmentation inference, deep-feature extraction, OOD\
+  \ evaluation, and most analysis scripts. Results that depend on the internal breast cancer CT dataset\
+  \ cannot be reproduced from public data alone, since that cohort is not publicly available.\n\n## Typical\
+  \ Workflow\n\nTo reproduce the paper workflow, the main steps are feature extraction, optional baseline\
+  \ generation, RF-Deep evaluation, and figure or analysis generation. Most scripts expect data to be\
+  \ indexed through JSON manifests in [`jsons/`](jsons).\n\n### 1. Feature Extraction\n\nRF-Deep operates\
+  \ on hierarchical backbone (3D Swin Transformer) features extracted from the segmentation model.\n\n\
+  ```bash\npython extract_features.py --model smit\n```\n\nFeature caches are typically written as `.pkl`\
+  \ files under [`pickle_data/`](pickle_data).\n\n### 2. Baseline Generation\n\nTo compare RF-Deep against\
+  \ radiomics or logit-based uncertainty baselines:\n\n```bash\npython logit_baselines.py global --metric\
+  \ maxlogit\n```\n\n### 3. OOD Detection and Evaluation\n\nTrain and evaluate RF-Deep on the ID and OOD\
+  \ datasets:\n\n```bash\npython ood_rfdeep.py --method lodo --model-name smit --img-size 128 --train-size\
+  \ 20\n```\n\n## Data and Paths\n\nDatasets are expected under `data/` by default, but that path is intentionally\
+  \ ignored because it may be machine-specific or a symlink. Shared code resolves paths through [`project_paths.py`](project_paths.py),\
+  \ and dataset roots can be overridden with environment variables when needed. Metadata required for\
+  \ scanner analysis and PyCERR-based radiomics lives in [`metadata_info/`](metadata_info).\n\nDataset\
+  \ manifests under [`jsons/`](jsons) are machine-specific and not redistributed; generate them locally\
+  \ with `python -m scripts.make_json` after obtaining the datasets. See [`jsons/README.md`](jsons/README.md)\
+  \ for the manifest schema.\n\n## Repository Guide\n\n- [`PROJECT_LAYOUT.md`](PROJECT_LAYOUT.md): canonical\
+  \ directory layout and output policy\n- [`CODE_REFERENCE.md`](CODE_REFERENCE.md): module-by-module reference\
+  \ for the shared codebase\n- [`AGENTS.md`](AGENTS.md): orientation file for agentic AI tools (Claude\
+  \ Code, Codex, Cursor, etc.)\n- [`models/README.md`](models/README.md): model architectures, feature-extraction\
+  \ expectations, and weight directories\n- [`paper_figures/README.md`](paper_figures/README.md): figure-generation\
+  \ entrypoints used for paper assets\n- [`scripts/README.md`](scripts/README.md): reusable operational\
+  \ and analysis scripts\n- [`jsons/README.md`](jsons/README.md): dataset manifest conventions\n- [`metadata_info/README.md`](metadata_info/README.md):\
+  \ synced metadata inputs for scanner, holdout, and radiomics-support analysis\n- [`results/README.md`](results/README.md):\
+  \ generated analysis outputs\n- [`radiomics_features/README.md`](radiomics_features/README.md): generated\
+  \ radiomics CSV outputs\n- [`pickle_data/README.md`](pickle_data/README.md): cached deep-feature pickle\
+  \ outputs\n- [`excelrecords/README.md`](excelrecords/README.md): generated segmentation metric CSV outputs\n\
+  \n## Acknowledgement\n\nWe sincerely thank the authors of [Swin UNETR](https://github.com/Project-MONAI/research-contributions/tree/main/SwinUNETR)\
+  \ and [SMIT](https://github.com/The-Veeraraghavan-Lab/SMIT) for open-sourcing their code and models.\
+  \ In addition, thanks to these great repositories: [PyTorch](https://github.com/pytorch/pytorch), [MONAI](https://github.com/project-monai/monai),\
+  \ [PyCERR](https://github.com/cerr/pyCERR), [DeepMind Surface Distance](https://github.com/google-deepmind/surface-distance),\
+  \ [NiBabel](https://github.com/nipy/nibabel), _scikit-learn_ among others. Finally, AI-driven coding\
+  \ assistants were used in development of parallelization scripts, code cleanup, and relevant technical\
+  \ documentation.\n\n## Citation\n\n```bibtex\n@article{rangnekar2026tumoranchored,\n  title={Tumor-anchored\
+  \ deep feature random forests for out-of-distribution detection in lung cancer segmentation},\n  author={Aneesh\
+  \ Rangnekar and Harini Veeraraghavan},\n  journal={Transactions on Machine Learning Research},\n  issn={2835-8856},\n\
+  \  year={2026}\n}\n```\n"

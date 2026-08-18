@@ -1,0 +1,109 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Ramtin-Mojtahedi/AI-Radiomics-Carotid
+url: https://github.com/Ramtin-Mojtahedi/AI-Radiomics-Carotid
+platform: github
+description: Code and resources for using machine learning-based radiomics to enhance cardiovascular risk
+  prediction by analyzing carotid plaque data and uncovering variable interdependencies.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 1
+updated_at: '2026-08-03T07:20:49Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Radiomic carotid plaque features for cardiovascular risk prediction\n\n[![DOI](https://img.shields.io/badge/DOI-10.1016%2Fj.ultrasmedbio.2026.05.006-blue)](https://doi.org/10.1016/j.ultrasmedbio.2026.05.006)\n\
+  ![Status](https://img.shields.io/badge/status-research%20snapshot-6c757d)\n![License](https://img.shields.io/badge/license-none%20declared-lightgrey)\n\
+  \nAnalysis notebooks associated with:\n\n> Ricky Hu, Ramtin Mojtahedi, Ergi Duli, Marie-France Hétu,\
+  \ Laura Mantella, Amber L. Simpson, Michael J. Blaha, Taylor Barwell, Kiera Liblik, Jasjit S. Suri,\
+  \ and Amer M. Johri. “Radiomic Carotid Plaque Features Integrated into Machine Learning Models for Cardiovascular\
+  \ Risk Prediction.” *Ultrasound in Medicine & Biology*, In Press, Corrected Proof, available online\
+  \ 12 June 2026. [https://doi.org/10.1016/j.ultrasmedbio.2026.05.006](https://doi.org/10.1016/j.ultrasmedbio.2026.05.006)\n\
+  \n<!-- repository-guide:start -->\n## At a glance\n\n[Paper](https://doi.org/10.1016/j.ultrasmedbio.2026.05.006)\
+  \ · [All features](AllFeatures.ipynb) · [Clinical + imaging](ClinHistAndImaging.ipynb) · [Clinical](ClinHistOnly.ipynb)\
+  \ · [Imaging](ImagingOnly.ipynb) · [Radiomics + clinical](RadiomicsAndClinHist.ipynb) · [Radiomics +\
+  \ imaging](RadiomicsAndImaging.ipynb) · [Radiomics](RadiomicsOnly.ipynb) · [`CITATION.cff`](CITATION.cff)\n\
+  \n### Dependency evidence\n\n| Package | Role in the committed notebooks |\n|---|---|\n| `pandas` |\
+  \ CSV loading and result tables |\n| `numpy` | Numerical arrays and aggregation |\n| `scikit-learn`\
+  \ | Scaling, classifiers, stratified folds, ROC and classification metrics |\n| `skrebate` | ReliefF\
+  \ feature ranking |\n| `imbalanced-learn` | `RandomOverSampler` |\n| `xgboost` | `XGBClassifier` |\n\
+  | `matplotlib` | ROC and analysis plots |\n\nNo requirements file or package versions are supplied.\n\
+  \n### Analysis flow represented by each feature-set notebook\n\n```mermaid\nflowchart LR\n    A[\"One\
+  \ expected feature-set CSV<br/>(not included)\"] --> B[\"Outcome: first column<br/>Features: remaining\
+  \ columns\"]\n    B --> C[\"Missing-value inspection\"]\n    C --> D[\"StandardScaler\"]\n    D -->\
+  \ E[\"ReliefF feature selection\"]\n    E --> F[\"RandomOverSampler\"]\n    F --> G[\"SVM · KNN · Random\
+  \ Forest · XGBoost\"]\n    G --> H[\"Stratified K-fold evaluation\"]\n    H --> I[\"ROC/AUC · precision\
+  \ · recall · F1 · accuracy\"]\n    I --> J[\"Plots and retained notebook outputs\"]\n```\n\n> **Reproducibility\
+  \ boundary:** this diagram follows the committed cell order. Those cells fit scaling, feature selection,\
+  \ and oversampling before the manually iterated cross-validation splits. A fresh leakage-sensitive evaluation\
+  \ should place these operations inside each training fold and verify the intended procedure against\
+  \ the paper. Patient tables and upstream radiomic extraction are not included.\n<!-- repository-guide:end\
+  \ -->\n\n## Repository status\n\n> **Important:** this repository is an archival analysis snapshot.\
+  \ It is **not a standalone reproducibility package**, and the notebooks cannot reproduce the paper from\
+  \ a fresh clone.\n\nThe repository contains seven Jupyter notebooks that compare clinical-history, focused\
+  \ vascular ultrasound imaging, and carotid-plaque radiomic feature sets. It does not include the patient-level\
+  \ input tables or the upstream data-processing pipeline.\n\nSpecifically:\n\n- none of the seven CSV\
+  \ files expected by the notebooks is included;\n- no raw or processed clinical data, ultrasound measurements,\
+  \ radiomic features, outcome records, data dictionary, or patient/split identifiers are included;\n\
+  - the plaque segmentation, radiomic feature-extraction, manual-measurement, and table-construction code\
+  \ is absent;\n- there is no requirements file, environment lockfile, container, or package-version record;\n\
+  - notebook code uses fixed relative input and output filenames, while retained outputs expose paths\
+  \ from the original Windows environment; and\n- no software license has been declared.\n\nTreat these\
+  \ notebooks as a record of selected analysis steps, not as a validated risk calculator, clinical decision-support\
+  \ tool, or independently reproducible implementation.\n\n## Repository map and required inputs\n\nEach\
+  \ notebook expects its CSV in the repository’s working directory. The code treats the **first CSV column\
+  \ as the prediction outcome** and the remaining columns as numerical features.\n\n| Notebook | Expected\
+  \ CSV, not included | Feature group represented |\n|---|---|---|\n| `AllFeatures.ipynb` | `allData.csv`\
+  \ | Clinical history, focused vascular ultrasound imaging, and radiomics |\n| `ClinHistAndImaging.ipynb`\
+  \ | `clinHistAndImaging.csv` | Clinical history and imaging |\n| `ClinHistOnly.ipynb` | `clinHistOnly.csv`\
+  \ | Clinical history only |\n| `ImagingOnly.ipynb` | `imagingOnly.csv` | Imaging only |\n| `RadiomicsAndClinHist.ipynb`\
+  \ | `radiomicsAndClinHist.csv` | Radiomics and clinical history |\n| `RadiomicsAndImaging.ipynb` | `radiomicsAndImaging.csv`\
+  \ | Radiomics and imaging |\n| `RadiomicsOnly.ipynb` | `radiomicsOnly.csv` | Radiomics only |\n| `CITATION.cff`\
+  \ | — | Machine-readable citation metadata for the accompanying article |\n\nThe column names, units,\
+  \ missing-value conventions, inclusion criteria, and outcome coding cannot be recovered from the repository.\
+  \ Supplying unrelated CSVs with the same filenames is not sufficient to reproduce the published analysis.\n\
+  \n## Analysis represented in the notebooks\n\nAcross the notebook variants, the committed cells include:\n\
+  \n- CSV loading and basic missing-value inspection;\n- standardization with scikit-learn;\n- ReliefF\
+  \ feature ranking/selection;\n- class oversampling with `RandomOverSampler`;\n- support-vector machine,\
+  \ k-nearest-neighbor, random-forest, and XGBoost classifiers; and\n- stratified cross-validation with\
+  \ ROC/AUC and classification metrics.\n\nThe notebooks contain exploratory and repeated cells, including\
+  \ model variants and retained outputs. They should not be interpreted as a clean, single-command implementation\
+  \ of the final statistical analysis without comparison to the paper and original analysis records.\n\
+  \n## Environment and path assumptions\n\nThe notebooks import pandas, NumPy, scikit-learn, Matplotlib,\
+  \ scikit-rebate (`skrebate`), imbalanced-learn, and XGBoost. Exact versions are not recorded, and retained\
+  \ warnings indicate that the original environment used APIs that may now be deprecated.\n\nPath-related\
+  \ limitations include:\n\n- each notebook hard-codes one relative CSV filename listed above;\n- several\
+  \ notebooks save plots as `allData.png`, so running them in the same directory can overwrite another\
+  \ notebook’s output;\n- `ImagingOnly.ipynb` can also write `results_table.csv`; and\n- stored cell outputs\
+  \ contain historical paths such as `C:\\Users\\mojta\\...`. Those Windows paths are execution traces,\
+  \ not portable inputs.\n\n## Clone for inspection\n\n```bash\ngit clone https://github.com/Ramtin-Mojtahedi/AI-Radiomics-Carotid.git\n\
+  cd AI-Radiomics-Carotid\n```\n\nA successful clone provides only the notebooks. To reconstruct an analysis\
+  \ environment, a researcher would need to:\n\n1. obtain authorized access to the de-identified study\
+  \ table or approved equivalent data;\n2. recover the data dictionary, outcome definition, feature provenance,\
+  \ inclusion criteria, and exact train/cross-validation design;\n3. build the seven expected CSV views\
+  \ or deliberately update each notebook’s input path;\n4. reconstruct and record compatible package versions;\n\
+  5. verify preprocessing, feature-selection, oversampling, and evaluation order against the final paper;\
+  \ and\n6. redirect each notebook’s outputs to a separate directory to prevent overwrites.\n\nDo not\
+  \ upload patient-level or otherwise restricted data to a public fork.\n\n## Data availability\n\nThe\
+  \ study reports 493 participants with five-year major adverse cardiovascular event outcomes. Those clinical\
+  \ inputs are not distributed here. The published article states that data are available upon reasonable\
+  \ request to Amer M. Johri; consult the article for the authoritative request route and applicable approvals.\n\
+  \n## Citation\n\nIf these notebooks inform your work, cite the accompanying article:\n\n```bibtex\n\
+  @article{hu2026radiomic,\n  author  = {Hu, Ricky and Mojtahedi, Ramtin and Duli, Ergi and Hétu, Marie-France\
+  \ and Mantella, Laura and Simpson, Amber L. and Blaha, Michael J. and Barwell, Taylor and Liblik, Kiera\
+  \ and Suri, Jasjit S. and Johri, Amer M.},\n  title   = {Radiomic Carotid Plaque Features Integrated\
+  \ into Machine Learning Models for Cardiovascular Risk Prediction},\n  journal = {Ultrasound in Medicine\
+  \ \\& Biology},\n  year    = {2026},\n  note    = {In Press, Corrected Proof; available online 12 June\
+  \ 2026},\n  doi     = {10.1016/j.ultrasmedbio.2026.05.006},\n  url     = {https://doi.org/10.1016/j.ultrasmedbio.2026.05.006}\n\
+  }\n```\n\nGitHub can also expose this citation through `CITATION.cff`.\n\n## License and reuse\n\n**No\
+  \ license file or software license grant is included.** The repository’s public visibility does not\
+  \ by itself grant permission to copy, modify, redistribute, or incorporate the notebooks into another\
+  \ project. Unless an exception in applicable law applies, obtain permission from the relevant rights\
+  \ holders before reuse.\n\nFor permissions, data access, or scientific questions, contact the authors\
+  \ through the published article or contact the repository owner.\n"

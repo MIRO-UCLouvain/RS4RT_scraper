@@ -1,0 +1,51 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: LuciaGuo-Coder/cbct-roi-quantify
+url: https://github.com/LuciaGuo-Coder/cbct-roi-quantify
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-10T00:56:26Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# CBCT ROI Quantify Service\n\n口腔 CBCT 图像 ROI 量化分析微服务。\n\n基于 **DCTA-DilUnet** 牙齿分割模型，对分割\
+  \ mask 进行膨胀、计算 ROI 区域平均 CT 值，并生成红圈标注的可视化图片。\n\n## 项目结构\n\n```\n├── main.py             # FastAPI 服务入口（含\
+  \ Web 交互页面）\n├── ring_roi_core.py    # 任务一算法占位文件，后续替换为正式实现\n├── requirements.txt    # Python 依赖\n├──\
+  \ Dockerfile          # 容器化部署\n└── README.md           # 本文档\n```\n\n## 快速启动\n\n### 本地运行\n\n```bash\n\
+  pip install -r requirements.txt\nuvicorn main:app --host 0.0.0.0 --port 8000 --reload\n```\n\n### Docker\
+  \ 运行\n\n```bash\ndocker build -t cbct-quantify .\ndocker run -p 8000:8000 cbct-quantify\n```\n\n启动后访问\
+  \ http://localhost:8000 打开可视化操作页面（Swagger API 文档可通过 http://localhost:8000/docs 访问）。\n\n---\n\n## API\
+  \ 接口\n\n### 1. `GET /health` — 健康检查\n\n```bash\ncurl http://localhost:8000/health\n```\n\n**响应：**\n\n\
+  ```json\n{\"status\": \"ok\"}\n```\n\n---\n\n### 2. `POST /quantify` — ROI 量化分析\n\n接收 Base64 编码的 mask\
+  \ 图和 CT 图，调用 `ring_roi_core.get_ring_roi()` 计算环形 ROI 内平均 CT 值，返回带红圈 ROI 标注的可视化图片。\n\n#### 请求体 (JSON)\n\
+  \n| 字段 | 类型 | 必填 | 说明 |\n|------|------|------|------|\n| `mask_b64` | string | 是 | Base64 编码的 mask\
+  \ 图（DCTA-DilUnet 输出的分割结果，前景 > 0） |\n| `ct_b64` | string | 是 | Base64 编码的 CT 图（灰度，308×308） |\n| `expand_pixels`\
+  \ | int | 否 | mask 膨胀像素数，默认 15，范围 1-50 |\n\n#### 响应体\n\n| 字段 | 类型 | 说明 |\n|------|------|------|\n|\
+  \ `mean_ct_value` | float | ROI 区域的平均 CT 值（灰度 0-255） |\n| `roi_image_b64` | string | 带红圈 ROI 标注的 PNG\
+  \ 图片（Base64 编码） |\n| `roi_pixel_count` | int | ROI 区域有效像素数 |\n\n#### Python 调用示例\n\n```python\nimport\
+  \ base64\nimport requests\n\ndef encode_image(path: str) -> str:\n    with open(path, \"rb\") as f:\n\
+  \        return base64.b64encode(f.read()).decode()\n\n# mask 来自 DCTA-DilUnet 分割输出，ct 为原始 CBCT 切片\n\
+  resp = requests.post(\"http://localhost:8000/quantify\", json={\n    \"mask_b64\": encode_image(\"predict_mask.png\"\
+  ),\n    \"ct_b64\": encode_image(\"ct_slice.png\"),\n    \"expand_pixels\": 5,\n})\n\ndata = resp.json()\n\
+  print(f\"平均 CT 值: {data['mean_ct_value']}\")\nprint(f\"ROI 像素数: {data['roi_pixel_count']}\")\n\n# 保存红圈标注的可视化结果\n\
+  with open(\"roi_result.png\", \"wb\") as f:\n    f.write(base64.b64decode(data[\"roi_image_b64\"]))\n\
+  ```\n\n#### cURL 调用示例\n\n```bash\nMASK_B64=$(base64 -i predict_mask.png | tr -d '\\n')\nCT_B64=$(base64\
+  \ -i ct_slice.png | tr -d '\\n')\n\ncurl -X POST http://localhost:8000/quantify \\\n  -H \"Content-Type:\
+  \ application/json\" \\\n  -d \"{\\\"mask_b64\\\": \\\"$MASK_B64\\\", \\\"ct_b64\\\": \\\"$CT_B64\\\"\
+  , \\\"expand_pixels\\\": 5}\"\n```\n\n---\n\n## 工作流程\n\n```\n原始 CBCT 切片 (灰度 PNG)\n        │\n      \
+  \  ├──► 分割模型 ──► mask (分割标签图)\n        │                      │\n        └──────────────────────┤\n\
+  \                               ▼\n                      POST /quantify\n                 (mask + CT\
+  \ + expand_pixels)\n                               │\n                               ▼\n           \
+  \      ┌──────────────────────────┐\n                 │ 1. Base64 解码与参数校验  │\n                 │ 2.\
+  \ 调用 get_ring_roi      │\n                 │ 3. 生成红圈 ROI 可视化图  │\n                 │ 4. 返回平均 CT 值和图片\
+  \   │\n                 └──────────────────────────┘\n                               │\n           \
+  \                    ▼\n                 { mean_ct_value, roi_image_b64 }\n```\n"

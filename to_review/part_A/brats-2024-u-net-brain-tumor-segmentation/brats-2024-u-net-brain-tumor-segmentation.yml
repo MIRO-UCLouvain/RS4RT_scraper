@@ -1,0 +1,62 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Levi-Walker/BraTS-2024-U-Net-Brain-Tumor-Segmentation
+url: https://github.com/Levi-Walker/BraTS-2024-U-Net-Brain-Tumor-Segmentation
+platform: github
+description: A reproducible 2D U-Net study for whole-tumor segmentation on BraTS 2024 using four MRI modalities,
+  multi-seed evaluation, and validation-tuned thresholds.
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-06T20:16:30Z'
+image_source: https://raw.githubusercontent.com/Levi-Walker/BraTS-2024-U-Net-Brain-Tumor-Segmentation/HEAD/research_images/brain-tumor-unet-replication-poster.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# BraTS 2024 U-Net Brain Tumor Segmentation\n\nThis repository contains my current work\
+  \ on brain tumor segmentation with a 2D U-Net. I am using the BraTS 2024 glioma dataset and combining\
+  \ four MRI modalities (T1, contrast-enhanced T1, T2, and FLAIR) to predict a binary whole-tumor mask.\n\
+  \n![Brain tumor segmentation research poster](research_images/brain-tumor-unet-replication-poster.png)\n\
+  \n## Project background\n\nI first presented this project at MBAAI and have continued experimenting\
+  \ with it since then. The results saved here come from a newer experiment with 15 seeded runs. They\
+  \ are close to the results on the poster, but they do not match exactly because the notebook and analysis\
+  \ have changed as I have worked on the project. The poster shows where the study was at the time of\
+  \ the presentation; the notebook and CSV files show the current version.\n\nMy goal is to look at more\
+  \ than one successful training run. Changing the random seed affects the train, validation, and test\
+  \ split as well as model initialization, so running the model across several seeds gives a better picture\
+  \ of how stable the results are.\n\n## Approach\n\nFor each subject, I use the central axial slice from\
+  \ the four aligned MRI volumes. The four slices are stacked into one input and resized to 144 x 192\
+  \ pixels. All tumor labels in the segmentation mask are combined into one whole-tumor class.\n\nThe\
+  \ model is a four-level 2D U-Net. Training uses a combination of binary cross-entropy and Tversky loss,\
+  \ with more weight placed on missed tumor pixels. I use an approximately 70/15/15 train, validation,\
+  \ and test split. Early stopping monitors validation Dice and restores the best weights from each run.\n\
+  \nThe model produces a probability map, so I also test a range of thresholds. The threshold is selected\
+  \ using only the validation set and is then fixed before evaluating the test set. Flip and rotation\
+  \ augmentation are included in the notebook, but both were disabled for this experiment after they did\
+  \ not improve validation performance.\n\n## Current results\n\nAcross the 15 seeded runs, the mean validation-tuned\
+  \ test Dice score was **0.773**. The mean validation Dice score was **0.777**, and training stopped\
+  \ after an average of **39.7 epochs**.\n\nThe full results are saved in:\n\n- [`results/multiseed_results.csv`](results/multiseed_results.csv)\n\
+  - [`results/multiseed_results_report.csv`](results/multiseed_results_report.csv)\n\n### Example inputs\
+  \ and predictions\n\n![MRI modalities and ground truth](results/research_images/unet_modalities_with_gt.png)\n\
+  \n![Segmentation predictions and ground truth](results/research_images/unet_dense_3x3_poster_spacing.png)\n\
+  \n## Running the notebook\n\nThe Conda environment can be created with:\n\n```bash\nconda env create\
+  \ -f tf-brain.yml\nconda activate tf-brain\njupyter lab\n```\n\nThen open [`brain-tumor-unet-replication.ipynb`](brain-tumor-unet-replication.ipynb)\
+  \ and run the cells in order.\n\nThe BraTS data must be downloaded separately and placed in this directory:\n\
+  \n```text\nBraTS2024-BraTS-GLI-TrainingData/\n`-- training_data1_v2/\n    `-- BraTS-GLI-.../\n     \
+  \   |-- ...-t1n.nii.gz\n        |-- ...-t1c.nii.gz\n        |-- ...-t2w.nii.gz\n        |-- ...-t2f.nii.gz\n\
+  \        `-- ...-seg.nii.gz\n```\n\nThe notebook writes aggregate CSV files to `results/`, model checkpoints\
+  \ to `results/checkpoints/`, training histories to `results/history/`, and figures to `results/research_images/`.\n\
+  \n## Limitations\n\nThis is a 2D study using one slice per subject, so it does not use the full spatial\
+  \ information available in each MRI volume. It also combines all tumor regions into one class instead\
+  \ of evaluating separate tumor subregions. The work is experimental and is not intended for clinical\
+  \ use.\n\n## References\n\n- Bice, N. et al. (2021). *A sensitivity analysis of probability maps in\
+  \ deep-learning-based anatomical segmentation*. Journal of Applied Clinical Medical Physics, 22(8),\
+  \ 105-119. https://doi.org/10.1002/acm2.13331\n- BraTS 2024 challenge dataset paper: https://doi.org/10.48550/arXiv.2405.18368\n\
+  \n## Acknowledgment\n\nResearch advisor: Dr. Ackley Will  \nAndrews University Computer Science Department\n\
+  \n## License\n\nThe code and original documentation in this repository are available under the [MIT\
+  \ License](LICENSE). The BraTS dataset and other third-party materials keep their original terms.\n"

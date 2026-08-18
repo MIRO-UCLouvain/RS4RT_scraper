@@ -1,0 +1,71 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: cyrilvoyant/DICOM-Transfer-Modify
+url: https://github.com/cyrilvoyant/DICOM-Transfer-Modify
+platform: github
+description: Dicom Tool using dcmdjpeg dcmmodify gdmconv storescu
+license: MIT
+language: HTML
+keywords:
+- dcmtk
+- dicom
+- gdcm
+- medical-physics
+- pinnacle
+- radiotherapy
+- transfer-files
+stars: 1
+updated_at: '2026-07-23T11:06:23Z'
+image_source: null
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 5 support term(s).
+readme_excerpt: "# DICOM-Transfer-Modify\n\nA small Windows batch workflow to make DICOM RT images from\
+  \ a CD/portable media importable into treatment planning systems (TPS) that expect uncompressed, Explicit\
+  \ VR Little Endian DICOM — for use only when the vendor's own transfer tool (e.g. CD2RTP for ADAC/Pinnacle)\
+  \ fails.\n\n## When to use this\n\nOnly if the usual DICOM transfer software does not work. The typical\
+  \ failure mode: images arrive JPEG- or JPEG2000-compressed rather than \"Little Endian\", which some\
+  \ older TPS cannot ingest directly.\n\n## Contents of `Suite.zip`\n\n| File | Purpose | Origin |\n|---|---|---|\n\
+  | `code.bat` | Orchestrates the 4 actions below | This repository |\n| `ADDPATH/dcmdjpeg.exe` | Decompress\
+  \ JPEG-compressed DICOM | [DCMTK](https://dicom.offis.de/dcmtk.php.en) (OFFIS), BSD-style license |\n\
+  | `ADDPATH/gdcmconv.exe` | Decompress JPEG2000-compressed DICOM | [GDCM](http://gdcm.sourceforge.net/)\
+  \ (Grassroots DICOM), BSD-style license |\n| `ADDPATH/dcmodify.exe` | Edit DICOM tags | DCMTK, BSD-style\
+  \ license |\n| `ADDPATH/storescu.exe` | Push images via DICOM C-STORE to a PACS/TPS node | DCMTK, BSD-style\
+  \ license |\n| `ezDicom.exe` | Standalone DICOM tag viewer, used to check the Transfer Syntax UID |\
+  \ [ezDicom](https://sourceforge.net/projects/ezdicom/) — third-party freeware; license not verified\
+  \ by this repository, check the original SourceForge page before further redistribution |\n| `IMAGES/`\
+  \ | Empty placeholder folder — drop your own (already anonymized) DICOM files here | This repository\
+  \ |\n\n**SHA256 checksums** (verify before running, per this repo's own contribution guidelines):\n\n\
+  ```\n62c4834457ef354914a43a0e0c5449a10b894c55a27993950e8c4a0d37289ce9  ADDPATH/dcmdjpeg.exe\nfdcf775b88fd994d62fe2f61aeeeb67c09e692ec903e068c3bdce2030d5cd6df\
+  \  ADDPATH/dcmodify.exe\n67950e2db28c0b3538c99cadb46a6113ffcf751ffd77e0b5feca192285ed768e  ADDPATH/gdcmconv.exe\n\
+  6e36af6e8224870f335013b9225db3eabb81ec318512c0d8bb3b6e49d0536f01  ADDPATH/storescu.exe\n360bff9e9d221165c2844f3897f2a3bf61800e2fac13d1085a65fd484d432e32\
+  \  ezDicom.exe\n```\n\nNo patient DICOM data is included in this repository — `IMAGES/` ships with only\
+  \ an empty placeholder file.\n\n## Requirements\n\n- Windows.\n- [DCMTK](https://dicom.offis.de/dcmtk.php.en)\
+  \ and [GDCM](http://gdcm.sourceforge.net/html/gdcmconv.html) — already bundled in `Suite.zip/ADDPATH/`\
+  \ as pre-built executables (see checksums above); add `ADDPATH/` to your system `PATH`, or install your\
+  \ own copies from the links above if you'd rather not run the bundled binaries.\n\n## Usage\n\n1. Place\
+  \ your **already anonymized** DICOM images in the `IMAGES/` directory.\n2. Check whether they're all\
+  \ the same file size:\n   - **Same size** → likely already uncompressed (\"Little Endian\"), compatible\
+  \ with ADAC-Pinnacle as-is.\n   - **Different sizes** → likely JPEG- or JPEG2000-compressed, not directly\
+  \ compatible.\n3. To confirm the compression type, open one image in `ezDicom.exe` and check DICOM tag\
+  \ **(0002,0010)** (Transfer Syntax UID): if it ends in `1.2.1`, there is no compression; otherwise the\
+  \ images are compressed.\n4. Right-click `code.bat` → **Edit** to review the four actions before running\
+  \ anything:\n   - add a `.dcm` extension to every file in `IMAGES/` (**enabled by default**),\n   -\
+  \ decompress JPEG (`dcmdjpeg`, disabled by default — remove the leading `rem` to enable),\n   - decompress\
+  \ JPEG2000 (`gdcmconv --raw`, disabled by default),\n   - modify a DICOM tag, e.g. `(3004,000A)` = Dose\
+  \ Type (disabled by default),\n   - push the result to a PACS/TPS node via `storescu` (disabled by default\
+  \ — **edit the placeholder AE title, IP address, and port for your own PACS/TPS before enabling this\
+  \ line**; earlier versions of this script hardcoded one hospital's internal network address, which has\
+  \ been replaced with placeholders for public distribution).\n5. Double-click `code.bat` to run the actions\
+  \ you've left enabled.\n\n## Safety notes\n\n- **Never commit real patient DICOM files to this repository.**\
+  \ Always anonymize data before adding any sample files.\n- Review `code.bat` and verify the executable\
+  \ checksums above before running anything, especially since this suite bundles pre-built third-party\
+  \ binaries rather than source you compile yourself.\n- The `storescu` push target must be edited for\
+  \ your own network before use — it is commented out by default specifically to prevent an unedited copy\
+  \ from silently attempting a transfer to the wrong destination.\n\n## Citation\n\nIf you use this toolkit,\
+  \ please cite this repository (see [`citation.cff`](citation.cff)).\n\n## License\n\nMIT — see [`LICENSE`](LICENSE).\
+  \ This applies to `code.bat` and this documentation only. The bundled third-party executables (DCMTK,\
+  \ GDCM, ezDicom) remain under their own respective licenses; see the links in the table above.\n"

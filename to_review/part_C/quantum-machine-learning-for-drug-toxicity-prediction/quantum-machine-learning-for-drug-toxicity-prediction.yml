@@ -1,0 +1,72 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: yousef2342K/Quantum-Machine-Learning-for-Drug-Toxicity-Prediction
+url: https://github.com/yousef2342K/Quantum-Machine-Learning-for-Drug-Toxicity-Prediction
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2025-11-09T19:48:48Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 2 AI/ML term(s) in repository name.
+readme_excerpt: "```markdown\n# QuantumBoost2025: Advanced Quantum ML for Drug Toxicity Prediction\n\n\
+  **Predicting drug toxicity using Quantum Variational Classifiers (QVC) and Quantum Support Vector Machines\
+  \ (QSVM)**  \nBuilt with **Qiskit**, **scikit-learn**, and **imbalanced-learn**.\n\n---\n\n## Overview\n\
+  \nThis project implements a **state-of-the-art quantum machine learning pipeline** to predict **drug\
+  \ toxicity** (binary: `Non-Toxic=0`, `Toxic=1`) from molecular descriptors.\n\n### Key Features\n- **Advanced\
+  \ preprocessing**: missing value handling, variance filtering, correlation removal\n- **Multi-stage\
+  \ feature selection**: Mutual Information + Random Forest importance\n- **Class imbalance**: `BorderlineSMOTE`\
+  \ for robust oversampling\n- **Quantum-ready scaling**: values mapped to `[0, 2π]`\n- **Dimensionality\
+  \ reduction**: PCA → 6 qubits\n- **Two quantum models**:\n  - **QVC** (Variational Quantum Classifier)\n\
+  \  - **QSVM** (Quantum Support Vector Machine with fidelity kernel)\n- **Comprehensive evaluation**:\
+  \ Accuracy, Precision, Recall, F1, MCC, Confusion Matrices\n- **Modular 4-notebook pipeline**\n- **Full\
+  \ reproducibility** via `requirements.txt`\n\n---\n\n## Project Structure\n\n```\nQuantumBoost2025/\n\
+  │\n├── Dataset/                    \n│\n├── notebooks/ \n├── 01_data_preprocessing.ipynb  # Load, clean,\
+  \ merge, save train_clean.csv\n├── 02_feature_extraction.ipynb  # Correlation, MI, RF → X_selected.csv\n\
+  ├── 03_quantum_model_training.ipynb  # SMOTE, PCA, QVC/QSVM training\n├── 04_evaluation_and_analysis.ipynb\
+  \ # Metrics, plots, comparison\n│\n├── requirements.txt             # Exact package versions\n├── README.md\
+  \                    \n│\n└──\n```\n\n---\n\n## Requirements\n\n- **Google Colab** (recommended) or\
+  \ local **Python 3.10–3.11**\n- **Google Drive** access (for data and outputs)\n- Internet connection\
+  \ (for `pip install`)\n\n---\n\n## Setup & Installation\n\n### Option 1: Google Colab (Recommended)\n\
+  \n1. Open [Google Colab](https://colab.research.google.com)\n2. Upload all `.ipynb` files and `requirements.txt`\
+  \ to your Drive under:\n   ```\n   /MyDrive/QuantumBoost2025/\n   ```\n3. Place your dataset in:\n \
+  \  ```\n   /MyDrive/QuantumBoost2025/Dataset/train_features.csv\n   /MyDrive/QuantumBoost2025/Dataset/train_labels.csv\n\
+  \   ```\n4. Open `01_data_preprocessing.ipynb` → **Run All**\n\n> The first cell will install everything:\n\
+  > ```python\n> !pip install -r /content/drive/MyDrive/QuantumBoost2025/requirements.txt\n> ```\n\n###\
+  \ Option 2: Local Environment\n\n```bash\n# Clone or download the project\ngit clone <your-repo-url>\n\
+  cd QuantumBoost2025\n\n# Create and activate virtual environment\npython -m venv quantum_env\nsource\
+  \ quantum_env/bin/activate  # Linux/Mac\n# quantum_env\\Scripts\\activate   # Windows\n\n# Install dependencies\n\
+  pip install --upgrade pip\npip install -r requirements.txt\n```\n\n---\n\n## Execution Order\n\nRun\
+  \ the notebooks **in sequence**:\n\n```bash\n1. 01_data_preprocessing.ipynb\n2. 02_feature_extraction.ipynb\n\
+  3. 03_quantum_model_training.ipynb\n4. 04_evaluation_and_analysis.ipynb\n```\n\nEach notebook:\n- Loads\
+  \ inputs from previous stage\n- Saves outputs to shared Drive folder\n- Prints progress and final metrics\n\
+  \n> **Tip**: Use `Runtime → Run all` in Colab for each notebook.\n\n---\n\n## Output Highlights\n\n\
+  | File | Description |\n|------|-------------|\n| `model_comparison.csv` | Final QVC vs QSVM metrics\
+  \ |\n| `model_comparison.png` | Bar chart of Accuracy, F1, MCC, etc. |\n| `confusion_matrices.png` |\
+  \ Side-by-side confusion matrices |\n| `qvc_model.pkl` / `qsvm_model.pkl` | Trained quantum models |\n\
+  | `preprocessing_objects.pkl` | Full pipeline (scalers, PCA, features) |\n\n---\n\n## Making Predictions\
+  \ on New Data\n\nUse the helper function (defined in original notebook or below):\n\n```python\ndef\
+  \ predict_toxicity(model, new_data_df, prep_objects):\n    X = new_data_df[prep_objects['features']]\n\
+  \    X = prep_objects['robust'].transform(X)\n    X = prep_objects['minmax'].transform(X)\n    X = prep_objects['pca'].transform(X)\n\
+  \    X = prep_objects['pca_scaler'].transform(X)\n    return model.predict(X)\n```\n\nExample:\n```python\n\
+  with open('preprocessing_objects.pkl', 'rb') as f:\n    prep = pickle.load(f)\nwith open('qvc_model.pkl',\
+  \ 'rb') as f:\n    qvc = pickle.load(f)\n\nnew_molecules = pd.read_csv('test_features.csv')\npreds =\
+  \ predict_toxicity(qvc, new_molecules, prep)\n```\n\n---\n\n## Reproducibility\n\n- All random seeds:\
+  \ `random_state=42`\n- Exact library versions in `requirements.txt`\n- Deterministic train/test split\
+  \ (`stratify=y`)\n- No external APIs or mutable data sources\n\n---\n\n## Performance (Example)\n\n\
+  | Model | Accuracy | Precision | Recall | F1 | MCC |\n|-------|----------|-----------|--------|----|-----|\n\
+  | QVC   | 0.842    | 0.801     | 0.756  | 0.778 | **0.678** |\n| QSVM  | 0.835    | 0.788     | 0.742\
+  \  | 0.764 | 0.659 |\n\n> **Best model selected by Matthews Correlation Coefficient (MCC)**\n\n---\n\
+  \n## Contributors\n\n- **Youssif Khalid Mahmoud Attia** – Quantum ML Engineer\n- Built with [Qiskit](https://qiskit.org),\
+  \ [scikit-learn](https://scikit-learn.org), and [Google Colab](https://colab.research.google.com)\n\n\
+  ---\n\n## License\n\nMIT License – feel free to use, modify, and distribute.\n\n---\n\n**QuantumBoost2025**\
+  \ – *Where Quantum Meets Drug Discovery*\n```"

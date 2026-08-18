@@ -1,0 +1,38 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: nebulaHZH/CBCT2CT
+url: https://github.com/nebulaHZH/CBCT2CT
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-21T13:28:08Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# CBCT-to-CT 基线工程\n\n这个工程实现了一个用于 SynthRAD2023 Task 2 的 CBCT-to-CT 图像转换基线。\n主扩散模型是 Peng\
+  \ 等人官方 `conditional_DDPM` 的本地实现版本：以 CBCT 作为条件输入，以 CT 作为目标图像，用官方结构的时间嵌入 U-Net 预测扩散噪声。\n对应论文为 `CBCT-Based\
+  \ synthetic CT image generation using conditional denoising diffusion probabilistic model`，官方仓库为 `https://github.com/junbopeng/conditional_DDPM`。\n\
+  \n## 数据准备\n\n先从 Zenodo 下载 SynthRAD2023，并解压 `Task2.zip`。\n\n```powershell\npython scripts/prepare_synthrad2023.py\
+  \ --root E:\\path\\to\\Task2 --output-dir manifests/synthrad2023\n```\n\n期望的数据目录结构如下：\n\n```text\nTask2/\n\
+  \  brain/2Bxxxx/cbct.nii.gz ct.nii.gz mask.nii.gz\n  pelvis/2Pxxxx/cbct.nii.gz ct.nii.gz mask.nii.gz\n\
+  ```\n\n## 训练\n\n先安装与你的 CUDA 版本匹配的 PyTorch，再安装其余依赖。\n\n```powershell\npip install torch torchvision --index-url\
+  \ https://download.pytorch.org/whl/cu121\npip install -r requirements.txt\npython train.py --config\
+  \ configs/cddpm_synthrad2023_brain.yaml\n```\n\n如果只是想做一个极小规模的 smoke test：\n\n```powershell\npython train.py\
+  \ --config configs/cddpm_synthrad2023_brain.yaml --override training.epochs=1 --override data.max_slices_per_case=4\n\
+  ```\n\n## 推理与评估\n\n```powershell\npython infer.py --config configs/cddpm_synthrad2023_brain.yaml --checkpoint\
+  \ runs/cddpm_synthrad2023_brain/checkpoints/epoch_0100.pt --manifest manifests/synthrad2023/task2_brain_train.jsonl\
+  \ --output-dir runs/cddpm_synthrad2023_brain/predictions\npython evaluate.py --manifest manifests/synthrad2023/task2_brain_train.jsonl\
+  \ --prediction-dir runs/cddpm_synthrad2023_brain/predictions --output-csv runs/cddpm_synthrad2023_brain/metrics.csv\
+  \ --visual-dir runs/cddpm_synthrad2023_brain/visuals\n```\n\n正式比较模型前，建议先跑 identity baseline，量化“直接把原始\
+  \ CBCT 当作 CT”的下限表现：\n\n```powershell\npython scripts/evaluate_identity.py --manifest manifests/synthrad2023/task2_brain_train.jsonl\
+  \ --output-csv runs/identity_brain_metrics.csv\n```\n\n## 建议对比的基线\n\n- Identity baseline：直接评估原始 CBCT\
+  \ 与 CT 的差异，用来衡量下限。\n- 官方 cDDPM baseline：默认 `configs/cddpm_synthrad2023_*.yaml`，结构对齐 `junbopeng/conditional_DDPM`，但代码在本项目中重新实现，便于适配\
+  \ SynthRAD manifest。\n- `configs/resunet_synthrad2023_brain.yaml`：监督式 ResUNet 回归基线。\n- CycleGAN：如果后续要评估弱配对或非配对场景，可以作为经典对比方法。\n\
+  - TPDM-CBCT2CT：在当前流程稳定后，可以作为更强的纹理保持扩散模型对比。\n\nSynthRAD2023 采用 CC BY-NC 4.0 发布。除非你单独确认授权，否则实验应限于非商业研究用途。\n"

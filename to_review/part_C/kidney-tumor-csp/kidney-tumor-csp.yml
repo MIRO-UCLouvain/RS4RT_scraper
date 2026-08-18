@@ -1,0 +1,84 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: fongrong/kidney-tumor-csp
+url: https://github.com/fongrong/kidney-tumor-csp
+platform: github
+description: CSP-Enhanced U-Net for Kidney Tumor Segmentation and Classification Based on a Hybrid Deep
+  Learning Framework and Radiomics
+license: MIT
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-02-19T16:25:02Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# CSP-Enhanced U-Net for Kidney Tumor Segmentation and Classification\n\n[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)\n\
+  [![PyTorch 1.12+](https://img.shields.io/badge/pytorch-1.12+-ee4c2c.svg)](https://pytorch.org/)\n[![License:\
+  \ MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)\n\nOfficial implementation of **\"\
+  Kidney Tumor Segmentation and Classification Based on a Hybrid Deep Learning Framework and Radiomics:\
+  \ Integrating Cross-Stage Partial Network and Enhanced U-Net Structures to Reduce Computational Costs\"\
+  **.\n\n---\n\n## Highlights\n\n- **CSP modules** reduce U-Net encoder parameters by **28%** without\
+  \ segmentation loss\n- **Backbone-agnostic** design generalizes across ResUNet and DenseUNet\n- **Hybrid\
+  \ radiomics–deep learning** classification achieves **AUC 0.89** for renal tumors\n- **Clinically informed\
+  \ augmentation** targets benign subtypes for class imbalance\n- **Efficient inference** enables real-time\
+  \ deployment on mid-range hardware\n\n## Architecture Overview\n\n```\nInput CT Volume\n       │\n \
+  \      ▼\n┌──────────────────────┐\n│  Stage 1: Low-Res    │  Coarse kidney/tumor localization\n│  3D\
+  \ U-Net            │\n└──────────┬───────────┘\n           │ Probability maps\n           ▼\n┌──────────────────────┐\n\
+  │  Stage 2: Full-Res   │  Fine-grained tumor delineation\n│  CSP-ResUNet /       │  with CSP-enhanced\
+  \ encoder\n│  CSP-DenseUNet       │\n└──────────┬───────────┘\n           │ Segmentation masks\n   \
+  \        ▼\n┌──────────────────────┐\n│  Radiomics Pipeline  │  PyRadiomics feature extraction\n│  +\
+  \ XGBoost Classifier│  Benign vs. Malignant (AUC 0.89)\n└──────────────────────┘\n```\n\n## Results\n\
+  \n### Segmentation Performance (KiTS19 Test Set)\n\n| Model | Params (M) | FLOPs | Size (MB) | Kidney\
+  \ Dice | Tumor Dice |\n|-------|-----------|-------|-----------|-------------|------------|\n| ResUNet\
+  \ | 47.5 | 6.99×10¹¹ | 371 | 94.98% | 81.31% |\n| **CSP-ResUNet** | **34.1 (↓28%)** | **5.66×10¹¹ (↓19%)**\
+  \ | **265** | **95.08%** | **81.03%** |\n| DenseUNet | 19.4 | 3.17×10¹¹ | 152 | **96.67%** | **81.41%**\
+  \ |\n| **CSP-DenseUNet** | **17.8 (↓8%)** | **2.98×10¹¹ (↓6%)** | **140** | **96.21%** | **81.28%**\
+  \ |\n\n### Classification Performance (KiTS21, XGBoost)\n\n| Augmentation Strategy | Accuracy | F1 |\
+  \ AUC |\n|----------------------|----------|-----|-----|\n| No augmentation | 0.91 | 0.96 | 0.66 |\n\
+  | SMOTETomek only | 0.77 | 0.86 | 0.85 |\n| Targeted oversampling | 0.90 | 0.94 | 0.87 |\n| **Hybrid\
+  \ (ours)** | **0.90** | **0.95** | **0.89** |\n\n## Installation\n\n```bash\ngit clone https://github.com/fongrong/kidney-tumor-csp.git\n\
+  cd kidney-tumor-csp\nconda create -n kits python=3.8 -y\nconda activate kits\npip install -r requirements.txt\n\
+  ```\n\n## Dataset Preparation\n\nThis project uses the [KiTS19](https://github.com/neheller/kits19)\
+  \ and [KiTS21](https://kits21.kits-challenge.org/) challenge datasets.\n\n```bash\n# Download KiTS19\
+  \ (210 cases)\ngit clone https://github.com/neheller/kits19.git\ncd kits19 && python -m starter_code.get_imaging\n\
+  \n# Preprocess\npython scripts/preprocess_data.py \\\n    --input_dir /path/to/kits19/data \\\n    --output_dir\
+  \ data/processed \\\n    --clip_percentile 0.5\n```\n\n## Usage\n\n### 1. Segmentation Training\n\n\
+  ```bash\n# Stage 1: Low-resolution coarse segmentation\npython train_segmentation.py \\\n    --config\
+  \ configs/seg_lowres.yaml \\\n    --model lowres_unet\n\n# Stage 2: Full-resolution with CSP-enhanced\
+  \ encoder\npython train_segmentation.py \\\n    --config configs/seg_fullres.yaml \\\n    --model csp_resunet\
+  \ \\\n    --lowres_ckpt results/segmentation/lowres_best.pth\n```\n\nAvailable models: `resunet`, `csp_resunet`,\
+  \ `denseunet`, `csp_denseunet`\n\n### 2. Segmentation Inference\n\n```bash\npython inference_segmentation.py\
+  \ \\\n    --config configs/seg_fullres.yaml \\\n    --model csp_denseunet \\\n    --checkpoint results/segmentation/csp_denseunet_best.pth\
+  \ \\\n    --input_dir data/processed/test \\\n    --output_dir results/segmentation/predictions\n```\n\
+  \n### 3. Radiomics Feature Extraction\n\n```bash\npython extract_radiomics.py \\\n    --data_dir data/processed\
+  \ \\\n    --mask_dir results/segmentation/predictions \\\n    --output_csv results/classification/radiomics_features.csv\n\
+  ```\n\n### 4. Tumor Classification\n\n```bash\npython train_classification.py \\\n    --features results/classification/radiomics_features.csv\
+  \ \\\n    --augmentation hybrid \\\n    --classifier xgboost \\\n    --output_dir results/classification\n\
+  ```\n\n## Project Structure\n\n```\nkidney-tumor-csp/\n├── configs/                    # Training configurations\n\
+  │   ├── seg_lowres.yaml\n│   ├── seg_fullres.yaml\n│   └── classification.yaml\n├── models/        \
+  \             # Model architectures\n│   ├── csp_module.py           # Cross-Stage Partial module\n\
+  │   ├── resunet3d.py            # 3D ResUNet backbone\n│   ├── denseunet3d.py          # 3D DenseUNet\
+  \ backbone\n│   ├── csp_resunet3d.py        # CSP-enhanced ResUNet\n│   ├── csp_denseunet3d.py     \
+  \ # CSP-enhanced DenseUNet\n│   └── unet3d_lowres.py        # Low-resolution U-Net\n├── utils/     \
+  \                 # Utility functions\n│   ├── dataset.py              # Data loading and transforms\n\
+  │   ├── losses.py               # Loss functions\n│   ├── metrics.py              # Evaluation metrics\n\
+  │   ├── augmentation.py         # Data augmentation\n│   └── radiomics_utils.py      # Radiomics helpers\n\
+  ├── scripts/\n│   └── preprocess_data.py\n├── train_segmentation.py\n├── inference_segmentation.py\n\
+  ├── extract_radiomics.py\n├── train_classification.py\n├── evaluate_segmentation.py\n├── evaluate_classification.py\n\
+  ├── requirements.txt\n├── LICENSE\n└── README.md\n```\n\n## Citation\n\n```bibtex\n@article{yang2026kidney,\n\
+  \  title={Kidney Tumor Segmentation and Classification Based on a Hybrid Deep\n         Learning Framework\
+  \ and Radiomics: Integrating Cross-Stage Partial\n         Network and Enhanced U-Net Structures to\
+  \ Reduce Computational Costs},\n  author={Yang, Shao-Yu and Sung, Chih-Chien and Sun, Tzu-Lung and\n\
+  \          Lin, Frank Yeong-Sung and Hsiao, Chiu-Han and Wu, Chih-Horng and\n          Yang, Feng-Jung},\n\
+  \  journal={Artificial Intelligence in Medicine},\n  year={2026},\n  publisher={Elsevier}\n}\n```\n\n\
+  ## Acknowledgements\n\n- [KiTS19/21 Challenge](https://kits-challenge.org/) for benchmark datasets\n\
+  - [CSPNet](https://github.com/WongKinYiu/CrossStagePartialNetworks) for the CSP design principle\n-\
+  \ [PyRadiomics](https://pyradiomics.readthedocs.io/) for radiomics feature extraction\n\nThis research\
+  \ was supported by National Taiwan University Hospital Yunlin Branch (NTUHYL107.I007, NTUHYL109.I008,\
+  \ NTUHYL110.I004, NTUHYL114.F007) and the National Science and Technology Council, Taiwan (NSTC 113-2221-E-002-159).\n\
+  \n## License\n\nThis project is licensed under the MIT License — see [LICENSE](LICENSE) for details.\n"

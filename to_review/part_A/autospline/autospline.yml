@@ -1,0 +1,139 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ImaneChafi/autospline
+url: https://github.com/ImaneChafi/autospline
+platform: github
+description: CBCT automatic detection of dental spline for panoramic scan generation using raycasting
+license: MIT
+language: Python
+keywords: []
+stars: 2
+updated_at: '2026-08-14T18:11:01Z'
+image_source: https://raw.githubusercontent.com/ImaneChafi/autospline/HEAD/docs/video_abstract_poster.png
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# CBCT Dental Arch Spline Detector\n\nAI-assisted tool for detecting and annotating dental\
+  \ arch splines on CBCT (Cone Beam CT) axial slices.\n\nInspired by margin line detection on 3D meshes,\
+  \ adapted for 2D CBCT imaging. A U-Net predicts a heatmap of control point locations; the user can then\
+  \ refine the result interactively in a GUI annotator.\n\n## \U0001F3A5 Video abstract\n\n[![AutoSpline\
+  \ — video abstract](docs/video_abstract_poster.png)](https://github.com/ImaneChafi/autospline/raw/main/video_abstract.mp4)\n\
+  \n**▶ Click the image above to play the video abstract.**\n\n<!--\n  Optional — for a video that PLAYS\
+  \ INLINE (embedded player) instead of on click:\n  open this README on github.com, click ✏️ edit, drag\
+  \ video_abstract.mp4 into the\n  editor here, and GitHub inserts a https://github.com/user-attachments/assets/…\n\
+  \  link that renders as an inline player. Then replace the image line above with it.\n-->\n\n\n## GUI\
+  \ feature pipeline\n\n![CBCT arch annotator GUI pipeline](docs/gui_pipeline.png)\n\nLoad a CBCT, detect\
+  \ the arch by one of three methods (AI, assisted, or automatic\ngeometric), refine the control points,\
+  \ then export a Slicer `.fcsv`.\n\n---\n\n## Overview\n\nEach CBCT case produces one annotated axial\
+  \ slice with ~17–32 control points forming a U-shaped dental arch. The pipeline:\n\n1. Extracts the\
+  \ relevant axial slice from the NIfTI volume\n2. Trains a U-Net to predict a heatmap of control point\
+  \ locations\n3. Post-processes the heatmap into ordered control points + a smooth B-spline\n4. Lets\
+  \ the user refine points in an interactive GUI\n5. Exports annotations in Slicer `.fcsv` format\n\n\
+  ---\n\n## Repository Structure\n\n```\ncbct_arch_spline/\n├── config.py                   # All hyperparameters\
+  \ and paths\n├── requirements.txt\n│\n├── data/\n│   ├── preprocessing.py        # NIfTI loading, HU\
+  \ windowing, slice extraction\n│   └── dataset.py              # PyTorch dataset: slice + Gaussian heatmap\
+  \ pairs\n│\n├── models/\n│   └── unet.py                 # EfficientNet-B3 U-Net (or SimpleUNet fallback)\n\
+  │\n├── spline/\n│   ├── fcsv_io.py              # Read/write Slicer .fcsv, LPS ↔ voxel coordinates\n\
+  │   └── spline_utils.py         # B-spline fitting, arch ordering, metrics\n│\n├── training/\n│   ├──\
+  \ losses.py               # FocalMSE loss (upweights keypoint pixels)\n│   └── trainer.py          \
+  \    # Training loop, AdamW + cosine LR schedule\n│\n├── inference/\n│   └── predictor.py          \
+  \  # ArchPredictor: slice → heatmap → keypoints\n│\n├── gui/\n│   └── app.py                  # Interactive\
+  \ PyQt5 annotator\n│\n└── scripts/\n    ├── explore_annotations.py  # Visualise .fcsv arches (no CBCT\
+  \ needed)\n    ├── train.py                # Train the model\n    ├── evaluate.py             # Compute\
+  \ metrics on a test set\n    └── annotate.py             # Launch the GUI\n```\n\n---\n\n## Installation\n\
+  \n```bash\npip install -r requirements.txt\n```\n\nRequirements: Python ≥ 3.9, PyTorch ≥ 2.0, nibabel,\
+  \ PyQt5, timm, scikit-image, SimpleITK.\n\n---\n\n## Data Format\n\n### CBCT volumes\nSupported formats:\n\
+  - **ITK MetaImage** (`.mha`, `.mhd`, `.nrrd`) — e.g. the ToothFairy2 dataset, read via SimpleITK\n-\
+  \ **NIfTI** (`.nii`, `.nii.gz`) — read via nibabel\n\nFiles are named `{case_id}.mha` (or `.nii.gz`).\
+  \ Both backends are normalised\ninternally to the same conventions (voxel→RAS affine, `(i, j, k)` array\
+  \ order),\nso all downstream coordinate math is identical regardless of source format.\nExpected Hounsfield\
+  \ Unit range: −500 to +2000 (dental CBCT).\n\nThe training/eval scripts look for volumes both directly\
+  \ in `--cbct_dir` and in\na nested `imagesTr/` subfolder (nnU-Net / ToothFairy2 layout):\n\n```\nDataset112_ToothFairy2/\n\
+  ├── imagesTr/\n│   ├── ToothFairy2F_001_0000.mha\n│   └── ...\n└── labelsTr/\n```\n\n### Annotations\n\
+  Slicer `.fcsv` fiducial files — one per case, same stem as the volume file\n(`ToothFairy2F_001_0000.mha`\
+  \ ↔ `ToothFairy2F_001_0000.fcsv`).\n\n```\n# CoordinateSystem = LPS\n# columns = id,x,y,z,...\n1, 31.98,\
+  \ 101.81, 34.5, ...\n2, 36.37,  84.00, 34.5, ...\n...\n```\n\nAll control points in a given case share\
+  \ the same `z` coordinate (a single axial slice).  \nThe project ships with **163 annotated cases**\
+  \ in `arch_points_manual/`.\n\n---\n\n## Usage\n\n### 1. Explore annotations (no CBCT files needed)\n\
+  \n```bash\npython3 scripts/explore_annotations.py           # 3×3 grid of 9 cases\npython3 scripts/explore_annotations.py\
+  \ --n 20   # show 20 cases\npython3 scripts/explore_annotations.py --case ToothFairy2F_001_0000\n```\n\
+  \n### 2. Train\n\n```bash\npython3 scripts/train.py \\\n    --cbct_dir /path/to/nifti_files \\\n   \
+  \ --epochs 100 \\\n    --batch_size 8\n```\n\nCheckpoints are saved to `saved_models/` as `arch_detector_best.pth`\
+  \ and `arch_detector_last.pth`.\n\nOptions:\n| Flag | Default | Description |\n|------|---------|-------------|\n\
+  | `--cbct_dir` | required | Directory with `.nii.gz` files |\n| `--fcsv_dir` | `arch_points_manual/`\
+  \ | Directory with `.fcsv` files |\n| `--epochs` | 100 | Number of training epochs |\n| `--batch_size`\
+  \ | 8 | Batch size |\n| `--lr` | 1e-4 | Learning rate |\n| `--no_pretrained` | False | Use SimpleUNet\
+  \ instead of EfficientNet-B3 |\n\n### 3. Evaluate\n\n```bash\npython3 scripts/evaluate.py \\\n    --cbct_dir\
+  \ /path/to/nifti_files \\\n    --checkpoint saved_models/arch_detector_best.pth\n```\n\nReports mean\
+  \ / median distance (pixels) from predicted points to the ground-truth spline.\n\n### 4. Interactive\
+  \ annotation GUI\n\n```bash\n# Empty GUI\npython3 scripts/annotate.py\n\n# Pre-load CBCT + annotation\n\
+  python3 scripts/annotate.py \\\n    --cbct /path/to/case.nii.gz \\\n    --fcsv /path/to/case.fcsv\n\n\
+  # Pre-load with trained model\npython3 scripts/annotate.py \\\n    --cbct /path/to/case.nii.gz \\\n\
+  \    --model saved_models/arch_detector_best.pth\n```\n\n---\n\n## GUI Controls\n\n| Action | How |\n\
+  |--------|-----|\n| Load CBCT | File menu or \"Load CBCT\" button |\n| Scroll slices | Slider or ← /\
+  \ → arrow keys |\n| Run AI detection | \"Detect Arch (AI)\" button |\n| Add control point | Left-click\
+  \ on empty space (or Shift+click) |\n| Move control point | Left-click + drag a point |\n| Delete control\
+  \ point | Right-click on point |\n| Re-order points | \"Re-order Points\" button |\n| Generate panoramic\
+  \ | \"Generate Panoramic\" button (Panoramic panel) |\n| Save annotation | Ctrl+S or \"Save .fcsv\"\
+  \ button |\n\n---\n\n## Annotating Without a Trained Model (Geometric Workflow)\n\nBefore you have trained\
+  \ a model, use the **Geometric (no AI)** panel. The\nrecommended, reliable workflow needs only a handful\
+  \ of clicks:\n\n1. Scroll to the slice you want to annotate.\n2. **Click ~6 points** roughly along the\
+  \ arch (e.g. both rear molars and a few\n   points in between — they don't need to be precise). Clicking\
+  \ empty space adds\n   a point; clicking an existing point lets you drag it.\n3. Click **\"Fit Arch\
+  \ from Clicks\"** → your clicks become a smooth, evenly-spaced\n   spline of N control points (set N\
+  \ with the spinbox, default 24).\n4. *(Optional)* Click **\"Snap to Bright\"** to nudge each point onto\
+  \ the nearest\n   tooth / cortical bone.\n5. Drag any individual point to fine-tune, then **Ctrl+S**\
+  \ to save.\n\nThis works on every slice — including those with no clean tooth row — because\n*you* supply\
+  \ the anatomical prior with the clicks; the geometry just smooths and\nresamples them.\n\nThere are\
+  \ also **two fully-automatic** buttons (no clicks, no label):\n\n- **\"Auto (contrast)\"** — bright-blob\
+  \ detection on the *current axial slice*\n  ([`inference/geometric.py`](cbct_arch_spline/inference/geometric.py)\
+  \ →\n  `auto_detect_arch`). Fast, but only works when a clean tooth row is visible on\n  that slice.\n\
+  - **\"Auto (ROI)\"** — the image-based arch detector over the *whole volume*\n  ([`ROI_targeting/altered_geometric_version.py`](cbct_arch_spline/ROI_targeting/altered_geometric_version.py)):\n\
+  \  finds the jaw's coronal ROI from the enamel band, extracts the dental-arch\n  footprint from the\
+  \ bone-window mean projection, skeletonises it to a\n  centreline, and fits a smoothing B-spline. More\
+  \ robust across slices/bite.\n\nEither way, drag to refine, then **Generate Panoramic**. The click-assisted\n\
+  helpers (`assisted_arch_from_clicks`, `snap_points_to_bright`) also live in\n`inference/geometric.py`.\n\
+  \n---\n\n## AI Detection (HeatmapNet)\n\nThe trained deep-learning method lives in\n[`cbct_arch_spline/dl/`](cbct_arch_spline/dl/)\
+  \ and powers the GUI's\n**\"AI Detection\"** panel. It predicts the whole arch in one shot from a 2D\n\
+  maximum-intensity projection (MIP) of the jaw plus its tooth/bone segmentation.\nThis is the winning\
+  \ architecture from an internal comparison — **HeatmapNet**\n(Payer et al., MICCAI 2016), **~4.0 mm**\
+  \ mean curve distance vs. 16.1 mm for the\nprevious ResNet + residual-correction approach.\n\n**How\
+  \ it works.** For the chosen jaw it takes a z-range MIP of the CBCT, the\nmatching label MIP, and a\
+  \ rendered geometric-baseline arch as a 3-channel image,\nruns a **U-Net encoder–decoder** that outputs\
+  \ one 2D Gaussian **heatmap per\ncontrol point**, and recovers each `(x, y)` via **soft-argmax** (a\
+  \ jaw/geometry-\nconditioned MLP then applies a small correction). The result is written as a\nSlicer\
+  \ `.fcsv` in the same LPS format as the manual annotations and loaded back\nthrough the GUI's normal\
+  \ annotation loader.\n\n**Usage in the GUI:**\n1. Load a CBCT. The matching label volume is auto-found\
+  \ via the ToothFairy2\n   convention (`imagesTr/<case>_0000.mha` → `labelsTr/<case>.mha`); otherwise\n\
+  \   click **\"Load Label\"**.\n2. Pick the **jaw** (lower / upper).\n3. Click **\"Detect Arch (AI)\"\
+  ** — or just leave **\"Auto-detect on load\"** on and\n   it runs automatically when the CBCT loads.\n\
+  4. Refine the predicted points by dragging, then **Ctrl+S**.\n\n**Standalone CLI** (useful for testing\
+  \ before the GUI):\n```bash\npython3 cbct_arch_spline/dl/dl_arch_predictor.py \\\n    --cbct  imagesTr/ToothFairy2F_001_0000.mha\
+  \ \\\n    --label labelsTr/ToothFairy2F_001.mha \\\n    --checkpoint cbct_arch_spline/dl/final_model.pt\
+  \ \\\n    --jaw lower \\\n    --pipeline_path cbct_arch_spline/dl/drr_pipeline_v4.py \\\n    --out_fcsv\
+  \ prediction.fcsv\n```\n\n**Running on a raw scan with no label.** This model requires a tooth/bone\
+  \ label\nvolume (it uses it to locate the jaw, as an input channel, and to build the\ngeometric baseline).\
+  \ ToothFairy2 ships with labels, but a brand-new CBCT won't\nhave one. In that case the intended pipeline\
+  \ is two stages:\n\n```\nraw CBCT ──▶ tooth-segmentation model ──▶ label volume ──▶ our DL arch model\
+  \ ──▶ spline\n```\n\ni.e. first run a tooth/bone segmentation model (e.g. an nnU-Net trained on\nToothFairy2)\
+  \ on the raw CBCT to produce the label volume, then feed the CBCT +\nthat label into the AI Detection\
+  \ here.\n\n**Caveats:**\n- **Lower jaw is reliable; upper jaw is preliminary** — the model was trained\
+  \ on\n  155 lower-jaw vs only 6 upper-jaw cases.\n- HeatmapNet is a **from-scratch U-Net** (no ImageNet\
+  \ backbone), so no weight\n  download is needed and the 6 MB checkpoint is self-contained.\n- **Input\
+  \ normalisation:** the stand-alone hand-off code fed the MIP channel in\n  raw Hounsfield units, which\
+  \ collapsed every prediction into an off-canvas loop.\n  The integrated version windows the MIP to `[0,\
+  \ 1]`\n  (`HU_WINDOW = (-1000, 2000)` in `dl_arch_predictor.py`) before the network,\n  which restores\
+  \ correct arches. If you have the original training dataloader,\n  confirm this matches its exact normalisation.\n\
+  - The model works on the **whole jaw volume**, not a single slice — its arch is\n  valid across all\
+  \ jaw slices, so the GUI keeps your current slice when loading\n  the prediction (`keep_slice=True`).\n\
+  \n---\n\n## AI Assistant (local LLM via Ollama)\n\nThe GUI's **AI Assistant** panel lets you drive the\
+  \ tool in plain English —\ne.g. *\"make the panoramic brighter and sharper\"*, *\"extend the arch back\"\
+  *,\n*\"give me 30 control points\"*, *\"re-detect the arch\"*. It runs a **local**\nmodel through [Ollama](https://github.com/ollama/ollama):\
+  \ **no API key, no cost,\nfully offline**, and the CBCT image never leaves your machine.\n\n**How it\
+  \ works.** Your request + the current state (number of control points,\ncurrent panoramic settings)\
+  \ go to the local model, which returns a small JSON\nlist of operations *chosen from a fixed, whitelisted\
+  \ vocabulary* — it can only\nadjust panor"

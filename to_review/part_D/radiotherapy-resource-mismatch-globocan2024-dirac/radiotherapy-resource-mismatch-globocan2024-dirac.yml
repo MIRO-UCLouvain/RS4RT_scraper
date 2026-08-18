@@ -1,0 +1,76 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ammkkr/radiotherapy-resource-mismatch-globocan2024-dirac
+url: https://github.com/ammkkr/radiotherapy-resource-mismatch-globocan2024-dirac
+platform: github
+description: Derived data, analysis code, and figure source data linking GLOBOCAN 2024 cancer projections
+  with IAEA DIRAC radiotherapy-resource data.
+license: NOASSERTION
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-03T15:08:17Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Cancer Tomorrow Burden Updates and Latest-Reported Radiotherapy Capacity\n\nThis repository\
+  \ contains derived country-level data, display source data, and\nanalysis code for a study linking IARC\
+  \ Global Cancer Observatory Cancer Tomorrow\nprojections with latest-reported IAEA Directory of Radiotherapy\
+  \ Centres records.\nThe primary burden analysis used API data version 2024; the stability analysis\n\
+  repeated the screen with data version 2022 while holding the same resource\nsnapshot fixed.\n\n## Study\
+  \ Questions\n\n1. Which countries have both upper-quartile projected selected-site incidence\n   growth\
+  \ and lower-quartile latest-reported megavoltage-unit density?\n2. Does updating the modeled cancer-burden\
+  \ version change the countries identified?\n3. Do classifications persist when the burden definition\
+  \ or resource-record\n   recency changes?\n4. How widely can missing resource observations change global\
+  \ and regional conclusions?\n\nThe two-threshold result is an early-warning screen for capacity verification.\n\
+  It is not a model of radiotherapy indication, optimal utilization, functional\nmachine capacity, or\
+  \ patient-level unmet need.\n\n## Key Derived Results\n\n- 23 of 150 matched countries met both primary\
+  \ thresholds.\n- With a common 2025 baseline and fixed resource snapshot, each burden version\n  identified\
+  \ 24 countries; 23 were retained, Papua New Guinea entered, and\n  Zimbabwe exited in version 2024.\n\
+  - The all-cancer definition retained all 23 primary countries.\n- A baseline-case density denominator\
+  \ retained 21 of 23 countries, and stricter\n  80th-growth/20th-density percentiles retained 16.\n-\
+  \ Restriction to 125 countries with DIRAC records dated 2023 or later retained\n  all 16 eligible primary\
+  \ countries; 7 primary countries had older records.\n- Sixteen primary countries were retained under\
+  \ all seven alternative\n  specifications, and 20 were retained under at least six.\n- With 17 high-growth\
+  \ countries lacking resource matches, the global\n  identification interval was 12.4%-21.5%; the African\
+  \ Region interval was\n  38.3%-59.6%. These are missing-data bounds, not confidence intervals.\n\nInventory\
+  \ completeness is not treated as a neutral quality issue. A\ncomplete-case-only screen can reward stronger\
+  \ reporting systems, so\nresource-unknown countries remain eligible for capacity verification.\n\n##\
+  \ Repository Contents\n\n- `data/radiotherapy_resource_mismatch_country_v6_sensitivity.csv`: integrated\n\
+  \  country-level dataset used by the final figure and stability analyses.\n- `data/figure_1_country_source_data.csv`\
+  \ and\n  `data/figure_1_region_source_data.csv`: Figure 1 source data.\n- `data/table_15_radiology_research_letter_country_characteristics.csv`:\
+  \ legacy\n  country-characteristics table retained for reproducibility.\n- `data/table_19_burden_version_reclassification.csv`:\
+  \ version transitions.\n- `data/table_20_denominator_threshold_stability.csv`: denominator and\n  threshold\
+  \ sensitivity.\n- `data/table_21_missing_resource_identification_bounds.csv`: global, region,\n  income,\
+  \ and human-development bounds.\n- `data/table_22_construct_diagnostics.csv`: rank-correlation diagnostics.\n\
+  - `data/table_23_country_stability.csv`: seven-analysis support by primary country.\n- `data/table_24_common_2025_baseline_burden_version_reclassification.csv`:\n\
+  \  burden-version transitions using the same 2025 baseline.\n- `data/table_25_dirac_record_recency_sensitivity.csv`\
+  \ and\n  `data/table_26_dirac_record_recency_country_detail.csv`: resource-record\n  recency analysis\
+  \ and country detail.\n- `data/table_27_country_stability_updated.csv`: updated country-level Table\
+  \ 1 source.\n- `data/table_28_stability_summary.csv`: compact policy-facing stability table.\n- `data/table_29_radiotherapy_oncology_stability.csv`:\
+  \ compact main-table source\n  for the Radiotherapy and Oncology Short Communication.\n- `data/table_30_radiotherapy_oncology_primary_summary.csv`:\
+  \ primary-group\n  burden, unit-pressure, support, and record-recency summary.\n- `data/radiotherapy_oncology_short_communication_summary.json`:\
+  \ machine-readable\n  summary generated with the journal-specific analysis script.\n- `figures/`: Figure\
+  \ 1 in SVG, PDF, and PNG formats.\n- `docs/expanded_methods.md`: expanded reproducibility methods; this\
+  \ is\n  repository documentation, not a formal journal supplement.\n- `scripts/`: data-fetch, analysis,\
+  \ and figure-generation code.\n- `MANIFEST.csv` and `checksums_sha256.txt`: public-file inventory and\
+  \ checksums.\n\n## Reproduce Figure 1\n\n```bash\npip install -r requirements.txt\npython scripts/make_radiotherapy_resource_mismatch_figure.py\n\
+  python scripts/analyze_radiotherapy_oncology_short_communication.py\n```\n\nThe figure script uses the\
+  \ included derived dataset, common-baseline version\nanalysis, identification-bound table, Natural Earth\
+  \ geometry, and sanitized logs.\n\n## Rebuild From Source\n\nRaw Cancer Tomorrow and Directory of Radiotherapy\
+  \ Centres source exports are\nnot redistributed. The fetch and analysis scripts document the complete\n\
+  workflow. Users rebuilding the analysis should obtain or fetch source data from\nthe original providers,\
+  \ preserve the documented directory structure, and then\nrun the primary and additional analysis scripts.\
+  \ The main burden-version\ncomparison uses a common 2025 baseline, a 2050 horizon, the same 149 matched\n\
+  countries, and the same resource snapshot for both versions.\n\nFull rebuilding expects `data/source/gco_cancer_tomorrow_2022_predictions_long.csv`,\n\
+  `data/source/gco_cancer_tomorrow_2024_predictions_long.csv`, and\n`data/source/dirac_country_resources.csv`.\
+  \ The GCO fetch scripts additionally\nrequire the provider population dictionaries and site-rule file\
+  \ documented in\ntheir module constants. Figure 1 can be reproduced directly from the included\nderived\
+  \ files without downloading raw source data.\n\n## Citation\n\nPlease cite the associated manuscript,\
+  \ Global Cancer Observatory Cancer\nTomorrow, the IAEA Directory of Radiotherapy Centres, and Natural\
+  \ Earth as\napplicable.\n"

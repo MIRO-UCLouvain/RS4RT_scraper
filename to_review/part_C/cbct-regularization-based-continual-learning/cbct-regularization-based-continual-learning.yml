@@ -1,0 +1,393 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: YeongM/CBCT-Regularization-based-Continual-Learning
+url: https://github.com/YeongM/CBCT-Regularization-based-Continual-Learning
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-28T00:34:59Z'
+image_source: null
+heuristic_total_score: 18
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: '# Continual Learning for Dental CBCT Segmentation
+
+
+  This repository contains the modeling code used for an nnU-Net v2 continual learning experiment in dental
+  cone-beam CT (CBCT) segmentation.
+
+
+  The study evaluates whether continual learning can reduce catastrophic forgetting when a segmentation
+  model trained on a public ToothFairy3 CBCT dataset is extended to a Korea University Anam Hospital CBCT
+  dataset with a different field of view, scanner setting, and target label set.
+
+
+  Only trainer/modeling files are included. Raw data, preprocessing scripts, trained weights, prediction
+  outputs, evaluation scripts, and batch files are not included.
+
+
+  ## Research Question
+
+
+  The central question is:
+
+
+  ```text
+
+  Can a dental CBCT segmentation model learn a new institutional dataset while preserving performance
+  on previously learned ToothFairy3 structures?
+
+  ```
+
+
+  This is a combined domain-shift and class-incremental setting:
+
+
+  - ToothFairy3 is the old/base task.
+
+  - Korea University Anam Hospital is the new/incremental task.
+
+  - The shared base structures are the mandible and inferior alveolar nerve (IAN).
+
+  - The new task adds five novel structures: maxilla, palate, head, temporal bone, and zygomatic bone.
+
+
+  The study compares naive fine-tuning with two regularization-based continual learning methods:
+
+
+  - Learning without Forgetting (LwF)
+
+  - Elastic Weight Consolidation (EWC)
+
+
+  ## Dataset Setting
+
+
+  | Dataset | Role | Cases | Test target |
+
+  | --- | --- | ---: | --- |
+
+  | ToothFairy3 | Base task / old domain | 532 total, 426 train, 106 test | Forgetting analysis on mandible
+  and IAN |
+
+  | Korea University Anam Hospital | Incremental task / new domain | 99 total, 80 train, 19 test | New-task
+  segmentation of 7 structures |
+
+
+  The Korea University dataset was retrospectively collected from October 2018 to December 2022. Of 103
+  assessed cases, four were excluded: two for missing CBCT data and two for missing maxilla labeling.
+
+
+  The ToothFairy3 maxilla label was not used as a base class because its definition includes the maxillary
+  sinuses and does not match the Korea University maxilla annotation protocol. Therefore, maxilla is treated
+  as a novel incremental class in this project.
+
+
+  ## Label Convention
+
+
+  This public code uses the following old-task ToothFairly3 Model output convention:
+
+
+  ```text
+
+  0 = background
+
+  1 = mandible
+
+  2 = IAN
+
+  ```
+
+
+  Maxilla is excluded from the ToothFairly3 Model.
+
+
+  The shared old-task channels are defined in `models/cl_common.py`:
+
+
+  ```python
+
+  OLD_NUM_CLASSES = 3
+
+  OLD_CLASS_CHANNELS = [0, 1, 2]
+
+  ```
+
+
+  For warm-start, LwF, and EWC to be valid, the student/new-task dataset must keep the same first three
+  channels:
+
+
+  ```text
+
+  0 = background
+
+  1 = mandible
+
+  2 = IAN
+
+  3 = maxilla
+
+  4 = palate
+
+  5 = head
+
+  6 = temporal
+
+  7 = zygomatic
+
+  ```
+
+
+  If your local Korea University dataset uses a different label order, for example `2 = maxilla` and `3
+  = IAN`, change the dataset label order or the channel mapping before training. Otherwise, the inherited
+  IAN head row will be copied or distilled into the wrong output channel.
+
+
+  ## Model Comparison
+
+
+  | Model | Meaning in the manuscript | Trainer file | Initialization | CL regularization |
+
+  | --- | --- | --- | --- | --- |
+
+  | ToothFairly3 Model | Base model / teacher | `models/nnUNetTrainer_Toothfairy3_model.py` | Scratch
+  on ToothFairy3 | No |
+
+  | Korea University Model | New-task scratch model | `models/nnUNetTrainer_KU_model.py` | Scratch on
+  KU | No |
+
+  | Fine-tuned Model | No-CL adaptation baseline | `models/nnUNetTrainer_FineTune.py` | Warm-start from
+  ToothFairly3 Model | No |
+
+  | CL-LwF (λ=0.1) | Continual learning with output distillation | `models/nnUNetTrainer_LwF.py` | Warm-start
+  from ToothFairly3 Model | LwF |
+
+  | CL-LwF (λ=0.5) | Continual learning with output distillation | `models/nnUNetTrainer_LwF.py` | Warm-start
+  from ToothFairly3 Model | LwF |
+
+  | CL-LwF (λ=1.0) | Continual learning with output distillation | `models/nnUNetTrainer_LwF.py` | Warm-start
+  from ToothFairly3 Model | LwF |
+
+  | CL-EWC (λ=100) | Continual learning with parameter regularization | `models/nnUNetTrainer_EWC.py`
+  | Warm-start from ToothFairly3 Model | EWC |
+
+  | CL-EWC (λ=1000) | Continual learning with parameter regularization | `models/nnUNetTrainer_EWC.py`
+  | Warm-start from ToothFairly3 Model | EWC |
+
+  | CL-EWC (λ=5000) | Continual learning with parameter regularization | `models/nnUNetTrainer_EWC.py`
+  | Warm-start from ToothFairly3 Model | EWC |
+
+
+  The key comparison is not only new-task performance on the Korea University test set. The main forgetting
+  analysis is performed on the ToothFairy3 test set after the models have been adapted to the Korea University
+  task.
+
+
+  ## Architecture
+
+
+  All models use the standard nnU-Net v2 three-dimensional `PlainConvUNet` without architectural modification.
+
+
+  The manuscript setting used:
+
+
+  ```text
+
+  Encoder stages: 6
+
+  Decoder stages: 5
+
+  Feature channels: 32 to 320
+
+  Downsampling: strided convolution
+
+  Upsampling: transposed convolution
+
+  Skip connections: enabled
+
+  Final segmentation head: 1x1x1 convolution
+
+  ```
+
+
+  The ToothFairly3 Model has three output channels:
+
+
+  ```text
+
+  background, mandible, IAN
+
+  ```
+
+
+  The incremental student model expands the segmentation head to eight output channels:
+
+
+  ```text
+
+  background, mandible, IAN, maxilla, palate, head, temporal, zygomatic
+
+  ```
+
+
+  The encoder-decoder backbone and the three base-class head rows are inherited from the ToothFairly3
+  Model. The five novel-class head rows are randomly initialized by nnU-Net.
+
+
+  ## Continual Learning Details
+
+
+  ### LwF
+
+
+  `nnUNetTrainer_LwF` loads the frozen ToothFairly3 Model teacher and applies KL-divergence distillation
+  between teacher and student logits.
+
+
+  Distillation is applied only to:
+
+
+  ```text
+
+  [0 background, 1 mandible, 2 IAN]
+
+  ```
+
+
+  This avoids forcing the old teacher to supervise new-class regions as background.
+
+
+  The current public trainer defaults are:
+
+
+  ```text
+
+  temperature = 4.0
+
+  lambda_distill_max = 0.5
+
+  warmup_epochs = 50
+
+  ```
+
+
+  The manuscript evaluated `CL-LwF (λ=0.1)`, `CL-LwF (λ=0.5)`, and `CL-LwF (λ=1.0)`. The best stability-plasticity
+  balance in the manuscript was `CL-LwF (λ=0.1)`.
+
+
+  ### EWC
+
+
+  `nnUNetTrainer_EWC` uses a diagonal Fisher information matrix estimated from the ToothFairly3 Model
+  on the old ToothFairy3 task.
+
+
+  The EWC penalty anchors:
+
+
+  - shared backbone parameters
+
+  - base-class segmentation head rows `[0, 1, 2]`
+
+
+  The current public trainer defaults are:
+
+
+  ```text
+
+  lambda_ewc_max = 1000.0
+
+  warmup_epochs = 50
+
+  ```
+
+
+  The manuscript evaluated `CL-EWC (λ=100)`, `CL-EWC (λ=1000)`, and `CL-EWC (λ=5000)`.
+
+
+  ## Main Findings From the Manuscript
+
+
+  On the Korea University test set, the Fine-tuned Model and `CL-LwF (λ=0.1)` showed nearly identical
+  new-task performance:
+
+
+  | Model | Mean Dice on KU test set |
+
+  | --- | ---: |
+
+  | Korea University Model | 0.760 |
+
+  | Fine-tuned Model | 0.782 |
+
+  | CL-LwF (λ=0.1) | 0.781 |
+
+  | CL-EWC (λ=100) | 0.779 |
+
+
+  On the ToothFairy3 test set, forgetting was evident after adaptation to Korea University data. The Fine-tuned
+  Model dropped from the ToothFairly3 Model performance of `0.985` to `0.811` Dice for the mandible and
+  from `0.885` to `0.455` Dice for the IAN.
+
+
+  LwF improved retention on both shared structures:
+
+
+  | Model | ToothFairy3 mandible Dice | ToothFairy3 IAN Dice |
+
+  | --- | ---: | ---: |
+
+  | ToothFairly3 Model | 0.985 | 0.885 |
+
+  | Korea University Model | 0.773 | 0.190 |
+
+  | Fine-tuned Model | 0.811 | 0.455 |
+
+  | CL-LwF (λ=0.1) | 0.850 | 0.480 |
+
+  | CL-LwF (λ=0.5) | 0.925 | 0.621 |
+
+  | CL-LwF (λ=1.0) | 0.942 | 0.729 |
+
+  | CL-EWC (λ=100) | 0.800 | 0.448 |
+
+  | CL-EWC (λ=1000) | 0.807 | 0.492 |
+
+  | CL-EWC (λ=5000) | 0.805 | 0.538 |
+
+
+  The manuscript conclusion is that `CL-LwF (λ=0.1)` can reduce forgetting while keeping new-task performance
+  statistically equivalent to fine-tuning. Stronger LwF settings improve old-task retention further but
+  reduce adaptation to the Korea University task, demonstrating the stability-plasticity trade-off.
+
+
+  ## Training Configuration
+
+
+  The manuscript used:
+
+
+  ```text
+
+  Framework: nnU-Net v2
+
+  Network: 3D PlainConvUNet
+
+  Optimizer: SGD with Nesterov momentum 0.99
+
+  Weight decay: 3e-5
+
+  Initial learning rate: 0.01
+
+  '

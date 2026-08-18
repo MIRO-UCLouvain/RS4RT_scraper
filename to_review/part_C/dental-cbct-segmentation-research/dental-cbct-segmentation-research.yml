@@ -1,0 +1,72 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Guney-olu/dental-cbct-segmentation-research
+url: https://github.com/Guney-olu/dental-cbct-segmentation-research
+platform: github
+description: Open research demo for dental CBCT anatomy segmentation using a fine-tuned NVIDIA NV-Segment-CT
+  workflow, with 2D slice review, 3D mesh visualization
+license: NOASSERTION
+language: Python
+keywords:
+- dental
+- nvidia
+- research-project
+stars: 0
+updated_at: '2026-06-15T06:25:49Z'
+image_source: https://raw.githubusercontent.com/Guney-olu/dental-cbct-segmentation-research/HEAD/docs/demo.gif
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Dental NV-Segment-CT Research\n\nResearch code, model packaging, and a browser demo\
+  \ for dental CBCT anatomy segmentation using a fine-tuned NVIDIA NV-Segment-CT workflow.\n\nThis project\
+  \ explores how foundation-style CT segmentation models can be adapted to dental CBCT, with the long-term\
+  \ goal of building open research tooling for 3D dental anatomy understanding, implant/surgical planning\
+  \ support, and downstream synthetic-data generation.\n\nModel artifact: [AryanNsc/dental-nvsegment-ct-core](https://huggingface.co/AryanNsc/dental-nvsegment-ct-core)\n\
+  \n## Preview\n\n![Dental CBCT segmentation demo](docs/demo.gif)\n\n\n## Research Goal\n\nThe immediate\
+  \ goal is to create a reproducible baseline for segmenting core dental CBCT anatomy from volumetric\
+  \ scans. The demo focuses on making the model output understandable: a scrollable axial slice viewer,\
+  \ predicted segmentation overlays, a synchronized 3D axial plane, and 3D voxel-surface meshes.\n\nThe\
+  \ broader goal is to move toward a practical dental AI research stack:\n\n- automatic segmentation of\
+  \ jaw, teeth, and nerve-adjacent anatomy\n- 3D visual review of model predictions\n- quantitative validation\
+  \ against expert labels\n- exportable masks and meshes for planning/research workflows\n- future mask-conditioned\
+  \ CBCT generation and synthetic-data experiments\n\nThe current demo model targets core anatomy:\n\n\
+  | ID | Label |\n| --- | --- |\n| 0 | background |\n| 1 | mandible |\n| 2 | maxilla |\n| 3 | mandibular\
+  \ canal |\n| 4 | teeth-all |\n| 5 | implant, experimental |\n| 6 | lesion, experimental |\n\n## Repository\
+  \ Layout\n\n```text\nscripts/\n  infer.py                 Run local inference using the HF checkpoint.\n\
+  \  make_overlays.py         Create PNG overlays from image/prediction/optional GT.\n  export_meshes.py\
+  \         Convert voxel masks to browser-ready GLB meshes.\n  export_demo_assets.py    Export demo overlays,\
+  \ slices, meshes, and manifest.\n\ndocs/\n  index.html               Static HTML demo with 2D slices,\
+  \ overlays, and 3D meshes.\n  app.js\n  styles.css\n  demo.gif\n  assets/demo_manifest.json\n```\n\n\
+  ## Setup\n\nClone NVIDIA NV-Segment-CTMR separately:\n\n```bash\ngit clone https://github.com/NVIDIA-Medtech/NV-Segment-CTMR.git\n\
+  cd NV-Segment-CTMR/NV-Segment-CT\npip install -r requirements.txt\npip install itk huggingface_hub matplotlib\
+  \ tqdm\n```\n\nInstall this repo's Python requirements:\n\n```bash\npip install -r requirements.txt\n\
+  ```\n\n## Inference\n\n```bash\npython scripts/infer.py \\\n  --repo-id AryanNsc/dental-nvsegment-ct-core\
+  \ \\\n  --nvsegment-ct-dir ~/NV-Segment-CTMR/NV-Segment-CT \\\n  --image /path/to/cbct.nii.gz \\\n \
+  \ --out-dir outputs/inference_case\n```\n\nThe prediction is written under:\n\n```text\noutputs/inference_case/prediction/\n\
+  ```\n\n## Make Overlays\n\n```bash\npython scripts/make_overlays.py \\\n  --image /path/to/cbct.nii.gz\
+  \ \\\n  --prediction outputs/inference_case/prediction/YOUR_OUTPUT.nii.gz \\\n  --out-dir outputs/inference_case/overlays\n\
+  ```\n\nIf you have ground truth:\n\n```bash\npython scripts/make_overlays.py \\\n  --image /path/to/cbct.nii.gz\
+  \ \\\n  --prediction outputs/inference_case/prediction/YOUR_OUTPUT.nii.gz \\\n  --ground-truth /path/to/mask.nii.gz\
+  \ \\\n  --out-dir outputs/inference_case/overlays\n```\n\n## Export 3D Meshes\n\nThe model output is\
+  \ a 3D voxel mask. For browser visualization, convert predicted labels into `.glb` surface meshes:\n\
+  \n```bash\npython scripts/export_meshes.py \\\n  --prediction outputs/inference_case/prediction/YOUR_OUTPUT.nii.gz\
+  \ \\\n  --case-id YOUR_CASE_ID \\\n  --out-dir outputs/inference_case/meshes\n```\n\nFor a prepared\
+  \ demo folder, export meshes for each prediction:\n\n```bash\nmkdir -p /path/to/demo/meshes\n\nfor pred\
+  \ in /path/to/demo/predictions/*.nii.gz; do\n  case_id=$(basename \"$pred\" | sed 's/_trans.nii.gz//'\
+  \ | sed 's/.nii.gz//')\n  python scripts/export_meshes.py \\\n    --prediction \"$pred\" \\\n    --case-id\
+  \ \"$case_id\" \\\n    --out-dir /path/to/demo/meshes\ndone\n```\n\n## Static Demo\n\nTo populate the\
+  \ web demo with local demo volumes, overlays, metrics, and 3D meshes:\n\n```bash\npython scripts/export_demo_assets.py\
+  \ \\\n  --demo-dir /path/to/demo \\\n  --docs-dir docs\n```\n\nExpected local demo inputs:\n\n```text\n\
+  demo/\n  DentalDemo_001.mha\n  DentalDemo_002.mha\n  DentalDemo_003.mha\n  dice_scores.csv\n  case_aliases.json\n\
+  \  overlays/\n  meshes/\n  predictions/\n```\n\nThe static web demo displays public case IDs such as\
+  \ `DentalDemo_001`, `DentalDemo_002`, and `DentalDemo_003`. The alias file can map those public names\
+  \ back to private/internal case IDs during local asset export.\n\nThen serve locally:\n\n```bash\npython\
+  \ -m http.server 8000 -d docs\n```\n\nOpen:\n\n```text\nhttp://localhost:8000\n```\n\nThe static demo\
+  \ can be published with GitHub Pages from the `docs/` folder when the included assets are permitted\
+  \ for redistribution.\n\n## Important Limitations\n\n- Research use only.\n- Not for clinical diagnosis,\
+  \ treatment planning, or autonomous medical decision-making.\n- The current model is strongest on core\
+  \ anatomy.\n- Implant and lesion labels are experimental.\n"

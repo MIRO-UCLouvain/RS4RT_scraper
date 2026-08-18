@@ -1,0 +1,71 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: lucasbritocFis/patient-plan-explainer
+url: https://github.com/lucasbritocFis/patient-plan-explainer
+platform: github
+description: DICOM RT → patient-friendly treatment explanations. PDF and audio, in Brazilian Portuguese.
+  Built for LATAM radiotherapy clinics.
+license: MIT
+language: Python
+keywords:
+- accessibility
+- brazilian-portuguese
+- dicom
+- dicom-rt
+- gemini-api
+- healthcare
+- llm
+- medical-physics
+- patient-communication
+- pdf-generation
+- python
+- radiation-oncology
+- radiotherapy
+- streamlit
+- text-to-speech
+stars: 1
+updated_at: '2026-06-22T17:21:30Z'
+image_source: null
+heuristic_total_score: 47
+heuristic_reasons:
+- Matched 6 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 15 support term(s).
+readme_excerpt: "# patient-plan-explainer\n\n![CI](https://github.com/lucasbritocFis/patient-plan-explainer/actions/workflows/ci.yml/badge.svg)\n\
+  \n> DICOM RT → patient-friendly treatment explanations.\n> PDF and audio, in Brazilian Portuguese. Built\
+  \ for LATAM radiotherapy clinics.\n\n## The clinical problem this solves\n\nA radiotherapy treatment\
+  \ plan is born as a DICOM RT bundle: structured data about prescriptions, beams, dose distributions,\
+  \ and target volumes. It is written for treatment planning systems and clinical staff — not for the\
+  \ person who is about to receive the treatment.\n\nPatients arrive at their first consultation overwhelmed,\
+  \ often with limited clinical literacy, and leave with a vague sense of \"I'm going to get radiation.\"\
+  \ In LATAM specifically, the gap between what the clinical team understands and what the patient understands\
+  \ is wide enough to affect adherence, anxiety, and outcomes.\n\nThis tool reads a DICOM RT plan and\
+  \ generates a clear explanation in plain Brazilian Portuguese — written for patients, designed to be\
+  \ reviewed and signed by the responsible medical physicist before delivery.\n\n## What it does\n\n-\
+  \ **Input:** DICOM RT Plan (.dcm) + RT Structure Set (.dcm)\n- **Output:** Patient-friendly narrative\
+  \ (text + PDF + audio)\n  - PDF with treatment summary, empathetic explanation, regulatory disclaimer,\
+  \ and signature line for clinical review\n  - Audio narration in Brazilian Portuguese (neural TTS),\
+  \ shareable via WhatsApp\n\n## How it works\n\n```\nDICOM RT Plan + RT Struct\n        │\n        ▼\n\
+  ┌─────────────────┐\n│   Extract        │  pydicom: technique (VMAT/IMRT/3D/SBRT),\n│   (src/extract)\
+  \  │  dose, fractions, machine, OARs, targets\n└────────┬────────┘\n         │\n         ▼\n┌─────────────────┐\n\
+  │   Narrate        │  Gemini LLM with controlled prompt\n│   (src/narrate)  │  → empathetic text in\
+  \ PT-BR\n└────────┬────────┘\n         │\n         ▼\n┌─────────────────┐\n│   Export         │  PDF\
+  \ (fpdf2) + Audio (edge-tts)\n│   (src/export)   │  with disclaimer + signature line\n└─────────────────┘\n\
+  ```\n\n## Quick start\n\n```bash\n# Clone\ngit clone https://github.com/lucasbritocFis/patient-plan-explainer.git\n\
+  cd patient-plan-explainer\n\n# Setup\npython -m venv venv\nsource venv/bin/activate        # Linux/Mac\n\
+  # venv\\Scripts\\activate         # Windows\n\npip install -r requirements.txt\n\n# Configure API key\n\
+  cp .env.example .env\n# Edit .env and add your Gemini API key (free at aistudio.google.com)\n\n# Run\n\
+  streamlit run app.py\n```\n\nOpen `http://localhost:8501`, upload your RTPLAN and RTSTRUCT files, and\
+  \ click \"Gerar Explicação Completa\".\n\n## Running tests\n\n```bash\npip install pytest\npython -m\
+  \ pytest tests/ -v\n```\n\n## Privacy & limitations\n\n**This tool is not a medical device** and does\
+  \ not replace clinical consultation. Output must be reviewed and signed by a qualified medical physicist\
+  \ or radiation oncologist before being delivered to a patient.\n\nDICOM data uploaded through this tool\
+  \ is processed by external LLM APIs (Google Gemini). **Use only anonymized or test data** unless your\
+  \ institutional privacy and regulatory review allows otherwise.\n\n## Roadmap\n\n- [x] v0.1 — PDF output,\
+  \ Brazilian Portuguese\n- [x] v0.2 — Audio output (neural TTS)\n- [ ] v0.3 — Spanish localization\n\
+  - [ ] v0.4 — Visual companion (DVH, isodose overlays)\n- [ ] v0.5 — Voice cloning of the responsible\
+  \ physicist (with consent)\n\n## License\n\nMIT — see [LICENSE](./LICENSE).\n\n## Author\n\nLucas Brito,\
+  \ PhD — Medical Physicist & Software Developer\n[GitHub](https://github.com/lucasbritocFis) · Rio de\
+  \ Janeiro, Brazil\n"

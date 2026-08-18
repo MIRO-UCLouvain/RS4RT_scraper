@@ -1,0 +1,62 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: DarkBreakerZero/FDA-Recon
+url: https://github.com/DarkBreakerZero/FDA-Recon
+platform: github
+description: 'FDA-Recon: Faithful and Data-Adaptive Reconstruction for Limited-Angle CBCT'
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-05T06:31:52Z'
+image_source: https://raw.githubusercontent.com/DarkBreakerZero/FDA-Recon/HEAD/assets/work_flow.svg
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# FDA-Recon: Faithful and Data-Adaptive Reconstruction for Limited-Angle CBCT\r\n\r\n\
+  Yuhao Liu, Yao Wang, Yikun Zhang, Dianlin Hu, Qiegen Liu, Yi Zhang, Jian Yang, Hao Gao, and Yang Chen\r\
+  \n\r\n## Abstract\r\n\r\nCone Beam Computed Tomography (CBCT) is a real-time imaging modality that provides\
+  \ three-dimensional (3D) images with high-resolution and dose-efficiency. Considering the spatial limitations\
+  \ and the imaging speed constraints, limited-angle sampling scheme is inevitably adopted in several\
+  \ clinical settings. However, limited-angle CBCT (LA-CBCT) reconstruction is a typical ill-posed inverse\
+  \ problem due to insufficient sampling, giving rise to wedge artifacts and structural distortions in\
+  \ the reconstructed images. Although supervised methods have provided possible solutions, these methods\
+  \ require paired LA-CBCT and full-angle CBCT (FA-CBCT) images for training an image restoration model,\
+  \ which are usually unavailable in real-world clinical scenarios. In order to obtain high-quality reconstructed\
+  \ images, this study proposes an unsupervised method named Faithful and Data-Adaptive Reconstruction\
+  \ (FDA-Recon) for LA-CBCT. FDA-Recon comprises three sequential stages, namely Target-to-Source Domain\
+  \ Adaptation (T2SDA) stage, Source Domain Image Restoration (SDIR) stage, and Prior Image Constrained\
+  \ Target Domain Faithful Reconstruction (PIC-TDFR) stage. The T2SDA stage transfers target domain images\
+  \ to source-style images, and then the SDIR stage eliminates artifacts and restores structural information\
+  \ in the transferred images. Finally, the PIC-TDFR stage utilizes an iterative algorithm to minimize\
+  \ domain discrepancy and further enhance the image quality by forcing the consistency to the target\
+  \ domain projections. During the T2SDA and SDIR stages, deep learning (DL) methods are applied. Considering\
+  \ the characteristics of CBCT images, spiral mamba is introduced to enhance the capacity of DL models.\
+  \ Experiments on the real head \\& neck dataset exhibit the promising performance of FDA-Recon in artifact\
+  \ reduction and image restoration. \r\n\r\n## Motivation\r\n\r\n\r\n\r\n<img src=\"./assets/motivation.svg\"\
+  \ style=\"zoom:10%\">\r\n\r\n## Work Flow\r\n\r\n![Figure_3](./assets/work_flow.svg)\r\n\r\n## Network\
+  \ Architecture\r\n\r\n<img src=\"./assets/network_architecture.svg\">\r\n\r\n## Usage\r\n\r\n### 1.\
+  \ Environment setup\r\n\r\nStep 1:\r\n\r\nCreate a conda env with Python >=3.9 (recommended) and install\
+  \ PyTorch with CUDA >=11.8  (recommended):\r\n\r\n```shell\r\nconda create -n fda_recon python=3.9\r\
+  \n\r\npip install torch==2.2.0 --index-url https://download.pytorch.org/whl/cu118\r\n```\r\n\r\nStep\
+  \ 2:\r\n\r\nInstall other required packages:\r\n\r\n```\r\npip install -r requirements.txt\r\n```\r\n\
+  \r\nStep 3:\r\n\r\nDownload mamba that is Compatible with your PyTorch version https://github.com/state-spaces/mamba/releases\r\
+  \n\r\n\r\n\r\n### 2. Model Training\r\n\r\nStep 1: Firstly, train the domain adapter (DA) for the first\
+  \ step:\r\n\r\n```\r\npython trainGAN.py\r\n```\r\n\r\nStep 2: Secondly, train the image restoration\
+  \ (IR) model with the paired simulated dataset:\r\n\r\n```\r\npython train_IR.py\r\n```\r\n\r\n### 3.\
+  \ Model Testing\r\n\r\nThe code of the T2SDA stage and the SDIR stage were incoperating in the test.py:\r\
+  \n\r\n```\r\npython test.py\r\n```\r\n\r\nThe PICCS algorithm used during the PIC-TDFR stage was implemented\
+  \ using the TIGRE toolbox, which could be downloaded through https://github.com/CERN/TIGRE\r\n\r\n###\
+  \ 4. Data Structure\r\n\r\nPlease order your data using the following file system structure: \r\n\r\n\
+  ```\r\n./Data/\r\n├── Source/\r\n│ └── Input_Train\r\n│ └── └── 1.raw # using .raw to store the images,\
+  \ name files from 1.raw to n.raw\r\n│ └── Label_Train\r\n│ └── Input_Valid\r\n│ └── Label_Valid\r\n\
+  ├── Target/\r\n│ └── Input_Train\r\n│ └── Label_Train\r\n│ └── Input_Valid\r\n│ └── Label_Valid\r\n\
+  ```\r\n\r\nThe Target domain images in Label_Train and Label_Valid were not loaded during training,\
+  \ but were loaded during \"valid\" for evaluation among each epoch. \r\n\r\n\r\n\r\n## Acknowledgment\r\
+  \n\r\nThis repository is the official implementation of the paper: \"FDA-Recon: Faithful and Data-Adaptive\
+  \ Reconstruction for Limited-Angle CBCT\", featuring optimized code structure, comprehensive documentation,\
+  \ and enhanced model reproducibility.\r\n"

@@ -1,0 +1,141 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: henrique-c727/DoseEngine
+url: https://github.com/henrique-c727/DoseEngine
+platform: github
+description: Radiation therapy dose algorithms learning project.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-22T20:25:46Z'
+image_source: https://raw.githubusercontent.com/henrique-c727/DoseEngine/HEAD/images/PBC_dose_CT_ex.png
+heuristic_total_score: 25
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 8 support term(s).
+readme_excerpt: "# DoseEngine \n\n> An educational, transparent, and modular 2D dose calculation platform\
+  \ for external photon beam radiotherapy.\n\n**DoseEngine** is a Python project developed to explore\
+  \ the physical and computational principles behind model-based photon dose calculation algorithms used\
+  \ in radiotherapy Treatment Planning Systems (TPS).\n\nRather than reproducing the complexity of a commercial\
+  \ TPS as a closed “black box”, DoseEngine exposes each stage of a simplified dose calculation pipeline.\
+  \ The project shows how tissue density affects primary photon attenuation, how released energy can be\
+  \ represented through a relative TERMA distribution, and how secondary energy transport can be approximated\
+  \ through convolution with a dose spread kernel.\n\nThe engine can perform simulations on configurable\
+  \ density phantoms or on CT images in DICOM format after converting Hounsfield Units into relative density.\n\
+  \n![DoseEngine output](images/PBC_dose_CT_ex.png)\n![DoseEngine output](images/PBC_dose_lung_ex.png)\n\
+  *Example output showing the density map, relative TERMA distribution, final dose distribution, central-axis\
+  \ depth-dose profile, and lateral profile.*\n\n---\n\n## Key Features\n\n- **Radiological depth calculation**\
+  \  \n  Computes the accumulated density-weighted path length along the beam direction.\n\n- **Primary\
+  \ photon transport**  \n  Models photon fluence attenuation using the Beer–Lambert law and an inverse-square\
+  \ correction.\n\n- **Relative TERMA estimation**  \n  Represents the spatial distribution of energy\
+  \ released by the primary photon field before secondary transport.\n\n- **Pencil Beam Convolution**\
+  \  \n  Convolves the TERMA distribution with a normalized empirical 2D dose spread kernel.\n\n- **Configurable\
+  \ heterogeneous phantoms**  \n  Supports homogeneous water media and customizable density distributions,\
+  \ including predefined lung and bone scenarios.\n\n- **DICOM CT integration**  \n  Reads CT images,\
+  \ converts stored pixel values into Hounsfield Units, resamples the image to the computational grid,\
+  \ and estimates relative density.\n\n- **Configurable simulation parameters**  \n  Allows modification\
+  \ of grid dimensions, beam energy, field size, source-to-surface distance, calculation model, and heterogeneity\
+  \ corrections.\n\n- **Dose visualization and analysis**  \n  Produces density, TERMA, and dose maps,\
+  \ together with central-axis depth-dose and lateral profiles.\n\n- **Modular architecture**  \n  Separates\
+  \ image processing, phantom generation, primary transport, kernel generation, convolution, visualization,\
+  \ and simulation control.\n\n---\n\n## Physical Model\n\nDoseEngine currently implements a simplified\
+  \ two-dimensional workflow based on **Pencil Beam Convolution**.\n\nThe calculation is divided into\
+  \ independent stages so that each physical approximation can be inspected and modified separately.\n\
+  \n### 1. Input density map\n\nThe calculation medium can be generated from:\n\n- a homogeneous water\
+  \ phantom;\n- a predefined lung or bone phantom;\n- a fully customizable relative-density matrix;\n\
+  - a CT image in DICOM format.\n\nFor CT images, the stored pixel values are first converted into Hounsfield\
+  \ Units:\n\n$$\nHU = \\text{pixel value} \\times \\text{RescaleSlope}\n     + \\text{RescaleIntercept}\n\
+  $$\n\nA simplified linear calibration is then used to estimate relative density:\n\n$$\n\\rho_{\\mathrm{rel}}\
+  \ = 1 + \\frac{HU}{1000}\n$$\n\nThis relation is used exclusively for educational purposes and does\
+  \ not represent a scanner-specific clinical calibration curve.\n\n### 2. Radiological depth\n\nFor a\
+  \ beam travelling along the positive depth axis, the accumulated radiological depth is calculated as:\n\
+  \n$$\nd_{\\mathrm{eff}}(z,x) = \\sum_{z'=0}^{z} \\rho_{\\mathrm{rel}}(z',x)\\,\\Delta z\n$$\n\nThis\
+  \ produces a water-equivalent path length that accounts for density variations along each beam path.\n\
+  \n### 3. Primary photon fluence\n\nPrimary fluence is estimated using exponential attenuation:\n\n$$\n\
+  \\Phi(z,x) = \\Phi_0 \\exp\\left[-\\mu_{\\mathrm{water}}d_{\\mathrm{eff}}(z,x)\\right] \\left( \\frac{SSD}{SSD+z}\
+  \ \\right)^2\n$$\n\nThe second factor represents the inverse-square reduction in fluence with increasing\
+  \ distance from the source.\n\n### 4. Relative TERMA\n\nThe relative TERMA distribution is estimated\
+  \ as:\n\n$$\nT(z,x) \\propto\n\\mu_{\\mathrm{water}}\\Phi(z,x)\n$$\n\nIn the current implementation,\
+  \ TERMA is a relative quantity and is not expressed in absolute energy or dose units.\n\n### 5. Dose\
+  \ spread kernel\n\nSecondary energy transport is represented using an empirical isotropic kernel composed\
+  \ of two exponential terms:\n\n$$ K(r) = A e^{-ar} + B e^{-br} $$\n\nThe narrow component represents\
+  \ the central concentration of deposited energy, while the broader component produces a lower-amplitude\
+  \ tail.\n\nThe kernel is normalized so that:\n\n$$\n\\sum K = 1\n$$\n\n### 6. Dose convolution\n\nThe\
+  \ final relative dose distribution is obtained through the two-dimensional convolution:\n\n$$\nD(z,x)\
+  \ = T(z,x) * K(z,x)\n$$\n\nwhere $T$ is the relative TERMA distribution and $K$ is the dose spread kernel.\n\
+  \n---\n\n## Calculation Pipeline\n\n```text\nPhantom or DICOM CT\n          │\n          ▼\nRelative\
+  \ density matrix\n          │\n          ▼\nRadiological depth\n          │\n          ▼\nPrimary photon\
+  \ fluence\n          │\n          ▼\nRelative TERMA\n          │\n          ▼\nDose spread kernel\n\
+  \          │\n          ▼\n2D spatial convolution\n          │\n          ▼\nRelative dose distribution\n\
+  \          │\n          ▼\nDose maps and profiles\n```\n## Repository Structure\n```text\nDoseEngine/\n\
+  ├── .gitignore\n├── README.md                       # Project overview and documentation\n├── requirements.txt\
+  \                # Core Python dependencies\n├── requirements-notebook.txt       # Optional notebook\
+  \ dependencies\n├── Demo.ipynb                      # Interactive walkthrough of the model\n├── data/\n\
+  │   └── ct/                         # Local DICOM test data\n├── images/                         # README\
+  \ figures and simulation outputs\n└── dose_engine/\n    ├── config.py                   # Grid, beam,\
+  \ and engine configuration\n    ├── phantom.py                  # Configurable 2D phantom generation\n\
+  \    ├── ct.py                       # DICOM loading and image resampling\n    ├── density.py      \
+  \            # HU-to-density conversion and corrections\n    ├── physics.py                  # Radiological\
+  \ depth, fluence, and TERMA\n    ├── kernel.py                   # Empirical dose spread kernel\n  \
+  \  ├── convolution.py              # TERMA-kernel convolution\n    ├── engine.py                   #\
+  \ Dose calculation pipeline coordinator\n    └── main.py                     # Command-line execution\
+  \ and visualization\n```\n\n---\n\n## Requirements\n\nDoseEngine requires Python and the following core\
+  \ libraries:\n\n- Python 3.10 or later\n- NumPy\n- SciPy\n- Matplotlib\n- pydicom\n\nThe core dependencies\
+  \ are listed in `requirements.txt`:\n\n```text\nnumpy>=1.24,<3.0\nscipy>=1.10,<2.0\nmatplotlib>=3.7,<4.0\n\
+  pydicom>=2.4,<4.0\n```\n\nThe interactive notebook additionally requires JupyterLab and IPython Kernel.\
+  \ These optional dependencies are listed in `requirements-notebook.txt`:\n\n```text\n-r requirements.txt\n\
+  \njupyterlab>=4.0,<5.0\nipykernel>=6.0,<7.0\n```\n\n---\n\n##  Quick Start\n\n### 1. Clone the repository\n\
+  \n```bash\ngit clone https://github.com/<henrique-c727>/DoseEngine.git\ncd DoseEngine\n```\n\n### 2.\
+  \ Create a virtual environment\n\nUsing `venv`:\n\n```bash\npython -m venv .venv\n```\n\nActivate it\
+  \ on Windows:\n\n```bash\n.venv\\Scripts\\activate\n```\n\nActivate it on Linux or macOS:\n\n```bash\n\
+  source .venv/bin/activate\n```\n\n### 3. Install the dependencies\n\nTo run the main application:\n\n\
+  ```bash\npip install -r requirements.txt\n```\n\nTo run both the application and the interactive notebook:\n\
+  \n```bash\npip install -r requirements-notebook.txt\n```\n\n### 4. Run a simulation\n\nLung phantom:\n\
+  \n```bash\npython main.py --phantom lung\n```\n\nBone phantom:\n\n```bash\npython main.py --phantom\
+  \ bone\n```\n\nHomogeneous water phantom:\n\n```bash\npython main.py --phantom water\n```\n\nCustom\
+  \ phantom:\n\n```bash\npython main.py --phantom custom\n```\n\nDICOM CT image:\n\n```bash\npython main.py\
+  \ --phantom ct --ct_path data/ct/example.dcm\n```\n\nA valid local DICOM filepath must be provided when\
+  \ the CT simulation mode is selected.\n> **PowerShell note:** Enclose the DICOM filepath in quotation\
+  \ marks if it contains spaces.\n\n---\n\n## Simulation Output\n\nEach simulation produces a figure containing:\n\
+  \n1. the relative-density distribution;\n2. the relative TERMA distribution;\n3. the final relative-dose\
+  \ distribution;\n4. a central-axis depth-dose profile;\n5. a lateral dose profile at a selected depth;\n\
+  6. a homogeneous-water reference for comparison.\n\nThe results are intended for qualitative analysis\
+  \ of the physical and computational behaviour of the model.\n\n![DoseEngine output](images/PBC_dose_bone_ex.png)\n\
+  \n*Example output containing the density map, relative TERMA distribution, relative dose distribution,\
+  \ central-axis depth-dose profile, and lateral profile.*\n\n---\n\n## ⚙️ Configuration\n\nThe main simulation\
+  \ parameters are defined in `config.py`.\n\n```python\nGRID = {\n    \"dx\": 0.2,\n    \"dz\": 0.2,\n\
+  \    \"nx\": 100,\n    \"nz\": 200\n}\n\nBEAM = {\n    \"energy_mv\": 6,\n    \"field_size_cm\": 10.0,\n\
+  \    \"ssd_cm\": 100.0\n}\n\nENGINE = {\n    \"model_type\": \"pencil_beam\",\n    \"apply_etar\": False,\n\
+  \    \"etar_sigma\": 1.0\n}\n```\n\n### Grid parameters\n\n- `dx`: lateral voxel dimension in centimetres;\n\
+  - `dz`: depth voxel dimension in centimetres;\n- `nx`: number of lateral voxels;\n- `nz`: number of\
+  \ depth voxels.\n\n### Beam parameters\n\n- `energy_mv`: nominal photon beam energy;\n- `field_size_cm`:\
+  \ lateral field size at the phantom surface;\n- `ssd_cm`: source-to-surface distance.\n\n### Engine\
+  \ parameters\n\n- `model_type`: selected calculation model;\n- `apply_etar`: enables or disables the\
+  \ optional ETAR-inspired correction;\n- `etar_sigma`: Gaussian smoothing scale used by the qualitative\
+  \ heterogeneity correction.\n\nThe current photon transport model uses a constant effective attenuation\
+  \ coefficient. Consequently, changing the nominal beam energy does not yet generate an energy-dependent\
+  \ beam spectrum or attenuation model.\n\n---\n\n## Interactive Demonstration\n\nThe `demo.ipynb` notebook\
+  \ presents the calculation pipeline step by step, currently only available in portuguese, but expected\
+  \ to change over time, including adding a translated version to english. \n\nIt can be used to inspect:\n\
+  \n- phantom construction;\n- radiological-depth accumulation;\n- primary photon fluence attenuation;\n\
+  - relative TERMA generation;\n- dose spread kernel shape;\n- convolution and final dose distribution;\n\
+  - the influence of heterogeneous media on primary attenuation.\n\nThe notebook provides a more guided\
+  \ introduction to the physical assumptions and numerical implementation than the command-line interface.\n\
+  \nTo open it:\n\n```bash\njupyter lab demo.ipynb\n```\n\n---\n\n## Current Limitations\n\nDoseEngine\
+  \ v1.0 is intentionally simplified.\n\n- The calculation is two-dimensional.\n- A single axial CT slice\
+  \ is treated as a two-dimensional calculation medium.\n- The beam propagates from the top of the matrix\
+  \ along a fixed direction.\n- Oblique beam incidence and beam rotation are not currently supported.\n\
+  - The field width is fixed across the calculation grid and does not include geometrical beam divergence.\n\
+  - The attenuation coefficient is represented by a constant effective value.\n- TERMA and dose are relative\
+  \ rather than absolute quantities.\n- The dose spread kernel is empirical, isotropic, and spatially\
+  \ invariant.\n- Tissue-dependent secondary-particle transport is not explicitly modelled.\n- CT images\
+  \ are resampled to the computational grid without reconstructing their original physical spacing, orientation,\
+  \ or full patient geometry.\n- The HU-to-density conversion uses a simplified linear relationship rather\
+  \ than a scanner-specific calibration curve.\n- The optional ETAR-inspired correction is qualitative\
+  \ and is not a clinical implementation of the ETAR method.\n- The model has not been validated against\
+  \ clinical measurements, Monte Carlo simulations, or commercial treatment-planning software.\n\nThese\
+  \ limitations are documented explicitly because the project is intended to expose and "

@@ -1,0 +1,79 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: iamrohannegi/Toxicity-Prediction-Challenge-II
+url: https://github.com/iamrohannegi/Toxicity-Prediction-Challenge-II
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2023-04-08T18:13:25Z'
+image_source: https://user-images.githubusercontent.com/16450711/230745707-8ac63d5c-6f3e-44b1-b087-f2ad6bf914a4.png
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Toxicity-Prediction-Challenge-II\n\n\n\n# Code\n\nSolution coded on the following Kaggle's\
+  \ notebook.\n\nKaggle: https://www.kaggle.com/code/x2022fic/x2022fic-submission\n\nLibraries used: Pandas,\
+  \ sklearn, rdkit, xgboost\n\n\n# Introduction\n\nThe objective of this project is to develop a machine\
+  \ learning model to predict the toxicity of chemicals. We will use XGBoost classifier with RDKit descriptors\
+  \ to train the model. RDKit is a collection of cheminformatics and machine learning tools for drug discovery,\
+  \ and XGBoost is an optimized distributed gradient boosting library designed to be highly efficient,\
+  \ flexible and portable.\n\n# Data\nWe have two datasets: train.csv and test.csv. Both datasets contain\
+  \ information about chemicals and assay id. The train dataset has 75383 unique values, and the test\
+  \ dataset has 10994 unique values. We will use the train dataset to train our model and then use this\
+  \ model to do predictions on the test dataset.\n\n# Preprocessing\nWe first load the train and test\
+  \ datasets into Pandas dataframes using the read_csv function. We then extract the assay_id and chemical_id\
+  \ from the Id column of the dataframes. \n\nWe remove rows with Si from the train dataset, as this chemical\
+  \ is known to cause errors in the RDKit descriptors. Finally, we select a list of 2D RDKit descriptors\
+  \ to use as features in our model.\n\nAfter selecting the RDKit Descriptors we need as features, we\
+  \ go through each row in the train dataset and generate values for the descriptors based on the chemical\
+  \ id we extracted before.\n\nThe predicted column in the train dataset contains values in 1s and 2s.\
+  \ Using the LabelEncoder, we encode the 1s and 2s to 0s and 1s, so that we can use the data in our XGBClassifier\
+  \ model. \n\n# Features Selection\nAfter generating values for the 205 RDKit 2D Descriptors that we\
+  \ selected earlier for each row, we combine the names of all the 205 descriptors with assay_id that\
+  \ we extracted from the train dataset in the beginning. \n\nUsing the XGB model’s Booster object’s get_score()\
+  \ method, we can calculate the importance score of the features used in the model. The get_score method\
+  \ in XGBoost library helps you to obtain the feature importance scores of a trained gradient boosting\
+  \ model. \n\nThe importance score provides an estimate of the relative importance of each feature in\
+  \ predicting the target variable. Knowing the feature importance scores can help  identify the most\
+  \ important features in the model, which can be used for feature selection or feature engineering.\n\
+  \nLooking at the following line of code:\nxgb_model.get_booster().get_score(importance_type='gain')\n\
+  \nSetting the importance_type to gain means that the importance score is calculated based on the average\
+  \ gain of the feature when it is used in the model to split the data. The gain is defined as the improvement\
+  \ in the evaluation metric (e.g. accuracy or log-loss) that results from splitting the data on a particular\
+  \ feature.\n\nThe 10 features with the highest Gain Score:\n![image](https://user-images.githubusercontent.com/16450711/230745707-8ac63d5c-6f3e-44b1-b087-f2ad6bf914a4.png)\n\
+  \nSetting the importance_type to weight means that the score is calculated based on the number of times\
+  \ a feature is used to split the data across all trees in the model.\n![image](https://user-images.githubusercontent.com/16450711/230745711-a0c0d153-5fb3-44c1-ba03-59443e8df82f.png)\n\
+  \n\n# Model Selection\nFor this submission, XGBClassifier was used. The classifier uses an ensemble\
+  \ of decision trees to make predictions, with each subsequent tree trained to correct the errors of\
+  \ the previous ones. XGBClassifier has several hyperparameters that can be tuned to optimize model performance,\
+  \ such as the learning rate, n_estimators, and random_state. It also supports early stopping, which\
+  \ can save computation time and prevent overfitting.\n\nAfter a few iterations of testing, we tuned\
+  \ the parameters of our XGBClassifier model to include n_estimators=3000, learning_rate=0.09, early_stopping_rounds=7,\
+  \ and random_state=0, based on the results of the F1 score. \n\n# Testing the model\nWe tested the XGBClassifier\
+  \ model using the train_test_split function from the sklearn.model_selection module. This function randomly\
+  \ splits the dataset into two subsets: the training set and the testing set. \n\nThe training set is\
+  \ used to fit the XGBoost model, while the testing set is used to evaluate the performance of the model.\
+  \ We then calculate the f1-score of the model, which you can import the f1_score function from the sklearn.metrics\
+  \ module. \n\nOnce the model is trained, we use it to make predictions on the testing set. Then,  using\
+  \ the f1_score function we calculate the f1-score of the predicted labels and the actual labels from\
+  \ the testing set.\n\n\nFollowing are the results of the internal evaluation F1 score and the public\
+  \ score of each submission.\n\n![image](https://user-images.githubusercontent.com/16450711/230736721-3b190fb2-812b-4462-87b3-4eadac6335bd.png)\n\
+  \n# Predictions\nFinally, after tuning the parameters of our XGBClassifier model using the train_test_split\
+  \ evaluation, we fitted the model with the entire data from the train dataset for predictions. \n\n\
+  At the end, we inverted the prediction back to 1s and 2s using our label encoder, as the submission\
+  \ file uses values 1s and 2s instead of 0s and 1s.\n\n# Suggestions for Improvement\n\nAssigning weight\
+  \ to the less represented class resulted in a better internal score as well as a private score, although\
+  \ it was not the best score in the public score. \nFor the best submission that scored 0.83445 in private\
+  \ score, we calculated the weight using the following line: \n\nweights = (y == 0).sum() / (1.0 * (y\
+  \ == 1).sum()) \n\nThen we provided it to the XGBClassifier model using one of its parameters called\
+  \ scale_pos_weight. \n\nThe weight given to scale_pos_weight was the square root of the above-calculated\
+  \ weight since the two classes were heavily imbalanced. \n\nThis submission scored 0.80715 in the public\
+  \ score but performed better on both internal evaluations where it scored 0.67620 and private score\
+  \ where it got 0.83445.\n\n\n"

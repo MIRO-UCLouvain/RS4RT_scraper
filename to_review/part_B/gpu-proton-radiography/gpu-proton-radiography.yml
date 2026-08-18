@@ -1,0 +1,148 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: JonasDolezal07/gpu-proton-radiography
+url: https://github.com/JonasDolezal07/gpu-proton-radiography
+platform: github
+description: GPU proton radiography for HED plasmas — Rust/Vulkan relativistic Boris tracer, ≈33,000×
+  faster than CPU tools, 25-test validation suite.
+license: MIT
+language: Rust
+keywords:
+- gpu
+- hedp
+- inertial-confinement-fusion
+- plasma-physics
+- proton-radiography
+- rust
+- scientific-computing
+- vulkan
+stars: 1
+updated_at: '2026-06-12T20:37:48Z'
+image_source: https://raw.githubusercontent.com/JonasDolezal07/gpu-proton-radiography/HEAD/docs/images/logo_text.png
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 4 particle-therapy term(s).
+readme_excerpt: "<p align=\"center\">\n  <img src=\"docs/images/logo_text.png\" alt=\"prad — GPU Proton\
+  \ Radiography\" width=\"420\" />\n</p>\n\n**prad is a GPU-accelerated proton-radiography forward model\
+  \ for laser-plasma and HEDP experiments.**\n\nGiven a measured or simulated electromagnetic field, prad\
+  \ traces a synthetic proton beam through it\nand produces a synthetic radiograph — the pattern of proton\
+  \ hits on the detector — for direct\ncomparison with experimental RCF or image-plate data. It runs the\
+  \ full **relativistic Boris** orbit,\nno paraxial approximation, and is **≈33,000× faster than CPU tracing**\
+  \ in a measured 1M-particle\nhead-to-head against PlasmaPy on the same hardware.\n\n```\n✓ 25/25 physics\
+  \ validation tests passing (t01–t25)\n✓ Trajectory-level agreement with PlasmaPy's CPU Boris pusher\n\
+  ✓ Reproducible, self-documenting run directories\n✓ CLI + GUI workflows\n✓ Python API (pip install prad)\n\
+  ✓ Re-render without re-tracing particles\n```\n\n---\n\n## Quick start\n\n| Dependency | Purpose | Install\
+  \ |\n|---|---|---|\n| Rust (stable) | Build the engine | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs\
+  \ \\| sh` |\n| `glslangValidator` | GLSL → SPIR-V shader compilation | `brew install glslang` |\n| MoltenVK\
+  \ (macOS) | Vulkan over Metal | `brew install molten-vk` |\n| Python 3.9+ | Validation suite, Python\
+  \ API | system or `pyenv` |\n\n```bash\n# Build (also compiles shaders via build.rs)\ncd rust && cargo\
+  \ build --release && cd ..\n\n# Scaffold a working deck from a preset\n./rust/target/release/proton_tracer\
+  \ init zpinch -o my_run.toml\n\n# Inspect resolved geometry before running\n./rust/target/release/proton_tracer\
+  \ explain my_run.toml\n\n# Run — produces a self-contained output directory\n./rust/target/release/proton_tracer\
+  \ run my_run.toml -o runs/zpinch_01\n```\n\n**macOS / MoltenVK** — set these before running:\n```bash\n\
+  export VK_ICD_FILENAMES=/opt/homebrew/etc/vulkan/icd.d/MoltenVK_icd.json\nexport DYLD_LIBRARY_PATH=/opt/homebrew/lib:$DYLD_LIBRARY_PATH\n\
+  ```\n\nSee [docs/quickstart.md](docs/quickstart.md) for the full install walkthrough.\n\n---\n\n## Validation\n\
+  \n```bash\npython3 validate.py           # uses existing binary\npython3 validate.py --build   # build\
+  \ first, then validate\n```\n\n25 physics tests covering electromagnetic deflection (analytic Larmor\
+  \ radius, E×B velocity\nselector, relativistic energy conservation to machine precision), all source\
+  \ geometries and\nenergy spectra, arbitrary detector orientation, geometry invariance under world-frame\
+  \ rotation,\nfield compositing and linearity, adaptive timestepping, per-hit export consistency, and\n\
+  Bethe-Bloch CSDA energy loss (0.7% vs NIST PSTAR). Trajectory-level physics agreement with\nPlasmaPy's\
+  \ CPU Boris pusher is verified separately — see [docs/benchmark.md](docs/benchmark.md).\n\n<details>\n\
+  <summary>Latest run — Apple M4, macOS 15, MoltenVK (2026-06-12): <strong>25/25 PASS</strong></summary>\n\
+  \n```\n  test1_regression                     PASS\n  test2_zero_fields                    PASS\n  test3_uniform_E\
+  \                      PASS\n  test4_B_energy_conservation          PASS\n  test5_pencil_tilted    \
+  \              PASS\n  test6_point_full_cone                PASS\n  test7_disk_spatial_spread      \
+  \      PASS\n  test8_energy_spread                  PASS\n  test9_blur_conservation              PASS\n\
+  \  test10_poisson_reproducibility       PASS\n  test11_exponential_spectrum          PASS\n  test12_relativistic_60mev\
+  \            PASS\n  test13_tilted_geometry               PASS\n  test14_superimposed_fields       \
+  \    PASS\n  test15_adaptive_dt                   PASS\n  test16_bethe_bloch                   PASS\n\
+  \  test17_analytic_hit                  PASS\n  test18_larmor_radius                 PASS\n  test19_exb_velocity_selector\
+  \         PASS\n  test20_hits_bin_rebinning            PASS\n  test21_geometry_invariance          \
+  \ PASS\n  test22_field_compositing_linearity   PASS\n  test23_density_scaling               PASS\n \
+  \ test24_vacuum_regression             PASS\n  test25_opaque_absorber               PASS\n  ──────────────────────────────────────────\n\
+  \  25/25 PASS\n```\n\n</details>\n\nSee [docs/validation.md](docs/validation.md) for per-test descriptions\
+  \ and tolerances.\n\n---\n\n## Example radiographs\n\nThree MHD instability geometries, computed in\
+  \ seconds on a laptop GPU:\n\n| z-pinch | kink instability | sausage instability |\n|:---:|:---:|:---:|\n\
+  | ![z-pinch radiograph](docs/images/zpinch.png) | ![kink instability radiograph](docs/images/kink_strong.png)\
+  \ | ![sausage instability radiograph](docs/images/sausage_strong.png) |\n\nEach image is a synthetic\
+  \ proton radiograph — the spatial structure directly reflects the\npath-integrated field topology.\n\
+  \n### GUI\n\n![GUI launcher showing sausage instability run complete](docs/images/gui.png)\n\nDeck parameters,\
+  \ run status, and the 3D radiograph — all in one view.\n\n---\n\n## Why this tool\n\n**Speed that changes\
+  \ what's practical.** In a measured head-to-head against PlasmaPy's CPU\nBoris pusher (uniform field,\
+  \ same laptop, both timed — no extrapolation), prad is\n**≈2,180× faster at 1M particles with a matched\
+  \ fixed timestep**, and **≈33,000× faster**\nwith its default adaptive timestep (0.148 s vs 4,920 s).\
+  \ That gap makes workflows practical\nthat previously weren't: broad parameter sweeps, interactive geometry\
+  \ design, comparison of\nfield topologies, synthetic dataset generation for ML inverse solvers.\n\n\
+  **No approximations.** Every fast alternative uses the paraxial approximation — it integrates\nthe field\
+  \ kick along a straight reference trajectory. That's fine for weak fields, but in the\nstrong-field\
+  \ regimes common in pulsed-power and high-intensity laser experiments it fails badly.\nAt just 20% of\
+  \ the kink instability field amplitude the paraxial prediction is qualitatively\nwrong, producing streaks\
+  \ across the entire detector while the full-orbit result shows the\ncorrect helical kink signature.\
+  \ prad traces the full relativistic orbit in all cases.\n\n**A complete research environment.** prad\
+  \ is not just a solver. It ships with a Python API\n(`pip install prad`, numpy arrays in and out), a\
+  \ parameter sweep engine, a GUI for interactive\ndeck editing, TNSA exponential spectrum sampling with\
+  \ exact inverse-CDF, and self-documenting\nrun directories with SHA-256 field hashes for exact reproducibility.\
+  \ You can go from a numpy\nfield array to a radiograph with three lines of Python, or run a six-point\
+  \ energy sweep from\nthe command line in one command.\n\n---\n\n## New in v0.4.0\n\n- **Arbitrary source/detector\
+  \ geometry** — detector normal and up vectors are fully configurable; Gram-Schmidt basis construction\
+  \ in the shader handles any orientation (test 13)\n- **Per-hit binary export** (`counts/hits.bin`) —\
+  \ every detector hit recorded as `(y_mm, z_mm, energy_MeV)`; enables energy-resolved radiographs and\
+  \ post-hoc material inference\n- **Adaptive timestep** — large dt in vacuum, Larmor-constrained dt inside\
+  \ the field; 5–20× speedup with no physics change (test 15)\n- **Superimposed field grids** — stack\
+  \ any number of `.bfld` files at load time via `[[field.extra_b]]` TOML blocks; CPU-side resampling,\
+  \ no shader changes (test 14)\n- **Bethe-Bloch CSDA energy loss** — relativistic stopping power from\
+  \ a 256-entry GPU lookup table; scalar density grid (`.dens` format); material presets (water, CH₂,\
+  \ Be, Al, H); 0.7% agreement with NIST PSTAR at 14.7 MeV (test 16)\n\n---\n\n## Python API\n\n`prad`\
+  \ is a Python wrapper around the engine. Install it with pip:\n\n```bash\npip install prad\n```\n\n\
+  Run a simulation and get results as numpy arrays in three lines:\n\n```python\nimport prad\n\nresult\
+  \ = prad.run(\n    \"data/zpinch.bfld\",\n    energy_MeV=14.7,\n    n_particles=200_000,\n    source_distance_mm=80.0,\n\
+  \    detector_distance_mm=100.0,\n)\n\ncounts = result.raw_counts          # numpy uint32, 1024×1024\n\
+  print(result.diagnostics)           # hit_fraction, n_hits, …\nresult.show()                       #\
+  \ display inline (Jupyter / matplotlib)\n```\n\nYou can also pass a field constructed from a numpy array\
+  \ directly:\n\n```python\nimport numpy as np, prad\n\nB = np.zeros((64, 64, 64, 3), dtype=np.float32)\n\
+  B[:, :, :, 2] = 5.0                # 5 T uniform Bz\n\nfield = prad.Field.from_array(B, bounds_m=(-0.05,\
+  \ 0.05, -0.05, 0.05, -0.05, 0.05))\nresult = prad.run(field, n_particles=100_000)\n```\n\nSee [docs/python_api.md](docs/python_api.md)\
+  \ for the full API reference.\n\n---\n\n## Subcommands\n\n| Command | Purpose |\n|---|---|\n| `run <deck>\
+  \ [-o dir]` | Batch run — GPU compute, full run directory output |\n| `gui [deck]` | Interactive launcher\
+  \ with live progress |\n| `explain <deck>` | Print resolved geometry and step budget — no GPU |\n| `validate\
+  \ <deck>` | Schema check only — no GPU |\n| `init [preset] [-o deck.toml]` | Emit a starter deck (`blank`\
+  \ / `zpinch` / `kink-strong`) |\n| `demo [preset]` | Run a built-in preset without writing a deck |\n\
+  | `render <run_dir>` | Re-render radiograph from saved counts — no GPU |\n| `sweep <deck> --param k=v1,v2`\
+  \ | Parameter sweep — one run directory per point |\n| `inspect <run_dir\\|sweep_dir>` | Print run or\
+  \ sweep summary |\n| `analyze <run_dir>` | Count statistics |\n\n---\n\n## Run directory layout\n\n\
+  Every `run` produces a self-contained directory. Share it with a colleague and they can\nre-render or\
+  \ analyse without re-running anything.\n\n```\nruns/zpinch_01/\n  input_deck.toml          ← exact copy\
+  \ of deck used\n  resolved_config.json     ← fully resolved SI parameters\n  metadata.json         \
+  \   ← hardware, git hash, field SHA-256, timing\n  log.txt                  ← full terminal output mirror\n\
+  \  counts/\n    raw_counts.bin         ← u32 [H×W] detector hit counts\n    processed_counts.bin   ←\
+  \ f32 [H×W] after detector response\n    hits.bin               ← (y_mm, z_mm, energy_MeV) per hit\n\
+  \  images/\n    radiograph.png\n```\n\n---\n\n## Energy spectra\n\nThree proton source spectra are supported:\n\
+  \n| Mode | Deck field | Typical use |\n|---|---|---|\n| Monoenergetic | `energy_MeV` | D–³He fusion\
+  \ protons (14.7 MeV), accelerator beams |\n| Gaussian spread | `energy_spread_percent` | Slightly impure\
+  \ mono sources, calibration |\n| Exponential / TNSA | `temperature_MeV`, `cutoff_mev` | Laser-accelerated\
+  \ proton sources |\n\n```toml\n# TNSA example\n[source]\ntemperature_MeV = 3.0\ncutoff_mev      = 40.0\n\
+  n_particles     = 200000\n```\n\nAll three modes feed into the same relativistic Boris integrator —\
+  \ `u = γv` is computed\nexactly regardless of the drawn energy. See [docs/spectra.md](docs/spectra.md)\
+  \ for details.\n\n---\n\n## Parameter sweeps\n\n```bash\n# Energy scan — four runs, zipped\nproton_tracer\
+  \ sweep zpinch.toml \\\n  --param source.energy_MeV=5,10,15,20\n\n# Range syntax\nproton_tracer sweep\
+  \ zpinch.toml \\\n  --param source.energy_MeV=5:20:5\n\n# Paired sweep — same-length lists, zipped\n\
+  proton_tracer sweep zpinch.toml \\\n  --param source.energy_MeV=5,10,15 \\\n  --param numerics.max_steps=10000,20000,30000\n\
+  ```\n\nOutput: `runs/sweep_001/` with one run directory per point and a live `sweep_manifest.json`.\n\
+  \n---\n\n## Performance\n\n**vs PlasmaPy** — measured head-to-head on the same hardware (uniform Bz\
+  \ = 1 T, 14.7 MeV\nprotons, Apple M4; both tracers timed at every point, no extrapolation). With a matched\
+  \ fixed\ntimestep (dt = 0.2 ps, identical physics) prad is **≈2,180× faster at 1M particles**. With\n\
+  prad's default three-phase adaptive timestep — large dt in vacuum, Larmor-constrained dt\ninside the\
+  \ field — the measured gap is:\n\n| N | prad (adaptive dt) | PlasmaPy (measured) | Speedup |\n|---|---|---|---|\n\
+  | 100,000 | 0.076 s | 425 s | **≈ 5,600×** |\n| 500,000 | 0.114 s | 2,332 s | **≈ 20,400×** |\n| 1,000,000\
+  \ | 0.148 s | 4,920 s | **≈ 33,000×** |\n\nThis comparison isolates the forward particle-tracing step\
+  \ only; PlasmaPy is a broader\nplasma-physics ecosystem and is not being replaced by prad.\n\nFixed-dt\
+  \ wall times per field preset (Apple M4, prad v0.4.0):\n\n| Field | 100,000 particles | 1,000,000 particles\
+  \ |\n|---|---|---|\n| zero field | 0.34 s | 1.87 s |\n| z-pinch | 0.31 s | 1.88 s |\n| kink | 0.35 s\
+  \ | 1.92 s |\n| sausage | 0.32 s | 1.91 s |\n\nPeak step throughput: **9.0 B steps/s**.\n\nAdditional\
+  \ Linux/NVIDIA validation on an RTX 4090 reached ~34 B particle-steps/s\non the benchmark configuration,\
+  \ correspondin"

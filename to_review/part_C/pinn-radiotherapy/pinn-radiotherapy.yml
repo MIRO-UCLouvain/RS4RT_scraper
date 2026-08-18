@@ -1,0 +1,49 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: romanaruqia/PINN-Radiotherapy
+url: https://github.com/romanaruqia/PINN-Radiotherapy
+platform: github
+description: Using Physics-Informed Neural Networks (PINNs) to simulate radiation transport profiles in
+  clinical tissue
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-16T15:01:34Z'
+image_source: null
+heuristic_total_score: 27
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 6 support term(s).
+readme_excerpt: "# Physics-Informed Neural Networks (PINNs) for Radiotherapy Dose Calculation\n\nUsing\
+  \ Physics-Informed Neural Networks (PINNs) to simulate radiation transport profiles in clinical tissue\
+  \ - An interdisciplinary Scientific Machine Learning (SciML) project accelerating radiation transport\
+  \ simulations in clinical tissue using Physics-Constrained Deep Learning.\n\n## The Core Problem (Medical\
+  \ Physics Perspective)\nTraditional intensity-modulated radiation therapy (IMRT) planning relies heavily\
+  \ on numerical Monte Carlo simulations or analytical voxel-solvers to predict how a radiation beam deposits\
+  \ energy (dose) inside a patient. While highly accurate, these frameworks are computationally intensive\
+  \ and slow down clinical workflows. \n\nThis project implements a **Physics-Informed Neural Network\
+  \ (PINN)** to approximate the spatial attenuation profile of a clinical megavoltage beam traversing\
+  \ soft tissue. By leveraging automatic differentiation, the model learns the underlying physics without\
+  \ relying on massive amounts of clinical training data.\n\n## Embedded Governing Physics\nInstead of\
+  \ treating the neural network as a \"black box,\" this architecture embeds the **1D Radiation Transport\
+  \ Equation** directly into the optimization pipeline:\n\n$$\\frac{dI(x)}{dx} + \\mu(x)I(x) = 0$$\n\n\
+  Where:\n* $x$ represents depth penetration in human tissue (0 to 10 cm).\n* $I(x)$ represents relative\
+  \ beam intensity/absorbed dose.\n* $\\mu$ represents the material-specific linear attenuation coefficient\
+  \ (set to $0.15 \\text{ cm}^{-1}$ for soft tissue).\n\nThe network architecture evaluates structural\
+  \ boundary parameters at the skin line ($x=0$) such that $I(0) = 1.0$ (100% initial beam intensity).\n\
+  \n## Deep Learning Architecture\n* **Framework:** DeepXDE supported by a **PyTorch** compute backend.\n\
+  * **Network Structure:** Fully Connected Neural Network (FNN) comprising 1 Input layer (depth), 3 Hidden\
+  \ layers (32 neurons apiece configured via `tanh` activations), and 1 Output layer (intensity).\n* **Loss\
+  \ Dynamics:** The training engine minimizes a composite objective function mapping boundary data variance\
+  \ alongside exact physics residue calculated via Automatic Differentiation:\n\n$$\\text{Loss}_{\\text{total}}\
+  \ = \\text{Loss}_{\\text{BC}} + \\lambda \\text{Loss}_{\\text{PDE}}$$\n\n## Execution Guide\nTo run\
+  \ this project locally or in a notebook environment, install the following packages:\npip install deepxde\
+  \ torch matplotlib numpy\n\n## Environment Setup\n1. Open the project notebook in Google Colab or Jupyter.\n\
+  \n2. Ensure your runtime environment is set to use a GPU hardware accelerator (e.g., Nvidia T4) to speed\
+  \ up the automatic differentiation loops.\n\n3. Run the cells sequentially to initialize the physics\
+  \ engine, compile the PyTorch model, and begin the 12,000 epoch optimization loop.\n"

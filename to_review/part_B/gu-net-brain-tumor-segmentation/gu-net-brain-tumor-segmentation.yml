@@ -1,0 +1,48 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: arnavdhar07/GU-Net-Brain-Tumor-Segmentation
+url: https://github.com/arnavdhar07/GU-Net-Brain-Tumor-Segmentation
+platform: github
+description: 'GU-Net: a simplified, low-computation BU-Net variant for diffuse glioma segmentation in
+  MRI (BraTS 2021).'
+license: null
+language: Python
+keywords:
+- brain-tumor
+- brats
+- deep-learning
+- image-segmentation
+- medical-imaging
+- mri
+- pytorch
+- unet
+stars: 1
+updated_at: '2026-08-03T23:57:23Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# GU-Net: Low-Computation Diffuse Glioma Segmentation\n### Author: Arnav Dhar\n\nA novel,\
+  \ simplified variant of **BU-Net** for segmenting diffuse gliomas (a\nprevalent adult brain tumor) in\
+  \ MRI scans, optimized specifically for\n**low-computation neuroimaging**.\n\nDiffuse gliomas are currently\
+  \ identified and segmented manually by radiologists\nso that surgeons can use the result as a treatment\
+  \ reference — a slow process.\nPrior automated approaches use CNNs and U-Nets; one key piece of prior\
+  \ work,\n**BU-Net**, slightly alters the U-Net architecture. GU-Net simplifies BU-Net so\nit needs far\
+  \ less data and compute.\n\n## Results\nTrained on a subset of the **BraTS 2021** dataset — just **1,647\
+  \ images** from\n**549 brain MRIs** — GU-Net achieves:\n\n| Metric | Score |\n| --- | --- |\n| Dice\
+  \ Similarity Coefficient (DSC) | **71.58%** |\n| Intersection over Union (IoU) | **61.29%** |\n\nThese\
+  \ are relatively high given the limited data and computation, and are\ncomparable to BU-Net and U-Net\
+  \ despite using a significantly smaller portion of\nthe data. The goal is to advance diagnosis in underprivileged\
+  \ areas and\nhospitals with limited funding, where less data and higher efficiency matter.\n\n## Architecture\n\
+  `og_gu_net.py` contains the full model and training pipeline:\n- **`Conv2DBlock`** — double convolution\
+  \ block (Conv → BN → ReLU, ×2).\n- **`ES`** — multi-scale strip-convolution block with a residual skip.\n\
+  - **`WC`** — factorized (width/height) convolution block used at the transition.\n- **`BUNet`** — the\
+  \ GU-Net encoder/transition/decoder with average-pooling\n  downsampling and transpose-convolution upsampling.\n\
+  - **`DiceBCELoss`**, **`dice_coefficient`**, **`iou`** — combined Dice + BCE loss\n  and evaluation\
+  \ metrics.\n- **`MyDataset`** — loads preprocessed BraTS FLAIR/segmentation tensor slices.\n\n## Setup\n\
+  ```bash\npip install -r requirements.txt\n```\n\nOriginally developed as a Google Colab notebook with\
+  \ Google Drive mounted. The\ntraining code expects the BraTS 2021 tensor slices under the path set in\n\
+  `d_url` and runs on CUDA.\n"

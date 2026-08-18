@@ -1,0 +1,128 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Chosencodes/3D-Liver-and-Liver-Tumor-Segmentation
+url: https://github.com/Chosencodes/3D-Liver-and-Liver-Tumor-Segmentation
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-08-12T15:30:20Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: '# 3D Liver and Liver Tumor Segmentation
+
+
+  A 3D deep learning pipeline for automatic segmentation of the liver and liver tumors from contrast-enhanced
+  CT scans, built on the MSD Task03_Liver dataset. This project extends my earlier lung (MSD Task06) and
+  left atrium (MSD Task02) segmentation work to a harder, multi-class problem with severe class imbalance
+  — liver tumors occupy well under 1% of total image volume.
+
+
+  ## Overview
+
+
+  - **Task**: 3-class semantic segmentation (background / liver / tumor) from 3D CT volumes
+
+  - **Dataset**: [Medical Segmentation Decathlon — Task03 Liver](http://medicaldecathlon.com/), 123 usable
+  training volumes after excluding a handful of unavailable case IDs
+
+  - **Architecture**: MONAI `SegResNet` — a residual 3D encoder-decoder, chosen over a plain UNet specifically
+  for its stronger gradient flow to deep layers, which matters when the target signal (tumor) is faint
+  and easy to lose during downsampling
+
+  - **Loss**: `DiceFocalLoss`, class-weighted toward tumor (bg: 0.1, liver: 0.3, tumor: 0.6), to counteract
+  the extreme class imbalance
+
+  - **Training**: PyTorch Lightning, patch-based sampling via TorchIO''s `LabelSampler` (96³ patches,
+  weighted toward tumor-containing regions), sliding-window inference for full-volume validation and testing
+
+  - **Infrastructure**: Trained on Kaggle with a custom checkpoint backup system (Kaggle Dataset API)
+  to survive session interruptions, mirroring the crash-recovery pipeline I built for my lung segmentation
+  project
+
+
+  ## Results
+
+
+  Evaluated on a held-out, stratified test set of 19 cases (17 tumor-bearing, 2 tumor-free):
+
+
+  | Metric | Liver | Tumor |
+
+  |---|---|---|
+
+  | Dice | 0.9275 ± 0.0657 | 0.4229 ± 0.3209 |
+
+  | HD95 (mm) | 11.83 ± 38.24 | 31.98 ± 25.53 |
+
+  | ASSD (mm) | 4.91 ± 17.32 | 12.49 ± 17.65 |
+
+
+  - **Lesion detection rate**: 82.35% of tumor-bearing cases had at least one voxel of correctly-detected
+  overlap
+
+  - **False-positive rate**: both tumor-free test cases in this small sample received a spurious tumor
+  prediction — a known limitation discussed below
+
+
+  Liver segmentation is strong and consistent across the test set. Tumor segmentation is the harder half
+  of this task by design — tumor Dice varies widely case to case (0.00 to 0.83), reflecting how tumor
+  size, location, and contrast vary across patients. This spread, rather than a single headline number,
+  is the more honest picture of model performance on rare, small-target segmentation.
+
+
+  ## What I''d flag as limitations, not hide
+
+
+  - **False positives on tumor-free cases**: with only 2 tumor-free cases in the test set, a 100% false-positive
+  rate is not statistically meaningful on its own, but it''s a real signal that the model is biased toward
+  predicting *some* tumor, likely a direct consequence of training with `label_probabilities` weighted
+  heavily toward tumor-centered patches. A larger tumor-free evaluation set and probability recalibration
+  would be the next step.
+
+  - **Zero-Dice cases**: three test cases scored 0.0 tumor Dice despite the model detecting some tumor
+  presence in a couple of them — these are worth a qualitative look (see `qualitative_worst_*.png`) rather
+  than averaging away.
+
+  - **HD95/ASSD variance is large**: driven by a small number of outlier cases where the model''s tumor
+  boundary prediction diverged significantly from ground truth, visible in the wide standard deviations
+  relative to the means.
+
+
+  ## Pipeline Notes
+
+
+  A few design decisions worth calling out, since they weren''t obvious going in:
+
+
+  - **Preprocessing had a real bug I caught mid-project**: an early version of my crop transform (`CropOrPad(96,96,96)`)
+  was silently center-cropping full CT volumes down to the model''s patch size, discarding real anatomy
+  for any volume larger than 96³ — which was most of the dataset (raw volume sizes range up to 256×256×270).
+  I caught this by visually inspecting a slice and noticing it didn''t match the volume I expected. Fixed
+  by decoupling the crop target (256×256×240, sized to the 99th percentile of the dataset) from the patch
+  size (96³) used only for `LabelSampler`. I''m keeping the pre-fix checkpoint (tumor Dice 0.64 on a buggy
+  pipeline) as a documented before/after comparison rather than erasing the mistake — it''s a more honest
+  record of the actual process.
+
+  - **Validation and testing use full-volume sliding-window inference** (`overlap=0.75`, Gaussian blending),
+  not patch-based evaluation — patch-level Dice on a `LabelSampler`-drawn crop would overstate performance,
+  since the sampler is deliberately biased toward tumor-rich regions.
+
+  - **Stratified splitting by tumor presence** (train/val/test) to avoid a split that accidentally concentrates
+  rare tumor-positive cases in one partition.
+
+
+  ## Acknowledgments
+
+
+  Built on [MONAI](https://monai.io/) and [PyTorch Lightning](https://lightning.ai/), using data from
+  the [Medical Segmentation Decathlon](http://medicaldecathlon.com/).
+
+  '

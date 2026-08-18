@@ -1,0 +1,139 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: pedropiedade1/Data-Analysis-Gamma-1D
+url: https://github.com/pedropiedade1/Data-Analysis-Gamma-1D
+platform: github
+description: Tool for evaluating profiles and pdd curves.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-04-14T01:09:42Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# SRS Dosimetry Analysis Tool\n\nFerramenta gráfica em Python para análise, edição e\
+  \ comparação de curvas\ndosimétricas de fantoma de água.  Desenvolvida para uso clínico em física\n\
+  médica: comissionamento de aceleradores lineares, QA de SRS/SBRT e\ncomparação medida × cálculo.\n\n\
+  ---\n\n## Índice\n\n1. [Requisitos](#1-requisitos)\n2. [Execução](#2-execução)\n3. [Formatos de arquivo\
+  \ suportados](#3-formatos-de-arquivo-suportados)\n4. [Interface gráfica — visão geral](#4-interface-gráfica--visão-geral)\n\
+  \   - 4.1 [Barra de ferramentas](#41-barra-de-ferramentas)\n   - 4.2 [Aba Scans](#42-aba-scans)\n  \
+  \ - 4.3 [Aba Editar](#43-aba-editar)\n   - 4.4 [Aba Gama](#44-aba-gama)\n   - 4.5 [Área de gráfico](#45-área-de-gráfico)\n\
+  5. [Módulos — referência técnica](#5-módulos--referência-técnica)\n   - [parse_snctxt.py](#parse_snctxtpy)\n\
+  \   - [parse_monaco.py](#parse_monacopy)\n   - [parse_mcc.py](#parse_mccpy)\n   - [parse_dta.py](#parse_dtapy)\n\
+  \   - [parse_rfb.py](#parse_rfbpy)\n   - [parse_multiformats.py](#parse_multiformatspy)\n   - [srs_ui.py](#srs_uipy)\n\
+  6. [Estrutura de dados — classe `Scan`](#6-estrutura-de-dados--classe-scan)\n7. [Métricas calculadas](#7-métricas-calculadas)\n\
+  8. [Índice Gama 1D](#8-índice-gama-1d)\n9. [Fluxo de trabalho típico](#9-fluxo-de-trabalho-típico)\n\
+  \n---\n\n## 1. Requisitos\n\n| Pacote | Versão mínima |\n|--------|--------------|\n| Python | 3.10\
+  \ |\n| numpy  | 1.23 |\n| matplotlib | 3.5 |\n| scipy  | 1.9 (para suavização Savitzky-Golay) |\n| tkinter\
+  \ | incluído no Python padrão |\n\nInstalação das dependências:\n\n```bash\npip install numpy matplotlib\
+  \ scipy\n```\n\n---\n\n## 2. Execução\n\n### Executável Windows (sem instalar Python)\n\nUm executável\
+  \ pré-compilado para Windows está disponível na pasta `dist/`\ndo repositório e também na página de\n\
+  [Releases](https://github.com/pedropiedade1/Data-Analysis-Gamma-1D/releases).\n\nBasta baixar e executar\
+  \ `SRS_Analysis.exe` — sem instalação, sem Python.\n\n### Via Python (desenvolvimento)\n\n```bash\n\
+  # sem arquivo pré-carregado\npy -3 srs_ui.py\n\n# com arquivo snctxt inicial\npy -3 srs_ui.py --file\
+  \ \"Curso SRS.snctxt\"\n```\n\n### Gerar o executável localmente\n\n```bash\npip install pyinstaller\n\
+  pyinstaller --onefile --windowed --name \"SRS_Analysis\" srs_ui.py\n# o executável fica em dist/SRS_Analysis.exe\n\
+  ```\n\n---\n\n## 3. Formatos de arquivo suportados\n\n| Botão | Formato | Extensões | Módulo parser\
+  \ |\n|-------|---------|-----------|---------------|\n| **Abrir arquivo...** | Sun Nuclear SNC Water\
+  \ Tank | `.snctxt` | `parse_snctxt.py` |\n| **Importar Monaco...** | Monaco TPS — grade de dose 2D |\
+  \ `.ALL` | `parse_monaco.py` |\n| **Importar MCC...** | PTW Mephisto / BeamScan ASCII | `.mcc` | `parse_mcc.py`\
+  \ |\n| **Importar DTA...** | IBA OmniPro Accept / texto plano | `.dta` `.asc` | `parse_dta.py` |\n|\
+  \ **Importar RFB...** | OmniPro V6 binário (IBA Dosimetry) | `.rfb` | `parse_rfb.py` |\n| **Importar\
+  \ outros...** | Múltiplos formatos (auto-detecção) | `.asc` `.txt` `.csv` `.sncxml` | `parse_multiformats.py`\
+  \ |\n\n### Formatos disponíveis em \"Importar outros...\"\n\n| Formato | Extensão | Notas |\n|---------|----------|-------|\n\
+  | Eclipse w2CAD | `.asc` | Exportação direta do TPS Eclipse |\n| Eclipse Line Profile Export | `.txt`\
+  \ | Mesmo parser do w2CAD |\n| OmniPro RFA300 ASCII BDS | `.txt` `.asc` | Detectado por `:MSR` / `%SCN`\
+  \ |\n| RayStation Physics Export | `.csv` | Detectado por `#Exported: RayStation` |\n| SNC Water Tank\
+  \ XML | `.sncxml` | Formato XML nativo do SNC |\n| Standard Imaging DoseView 1D | `.csv` | Detectado\
+  \ por `DoseView 1D Software Export` |\n\n> **Formato não suportado no momento:**\n> SNC IC Profiler\
+  \ (`.prm`) — formato não documentado publicamente.\n\n---\n\n## 4. Interface gráfica — visão geral\n\
+  \n```\n┌──────────────────────────────────────────────────────────────────────────────────┐\n│ [Abrir]\
+  \ [Monaco] [MCC] [DTA] [RFB] [Outros] [Reset tudo]  arquivo.snctxt        │\n├──────────────────────┬───────────────────────────────────────────────────────────┤\n\
+  │ ┌────────────────┐   │                                                        │\n│ │  Scans  Editar\
+  \ │   │                                                        │\n│ │  Gama          │   │         \
+  \ Área de gráfico (matplotlib)                  │\n│ │                │   │                        \
+  \                                │\n│ │                │   │                                       \
+  \                 │\n│ └────────────────┘   │                                                      \
+  \  │\n├──────────────────────┴───────────────────────────────────────────────────────┤\n│ Barra de status\
+  \                                                               │\n└──────────────────────────────────────────────────────────────────────────────┘\n\
+  ```\n\n### 4.1 Barra de ferramentas\n\n| Botão | Ação |\n|-------|------|\n| **Abrir arquivo...** |\
+  \ Carrega um `.snctxt` como conjunto principal (substitui scans existentes) |\n| **Importar Monaco...**\
+  \ | Adiciona perfis extraídos de arquivos Monaco `.ALL` |\n| **Importar MCC...** | Adiciona scans de\
+  \ arquivos PTW Mephisto `.mcc` |\n| **Importar DTA...** | Adiciona scans de arquivos DTA/ASC (IBA ou\
+  \ texto plano) |\n| **Importar RFB...** | Adiciona scans de arquivos OmniPro V6 binários `.rfb` |\n\
+  | **Importar outros...** | Adiciona scans de qualquer formato suportado com auto-detecção |\n| **Reset\
+  \ tudo** | Remove todas as edições (suavização, renorm., offset) de todos os scans |\n\n> Todos os botões\
+  \ de **importação adicionam** scans à lista atual (não substituem).\n> Use \"Reset tudo\" + recarregamento\
+  \ manual para recomeçar do zero.\n\n---\n\n### 4.2 Aba Scans\n\n**Filtros**\n\nPermite filtrar a lista\
+  \ por:\n- **Feixe** — Photon, Electron, etc.\n- **Tipo** — Depth Scan, Crossline, Inline, Diagonal\n\
+  - **Detector** — nome do detector lido do arquivo (ou editado)\n\nO botão **Limpar filtros** restaura\
+  \ a lista completa.\n\n**Lista de scans**\n\nExibe todos os scans que passam pelos filtros.  Cada linha\
+  \ mostra:\n```\n[idx]* BeamType Energy  FieldXxFieldY cm   ScanType       Detector\n```\nO `*` indica\
+  \ que o scan possui alguma edição pendente.\n\nSuporta seleção múltipla com `Ctrl+clique` ou `Shift+clique`.\n\
+  \n**Opções de plot**\n\n- **Normalizar** — normaliza cada curva a 100% no dmax (PDP) ou no CAX (perfil)\n\
+  - **Colorir por Detector / Campo** — controla a cor das curvas no gráfico\n\nBotão **\">> Plotar selecionados\"\
+  ** gera o gráfico agrupado por tipo de curva.\n\n---\n\n### 4.3 Aba Editar\n\nO painel de edição possui\
+  \ scroll vertical.  Todas as edições são **não\ndestrutivas** — o dado original fica intacto até que\
+  \ o botão\n**\"✔ Aceitar\"** seja pressionado.\n\n#### Seletor de scan\n\nLista todos os scans (sem\
+  \ filtro).  Múltiplos scans podem ser selecionados;\nedições são aplicadas a **todos** os selecionados\
+  \ simultaneamente.\n\n#### Renomear / Corrigir informações\n\nCampos editáveis:\n- **Nome** — rótulo\
+  \ exibido nos gráficos\n- **Feixe** — modalidade (Photon, Electron…)\n- **Energia** — valor numérico\
+  \ (ex.: `6`, `15`, `9`)\n- **Detector** — nome do detector\n- **Campo (cm)** — largura X e Y do campo\
+  \ colimado\n\nBotão **\"Aplicar informações\"** confirma as alterações de metadados.\n\n#### Suavização\n\
+  \n| Parâmetro | Descrição |\n|-----------|-----------|\n| Método | `savgol` (Savitzky-Golay), `moving_avg`\
+  \ (média móvel), `gaussian` (filtro gaussiano) |\n| Janela (pts) | Número de pontos da janela; deve\
+  \ ser ímpar para savgol |\n| Grau (savgol) | Ordem do polinômio (padrão 3) |\n| Sigma (gauss) | Desvio\
+  \ padrão do kernel gaussiano (em pontos) |\n| Região (cm) | Aplica a suavização somente entre `start`\
+  \ e `end` (vazio = tudo) |\n\n#### Centralizar perfil / PDP\n\n| Método | Ação |\n|--------|------|\n\
+  | `fwhm` | Desloca a posição de modo que o ponto médio do FWHM fique em 0 |\n| `cax` | Desloca de modo\
+  \ que o pico (CAX) fique em 0 |\n| `dmax` | Desloca de modo que o dmax fique em Z = 0 (para PDPs) |\n\
+  \nExibe o offset calculado para cada scan.\n\n#### Deslocar posição (eixo X)\n\nAplica um deslocamento\
+  \ manual em cm ao eixo de posição. Útil para alinhar\ncurvas medidas com eixos de referência.\n\n####\
+  \ Renormalizar\n\n| Método | Ponto de referência |\n|--------|---------------------|\n| `dmax` | Pico\
+  \ da curva (dose máxima) |\n| `cax` | Ponto central (posição 0) |\n| `point` | Posição específica definida\
+  \ em \"Posição (cm)\" |\n| `region` | Média da dose dentro da região [start, end] |\n\n#### Métricas\n\
+  \nCaixa de texto com as métricas calculadas para o(s) scan(s) selecionado(s).\nVer [Seção 7](#7-métricas-calculadas)\
+  \ para a lista completa.\n\n#### Aceitar / Reset\n\n| Botão | Efeito |\n|-------|--------|\n| **✔ Aceitar**\
+  \ | Consolida a dose editada como novo \"original\"; reset futuro parte deste estado |\n| **✖ Rejeitar\
+  \ / Reset selecionados** | Descarta todas as edições dos scans selecionados |\n| **✖ Reset TODOS** |\
+  \ Descarta edições de todos os scans na sessão |\n\n---\n\n### 4.4 Aba Gama\n\nCalcula o **índice gama\
+  \ 1D** entre dois scans.\n\n| Campo | Descrição |\n|-------|-----------|\n| **Referência** | Scan que\
+  \ serve como referência (medição ou TPS) |\n| **Avaliação** | Scan a ser comparado contra a referência\
+  \ |\n| **DD (%)** | Critério de diferença de dose (ex.: 3%) |\n| **DTA (cm)** | Critério de distância\
+  \ de concordância (ex.: 0.3 = 3 mm) |\n| **Threshold (%)** | Dose mínima (% do máximo) para incluir\
+  \ ponto no cálculo |\n| **Normaliz.** | `max` = normaliza pelo máximo global; `local` = ponto a ponto\
+  \ |\n\nO botão **\">> Calcular Gama\"** gera um gráfico com 3 painéis:\n1. Curvas sobrepostas (referência\
+  \ azul, avaliação vermelho)\n2. Diferença ponto-a-ponto (barras coloridas: azul ≤ DD, vermelho > DD)\n\
+  3. Índice γ por posição (verde ≤ 1, vermelho > 1)\n\nExibe: **pass rate (%)**, **γ_max**, **γ_mean**\
+  \ e contagem de pontos.\n\n---\n\n### 4.5 Área de gráfico\n\nGráfico interativo Matplotlib com barra\
+  \ de navegação padrão:\n- Pan / Zoom com mouse\n- Salvar figura (PNG, PDF, SVG…)\n- Reset de zoom\n\n\
+  No modo **\"Plotar selecionados\"**, as curvas são agrupadas por tipo\n(Depth Scan, Crossline, Inline)\
+  \ em subplots separados.\n\nNo modo **\"Preview de edição\"** (acionado ao selecionar na aba Editar),\
+  \ cada\nsubplot mostra original (---cinza) vs editado (—colorido) mais um painel de\ndiferença abaixo.\n\
+  \n---\n\n## 5. Módulos — referência técnica\n\n### `parse_snctxt.py`\n\nParser principal para o formato\
+  \ Sun Nuclear SNC Water Tank (`.snctxt`).\n\n**Funções públicas:**\n\n| Função | Descrição |\n|--------|-----------|\n\
+  | `parse_snctxt(filepath)` | Lê o arquivo e retorna `list[Scan]` |\n| `gamma_1d(pos_r, dose_r, pos_e,\
+  \ dose_e, dd, dta, norm, threshold)` | Calcula índice γ 1D; retorna `(positions, gamma_array)` |\n|\
+  \ `gamma_pass_rate(gamma_array)` | Retorna taxa de aprovação em % (γ ≤ 1) |\n| `compute_profile_metrics(pos,\
+  \ dose)` | Calcula métricas de perfil lateral |\n| `compute_pdp_metrics(pos, dose)` | Calcula métricas\
+  \ de PDP/PDD |\n| `format_metrics(scan)` | Retorna string formatada com todas as métricas do scan |\n\
+  | `apply_smooth(scan, method, window, polyorder, sigma, region)` | Suavização in-place |\n| `apply_centering(scan,\
+  \ method)` | Centralização in-place; retorna offset em cm |\n| `apply_renormalize(scan, method, value,\
+  \ ref_pos, region)` | Renormalização in-place |\n\n**Classe `Scan`** — ver [Seção 6](#6-estrutura-de-dados--classe-scan).\n\
+  \n---\n\n### `parse_monaco.py`\n\nParser para exportação de dose 2D do Monaco (Elekta TPS) no formato\
+  \ `.ALL`.\n\n**Funções públicas:**\n\n| Função | Descrição |\n|--------|-----------|\n| `parse_monaco_all(filepath)`\
+  \ | Lê um arquivo `.ALL` e retorna `MonacoFile` |\n| `load_monaco_files(filepaths, index_start)` | Carrega\
+  \ vários arquivos e extrai `list[Scan]` |\n\n**Classe `MonacoFile`:**\n\n| Campo | Tipo | Descrição\
+  \ |\n|-------|------|-----------|\n| `filepath` | str | Caminho do arquivo |\n| `plan_name` | str |\
+  \ Nome do plano (ex.: \"CCC1\", \"MontC05\") |\n| `algorithm` | str | Algoritmo: \"CCC\" ou \"MonteCarlo\"\
+  \ |\n| `plane_type` | str | \"Coronal\" ou \"Transversal\" |\n| `position_mm` | float | Profundidade\
+  \ (Coronal) ou posição lateral (Transversal) em mm |\n| `dose_matrix` | ndarray | Grade de dose (ny\
+  \ × nx) em cGy |\n\n**Convenção de coordenadas:**\n- **Coronal** (PlaneDesc = `C: X.XX cm`): extrai\
+  \ Crossline em Y=0 e Inline em X=0\n- **Transversal** (PlaneDesc = `T: X.XX cm`): extrai PDP em X=0\n\
+  \n---\n\n### `parse_mcc.py`\n\nParser para o form"

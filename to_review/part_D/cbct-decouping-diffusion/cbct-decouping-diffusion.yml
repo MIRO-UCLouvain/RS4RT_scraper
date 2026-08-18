@@ -1,0 +1,139 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: CristinaAsuna/CBCT_decouping_diffusion
+url: https://github.com/CristinaAsuna/CBCT_decouping_diffusion
+platform: github
+description: code for cbct decoupling
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-22T03:00:06Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Consistent CDM\n\nReorganized CBCT decoupling diffusion codebase.\n\nThis codebase\
+  \ keeps the original training, validation, inference, physics\nvisualization, and baseline workflows,\
+  \ but removes `tiny_ablation/` and\nreorganizes the project into a cleaner package layout.\n\n## Project\
+  \ Layout\n\n```text\nConsistent_cdm/\n  configs/                 diffusion configs\n  sh/          \
+  \            SLURM / cluster training scripts\n  baseline/                baseline configs, scripts,\
+  \ and CLI wrappers\n  output/                  checkpoints, samples, inference outputs\n  tensorboard/\
+  \             TensorBoard logs\n  swanlab/                 SwanLab local logs\n  logs/             \
+  \       SLURM stdout / stderr logs\n  consistent_cdm/\n    apps/                  train / infer / evaluate\
+  \ entry modules\n    data/                  dataset loading\n    model/                 diffusion model\
+  \ and UNet modules\n    utils/                 config, checkpoint, metrics, path, tensor IO utils\n\
+  \    visual/                physics visualization and comparison tools\n    baseline/              baseline\
+  \ model implementations and trainers\n```\n\nRoot-level scripts are compatibility wrappers:\n\n```text\n\
+  train_research.py      -> consistent_cdm.apps.train_research\ninfer_research.py      -> consistent_cdm.apps.infer_research\n\
+  evaluate_research.py   -> consistent_cdm.apps.evaluate_research\ncompare_physics_dirs.py -> consistent_cdm.visual.compare_physics_dirs\n\
+  ```\n\n## Unified Output Layout\n\nTraining outputs are organized by `group` and `experiment_name`.\n\
+  \n```text\noutput/<group>/<experiment_name>/\n  checkpoints/\n  samples/\n  infer/\n\ntensorboard/<group>/<experiment_name>/\n\
+  swanlab/<group>/<experiment_name>/\n```\n\nGroups:\n\n```text\ndiffusion  -> diffusion / branch model\n\
+  baseline   -> naive / ResUNet / Pix2Pix baselines\n```\n\nThe experiment name comes from `logging.experiment_name`\
+  \ in the config. You can\noverride it from the command line:\n\n```powershell\npython train_research.py\
+  \ --config configs/full_to_brach.yaml --experiment-name branch_consistent_v2\n```\n\nYou can also override\
+  \ root folders without editing configs:\n\n```powershell\n$env:CONSISTENT_CDM_OUTPUT_ROOT = \"D:\\runs\\\
+  consistent_cdm\\output\"\n$env:CONSISTENT_CDM_TENSORBOARD_ROOT = \"D:\\runs\\consistent_cdm\\tensorboard\"\
+  \n$env:CONSISTENT_CDM_SWANLAB_ROOT = \"D:\\runs\\consistent_cdm\\swanlab\"\n```\n\n## Diffusion Training\n\
+  \nRun from the project root:\n\n```powershell\ncd D:\\vscode_workplace\\codeplace\\Consistent_cdm\n\
+  ```\n\n### Recommended v2 Sum-Difference Training\n\nThe recommended retraining setup is:\n\n```text\n\
+  ADM-style conditional U-Net\n+ attn_res: [8]\n+ dropout: 0.05\n+ branch decoder\n+ cosine beta schedule\n\
+  + sum-difference target parameterization\n+ x0 reconstruction loss\n+ raw-space masked sum consistency\
+  \ loss\n+ difference and difference-edge losses\n+ Min-SNR weighting\n```\n\nUse:\n\n```powershell\n\
+  python train_research.py `\n  --config configs/full_to_brach_v2_sumdiff.yaml `\n  --case-root D:\\nnunet\\\
+  2d_projection_physics_consistent `\n  --experiment-name cbct_full_to_lr_v2_sumdiff\n```\n\nThe dataset\
+  \ still loads targets as `[left, right]`, but the diffusion model\ninternally trains on:\n\n```text\n\
+  r = left + right - full\nd = left - right\n```\n\nDuring validation and inference the sampler automatically\
+  \ decodes the generated\n`[r, d]` back to `[left, right]`, so saved predictions keep the same two-channel\n\
+  format as the legacy branch model.\n\n### v2 Ablations\n\nThe v2 losses, sum-difference target, cosine\
+  \ schedule, Min-SNR weighting, and\ndropout setting are integrated into the main v2 config. The only\
+  \ planned\narchitecture ablations are attention placement and branch decoder split depth:\n\n```text\n\
+  configs/full_to_brach_v2_sumdiff.yaml    # attn_res: [8], shared_blocks: 8\nconfigs/full_to_brach_v2_attn48.yaml\
+  \     # attn_res: [4, 8]\nconfigs/full_to_brach_v2_shared6.yaml    # shared_blocks: 6\nconfigs/full_to_brach_v2_shared10.yaml\
+  \   # shared_blocks: 10\n```\n\nSampler and prediction type are not separate ablation config families.\
+  \ Switch\nthem directly in YAML:\n\n```yaml\ndiffusion:\n  prediction_type: \"epsilon\" # or \"v_prediction\"\
+  \n  beta_schedule:\n    schedule: \"cosine\"\n    n_timestep: 1000\n    zero_terminal_snr: false # commonly\
+  \ true with v_prediction\n\nvalidation:\n  sampler:\n    sampler: \"ddim\"          # or \"dpm_solver_pp\"\
+  \n    steps: 50                # e.g. 30 for dpm_solver_pp\n    eta: 0.0                 # DDIM only\n\
+  \    # solver_order: 2        # DPM-Solver++ only\n```\n\nTraining preview output is intentionally lightweight\
+  \ in the v2 config: no\npreview `.npy` files are written, local samples only include prediction PNGs\
+  \ for\nchannels 0 and 1, physics visualization files are disabled, and the same\nprediction previews\
+  \ are logged to SwanLab by validation step.\n\n```yaml\nvalidation:\n  physics_visual_limit: 0\n  preview:\n\
+  \    channels: [0, 1]\n    save_png: true\n    save_npy: false\n    swanlab: true\n```\n\nSingle-process\
+  \ training:\n\n```powershell\npython train_research.py `\n  --config configs/full_to_brach.yaml `\n\
+  \  --case-root D:\\nnunet\\2d_projection_physics_consistent `\n  --experiment-name cbct_1175_full_to_lr_branch_baseline\n\
+  ```\n\nResume:\n\n```powershell\npython train_research.py `\n  --config configs/full_to_brach_v2_sumdiff.yaml\
+  \ `\n  --case-root D:\\nnunet\\2d_projection_physics_consistent `\n  --experiment-name cbct_full_to_lr_v2_sumdiff\
+  \ `\n  --resume output\\diffusion\\cbct_full_to_lr_v2_sumdiff\\checkpoints\\last.pt\n```\n\n## Cluster\
+  \ DDP Training\n\nBranch DDP script:\n\n```bash\nsbatch sh/train_brach.sh\n```\n\nThe script uses:\n\
+  \n```bash\ntorchrun --standalone --nproc_per_node=2 \\\n  -m consistent_cdm.apps.train_research \\\n\
+  \  --config configs/full_to_brach.yaml\n```\n\nDefault dataset path in the script:\n\n```bash\n/public_bme2/bme-cuizhm/maxquan/Datasets/CBCT/2d_projection_physics_consistent\n\
+  ```\n\nOverride common settings without editing the script:\n\n```bash\nEXPERIMENT_NAME=branch_base_final\
+  \ \\\nCBCT_CASE_ROOT=/public_bme2/bme-cuizhm/maxquan/Datasets/CBCT/2d_projection_physics_consistent\
+  \ \\\nNPROC_PER_NODE=2 \\\nsbatch sh/train_brach.sh\n```\n\nResume on cluster:\n\n```bash\nRESUME_CHECKPOINT=/path/to/last.pt\
+  \ sbatch sh/train_brach.sh\n```\n\nThe DDP outputs go to:\n\n```text\noutput/diffusion/<EXPERIMENT_NAME>/\n\
+  tensorboard/diffusion/<EXPERIMENT_NAME>/\nswanlab/diffusion/<EXPERIMENT_NAME>/\n```\n\n## Inference\n\
+  \nThere are two recommended inference modes:\n\n```text\n1. Raw inference:\n   Saves the model output\
+  \ directly. Use this to inspect the model itself.\n\n2. Low-frequency physics-corrected inference:\n\
+  \   Applies low-frequency residual correction and Left-Right difference denoising.\n   Use this as the\
+  \ current recommended post-processed result.\n```\n\n### 1. Raw Inference\n\n```powershell\npython infer_research.py\
+  \ `\n  --config configs/full_to_brach_v2_sumdiff.yaml `\n  --checkpoint output\\diffusion\\cbct_full_to_lr_v2_sumdiff\\\
+  checkpoints\\best_ema.pt `\n  --split val `\n  --case-root D:\\nnunet\\2d_projection_physics_consistent\
+  \ `\n  --output-dir output\\diffusion\\cbct_full_to_lr_v2_sumdiff\\infer_raw `\n  --weights ema `\n\
+  \  --branch-correction none `\n  --branch-diff-denoise-sigma 0.0\n```\n\n### 2. Low-Frequency Physics-Corrected\
+  \ Inference\n\n```powershell\npython infer_research.py `\n  --config configs/full_to_brach_v2_sumdiff.yaml\
+  \ `\n  --checkpoint output\\diffusion\\cbct_full_to_lr_v2_sumdiff\\checkpoints\\best_ema.pt `\n  --split\
+  \ val `\n  --case-root D:\\nnunet\\2d_projection_physics_consistent `\n  --output-dir output\\diffusion\\\
+  cbct_full_to_lr_v2_sumdiff\\infer_lowfreq_diff `\n  --weights ema `\n  --branch-correction proportional\
+  \ `\n  --branch-correction-strength 0.3 `\n  --branch-correction-blur-sigma 2.0 `\n  --branch-diff-denoise-sigma\
+  \ 0.6 `\n  --branch-correction-min-rel-mae 0.05\n```\n\nYou can also add a correction gate if you only\
+  \ want to correct samples with\nlarge physical residual:\n\n```powershell\n--branch-correction-min-residual-mae\
+  \ 0.15\n```\n\n### Optional: Full Residual Correction\n\nThis forces the full residual back into the\
+  \ two branches. It usually gives\nbetter `Left + Right = Full`, but it can blur or contaminate individual\
+  \ branches.\nUse it mainly as a comparison baseline:\n\n```powershell\npython infer_research.py `\n\
+  \  --config configs/full_to_brach.yaml `\n  --checkpoint output\\diffusion\\cbct_1175_full_to_lr_branch_baseline\\\
+  checkpoints\\best_ema.pt `\n  --split val `\n  --case-root D:\\nnunet\\2d_projection_physics_consistent\
+  \ `\n  --output-dir output\\diffusion\\cbct_1175_full_to_lr_branch_baseline\\infer_residual `\n  --weights\
+  \ ema `\n  --branch-correction equal `\n  --branch-correction-strength 1.0\n```\n\n### Using An Old\
+  \ Checkpoint\n\nYou can use an old checkpoint by absolute path:\n\n```powershell\npython infer_research.py\
+  \ `\n  --config configs/full_to_brach.yaml `\n  --checkpoint D:\\vscode_workplace\\codeplace\\palette\\\
+  CBCT_decouping_diffusion\\output\\checkpoints\\branch_consistent\\best_ema.pt `\n  --split val `\n \
+  \ --case-root D:\\nnunet\\2d_projection_physics_consistent `\n  --output-dir output\\diffusion\\branch_consistent_old_ckpt\\\
+  infer_lowfreq_diff `\n  --weights ema `\n  --branch-correction equal `\n  --branch-correction-strength\
+  \ 1.0 `\n  --branch-correction-blur-sigma 3.0 `\n  --branch-diff-denoise-sigma 1.0\n```\n\nMeaning:\n\
+  \n```text\nR = Full - (Pred_Left + Pred_Right)\nR_low = GaussianBlur(R, sigma=branch-correction-blur-sigma)\n\
+  \nLeft  += 0.5 * strength * R_low\nRight += 0.5 * strength * R_low\n\nD = Left - Right\nD_smooth = GaussianBlur(D,\
+  \ sigma=branch-diff-denoise-sigma)\nLeft_new  = (Left + Right + D_smooth) / 2\nRight_new = (Left + Right\
+  \ - D_smooth) / 2\n```\n\nIf `branch-correction-blur-sigma > 0`, the result is a low-frequency physics\n\
+  correction. The residual MAE may not become zero, by design.\n\n## Evaluation\n\nEvaluate saved predictions:\n\
+  \n```powershell\npython evaluate_research.py `\n  --config configs/full_to_brach_v2_sumdiff.yaml `\n\
+  \  --pred-dir output\\diffusion\\cbct_full_to_lr_v2_sumdiff\\infer_lowfreq_diff `\n  --split val `\n\
+  \  --case-root D:\\nnunet\\2d_projection_physics_consistent\n```\n\nFor branch models the evaluator\
+  \ also reports:\n\n```text\nbranch_physics_residual_mae\nbranch_physics_residual_rel_mae_masked\nbranch_left_mae\n\
+  branch_right_mae\nbranch_difference_mae\nbranch_difference_edge_mae\n```\n\n## Physics Visualization\
+  \ Comparison\n\nCompare two inference result folders:\n\n```powershell\npython compare_physics_dirs.py\
+  \ `\n  --left-dir output\\diffusion\\cbct_1175_full_to_lr_branch_baseline\\infer_residual\\physics `\n\
+  \  --right-dir output\\diffusion\\cbct_1175_full_to_lr_branch_baseline\\infer_lowfreq_diff\\physics\
+  \ `\n  --output-dir output\\comparisons\\residual_vs_lowfreq_diff `\n  --left-label \"Residual correction\"\
+  \ `\n  --right-label \"Low-frequency residual + diff denoise\" `\n  --scale 0.5\n```\n\n## Baselines\n\
+  \nTrain Pix2Pix:\n\n```powershell\npython baseline/train_pix2pix.py `\n  --config baseline/configs/pix2pix_96_capacity_matched.yaml\
+  \ `\n  --experiment-name pix2pix_96_capacity_matched\n```\n\nTrain ResUNet:\n\n```powershell\npython\
+  \ baseline/train_resunet.py `\n  --config baseline/configs/resunet_96_capacity_matched.yaml `\n  --experiment-name\
+  \ resunet_96_capacity_matched\n```\n\nBaseline inference:\n\n```powershell\npython baseline/infer.py\
+  \ `\n  --config baseline/configs/pix2pix_96_capacity_matched.yaml `\n  --checkpoint output\\baseline\\\
+  pix2pix_96_capacity_matched\\checkpoints\\best.pt `\n  --output-dir output\\baseline\\pix2pix_96_capacity_matched\\\
+  infer `\n  --weights generator\n```\n\nBaseline evaluation:\n\n```powershell\npython baseline/evaluate_saved_predictions.py\
+  \ `\n  --config baseline/configs/pix2pix_96_capacity_matched.yaml `\n  --pred-dir output\\baseline\\\
+  pix2pix_96_capacity_matched\\infer `\n  --save-quicklook\n```\n\nLocal overfit sanity check:\n\n```powershell\n\
+  powershell -ExecutionPolicy Bypass -File baseline/run_overfit_local.ps1\n```\n\n## Notes\n\n- `tiny_ablation/`\
+  \ is intentionally not included.\n- The configs may still contain local Windows dataset paths. Use `--case-root`\n\
+  \  or `CBCT_CASE_ROOT` on the cluster to override them.\n- `output.root: null` in configs is intentional.\
+  \ It enables the unified output\n  layout.\n- TensorBoard and SwanLab paths can still be overridden\
+  \ by `TENSORBOARD_LOGDIR`\n  and `SWANLAB_LOGDIR`, but the default behavior is unified under\n  `tensorboard/`\
+  \ and `swanlab/`.\n如果你想显式指定配置、实验名、数据路径：\n```bash\n"

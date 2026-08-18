@@ -1,0 +1,95 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: joaovcpessoa/sbrt_2025_rf_amplifier_mimo_study
+url: https://github.com/joaovcpessoa/sbrt_2025_rf_amplifier_mimo_study
+platform: github
+description: ''
+license: GPL-3.0
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-05-24T16:13:21Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# On Performance of Massive MIMO Systems with Solid-state Amplifiers\n\n- **Autores:**\
+  \ João Vítor C. Pessoa e Rafael S. Chaves  \n- **Instituição:** CEFET/RJ - Coordenação do Curso de Engenharia\
+  \ de Telecomunicações  \n- **Publicação:** XLIII Brazilian Symposium on Telecommunications and Signal\
+  \ Processing (SBrT 2025)  \n- **Evento:** 29 de setembro a 2 de outubro de 2025, Natal, RN\n\n## Descrição\n\
+  \nEste repositório contém o simulador desenvolvido para o artigo publicado no SBrT 2025. O objetivo\
+  \ é avaliar o impacto das não-linearidades do front-end analógico, especificamente do amplificador de\
+  \ estado sólido (SSA), no desempenho de BER em sistemas Massive MIMO, tanto no downlink quanto no uplink.\n\
+  \nO amplificador analisado é o **SSA (Solid-State Amplifier)**, cujo modelo apresenta apenas distorção\
+  \ AM-AM:\n\n$$f_A(|x|) = \\frac{|x|}{\\left(1 + \\left[\\frac{|x|}{A}\\right]^{2p}\\right)^{\\frac{1}{2p}}}$$\n\
+  \nonde `p > 0` controla a suavidade da não-linearidade e `A` é o nível de saturação. Quando `A → ∞`,\
+  \ o amplificador converge para o ideal.\n\n## Parâmetros de Simulação (Tabela I do artigo)\n\n| Parâmetro\
+  \ | Valor |\n|-----------|-------|\n| Número de antenas | M = 256 |\n| Número de UEs | K ∈ {64, 128,\
+  \ 256} |\n| Constelação | 64-QAM e 256-QAM |\n| Número de blocos | N = 500 (downlink) / 1000 (uplink)\
+  \ |\n| Geometria do arranjo | ULA |\n| Modelo de canal | Rician, κ = 10 dB |\n| Frequência portadora\
+  \ | fc = 2 GHz |\n| Potência da BS | 10 W |\n| Potência do UE | 200 mW |\n| Ganho de antena (BS e UE)\
+  \ | 0 dBi |\n| Figura de ruído | 9 dB |\n| SNR efetiva (downlink e uplink) | ρ ∈ {−10, −5, · · · , 30}\
+  \ dB |\n| Saturação do amplificador | A ∈ {0.5, 1.0, 2.0} |\n| Algoritmos de pré-codificação | ZF e\
+  \ MMSE |\n| Algoritmos de decodificação | ZF e MMSE |\n| Monte-Carlo (posições dos UEs) | 10 |\n| Monte-Carlo\
+  \ (desvanecimento em pequena escala) | 10 |\n\n## Estrutura do Repositório\n\n```\n.\n├── src/\n│  \
+  \ ├── matlab/\n│   │   ├── functions/\n│   │   │   ├── amplify_signal.m\n│   │   │   ├── decode_signal.m\n\
+  │   │   │   ├── normalize_decoded_signal.m\n│   │   │   ├── normalize_precoded_signal.m\n│   │   │ \
+  \  ├── precode_signal.m\n│   │   │   ├── rician_channel_generator.m\n│   │   │   └── user_position_generator.m\n\
+  │   │   ├── amplitude_analysis.m\n│   │   ├── ber_automation.m\n│   │   ├── ber_downlink.m\n│   │  \
+  \ ├── ber_uplink.m\n│   │   ├── load_env.m\n│   │   ├── plot_amplitude_phase.m\n│   │   ├── plot_ber.m\n\
+  │   │   ├── plot_ber_compare.m\n│   │   └── plot_constellation.m\n│   ├── python/\n│   │   ├── massive_mimo_sim/\n\
+  │   │   │   ├── __init__.py\n│   │   │   ├── amplifiers.py\n│   │   │   ├── channel.py\n│   │   │  \
+  \ ├── plotting.py\n│   │   │   ├── precoders.py\n│   │   │   ├── qam.py\n│   │   │   └── simulation.py\n\
+  │   │   └── run_simulation.py\n│   └── experiment.ipynb\n└── .env\n```\n\n## Como Reproduzir os Resultados\n\
+  \n### MATLAB\n\n#### Arquivo `.env`\n\nCrie um arquivo `.env` dois níveis acima do diretório dos scripts\
+  \ com os seguintes campos:\n\n```\nCPU_SIMULATION_SAVE_PATH=<caminho para salvar os .mat>\nCPU_FUNCTIONS_PATH=<caminho\
+  \ para a pasta functions>\nCPU_PLOT_BER_PATH=<caminho para salvar as figuras>\n```\n\n#### Análise de\
+  \ amplitude do amplificador\n\nGera os dados da transferência AM-AM do SSA (Fig. 2 do artigo):\n\n```matlab\n\
+  run amplitude_analysis.m\nrun plot_amplitude_phase.m\n```\n\n#### Simulação de BER no uplink\n\nExecute\
+  \ individualmente para cada combinação de decodificador e K:\n\n```matlab\ndecoder_type = 'ZF';   %\
+  \ 'ZF' | 'MMSE'\nK = 64;                % 64 | 128 | 256\nrun ber_uplink.m\n```\n\nOu use o script de\
+  \ automação, que itera sobre todos os cenários do uplink:\n\n```matlab\nrun ber_automation.m\n```\n\n\
+  Cada execução salva um arquivo `.mat` com nome `ul_ber_<decoder>_ss_256_<K>.mat`.\n\n#### Simulação\
+  \ de BER no downlink\n\nConfigure as variáveis e execute:\n\n```matlab\nprecoder_type = 'MMSE';   %\
+  \ 'ZF' | 'MMSE'\nK = 64;                   % 64 | 128 | 256\nrun ber_downlink.m\n```\n\nCada execução\
+  \ salva um arquivo `.mat` com nome `dl_ber_<precoder>_ss_256_<K>.mat`.\n\n#### Visualização dos resultados\n\
+  \n```matlab\nrun plot_ber.m           % BER vs SNR para um arquivo específico\nrun plot_ber_compare.m\
+  \   % Comparativo de K = {64, 128, 256} em um único gráfico\nrun plot_constellation.m % Constelações\
+  \ para 64-QAM e 256-QAM\n```\n\nCenários cobertos:\n\n| Link | K | Algoritmos | Figura |\n|------|---|------------|--------|\n\
+  | Uplink | 64, 128, 256 | ZF, MMSE | Fig. 3 |\n| Downlink | 64, 128, 256 | ZF, MMSE | Fig. 4 |\n| Constelação\
+  \ (uplink) | 64 | MMSE | Fig. 5 |\n\n---\n\n### Python\n\n#### Dependências\n\n```bash\npip install\
+  \ numpy scipy matplotlib\n```\n\n#### Notebook interativo\n\nAbra `experiment.ipynb` e execute as células\
+  \ em ordem. O notebook contém todas as funções de simulação e geração de figuras e é o equivalente Python\
+  \ dos scripts MATLAB.\n\nO objeto `SIMULATION_PARAMETERS` centraliza toda a configuração:\n\n```python\n\
+  SIMULATION_PARAMETERS = {\n    \"M\":           256,\n    \"B\":           4,              # 4 → 16-QAM\
+  \ | 6 → 64-QAM | 8 → 256-QAM\n    \"K_f_dB\":      10.0,\n    \"radial\":      1000.0,\n    \"SNR_dB\"\
+  :      list(range(-10, 31, 5)),\n    \"amplifiers\":  [\"IDEAL\", \"SS\"],\n    \"A0\":          [0.5,\
+  \ 1.0, 2.0],\n    \"N_MC1\":       10,\n    \"N_MC2\":       10,\n    \"ul_decoders\": [\"ZF\", \"MMSE\"\
+  ],\n    \"ul_K_values\": [64, 128, 256],\n    \"ul_N_BLK\":    1000,\n    \"dl_precoders\": [\"MMSE\"\
+  ],\n    \"dl_K_values\":  [64, 128, 256],\n    \"dl_N_BLK\":    500,\n}\n```\n\n#### Script de linha\
+  \ de comando\n\n```bash\n# Figuras de amplitude apenas (< 1 segundo)\npython run_simulation.py --amp-only\n\
+  \n# Monte Carlo reduzido (n_mc1=n_mc2=3, ~minutos por config)\npython run_simulation.py --quick\n\n\
+  # Simulação completa (n_mc1=n_mc2=10, várias horas)\npython run_simulation.py\n```\n\nOs resultados\
+  \ são salvos em `simulation_results/` por padrão.  \nUse `--outdir <caminho>` para alterar o diretório.\
+  \  \nUse `--force` para forçar re-execução mesmo com cache `.npz` existente.\n\n#### Figuras geradas\n\
+  \n| Arquivo | Figura do artigo | Descrição |\n|---------|-----------------|-----------|\n| `amplitude_io_ss.{png,eps}`\
+  \ | Fig. 2 | Curva AM-AM do SSA (p=1,2,3; A0=1,2) |\n| `ul_ber_zf_{...}.{png,eps}` | Fig. 3a | BER uplink,\
+  \ decodificador ZF |\n| `ul_ber_mmse_{...}.{png,eps}` | Fig. 3b | BER uplink, decodificador MMSE |\n\
+  | `dl_ber_zf_{...}.{png,eps}` | Fig. 4a | BER downlink, pré-codificador ZF |\n| `dl_ber_mmse_{...}.{png,eps}`\
+  \ | Fig. 4b | BER downlink, pré-codificador MMSE |\n| `constellation_ul_mmse_*_64qam_*.{png,eps}` |\
+  \ Fig. 5a–c | Constelação 64-QAM, A ∈ {0.5, 1, 2} |\n| `constellation_ul_mmse_*_256qam_*.{png,eps}`\
+  \ | Fig. 5d–f | Constelação 256-QAM, A ∈ {0.5, 1, 2} |\n\n## Reprodutibilidade\n\n- MATLAB: sem semente\
+  \ explícita nos scripts; resultados podem variar levemente entre execuções. Para reprodução exata, use\
+  \ `rng(42)` no início de cada script.\n- Python/Notebook: todos os sorteios usam `numpy.random.default_rng(seed=42)`.\
+  \ Resultados cacheados em `.npz` permitem regenerar gráficos sem re-simular.\n- A simulação reproduz\
+  \ fielmente o `ber_downlink.m` e `ber_uplink.m`, incluindo o fator de escala `sqrt(M-K)` no pré-codificador\
+  \ ZF/MMSE (quando M ≠ K) e a normalização por `N_BLK` em `normalize_precoded_signal.m`.\n\n## Resultados\
+  \ Principais\n\n- Uplink: a não-linearidade do SSA degrada significativamente a BER: perda de SNR de\
+  \ ~6 dB (A = 2) e ~6,5 dB (K = 128) a uma BER de $10^{-5}$ para ambos ZF e MMSE.\n- Downlink: maior\
+  \ robustez à não-linearidade: perda de SNR menor que 0,3 dB (A = 1) e menor que 3,2 dB (A = 0,5, K =\
+  \ 128) a uma BER de $10^{-3}$.\n- **Constelação** : a distorção AM-AM comprime as amplitudes dos símbolos\
+  \ externos para um círculo, sem desvio de fase, confirmando a natureza puramente AM-AM do SSA.\n"

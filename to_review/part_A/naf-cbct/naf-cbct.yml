@@ -1,0 +1,57 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Ruyi-Zha/naf_cbct
+url: https://github.com/Ruyi-Zha/naf_cbct
+platform: github
+description: '"Neural Attenuation Fields for Sparse-View CBCT Reconstruction" (MICCAI 2022 Oral)'
+license: MIT
+language: Python
+keywords:
+- 3d-reconstruction
+- ct-reconstruction
+- instant-ngp
+- medical-imaging
+- nerf
+- neural-radiance-fields
+stars: 185
+updated_at: '2026-07-29T15:05:37Z'
+image_source: https://raw.githubusercontent.com/Ruyi-Zha/naf_cbct/HEAD/assets/coord.png
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# NAF: Neural Attenuation Fields for Sparse-View CBCT Reconstruction\n\nCode for MICCAI\
+  \ 2022 Oral paper [NAF: Neural Attenuation Fields for Sparse-View CBCT Reconstruction](https://arxiv.org/abs/2209.14540)\
+  \ by [Ruyi Zha](https://ruyi-zha.github.io/), [Yanhao Zhang](https://sites.google.com/view/yanhaozhang/home)\
+  \ and [Hongdong Li](http://users.cecs.anu.edu.au/~hongdong/).\n\nA neural-field-based method for CBCT\
+  \ reconstruction.\n\n[\\[paper\\]](https://arxiv.org/abs/2209.14540)[\\[dataset\\]](https://drive.google.com/drive/folders/1BJYR4a4iHpfFFOAdbEe5O_7Itt1nukJd?usp=sharing)\n\
+  \n![NAF framework](assets/framework.png)\n\n## Setup\n\nWe recommend using [Conda](https://docs.conda.io/en/latest/miniconda.html)\
+  \ to set up an environment.\n\n``` sh\n# Create environment\nconda create -n naf python=3.9 -y\nconda\
+  \ activate naf\n\n# Install pytorch (hash encoder requires CUDA v11.3)\npip install torch==1.11.0+cu113\
+  \ torchvision==0.12.0+cu113 torchaudio==0.11.0 --extra-index-url https://download.pytorch.org/whl/cu113\n\
+  \n# Install other packages\npip install -r requirements.txt\n```\n\n## Training and evaluation\n\nDownload\
+  \ four CT datasets from [here](https://drive.google.com/drive/folders/1BJYR4a4iHpfFFOAdbEe5O_7Itt1nukJd?usp=sharing).\
+  \ Put them into the `./data` folder.\n\nExperiments settings are stored in `./config` folder.\n\nFor\
+  \ example, train NAF with `chest_50` dataset:\n\n``` sh\npython train.py --config ./config/chest_50.yaml\n\
+  ```\n\n*Note: It may take minutes to compile the hash encoder module for the first time.*\n\nThe evaluation\
+  \ outputs will be saved in `./logs/eval/epoch_*` folder.\n\n## Customized dataset\n\nYou can make your\
+  \ own simulation dataset with TIGRE toolbox. Please first install [TIGRE](https://github.com/CERN/TIGRE/blob/master/Frontispiece/python_installation.md).\n\
+  \n```sh\n# Install TIGRE\nwget https://github.com/CERN/TIGRE/archive/refs/tags/v2.3.zip\nunzip v2.3.zip\n\
+  cd TIGRE-2.3/Python\npip install . --no-build-isolation\ncd ../../\n```\n\nPut your CT data in the format\
+  \ as follows. Examples can be seen in [here](https://drive.google.com/drive/folders/1BJYR4a4iHpfFFOAdbEe5O_7Itt1nukJd?usp=sharing).\n\
+  \n```sh\n├── raw                                                                                   \
+  \                    \n│   ├── XXX (your CT name)\n│   │   └── img.mat (CT data)\n│   │   └── config.yml\
+  \ (Information about CT data and the geometry setting of CT scanner)\n```\n\nThen use TIGRE to generate\
+  \ simulated X-ray projections.\n\n``` sh\npython dataGenerator/generateData.py --ctName XXX --outputName\
+  \ XXX_50\n```\n## Coordinate system\nOur coordinate system is similar to that in TIGRE toolbox, except\
+  \ for the detector plane which follows OpenCV standards.\n\n![NAF coordinate systen](assets/coord.png)\n\
+  \n\n## Citation\n\nCite as below if you find this repository is helpful to your project.\n\n```sh\n\
+  @inproceedings{zha2022naf,\n  title={NAF: Neural Attenuation Fields for Sparse-View CBCT Reconstruction},\n\
+  \  author={Zha, Ruyi and Zhang, Yanhao and Li, Hongdong},\n  booktitle={International Conference on\
+  \ Medical Image Computing and Computer-Assisted Intervention},\n  pages={442--452},\n  year={2022},\n\
+  \  organization={Springer}\n}\n```\n\n## Acknowledgement\n\n* Hash encoder and code structure are adapted\
+  \ from [torch-ngp](https://github.com/ashawkey/torch-ngp.git).\n* Many thanks to the amazing [TIGRE\
+  \ toolbox](https://github.com/CERN/TIGRE.git).\n"

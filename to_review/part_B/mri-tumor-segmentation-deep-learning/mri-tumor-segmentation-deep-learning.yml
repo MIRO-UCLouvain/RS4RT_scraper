@@ -1,0 +1,83 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Naveen-85/mri-tumor-segmentation-deep-learning
+url: https://github.com/Naveen-85/mri-tumor-segmentation-deep-learning
+platform: github
+description: ''
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-24T08:28:37Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Brain Tumor MRI Segmentation\n\nProduction-ready refactor of a notebook prototype into\
+  \ an installable\nPython package with proper `train / val / test` data splits, a CLI for\ntraining /\
+  \ evaluation / inference, unit tests, and CI.\n\nTwo models are implemented and compared:\n\n| Model\
+  \ | Description |\n|---|---|\n| **Attention U-Net** (`attention_unet`) | Primary model. U-Net encoder/decoder\
+  \ with attention gates on every skip connection, trained with a combined BCE + focal-Tversky loss to\
+  \ handle the small tumour-to-background pixel ratio. |\n| **DeepLabV3-like** (`deeplab_like`) | Lightweight\
+  \ comparison baseline using an ASPP (atrous spatial pyramid pooling) block for multi-scale context.\
+  \ |\n\nDataset: [LGG MRI Segmentation (Kaggle `kaggle_3m`)](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)\
+  \ —\npaired `*.tif` MRI slices and `*_mask.tif` binary tumour masks. Not\nincluded in this repo; see\
+  \ [Getting the data](#1-get-the-data).\n\n## Project structure\n\n```\nbrain-tumor-mri-segmentation/\n\
+  ├── configs/\n│   └── config.yaml                # all hyperparameters/paths in one place\n├── data/\
+  \                           # NOT committed (see .gitignore) - populated by prepare_data.py\n│   ├──\
+  \ raw/                        # put/extract the downloaded Kaggle dataset here\n│   ├── train/{images,masks}/\n\
+  │   ├── val/{images,masks}/\n│   └── test/{images,masks}/\n├── notebooks/\n│   └── original_prototype.ipynb\
+  \    # the original exploratory notebook, kept for provenance\n├── outputs/                        #\
+  \ NOT committed - created at runtime\n│   ├── checkpoints/                # best_*.keras, last_*.keras\n\
+  │   ├── metrics/                    # *.csv metrics tables, training curves, confusion matrices\n│ \
+  \  └── predictions/                # saved qualitative prediction panels\n├── scripts/             \
+  \           # thin CLI entry points\n│   ├── prepare_data.py             # raw dataset -> data/train,val,test\
+  \ folders\n│   ├── train.py\n│   ├── evaluate.py\n│   ├── predict.py\n│   └── compare_models.py\n├──\
+  \ src/brain_tumor_seg/            # the actual installable package\n│   ├── config.py              \
+  \    # Config dataclass (+ YAML loader)\n│   ├── data/\n│   │   ├── dataset.py             # pairing,\
+  \ splitting, rebalancing, loading\n│   │   └── augmentation.py        # tf.data pipeline + augment()\n\
+  │   ├── models/\n│   │   ├── attention_unet.py\n│   │   └── deeplab_like.py\n│   ├── losses.py     \
+  \             # dice_coef, iou_metric, focal_tversky_loss, combo_loss\n│   ├── metrics.py          \
+  \       # numpy Dice/IoU/precision/recall/F1 for evaluation\n│   ├── utils.py                   # plotting\
+  \ helpers (curves, confusion matrix, prediction panels)\n│   ├── train.py                   # training\
+  \ loop\n│   ├── evaluate.py                # train/val/test metrics + confusion matrix + example predictions\n\
+  │   └── predict.py                 # inference on a single image or folder\n├── tests/             \
+  \             # unit tests that run without the dataset (CI-safe)\n├── .github/workflows/ci.yml    \
+  \    # lint + pytest on every push/PR\n├── Dockerfile\n├── requirements.txt / requirements-dev.txt\n\
+  ├── pyproject.toml\n└── pytest.ini\n```\n\n## Setup\n\n```bash\ngit clone <your-fork-url>\ncd brain-tumor-mri-segmentation\n\
+  python -m venv .venv && source .venv/bin/activate\npip install -r requirements-dev.txt\npip install\
+  \ -e .\n```\n\n## 1. Get the data\n\nDownload the [LGG MRI Segmentation dataset](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)\n\
+  and extract it, e.g. to `data/raw/kaggle_3m/`.\n\n## 2. Build train/val/test folders\n\n```bash\npython\
+  \ scripts/prepare_data.py \\\n  --raw-dir data/raw/kaggle_3m \\\n  --output-dir data \\\n  --val-split\
+  \ 0.2 --test-split 0.2 --seed 42\n```\n\nThis performs the same stratified (by tumour presence) split\
+  \ as the\noriginal notebook, but materialises real `data/train/`, `data/val/`,\n`data/test/` folders\
+  \ (each with `images/` and `masks/` subfolders)\ninstead of an in-memory list — use `--symlink` if disk\
+  \ space is tight.\n\n## 3. Train\n\n```bash\npython scripts/train.py --model attention_unet --config\
+  \ configs/config.yaml\npython scripts/train.py --model deeplab_like --epochs 60\n```\n\nCheckpoints,\
+  \ training curves, and the training-history CSV are written\nto `outputs/checkpoints/` and `outputs/metrics/`.\n\
+  \n## 4. Evaluate\n\n```bash\npython scripts/evaluate.py --checkpoint outputs/checkpoints/best_attention_unet.keras\n\
+  ```\n\nPrints and saves Dice / IoU / precision / recall / F1 for train, val,\nand test splits, a pixel-level\
+  \ confusion matrix, and the top-5 best\nqualitative test predictions (original / ground truth / prediction\
+  \ /\noverlay), matching the original notebook's evaluation cells.\n\nTo compare multiple trained models\
+  \ side by side:\n\n```bash\npython scripts/compare_models.py \\\n  --metrics outputs/metrics/best_attention_unet_train_val_test_metrics.csv\
+  \ \\\n            outputs/metrics/best_deeplab_like_train_val_test_metrics.csv\n```\n\n## 5. Run inference\
+  \ on new MRI slices\n\n```bash\npython scripts/predict.py \\\n  --checkpoint outputs/checkpoints/best_attention_unet.keras\
+  \ \\\n  --input path/to/slice.tif\n```\n\nAccepts a single image or a directory; writes a predicted\
+  \ mask and an\noverlay image per input.\n\n## Tests\n\n```bash\npytest -v\n```\n\nUnit tests cover the\
+  \ loss functions, metrics, and model construction\nusing small synthetic tensors — they do not require\
+  \ the MRI dataset,\nso they run in CI on every push.\n\n## Docker\n\n```bash\ndocker build -t brain-tumor-seg\
+  \ .\ndocker run --rm -v $(pwd)/data:/app/data -v $(pwd)/outputs:/app/outputs brain-tumor-seg \\\n  --model\
+  \ attention_unet --config configs/config.yaml\n```\n\n## Notes on the loss/metric design\n\n- **`combo_loss`**\
+  \ = 0.5 × BCE + 0.5 × focal Tversky. BCE gives stable\n  pixel-wise gradients; focal Tversky (`alpha=0.3,\
+  \ beta=0.7`) weights\n  false negatives more heavily than false positives, which matters\n  because\
+  \ tumour pixels are typically only ~1-2% of an MRI slice.\n- **Training-set rebalancing**: all tumour-positive\
+  \ slices are kept,\n  but empty-mask slices are downsampled to a 2:1 negative:positive\n  ratio (configurable\
+  \ via `negative_to_positive_ratio`) to stop the\n  model collapsing to \"always predict background\"\
+  .\n- Metrics are reported both **overall** and **restricted to\n  tumour-positive slices only**, since\
+  \ averaging Dice/IoU over slices\n  that contain no tumour at all inflates the score.\n\n## License\n\
+  \nMIT — see [LICENSE](LICENSE).\n"

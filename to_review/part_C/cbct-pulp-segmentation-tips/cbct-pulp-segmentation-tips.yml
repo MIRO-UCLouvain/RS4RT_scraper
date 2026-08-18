@@ -1,0 +1,95 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: mreymus/cbct-pulp-segmentation-tips
+url: https://github.com/mreymus/cbct-pulp-segmentation-tips
+platform: github
+description: ''
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-20T06:41:54Z'
+image_source: null
+heuristic_total_score: 19
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# cbct-pulp-segmentation-tips\n\nA reproducible Google Colab workflow for automated pulp\
+  \ cavity segmentation from dental CBCT volumes using **TIPs** (Tooth Instance and Pulp segmentation).\n\
+  \n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)\n[![TIPs: Apache-2.0](https://img.shields.io/badge/TIPs-Apache--2.0-blue.svg)](NOTICE)\n\
+  [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/mreymus/cbct-pulp-segmentation-tips/blob/main/notebooks/TIPs_pulp_segmentation_colab.ipynb)\n\
+  \nThis repository is **supplementary material** to:\n\n> Reymus M. et al. *(manuscript under review)*.\n\
+  > Citation will be updated upon publication — see [`CITATION.cff`](CITATION.cff).\n\n## What this is\
+  \ — and what it is not\n\nThis is a **wrapper**, not a segmentation method. All segmentation is performed\
+  \ by TIPs:\n\n> Zhong T, Ning Y, Wu X, Ye L, Li C, Zhang Y, Du Y. TIPs: Tooth instance and pulp segmentation\
+  \ based on hierarchical extraction and fusion of anatomical priors from cone-beam CT. *Artificial Intelligence\
+  \ in Medicine* 2025;169:103247. https://doi.org/10.1016/j.artmed.2025.103247 · https://github.com/TaoZhong11/TIPs\n\
+  \nTIPs is used **as published**, with its pretrained weights and without retraining, fine-tuning or\
+  \ parameter tuning. This repository contributes only:\n\n1. an executable Colab notebook wrapping the\
+  \ published pipeline end to end,\n2. four documented compatibility patches (`src/patch_tips.py`) needed\
+  \ to run TIPs on a current Colab runtime,\n3. version pinning and checksum verification for reproducibility.\n\
+  \n**All credit for the method belongs to Zhong et al.** Please cite their paper if you use this workflow.\n\
+  \n## Pipeline\n\n```\nDICOM ──dcm2niix──► NIfTI ──► TIPs (3 nnU-Net/U-Mamba passes) ──► NIfTI masks\n\
+  ```\n\n| Pass | Output | Content |\n|------|--------|---------|\n| 1 | `_resample_teeth_binary` | binary\
+  \ tooth mask (backbone; source of the anatomical priors) |\n| 2 | `_resample_teeth_instance` | per-tooth\
+  \ instance labels, FDI notation (guided by the Lateral Distance Gradient) |\n| 3 | `_resample_pulps_segmentation`\
+  \ | binary pulp mask (guided by the Pulp Contour Gradient) |\n| 3 | `_resample_pulps_instance` | pulp\
+  \ per tooth, labelled with the corresponding tooth ID |\n\nTIPs internally resamples every volume to\
+  \ **0.3 mm isotropic** before inference — this is fixed by the published model and applies regardless\
+  \ of the native acquisition resolution. Files prefixed `_resample_*_input` are resampled intermediates,\
+  \ not results.\n\nLoad results in 3D Slicer via `File → Add Data`, importing as **Segmentation** (not\
+  \ Volume).\n\n## Requirements\n\n- Google account with Drive (~1 GB free)\n- Colab runtime with **T4\
+  \ GPU** (`Runtime → Change runtime type → T4 GPU`)\n- CBCT export as flat DICOM (`000.dcm`, `001.dcm`,\
+  \ …)\n\nNo local installation. Everything else is built inside the Colab VM.\n\n> **Data protection:**\
+  \ Colab runs on US infrastructure. Do not process identifiable patient data through this notebook without\
+  \ a legal basis for the transfer. The workflow was developed on anonymised specimen data.\n\n## Your\
+  \ data stays in your account\n\nThe notebook mounts **your own** Google Drive in Cell 1 and reads/writes\
+  \ only under\n`/content/drive/MyDrive/TIPs_CBCT/` in that account. No Google account ID, Drive ID or\n\
+  personal folder ID is stored in this repository. The one Drive ID that appears in the\nnotebook (`WEIGHTS_GDRIVE_ID`)\
+  \ is the **TIPs authors' public weights archive**, taken from\nthe official TIPs README — not a private\
+  \ ID. You never touch anyone else's Drive.\n\n## Usage\n\n1. **Fork** this repository so the notebook\
+  \ clones the patch module from your own copy.\n2. Open the notebook via the Colab badge (or `File →\
+  \ Open notebook → GitHub` in Colab).\n3. `Runtime → Change runtime type → T4 GPU`.\n4. In **Cell 0**,\
+  \ set `GITHUB_USER` to your handle. Optionally set `TIPS_COMMIT`,\n   `WEIGHTS_SHA256` and `CASE_ID`\
+  \ (see the comments in that cell).\n5. Place the DICOM series in `MyDrive/TIPs_CBCT/DICOM/` (one specimen\
+  \ per run; clear the\n   folder between cases).\n6. Run cells 1–5 in order.\n7. Results appear in `MyDrive/TIPs_CBCT/Ergebnisse/`.\n\
+  \nCopy the output of **Cell 2** into your methods section — it records the exact runtime (Python, PyTorch,\
+  \ CUDA, GPU) the results were produced on.\n\n## Runtime\n\n| Step | Duration |\n|------|----------|\n\
+  | Cell 3 — mamba_ssm CUDA build | **60–90 min per fresh VM** |\n| Cell 4 — weights (from Drive cache)\
+  \ | ~30 s |\n| Cell 5 — DICOM → NIfTI + 3-pass inference | ~10–20 min |\n| Subsequent specimen, same\
+  \ session | ~15–25 min |\n\nThe build cost recurs on every new VM: Colab's pip cache does not survive\
+  \ a session. For more than a handful of specimens, snapshot an image with `mamba_ssm` prebuilt on an\
+  \ EU-hosted GPU provider instead.\n\n## Compatibility patches\n\nTIPs specifies Ubuntu 20.04 / CUDA\
+  \ 11.8 / Python 3.10 / PyTorch 2.0.1. A current Colab runtime provides Python 3.12 / PyTorch 2.x / CUDA\
+  \ 12–13. Four patches bridge the gap; none touches the architecture, the weights, the anatomical priors\
+  \ or the inference logic. They are documented in [`NOTICE`](NOTICE) and implemented in [`src/patch_tips.py`](src/patch_tips.py):\n\
+  \n1. `torch.load(..., weights_only=False)` — PyTorch ≥ 2.6 changed the default; the TIPs checkpoints\
+  \ contain NumPy objects.\n2. Absolute `nnUNet_results` path — TIPs.py uses a relative one.\n3. Removal\
+  \ of the 600-voxel limit that would skip resampling for large clinical volumes.\n4. Deactivation of\
+  \ monai-dependent nnU-Net trainers — unused during inference, and their import fails under Python 3.12.\n\
+  \n**Caveat:** running a published model outside its specified environment is not guaranteed to be numerically\
+  \ identical. If exact equivalence matters for your study, reproduce one case on the specified stack\
+  \ (Python 3.10 / PyTorch 2.0.1 / CUDA 11.8) and compare.\n\n## Troubleshooting\n\n| Symptom | Cause\
+  \ / remedy |\n|---------|----------------|\n| GPU connection lost during Cell 3 | RAM overflow in the\
+  \ CUDA compile. Keep `MAX_JOBS=1`; re-run Cell 3 unchanged — completed steps are skipped. |\n| `cannot\
+  \ import name '_center' from numpy._core.umath` | numpy was imported before the build. Restart the runtime\
+  \ and run cells in order. |\n| `ModuleNotFoundError: No module named 'mamba_ssm'` | Cell 3 build did\
+  \ not complete. Check its output. |\n| `FileFinder object has no attribute find_module` | Patch 4 did\
+  \ not apply — re-run Cell 3. |\n| `0 cases that I would like to predict` | Stale predictions. Cell 5\
+  \ step 3 clears them; verify the folders are empty. |\n| Cell 5 appears to hang for minutes | Expected\
+  \ for large JPEG-compressed series. Timeouts (600 s / 1800 s) abort a genuine hang. |\n| `unzip` waits\
+  \ at `[y]es [n]o [A]ll` | Use `-oq`, already set in Cell 4. |\n| Colab free-tier GPU quota exhausted\
+  \ | Wait, or switch to Pay-As-You-Go. |\n\n## Repository layout\n\n```\n├── notebooks/TIPs_pulp_segmentation_colab.ipynb\
+  \   # the workflow\n├── src/patch_tips.py                              # compatibility patches\n├──\
+  \ docs/RUNBOOK_DE.md                             # operating manual (German)\n├── docs/METHODS.md  \
+  \                              # methods paragraph as submitted\n├── NOTICE                        \
+  \                 # TIPs attribution + modifications\n├── CITATION.cff\n├── CHANGELOG.md\n└── LICENSE\
+  \                                        # MIT (this wrapper only)\n```\n\n## License\n\nThis wrapper:\
+  \ **MIT** ([LICENSE](LICENSE)).\nTIPs itself: **Apache-2.0**, © Tao Zhong et al. — see [NOTICE](NOTICE).\n\
+  The TIPs weights are distributed by their authors and are not redistributed here.\n\n## Author\n\n**Marcel\
+  \ Reymus** — Department of Conservative Dentistry and Periodontology, LMU University Hospital, LMU Munich,\
+  \ Germany\n[ORCID: 0000-0001-9040-5623](https://orcid.org/0000-0001-9040-5623)\n"

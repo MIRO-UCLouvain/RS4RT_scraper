@@ -1,0 +1,51 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: kssrikar4/PancreasSeg-UNet
+url: https://github.com/kssrikar4/PancreasSeg-UNet
+platform: github
+description: A two-stage 3D pancreas segmentation model designed for both CT and CBCT abdominal scans.
+license: MPL-2.0
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-09T14:04:28Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 4 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# PancreasSeg‑UNet\n\n**Two‑Stage 3D Pancreas Segmentation Pipeline for CT & CBCT**\n\
+  \n[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)\n\
+  [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-red.svg)](https://pytorch.org/)\n[![Streamlit\
+  \ App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://github.com/kssrikar4/PancreasSeg-UNet/blob/main/app.py)\
+  \ \n[![MONAI](https://img.shields.io/badge/MONAI-0.9.1-blue?logo=monai)](https://monai.io/)\n[![License:\
+  \ MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)\n\
+  \nThis repository provides a complete training and inference pipeline for automatic pancreas segmentation\
+  \ in 3D CT and CBCT volumes.  \nThe model combines a lightweight UNet for coarse localisation with an\
+  \ Attention UNet for fine boundary delineation.  \nA ready‑to‑use **Streamlit** graphical interface\
+  \ allows you to upload volumes and view segmentation results without writing any code.\n\n## Model Architecture\n\
+  \n| Stage | Network | Input Size | Purpose |\n|-------|---------|------------|---------|\n| 1 | **UNet**\
+  \ (3D) | 128×128×64 | localise pancreas, predict bounding box |\n| 2 | **Attention UNet** (3D) | 128×128×96\
+  \ | fine segmentation inside the crop |\n\n- Loss: `DiceCELoss` (Dice + Cross‑Entropy)  \n- Optimiser:\
+  \ Adam (lr=1e‑3) + Warmup Cosine scheduler  \n- Mixed‑precision training (`torch.amp`)\n\n**Pretrained\
+  \ weights (`.pth` files)** are available on [**Hugging Face**](https://huggingface.co/kssrikar4/PancreasSeg-UNet)\n\
+  \n## Dataset\n\nThe model was trained on the **Pancreatic CT/CBCT Segmentation** collection from [The\
+  \ Cancer Imaging Archive](https://www.cancerimagingarchive.net/collection/pancreatic-ct-cbct-seg/).\n\
+  \n- **Preprocessing**: resampled to `(1.5×1.5×3.0 mm)`, clipped to `[-150,250] HU`, scaled to `[0,1]`,\
+  \ pancreas‑centered cropping.\n- **Split**: 28 training / 6 validation / 9 test (patient‑wise, fixed\
+  \ seed 42).\n\n## Usage\n\n### 1. Clone the repository\n\n```bash\ngit clone https://github.com/kssrikar4/PancreasSeg-UNet.git\n\
+  cd PancreasSeg-UNet\n```\n\n### 2. Run the Streamlit GUI\n\n```bash\nstreamlit run app.py\n```\n\nThe\
+  \ web app allows you to:\n- Upload a 3D CT volume (`.npy`, `.nii.gz`, or DICOM folder)\n- Run the two‑stage\
+  \ segmentation\n- Visualise slice‑by‑slice overlays of the predicted mask\n\n\n## Results on Test Set\n\
+  \n<img width=\"1000\" height=\"400\" alt=\"eval_Pancreas-CT-CB_002\" src=\"https://github.com/user-attachments/assets/e38a5310-621c-4e55-aaf8-42bd3713ba51\"\
+  \ />\n\n*Example patient – GT (left) vs. prediction (right), Dice = 0.66*\n\n<img width=\"1000\" height=\"\
+  400\" alt=\"eval_Pancreas-CT-CB_015\" src=\"https://github.com/user-attachments/assets/16f02da4-0341-463d-97ee-35c9de1f3b1e\"\
+  \ />\n\n*Example patient – GT (left) vs. prediction (right), Dice = 0.73*\n\n<img width=\"1000\" height=\"\
+  400\" alt=\"eval_Pancreas-CT-CB_018\" src=\"https://github.com/user-attachments/assets/f33161b5-5eab-418a-9c05-6dc72ee71e95\"\
+  \ />\n\n*Example patient – GT (left) vs. prediction (right), Dice = 0.84*\n\n## Acknowledgements\n\n\
+  - Built with [MONAI](https://monai.io/) and [PyTorch](https://pytorch.org/)\n- RTSTRUCT parsing using\
+  \ [rt-utils](https://github.com/razorx89/rt-utils)\n- Dataset provided by [TCIA](https://www.cancerimagingarchive.net/)\n\
+  \n## License\n\n[Mozilla Public License Version 2.0](LICENSE) - Feel free to use and modify\n"

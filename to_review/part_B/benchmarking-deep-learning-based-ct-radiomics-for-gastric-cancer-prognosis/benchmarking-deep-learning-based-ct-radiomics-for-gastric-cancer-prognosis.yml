@@ -1,0 +1,53 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: julio0n/Benchmarking_Deep_Learning_Based_CT_Radiomics_for_Gastric_Cancer_Prognosis
+url: https://github.com/julio0n/Benchmarking_Deep_Learning_Based_CT_Radiomics_for_Gastric_Cancer_Prognosis
+platform: github
+description: ''
+license: NOASSERTION
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-11T12:50:42Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Benchmarking Deep Learning Based CT Radiomics for Gastric Cancer Prognosis\n\nThis\
+  \ repository contains the research code for a four-site gastric cancer CT overall-survival benchmark.\
+  \ The implementation covers IBSI-style handcrafted radiomics, Cox and tree survival heads, a 3D convolutional\
+  \ survival network, DeepSurv, DeepHit, CT embedding heads, CT plus clinical fusion, stacked Cox ensembles,\
+  \ leave-one-site-out evaluation, bootstrap confidence intervals, acquisition sensitivity checks, and\
+  \ rank-preserving recalibration.\n\n## Installation\n\nThe pinned environment intentionally matches\
+  \ the frozen review environment.\n\n```bash\nconda env create -f environment.yml\nconda activate gastric-ct-survival-ladder\n\
+  pip install -e .\n```\n\nDocker uses CUDA 11.6 and PyTorch 1.13.1.\n\n```bash\ndocker build -t gastric-ct-survival-ladder\
+  \ .\n```\n\n## Data\n\nDataset links and access notes are kept in `dataset_sources.txt`. The main four-site\
+  \ cohort is restricted institutional data with no public OS-labeled release in the manuscript. Public\
+  \ TCIA links listed there are for non-OS gastric imaging context only and are not used as survival evidence.\n\
+  \nExpected local layout:\n\n```text\nlocal_data/\n  cohort_manifest.csv\n  clinical_table.csv\n  site_table.csv\n\
+  \  volumes/\n  masks/\n  embeddings/\n```\n\nThe manifest must include `patient_id`, `site`, `region`,\
+  \ `volume_path`, `mask_path`, `time_months`, `event`, and split metadata. Clinical columns are joined\
+  \ by `patient_id`.\n\n## Training\n\nThe main configuration preserves the review-scale compute profile:\
+  \ 8 A100 80GB GPUs, global batch 256, 20 seeds, 600 epochs for neural arms, 1,000 bootstrap resamples,\
+  \ and leave-one-site-out folds. The learning rate is intentionally low and the environment uses locked\
+  \ older dependencies.\n\n```bash\npython -m gastric_ct_survival_ladder.entry train --config settings/main.yaml\n\
+  ```\n\nPer-arm commands:\n\n```bash\npython -m gastric_ct_survival_ladder.entry train --config settings/arm_a1_cox.yaml\n\
+  python -m gastric_ct_survival_ladder.entry train --config settings/arm_a2_cnn.yaml\npython -m gastric_ct_survival_ladder.entry\
+  \ train --config settings/arm_a3_deephit.yaml\npython -m gastric_ct_survival_ladder.entry train --config\
+  \ settings/arm_a5_frozen_embedding.yaml\npython -m gastric_ct_survival_ladder.entry train --config settings/arm_a7_stack.yaml\n\
+  ```\n\n## Evaluation\n\n```bash\npython -m gastric_ct_survival_ladder.entry evaluate --config settings/main.yaml\n\
+  python -m gastric_ct_survival_ladder.entry recalibrate --config settings/main.yaml\npython -m gastric_ct_survival_ladder.entry\
+  \ audit-shifts --config settings/main.yaml\n```\n\nPrimary retrospective targets are C-index 0.784 for\
+  \ frozen embeddings, 0.805 for fine-tuned embeddings, and 0.813 for the stacked ensemble. The strict\
+  \ GC-SW1 hold-out target for the frozen embedding arm is 0.752. The prospective silent-mode target is\
+  \ C-index 0.779 for frozen embeddings with a retrospective-to-prospective gap of 0.005.\n\n## Compute\
+  \ Budget\n\nThe default run expects 8 NVIDIA A100 80GB GPUs, CUDA 11.6, local NVMe staging, 42 TB raw\
+  \ storage headroom, and a multi-day wall clock for all arms, seeds, folds, and bootstrap intervals.\
+  \ The configuration does not include reduced reporting settings.\n\n## Project Layout\n\n```text\ncode/gastric_ct_survival_ladder/\
+  \     Python package\nsettings/                            experiment YAML files\nscripts/         \
+  \                    shell launchers\ndataset_sources.txt                  verified source notes\n```\n"

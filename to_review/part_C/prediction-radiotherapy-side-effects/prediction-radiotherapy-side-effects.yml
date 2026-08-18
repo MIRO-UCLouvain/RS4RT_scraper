@@ -1,0 +1,72 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: matteecala/prediction-radiotherapy-side-effects
+url: https://github.com/matteecala/prediction-radiotherapy-side-effects
+platform: github
+description: Logistic regression models to predict acute side effects (dysphagia and oral mucositis) in
+  radiotherapy patients
+license: null
+language: R
+keywords: []
+stars: 0
+updated_at: '2026-05-04T09:55:26Z'
+image_source: null
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 3 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# \U0001F3E5 Prediction of Radiotherapy Side Effects\n\nA statistical inference project\
+  \ developed at **Politecnico di Milano** in collaboration with **Istituto dei Tumori di Milano**.\n\n\
+  **Authors:** Sara Auletta, Matteo Calabrò, Giulia Di Vincenzo, Christian Frigerio, Giorgio Lanzoni \
+  \ \n**Supervisor:** Dr. Tiziana Rancati\n\n---\n\n## \U0001F4CC Overview\n\nThis project focuses on\
+  \ predicting acute side effects in patients undergoing radiotherapy for head and neck cancers. Radiotherapy\
+  \ uses high-energy radiation to target tumor cells, but may also damage surrounding healthy tissues.\
+  \ The study aims to identify the factors that most influence the severity of treatment-related side\
+  \ effects — specifically **dysphagia** and **oral mucositis** — while keeping models simple and interpretable.\n\
+  \nThe dataset includes 200 patients from the Istituto dei Tumori in Milan, combining pre-treatment clinical\
+  \ records, microbiota profiles, radiotherapy dose distributions (EUD), and weekly follow-up reports\
+  \ collected during treatment.\n\n---\n\n## \U0001F3AF Objective\n\nBuild logistic regression models\
+  \ that:\n- Predict the risk of developing severe dysphagia and oral mucositis\n- Integrate clinical,\
+  \ dosimetric, and microbiological patient data\n- Support clinicians in choosing between conservative\
+  \ and standard toxicity assessments\n- Provide a foundation for personalized radiotherapy treatment\
+  \ planning\n\n---\n\n## \U0001F4CA Dataset\n\n- **Source:** Istituto dei Tumori di Milano\n- **Observations:**\
+  \ 200 patients with head and neck cancer\n- **Side effects studied:** Dysphagia, Oral Mucositis\n\n\
+  ### Key Variables\n\n| Variable | Type | Description |\n|---|---|---|\n| EUD (organ-specific) | continuous\
+  \ | Equivalent Uniform Dose for each organ |\n| Concomitant | binary | Presence of concomitant systemic\
+  \ therapy (chemotherapy) |\n| Microbiota | categorical | Patient microbiota profile cluster (5 values)\
+  \ |\n| Obesity | binary | BMI-based obesity indicator |\n| Sex | binary | Patient sex (1 = male, 0 =\
+  \ female) |\n| Toxicity | binary | Target variable (1 = high toxicity, 0 = low toxicity) |\n\n---\n\n\
+  ## \U0001F52C Methodology\n\n1. **Data preprocessing** — cleaning and preparation of clinical records,\
+  \ dose data and microbiota profiles\n2. **Toxicity definition** — two approaches compared:\n   - **MaxT\
+  \ (Maximum Toxicity):** highest toxicity value recorded across follow-up\n   - **CFS (Cumulative Follow-up\
+  \ Score):** area under the follow-up curve, capturing overall burden over time\n3. **Clustering** —\
+  \ hierarchical clustering (complete linkage, Euclidean distance) on both symptom severity and temporal\
+  \ follow-up trajectories\n4. **EUD selection** — univariate logistic regressions across a range of n\
+  \ values (0.01–1) to identify the most discriminative EUD per organ\n5. **Collinearity analysis** —\
+  \ VIF monitoring and organ grouping by anatomical proximity\n6. **Model building** — four independent\
+  \ logistic regression models (2 side effects × 2 toxicity definitions), variable selection combining\
+  \ statistical relevance and clinical plausibility\n\n---\n\n## \U0001F4C8 Final Models & Results\n\n\
+  | Model | Formula | AUC |\n|---|---|---|\n| Dysphagia – MaxT | `Toxicity ~ MC_0.1 + Concomitant + Microbiota`\
+  \ | 0.7470 |\n| Dysphagia – CFS | `Toxicity ~ MC_0.2 + CO_0.05 + Concomitant + Microbiota + Obesity`\
+  \ | 0.7275 |\n| Oral Mucositis – MaxT | `Toxicity ~ CO_0.05 + Concomitant + Sex` | 0.7055 |\n| Oral\
+  \ Mucositis – CFS | `Toxicity ~ CO_0.05 + Concomitant + Microbiota + Sex` | 0.7643 |\n\nAll four models\
+  \ share a consistent structure including EUD of clinically relevant organs, concomitant chemotherapy,\
+  \ clinical factors (BMI, sex), and microbiota profile — strengthening the robustness of the findings.\n\
+  \n---\n\n## \U0001F5C2️ Repository Structure\n\n```\nprediction-radiotherapy-side-effects/\n│\n├── README.md\n\
+  ├── data/\n│   ├── raw/                  # Original patient dataset\n│   └── processed/            #\
+  \ Cleaned and preprocessed data\n├── script/                   # R analysis scripts\n├── reports/\n\
+  │   ├── report/               # Final written report\n│   └── figures/              # Plots and output\
+  \ graphics\n└── poster/                   # Project poster\n```\n\n---\n\n## \U0001F6E0️ Technologies\
+  \ Used\n\n- **Language:** R\n- **Key packages:** `ggplot2`, `GGally`, `corrplot`, `pROC`, `ResourceSelection`,\
+  \ `car`\n- **Methods:** Logistic Regression, Hierarchical Clustering, EUD Analysis, ROC/AUC, VIF, Hosmer-Lemeshow\
+  \ Test\n\n---\n\n## ▶️ How to Run\n\n1. Clone the repository:\n   ```bash\n   git clone https://github.com/<your-username>/prediction-radiotherapy-side-effects.git\n\
+  \   cd prediction-radiotherapy-side-effects\n   ```\n\n2. Place the patient dataset in `data/raw/`\n\
+  \n3. Open and run the scripts in `script/` in the indicated order\n\n> ⚠️ Note: the dataset contains\
+  \ sensitive patient data and is not publicly available. Please contact the authors or the Istituto dei\
+  \ Tumori di Milano for access.\n\n---\n\n## \U0001F4DA References\n\n- Istituto dei Tumori di Milano:\
+  \ https://www.istitutotumori.mi.it\n- Niemierko, A. (1997). *Reporting and analyzing dose distributions:\
+  \ A concept of equivalent uniform dose.* Medical Physics, 24(1), 103–110.\n"

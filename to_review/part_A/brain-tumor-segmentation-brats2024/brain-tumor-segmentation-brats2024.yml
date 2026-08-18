@@ -1,0 +1,85 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: SaharI12/-brain-tumor-segmentation-brats2024
+url: https://github.com/SaharI12/-brain-tumor-segmentation-brats2024
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-17T10:47:47Z'
+image_source: https://raw.githubusercontent.com/SaharI12/-brain-tumor-segmentation-brats2024/HEAD/assets/axial_uncertainty.gif
+heuristic_total_score: 19
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# Uncertainty-Aware Brain Tumor Segmentation\n\nSegmentation of adult glioma sub-regions\
+  \ on **post-treatment** MRI (BraTS 2024 GLI), with a\nper-voxel uncertainty map that tells you where\
+  \ the model's contour is likely to be wrong.\n\n<p align=\"center\">\n  <img src=\"assets/axial_uncertainty.gif\"\
+  \ width=\"62%\"\n       alt=\"MC Dropout predictive entropy sweeping through the axial slices of a held-out\
+  \ subject\">\n</p>\n\n*One held-out subject swept slice by slice through the axial plane, with the predictive\
+  \ entropy from\n20 Monte Carlo Dropout passes overlaid on the T1c image. Entropy sits at essentially\
+  \ zero across\nhealthy tissue and inside confidently segmented regions, and rises in thin bands along\
+  \ the tumor\nboundaries — exactly where the delineation is genuinely ambiguous. Regenerate it with\n\
+  [`v2/visualize_uncertainty_gif_v2.py`](v2/visualize_uncertainty_gif_v2.py).*\n\n---\n\n## The problem\n\
+  \nAutomatic delineation of glioma sub-regions on multi-parametric MRI supports surgical planning,\n\
+  radiotherapy targeting and response assessment, but manual contouring is slow and inconsistent. The\n\
+  BraTS 2024 adult glioma post-treatment (GLI) cohort makes the task harder: scans acquired after\nresection\
+  \ and chemoradiation contain surgical cavities, treatment-related signal changes and possible\npseudoprogression,\
+  \ which can both mimic residual tumor and hide it.\n\nA further obstacle to clinical use is that segmentation\
+  \ networks are typically overconfident and give\nno indication of where their contours are likely to\
+  \ be wrong — precisely the information a\nradiologist reviewing an automatic contour would want.\n\n\
+  ## Approach\n\nA single **attention-gated 3D U-Net** (21.8M parameters) with **Monte Carlo Dropout**\
+  \ kept active at\ntest time, so 20 stochastic passes yield both an averaged segmentation and a per-voxel\n\
+  predictive-entropy map. No ensembles, no multi-GPU training — everything here fits on one RTX 3060.\n\
+  \n- **Architecture** — four encoder stages (32 → 256 channels) plus a 320-channel bottleneck,\n  instance\
+  \ norm + LeakyReLU, learned stride-2 downsampling, trilinear upsampling. Attention gates on\n  every\
+  \ skip connection let the decoder suppress background-dominated encoder features, which matters\n  when\
+  \ enhancing tumor is ~0.36% of all voxels.\n- **Uncertainty** — `Dropout3d(p=0.15)` in the bottleneck\
+  \ and the two deepest decoder blocks, left on\n  at inference. Prediction is the argmax of the mean\
+  \ softmax over 20 passes; uncertainty is the\n  predictive entropy of that mean.\n- **Training** — Dice\
+  \ Focal loss (background excluded), AdamW (lr 2e-4, weight decay 1e-4), 5-epoch\n  linear warmup then\
+  \ cosine annealing. Augmentation: random flips on all three axes, per-modality\n  intensity scale/shift,\
+  \ Gaussian noise.\n- **Data** — 1,621 labeled subjects, split once with a fixed seed into 1,297 for\
+  \ training and a\n  persistent 324-subject holdout that every number below is measured on. The official\
+  \ 188-subject\n  validation set could not be scored: the BraTS 2024 evaluation platform closed before\
+  \ submission.\n- **Cost** — ~48 h to train (best checkpoint at epoch 108); 0.6 s for a single forward\
+  \ pass over a\n  full volume, 11.6 s for the full 20-pass MC inference.\n\n\n## Repo layout\n\n`unet3d_baseline/`\
+  \ is the plain 3D U-Net without attention gates, kept as the comparison baseline;\n`v2/` holds the attention-gated\
+  \ model that produced the results above. Both read the same\npreprocessed data and use the same held-out\
+  \ split.\n\n| Path | What it is |\n|---|---|\n| `preprocess.py` | Raw NIfTI → H5: normalize, remap label\
+  \ 4 → 3, crop to brain, pad to 160×208×160 (shared by both models) |\n| `unet3d_baseline/model.py` |\
+  \ `UNet3D` without attention gates, `mc_inference()`, `get_region_masks()` |\n| `unet3d_baseline/dataset.py`,\
+  \ `unet3d_baseline/train.py` | Baseline dataset/split and training loop |\n| `unet3d_baseline/evaluate.py`\
+  \ | Baseline Dice + HD95 per region, deterministic or MC |\n| `v2/model_v2.py` | `UNet3DAttn`, `AttentionGate`,\
+  \ `mc_inference()` |\n| `v2/dataset_v2.py`, `v2/train_v2_1.py` | Augmented dataset with a persistent\
+  \ split; training loop |\n| `v2/evaluate_v2.py` | Dice + HD95 per region, deterministic or MC |\n| `v2/visualize_uncertainty_v2.py`\
+  \ | Entropy maps, entropy-by-outcome stats, ECE + AUROC |\n| `v2/calibration_foreground_only.py` | The\
+  \ same calibration analysis with background excluded |\n| `v2/visualize_uncertainty_gif_v2.py` | Animated\
+  \ entropy sweeps, including the GIF at the top of this file |\n| `v2/results_summary/` | Presentation-ready\
+  \ copy of the headline figures and tables |\n\n## Reproducing\n\n```bash\npip install -r requirements.txt\n\
+  \n# 1. Raw BraTS NIfTI → processed/{train,val}/*.h5\npython preprocess.py\n\n# 2. Train the attention\
+  \ model (add --resume to continue from latest_checkpoint.pth)\ncd v2 && python train_v2_1.py\n\n# 2b.\
+  \ Or train the plain 3D U-Net baseline for comparison\ncd unet3d_baseline && python train.py --data_dir\
+  \ ../processed/train --ckpt_dir checkpoints\n\n# 3. Dice + HD95 on the held-out split, deterministic\
+  \ and with MC Dropout\npython evaluate_v2.py --checkpoint checkpoints_v2_1/best_model.pth --mc_passes\
+  \ 0\npython evaluate_v2.py --checkpoint checkpoints_v2_1/best_model.pth --mc_passes 20\n\n# 4. Uncertainty\
+  \ maps + calibration\npython visualize_uncertainty_v2.py --checkpoint checkpoints_v2_1/best_model.pth\n\
+  python calibration_foreground_only.py --checkpoint checkpoints_v2_1/best_model.pth\n\n# 5. Figures and\
+  \ animated entropy sweeps\npython inference_report_v2.py --checkpoint checkpoints_v2_1/best_model.pth\
+  \ --out_dir inference_report_v2_1\npython visualize_uncertainty_gif_v2.py --checkpoint checkpoints_v2_1/best_model.pth\
+  \ --n_subjects 10\n```\n\nThe trained checkpoint (`v2/checkpoints_v2_1/best_model.pth`, epoch 108, 261\
+  \ MB) is tracked with\n**Git LFS** — run `git lfs install` before cloning, or the file arrives as a\
+  \ text pointer. The\npersistent holdout (`v2/checkpoints_v2_1/val_split.json`) is committed alongside\
+  \ it so the split is\nreproducible without retraining.\n\nThe BraTS 2024 GLI data itself is not in this\
+  \ repo — request access from the challenge organizers\n(see the challenge paper linked below). Unpack\
+  \ it as `BraTS2024-BraTS-GLI-*Data/` and point\n`ROOT` at the top of `preprocess.py` to wherever that\
+  \ lives before running step 1.\n\n## Authors\n\nHadas Avraham and Sahar Ifrah, Tel Aviv University.\n\
+  \nKey references: [Attention U-Net](https://arxiv.org/abs/1804.03999) (Oktay et al., 2018),\n[MC Dropout](https://arxiv.org/abs/1506.02142)\
+  \ (Gal & Ghahramani, 2016),\n[BraTS 2024 post-treatment glioma challenge](https://arxiv.org/abs/2405.18368)\
+  \ (de Verdier et al.,\n2024).\n"

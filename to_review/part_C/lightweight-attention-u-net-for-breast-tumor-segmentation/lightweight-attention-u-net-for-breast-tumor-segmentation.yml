@@ -1,0 +1,69 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: TotallyNotMinh/Lightweight-Attention-U-Net-for-Breast-Tumor-Segmentation
+url: https://github.com/TotallyNotMinh/Lightweight-Attention-U-Net-for-Breast-Tumor-Segmentation
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-21T08:33:25Z'
+image_source: https://raw.githubusercontent.com/TotallyNotMinh/Lightweight-Attention-U-Net-for-Breast-Tumor-Segmentation/HEAD/demo/image3.png
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Lightweight Attention U-Net for Breast Tumor Segmentation\n\nThis repository contains\
+  \ the implementation of a highly optimized, lightweight **Attention U-Net** designed for the segmentation\
+  \ of benign and malignant breast tumors in ultrasound imaging. \n\nBy replacing standard skip-connections\
+  \ with active Spatial Attention Gates and using a robust `EfficientNet-B0` backbone, the network actively\
+  \ filters acoustic speckle noise and highlights tumor boundaries while requiring only a fraction of\
+  \ the computational power of standard medical segmentation networks.\n\n<div align=\"center\">\n  <img\
+  \ src=\"demo/image3.png\" alt=\"Optimal Segmentation Example\" width=\"800\">\n  <p><em>Example: The\
+  \ network successfully bounding an irregular, lobulated tumor while actively suppressing acoustic shadowing\
+  \ and surrounding tissue noise.</em></p>\n</div>\n\n---\n\n## \U0001F3AF Key Achievements & Results\n\
+  \nOur experimental validation highlights two distinct optimization milestones:\n\n1. **Standard Attention\
+  \ U-Net**: Reached an average Validation Dice Score of **0.7614**.\n2. **PSO Optimized Version**: By\
+  \ employing Particle Swarm Optimization (PSO) to fine-tune the hyperparameter landscape (learning rates,\
+  \ loss weights, dropout regularization), the network achieved an average Validation Dice Score of **0.7922**.\n\
+  \n### Performance Metrics\n* **Average Dice Score:** `0.7922` (PSO Optimized)\n* **Model Parameters:**\
+  \ `4,188,585 (~4.19M)` \n* **Inference Speed:** `~40ms per image (24.8 FPS)` directly on a standard\
+  \ CPU.\n* **Loss Objective:** Hybrid Custom Loss `(0.7 * Tversky Loss + 0.3 * Focal Loss)`\n\n---\n\n\
+  ## \U0001F9E0 Architecture Overview\n\n### 1. The Encoder (EfficientNet-B0)\nThe network utilizes a\
+  \ pretrained `efficientnet_b0` feature extractor. It leverages ImageNet weights to circumvent training\
+  \ from scratch on limited grayscale clinical datasets. The backbone is exceptionally efficient, making\
+  \ up ~85.8% of the model's total parameters.\n\n### 2. Spatial Attention Gates\nStandard U-Nets suffer\
+  \ from redundant feature propagation, where noisy high-resolution spatial features are passed directly\
+  \ to the decoder. \n\nThis model integrates **Attention Gates** before concatenation. The deep, semantically\
+  \ rich decoder signals act as a gating mechanism to dynamically filter out speckle artifacts and accentuate\
+  \ the salient regions (tumors) in the skip connections.\n\n### 3. Spatial Dropout Regularization\nTo\
+  \ prevent co-adaptation in spatial feature grids, the decoder utilizes `nn.Dropout2d`. It drops entire\
+  \ spatial channels instead of individual pixels, preventing the network from interpolating missing pixels\
+  \ from adjacent neighbors.\n\n---\n\n## ⚙️ The Hybrid Loss Function\n\nUltrasound segmentation suffers\
+  \ from extreme class imbalance (tumor pixels occupy < 5% of the image area). Standard Cross-Entropy\
+  \ biases the network heavily toward the background. \n\nThis repository implements a custom hybrid loss\
+  \ function:\n* **Tversky Loss (70% Weight):** Extends the Dice coefficient to differentially weight\
+  \ False Positives and False Negatives. We heavily penalize False Negatives (missing a tumor is clinically\
+  \ dangerous).\n* **Focal Loss (30% Weight):** Dynamically scales down the loss contribution of easy-to-classify\
+  \ background pixels, forcing backpropagation to focus on hard, fuzzy boundary pixels.\n\n---\n\n## \U0001F6E0\
+  ️ Data Preprocessing & Augmentation Pipeline\n\nThe input data pipeline relies on a rigorous preprocessing\
+  \ suite designed specifically for acoustic artifacts:\n* **Pad-to-Square:** Prevents geometric distortion.\n\
+  * **CLAHE (Contrast Limited Adaptive Histogram Equalization):** Boosts local edge contrast.\n* **Elastic\
+  \ Deformation:** Simulates soft-tissue compression from varying sonographer probe pressure.\n* **Coarse\
+  \ Dropout:** Simulates shadowing artifacts where the acoustic signal is blocked by dense structures\
+  \ (like ribs or calcifications).\n* **Additional Regimes:** Gaussian Noise (speckle simulation), Gaussian\
+  \ Blur, Scale Jittering, and Affine Rotations.\n\n---\n\n## \U0001F4C2 Project Structure\n\n```text\n\
+  ├── notebooks/\n│   ├── attention-u-net.ipynb     # Base model training & validation pipeline\n│   ├──\
+  \ pso_optimized.ipynb       # Hyperparameter tuning utilizing Particle Swarm Optimization\n│   ├── train.ipynb\
+  \               # Modular training script\n│   ├── test.ipynb                # Validation and metric\
+  \ calculation\n│   ├── inference.ipynb           # Single-image inference demonstrations\n│   └── visualize.ipynb\
+  \           # Post-training result visualization\n├── checkpoints/                  # Saved .bin model\
+  \ weights\n├── docs/                         # Detailed architecture specifications & presentation diagrams\n\
+  ├── scripts/                      # Auxiliary python scripts (e.g. visualize_augmentations.py)\n├──\
+  \ main.py                       # Project entry point\n└── README.md                     # This file\n\
+  ```\n"

@@ -1,0 +1,146 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ANFAIA/Agentic-Smart-Health
+url: https://github.com/ANFAIA/Agentic-Smart-Health
+platform: github
+description: Multi-agent system that unifies heterogeneous dental data (CBCT, STL, clinical reports, photos)
+  into a patient Digital Twin built on Gaussian Splatting, with per-region clinical attributes and longitudinal
+  series.
+license: Apache-2.0
+language: Jupyter Notebook
+keywords:
+- agentic-ai
+- digital-twin
+- gaussian-splatting
+- healthcare
+- mcp
+- medical-imaging
+- multi-agent-systems
+- open-source
+- python
+stars: 3
+updated_at: '2026-08-17T17:31:20Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# Agentic Smart Health\n\nSistema multiagente para la integración, análisis y representación\
+  \ de datos clínicos dentales heterogéneos sobre un **Digital Twin** del paciente, basado en Gaussian\
+  \ Splatting con atributos clínicos por punto/zona y soporte de series temporales.\n\n[![tests](https://github.com/ANFAIA/Agentic-Smart-Health/actions/workflows/tests.yml/badge.svg)](https://github.com/ANFAIA/Agentic-Smart-Health/actions/workflows/tests.yml)\n\
+  \n> Proyecto open source · Licencia Apache 2.0 · Python ≥ 3.13\n\n---\n\n## Contexto del proyecto\n\n\
+  El sector dental maneja datos altamente heterogéneos: escáneres CBCT (DICOM), archivos STL de escaneos\
+  \ intraorales, informes clínicos en PDF e imágenes 2D. Esta información vive fragmentada en silos por\
+  \ proveedor y por clínica, lo que impide un seguimiento longitudinal real del paciente y compromete\
+  \ su soberanía sobre los propios datos de salud.\n\n**Agentic Smart Health** aborda este problema mediante\
+  \ una arquitectura multiagente que organiza, integra y analiza de forma autónoma datos dentales heterogéneos,\
+  \ proyectándolos sobre un gemelo digital del paciente. El proceso es reversible: el sistema puede regenerar\
+  \ ficheros STL e imágenes directamente desde el Digital Twin.\n\n---\n\n## Cómo encaja todo (vista rápida)\n\
+  \nVarios **agentes** (trabajadores con una única responsabilidad) traducen ficheros\nclínicos heterogéneos\
+  \ (DICOM, STL, PDF, foto) a un **documento común** —el\n`TwinSnapshot` de [`core-schemas`](packages/core-schemas/)—,\
+  \ lo enriquecen y lo\nmaterializan para que un **visor** lo muestre; un **orquestador**\n([`agent-orchestrator`](apps/agent-orchestrator/))\
+  \ reparte el trabajo. El\n«modelo» (LLM) no es una capa central: es el *cerebro* que razona **dentro**\
+  \ de un\nagente concreto (hoy solo `research-agent`), y no todos lo necesitan.\n\n> \U0001F4D0 **Mapa\
+  \ completo de las 6 capas y el recorrido del dato** (pensado para quien\n> llega nuevo): [`docs/architecture/multi-agent-pipeline.md`\
+  \ §0](docs/architecture/multi-agent-pipeline.md#0-vista-de-conjunto-para-quien-llega-nuevo).\n\n## Estado\
+  \ actual (semanas 1–4)\n\nLa **ingesta, la fusión, la segmentación y los tres canales de exportación\
+  \ están\nconstruidos y probados**, y el recorrido completo entrada → twin → fichero tiene prueba de\n\
+  integración; lo que queda del camino es el análisis clínico. Lo que ya funciona hoy:\n\n**Contrato de\
+  \ datos** — `core-schemas` (Pydantic v2, esquema **`1.2.0`**). El\n`TwinSnapshot` es el documento común:\
+  \ `gaussian_field_ref` (campo 3DGS),\n`surface_ref` (malla), `image_refs` (fotos, lista), `regional`\
+  \ (observaciones por\ndiente FDI) y `provenance` por valor (trazabilidad raw→contrato).\n\n**Agentes\
+  \ de ingesta** — `packages/ingestion-agents`: **4 modalidades**, una por\nsoporte, deterministas y *fail-loud*\
+  \ (nunca lanzan una excepción; devuelven estado +\nconfianza y dejan la basura en cuarentena):\n\n|\
+  \ Agente | Entrada | Produce |\n|---|---|---|\n| `mesh-agent` | STL / OBJ (escáner intraoral) | superficie\
+  \ + normales |\n| `cbct-agent` | DICOM (CBCT) | volumen → campo de gaussianas |\n| `report-agent` |\
+  \ PDF / TXT (informe clínico) | pH por diente FDI (reglas o LLM) |\n| `image-agent` | JPG / PNG / HEIC\
+  \ (foto) | píxeles RGB **sin EXIF** |\n\nDiseño transversal: **Provenance** por valor, **ArtifactStore**\
+  \ direccionado por\ncontenido (SHA-256), **gate de human-in-the-loop** por umbral de confianza (0,7)\
+  \ y <!--const:DEFAULT_HITL_THRESHOLD-->\n**anonimización** (EXIF fuera, seudonimización HMAC — ver\n\
+  [`docs/architecture/anonymization-strategy.md`](docs/architecture/anonymization-strategy.md)).\n\n**Orquestador**\
+  \ — `agent-orchestrator` dispara los agentes en paralelo, ensambla el\n`TwinSnapshot`, aplica el gate\
+  \ HITL y respeta el presupuesto de <60 s. <!--const:LATENCY_BUDGET_S-->\n\n**Reconstrucción 3DGS** (en\
+  \ notebooks, ver más abajo): malla real → **Blender**\n(vistas con pose exacta, sin COLMAP) → **gsplat**\
+  \ → campo de gaussianas evaluable en\nvistas retenidas, servido en un **visor web** ([`dental-3dgs-viewer`](https://github.com/lgarbayo/dental-3dgs-viewer),\n\
+  repo aparte) con dos casos reales — Teeth3DS+ (con color por armónicos) y Bite2Text\n(color de esmalte/encía\
+  \ **muestreado de las fotos** con el `image-agent`).\n\nLo que el contrato promete de **todos** los\
+  \ agentes por igual —los tres caminos\n(`OK`/`MISSING`/`FAILED`), no lanzar nunca, emitir `Provenance`,\
+  \ ser reproducible y\nno copiar dato clínico a la cuarentena— lo verifica una **suite de conformidad**\n\
+  ([`test_conformidad.py`](packages/ingestion-agents/tests/test_conformidad.py))\nparametrizada sobre\
+  \ los cuatro agentes. Un agente nuevo entra en esa lista y queda\nsometido a las nueve reglas sin escribir\
+  \ un test.\n\nY frente al caso que *sale bien* de `synthetic.py` hay un catálogo de **casos\nlímite**\
+  \ ([`edge_cases.py`](packages/ingestion-agents/src/ingestion_agents/edge_cases.py)):\ncabecera DICOM\
+  \ truncada, resonancia etiquetada como CBCT, espaciado cero o negativo,\n`NaN` en la malla, PNG a medias,\
+  \ rutas con unicode, enlaces rotos. Cada caso declara\n**qué debe pasar y por qué**, porque no todos\
+  \ deben fallar: un pH imposible se\ndescarta línea a línea y la ingesta sigue siendo válida. Encontró\
+  \ cuatro defectos\nreales el día que se escribió.\n\n**Cobertura**: la suite completa en verde, verificada\
+  \ en cada push y cada PR por\nel workflow [`tests`](.github/workflows/tests.yml) — el badge de arriba\
+  \ lo publica\nesa ejecución. El CI **falla si la cobertura de agentes y pipeline baja del 80 %**,\n\
+  que es el criterio de éxito del proyecto; el umbral vive en `pyproject.toml`, así\nque `uv run pytest\
+  \ --cov` mide en local exactamente lo mismo. Aquí no se escribe\nningún número a mano: los recuentos\
+  \ manuales envejecen solos.\n\n> **Lo que el CI no verifica, dicho antes de que haga falta preguntarlo.**\
+  \ El runner no\n> tiene GPU. Eso **no** deja partes del pipeline sin probar: `packages/` y `apps/` no\n\
+  > importan `torch` en ninguna línea, a propósito — los modelos entran por los `Protocol`\n> `Segmenter`\
+  \ y `Registrar`, así que lo que se ejecuta en producción es numpy y se prueba\n> entero. Lo que queda\
+  \ fuera son tres scripts de investigación\n> ([`entrenar_3dgs.py`](scripts/entrenar_3dgs.py),\n> [`segmentar_fdi.py`](scripts/segmentar_fdi.py),\n\
+  > [`ablacion_recetas.py`](scripts/ablacion_recetas.py)) y los notebooks: se ejecutan a\n> mano en una\
+  \ máquina con GPU y su producto es una **medida**, no un servicio. Cuando un\n> número de esta página\
+  \ sale de ahí, la sección lo dice y enlaza el script que lo produjo.\n\n**Fusión y segmentación** —\
+  \ `fusion-agents` (registro geométrico + anclaje semántico\nal FDI, ADR 004) y `analysis-agents` (`segmentation-agent`:\
+  \ `region_id` por gaussiana\ny el mapa `FDI → confianza` que consume la fusión semántica). El registro\n\
+  CBCT↔intraoral está **medido sobre un paciente real**\n([`scripts/registro_ios_cbct.py`](scripts/registro_ios_cbct.py)):\
+  \ 0,452 mm sobre la\npoblación solapada, con la etapa gruesa que el ADR dejaba pendiente ya implementada.\n\
+  \n**Exportación reversible** — `export-agents`, **tres canales, y los tres miden lo que\nproducen releyéndolo**\
+  \ en vez de prometerlo:\n\n| Agente | Materializa | Error medido |\n|---|---|---|\n| `export-agent`\
+  \ | `surface_ref` → **STL binario** | **3,8·10⁻⁶ mm** de desviación máxima sobre un escaneo real de\
+  \ Teeth3DS+ (110.804 vértices, arcada de 86 mm) en 0,07 s — la que impone el `float32` del formato,\
+  \ cuatro órdenes de magnitud bajo el presupuesto de **0,1 mm** del brief | <!--const:REVERSIBILITY_BUDGET_MM-->\n\
+  | `field-export-agent` | `gaussian_field_ref` → **PLY binario** | **0,0 mm** exactos sobre el CBCT de\
+  \ un paciente real (498.407 primitivas, 27,9 MB en 0,06 s): las posiciones van en `double` para que\
+  \ la verificación mida *bugs* de formato y no el redondeo |\n| `render-export-agent` | `gaussian_field_ref`\
+  \ → **PNG multivista** | **PSNR 102 dB · SSIM 0,99999999** en el ciclo twin → PLY → render, reproducible\
+  \ byte a byte |\n\nEl STL sale en el sistema del escáner o en el del twin; el PLY, centrado o en mm\
+  \ reales\ndel CBCT. Y un snapshot parcial lo declara en `hitl_reasons` **y dentro del propio\nfichero**.\n\
+  \n**Todavía no**: color **per-píxel** (registro foto↔malla — probado, no converge barato\nsin calibración),\
+  \ `pathology-agent`. Sigue pendiente del ADR de motor de render\n**de dónde sale el color** de un campo\
+  \ de densidad — el contenedor ya está resuelto, pero\nun CBCT no mide color y el PLY no se lo inventa.\
+  \ El paquete `3dgs-engine` es hoy un\nplaceholder: la reconstrucción vive en los notebooks + `gsplat`.\n\
+  \n---\n\n## Arquitectura del monorepo\n\nEl repositorio está organizado como un **monorepo gestionado\
+  \ con [`uv` workspaces`](https://docs.astral.sh/uv/concepts/workspaces/)**. El archivo `pyproject.toml`\
+  \ raíz declara el workspace y agrupa automáticamente todos los miembros bajo `apps/` y `packages/`:\n\
+  \n```toml\n[tool.uv.workspace]\nmembers = [\"apps/*\", \"packages/*\"]\n```\n\nEsto permite que cada\
+  \ aplicación y paquete tenga su propio `pyproject.toml` y ciclo de vida independiente, mientras comparten\
+  \ un único entorno virtual (`.venv/`) en la raíz y un lockfile común (`uv.lock`). Las dependencias internas\
+  \ se resuelven mediante referencias de workspace (`workspace = true`), sin pasar por PyPI.\n\n```\n\
+  agentic-smart-health/          ← workspace root\n├── pyproject.toml             ← declaración del workspace\
+  \ uv\n├── uv.lock                    ← lockfile unificado\n├── Makefile                   ← comandos\
+  \ de desarrollo\n├── apps/\n│   ├── agent-orchestrator/    ← orquestador del sistema multiagente\n│\
+  \   ├── research-agent/        ← agente de investigación (RAG + literatura científica)\n│   └── slicer-mcp-server/\
+  \     ← servidor MCP para integración con 3D Slicer\n├── packages/\n│   ├── core-schemas/          ←\
+  \ esquemas Pydantic compartidos (el contrato TwinSnapshot)\n│   ├── ingestion-agents/      ← 4 agentes\
+  \ de ingesta (mesh · cbct · report · image)\n│   ├── fusion-agents/         ← fusión geométrica y semántica\
+  \ sobre el twin\n│   ├── analysis-agents/       ← segmentación anatómica: region_id (FDI) por gaussiana\n\
+  │   ├── export-agents/         ← regeneración de malla, campo y render desde el twin, con el error medido\n\
+  │   ├── tooth-aggregation/     ← agregación de etiquetas por punto a instancias de diente\n│   └── 3dgs-engine/\
+  \           ← placeholder (la reconstrucción 3DGS vive hoy en notebooks + gsplat)\n├── data/\n│   └──\
+  \ research-agent/        ← knowledge base del agente de investigación\n├── docs/                   \
+  \   ← documentación (ver nota más abajo)\n├── notebooks/                 ← experimentación y exploración\
+  \ (01–07)\n├── tests/                     ← suite de pruebas global\n├── scripts/                  \
+  \ ← utilidades: render Blender, auditor de PRs, fetch de datasets\n└── .github/\n    └── workflows/\
+  \             ← CI: agente de revisión de código (ai-code-reviewer)\n```\n\n---\n\n## Aplicaciones (`apps/`)\n\
+  \n### `agent-orchestrator`\n\nOrquestador central del sistema multiagente. Coordina los agentes de cada\
+  \ fase del pipeline:\n\n- **Ingesta** ✅ *(implementado)*: dispara los 4 agentes de `ingestion-agents`\
+  \ en paralelo sobre una adquisición (STL + CBCT + informe + N fotos), ensambla el `TwinSnapshot` y aplica\
+  \ el gate de revisión humana; presupuesto de <60 s. <!--const:LATENCY_BUDGET_S-->\n- **Fusión** *(pendiente)*:\
+  \ integración multimodal y temporal de los datos en el Digital Twin.\n- **Análisis** *(pendiente)*:\
+  \ razonamiento clínico sobre el estado del gemelo digital.\n- **Exportación** ✅ *(los tres canales)*:\
+  \ `export-agents` regenera desde el `TwinSnapshot` la **malla** en STL, el **campo gaussiano** en PLY\
+  \ (en el marco del twin o en mm reales del CBCT) y un **render multivista** en PNG por Beer-Lambert,\
+  \ cada uno con su error medido —desviación máxima y media para la geometría, PSNR/SSIM para la imagen—.\
+  \ Los dispara el orquestador con `IngestionPipeline.exportar(result, destino)`, y el recorrido completo\
+  \ **entrada → twin → fichero** está probado de punta a punta en `tests/test_e2e.py`.\n\nDepende de `core-schemas`\
+  \ e `ingestion-agents` (vía workspace) para garantizar contratos de datos compartidos con el resto del\
+  \ sistema.\n\n### `slicer-mcp-server`\n\nServidor **MCP (Model Context Protocol)** qu"

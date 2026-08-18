@@ -1,0 +1,109 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: A-SHOJAEI/molecular-scaffold-aware-multi-task-toxicity-prediction
+url: https://github.com/A-SHOJAEI/molecular-scaffold-aware-multi-task-toxicity-prediction
+platform: github
+description: Scaffold-aware GCN with attention-based substructure pooling for multi-task Tox21 toxicity
+  prediction. 12-task model with scaffold-split evaluation achieving 0.789 AUC-ROC on best assay.
+license: MIT
+language: Python
+keywords:
+- cheminformatics
+- graph-neural-networks
+- multi-task-learning
+- pytorch
+- tox21
+- toxicity-prediction
+stars: 0
+updated_at: '2026-02-21T04:18:43Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Molecular Scaffold-Aware Multi-Task Toxicity Prediction\n\nA hierarchical graph neural\
+  \ network that learns molecular toxicity across 12 Tox21 assays by explicitly modeling scaffold-substructure\
+  \ relationships. The system uses scaffold-aware attention mechanisms to dynamically weight subgraph\
+  \ contributions based on known toxicophore patterns, combined with multi-task learning for simultaneous\
+  \ prediction of all endpoints.\n\n## Training Configuration\n\n| Parameter | Value |\n|---|---|\n| Dataset\
+  \ | Tox21 (7,831 molecules, 12 toxicity endpoints) |\n| Model | Scaffold-Aware GCN + Attention Substructure\
+  \ Pooling |\n| Backbone | 3-layer GCN, 128 hidden dim |\n| Scaffold Dim | 64 |\n| Prediction Head |\
+  \ [128, 64] with 0.3 dropout |\n| Split Strategy | Scaffold-based (80/10/10) |\n| Optimizer | AdamW\
+  \ (lr=0.001, weight_decay=1e-5) |\n| Scheduler | ReduceLROnPlateau (factor=0.5, patience=10) |\n| Early\
+  \ Stopping | Patience 15, min_delta=0.0001 |\n| Training Duration | 29 epochs |\n| Batch Size | 32 |\n\
+  | Seed | 42 |\n\n## Results\n\n### Per-Task AUC-ROC (Scaffold Split)\n\n| Rank | Task | AUC-ROC | Category\
+  \ |\n|------|------|---------|----------|\n| 1 | NR-AR-LBD | 0.720 | Nuclear Receptor |\n| 2 | NR-AhR\
+  \ | 0.714 | Nuclear Receptor |\n| 3 | NR-AR | 0.708 | Nuclear Receptor |\n| 4 | SR-ATAD5 | 0.672 | Stress\
+  \ Response |\n| 5 | SR-HSE | 0.640 | Stress Response |\n| 6 | NR-ER-LBD | 0.617 | Nuclear Receptor |\n\
+  | 7 | NR-PPAR-gamma | 0.607 | Nuclear Receptor |\n| 8 | SR-ARE | 0.597 | Stress Response |\n| 9 | SR-p53\
+  \ | 0.598 | Stress Response |\n| 10 | NR-ER | 0.592 | Nuclear Receptor |\n| 11 | SR-MMP | 0.574 | Stress\
+  \ Response |\n| 12 | NR-Aromatase | 0.512 | Nuclear Receptor |\n\n### Aggregate Metrics\n\n| Metric\
+  \ | Value |\n|--------|-------|\n| Mean AUC-ROC | 0.6293 |\n| Best Task AUC-ROC | 0.7202 (NR-AR-LBD)\
+  \ |\n| Mean Accuracy | 92.62% |\n| Final Training Loss | 0.1989 |\n| Final Validation Loss | 0.2563\
+  \ |\n| Best Validation AUC-ROC | 0.6340 (Epoch 14) |\n\n### Training Dynamics\n\nThe model converged\
+  \ smoothly over 29 epochs with training loss decreasing from 0.379 to 0.199 and validation loss stabilizing\
+  \ at 0.256. The validation AUC-ROC peaked at 0.634 (epoch 14) before showing slight oscillation typical\
+  \ of multi-task learning on imbalanced data. Learning rate was reduced from 0.001 to 0.0005 at epoch\
+  \ 24 via ReduceLROnPlateau scheduler.\n\nTrained model checkpoint: `outputs/checkpoints/best_model.pt`\
+  \ (saved at epoch 14 with best validation AUC-ROC)\n\n### Analysis\n\n**Scaffold-based splitting is\
+  \ intentionally harder than random splitting.** Unlike random splits that allow structurally similar\
+  \ molecules to appear in both train and test sets, scaffold splitting forces the model to generalize\
+  \ to entirely unseen molecular scaffolds. This evaluates true out-of-distribution generalization rather\
+  \ than memorization. Published Tox21 benchmarks using random splits often report AUC-ROC values of 0.80-0.85+,\
+  \ so the results here reflect a substantially more challenging evaluation protocol.\n\n**Nuclear receptor\
+  \ (NR) tasks consistently outperform stress response (SR) tasks.** The top four tasks are all nuclear\
+  \ receptor assays (mean NR AUC-ROC: 0.667 vs. mean SR AUC-ROC: 0.563). This aligns with the toxicology\
+  \ literature: nuclear receptor binding is more directly determined by molecular scaffold geometry and\
+  \ pharmacophore features that the scaffold-aware architecture explicitly encodes. Stress response pathways\
+  \ involve more indirect, pathway-level mechanisms that are harder to predict from molecular structure\
+  \ alone.\n\n**High accuracy despite moderate AUC-ROC** is a consequence of the severe class imbalance\
+  \ in Tox21 -- most molecules are non-toxic for most endpoints, so a model can achieve high accuracy\
+  \ while the AUC-ROC (which balances sensitivity and specificity) gives a more nuanced picture of discriminative\
+  \ power.\n\n## Installation\n\n```bash\npip install -e .\n```\n\n## Quick Start\n\n```bash\n# Train\
+  \ scaffold-aware GCN model\npython scripts/train.py --config configs/default.yaml\n\n# Evaluate with\
+  \ scaffold analysis (trained model available at outputs/checkpoints/best_model.pt)\npython scripts/evaluate.py\
+  \ --config configs/default.yaml --checkpoint outputs/checkpoints/best_model.pt\n\n# Run inference on\
+  \ new molecules\npython scripts/predict.py --config configs/default.yaml --checkpoint outputs/checkpoints/best_model.pt\
+  \ --smiles \"CC(C)Cc1ccc(cc1)C(C)C(O)=O\"\n\n# Run ablation study (no scaffold attention)\npython scripts/train.py\
+  \ --config configs/ablation.yaml\n```\n\n## Usage\n\n```python\nfrom molecular_scaffold_aware_multi_task_toxicity_prediction.models.model\
+  \ import MultiTaskToxicityPredictor\nfrom molecular_scaffold_aware_multi_task_toxicity_prediction.data.loader\
+  \ import MoleculeNetLoader\n\n# Load Tox21 dataset\nloader = MoleculeNetLoader(data_dir='./data')\n\
+  df = loader.load_dataset('tox21')\n\n# Create scaffold-aware model\nmodel = MultiTaskToxicityPredictor(\n\
+  \    backbone='gcn',\n    backbone_config={'node_dim': 133, 'hidden_dim': 128, 'num_layers': 3},\n \
+  \   num_tasks=12\n)\n```\n\n## Methodology\n\n### Novel Contribution\n\nThis work introduces **scaffold-aware\
+  \ attention mechanisms** for molecular toxicity prediction. Unlike standard graph neural networks that\
+  \ treat all molecular substructures equally, our approach explicitly models the relationship between\
+  \ core scaffolds and peripheral substituents. The key insight is that toxicity is often scaffold-dependent\
+  \ -- the same functional group can be toxic or benign depending on the scaffold it's attached to.\n\n\
+  The novel architecture dynamically weights substructure contributions based on scaffold context, enabling\
+  \ the model to learn scaffold-specific toxicophore patterns. This improves generalization to unseen\
+  \ molecular frameworks, addressing a critical challenge in toxicity prediction where models must extrapolate\
+  \ beyond training scaffolds.\n\nCombining scaffold-aware attention with multi-task learning across 12\
+  \ Tox21 endpoints enables transfer of toxicological knowledge between related assays while maintaining\
+  \ scaffold-specific representations. This joint learning is particularly effective for nuclear receptor\
+  \ tasks where scaffold geometry determines binding affinity.\n\n## Architecture\n\nThe system combines\
+  \ three key components:\n\n1. **Scaffold-Aware Attention**: Multi-head attention mechanism that uses\
+  \ molecular scaffolds as queries to weight substructure contributions\n2. **Hierarchical Graph Encoding**:\
+  \ Separate encoders for molecular graphs and scaffold structures with learned fusion\n3. **Multi-Task\
+  \ Prediction Head**: Task-specific embeddings with shared backbone for joint toxicity prediction\n\n\
+  ```\nSMILES -> Graph Features -> Scaffold-Aware GNN -> Multi-Task Head -> Toxicity Predictions\n   \
+  \           |                    |                    |\n          Node/Edge            Attention  \
+  \         Task Embeddings\n          Features             Pooling           + Shared Backbone\n```\n\
+  \n## Project Structure\n\n```\nmolecular-scaffold-aware-multi-task-toxicity-prediction/\n  configs/\n\
+  \    default.yaml              # Training configuration\n    ablation.yaml             # Ablation study\
+  \ config (no scaffold attention)\n  scripts/\n    train.py                  # Training entry point\n\
+  \    evaluate.py               # Evaluation with scaffold analysis\n    predict.py                #\
+  \ Inference on new molecules\n  src/\n    molecular_scaffold_aware_multi_task_toxicity_prediction/\n\
+  \      data/\n        loader.py             # Tox21 data loading\n        preprocessing.py      # Molecular\
+  \ graph featurization\n      models/\n        model.py              # Scaffold-aware GCN model\n   \
+  \     components.py         # Custom attention & pooling layers\n      training/\n        trainer.py\
+  \            # Training loop with MLflow logging\n      evaluation/\n        metrics.py            #\
+  \ AUC-ROC, accuracy, per-task metrics\n      utils/\n        config.py             # YAML config management\n\
+  \  tests/\n    test_model.py\n    test_data.py\n    test_training.py\n    test_scripts.py\n  notebooks/\n\
+  \    exploration.ipynb\n```\n\n## Development\n\n```bash\n# Run tests\npytest\n\n# Code quality\nblack\
+  \ src/ tests/\nisort src/ tests/\nmypy src/\nflake8 src/ tests/\n```\n\n## License\n\nMIT License -\
+  \ see [LICENSE](LICENSE) file for details.\n"

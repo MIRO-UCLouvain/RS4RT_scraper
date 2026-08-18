@@ -1,0 +1,91 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: 767172261/Use-the-UNet-model-to-train-the-List-liver-tumor-segmentation-data-set-to-complete-the-liver-tumor-s
+url: https://github.com/767172261/Use-the-UNet-model-to-train-the-List-liver-tumor-segmentation-data-set-to-complete-the-liver-tumor-s
+platform: github
+description: 使用 U-Net模型训练List肝脏肿瘤分割数据集并_来完成肝脏肿瘤分割任务 建立基于u net 肝脏肿瘤分割检测系统
+license: null
+language: null
+keywords: []
+stars: 0
+updated_at: '2026-07-11T14:36:30Z'
+image_source: https://i-blog.csdnimg.cn/direct/14f6932091644e3190f9bd620a80b4e2.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 AI/ML term(s) in repository name.
+readme_excerpt: "\uFEFF使用 U-Net模型训练List肝脏肿瘤分割数据集并_来完成肝脏肿瘤分割任务\n@[toc]\n![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/14f6932091644e3190f9bd620a80b4e2.png)\n\
+  \nList肝脏肿瘤分割数据集，.png格式，背景0像素，肿瘤1像素，肝脏2像素。mask标签。1854张。![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/1e621e3377534a25801042bf85835e2d.png)\n\
+  1\n![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/aec008a3b751433ea3947ffb466559ba.png)\n1![在这里插入图片描述](https://i-blog.csdnimg.cn/direct/560a26d4147e4be9973c0ce3a2257cd2.png)\n\
+  \n使用 **U-Net** 模型来完成肝脏肿瘤分割任务。以下是完整的流程，包括安装依赖、准备数据集、训练模型、评估模型、推理代码以及构建GUI应用程序。\n\n---\n\n### **1. 安装依赖**\n\
+  \n确保安装了必要的Python库：\n\n```bash\npip install torch torchvision matplotlib opencv-python-headless numpy\
+  \ scikit-image PyQt5 segmentation-models-pytorch\n```\n\n---\n\n### **2. 准备数据集**\n\n#### 数据集描述\n\n-\
+  \ 图像数量：1854张。\n- Mask标签：PNG格式，像素值为：\n  - 背景：0\n  - 肿瘤：1\n  - 肝脏：2\n\n假设你的数据集已组织如下：\n\n```\nliver_tumor_dataset/\n\
+  ├── images/\n│   ├── train/\n│   │   ├── img1.png\n│   │   └── ...\n│   └── val/\n│       ├── img501.png\n\
+  │       └── ...\n└── masks/\n    ├── train/\n    │   ├── mask1.png\n    │   └── ...\n    └── val/\n\
+  \        ├── mask501.png\n        └── ...\n```\n\n---\n\n### **3. 自定义数据集类**\n\n创建一个自定义的 `Dataset` 类来加载图像和对应的mask。\n\
+  \n```python\nimport os\nfrom PIL import Image\nimport numpy as np\nimport torch\nfrom torch.utils.data\
+  \ import Dataset\nfrom torchvision import transforms\n\nclass LiverTumorDataset(Dataset):\n    def __init__(self,\
+  \ image_dir, mask_dir, transform=None):\n        self.image_dir = image_dir\n        self.mask_dir =\
+  \ mask_dir\n        self.transform = transform\n        self.images = os.listdir(image_dir)\n\n    def\
+  \ __len__(self):\n        return len(self.images)\n\n    def __getitem__(self, idx):\n        img_path\
+  \ = os.path.join(self.image_dir, self.images[idx])\n        mask_path = os.path.join(self.mask_dir,\
+  \ self.images[idx].replace('.png', '_mask.png'))\n        \n        # 加载图像和mask\n        image = np.array(Image.open(img_path).convert(\"\
+  RGB\"))\n        mask = np.array(Image.open(mask_path), dtype=np.int64)  # 确保mask是整数类型\n        \n \
+  \       if self.transform:\n            augmentations = self.transform(image=image, mask=mask)\n   \
+  \         image = augmentations['image']\n            mask = augmentations['mask']\n\n        return\
+  \ image, mask\n```\n\n---\n\n### **4. 配置和训练 U-Net 模型**\n\n#### 数据增强与加载\n\n```python\nfrom albumentations\
+  \ import Compose, Resize, Normalize, HorizontalFlip, VerticalFlip\n\n# 数据增强\ntransform = Compose([\n\
+  \    Resize(256, 256),  # 统一调整图像大小\n    HorizontalFlip(p=0.5),\n    VerticalFlip(p=0.5),\n    Normalize(mean=(0.485,\
+  \ 0.456, 0.406), std=(0.229, 0.224, 0.225)),\n])\n\n# 加载训练集和验证集\ntrain_dataset = LiverTumorDataset(\n\
+  \    image_dir='./path/to/train/images',\n    mask_dir='./path/to/train/masks',\n    transform=transform\n\
+  )\nval_dataset = LiverTumorDataset(\n    image_dir='./path/to/val/images',\n    mask_dir='./path/to/val/masks',\n\
+  \    transform=transform\n)\n\ntrain_loader = torch.utils.data.DataLoader(train_dataset, batch_size=8,\
+  \ shuffle=True)\nval_loader = torch.utils.data.DataLoader(val_dataset, batch_size=8, shuffle=False)\n\
+  ```\n\n#### 使用 `segmentation_models_pytorch` 加载 U-Net\n\n```python\nimport torch\nimport torch.nn as\
+  \ nn\nfrom segmentation_models_pytorch import Unet\nfrom segmentation_models_pytorch.losses import DiceLoss\n\
+  from torch.optim import Adam\n\n# 定义模型\nmodel = Unet(encoder_name=\"resnet34\", encoder_weights=\"imagenet\"\
+  , classes=3, activation=None).cuda()\n\n# 损失函数和优化器\ncriterion = DiceLoss(mode='multiclass')\noptimizer\
+  \ = Adam(model.parameters(), lr=1e-4)\n\n# 训练函数\ndef train_model(model, train_loader, val_loader, criterion,\
+  \ optimizer, num_epochs=20):\n    for epoch in range(num_epochs):\n        model.train()\n        running_loss\
+  \ = 0.0\n        for images, masks in train_loader:\n            images = images.cuda()\n          \
+  \  masks = masks.long().cuda()\n\n            outputs = model(images)\n            loss = criterion(outputs,\
+  \ masks)\n\n            optimizer.zero_grad()\n            loss.backward()\n            optimizer.step()\n\
+  \n            running_loss += loss.item()\n\n        print(f\"Epoch [{epoch+1}/{num_epochs}], Loss:\
+  \ {running_loss/len(train_loader):.4f}\")\n\n        # 验证阶段\n        model.eval()\n        val_loss\
+  \ = 0.0\n        with torch.no_grad():\n            for images, masks in val_loader:\n             \
+  \   images = images.cuda()\n                masks = masks.long().cuda()\n\n                outputs =\
+  \ model(images)\n                loss = criterion(outputs, masks)\n                val_loss += loss.item()\n\
+  \n        print(f\"Validation Loss: {val_loss/len(val_loader):.4f}\")\n```\n\n运行训练代码：\n\n```python\n\
+  train_model(model, train_loader, val_loader, criterion, optimizer, num_epochs=20)\n```\n\n---\n\n###\
+  \ **5. 推理代码**\n\n编写推理代码，用于分割单张图片中的肝脏和肿瘤区域：\n\n```python\nimport cv2\nimport numpy as np\nimport torch\n\
+  from torchvision import transforms\n\ndef segment_image(image_path, model):\n    transform = transforms.Compose([\n\
+  \        transforms.ToTensor(),\n        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229,\
+  \ 0.224, 0.225]),\n    ])\n\n    # 加载并预处理图像\n    image = Image.open(image_path).convert(\"RGB\")\n \
+  \   input_tensor = transform(image).unsqueeze(0).cuda()\n\n    # 模型预测\n    model.eval()\n    with torch.no_grad():\n\
+  \        output = model(input_tensor)\n        pred_mask = torch.argmax(output, dim=1).squeeze().cpu().numpy()\n\
+  \n    # 将预测结果转换为彩色图像\n    colored_mask = np.zeros((pred_mask.shape[0], pred_mask.shape[1], 3), dtype=np.uint8)\n\
+  \    colored_mask[pred_mask == 0] = [0, 0, 0]  # 背景\n    colored_mask[pred_mask == 1] = [255, 0, 0]\
+  \  # 肿瘤\n    colored_mask[pred_mask == 2] = [0, 255, 0]  # 肝脏\n\n    return colored_mask\n\n# 示例用法\n\
+  image_path = './path/to/test/image.png'\ncolored_mask = segment_image(image_path, model)\ncv2.imshow('Segmented\
+  \ Image', colored_mask)\ncv2.waitKey(0)\ncv2.destroyAllWindows()\n```\n\n---\n\n### **6. 构建GUI应用程序**\n\
+  \n使用PyQt5构建一个简单的GUI应用程序，用于选择图片并展示分割结果：\n\n```python\nimport sys\nfrom PyQt5.QtWidgets import QApplication,\
+  \ QWidget, QVBoxLayout, QPushButton, QLabel, QFileDialog\nfrom PyQt5.QtGui import QPixmap\nfrom PyQt5.QtCore\
+  \ import Qt\nimport cv2\n\nclass App(QWidget):\n    def __init__(self, model):\n        super().__init__()\n\
+  \        self.model = model\n        self.initUI()\n\n    def initUI(self):\n        self.setWindowTitle('肝脏肿瘤分割系统')\n\
+  \n        layout = QVBoxLayout()\n\n        self.image_label = QLabel(self)\n        layout.addWidget(self.image_label)\n\
+  \n        self.select_button = QPushButton('选择图片', self)\n        self.select_button.clicked.connect(self.select_image)\n\
+  \        layout.addWidget(self.select_button)\n\n        self.setLayout(layout)\n        self.show()\n\
+  \n    def select_image(self):\n        options = QFileDialog.Options()\n        file_name, _ = QFileDialog.getOpenFileName(self,\
+  \ \"选择图片\", \"\", \"Image Files (*.png *.jpg *.jpeg)\", options=options)\n        if file_name:\n  \
+  \          self.segment_and_show(file_name)\n\n    def segment_and_show(self, image_path):\n       \
+  \ segmented_image = segment_image(image_path, self.model)\n        height, width, channel = segmented_image.shape\n\
+  \        bytes_per_line = 3 * width\n        q_img = QImage(segmented_image.data, width, height, bytes_per_line,\
+  \ QImage.Format_RGB888).rgbSwapped()\n        pixmap = QPixmap.fromImage(q_img)\n        self.image_label.setPixmap(pixmap)\n\
+  \nif __name__ == '__main__':\n    app = QApplication(sys.argv)\n    ex = App(model)  # 将训练好的模型传入\n \
+  \   sys.exit(app.exec_())\n```\n\n---\n\n### **7. 运行**\n\n1. 确保所有路径和参数正确无误。\n2. 训练模型后保存权重文件（如 `best.pth`）。\n\
+  3. 在推理代码和GUI中加载训练好的模型权重。\n4. 启动GUI应用程序，选择测试图片进行分割。\n\n从安装依赖、准备数据集、训练U-Net模型、评估模型、推理代码到构建GUI应用程序.\n\n\
+  仅供参考，同学。\n"

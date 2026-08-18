@@ -1,0 +1,73 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: rubiasnow12/CBCT_3D_SR_Project
+url: https://github.com/rubiasnow12/CBCT_3D_SR_Project
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-04T03:21:21Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# CBCT 牙冠 3D 超分项目（当前主路线）\n\n本文档仅保留当前在用的技术路线：\n- 以 CBCT 灰度体积（ROI）+ 点云联合建模\n- 以 p 开头的无牙龈病例为主数据集\n\
+  - 训练流程为 Step 1 预训练 + Step 2 带验证集微调 + Step 3 测试集全流程评估\n- 继续使用旧版的 `test_5` 作为测试集来验证带体素的 MedGS 模型能力。\n\n\
+  ---\n\n## 1. 当前推荐目录\n\n```text\nCBCT_3D_SR_Project/\n├── data/\n│   ├── raw/                       \
+  \             # 原始患者数据（CBCT nii/dicom + IOS stl）\n│   └── processed_npy/\n│       └── process_dataset/\n\
+  │           ├── LR/                             # 输入点云（20480）\n│           ├── GT/                 \
+  \            # 目标点云（81920）\n│           └── ROI/                            # ROI体积 npz（volume + roi_min_phys\
+  \ + roi_max_phys）\n├── configs/\n│   ├── pretrain.yaml                           # 预训练配置（当前默认 process_dataset）\n\
+  │   └── finetune_edge.yaml                      # 微调配置（患者级 train/val 划分）\n├── scripts/\n│   ├── batch_process_raw.py\
+  \                    # 从 data/raw 批处理生成训练样本\n│   ├── data_pipeline.py                        # 单患者预处理流水线\n\
+  │   ├── step1_pretrain_model.py                 # Step 1 预训练\n│   ├── step2_finetune_edge.py       \
+  \           # Step 2 微调（CBCT引导 + val）\n│   ├── prepare_testset_5.py                    # 自动提取和预处理 1-5\
+  \ 号带 -512 的测试集\n│   └── step3_evaluate_testset.py               # Step 3 测试集前向推理与性能评估\n└── src/\n  \
+  \  ├── data/dataset.py                         # 读取 LR/GT/ROI\n    ├── models/sr_network.py        \
+  \            # PU-GCN + 3D CBCT Encoder\n    └── losses/edge_aware_loss.py               # Masked CD\
+  \ + MedGS\n```\n\n---\n\n## 2. 环境配置\n\n### Linux\n\n```bash\nconda create -n cbct_sr python=3.10 -y\n\
+  conda activate cbct_sr\npip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126\n\
+  pip install -r requirements.txt\n```\n\n### Windows\n\n```powershell\nconda create -n cbct_sr python=3.10\
+  \ -y\nconda activate cbct_sr\npip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128\n\
+  pip install -r requirements.txt\n```\n\n---\n\n## 3. 数据预处理（推荐）\n\n### 3.1 原始数据输入\n\n将患者数据放在 `data/raw/`。`batch_process_raw.py`\
+  \ 会自动遍历患者目录并调度 `data_pipeline.py`。\n\n### 3.2 批量预处理命令\n\n```bash\npython scripts/batch_process_raw.py\
+  \ \\\n  --raw_dir data/raw \\\n  --output_dir data/processed_npy/process_dataset \\\n  --nnunet_model_dir\
+  \ \"$(pwd)/nnunet_results\"\n```\n\n执行后应得到：\n- `data/processed_npy/process_dataset/LR/*.npy`\n- `data/processed_npy/process_dataset/GT/*.npy`\n\
+  - `data/processed_npy/process_dataset/ROI/*.npz`\n\nROI 是训练时引入 CBCT 灰度信息的关键数据（`volume`、`roi_min_phys`、`roi_max_phys`）。\n\
+  \n---\n\n## 4. 训练流程\n\n### Step 1：预训练\n\n```bash\npython scripts/step1_pretrain_model.py --config configs/pretrain.yaml\n\
+  ```\n\n说明：\n- 默认读取 `process_dataset`（不是旧的 `train_18`）\n- 默认 `batch_size=1`（当前 80k/20k 点规模下显存更稳）\n- 日志中\
+  \ `MedGS` 可能为 0，这是当前 Step 1 设计允许的现象\n\n### Step 2：微调（CBCT 引导 + 验证集）\n\n```bash\npython scripts/step2_finetune_edge.py\
+  \ --config configs/finetune_edge.yaml\n```\n\n当前 Step 2 特性：\n- 读取 `LR + GT + ROI`，显式使用 CBCT 灰度体积\n-\
+  \ 损失包含 `w_medgs`\n- 患者级 train/val 划分（避免 upper/lower 泄漏）\n- 每轮训练后都会跑验证集并按 `val/loss_total` 保存最优权重\n-\
+  \ 目前不启用 early stopping（按你的要求）\n\n### Step 3：测试集的自动处理与模型评估 (推荐在服务器运行)\n\n由于测试集处理和网络推理均需要较大资源，因此建议在服务器上直接运行。\n\
+  请保证 `data/raw_stl/CBCT/` 及其相关文件都在正确路径内，我们会使用 1~5 号后缀带 `-512` 的数据进行处理。\n\n**1. 准备测试集完整数据 (包含 DICOM ->\
+  \ NIfTI、剥离牙龈、配准对齐、以及网络推理需要的 ROI .npz 体块)：**\n```bash\npython scripts/prepare_testset_5.py\n```\n*此步骤会调用\
+  \ nnU-Net 和各类配准算子，视服务器算力需要一定运算时间，执行完后在 `data/processed_npy/test_5` 下生成最新可用的 LR、GT、ROI。*\n\n**2. 场景 A：有\
+  \ GT 的完整评估（推理 + 指标计算）**\n\n适合你要对比 LR / SR 和 IOS 真值时使用，脚本会读取 `LR + GT + ROI`，并输出每个样本的 STL 和评估 JSON。\n\
+  \n```bash\npython scripts/step3_evaluate_testset.py\n```\n\n如果你想显式指定参数，也可以这样跑：\n\n```bash\npython scripts/step3_evaluate_testset.py\
+  \ \\\n  --ckpt_path experiments/finetune_logs/finetune_edge_best.pth \\\n  --test_npy data/processed_npy/test_5\
+  \ \\\n  --output_dir outputs/testset_predictions_stl \\\n  --fs_thresh 0.5\n```\n\n*完成后 `outputs/testset_predictions_stl/`\
+  \ 下会生成 `*_SR.stl` 和 `evaluation_results.json`。*\n\n**3. 场景 B：无 GT 纯推理（只导出 SR STL）**\n\n适合你只想快速检查网络输出或做后处理，不需要\
+  \ GT 和指标时使用。这个模式等价于 `--no_gt` 或 `--inference_only`。\n\n```bash\npython scripts/step3_evaluate_testset.py\
+  \ --no_gt --test_npy data/process_test_5\n```\n\n也可以写成：\n\n```bash\npython scripts/step3_evaluate_testset.py\
+  \ --inference_only --test_npy data/process_test_5\n```\n\n*完成后 `outputs/testset_predictions_stl/` 下会生成\
+  \ `*_SR.stl` 和 `inference_results.json`。*\n\n---\n\n## 5. 关键配置（当前）\n\n### `configs/pretrain.yaml`\n\n\
+  - `data.train_dir`: `data/processed_npy/process_dataset`\n- `data.lr_subdir`: `LR`\n- `data.gt_subdir`:\
+  \ `GT`\n- `train.batch_size`: `1`\n\n### `configs/finetune_edge.yaml`\n\n- `data.train_dir`: `data/processed_npy/process_dataset`\n\
+  - `data.lr_subdir`: `LR`\n- `data.gt_subdir`: `GT`\n- `data.roi_subdir`: `ROI`\n- `data.val_ratio`:\
+  \ `0.2`\n- `loss.w_medgs`: `0.5`\n\n---\n\n## 6. 旧流程状态说明\n\n以下内容目前属于纯点云兼容保留：\n- 仅基于 IOS 的无 CBCT 引导的点云训练说明\n\
+  \n最新版本的 `scripts/step3_evaluate_testset.py` 已经完全升级并支持目前最新的主线 `cbct_vol` 与模型特性。\n\n---\n\n## 7. 可选清理（手动执行）\n\
+  \n以下命令不会自动执行，请在确认不再需要旧实验后手动运行。\n\n```bash\n# 先查看空间占用\ndu -sh data/processed_npy/train_18 data/processed_npy/test_5\
+  \ data/raw_stl/train_18 data/raw_stl/test_5 2>/dev/null\n\n# 可选删除旧纯点云数据\nrm -rf data/processed_npy/train_18\n\
+  rm -rf data/processed_npy/test_5\nrm -rf data/raw_stl/train_18\nrm -rf data/raw_stl/test_5\n```\n\n\
+  建议先备份到外部盘再删。\n\n---\n\n## 8. 监控与日志\n\n```bash\nwandb login\n```\n\n训练日志写入：\n- `experiments/pretrain_logs`\n\
+  - `experiments/finetune_logs`\n\nTensorBoard 典型字段：\n- `train/loss_total`, `train/loss_cd`, `train/loss_medgs`\n\
+  - `val/loss_total`, `val/loss_cd`, `val/loss_medgs`\n\n---\n\n## 9. 常见问题\n\n### Q1：为什么需要 ROI？\n\n因为\
+  \ Step 2 已切到 CBCT 引导路线。`ROI/*.npz` 让网络在点位置采样体素灰度特征，实现几何+影像联合优化。\n\n### Q2：要不要上 DINO / LLM / 大模型？\n\n\
+  当前数据规模下不建议作为第一优先。先把现有 CBCT 引导路线稳定跑通并在 val 上收敛，再做架构升级更稳妥。\n"

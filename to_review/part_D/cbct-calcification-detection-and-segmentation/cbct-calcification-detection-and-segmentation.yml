@@ -1,0 +1,216 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hamed-bavar/cbct-calcification-detection-and-segmentation
+url: https://github.com/hamed-bavar/cbct-calcification-detection-and-segmentation
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2025-09-25T21:02:23Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: '# Calcification Detection and Segmentation Workflow
+
+
+  This study implements a deep learning workflow for calcification detection and segmentation using Python.
+  The pipeline consists of multiple components, including a Variational Autoencoder (VAE), Deviation Network,
+  and Segment Anything Model (SAM).
+
+
+  ## Requirements
+
+
+  - Python 3.10.14
+
+  - Required packages can be installed from the `requirements.txt` file
+
+
+  To install the required packages, run:
+
+
+  ```
+
+  pip install -r requirements.txt
+
+  ```
+
+
+  ## Pipeline Components
+
+
+  The pipeline consists of four main notebooks:
+
+
+  1. `VAE.ipynb`: Implements the Variational Autoencoder
+
+  2. `deviation_network.ipynb`: Implements the deviation network
+
+  3. `SAM.ipynb`: Implements the Segment Anything Model
+
+
+  ## Workflow
+
+
+  ### Clacification Detection
+
+
+  For clacification detection, run the following notebooks in order:
+
+
+  1. `VAE.ipynb` (optional if `prior_driven` is True in deviation network code)
+
+  2. `deviation_network.ipynb`
+
+
+  ### Anomaly Segmentation
+
+
+  For anomaly segmentation, you should additionally run the following notebook after training the calcficaition
+  detection model:
+
+
+  1. `SAM.ipynb`
+
+
+
+  ## Configuration Parameters
+
+
+  ### VAE.ipynb
+
+
+  ```python
+
+  dataset = ''custom''
+
+  gpu = 0
+
+  fold = ''0''
+
+  model_name = ''vae''
+
+  input_size = 512
+
+  epochs = 4
+
+  expansion = 1
+
+  hidden_num = 1024
+
+  latent_size = 16
+
+  en_depth = 1
+
+  de_depth = 1
+
+  train_eval_freq = 1
+
+  train_batch_size = 32
+
+  train_lr = 1e-3
+
+  train_weight_decay = 0
+
+  train_seed = 36420
+
+  ```
+
+  //Mean and Std will be saved in vae_output.txt
+
+  ### deviation_network.ipynb
+
+
+  ```python
+
+  batch_size=48
+
+  steps_per_epoch=20
+
+  epochs=50
+
+  ramdn_seed=54321
+
+  no_cuda=False
+
+  weight_name="model.pkl"
+
+  dataset_root="../input/dev-network-v1/data"
+
+  experiment_dir="./experiment/deviation"
+
+  patches_dir="patches/data"
+
+  vae_output_dir="../input/vae8-payload/vae_output.txt"
+
+  classname=""
+
+  img_size=512
+
+  n_scales=1
+
+  topk=0.25
+
+  lr=0.0001
+
+  min_cam_threshold=80 #min threshold to activate the cam as the prompt
+
+  min_island_size=30 #min island size to activate the cam, if the island are smaller than this value,
+  the cam will not be activated
+
+  prior_driven=True #if this value is False, it means the deviation loss is data driven so the VAE model
+  should be trained before this model
+
+  post_process=True //process the class activation maps to generate prompt masks for SAM
+
+
+  ```
+
+
+  ### SAM.ipynb
+
+
+  ```python
+
+  batch_size = 4
+
+  epochs = 5
+
+  ramdn_seed = 42
+
+  lr = 1e-4
+
+  ```
+
+
+  ## Notes
+
+
+  - The VAE model is optional if the `prior_driven` flag is set to `True` in the deviation network code.
+
+  - Make sure to adjust the paths and parameters according to your specific setup and requirements.
+
+
+
+  ## References
+
+
+  1. Cai, Y., Zhang, W., Chen, H., & Cheng, K. T. (2024). MedIAnomaly: A comparative study of anomaly
+  detection in medical images. _arXiv preprint arXiv:2404.04518_.
+
+
+  2. Pang, G., Ding, C., Shen, C., & Hengel, A. V. D. (2021). Explainable deep few-shot anomaly detection
+  with deviation networks. _arXiv preprint arXiv:2108.00462_.
+
+
+  3. Ma, J., He, Y., Li, F., Han, L., You, C., & Wang, B. (2024). Segment anything in medical images.
+  _Nature Communications_, _15_(1), 654.
+
+  '

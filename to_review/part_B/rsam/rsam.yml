@@ -1,0 +1,46 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: yhyumi123/RSAM
+url: https://github.com/yhyumi123/RSAM
+platform: github
+description: Anatomy-aware MR-imaging-only Radiotherapy
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-11-02T09:20:10Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# Region-Specific Attention Mechanism for MRI-based Pseudo-CT Synthesis\nUsed to train\
+  \ a model that converts MRI images of multiple organs into CT images using a Generative Adversarial\
+  \ Network (GAN) architecture. The model is trained on a dataset of MRI and CT image pairs.\n<!-- ##\
+  \ Experiments\n- CUDA/CUDNN\n- torch >=1.12.0\n- timn >=0.5.4\n- numpy >=1.22.3 -->\n\n## Dataset\n\
+  We applied N4 bias field correction to the data and performed registration between MR and CT images.\
+  \ The paired data is stored in the following format:\n```\n/Datasets/\n    ├──brain_001\n      ├── MR.nii.gz\n\
+  \      ├── CT.nii.gz\n      ├── mask.nii.gz\n    ├──brain_002\n      ├── MR.nii.gz\n      ├── CT.nii.gz\n\
+  \      ├── mask.nii.gz\n    .\n    ├──pelvis_001\n      ├── MR.nii.gz\n      ├── CT.nii.gz\n      ├──\
+  \ mask.nii.gz\n    ├──pelvis_002\n      ├── MR.nii.gz\n      ├── CT.nii.gz\n      ├── mask.nii.gz\n\
+  \    .\n\n    ├──Abdomen_001\n      ├── MR.nii.gz\n      ├── CT.nii.gz\n      ├── mask.nii.gz\n    ├──Abdomen_002\n\
+  \      ├── MR.nii.gz\n      ├── CT.nii.gz\n      ├── mask.nii.gz\n```\n\n## Train\npython train.py --slice_count\
+  \ 35 --epoch 0 --n_epochs 50 --batchSize 6 --dataroot /path/to/dataset --lr 0.0001 --decay_epoch 25\
+  \ --size 256 --input_nc 1 --output_nc 1 --cuda True --n_cpu 8 --project_name my_project --num_organs\
+  \ 3\n\n--slice_count: Number of slices to consider for each volume.\n--epoch: Starting epoch.\n--n_epochs:\
+  \ Number of epochs of training.\n--batchSize: Size of the batches.\n--dataroot: Root directory of the\
+  \ dataset.\n--lr: Initial learning rate.\n--decay_epoch: Epoch to start linearly decaying the learning\
+  \ rate to 0.\n--size: Size of the data crop (squared assumed).\n--input_nc: Number of channels of input\
+  \ data.\n--output_nc: Number of channels of output data.\n--cuda: Use GPU computation.\n--n_cpu: Number\
+  \ of CPU threads to use during batch generation.\n--project_name: Name of the project.\n--num_organs:\
+  \ Number of organs.\n\n## Test\npython test.py --slice_count 65 --batchSize 1 --dataroot /path/to/test_dataset\
+  \ --input_nc 1 --output_nc 1 --size 256 --cuda True --n_cpu 8 --generator_A2B /path/to/netG_A2B.pth\
+  \ --generator_B2A /path/to/netG_B2A.pth\n\n--slice_count: Number of slices to consider for each volume.\n\
+  --batchSize: Size of the batches.\n--dataroot: Root directory of the test dataset.\n--input_nc: Number\
+  \ of channels of input data.\n--output_nc: Number of channels of output data.\n--size: Size of the data\
+  \ (squared assumed).\n--cuda: Use GPU computation.\n--n_cpu: Number of CPU threads to use during batch\
+  \ generation.\n--generator_A2B: Path to the A2B generator checkpoint file.\n--generator_B2A: Path to\
+  \ the B2A generator checkpoint file.\n\n\n## Output\nThe generated synthetic CT images will be saved\
+  \ in the test_result directory. The SSIM and PSNR scores will be written to the ssim_scores.txt file.\n"

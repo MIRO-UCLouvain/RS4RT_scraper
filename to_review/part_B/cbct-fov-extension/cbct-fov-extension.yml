@@ -1,0 +1,50 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: SusanneSchaub/CBCT-FOV-Extension
+url: https://github.com/SusanneSchaub/CBCT-FOV-Extension
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-07T15:10:15Z'
+image_source: https://raw.githubusercontent.com/SusanneSchaub/CBCT-FOV-Extension/HEAD/cbct_extension.png
+heuristic_total_score: 18
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# CBCT Field-of-View Extension \n\nThis is the official repository for the Paper \"Field-of-View\
+  \ Extension in Dental Cone-Beam CT via Implicit Neural Representations and Diffusion Model-Based Refinement\"\
+  .\n\nWe use a three-stage framework that consists of (1) an implicit neural representation (INR) for\
+  \ estimating missing parts of the truncated projection data, (2) an iterative reconstruction for generating\
+  \ a secondary volumetric image with improved anatomical consistency and (3) a fast diffusion model for\
+  \ image enhancement.\n\nThe INR model builds on the work of Zha, R., et al. [1] ([NAF](https://github.com/Ruyi-Zha))\
+  \ with modifications described in our paper. The fast diffusion model builds on the work of Nichol,\
+  \ A. Q. and Dhariwal, P. [2] ([DDPM](https://github.com/openai/improved-diffusion)). We accelerated\
+  \ the sampling process by incorporating modifications proposed in [3] ([fastWDM](https://github.com/AliciaDurrer/fastWDM3D))\n\
+  \n<img src=\"./cbct_extension.png\" alt=\"Inference Overview\" width=\"800\">\n\n# How to Run This Repository\n\
+  \nFollow the steps below to set up and run this repository.\n\n## Step 1: Set Up the Environments\n\
+  For data generation and image reconstruction, first install [TIGRE toolbox](https://github.com/CERN/TIGRE).\
+  \ To run the INR model, install the dependencies listed in [`requirements.txt`](naf/requirements.txt).\
+  \ To run the diffusion model, install the dependencies listed in [`requirements.txt`](inr-diffusion/requirements.txt).\n\
+  \n## Step 2: Get the Data\nWe used the publicly available MMDental dataset that can be downloaded [here](https://springernature.figshare.com/articles/dataset/MMDental_-_A_multimodal_dataset_of_tooth_CBCT_images_with_expert_medical_records/28505276?file=53187695).\n\
+  \n\n## Step 3: Training of the INR\n\n1. In [`naf/dataGenerator`](naf/dataGenerator/), prepare the training\
+  \ data for the INR by running\n\n   ```bash\n   python MMDental.py\n   ```\n\n2. Run the INR training\
+  \ in the [`naf`](naf/) directory with:\n\n   ```bash\n   python train_adapt.py\n   ```\n   \n## Step\
+  \ 4: Iterative Reconsruction\nRun an iterative reconstruction with the INR rendered projections with:\n\
+  \   ```bash\n   python MMDental_reconstruction.py\n   ```\nCreate a dataset with this code for the training\
+  \ of the diffusion model.\n\n## Step 5: Training of the fast DDPM\n\n1. In [`inr-diffusion`](inr-diffusion/),\
+  \ train the diffusion model by running\n\n   ```bash\n   bash run.sh train\n   ```\n\n2. Run the sampling\
+  \ process with:\n\n   ```bash\n   bash run.sh sample\n   ```\n\n## Acknowledgements\nWe thank the authors\
+  \ of the publicly available [4] ([TIGRE toolbox](https://github.com/CERN/TIGRE)). \n\n## References\n\
+  [1] Zha, R., et al.: \"NAF: Neural Attenuation Fields for Sparse-View CBCT Reconstruction.\" arXiv preprint\
+  \ arXiv:2209.14540 (2022).\n\n[2] Nichol, A. Q., & Dhariwal, P. (2021). \"Improved denoising diffusion\
+  \ probabilistic models.\" arXiv preprint arXiv:2102.09672 (2021).\n\n[3] Durrer, A., et al.: \"fastWDM3D:\
+  \ Fast and Accurate 3D Healthy Tissue Inpainting.\" arXiv preprint arXiv:2507.13146 (2025).\n\n[4] Biguri,\
+  \ A., et al.:\"TIGRE v3: Efficient and easy to use iterative computed tomographic reconstruction toolbox\
+  \ for real datasets.\" arXiv preprint arXiv:2412.10129 (2024).\n"

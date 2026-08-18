@@ -1,0 +1,79 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: vkrishna7698-sketch/brain-tumor-segmentation-unet
+url: https://github.com/vkrishna7698-sketch/brain-tumor-segmentation-unet
+platform: github
+description: U-Net model for brain tumor segmentation on MRI scans — findings, results, and metrics
+license: null
+language: null
+keywords: []
+stars: 0
+updated_at: '2026-07-21T00:57:34Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Brain Tumor Segmentation — U-Net — Brain MRI\n\nA deep learning model that looks at\
+  \ a brain MRI scan and tries to outline\nwhere a tumor is, pixel by pixel.\n\n**Result: Dice score of\
+  \ [TBD — add final test Dice here] on scans the model had never seen before.**\n\n---\n\n## What is\
+  \ image segmentation?\n\nMost people have heard of image *classification* — a model looks at a photo\n\
+  and says \"this is a cat.\" Segmentation goes further: instead of labelling\nthe whole image, it labels\
+  \ **every single pixel**.\n\nSo for a brain MRI, the model doesn't just answer \"is there a tumor?\"\
+  \ It\nanswers \"which exact pixels *are* the tumor?\" The output is a mask — a\nblack-and-white image\
+  \ where white marks tumor and black marks everything\nelse.\n\nThink of it as the difference between\
+  \ saying \"there's a tumor in this scan\"\nand drawing a precise outline around it with a marker.\n\n\
+  ## Why build this?\n\nRadiologists currently outline tumors by hand, slice by slice. A single\npatient's\
+  \ MRI can have dozens of slices, and each one takes time and\nconcentration. It's slow, and two doctors\
+  \ can draw slightly different\nboundaries.\n\nAn automated model can:\n- Outline tumors in seconds instead\
+  \ of minutes\n- Give consistent boundaries every time\n- Measure tumor size and track whether it grows\
+  \ or shrinks between scans\n\nThis isn't meant to replace a doctor — it's meant to give them a starting\n\
+  point they can adjust, so they spend their time on judgement instead of\ntracing.\n\n## The dataset\n\
+  \n[LGG MRI Segmentation](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)\n— brain\
+  \ MRI scans from real patients, each paired with a mask that doctors\ndrew by hand showing the true\
+  \ tumor location.\n\nThose hand-drawn masks are the \"answer key.\" The model learns by comparing\n\
+  its guesses against them, over and over, until its outlines match.\n\nThe full set has 3,929 slices,\
+  \ of which about 1,373 (35%) contain a tumor.\nThat imbalance matters a lot — see below.\n\n## How U-Net\
+  \ works\n\nU-Net is the model architecture. Its name comes from its shape — it goes\ndown, then back\
+  \ up, like the letter U.\n\n**Going down (the encoder):** the image is compressed step by step. The\n\
+  model loses fine detail but learns *what* it's looking at — edges, textures,\nshapes that look like\
+  \ tumor tissue.\n\n**Going up (the decoder):** the compressed understanding is expanded back to\nfull\
+  \ size, so the model can say *where* the tumor is and draw the mask.\n\n**The shortcuts (skip connections):**\
+  \ fine detail lost on the way down is\npassed directly across to the way up, which is why U-Net can\
+  \ draw sharper\noutlines than a plain encoder-decoder network, and why it's the standard\nchoice for\
+  \ medical imaging.\n\n## Current setup\n\n| Component | Choice |\n|---|---|\n| Model | U-Net (2,066,497\
+  \ parameters) |\n| Input | 128×128 grayscale MRI slices |\n| Output | Binary tumor mask |\n| Loss |\
+  \ Binary cross-entropy |\n| Optimizer | Adam (default learning rate) |\n| Training | [TBD — confirm\
+  \ final epoch count], batch size 16, on the full dataset (tumor + non-tumor slices) |\n| Framework |\
+  \ TensorFlow / Keras |\n\n## Where things stand right now\n\nEarly runs show accuracy sitting around\
+  \ 98–99%, but Dice is still low\n(in the 0.1–0.2 range as of the last run). This is expected, not a\
+  \ bug —\naccuracy is misleading here:\n\nAcross the whole dataset, roughly 1% of all pixels are tumor.\
+  \ A model that\npredicts \"no tumor\" everywhere would still score around 99% accuracy while\nbeing\
+  \ completely useless. **Dice score** measures actual overlap between\nthe predicted mask and the true\
+  \ mask — 1.0 is a perfect match, 0.0 is no\noverlap at all — so it's the metric that actually tells\
+  \ us whether the\nmodel found the tumor or not.\n\n**Next steps to improve the Dice score** (based on\
+  \ comparing against a\nsimilar project):\n1. Switch the loss function from plain BCE to a combined BCE\
+  \ + Dice loss,\n   so the model is directly penalized for missing the tumor region\n2. Consider training\
+  \ only on slices that actually contain a tumor, since\n   feeding it mostly-empty images may be drowning\
+  \ out the signal\n3. Try a lower learning rate if the model appears to jump to a \"predict\n   nothing\"\
+  \ answer early in training\n4. Train for more epochs — 5 is likely not enough for Dice to fully climb\n\
+  \n## Results\n\n### Training curves\n\n![Training curves](training_curves.png)\n*(TBD — copy the saved\
+  \ `training_curves.png` from the project folder into\nthis results folder)*\n\n### Predicted masks\n\
+  \n![Predicted masks](predicted_masks.png)\n*(TBD — copy the saved prediction image(s) from the project\
+  \ folder)*\n\n### Tumor overlay\n\n![Tumor overlay](tumor_overlay.png)\n*(TBD — copy the saved overlay\
+  \ image(s) from the project folder)*\n\n## Results summary\n\n| Metric | Score |\n|---|---|\n| Test\
+  \ Dice | [TBD] |\n| Train Dice (final epoch) | [TBD] |\n| Validation Dice (final epoch) | [TBD] |\n\
+  | Test accuracy | [TBD] (not very meaningful — see above) |\n\n## How to run\n\n1. Download the [LGG\
+  \ MRI Segmentation dataset](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)\n2. Update\
+  \ the `DATA_DIR` path in the script to point at the unzipped\n   `kaggle_3m` folder\n3. Install dependencies:\
+  \ `opencv-python`, `numpy`, `scikit-learn`,\n   `matplotlib`, `tensorflow`\n4. Run the script\n\n##\
+  \ Tech stack\n\nPython · TensorFlow/Keras · OpenCV · NumPy · scikit-learn · Matplotlib\n\n## Limitations\
+  \ (current state)\n\n- Trained on the full dataset including tumor-free slices, which likely\n  makes\
+  \ it harder for the model to learn the tumor signal\n- Uses plain binary cross-entropy loss rather than\
+  \ a Dice-aware loss\n- Only trained for a small number of epochs so far — Dice was still\n  climbing\
+  \ when training stopped\n- Uses grayscale input; the original scans have channels that could carry\n\
+  \  extra useful information\n- Trained on one dataset from one source, so it may not transfer to scans\n\
+  \  from different machines or hospitals\n"

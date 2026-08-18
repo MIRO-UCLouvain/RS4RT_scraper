@@ -1,0 +1,287 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Swapnil-2005/Breast_Tumor_Segmentation
+url: https://github.com/Swapnil-2005/Breast_Tumor_Segmentation
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-31T07:43:51Z'
+image_source: https://raw.githubusercontent.com/Swapnil-2005/Breast_Tumor_Segmentation/HEAD/assets/Architechture.png
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: '# 🩺 Breast Tumor Segmentation using PU-UNet and Residual U-Net
+
+
+  > A comparative deep learning framework for breast ultrasound tumor segmentation using **PU-UNet** and
+  **Residual U-Net**, accompanied by quantitative evaluation and Explainable AI (XAI).
+
+
+  ---
+
+
+  ## 📖 Overview
+
+
+  Breast cancer is one of the leading causes of cancer-related deaths among women worldwide. Accurate
+  delineation of breast tumors in ultrasound images is a critical step for diagnosis, treatment planning,
+  and disease monitoring. However, breast ultrasound images often contain speckle noise, low contrast,
+  and irregular lesion boundaries, making manual segmentation challenging and time-consuming.
+
+
+  This project presents a comprehensive comparative study between **Residual U-Net (ResUNet)** and the
+  recently proposed **Product Unit U-Net (PU-UNet)** for semantic segmentation of breast tumors using
+  the **BUSI (Breast Ultrasound Images) Dataset**.
+
+
+  Unlike conventional convolutional architectures that rely primarily on additive feature aggregation,
+  PU-UNet introduces **stable multiplicative interactions through Product Unit Residual Blocks**, enabling
+  richer feature representations while maintaining nearly identical computational complexity.
+
+
+  The project further integrates multiple Explainable AI (XAI) techniques including **Grad-CAM**, **Saliency
+  Maps**, and **Probability Map Visualization** to improve model transparency and interpretability.
+
+
+  ---
+
+
+  ## ✨ Key Features
+
+
+  - 🩺 Breast Tumor Semantic Segmentation
+
+  - 📊 Comparative Analysis of PU-UNet and Residual U-Net
+
+  - 🧠 Product Unit Residual Learning
+
+  - 📈 Dice Score, IoU, Precision & Recall Evaluation
+
+  - 📉 ROC-AUC Analysis
+
+  - 🔥 Grad-CAM Explainability
+
+  - 🎯 Saliency Map Visualization
+
+  - 🌡 Probability Map Analysis
+
+  - 📑 Confidence Interval Based Performance Evaluation
+
+  - 💻 TensorFlow/Keras Implementation
+
+
+  ---
+
+
+  # 🏗️ Model Architecture
+
+
+  <img src="assets/Architechture.png" width="1000">
+
+
+  The proposed framework performs a comparative analysis between **Residual U-Net (baseline)** and the
+  recently proposed **Product Unit U-Net (PU-UNet)** for breast ultrasound tumor segmentation.
+
+
+  ### 🔹 Residual U-Net
+
+
+  Residual U-Net follows a conventional encoder–decoder architecture with residual learning. The encoder
+  progressively extracts hierarchical image features through residual convolutional blocks and down-sampling
+  operations, while the decoder reconstructs the segmentation mask using skip connections that preserve
+  fine spatial information. This architecture effectively alleviates the vanishing gradient problem while
+  improving feature propagation across deep layers.
+
+
+  ### 🔹 PU-UNet
+
+
+  PU-UNet extends the Residual U-Net architecture by selectively replacing low-resolution residual blocks
+  with **Product Unit Residual Blocks**. Instead of relying solely on additive feature aggregation, these
+  blocks explicitly model multiplicative feature interactions using a numerically stable Product Unit
+  formulation consisting of **Softplus-based positivity mapping**, **log-domain clipping**, and **exponential
+  reconstruction**.
+
+
+  Unlike replacing every convolutional block, Product Unit Residual Blocks are inserted only within semantically
+  richer low-resolution encoder, bottleneck, and decoder stages, allowing the model to capture higher-order
+  nonlinear feature relationships while preserving efficient local feature extraction in the shallow layers.
+
+
+  The side-by-side architecture illustrates the fundamental difference between both models and highlights
+  how explicit multiplicative feature learning enhances semantic segmentation without introducing significant
+  computational overhead.
+
+
+  ---
+
+
+  # 📊 Experimental Results
+
+
+  ## Dataset Distribution
+
+
+  <img src="assets/dataset_details.png" width="500">
+
+
+  The **BUSI (Breast Ultrasound Images) Dataset** consists of three categories: **Benign**, **Malignant**,
+  and **Normal** ultrasound images. The figure illustrates the class distribution used throughout the
+  study. Understanding the dataset composition is essential for interpreting segmentation performance
+  and assessing potential class imbalance.
+
+
+  ---
+
+
+  ## Dice Score Curve
+
+
+  <img src="assets/Dice_score_curve.png" width="700">
+
+
+  The Dice Score curves compare the training and validation performance of PU-UNet and Residual U-Net
+  across training epochs. Dice Score measures the overlap between predicted segmentation masks and the
+  corresponding ground truth annotations. A higher Dice Score indicates more accurate tumor segmentation
+  and better boundary delineation.
+
+
+  ---
+
+
+  ## IoU Score Curve
+
+
+  <img src="assets/iou_score_curve.png" width="700">
+
+
+  The Intersection over Union (IoU) curves illustrate the segmentation quality achieved during training.
+  IoU evaluates the overlap between predicted masks and ground truth relative to their union, providing
+  another robust measure of segmentation performance. The convergence trends demonstrate the learning
+  behavior of both architectures.
+
+
+  ---
+
+
+  ## Training Loss Curve
+
+
+  <img src="assets/loss_curve.png" width="700">
+
+
+  The training and validation loss curves describe the optimization process throughout model training.
+  A consistent decrease in loss indicates successful learning, while the relationship between training
+  and validation losses provides insight into model generalization and potential overfitting.
+
+
+  ---
+
+
+  ## Quantitative Performance Comparison
+
+
+  <img src="assets/test_results.png" width="750">
+
+
+  The quantitative comparison summarizes the final segmentation performance of both models using **Dice
+  Score**, **Intersection over Union (IoU)**, **Precision**, and **Recall**. These metrics collectively
+  evaluate overlap accuracy, lesion localization capability, false positive reduction, and segmentation
+  completeness.
+
+
+  ---
+
+
+  ## ROC Curve Comparison
+
+
+  <img src="assets/roc_curve_test_result_comparison.png" width="750">
+
+
+  The Receiver Operating Characteristic (ROC) curves compare the pixel-level discrimination capability
+  of PU-UNet and Residual U-Net. The Area Under the Curve (AUC) reflects the overall segmentation performance,
+  where values closer to one indicate stronger discrimination between tumor and background pixels.
+
+
+  ---
+
+
+  ## Segmentation Prediction Comparison
+
+
+  <img src="assets/Segmentation_prediction.png" width="850">
+
+
+  Qualitative segmentation results compare the original ultrasound image, ground truth annotation, PU-UNet
+  prediction, and Residual U-Net prediction. The overlay visualization highlights correctly segmented
+  tumor regions and enables direct visual assessment of segmentation quality between both architectures.
+
+
+  ---
+
+
+  ## Grad-CAM Explainability
+
+
+  <img src="assets/Grad_CAM.png" width="850">
+
+
+  Grad-CAM visualizations highlight the regions that contributed most significantly to the segmentation
+  decision. These activation maps improve model interpretability by demonstrating that the network primarily
+  focuses on clinically relevant tumor regions instead of surrounding anatomical structures.
+
+
+  ---
+
+
+  ## Saliency Map Analysis
+
+
+  <img src="assets/integrated_gradients.png" width="850">
+
+
+  Saliency Maps provide an alternative Explainable AI perspective by highlighting input pixels that most
+  strongly influence the model''s predictions. These visualizations help verify whether the segmentation
+  model relies on meaningful anatomical information during inference.
+
+
+  ---
+
+
+  ## Probability Map Visualization
+
+
+  <img src="assets/Probability_map.png" width="850">
+
+
+  Probability maps visualize the confidence assigned by each model to every image pixel. Higher intensity
+  corresponds to greater confidence that a pixel belongs to the tumor region. The probability difference
+  map further highlights regions where PU-UNet and Residual U-Net produce different confidence estimates.
+
+
+  ---
+
+
+  # 📈 Summary
+
+
+  This study presents a comprehensive comparative evaluation of **Residual U-Net** and **PU-UNet** for
+  breast ultrasound tumor segmentation on the **BUSI dataset**. Experimental results demonstrate that
+  PU-UNet effectively enhances feature representation through stable multiplicative interactions while
+  maintaining computational efficiency. Quantitative evaluation using Dice Score, IoU, Precision, Recall,
+  and ROC-AUC, together with qualitative analysis using Grad-CAM, Saliency Maps, and Probability Maps,
+  demonstrates the effectiveness and interpretability of the proposed segmentation framework for medical
+  image analysis.
+
+
+  ---
+
+  ```'

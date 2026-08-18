@@ -1,0 +1,125 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: shivapriyasunnam/Toxicity-Prediction-Using-Machine-Learning
+url: https://github.com/shivapriyasunnam/Toxicity-Prediction-Using-Machine-Learning
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2024-04-01T21:42:57Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 2 AI/ML term(s) in repository name.
+readme_excerpt: "# Toxicity Prediction of Chemicals using Data Mining and Machine Learning\n\n**1. Introduction**\n\
+  \nThis project focuses on building a Machine Learning solution for predicting the toxicity of a chemical\
+  \ when\nthe respective SMILE molecule is provided. I have experimented with many machine learning models\
+  \ and\ntechniques to achieve an accurate model. This report talks about the steps followed in the project\
+  \ during\nthe development of the solution.\n\n**2. Data Preparation**\n\nWe were provided with a Training\
+  \ and a Testing Dataset, these datasets were worked on and used to train\nand test the machine learning\
+  \ algorithms used for Toxicity Prediction.\n\n\n***2.1 Training Dataset***\n\nThe training dataset consisted\
+  \ of 75,384 samples. Each sample had an ‘ID’ and an ‘Expected’ value. The ID\nwas a combination of SMILE\
+  \ molecule of the compound and the Assay ID, separated with a semicolon.\nSMILE is a Simplified Molecular\
+  \ Input Line; this format is used for computer programming applications.\nThe Assay ID is a unique identifier\
+  \ that represents scientific tests. The first step towards preparing training\ndata was to separate\
+  \ the SMILE molecules from the Assay IDs. After being separated the Assay ID was\ntaken as a feature\
+  \ and given to the training model.\n\n***2.2 Testing Dataset***\nThe testing dataset consisted of 10,995\
+  \ samples. They were in a similar format to the training dataset.\nHowever, the result ‘Expected’ was\
+  \ not present as this dataset should be used for testing purposes only.\nThe samples were provided with\
+  \ ‘x’ as the column identifier. These samples were also separated using the\nsemicolon before giving\
+  \ them to the model. Assay ID was also considered as a feature similar to the testing\ndataset.\n\n\
+  **3. Feature Identification**\n\nUsing the SMILE molecule information, one can retrieve much information\
+  \ from the web. There are many\nlibraries available in Python and other languages that provide such\
+  \ information with simple commands.\n\n\n***3.1 Libraries in Python for Chemical Features***\n\nLibraries\
+  \ such as RDKit, DeepChem, PubChem, MolIVS, ChemSpider and Pybel are few examples for getting\nchemical\
+  \ information using just a SMILE molecule. They are some great sources with clear documentation\nabout\
+  \ every function. In this project, I specifically used the RDKit and PubChem libraries to finalize my\n\
+  features.\n\n\n***3.2 Final Training Features***\n\nI have used many combinations of features and also\
+  \ tried to do feature selection using algorithms like\nRecursive Feature Elimination. Finally, the features\
+  \ that contributed to my best score were Molecular\nDescriptors from RDKit, MACCS Fingerprint (166 Bit)\
+  \ from RDKIT and Element Property Fingerprint (\nBit) from DeepChem.\n\nThe molecular descriptors give\
+  \ much chemical information in numerical form, some examples of\ndescriptors are Number of Valence Electrons,\
+  \ Number of Radical Electrons and Heavy Atom Weight. During\nthe retrieval of molecular descriptors,\
+  \ some values from the dataset threw some errors, they were\n\n\ndiscarded temporarily. The MACCS keys\
+  \ are Molecular Access System fingerprints that provide information\nabout certain structural properties\
+  \ in the molecules. Many applications use these fingerprints for\nclustering and classification tasks.\
+  \ MACCS keys have contributed to increasing the total accuracy of the\npredictions. The Element Structure\
+  \ Property keys were also retrieved from DeepChem library. These\nfingerprints provide information about\
+  \ physicochemical properties. Properties such as polarizability and\nelectronegativity are also given\
+  \ in these keys.\n\n**4. Dataset Balancing – Random Over Sampler**\n\nAfter extracting all the features\
+  \ and training the machine learning models, the accuracy was still less and\nnot improving. This clearly\
+  \ meant that the dataset was skewed and had to be balanced before feeding it\nto the model. Another\
+  \ change I made to the dataset was to convert the output numerical into\nstandardized format. The original\
+  \ output values were either ‘1’ or ‘2’ but I transformed that to either ‘0’\nor ‘1’. I also then balanced\
+  \ the originally skewed dataset using **_RandomOverSampler_** this is a balancing\nmodel available on\
+  \ sklearn.\n\n\nI used a sampling strategy as 0.5 and random state as 42. The sampling strategy is the\
+  \ ratio of minority\nclass to majority class. I tried with multiple float values such as 0.2, 0.3, 0.4,\
+  \ 0.6 and 0.7 but 0.5 worked\nbest for my experiment. After random over sampling, the total number of\
+  \ samples that can be fed to\ntraining model was now 97,078. These samples were not imbalanced or skewed.\
+  \ Our training dataset is\nnow ready to be fed to any machine learning algorithm!\n\n**5. Model Selection**\n\
+  \nExamining the problem more closely, it is clear that this is a Classification problem because the\
+  \ datasets\nprovided are in such a way that when a model is given input data, here a chemical molecule,\
+  \ the model\nhas to predict if that molecule is toxic or not. The output classes here are ‘1’ for toxic\
+  \ prediction and ‘0’\nfor non-toxic or safe prediction.\n\n***5.1 XGB Classifier***\n\nI experimented\
+  \ with many classification models and tried the following experiments on all the models.\nHowever, in\
+  \ this entire document, I will be talking about only one model that worked best for me and with\nwhich\
+  \ I achieved my best score. The model that I scored best for me is XGB or the e **_Xtreme Gradient\n\
+  Boosting Classifier Model_**. The main reason I think XGB worked best for me is that unlike most models,\n\
+  XGB is an ensemble model, it internally combines many simple models. XGB also has the ability to handle\n\
+  missing data internally. Additionally, it also knows how to work with relationships that are not linear\
+  \ and\ncomputes regularization for the dataset. XGB Classifier also is extremely scalable. After balancing\
+  \ my\ndataset the size of the dataset was almost 1 lakh samples with hundreds of features. XGB can handle\
+  \ such\na huge dataset with ease. Some other models that I performed experiments with are Random Forests,\n\
+  \n\nNaives Bayes, Support Vector Machines, Decision Trees and Gaussian Naives Bayes. However, all of\
+  \ them\nperformed either slightly similar in comparison to XGB or worse. I also tried to create ensemble\
+  \ models\nthat were trained on different feature sets but did not perform as good as XGB.\n\n**6. Training**\n\
+  \nTraining the model is the most important phase in developing a machine learning solution. At first,\
+  \ I used\nsome default parameters to train the model that resulted in low accuracies which ranged between\
+  \ 60 - 70.\nResearching more about the parameters, it was important that the parameters had to be set\
+  \ to\nappropriate values based on your training dataset for best results.\n\n***6.1 Hyperparameter Tuning***\n\
+  \nAfter balancing the data, the same dataset was passed to a Hyperparameter tuning model called the\n\
+  ‘Randomized Search CV’. Randomized Search CV is a technique used in machine learning to find the best\n\
+  hyperparameters for a given model. It is a type of cross-validation that randomly selects hyperparameters\n\
+  from a specified range of values and evaluates the model's performance using those values. This method\n\
+  is particularly useful when the hyperparameter space is large and exhaustive search is impractical.\n\
+  \n\nThe following are the parameters that are accepted by XGB Classifier:\n\n- max_depth: The maximum\
+  \ possible depth of the Tree.\n- learning_rate: The rate at which the algorithm learns.\n- n_estimators:\
+  \ Number of estimators for the model.\n- gamma: The value for loss reduction in the model.\n- subsample:\
+  \ Ratio of observations that are sampled randomly.\n- colsample_bytree: Ratios of coloumns that are\
+  \ sampled randomly.\n- min_child_weight: Min weight for each child node.\n\n\n- reg_alpha: Regularization\
+  \ value for weights.\n- reg_lambda: Regularization value for weights L2.\n    I have run randomized\
+  \ search CV for 2 iterations with 5 cross validation folds. Once, the\n    parameters are generated,\
+  \ use them in XGB Classifier to train your model. I have used cross\n    validation training for 8 folds\
+  \ to achieve my best score on Kaggle. Will explain more about cross\n    validation in the next section.\
+  \ Finally, the score I got after following all the above steps are as\n    follows.\n\n**7. Testing**\n\
+  \nI used the k fold Cross validation techniques to perform testing. The idea behind k-fold cross-validation\
+  \ is\nto split the original dataset into k subsets (or \"folds\"), then train and test the model k times,\
+  \ using a\ndifferent fold as the testing set in each iteration and the remaining folds as the training\
+  \ set. I have used 8\nfolds to get my result.\n\n\n***7.1 Internal Validation***\n\nI have used 5 metrics\
+  \ for internal validation; however, the F1 Score was the major determinant of\nunderstanding the performance\
+  \ of my model. The following are the score I referred to:\n\n- F1 Score\n- Accuracy Score\n- Precision\
+  \ Score\n- Recall Score\n- ROC AUC Score\n  \n**8. Saving the Model using Pickle**\n\nOnce, the training\
+  \ and testing functions complete execution, I have saved the trained model using Pickle\nfor predicting\
+  \ future results simulating the model again and again to go through the processing of data\npreparation\
+  \ and training. The code submit picks up the pickle model and generates the submission file\nuntil states\
+  \ otherwise in the code. To run the entire code we have to change the value of _trainModel_\nvariable\
+  \ to True.\n\n**9. Kaggle Leaderboard**\n\nThe first BEST Private Score is the best score with 83.02\
+  \ \n\n**10. Reproducibility**\n\nDocker is a containerization technology for building, testing, and\
+  \ deploying applications quickly. To run the\nthe project, one can simply run the **_Dockerfile_** created\
+  \ for the project that’s available in the GitHub Repository.\n\n**Operating System** : Windows\n\n**Python**\
+  \ : Version 3 and above\n\n**Libraries Required** :\n\npandas\n\nrdkit\n\nscikit-learn\n\nxgboost\n\n\
+  imblearn\n\ndeepchem\n\ntensorflow\n\n**Running the Code with DOCKER:**\n\nSimply run the 'run.sh' file\
+  \ that executes Docker Commands\n    - Dockerfile automatically installs the required libraries\n\n\
+  **Docker Commands:**\n\ndocker build -t toxicity -f Dockerfile .\n\ndocker images\n\ndocker run toxicity\n\
+  \n**Run in Local:**\n\nInstall the above libraries using\n    pip install {library}\nRun the python\
+  \ command\n    python toxicityPrediction.py\n\n\n**11. Conclusion**\n\nThrough this project I was able\
+  \ to implement a full-fledged Machine Learning Solution for predicting the\ntoxicity of a Molecule when\
+  \ a SMILE compound is provided. I scored 83.02 private accuracy and 80.\npublic accuracy. I also reproduced\
+  \ the same code using Dockerfile.\n\n\n"

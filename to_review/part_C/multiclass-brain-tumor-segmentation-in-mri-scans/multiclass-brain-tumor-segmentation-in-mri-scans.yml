@@ -1,0 +1,90 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: nabil-ha5an/Multiclass-Brain-Tumor-Segmentation-in-MRI-Scans
+url: https://github.com/nabil-ha5an/Multiclass-Brain-Tumor-Segmentation-in-MRI-Scans
+platform: github
+description: 'Implemented and benchmarked 3D U-Net, Attention U-Net, and Swin UNETR on the BraTS 2021
+  dataset using PyTorch/MONAI, reaching up  to 93.5% Dice on whole-tumor segmentation '
+license: null
+language: HTML
+keywords: []
+stars: 0
+updated_at: '2026-08-17T14:07:15Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Brain Tumor Segmentation using Deep Learning\n\nAutomated multiclass brain tumor segmentation\
+  \ from 3D MRI scans using three deep learning architectures: **3D U-Net**, **Attention U-Net**, and\
+  \ **Swin UNETR**.\n\n## Authors\n\n| Name | Email |\n|------|-------|\n| Md Minhajul Abedin | mminhajula@mun.ca\
+  \ |\n| Nabil Hasan | nabilh@mun.ca |\n| Md Abdul Hadi Chowdhury | mabdulc@mun.ca |\n\n**Computer Vision**\
+  \ — Memorial University of Newfoundland\n\n---\n\n## Overview\n\nBrain tumors, particularly glioblastomas,\
+  \ have a complex heterogeneous structure with distinct sub-regions that need precise identification\
+  \ for treatment planning. Manual segmentation by radiologists is time-consuming and prone to inter-observer\
+  \ variability. This project develops an automated pipeline that segments tumor sub-regions from multi-parametric\
+  \ MRI scans using deep learning.\n\nThe system classifies each voxel into one of four categories:\n\
+  - **Label 0** — Healthy tissue (background)\n- **Label 1** — Necrotic tumor core (NCR)\n- **Label 2**\
+  \ — Peritumoral edema (ED)\n- **Label 3** — Enhancing tumor (ET)\n\n## Dataset\n\nWe use the **BraTS\
+  \ 2021 Task 1 Dataset**, which contains 3D MRI scans from **1,251 subjects**. Each subject includes\
+  \ four MRI modalities:\n\n- **T1** — Native pre-contrast scan\n- **T1ce** — Gadolinium-enhanced scan\
+  \ (highlights tumor core)\n- **T2** — Highlights peritumoral edema\n- **FLAIR** — Fluid-attenuated inversion\
+  \ recovery (edema visibility)\n\nAll volumes are provided as NIfTI files (`.nii.gz`) with dimensions\
+  \ of 240×240×155 voxels.\n\n### Data Split\n| Set | Subjects | Percentage |\n|-----|----------|------------|\n\
+  | Training | ~1,000 | 80% |\n| Validation | ~125 | 10% |\n| Test | ~126 | 10% |\n\n## Models\n\n###\
+  \ 3D U-Net\nThe baseline encoder-decoder architecture for volumetric medical image segmentation. Uses\
+  \ residual units with 5 encoding levels (32, 64, 128, 256, 512 channels) and skip connections.\n\n###\
+  \ Attention U-Net\nExtends the U-Net with attention gates that learn to suppress irrelevant regions\
+  \ and focus on smaller tumor components. Same channel configuration as 3D U-Net.\n\n### Swin UNETR\n\
+  A transformer-based architecture that uses a Swin Transformer encoder to capture long-range spatial\
+  \ dependencies. Uses shifted window self-attention with a feature size of 24.\n\n## Preprocessing Pipeline\n\
+  \n1. **NIfTI Loading** — Volumes loaded using nibabel/MONAI\n2. **Orientation** — Standardized to RAS\
+  \ (Right-Anterior-Superior)\n3. **Resampling** — Resampled to 1mm isotropic spacing\n4. **Label Remapping**\
+  \ — BraTS labels {0, 1, 2, 4} remapped to contiguous {0, 1, 2, 3}\n5. **Normalization** — Z-score normalization\
+  \ per patient, per modality (nonzero voxels only)\n6. **Foreground Cropping** — Empty background margins\
+  \ removed\n7. **Patching** — Random 3D crops (128³ for U-Net/Attention U-Net, 96³ for Swin UNETR)\n\n\
+  ### Data Augmentation (Training Only)\n- Random 3D flips (all three axes)\n- Random 90° rotations\n\
+  - Random intensity scaling (±10%)\n- Random intensity shifting (±10%)\n\n## Training Configuration\n\
+  \n| Parameter | Value |\n|-----------|-------|\n| Optimizer | AdamW |\n| Learning Rate | 1e-4 |\n| Weight\
+  \ Decay | 1e-5 |\n| LR Scheduler | Cosine Annealing |\n| Loss Function | Dice + Cross-Entropy |\n| Batch\
+  \ Size | 2 |\n| Max Epochs | 100 |\n| Early Stopping Patience | 15 validation intervals |\n| Mixed Precision\
+  \ | Yes (torch.amp) |\n| Gradient Clipping | Max norm = 1.0 |\n\n## Results\n\n### Dice Similarity Coefficient\
+  \ (↑ higher is better)\n\n| Model | Whole Tumor | Tumor Core | Enhancing Tumor | Mean Dice |\n|-------|-------------|------------|-----------------|-----------|\n\
+  | 3D U-Net | 0.9330 | 0.8980 | 0.8537 | 0.8949 |\n| **Attention U-Net** | **0.9390** | **0.9060** |\
+  \ **0.8624** | **0.9028** |\n| Swin UNETR | 0.9260 | 0.8810 | 0.8436 | 0.8902 |\n\n### Hausdorff Distance\
+  \ 95% in mm (↓ lower is better)\n\n| Model | Whole Tumor | Tumor Core | Enhancing Tumor |\n|-------|-------------|------------|-----------------|\n\
+  | 3D U-Net | 2.50 | 2.50 | 1.78 |\n| **Attention U-Net** | **1.78** | **2.35** | **2.30** |\n| Swin\
+  \ UNETR | 2.00 | 2.90 | 2.90 |\n\n**Best model: Attention U-Net** with a mean Dice of 0.9028.\n\n##\
+  \ Model Interpretability\n\nWe implemented **Grad-CAM (Gradient-weighted Class Activation Mapping)**\
+  \ to visualize which regions of the MRI each model focuses on when predicting each tumor sub-region.\
+  \ This provides transparency into the model's decision-making process without any retraining.\n\nAdditionally,\
+  \ we generated **3D volumetric surface renderings** of the predicted segmentation masks using the marching\
+  \ cubes algorithm, allowing visual inspection of tumor shape and structure from any angle.\n\n## Project\
+  \ Structure\n\n```\n.\n├── Brain_Tumor_Segmentation.ipynb    # Main notebook with all code\n├── README.md\
+  \                         # This file\n├── data/\n│   └── brats2021/                    # BraTS 2021\
+  \ dataset (not included)\n│       └── BraTS2021_XXXXX/\n│           ├── BraTS2021_XXXXX_t1.nii.gz\n\
+  │           ├── BraTS2021_XXXXX_t1ce.nii.gz\n│           ├── BraTS2021_XXXXX_t2.nii.gz\n│          \
+  \ ├── BraTS2021_XXXXX_flair.nii.gz\n│           └── BraTS2021_XXXXX_seg.nii.gz\n└── outputs/\n    ├──\
+  \ unet/\n    │   ├── best_model.pth\n    │   ├── unet_results.json\n    │   ├── gradcam_unet_subject_0.png\n\
+  \    │   ├── 3d_tumor_unet_subject_0.html\n    │   └── 3d_comparison_unet_subject_0.html\n    ├── attention_unet/\n\
+  \    │   ├── best_model.pth\n    │   ├── attention_unet_results.json\n    │   ├── gradcam_attention_unet_subject_0.png\n\
+  \    │   ├── 3d_tumor_attention_unet_subject_0.html\n    │   └── 3d_comparison_attention_unet_subject_0.html\n\
+  \    └── swin_unetr/\n        ├── best_model.pth\n        ├── swin_unetr_results.json\n        ├── gradcam_swin_unetr_subject_0.png\n\
+  \        ├── 3d_tumor_swin_unetr_subject_0.html\n        └── 3d_comparison_swin_unetr_subject_0.html\n\
+  ```\n\n## Requirements\n\n### Environment\n- Python 3.12.10\n- CUDA-capable GPU (12 GB+ VRAM recommended)\n\
+  \n### Dependencies\n```\ntorch==2.10.0\nmonai\nnibabel\nnumpy\nmatplotlib\nscikit-learn\nscikit-image\n\
+  scipy\nplotly\npandas\ntqdm\ntensorboard\nopencv-python==4.13\n```\n\n## Usage\n\n### 1. Download the\
+  \ Dataset\nDownload the BraTS 2021 dataset and place it in `data/brats2021/`.\n\n### 2. Train a Model\n\
+  Open `Brain_Tumor_Segmentation.ipynb` and set the desired model in the CONFIG cell:\n```python\nCONFIG[\"\
+  model_name\"] = \"unet\"  # options: \"unet\", \"attention_unet\", \"swin_unetr\"\n```\nRun all cells\
+  \ to train and evaluate. Repeat for each model.\n\n### 3. Compare Models\nAfter training all three models,\
+  \ the comparison section at the end of the notebook will automatically load results from each model's\
+  \ output directory and generate comparison charts.\n\n### 4. Generate Visualizations\nThe Grad-CAM and\
+  \ 3D visualization cells can be run after training. They load saved checkpoints and require no retraining.\n\
+  \n## Acknowledgements\n\n- [BraTS 2021 Challenge](http://braintumorsegmentation.org/) for the dataset\n\
+  - [MONAI](https://monai.io/) framework for medical image deep learning\n- [Plotly](https://plotly.com/)\
+  \ for interactive 3D visualizations\n\n"

@@ -1,0 +1,90 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: rgiridharan2/cbct_joint_segmentation
+url: https://github.com/rgiridharan2/cbct_joint_segmentation
+platform: github
+description: DLMI final project
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-12T20:24:12Z'
+image_source: null
+heuristic_total_score: 20
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# Ankle CBCT Segmentation\n\nAutomated segmentation of the **tibia**, **fibula**, and\
+  \ **talus** from intraoperative cone-beam CT (CBCT) images. Nine 2D deep learning architectures are\
+  \ compared on a 40-scan dataset acquired with the OnSight 3D CBCT system.\n\nThis project is coursework\
+  \ for **EN.580.627 Deep Learning for Medical Imaging**.\n\n---\n\n## Results summary\n\n| Model | Tibia\
+  \ | Fibula | Talus | Mean Dice |\n|---|---|---|---|---|\n| V1 — U-Net (baseline) | 0.555 | 0.559 | 0.253\
+  \ | 0.456 |\n| V2 — Improved U-Net | 0.902 | 0.847 | 0.805 | 0.851 |\n| V3 — Attention U-Net | 0.847\
+  \ | 0.913 | 0.877 | **0.879** |\n| V4 — ResNet34 U-Net | 0.931 | 0.848 | 0.691 | 0.823 |\n| V5 — U-Net++\
+  \ | 0.939 | 0.869 | 0.858 | **0.889** |\n| V6 — DeepLabV3+ | 0.913 | 0.807 | 0.808 | 0.842 |\n| V7 —\
+  \ MAnet | 0.903 | 0.849 | 0.773 | 0.842 |\n| V8 — V-Net (2D) | 0.904 | 0.876 | 0.856 | **0.879** |\n\
+  | V9 — nnU-Net (2D) | 0.751 | 0.662 | 0.583 | 0.665 |\n\nV3–V7 scores are mean over 6 test scans. V9\
+  \ uses the nnU-Net training recipe (SGD + polynomial LR) and is underfit at 60 epochs — the recipe requires\
+  \ ~500+ epochs to converge.\n\n---\n\n## Setup\n\n```bash\npip install torch torchvision segmentation-models-pytorch\n\
+  ```\n\nFor TorchIO (optional, 3D extension):\n```bash\npip install torchio\n```\n\nThe dataset (`AnkleDataset_DS4.npz`)\
+  \ and `splits.json` are not included in this repository. Place them in `data/` before training.\n\n\
+  ---\n\n## Training\n\nEvery training script accepts the same core arguments. Examples below use V5 (best\
+  \ model); swap the script name for any other version.\n\n**Basic run (uses defaults):**\n```bash\npython\
+  \ train_v5.py\n```\n\n**Full argument list:**\n```bash\npython train_v5.py \\\n  --npz        data/AnkleDataset_DS4.npz\
+  \ \\\n  --splits     data/splits.json \\\n  --epochs     60 \\\n  --batch-size 16 \\\n  --lr       \
+  \  3e-4 \\\n  --weight-decay 1e-5 \\\n  --alpha      0.5 \\\n  --output-dir results/v5\n```\n\n`--alpha`\
+  \ controls the loss mix: `alpha * CE + (1 - alpha) * SoftDice`. Default is 0.5.\n\n**V1-specific flags**\
+  \ (simpler script, fewer options):\n```bash\npython train.py --epochs 25 --lr 1e-4 --model unet\n```\n\
+  `train.py` also accepts `--model resunet` and `--model attentionunet` to run alternative architectures\
+  \ through the same V1-era pipeline.\n\n**V9 (nnU-Net) uses different optimizer defaults:**\n```bash\n\
+  python train_nnunet.py \\\n  --lr         1e-2 \\\n  --momentum   0.99 \\\n  --weight-decay 3e-5 \\\n\
+  \  --poly-exponent 0.9 \\\n  --epochs     60          # increase to 500+ for full convergence\n```\n\
+  \nMixed-precision training is enabled automatically when a CUDA GPU is available. Disable with `--no-amp`.\n\
+  \n---\n\n## Model architecture overview\n\n### V1 — Baseline U-Net\nStandard 4-level encoder-decoder\
+  \ with features `[32, 64, 128, 256]`. Max-pool downsampling, transposed conv upsampling, InstanceNorm\
+  \ + ReLU, Dropout2d (p=0.5) at bottleneck. Loss: weighted cross-entropy only. Optimizer: Adam, lr=1e-4,\
+  \ 25 epochs.\n\n### V2 — Improved U-Net\n- Residual blocks (two 3×3 convs + 1×1 projection shortcut)\n\
+  - Squeeze-and-excitation channel attention after each encoder stage\n- 5 levels: `[32, 64, 128, 256,\
+  \ 320]`\n- GELU activations, bottleneck dropout reduced to 0.1\n- Combined CE + soft Dice loss (α=0.5)\n\
+  - AdamW + cosine annealing LR, 60 epochs\n\n### V3 — Attention U-Net\nSame base as V1 but skip connections\
+  \ pass through attention gates (Oktay et al., 2018). The gate computes a spatial attention map from\
+  \ the gating signal and the skip features, suppressing activations outside the target structure. Training\
+  \ setup matches V2.\n\n### V4–V7 — Pretrained encoder variants\nAll use a ResNet34 encoder pretrained\
+  \ on ImageNet via the `segmentation-models-pytorch` library, with a single-channel input adaptation.\n\
+  \n| Version | Decoder |\n|---|---|\n| V4 | Standard U-Net decoder |\n| V5 | U-Net++ (dense nested skip\
+  \ connections) |\n| V6 | DeepLabV3+ (ASPP + lightweight decoder) |\n| V7 | MAnet (multi-scale attention)\
+  \ |\n\n### V8 — 2D V-Net\nAdapted from Milletari et al. (2016). Key differences from U-Net: learned\
+  \ strided 2×2 conv downsampling, 5×5 convolutions per stage, PReLU activations with per-channel learnable\
+  \ slopes, residual connections wrapping entire encoder/decoder stages. Variable conv depth per level:\
+  \ 1, 2, 3, 3, 3.\n\n### V9 — nnU-Net PlainConvUNet (2D)\nPlain double-conv blocks with LeakyReLU(0.01)\
+  \ and InstanceNorm — no residuals, no attention. Deep supervision: four segmentation heads at decoder\
+  \ resolutions 128, 64, 32, 16, weighted 1 / 0.5 / 0.25 / 0.125 (normalized). Training recipe: SGD +\
+  \ Nesterov momentum (0.99), polynomial LR decay (exponent 0.9), gradient clip at norm 12.0. Validation\
+  \ uses only the full-resolution head so val Dice is comparable to other models.\n\n---\n\n## Loss function\n\
+  \nV2–V9 use a combined loss:\n\n```\nL = α · CE(logits, target) + (1 − α) · SoftDice(logits, target)\n\
+  ```\n\n`SoftDice` computes soft Dice over foreground classes only (background excluded), using batch-level\
+  \ summation. Class weights for CE are computed with median-frequency balancing from the training set\
+  \ pixel counts.\n\n---\n\n## Dataset details\n\n| Property | Value |\n|---|---|\n| Scans | 40 ankle\
+  \ CBCT volumes |\n| Scanner | Stryker OnSight 3D CBCT |\n| Dimensions | ~384 × 384 × 576 voxels |\n\
+  | Voxel spacing | 0.5 × 0.5 × 0.5 mm |\n| Classes | background (0), tibia (1), fibula (2), talus (3)\
+  \ |\n| Input to models | 2D axial slices, 128 × 128 (downsampled 4×) |\n| Split | fixed JSON: train\
+  \ / val / test at scan level |\n\nSlices are extracted per-axis (axial). The training set uses foreground-only\
+  \ sampling. The validation set uses all slices. Augmentation includes deformable transformations via\
+  \ `AugPipeline`.\n\n---\n\n## Evaluation\n\nDice is computed at the scan level: all predicted slices\
+  \ for a scan are stacked into a volume, then hard Dice is computed per class over that volume. Mean\
+  \ Dice over the three foreground classes is the primary metric. Per-class results are logged each epoch\
+  \ to `results/<model>/train_log.csv`.\n\n```\nepoch, train_loss, val_loss, val_dice, dice_tibia, dice_fibula,\
+  \ dice_talus, lr\n```\n\n---\n\n## Extending to 3D\n\nThe logical next step is slab or patch-based 3D\
+  \ input. TorchIO provides a convenient pipeline for patch sampling from volumetric data:\n\n```python\n\
+  import torchio as tio\n\nsubject = tio.Subject(image=tio.ScalarImage(tensor=volume))\nsampler = tio.data.UniformSampler(patch_size=(64,\
+  \ 64, 64))\n```\n\nThe V8 (V-Net) and V9 (nnU-Net) architectures both have direct 3D counterparts in\
+  \ the literature that can be swapped in with minimal changes to the training loop.\n\n---\n\n## References\n\
+  \n- Ronneberger et al. (2015). U-Net. *MICCAI*.\n- Milletari et al. (2016). V-Net. *3DV*.\n- Hu et al.\
+  \ (2018). Squeeze-and-excitation networks. *CVPR*.\n- Oktay et al. (2018). Attention U-Net. *MIDL*.\n\
+  - Zhou et al. (2018). UNet++. *DLMIA Workshop, MICCAI*.\n- Chen et al. (2018). DeepLabV3+. *ECCV*.\n\
+  - Fan et al. (2020). MA-Net. *IEEE Access*.\n- Isensee et al. (2021). nnU-Net. *Nature Methods*.\n-\
+  \ Yakubovskiy (2019). segmentation-models-pytorch. [GitHub](https://github.com/qubvel/segmentation_models.pytorch)\n"

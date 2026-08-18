@@ -1,0 +1,61 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Swarnabhabioinfo/fetal-radiogenomics-benchmark
+url: https://github.com/Swarnabhabioinfo/fetal-radiogenomics-benchmark
+platform: github
+description: ''
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-24T13:50:45Z'
+image_source: null
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Fetal Imaging-Transcriptomics: A Leakage-Free Benchmark\n\nCode, frozen model, and\
+  \ results for the paper **\"Anatomical Identity Confounds Radiogenomic\nInference from Fetal Brain MRI:\
+  \ A Leakage-Free Benchmark with Spatial Nulls and Cross-Modal\nCytoarchitectural Validation\"** (IEEE\
+  \ Transactions on Medical Imaging, under review).\n\n> **What this is — and is not.** This is a *benchmark\
+  \ / evaluation framework*, not a molecular\n> predictor. The central result of the paper is that, under\
+  \ proper controls, first-order fetal MRI\n> encodes **regional identity, not sub-regional molecular\
+  \ state**: a no-imaging anatomical-identity\n> baseline (R=0.879) beats the model (0.808), the genuine\
+  \ spatial null is ≈0, and the model collapses\n> on an independent cohort (ρ=−0.157, p=0.42). **The\
+  \ model's outputs are not validated molecular\n> predictions and must not be used clinically or scientifically\
+  \ as such.** The interactive demo exists\n> to *demonstrate this finding*, by showing the model and\
+  \ the no-imaging baseline side by side.\n\n## Reproduce the headline results\n```bash\npip install -r\
+  \ requirements.txt\n# Leakage-free CV: ST-GAT vs. no-imaging baseline vs. graph-spectral null  (Table\
+  \ I, Fig. 2)\npython scripts/rigorous_evaluation.py --epochs 150 --n-perm 1000\n# Cross-modal DHARANI\
+  \ Gate B/C  (Tables II-III, Fig. 3)\npython scripts/v2_gate_c_reviewerproof.py\n# Regenerate all figures\
+  \ from the result files only\npython scripts/make_submission_figures.py && python scripts/make_arch_figure.py\n\
+  ```\nEvery number in the paper is in `results/` (machine-readable) and `CORRECTED_RESULTS.md` (provenance).\n\
+  \n## What is included (and deliberately not)\n**Included** (a few MB): the evaluation framework and\
+  \ cross-modal pipeline (`scripts/`), the frozen\nrepresentative model (`models/spatiotemporal_gat_best_fold.pth`),\
+  \ all result files (`results/`,\n`data/derived/analysis_tables/`), the atlas ROI labels, the figure\
+  \ generators, and the demo (`app.py`).\n\n**Not included** (point to public sources instead): the raw/augmented\
+  \ fetal MRI volumes and warped\natlases (hundreds of GB). The molecular and imaging references are public\
+  \ —\n[BrainSpan](https://www.brainspan.org/), the [Gholipour fetal atlas](http://crl.med.harvard.edu/),\n\
+  and the [DHARANI atlas](https://registry.opendata.aws/dharani-brain-dataset/).\n\n## Interactive demo\
+  \ (Hugging Face Spaces)\n`app.py` (Gradio) loads precomputed assets (`demo_assets.npz`, `models/model_state.pt`)\
+  \ and runs instantly\non free CPU. Pick a fetal-brain sample; it runs the frozen ST-GAT **and** the\
+  \ no-imaging anatomical-identity\nbaseline and reports how well each predicts the molecular reference.\
+  \ Across the bundled samples the baseline\n**matches or beats** the model (e.g., model R 0.66–0.92 vs.\
+  \ baseline 0.86–0.95) — the paper's finding, live.\nA permutation-importance panel shows the model leans\
+  \ on first-order intensity (i.e., regional anatomy).\nRebuild assets with `python scripts/make_demo_assets.py`\
+  \ (requires the full reference data).\n\n## Licensing and attribution\n- **Code** (all `*.py`, the figure\
+  \ generators, the demo) and the authors' own outputs (result files,\n  model checkpoints, figures):\
+  \ **MIT License** (see `LICENSE`).\n- **Bundled reference-derived data** stay under their source licenses\
+  \ and are included for\n  **non-commercial research reproducibility** only, with attribution:\n  - `atlas/`\
+  \ ROI labels are derived from the **Gholipour CRL fetal brain atlas** — **CC-BY-4.0**;\n    cite Gholipour\
+  \ *et al.*, *Sci. Rep.* 7:476 (2017).\n  - the radiomics (`master_radiomics_roi.csv`) and the molecular\
+  \ targets embedded in `demo_assets.npz`\n    are derived from **BrainSpan** (Allen Institute), used\
+  \ under the Allen Institute Terms of Use for\n    **research / non-commercial** purposes with citation;\
+  \ **commercial use requires Allen Institute\n    permission.** Cite Miller *et al.*, *Nature* 508:199\
+  \ (2014).\n  - the **DHARANI** atlas (referenced, not redistributed here) is CC-BY-4.0; cite Verma *et\
+  \ al.*,\n    *J. Comp. Neurol.* 533(2):e70006 (2025).\n\nPlease cite the paper and these sources when\
+  \ you use this repository.\n"

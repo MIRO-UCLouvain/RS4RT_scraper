@@ -1,0 +1,66 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: MunishUpadhyay/Brain-Tumor-Segmentation-BraTS-2020-Dataset
+url: https://github.com/MunishUpadhyay/Brain-Tumor-Segmentation-BraTS-2020-Dataset
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-12T09:18:03Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# BraTS 2020 Brain Tumor Segmentation\n\nThis repository contains code for brain tumor\
+  \ segmentation using the BraTS 2020 dataset. The project implements deep learning models to automatically\
+  \ segment brain tumors from multi-modal MRI scans.\n\n## Dataset Overview\n\nThe Brain Tumor Segmentation\
+  \ Challenge (BraTS) 2020 dataset contains multi-institutional pre-operative MRI scans of glioblastoma\
+  \ and lower-grade glioma patients. Each case includes four MRI modalities:\n\n- **T1**: T1-weighted\n\
+  - **T1ce**: T1-weighted with contrast enhancement\n- **T2**: T2-weighted\n- **FLAIR**: Fluid Attenuated\
+  \ Inversion Recovery\n\n### Tumor Regions\nThe segmentation task involves identifying three tumor sub-regions:\n\
+  - **Enhancing Tumor (ET)**: Label 4\n- **Tumor Core (TC)**: Labels 1 and 4\n- **Whole Tumor (WT)**:\
+  \ Labels 1, 2, and 4\n\n## Project Structure\n\n```\n├── README.md\n├── brats2020_get_data_read.py \
+  \     # Data loading and preprocessing\n├── custom_data_generator.py        # Custom data generator\
+  \ for training\n├── train_brats2020_updated.py      # Main training script\n└── train_brat2020.ipynb\
+  \           # Jupyter notebook for experimentation\n```\n\n## Files Description\n\n### `brats2020_get_data_read.py`\n\
+  - Handles data loading from the BraTS 2020 dataset\n- Implements preprocessing functions for MRI volumes\n\
+  - Manages data organization and file path handling\n- Includes normalization and standardization utilities\n\
+  \n### `custom_data_generator.py`\n- Custom PyTorch/Keras data generator for efficient batch processing\n\
+  - Handles on-the-fly data augmentation\n- Manages memory-efficient loading of large MRI volumes\n- Implements\
+  \ random sampling strategies for training\n\n### `train_brats2020_updated.py`\n- Main training script\
+  \ with updated architecture\n- Implements the segmentation model (likely U-Net or similar)\n- Includes\
+  \ training loop with validation\n- Handles model checkpointing and logging\n\n### `train_brat2020.ipynb`\n\
+  - Interactive Jupyter notebook for experimentation\n- Step-by-step model development and testing\n-\
+  \ Visualization tools for results analysis\n- Hyperparameter tuning and ablation studies\n\n## Requirements\n\
+  \n```bash\n# Core dependencies\ntorch>=1.8.0\ntorchvision>=0.9.0\nnumpy>=1.19.0\nnibabel>=3.2.0\nscikit-image>=0.18.0\n\
+  matplotlib>=3.3.0\ntqdm>=4.60.0\npandas>=1.2.0\n\n# Optional for visualization\nseaborn>=0.11.0\nplotly>=4.14.0\n\
+  ```\n\n## Installation\n\n1. Clone the repository:\n```bash\ngit clone <repository-url>\ncd brats2020-segmentation\n\
+  ```\n\n2. Install dependencies:\n```bash\npip install -r requirements.txt\n```\n\n3. Download the BraTS\
+  \ 2020 dataset:\n   - Register at: https://www.med.upenn.edu/cbica/brats2020/\n   - Download and extract\
+  \ the dataset\n   - Update data paths in configuration files\n\n## Usage\n\n### Data Preparation\n```python\n\
+  from brats2020_get_data_read import load_brats_data, preprocess_volume\n\n# Load and preprocess data\n\
+  data_path = \"/path/to/brats2020/dataset\"\ntrain_data, val_data = load_brats_data(data_path)\n```\n\
+  \n### Training\n```bash\npython train_brats2020_updated.py --data_path /path/to/dataset --epochs 10\
+  \ --batch_size 2\n```\n\n### Interactive Development\n```bash\njupyter notebook train_brats2020.ipynb\n\
+  ```\n\n## Model Architecture\n\nThe project likely implements a 3D U-Net architecture optimized for\
+  \ multi-modal brain tumor segmentation:\n\n- **Input**: 4-channel MRI volumes (T1, T1ce, T2, FLAIR)\n\
+  - **Output**: 4-class segmentation masks\n- **Architecture**: 3D U-Net with skip connections\n- **Loss\
+  \ Function**: Combined Dice + Cross-entropy loss\n\n## Evaluation Metrics\n\nThe model is evaluated\
+  \ using standard BraTS metrics:\n- **Dice Similarity Coefficient (DSC)**\n- **Hausdorff Distance (HD95)**\n\
+  - **Sensitivity**\n- **Specificity**\n\n## Data Augmentation\n\nThe custom data generator includes:\n\
+  - Random rotations and flips\n- Elastic deformations\n- Intensity normalization\n- Random cropping and\
+  \ scaling\n\n## Training Configuration\n\n```python\n# Example configuration\nBATCH_SIZE = 2\nLEARNING_RATE\
+  \ = 1e-4\nEPOCHS = 10\nPATCH_SIZE = (128, 128, 128)\nNUM_CLASSES = 4\n```\n\n## Results\n\nExpected\
+  \ performance on BraTS 2020 validation set:\n- **Enhancing Tumor**: Dice ~0.78\n- **Tumor Core**: Dice\
+  \ ~0.85\n- **Whole Tumor**: Dice ~0.90\n\n## Contributing\n\n1. Fork the repository\n2. Create a feature\
+  \ branch\n3. Make your changes\n4. Add tests if applicable\n5. Submit a pull request\n\n## License\n\
+  \nThis project is licensed under the MIT License - see the LICENSE file for details.\n\n## Acknowledgments\n\
+  \n- BraTS 2020 Challenge organizers\n- Medical imaging community\n- Contributors to open-source medical\
+  \ imaging libraries\n\n## Contact\n\nFor questions or issues, please open a GitHub issue or contact\
+  \ [munishupadhyay183@gmail.com].\n\n---\n\n**Note**: Make sure to comply with the BraTS 2020 dataset\
+  \ usage terms and conditions. The dataset is for research purposes only.\n"

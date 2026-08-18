@@ -1,0 +1,145 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: PortPy-Project/CompressRTP
+url: https://github.com/PortPy-Project/CompressRTP
+platform: github
+description: 'Compressed Radiation Treatment Planning [NeurIPS''24, MP''2025, PMB''23] '
+license: Apache-2.0
+language: Python
+keywords:
+- large-scale-optimization
+- low-dimensional-embedding
+- medical-physics
+- radiation-oncology
+- radiation-treatment-planning
+- radiotherapy
+- representation-learning
+stars: 17
+updated_at: '2026-05-30T16:04:09Z'
+image_source: https://raw.githubusercontent.com/PortPy-Project/CompressRTP/HEAD/images/CompressRTPLogo2.PNG
+heuristic_total_score: 30
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+- Matched 6 support term(s).
+readme_excerpt: "<p align=\"center\">\n  <img src=\"./images/CompressRTPLogo2.PNG\" width=70% height=\"\
+  40%\">\n</p>\n\n\n<h1 align=\"center\">Compressed Radiation Treatment Planning (CompressRTP)</h1>\n\n\
+  <h2 align=\"center\">\n  <a href=\"./images/RMR_NeurIPS_Paper.pdf\">NeurIPS'2024 </a> | \n    <a href=\"\
+  https://aapm.onlinelibrary.wiley.com/doi/full/10.1002/mp.17736\">Medical Physics'2025 </a> |\n  <a href=\"\
+  https://iopscience.iop.org/article/10.1088/1361-6560/acbefe/meta\">PMB'2023</a>\n\n</h2>\n\n\n# What\
+  \ is CompressRTP?\n\nRadiotherapy is used to treat more than half of all cancer patients, either alone\
+  \ or in combination with other treatments like surgery, chemotherapy, or immunotherapy. It works by\
+  \ directing high-energy radiation beams at the patient's body to destroy cancer cells. Since every patient's\
+  \ anatomy is unique, radiotherapy must be personalized. This means customizing the radiation beams to\
+  \ effectively target the tumor while minimizing harm to nearby healthy tissue.\n\nPersonalizing radiotherapy\
+  \ involves solving large and complex optimization problems. These problems need to be solved quickly\
+  \ due to the limited time available in clinical settings. Currently, they are often solved using gross\
+  \ approximations, which can lead to less effective treatments. This might result in the tumor not receiving\
+  \ enough radiation or healthy tissues being exposed to excessive radiation. The CompressRTP project\
+  \ aims to solve these optimization problems both rapidly and accurately. This ongoing project currently\
+  \ includes tools introduced in our latest three publications [1, 2, 3]. \n\n# High-Level Overview\n\
+  The optimization problems in radiotherapy are highly complex due to the \"curse of dimensionality\"\
+  \ since they involve many beams, beamlets (small segments of beams), and voxels (3D pixels representing\
+  \ volume). However, much of this data is redundant because it comes from discretizing a system that\
+  \ is inherently continuous. For example, radiation doses delivered from adjacent beamlets are highly\
+  \ correlated, and radiation doses delivered to neighboring voxels are very similar. This redundancy\
+  \ means that large-scale radiotherapy optimization problems are highly compressible, which is the foundation\
+  \ of **CompressRTP**.\n\nDimensionality reduction and compression have a rich history in statistics\
+  \ and engineering. Recently, these techniques have re-emerged as powerful tools for addressing increasingly\
+  \ high-dimensional problems in fields like big data and machine learning. Our goal is to **adapt and\
+  \ adopt** these versatile methods to **embed high-dimensional** radiotherapy optimization problems into\
+  \ **lower-dimensional spaces** so they can be solved efficiently. A general radiotherapy optimization\
+  \ problem can be formulated as:\n\n$Minimize \\text{ } f(A\\mathbf{x},\\mathbf{x})$\n\nSubject to $g(A\\\
+  mathbf{x},\\mathbf{x})\\leq 0,\\mathbf{x}\\geq 0$\n​\n\n**CompressRTP** currently addresses the following\
+  \ two issues with this problem:\n\n1. **Matrix Compression to Address the Computational Intractability\
+  \ of $A$:**\n\n    - **The Challenge:** The matrix $\U0001D434$ is large and dense (approximately 100,000–500,000\
+  \ rows and 5,000–20,000 columns) and is the main source of computational difficulty in solving radiotherapy\
+  \ optimization problems.\n    - **Traditional Approach:** This matrix is often sparsified in practice\
+  \ by simply ignoring small elements (e.g., zeroing out elements less than 1% of the maximum value in\
+  \ $\U0001D434$), which can potentially lead to sub-optimal treatment plans.\n    - **CompressRTP Solutions:**\
+  \ We provide a compressed and accurate representation of matrix $\U0001D434$ using two different techniques:\n\
+  \      - **(1.1) Sparse-Only Compression:** This technique sparsifies $\U0001D434$ using advanced tools\
+  \ from probability and randomized linear algebra. ([NeurIPS paper](./images/RMR_NeurIPS_Paper.pdf),\
+  \ [Sparse-Only Jupyter Notebook](https://github.com/PortPy-Project/CompressRTP/blob/main/examples/matrix_sparse_only.ipynb))\n\
+  \      - **(1.2) Sparse-Plus-Low-Rank Compression:** This method decomposes $\U0001D434$ into a sum\
+  \ of a sparse matrix and a low-rank matrix. ([Medical Physics paper](https://aapm.onlinelibrary.wiley.com/doi/full/10.1002/mp.17736),\
+  \ [Sparse-Plus-Low-Rank Jupyter Notebook](https://github.com/PortPy-Project/CompressRTP/blob/main/examples/matrix_sparse_plus_low_rank.ipynb))\n\
+  2. **Fluence Compression to Enforce Smoothness on $\U0001D465$:**\n    - **The Need for Smoothness:**\
+  \ The beamlet intensities $\U0001D465$ need to be smooth for efficient and accurate delivery of radiation.\
+  \ Smoothness refers to small variations in the intensity of neighboring beamlets in two dimensions.\n\
+  \    - **Traditional Approach:** Smoothness is often achieved implicitly by adding regularization terms\
+  \ to the objective function that discourage variations between neighboring beamlets.\n    - **CompressRTP\
+  \ Solution:** We enforce smoothness explicitly by representing the beamlet intensities using low-frequency\
+  \ wavelets, resulting in built-in wavelet-induced smoothness. This can be easily integrated into the\
+  \ optimization problem by adding a set of linear constraints.  ([PMB paper](https://iopscience.iop.org/article/10.1088/1361-6560/acbefe/meta),\
+  \ [Wavelet Jupyter Notebook](https://github.com/PortPy-Project/CompressRTP/blob/main/examples/fluence_wavelets.ipynb))\n\
+  \n\n# 1) Matrix Compression to Address the Computational Intractability of $\U0001D434$\n\n## 1.1) Sparse-Only\
+  \ Matrix Compression\nMatrix sparsification has been extensively studied in the machine learning community\
+  \ for applications such as low-rank approximation and Principal Component Analysis (PCA). This technique\
+  \ is also a key part of an emerging field known as randomized linear algebra. The main idea is to carefully\
+  \ sample and scale elements from the original dense matrix $\U0001D434$ to create a sparse \"sketch\"\
+  \ matrix $\U0001D446$ that closely resembles the characteristics of $\U0001D434$ (for example, ensuring\
+  \ that \n$||A-S||_2$ is small).\n\nIn radiotherapy optimization, we can replace the original dense matrix\
+  \ $A$ with this sparse matrix $S$ and solve the following surrogate optimization problem:\n\n$Minimize\
+  \ \\text{ } f(S\\mathbf{x},\\mathbf{x})$\n\nSubject to $g(S\\mathbf{x},\\mathbf{x})\\leq 0,\\mathbf{x}\\\
+  geq 0$\n$(S≈A,S$ is sparse, $A$ is dense)\n\n\nIn our [paper](./images/RMR_NeurIPS_Paper.pdf), we introduced\
+  \ **Randomized Minor Rectification (RMR)**, a simple yet effective matrix sparsification algorithm equiped\
+  \ with robust mathematical properties. The core principle of RMR is to **deterministically retain the\
+  \ large elements of a matrix while probabilistically handling the smaller ones**. Specifically, the\
+  \ RMR algorithm converts a dense matrix $\U0001D434$ into a sparse matrix $\U0001D446$ with typically\
+  \ 2–4% non-zero elements. This sparsification ensures that the optimal solution to the surrogate optimization\
+  \ problem (where $\U0001D434$ is replaced by \n$S$) remains a near-optimal solution for the original\
+  \ problem. For a detailed mathematical analysis, refer to Theorems 3.6 and 3.9 in our [paper](./images/RMR_NeurIPS_Paper.pdf).\n\
+  ​\n<p align=\"center\">\n<img src=\"./images/RMR_performance.PNG\" width=\"80%\" height=\"50%\">\n<p>\n\
+  \n**Figure Explanation:** The figure above compares the proposed RMR algorithm with four existing sparsification\
+  \ algorithms in terms of feasibility and optimality gaps. These gaps were calculated by solving both\
+  \ the original and surrogate optimization problems for 10 lung cancer patients, whose data is publicly\
+  \ available on PortPy. The results demonstrate that the RMR algorithm outperforms the existing methods.\n\
+  \n<p align=\"center\">\n<img src=\"./images/RMR_vs_Naive.PNG\" width=\"80%\" height=\"50%\">\n<p>\n\n\
+  **Figure Explanation:** The figure above illustrates the discrepancies in Dose Volume Histogram (DVH)\
+  \ plots between the actual dose ($A\\mathbf{x}$, shown as a solid line) and the approximated dose ($\U0001D446\
+  \\mathbf{x}$, shown as a dotted line), where \n$\\mathbf{x}$ is the optimal solution of the surrogate\
+  \ optimization problem. A smaller gap between the dotted and solid lines indicates a more accurate dose\
+  \ approximation. **Left figure** demonstrates a significant dose discrepancy when the matrix \n$A$ is\
+  \ sparsified by simply zeroing out small elements—a technique commonly used in practice. **Right figure**\
+  \ shows a minimal dose discrepancy when the matrix $A$ is sparsified using the RMR algorithm. Importantly,\
+  \ in both cases, the sparsified matrix contained only 2% non-zero elements. \n\n\n**Implementation in\
+  \ PortPy:**\n\nIf you are using PortPy for your radiotherapy research, you can apply RMR sparsification\
+  \ by simply adding the following lines of code. For more details, see [Sparse-Only Jupyter Notebook](https://github.com/PortPy-Project/CompressRTP/blob/main/examples/matrix_sparse_only.ipynb).\n\
+  \n```python\nfrom compress_rtp.utils.get_sparse_only import get_sparse_only\n\n# Apply RMR sparsification\
+  \ to the matrix A\nS = get_sparse_only(A=A, threshold_perc=10, compression='rmr')\n\n# Replace the original\
+  \ matrix A with the sparsified matrix S\ninf_matrix.A = S\n```\n\n## 1.2) Sparse-Plus-Low-Rank Matrix\
+  \ Compression\nThe rows of matrix $\U0001D434$ correspond to the patient's voxels, and the similarity\
+  \ of doses delivered to neighboring voxels makes these rows highly correlated (the same argument applies\
+  \ to the columns). This high correlation means that matrix $\U0001D434$\nis **low-rank** and therefore\
+  \ **compressible**. \n\n<p align=\"center\">\n<img src=\"./images/SLR.PNG\" width=\"80%\" height=\"\
+  50%\">\n<p>\n  \n**Figure Explanation:** The low-rank nature of matrix $\U0001D434$ can be verified\
+  \ by observing the exponential decay of its singular values, as shown by the blue line in the **left\
+  \ figure**. If we decompose matrix \n$A$ into $A=S+L$,  where $\U0001D446$ is a sparse matrix containing\
+  \ large-magnitude elements (e.g., elements greater than 1% of the maximum value of $\U0001D434$), and\
+  \ $\U0001D43F$ includes smaller elements mainly representing scattering doses, then the singular values\
+  \ of the scattering matrix $\U0001D43F$ reveal an even sharper exponential decay (depicted by the red\
+  \ line). This suggests the use of “sparse-plus-low-rank” compression, $\U0001D434≈\U0001D446+\U0001D43B\
+  \U0001D44A$, as schematically shown in the **right figure**. \n\n\nThe matrix $S$ is sparse, $H$ is\
+  \ a “tall skinny matrix” with only a few columns, and $W$ is a “wide short matrix” with only a few rows.\
+  \ Therefore, $A≈S+HW$ provides a compressed representation of the data. This allows us to solve the\
+  \ following surrogate problem instead of the original problem\n\n$Minimize \\text{ } f(S\\mathbf{x}+H\\\
+  mathbf{y},\\mathbf{x})$\n\nSubject to $g(S\\mathbf{x}+H\\mathbf{y},\\mathbf{x})\\leq 0, \\mathbf{y}=W\\\
+  mathbf{x}, \\mathbf{x}\\geq 0$\n\nDecomposing a matrix into the sum of a sparse matrix and a low-rank\
+  \ matrix has found numerous applications in fields such as computer vision, medical imaging, and statistics.\
+  \ Historically, this structure has been employed as a form of prior knowledge to recover objects of\
+  \ interest that manifest themselves in either the sparse or low-rank components. However, the application\
+  \ presented here represents a novel departure from conventional uses of sparse-plus-low-rank decomposition.\
+  \ Unlike traditional settings where specific components (sparse or low-rank) hold intrinsic importance,\
+  \ our primary goal is not to isolate or interpret these structures. Instead, we leverage them for computationally\
+  \ efficient matrix representation. In this case, the structure serves purely as a tool for optimizing\
+  \ computational efficiency while maintaining data integrity.\n\n**Note:** Both sparse-only and sparse-plus-low-rank\
+  \ compression techniques serve the same purpose. We are currently investigating the strengths and weaknesses\
+  \ of each technique and their potential combination. Stay tuned for more results.\n\n**Implementation\
+  \ in PortPy:**\n\nIn PortPy, you can apply the sparse-plus-low-rank compression using the following\
+  \ lines of code. Unlike the sparse-only compression using RMR, which did not require any changes other\
+  \ than replacing $A\\mathbf{x}$ with $S\\mathbf{x}$ in your optimization formulation and code, this\
+  \ compression requires adding a linear constraint $y=W\\mathbf{x}$ and replacing $Ax$ with $S\\mathbf{x}+H\\\
+  mathbf{y}$. These changes can be easily implemented using CVXPy (see the [Sparse-Plus-Low-Rank Ju"

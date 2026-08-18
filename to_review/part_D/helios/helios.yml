@@ -1,0 +1,68 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ryancinsight/helios
+url: https://github.com/ryancinsight/helios
+platform: github
+description: 'Helios (Helios-rs): unified radiation-therapy simulation/planning and radiation imaging
+  on the Atlas stack — VoLO-class TomoTherapy helical delivery + MVCT imaging.'
+license: Apache-2.0
+language: Rust
+keywords: []
+stars: 0
+updated_at: '2026-08-18T15:17:47Z'
+image_source: null
+heuristic_total_score: 31
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 3 particle-therapy term(s).
+- Matched 5 support term(s).
+readme_excerpt: "# Helios (Helios-rs)\n\nA modular Rust workspace for **unified radiation-therapy simulation/planning\
+  \ and\nradiation imaging**, built natively on the [Atlas](../..) technology stack.\n\nHelios targets\
+  \ VoLO-class GPU-accelerated TomoTherapy — helical delivery with\nbinary-MLC modulation, couch translation,\
+  \ and MVCT guidance — alongside\nhigh-fidelity radiation-imaging simulation (MVCT forward projection,\n\
+  reconstruction, on-board kV/MV imaging, and IGRT workflows).\n\n> **Status:** Foundation, delivery,\
+  \ and planning/imaging baselines are\n> implemented. Active work spans the explicitly tracked physics,\
+  \ projection,\n> reconstruction, PyO3, provider-integration, and clinical-validation gaps in\n> [`backlog.md`](backlog.md)\
+  \ and [`gap_audit.md`](gap_audit.md).\n\n## Architecture at a glance\n\n```\nhelios-python         \
+  \                PyO3 bindings (thin)\n   │\nhelios-planning  helios-simulation  helios-imaging    \
+  \ application\n   │                │                 │\nhelios-analysis   helios-solver ── helios-gpu\
+  \           compute\n   │                │\nhelios-physics ─────┘\n   │\nhelios-domain             \
+  \                              domain\n   │\nhelios-math                                           \
+  \  numerics (Scalar seam)\n   │\nhelios-core                                             foundation\n\
+  ```\n\nStrictly unidirectional layering; Atlas crates (ritk, gaia, hephaestus, moirai,\ncoeus, asclepius,\
+  \ proteus, hyperion, consus, leto, hermes, mnemosyne, themis,\napollo) are consumed as remote git dependencies.\
+  \ Hyperion owns photon/optical\ncoefficient validation and transport laws; Proteus owns material density;\n\
+  Helios owns CT calibration, spatial projection, dose, imaging, and delivery.\nHelios does not mirror\
+  \ or re-export either provider vocabulary. Full crate\nresponsibilities and the Atlas dependency map\
+  \ are in\n[`ARCHITECTURE.md`](ARCHITECTURE.md).\n\n## Building\n\n```sh\n# Rust stable (edition 2021);\
+  \ toolchain pinned via rust-toolchain.toml.\ncargo build\ncargo clippy --all-targets --all-features\
+  \ -- -D warnings\ncargo nextest run          # test-time budget: 30 s slow / 60 s terminate\ncargo test\
+  \ --doc           # doctests (nextest does not run these)\n```\n\nThe workspace uses the shared Atlas\
+  \ test-time budget: a test that crosses 30 s is a\nperformance defect to profile and optimize, never\
+  \ a limit to raise.\n\n## Documentation\n\n- [Published Helios book](https://ryancinsight.github.io/helios/)\
+  \ — hosted mdBook site.\n- [Book source](docs/book/) — Markdown chapters and local build configuration.\n\
+  \nPull-request CI compares baseline and candidate Criterion reports through the\nAtlas-owned phase-replicated\
+  \ gate pinned in\n[ADR 0003](docs/adr/0003-atlas-benchmark-gate.md). It executes ABBA followed\nby BAAB\
+  \ on one runner, holds the candidate benchmark instrument constant, and\nfails closed on a reproduced\
+  \ family-wise regression or incomplete evidence.\n\n## Sprint roadmap\n\n1. **Sprint 1 — Foundation:**\
+  \ workspace skeleton, `helios-core`, `helios-math`\n   seam, `helios-domain` (`VoxelGrid` + `Volume`),\
+  \ and provider-owned CT/MVCT\n   DICOM ingest. *(implemented)*\n2. **Sprint 2 — Physics & GPU foundation:**\
+  \ Hyperion-owned photon attenuation,\n   hephaestus/Moirai execution, deterministic CPU dose and baseline\
+  \ imaging\n   projection kernels, and GPU HU→μ conversion. The provider cutover deletes\n   Helios's\
+  \ coefficient types, NIST tables, and Beer–Lambert implementation;\n   Helios retains only consumer-specific\
+  \ calibration and spatial/dose kernels.\n   *(provider cutover complete; exact and GPU spatial projection\
+  \ remain tracked\n   as Helios integration work)*\n3. **Sprint 3 — Delivery:** binary-MLC modeling,\
+  \ collimator aperture, helical\n   TomoTherapy delivery, and beam-following collapsed-cone dose. *(implemented)*\n\
+  4. **Sprint 4 — Planning & imaging:** Coeus planning objectives and dedicated\n   imaging/reconstruction/registration.\
+  \ *(FBP/SIRT/registration baseline\n   implemented; OS-SEM/MLEM remains tracked)*\n5. **Sprint 5 — End-to-end:**\
+  \ workflow validation and basic PyO3 exposure.\n   *(implemented baseline; NumPy zero-copy, real-DICOM\
+  \ Python exposure, GPU\n   throughput study, and clinical-reference validation remain tracked)*\n\n\
+  ## Validation targets\n\n- **Therapy:** gamma analysis (3%/2 mm), DVH agreement vs VoLO, and reference\
+  \ Monte\n  Carlo (TOPAS, GATE, EGSnrc) on phantom/clinical cases.\n- **Imaging:** MVCT reconstruction\
+  \ accuracy, noise, contrast, spatial resolution vs\n  published TomoTherapy MVCT data.\n- **Performance:**\
+  \ GPU scaling and timing competitive with VoLO-class throughput.\n- **Software:** zero Clippy warnings\
+  \ on production paths, >80% core coverage,\n  property-based testing, benchmarks with recorded baselines.\n\
+  \n## License\n\nLicensed under either of\n\n- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE))\n\
+  - MIT license ([LICENSE-MIT](LICENSE-MIT))\n\nat your option.\n"

@@ -1,0 +1,141 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: AkshayKumarBolusani/Hybrid-Quantum-GAN-Drug-Discovery-System
+url: https://github.com/AkshayKumarBolusani/Hybrid-Quantum-GAN-Drug-Discovery-System
+platform: github
+description: A complete end-to-end system for drug discovery using hybrid quantum-classical generative
+  adversarial networks (HQ-MolGAN), combining quantum computing with deep learning for molecular generation,
+  property prediction, toxicity assessment, and molecular docking.
+license: MIT
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-07-15T15:23:04Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Hybrid Quantum GAN Drug Discovery System\n\nA complete end-to-end system for drug discovery\
+  \ using hybrid quantum-classical generative adversarial networks (HQ-MolGAN), combining quantum computing\
+  \ with deep learning for molecular generation, property prediction, toxicity assessment, and molecular\
+  \ docking.\n\n## \U0001F31F Features\n\n- **Hybrid Quantum-Classical GAN**: Generate novel drug-like\
+  \ molecules using VVRQ/EFQ quantum circuits with PennyLane and Qiskit\n- **Multi-Model QSAR**: Property\
+  \ prediction using Random Forest, XGBoost, MLP, and Graph Neural Networks\n- **Toxicity Assessment**:\
+  \ Multi-task classification for comprehensive toxicity profiling\n- **Molecular Docking**: AutoDock\
+  \ Vina integration for binding affinity prediction\n- **Reinforcement Learning**: RL-based optimization\
+  \ of molecular properties\n- **Explainability**: SHAP analysis for model interpretability\n- **Interactive\
+  \ UI**: Streamlit-based web interface for all functionalities\n- **PDF Reports**: Automated report generation\
+  \ with visualizations\n\n## \U0001F4CB System Requirements\n\n- **OS**: macOS (Intel or Apple Silicon)\n\
+  - **Python**: 3.10 or 3.11\n- **Hardware**: CPU-only supported (no GPU required)\n- **Memory**: 8GB+\
+  \ RAM recommended\n\n## \U0001F680 Quick Start\n\n### 1. Environment Setup\n\n```bash\n# Clone or navigate\
+  \ to project directory\ncd /Users/kumar/Documents/projects/hybrid_qgan_drug_discovery\n\n# Create conda\
+  \ environment\nconda create -n qgan python=3.11 -y\nconda activate qgan\n\n# Install dependencies\n\
+  pip install torch==2.2.2 torchvision==0.17.2\npip install pennylane==0.38.0 qiskit==1.2.0 qiskit-aer==0.15.1\n\
+  pip install rdkit-pypi deepchem==2.8.0 openbabel-wheel\npip install torch-geometric scikit-learn xgboost\n\
+  pip install stable-baselines3 shap\npip install streamlit reportlab plotly matplotlib seaborn\npip install\
+  \ PyYAML python-dotenv tqdm\n\n# For molecular docking (optional)\nbrew install autodock-vina  # macOS\
+  \ with Homebrew\n```\n\n### 2. Download and Preprocess Data\n\n```bash\n# Download datasets (QM9, Tox21,\
+  \ etc.)\n./scripts/download_datasets.sh\n\n# Preprocess data (tokenization, featurization, splits)\n\
+  python scripts/preprocess_all.py\n```\n\n### 3. Train Models\n\n```bash\n# Option A: Run full training\
+  \ pipeline (GAN + QSAR + Toxicity)\n./scripts/run_full_training.sh\n\n# Option B: Train individual components\n\
+  python -m src.training.train_gan\npython -m src.training.train_qsar\npython -m src.training.train_toxicity\n\
+  ```\n\nTraining saves checkpoints to `experiments/checkpoints/` and logs to `logs/`.\n\n### 4. Generate\
+  \ Molecules\n\n```bash\n# Generate 10 sample molecules using trained GAN\npython scripts/generate_samples.py\
+  \ --num_samples 10\n\n# With specific checkpoint\npython scripts/generate_samples.py --num_samples 50\
+  \ --checkpoint experiments/checkpoints/gan_final.pt\n```\n\n### 5. Launch UI\n\n```bash\n# Start Streamlit\
+  \ web interface\n./scripts/run_streamlit.sh\n\n# Access at: http://localhost:8501\n```\n\n## \U0001F4C2\
+  \ Project Structure\n\n```\nhybrid_qgan_drug_discovery/\n├── configs/                    # Configuration\
+  \ files\n│   ├── project.yaml           # Main project config\n│   ├── data.yaml              # Data\
+  \ loading config\n│   ├── gan.yaml               # GAN architecture config\n│   ├── quantum.yaml   \
+  \        # Quantum circuit config\n│   ├── qsar.yaml              # QSAR model config\n│   ├── tox_admet.yaml\
+  \         # Toxicity config\n│   └── docking.yaml           # Docking config\n│\n├── src/\n│   ├── utils/\
+  \                 # Utilities\n│   │   ├── logging_utils.py   # Logging setup\n│   │   ├── config_utils.py\
+  \    # Config management\n│   │   ├── metrics_utils.py   # Evaluation metrics\n│   │   └── visualization_utils.py\
+  \  # Plotting\n│   │\n│   ├── data/                  # Data loading and preprocessing\n│   │   ├── datasets_qm9_pc9.py\
+  \      # QM9/PC9 loaders\n│   │   ├── smiles_tokenizer.py      # SMILES tokenization\n│   │   ├── graph_featurizer.py\
+  \      # Graph representations\n│   │   └── datamodules.py           # PyTorch datasets\n│   │\n│  \
+  \ ├── features/              # Feature extraction\n│   │   ├── rdkit_descriptors.py     # Molecular\
+  \ descriptors\n│   │   └── fingerprint_utils.py     # Molecular fingerprints\n│   │\n│   ├── quantum/\
+  \               # Quantum computing\n│   │   ├── vqc_vvrq.py        # VVRQ circuit\n│   │   ├── vqc_efq.py\
+  \         # EFQ circuit\n│   │   ├── quantum_layers_pl.py     # PennyLane layers\n│   │   └── quantum_layers_qiskit.py\
+  \ # Qiskit layers\n│   │\n│   ├── models/\n│   │   ├── gan/               # GAN models\n│   │   │  \
+  \ ├── generator_hqmolgan.py      # Quantum generator\n│   │   │   ├── discriminator_molgan.py    # MolGAN\
+  \ discriminator\n│   │   │   └── discriminator_transformer.py  # Transformer discriminator\n│   │  \
+  \ │\n│   │   ├── decoders/          # Graph-to-molecule decoders\n│   │   │   ├── graph_decoder.py \
+  \          # Graph decoder\n│   │   │   └── smiles_decoder_beam.py     # Beam search decoder\n│   │\
+  \   │\n│   │   ├── qsar/              # Property prediction\n│   │   │   ├── qsar_sklearn.py       \
+  \     # RF/XGBoost/MLP\n│   │   │   └── qsar_gnn.py                # Graph neural networks\n│   │  \
+  \ │\n│   │   ├── toxicity/          # Toxicity prediction\n│   │   │   ├── tox_classifiers.py      \
+  \   # Multi-task classifier\n│   │   │   └── tox_preprocessing.py       # Data preprocessing\n│   │\
+  \   │\n│   │   ├── docking/           # Molecular docking\n│   │   │   ├── docking_runner.py       \
+  \   # Vina integration\n│   │   │   ├── docking_preparation.py     # File preparation\n│   │   │   └──\
+  \ docking_parsers.py         # Result parsing\n│   │   │\n│   │   ├── rl/                # Reinforcement\
+  \ learning\n│   │   │   ├── reward_functions.py        # Multi-objective rewards\n│   │   │   └── rl_trainer.py\
+  \              # Policy gradient\n│   │   │\n│   │   └── explainability/    # Model interpretation\n\
+  │   │       ├── shap_explain_qsar.py       # QSAR explainability\n│   │       ├── shap_explain_toxicity.py\
+  \   # Toxicity explainability\n│   │       └── shap_explain_gan.py        # GAN explainability\n│  \
+  \ │\n│   ├── training/              # Training scripts\n│   │   ├── train_gan.py       # GAN training\n\
+  │   │   ├── train_qsar.py      # QSAR training\n│   │   ├── train_toxicity.py  # Toxicity training\n\
+  │   │   └── train_all_pipeline.py  # Full pipeline\n│   │\n│   ├── evaluation/            # Evaluation\
+  \ scripts\n│   │   ├── eval_gan_metrics.py      # GAN metrics\n│   │   ├── eval_qsar.py            \
+  \ # QSAR evaluation\n│   │   ├── eval_toxicity.py         # Toxicity evaluation\n│   │   └── eval_docking.py\
+  \          # Docking evaluation\n│   │\n│   ├── ui/                    # Streamlit UI\n│   │   ├── streamlit_app.py\
+  \   # Main app\n│   │   └── pages/             # UI pages\n│   │       ├── 01_Overview.py\n│   │   \
+  \    ├── 02_Generate_Molecules.py\n│   │       ├── 03_QSAR_and_Toxicity.py\n│   │       ├── 04_Docking_Results.py\n\
+  │   │       ├── 05_Explainability.py\n│   │       └── 06_Reports.py\n│   │\n│   └── reports/       \
+  \        # Report generation\n│       └── pdf_report_generator.py\n│\n├── scripts/                 \
+  \  # Utility scripts\n│   ├── download_datasets.sh   # Download datasets\n│   ├── preprocess_all.py\
+  \      # Preprocess data\n│   ├── run_full_training.sh   # Run training\n│   ├── generate_samples.py\
+  \    # Generate molecules\n│   └── run_streamlit.sh       # Launch UI\n│\n├── data/                \
+  \      # Data directory\n│   ├── raw/                   # Raw datasets\n│   ├── interim/           \
+  \    # Intermediate files\n│   └── processed/             # Processed data\n│\n├── experiments/    \
+  \           # Experiment outputs\n│   ├── checkpoints/           # Model checkpoints\n│   ├── generated_molecules.txt\
+  \  # Generated samples\n│   └── reports/               # PDF reports\n│\n└── logs/                 \
+  \     # Training logs\n```\n\n## \U0001F527 Configuration\n\nAll configurations are in `configs/` directory:\n\
+  \n- **project.yaml**: Project metadata, paths, random seeds\n- **data.yaml**: Dataset paths, batch sizes,\
+  \ splits\n- **gan.yaml**: GAN architecture (latent dim, layers, learning rates)\n- **quantum.yaml**:\
+  \ Quantum circuit configuration (qubits, layers, backend)\n- **qsar.yaml**: QSAR model hyperparameters\n\
+  - **tox_admet.yaml**: Toxicity model settings\n- **docking.yaml**: Docking simulation parameters\n-\
+  \ **ui.yaml**: UI appearance and settings\n\nEdit these files to customize the system.\n\n## \U0001F4CA\
+  \ Usage Examples\n\n### Generate Molecules with Specific Properties\n\n```python\nfrom src.models.gan.generator_hqmolgan\
+  \ import HQMolGANGenerator\nfrom src.models.decoders.graph_decoder import GraphDecoder\nimport torch\n\
+  \n# Load trained generator\ngenerator = HQMolGANGenerator(latent_dim=32)\ncheckpoint = torch.load('experiments/checkpoints/gan_final.pt')\n\
+  generator.load_state_dict(checkpoint['generator'])\ngenerator.eval()\n\n# Generate molecules\nwith torch.no_grad():\n\
+  \    z = torch.randn(10, 32)\n    graphs = generator(z)\n\n# Decode to SMILES\ndecoder = GraphDecoder(max_atoms=9)\n\
+  # ... decode graphs to SMILES strings\n```\n\n### Predict Molecular Properties\n\n```python\nfrom src.models.qsar.qsar_sklearn\
+  \ import QSARModelSklearn\nfrom src.features import calculate_fingerprints\n\n# Load trained QSAR model\n\
+  qsar_model = QSARModelSklearn.load('experiments/checkpoints/qsar_model.pkl')\n\n# Predict properties\n\
+  smiles = \"CCO\"  # Ethanol\nfingerprint = calculate_fingerprints(smiles, fp_type='morgan')\npredictions\
+  \ = qsar_model.predict([fingerprint])\nprint(f\"Predicted properties: {predictions}\")\n```\n\n### Run\
+  \ Docking Simulation\n\n```python\nfrom src.models.docking.docking_runner import DockingRunner\n\nrunner\
+  \ = DockingRunner(\n    receptor_pdbqt='data/proteins/receptor.pdbqt',\n    exhaustiveness=8,\n    num_modes=9\n\
+  )\n\nresults = runner.dock_molecule('CCO', output_dir='docking_results')\nprint(f\"Binding affinity:\
+  \ {results['affinity']} kcal/mol\")\n```\n\n### Explain Model Predictions\n\n```python\nfrom src.models.explainability.shap_explain_qsar\
+  \ import QSARExplainer\n\nexplainer = QSARExplainer(qsar_model, X_train)\nshap_values = explainer.explain(['CCO',\
+  \ 'CC(=O)O'])\nexplainer.plot_summary(save_path='shap_summary.png')\n```\n\n## \U0001F3AF Key Components\n\
+  \n### 1. Hybrid Quantum GAN\n\nThe HQ-MolGAN combines:\n- **Quantum Circuit**: VVRQ or EFQ circuits\
+  \ with 8 qubits\n- **Classical Network**: MLP layers for feature transformation\n- **Graph Output**:\
+  \ Adjacency matrices for molecular graphs\n\n### 2. QSAR Models\n\nMultiple models for property prediction:\n\
+  - Random Forest (RF)\n- XGBoost (gradient boosting)\n- Multi-Layer Perceptron (MLP)\n- Graph Neural\
+  \ Networks (GNN)\n\nProperties predicted: QED, LogP, SA score, molecular weight, TPSA, etc.\n\n### 3.\
+  \ Toxicity Assessment\n\nMulti-task classification for:\n- Hepatotoxicity\n- Cardiotoxicity\n- Mutagenicity\n\
+  - Developmental toxicity\n- General toxicity endpoints (Tox21 dataset)\n\n### 4. Reinforcement Learning\n\
+  \nPolicy gradient optimization with multi-objective rewards:\n- Drug-likeness (QED)\n- Synthetic accessibility\
+  \ (SA score)\n- Lipophilicity (LogP)\n- Target binding affinity (docking score)\n- Toxicity constraints\n\
+  \n## \U0001F4C8 Evaluation Metrics\n\n### GAN Metrics\n- Validity: Percentage of chemically valid molecules\n\
+  - Uniqueness: Percentage of unique molecules\n- Novelty: Percentage not in training set\n- Diversity:\
+  \ Internal diversity of generated set\n- Fréchet ChemNet Distance (FCD)\n\n### QSAR Metrics\n- MAE,\
+  \ RMSE, R² for regression\n- ROC-AUC for classification\n- Cross-validation scores\n\n### Toxicity Metrics\n\
+  - ROC-AUC per task\n- Precision, Recall, F1-score\n- Multi-task performance\n\n## \U0001F41B Troubleshooting\n\
+  \n### Import Errors\n\nIf you see `ModuleNotFoundError`:\n\n```bash\n# Ensure conda environment is activated\n\
+  conda activate qgan\n\n# Reinstall specific package\npip install --upgrade <package-name>\n\n# Check\
+  \ Python path\npython -c \"import sys; print(sys.executable)\"\n```\n\n### RDKit Issues\n\n```bash\n\
+  # Reinstall RDKit\npip uninstall rdkit rdkit-pypi\npip install rdkit-pypi==2022.9.5\n```\n\n### Quantum\
+  \ Backend Errors\n\n```bash\n# For PennyLane issues\npip uninstall pennylane\npip install pennylane==0.38.0\n\
+  \n# For Qiskit issues\npip uninstall qiskit qiskit-aer\npip install qiskit==1.2.0 qiskit-aer==0.15.1\n\
+  ```\n\n### Memory Errors\n\nReduce batch sizes in configs:\n\n```yaml\n# configs/data.yaml\ndata:\n\
+  \  batch_size: 16  # Reduce from 32\n```\n\n### Docking Errors\n\nEnsure AutoDock Vina i"

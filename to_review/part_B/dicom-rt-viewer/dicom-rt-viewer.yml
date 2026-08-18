@@ -1,0 +1,145 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: oki1002/DICOM_RT_Viewer
+url: https://github.com/oki1002/DICOM_RT_Viewer
+platform: github
+description: A SimpleITK-based DICOM MPR viewer widget for Tkinter.
+license: MIT
+language: Python
+keywords:
+- data-visualization
+- dicom
+- dicom-rt
+- medical-imaging
+- python
+- radiotherapy
+- viewer
+stars: 0
+updated_at: '2026-08-18T07:03:28Z'
+image_source: null
+heuristic_total_score: 25
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 6 support term(s).
+readme_excerpt: "# tk-rt-viewer\n\n[![PyPI](https://img.shields.io/pypi/v/tk-rt-viewer)](https://pypi.org/project/tk-rt-viewer/)\n\
+  [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/)\n[![License:\
+  \ MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)\n\nA SimpleITK-based DICOM-RT MPR viewer\
+  \ widget for Tkinter — CT display with\nRT-STRUCT contours, RT-DOSE isodose overlay, DVH panel, and\
+  \ mask-editing\ntools, embeddable in any Tkinter application.\n\nThe distribution name on PyPI is `tk-rt-viewer`;\
+  \ the import package is\n`tk_rt_viewer` (`from tk_rt_viewer import DicomViewer`).\n\n> **Disclaimer**\
+  \ — This software is **not a medical device**. It is\n> intended for research, education, and QA-support\
+  \ use only, and must not\n> be used for primary clinical decision-making, diagnosis, or treatment.\n\
+  \n## Features\n\n- **Three-plane MPR display** — Axial (large left), Coronal, and Sagittal views in\
+  \ a single widget. A single-Axes `\"single\"` layout mode is also available for host applications that\
+  \ only ever display one plane (e.g. a fluoroscopy or portal-imaging sequence).\n- **Blit-based rendering**\
+  \ — Idle-driven blit updates via `DrawingManager`; redraw requests are coalesced into a single Tk `after_idle`\
+  \ callback instead of a fixed-interval polling timer.\n- **Observer-pattern state management** — All\
+  \ view state lives in `SliceViewerState`; the widget reacts to changes without polling.\n- **SimpleITK-native\
+  \ coordinates** — Physical LPS coordinates, origin, spacing, and direction cosines are preserved throughout;\
+  \ axis reordering between SimpleITK and NumPy conventions is handled internally by the library.\n- **Interactive\
+  \ navigation** — Crosshair drag, mouse wheel, and keyboard (↑ / ↓ / PageUp / PageDown).\n- **Independent\
+  \ window / level per image** — The primary and secondary images each carry their own display window,\
+  \ so a PET, MR, or dose overlay can be windowed without disturbing the CT underneath. The secondary\
+  \ follows the primary until an override is set. Right-click drag adjusts whichever image is targeted:\
+  \ horizontal → window width (WW), vertical → window centre (WL).\n- **RT-STRUCT support** — ROI masks\
+  \ stored in `StructureSet` (keyed by integer ROI number); contour overlay with optional semi-transparent\
+  \ fill; brush tool for mask editing.\n- **ROI operations** — Shape-based inter-slice interpolation,\
+  \ true Euclidean margins (uniform or 6-direction anisotropic), Gaussian smoothing, and boolean operations\
+  \ (union / intersection / subtraction).\n- **Bounding box tool** — Create, move, and resize a bounding\
+  \ box with click-drag interactions.\n- **RT-DOSE overlay** — RT-DOSE volumes are displayed as isodose\
+  \ fills and contour lines; a DVH panel is available in the `\"mpr\"` layout mode.\n- **Custom overlay\
+  \ artists** — Host applications can register their own Matplotlib artists (e.g. manual point markers)\
+  \ via `add_overlay_artist` so they survive the blit-restore cycle like any built-in overlay, without\
+  \ `DicomViewer` needing to know what they represent.\n\n## Requirements\n\n- Python ≥ 3.12\n- SimpleITK\
+  \ ≥ 2.3\n- contourpy ≥ 1.2\n- matplotlib ≥ 3.7\n- numpy ≥ 1.24\n- pydicom ≥ 2.4\n- rt-utils ≥ 1.2\n\
+  - scikit-image ≥ 0.21\n- scipy ≥ 1.11\n\n## Installation\n\nFrom PyPI:\n\n```bash\npip install tk-rt-viewer\n\
+  ```\n\nOr directly from source (editable mode — changes take effect immediately):\n\n```bash\ngit clone\
+  \ https://github.com/oki1002/DICOM_RT_Viewer.git\ncd DICOM_RT_Viewer\npip install -e .\n```\n\n> **Note**\
+  \ — Tkinter is part of the CPython standard library but is *not*\n> pip-installable; on some Linux distributions\
+  \ it ships as a separate OS\n> package (e.g. `sudo apt install python3-tk` on Debian/Ubuntu).\n\n##\
+  \ Package structure\n\n```\ntk_rt_viewer/\n├── __init__.py\n├── py.typed                    # PEP 561\
+  \ marker: the package ships inline types\n├── events.py                   # Event-name constants for\
+  \ SliceViewerState listeners\n├── protocols.py                # ViewerHost: what event handlers ask\
+  \ of the viewer\n├── viewer.py                   # DicomViewer widget (wires up the collaborators below)\n\
+  ├── geometry.py                 # Pure geometric helpers (slicing, extent, contour paths)\n├── io.py\
+  \                       # DICOM series loading utilities (CT, RT-DOSE, REG)\n├── rtstruct_io.py    \
+  \          # RT-STRUCT read / write utilities\n├── roi_operations.py           # Interpolation, margin,\
+  \ smoothing, boolean ops\n├── isodose_levels.py           # Isodose level definitions and resolution\n\
+  ├── state/\n│   ├── viewer_state.py         # SliceViewerState (observable surface)\n│   ├── structure_set.py\
+  \        # StructureSet, RoiEntry\n│   ├── roi_manager.py          # ROI lifecycle + cache bookkeeping\n\
+  │   ├── dose_manager.py         # RT-DOSE in both geometries, Dmax, slice lookup\n│   ├── phase_manager.py\
+  \        # 4DCT phases with lazy resampling + LRU\n│   └── viewer_cache.py         # ViewerCacheManager,\
+  \ ContourPathCache, MaskSliceCache\n├── rendering/\n│   ├── drawing_manager.py      # DrawingManager\
+  \ (idle-driven redraw coalescing)\n│   ├── blit_compositor.py      # Background bitmaps, blit pass,\
+  \ artist-list cache\n│   ├── image_layer.py          # Primary / secondary base-image artists\n│   ├──\
+  \ contour_overlay.py      # ContourOverlay (ROI contour paths)\n│   ├── render.py               # RGBA\
+  \ colormap LUT and window/level helpers\n│   ├── isodose.py              # IsoDoseOverlay (fill bands\
+  \ + contour lines)\n│   ├── dvh.py                  # DvhPanel (cumulative DVH panel)\n│   └── layout.py\
+  \               # LayoutManager (single / mpr / mpr_wide layouts)\n└── event_controllers/\n    ├── viewer_events.py\
+  \        # ViewerEventHandler (dispatcher + hover state)\n    ├── crosshair_handler.py\n    ├── brush_handler.py\n\
+  \    └── bbox_handler.py\n```\n\n`state/` holds the Tkinter-independent observable state and performance\n\
+  caches; `rendering/` holds the canvas-rendering collaborators that\n`DicomViewer` constructs and wires\
+  \ together. Each collaborator is\nconstructed with the state, figure, or callbacks it needs (dependency\n\
+  injection), so none of them imports `DicomViewer` itself. The event\ncontrollers see the viewer only\
+  \ through the `ViewerHost` protocol in\n`protocols.py`, so every handler can be exercised without a\
+  \ Tk display.\n\n## Quick start\n\n```python\nimport tkinter as tk\nfrom tk_rt_viewer import DicomViewer,\
+  \ SliceViewerState\n\nroot = tk.Tk()\nroot.title(\"DICOM Viewer\")\n\nstate = SliceViewerState()\nviewer\
+  \ = DicomViewer(root, state=state)\nviewer.pack(fill=\"both\", expand=True)\n\nviewer.load_ct(\"/path/to/dicom/folder\"\
+  )\n\n\ndef on_close() -> None:\n    # The state was created here, so closing it is this application's\
+  \ job;\n    # see \"Memory model\" below.\n    state.close()\n    root.destroy()\n\n\nroot.protocol(\"\
+  WM_DELETE_WINDOW\", on_close)\nroot.mainloop()\n```\n\nIf you let the viewer create its own state (`DicomViewer(root)`\
+  \ with no\n`state=` argument), `viewer.destroy()` closes it for you and no explicit\n`close()` is needed.\n\
+  \n## Loading a DICOM series\n\n```python\nfrom tk_rt_viewer.io import load_dcm_series, validate_dicom_files\n\
+  \nif validate_dicom_files(\"/path/to/dicom\"):\n    info = load_dcm_series(\"/path/to/dicom\")\n   \
+  \ image = info[\"sitk_image\"]\n    print(image.GetSize())      # e.g. (512, 512, 120)\n    print(image.GetSpacing())\
+  \   # e.g. (0.977, 0.977, 3.0)\n```\n\n## Setting the display window\n\nThe primary and secondary images\
+  \ carry independent windows. The secondary\nfollows the primary until you set an override, which is\
+  \ what you want for a\n4DCT phase or a MAR reconstruction (same intensity scale) and what you do\n*not*\
+  \ want for a PET, MR, or dose overlay.\n\n```python\n# --- Primary image ---\nstate.set_window_level(window=400,\
+  \ level=40)   # soft-tissue window\nviewer.set_window(vmin=-160, vmax=240)         # or as vmin / vmax\
+  \ (HU)\n\n# --- Secondary image ---\nstate.set_secondary_window_level(window=6, level=3)   # e.g. a\
+  \ PET overlay\nviewer.set_secondary_window(vmin=0, vmax=60)          # or as vmin / vmax (Gy)\n\n# Which\
+  \ window is actually in effect for the overlay\nstate.effective_secondary_window_level()\n\n# Drop the\
+  \ override; the secondary follows the primary again\nstate.set_secondary_window_level(None)\n```\n\n\
+  Right-click drag adjusts whichever image `state.window_level_target` names\n(`\"primary\"` by default).\
+  \ Host applications can expose that as a toggle:\n\n```python\nstate.set_window_level_target(\"secondary\"\
+  )\n```\n\nHolding **Shift** during a right-click drag targets the other image for that\ndrag alone,\
+  \ which is ignored when no secondary image is loaded. The target is\nresolved once when the drag starts,\
+  \ so changing it mid-drag never makes the\nadjustment jump from one image's window to the other's.\n\
+  \nListen for `events.SECONDARY_WINDOW_LEVEL_CHANGED` (payload:\n`tuple[float, float] | None`) and `events.WINDOW_LEVEL_TARGET_CHANGED`\n\
+  (payload: `str`) to keep a UI in sync. Loading a new primary image clears the\nsecondary override.\n\
+  \n## Working with ROI contours\n\n```python\nimport SimpleITK as sitk\n\n# Add an ROI mask — returns\
+  \ an auto-assigned integer ROI number\nroi_number = state.add_contour(\"PTV\", mask_sitk_image, color=\"\
+  #ff4444\")\n\n# Choose which ROIs to display (pass a set of ROI numbers)\nstate.set_active_contours({roi_number})\
+  \  # argument is a set[int]\n\n# Toggle filled overlay (semi-transparent)\nstate.set_overlay_contours(True)\n\
+  \n# Update an ROI's name, mask, or colour\nstate.update_contour_properties(roi_number, {\"color\": \"\
+  #00ff00\"})\n\n# Remove an ROI\nstate.delete_contour(roi_number)\n```\n\nLoading an RT-STRUCT is a single\
+  \ call. `add_rt_struct_rois` wraps each mask\nback into a `sitk.Image` sharing the CT's geometry, resolves\
+  \ names that\ncollide with ROIs already loaded, activates the result, and fires one redraw\nnotification\
+  \ for the whole batch instead of one per ROI:\n\n```python\nfrom tk_rt_viewer.rtstruct_io import RtStructLoadError,\
+  \ load_rt_struct\n\ntry:\n    # max_workers defaults to 1 (sequential). rt-utils does not document\n\
+  \    # thread safety, so parallel decoding is opt-in: pass a higher value\n    # only after verifying\
+  \ it with the rt-utils version you ship.\n    structures = load_rt_struct(ct_dir, rtstruct_path)\nexcept\
+  \ RtStructLoadError as exc:\n    ...  # the file itself could not be parsed (an empty structure set\n\
+  \    # returns {} instead, so the two cases are distinguishable)\n\nroi_numbers = state.add_rt_struct_rois(structures)\n\
+  \n# Keep the file's names verbatim, and leave the new ROIs hidden:\nroi_numbers = state.add_rt_struct_rois(\n\
+  \    structures, activate=False, resolve_name_collisions=False\n)\n```\n\n`add_rt_struct_rois` raises\
+  \ rather than failing quietly, because both failure\nmodes are caller mistakes worth surfacing: `RuntimeError`\
+  \ when no primary\nimage is loaded (the masks have no geometry to be interpreted against, so\nload the\
+  \ CT first), and `ValueError` when a mask's shape does not match the\nprimary image — usually an RT-STRUCT\
+  \ belonging to a different series. Every\nmask is checked before any ROI is added, so a mismatch leaves\
+  \ the structure\nset untouched rather than half-populated.\n\nUse `add_contours` directly when the masks\
+  \ are not coming from an RT-STRUCT\n— it takes `(name, sitk.Image, colour)` tuples and applies no name\n\
+  resolution.\n\nWriting the current ROIs back out is likewise a single call.\n`save_structure_set` resamples\
+  \ each mask from the LPS-aligned space the\nviewer works in back to the original DICOM geometry, which\
+  \ is what the\nRT-STRUCT has to reference:\n\n```python\nfrom tk_rt_viewer.rtstruct_io import save_structure_set\n\
+  \n# original_image is SeriesInfo[\"original_sitk_image\"] — the CT as loaded,\n# before LPS alignment.\
+  \ Omit it when the series needed no reorientation.\nwritten = save_structure_set(\n    state.structure_set,\n\
+  \    ct_dir,\n    \"/path/to/output/rs.dcm\",\n    lps_image=state.primary_image,\n    original_image=original_image,\n\
+  )\n```\n\n## ROI operations\n\n`tk_rt_viewer.roi_operations` provides pure-function utilities that take\
+  \ and\nreturn `sitk.Image`:\n\n```python\nfrom tk_rt_viewer.roi_operations import (\n    interpolate_contour,\n\
+  \    apply_margin,\n    smooth_contour,\n    boolean_operation,\n    BooleanOp,\n    MarginConfig,\n\
+  )\n\n# Fill empty slices between existing mask slice"

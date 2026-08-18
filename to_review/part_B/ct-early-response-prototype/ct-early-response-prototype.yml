@@ -1,0 +1,68 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: saad-slimani/ct-early-response-prototype
+url: https://github.com/saad-slimani/ct-early-response-prototype
+platform: github
+description: CT early treatment response estimation prototype (FastAPI + radiomics)
+license: null
+language: Python
+keywords: []
+stars: 2
+updated_at: '2026-07-17T08:34:56Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "# CT Early Response Web App (Prototype)\n\nSee [docs/ai-native-pacs-ris-blueprint.md](docs/ai-native-pacs-ris-blueprint.md)\
+  \ for the broader product direction that extends this prototype toward an AI-native PACS/RIS platform.\n\
+  \nSee [docs/mvp-scaffold.md](docs/mvp-scaffold.md) for the current MVP scaffold that adds a worklist,\
+  \ reporting, AI task tracking, and local fine-tune queue.\n\nSee [docs/render-deploy.md](docs/render-deploy.md)\
+  \ for the prepared Render deployment path.\n\nThis project provides a working prototype for an AI-native\
+  \ PACS/RIS workstation with an early treatment response CT workflow:\n\n- Bulk upload DICOM folders\
+  \ with metadata extraction, or upload DICOM zip/NIfTI studies across CT, MRI, ultrasound, mammography,\
+  \ and X-ray-style modalities\n- Review studies in an embedded PACS viewer with single-series or comparison\
+  \ layouts, active-series selection, modality presets, mouse window/level, inversion, zoom, cine stack\
+  \ playback, axial/coronal/sagittal MPR, measurements, and segmentation mask editing\n- Manage a RIS\
+  \ worklist with scheduling and billing charge capture\n- Draft reports in a browser word processor and\
+  \ insert AI outputs or saved measurements\n- Dictate reports through hosted browser speech recognition\
+  \ or a local/open-source speech-to-text adapter such as Whisper.cpp\n- Upload baseline CT and early\
+  \ follow-up CT (2-6 weeks) for the early-response workflow\n- Run semi-automatic lesion segmentation\
+  \ using open-source tooling adapters\n- Review and edit segmentation slice-by-slice in a web viewer\n\
+  - Produce an early response score from 0-100\n- Train a radiomics regression model from labeled prior\
+  \ studies\n\n## Stack\n\n- Backend: FastAPI\n- Imaging I/O: SimpleITK\n- Segmentation adapters:\n  -\
+  \ `TotalSegmentator` CLI adapter (if installed)\n  - region-growing fallback (bounded seeded grower)\n\
+  - Radiomics/modeling: handcrafted radiomics + lightweight linear regression\n- Speech-to-text: optional\
+  \ open-source Whisper.cpp adapter\n- Hosted dictation fallback: browser `SpeechRecognition` when the\
+  \ backend model is not configured\n- Frontend: HTML/CSS/vanilla JS PACS/RIS workstation\n\n## Run\n\n\
+  ```bash\npython -m venv .venv\nsource .venv/bin/activate\npip install -r requirements.txt\nuvicorn app.main:app\
+  \ --reload\n```\n\nOpen `http://127.0.0.1:8000`.\n\nConfiguration starts from [.env.example](.env.example).\n\
+  \n## Data format\n\nUpload either:\n\n- DICOM folder: select a local folder from the bulk import panel\n\
+  - NIfTI: `.nii` or `.nii.gz`\n- DICOM archive: `.zip` containing one imaging series\n\nFor single-frame\
+  \ X-ray, mammography, or ultrasound studies, upload the primary series and leave the comparison upload\
+  \ empty. Folder imports and single-frame studies store a one-slice volume internally so the same viewer\
+  \ controls still work.\n\n## API overview\n\n- `POST /api/studies` create a study workspace from baseline/follow-up\
+  \ uploads\n- `POST /api/dicom/bulk` create one worklist-ready study per DICOM series in a folder upload\n\
+  - `GET /api/worklist` list reading queue items\n- `GET /api/studies/{id}/workspace` retrieve study,\
+  \ worklist, report, AI, and integration context\n- `PATCH /api/studies/{id}/worklist` update workflow\
+  \ status and assignment\n- `GET /api/studies/{id}/report` read the current draft report\n- `PUT /api/studies/{id}/report`\
+  \ save report draft or finalize it\n- `GET /api/studies/{id}/slice` retrieve an image + mask plane PNG\
+  \ with window/MPR options\n- `PUT /api/studies/{id}/mask/slice` persist edited slice mask\n- `GET /api/studies/{id}/measurements`\
+  \ list viewer measurements\n- `POST /api/studies/{id}/measurements` save a viewer measurement\n- `POST\
+  \ /api/studies/{id}/segment/auto` run semi-auto segmentation\n- `POST /api/studies/{id}/ai/tasks` run\
+  \ scaffolded AI tasks\n- `GET /api/schedule` and `POST /api/schedule` manage RIS appointments\n- `GET\
+  \ /api/billing` and `POST /api/billing` manage billing items\n- `GET /api/speech/status` inspect the\
+  \ local speech engine\n- `POST /api/speech/transcribe` transcribe browser microphone audio when Whisper.cpp\
+  \ is configured\n- `GET /api/models` inspect the indexed model catalog\n- `POST /api/model/train` fit\
+  \ the radiomics model from labels\n- `GET /api/training-runs` inspect fine-tune requests\n\n## Dictation\n\
+  \nThe hosted free Render deployment uses browser speech recognition when available, so the report dictation\
+  \ button can work without shipping a large model. To enable local/open-source backend dictation, install\
+  \ Whisper.cpp and ffmpeg, download a Whisper model, then set:\n\n```bash\nSTT_PROVIDER=whisper_cpp\n\
+  WHISPER_CPP_BINARY=/path/to/whisper-cli\nWHISPER_CPP_MODEL=/path/to/ggml-base.en.bin\nFFMPEG_BINARY=ffmpeg\n\
+  ```\n\n## Notes for production hardening\n\n- Add authentication, audit logging, and PHI controls\n\
+  - Replace fallback segmentation with tumor-site-specific foundation models\n- Add DICOM metadata QC\
+  \ and orientation normalization checks\n- Version models and require external validation before clinical\
+  \ use\n- Add uncertainty calibration and confidence intervals\n\n## Important\n\nThis is a research/prototyping\
+  \ codebase and is **not** a regulated clinical decision system.\n"

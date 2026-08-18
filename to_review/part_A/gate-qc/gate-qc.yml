@@ -1,0 +1,147 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Hero-Legend/GATE-QC
+url: https://github.com/Hero-Legend/GATE-QC
+platform: github
+description: 'Public implementation scaffold for GATE-QC: prior-gated foundation representations for no-reference
+  head-and-neck radiotherapy contour quality assessment.'
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-17T08:59:02Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: '# GATE-QC
+
+
+  This repository contains the public implementation scaffold for:
+
+
+  **GATE-QC: Prior-Gated Foundation Representations for No-Reference Head-and-Neck Radiotherapy Contour
+  Quality Assessment**
+
+
+  GATE-QC is a prior-gated no-reference contour quality assessment workflow for head-and-neck radiotherapy
+  structures.
+
+
+  The public release intentionally includes code, configuration files, and dataset/model access instructions
+  only. Manuscript drafts, generated figures, result tables, internal logs, checkpoints, and private intermediate
+  artifacts are not included.
+
+
+  ## What Is Included
+
+
+  - `scripts/gate_qc/`: data preparation, ROI construction, synthetic QC benchmark generation, prior-feature
+  extraction, baseline training, fusion models, and boundary-evidence utilities.
+
+  - `configs/gate_qc/`: public structure maps, label maps, error taxonomy, model specification, and experiment
+  configuration.
+
+  - `docs/`: dataset/model notes and release checklist.
+
+  - `requirements.txt`: Python dependencies for the released scripts.
+
+
+  ## What Is Not Included
+
+
+  - Manuscript source, PDFs, reviewer responses, and submission materials.
+
+  - Generated figures, tables, result summaries, experiment logs, and checkpoints.
+
+  - Redistributed copies of medical-image datasets.
+
+  - Private server paths, credentials, API keys, or recovered chat/session logs.
+
+
+  ## Data
+
+
+  The workflow expects users to obtain public datasets from their original providers and follow the corresponding
+  licenses/terms:
+
+
+  - SegRap2023 / SegRap23-Lite derived working data.
+
+  - HaN-Seg for external head-and-neck structure validation.
+
+  - MONAI/VISTA3D-HF for optional frozen 3D foundation ROI feature extraction.
+
+
+  See [docs/DATASETS.md](docs/DATASETS.md) for details.
+
+
+  ## Quick Start
+
+
+  Create an environment:
+
+
+  ```bash
+
+  python -m venv .venv
+
+  source .venv/bin/activate
+
+  pip install -r requirements.txt
+
+  ```
+
+
+  Download public datasets into a local data directory:
+
+
+  ```bash
+
+  DATA_ROOT=data/gate_qc_head_neck bash scripts/gate_qc/download_public_head_neck_datasets.sh
+
+  ```
+
+
+  Run the SegRap23-Lite preparation and synthetic QC scaffold:
+
+
+  ```bash
+
+  DATASET_DIR=data/gate_qc_head_neck/segrap23_lite \
+
+  WORK_DIR=data/gate_qc_head_neck/segrap23_lite_work \
+
+  RESULTS_ROOT=outputs/gate_qc \
+
+  bash scripts/gate_qc/run_segrap23_full_qc_pipeline.sh
+
+  ```
+
+
+  The commands above write derived files under `outputs/`, which is ignored by git.
+
+
+  ## Reproducibility Notes
+
+
+  Most shell scripts accept environment variables for all input/output paths. The default paths are relative
+  to the repository and are intended as examples. For large runs, place datasets and generated outputs
+  on local scratch or institutional storage and set the relevant environment variables.
+
+
+  The released scripts are intended to reproduce the computational workflow, not the private manuscript
+  figures or internal result tables.
+
+
+  ## License
+
+
+  No open-source license has been selected yet. Add an approved license before making the GitHub repository
+  public.
+
+  '

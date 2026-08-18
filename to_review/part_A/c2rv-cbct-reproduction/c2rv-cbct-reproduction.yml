@@ -1,0 +1,70 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: xiao634zhang/C2RV-CBCT-reproduction
+url: https://github.com/xiao634zhang/C2RV-CBCT-reproduction
+platform: github
+description: Unofficial C²RV reproduction for sparse-view CBCT reconstruction on LUNA16, based on DIF-Net
+  and including our best v10 implementation, with documented gaps to the paper results.
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-07-14T05:31:01Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# C²RV v10 非官方复现\n\n本仓库是对 CVPR 2024 C²RV 稀疏视角锥束 CT 重建方法的非官方复现。\n\n在本次工作开始时，论文作者没有提供可直接运行的完整\
+  \ C²RV 实现。因此，我们以公开的\nDIF-Net 代码思路为基础，经过数天的架构核对、几何验证、训练和消融实验，尽可能实现了\n论文描述的 C²RV。最终实现称为 **v10**。它已经显著接近论文结果，但仍存在明确差距；\n\
+  本仓库不声称与作者的内部实现完全一致。\n\n为了避免实验分支造成混乱，本仓库只保留：\n\n- 修复后的 DIF-Net baseline；\n- 最终 C²RV v10；\n- LUNA16 数据预处理、训练和100例评估代码。\n\
+  \n此前探索过的其他 C²RV 结构和无效实验均未放入本仓库。\n\n## 最终复现结果\n\n数据集：LUNA16；6 projection views；100 个 test scans。SSIM\
+  \ 对归一化至 `[0,1]`\n的三维体数据计算，并显式设置 `data_range=1`。表中结果为100例的均值 ± 标准差。\n\n| 方法 | 我们的结果 PSNR / SSIM | 论文新版\
+  \ Table 1 | 差距 |\n|---|---:|---:|---:|\n| DIF-Net Max | 24.72 ± 0.79 dB / 74.04 ± 3.10% | 25.55 dB /\
+  \ 73.19% | -0.83 dB / +0.85 pp |\n| C²RV v10 epoch 300 | 27.23 ± 0.87 dB / 81.67 ± 2.82% | 29.23 dB\
+  \ / 87.47% | -2.00 dB / -5.80 pp |\n| C²RV v10 epoch 400 | **27.29 ± 0.87 dB** / 81.50 ± 2.84% | 29.23\
+  \ dB / 87.47% | -1.94 dB / -5.97 pp |\n\nepoch 300 的 PSNR/SSIM 更均衡；epoch 400 获得最高平均 PSNR。论文旧表或旧评估代码中\n\
+  出现的 `84.40% / 92.78%` 属于不同 SSIM 口径，不应用于这里的新版 Table 1 比较。\n\n## 最终 C²RV v10 架构\n\n- 6 views；\n- 2D U-Net\
+  \ 提取 pixel-aligned feature；\n- 3-scale MS-3DV，体素分辨率为 `16³ / 8³ / 4³`；\n- 各视角体特征先做 Max-Pooling，再经过 3D\
+  \ ResConv；\n- 3 个串联的 SVC-Att 模块；\n- feature dimension 128，8 attention heads；\n- pixel feature 做跨视角 self-attention；\n\
+  - voxel feature 作为 query，对 pixel feature 做 cross-attention；\n- 每个 attention residual 后使用 LayerNorm；\n\
+  - pixel token 和 voxel token 均带 4× hidden dimension 的 GELU FFN；\n- 训练时将普通 BatchNorm 转为 SyncBatchNorm。\n\
+  \n每层的核心更新为：\n\n```python\nF_p = LN(F_p + SelfAttention(F_p))\nF_p = LN(F_p + FFN_4x(F_p))\n\nF_v = LN(F_v\
+  \ + CrossAttention(F_v, F_p))\nF_v = LN(F_v + FFN_4x(F_v))\n```\n\n模型参数量为 **49,772,289（约49.77M）**。论文报告约50.8M，仍相差约1.03M，说明\n\
+  最终复现与作者未公开实现之间可能仍存在局部模块定义差异。\n\n## 复现中确认的关键问题\n\n### 1. 角度顺序\n\n`Geometry.project()` 的 `sin/cos` 必须接收物理弧度。正确流程：\n\
+  \n1. 使用原始 radians 计算 `points_proj`；\n2. 投影完成后，再将 angle 归一化为网络输入。\n\n如果先把 `[0,π]` 归一化到 `[-1,1]` 再做几何投影，投影点会系统性错误。\n\
+  \n### 2. Detector H/W 轴\n\nDIF-Net/TIGRE 坐标约定要求在 `grid_sample()` 前转置 detector feature 的 H/W。合成\n标记实验中，不转置的平均误差为57.91\
+  \ px，转置后为0.57 px。因此最终代码保留：\n\n```python\nfeat = feat.transpose(2, 3)\n```\n\n### 3. DDP batch size\n\
+  \n论文 batch size 为4。四卡训练必须设置每卡 batch 1，得到 global batch 4。v10 使用\nSyncBatchNorm，使四个 DDP rank 联合统计 BatchNorm\
+  \ moments。\n\n### 4. SVC-Att 数值稳定性\n\n简单的 coarse voxel residual 会因特征幅值过大而支配输出，产生块状伪影。v10 使用\npost-norm\
+  \ attention 和 FFN，使 pixel/voxel token 的尺度及梯度更加稳定。\n\n## 仓库结构\n\n```text\ncode/\n├── datasets/\n│   ├──\
+  \ base.py                 # 修复后的角度顺序与数据接口\n│   ├── geometry.py\n│   └── mixed.py\n├── models/\n│   ├──\
+  \ c2rv_v10.py            # 唯一的 C²RV 实现\n│   └── difnet_baseline.py      # 修复后的 DIF-Net baseline\n├──\
+  \ train_c2rv_v10_ddp.py       # 固定 v10 + DDP + SyncBN\n└── train_ddp_difnet.py\n\nscripts/\n├── eval_c2rv_v10.py\n\
+  ├── eval_difnet.py\n└── summarize_metrics.py\n\ndata/\n├── base/\n└── LUNA16/\n```\n\n## 实验环境\n\n本次结果在以下环境获得：\n\
+  \n- OS：Ubuntu 20.04.6 LTS；\n- CPU：2× AMD EPYC 7763 64-Core，共128 cores / 256 threads；\n- 内存：约3.9 TiB；\n\
+  - GPU：8× NVIDIA GeForce RTX 3090 24GB；\n- 实际训练：GPU 0–3，共4张3090；\n- Python：3.9.25；\n- PyTorch：1.13.0+cu117；\n\
+  - CUDA runtime：11.7；\n- cuDNN：8.5.0；\n- NumPy：1.26.4；\n- SciPy：1.13.1；\n- scikit-image：0.24.0；\n- SimpleITK：2.5.5；\n\
+  - PyYAML：6.0.3；\n- TIGRE：本地源码编译，用于生成锥束投影。\n\n核心 Python 依赖也记录在 `requirements.txt`。不同 CUDA/PyTorch 组合可能可以运行，但\n\
+  上述版本是产生表中结果的已验证环境。\n\n## 数据准备\n\n从 LUNA16 官网下载 subset0–subset9，按 `data/LUNA16/README.md` 放置并预处理。\n数据及生成的\
+  \ projection/volume 不包含在本仓库中。\n\n预处理依赖 TIGRE。几何配置见 `data/LUNA16/config.yaml`：\n\n- volume：256×256×256；voxel\
+  \ spacing 1.6 mm；\n- detector：256×256；pixel spacing 2.4 mm；\n- DSO：800 mm；DSD：1200 mm；\n- circular cone-beam，180°；\n\
+  - 从完整投影中等间隔选择6 views。\n\n## 训练 C²RV v10\n\n训练入口已经固定为 v10，不再提供架构选择参数：\n\n```bash\ncd code\nexport PYTHONPATH=$(pwd)/..:$(pwd):$PYTHONPATH\n\
+  \nCUDA_VISIBLE_DEVICES=0,1,2,3 \\\npython -u train_c2rv_v10_ddp.py \\\n  --name c2rv_v10_6view_b4 \\\
+  \n  --dst_list LUNA16 \\\n  --cfg_root ../data \\\n  --epoch 400 \\\n  --lr_decay_epochs 400 \\\n  --batch_size\
+  \ 1 \\\n  --gpus 4 \\\n  --num_views 6 \\\n  --num_points 10000 \\\n  --eval_every 100 \\\n  --master-port\
+  \ 12356\n```\n\n训练配置：SGD，初始学习率 `1e-2`，momentum `0.98`，weight decay `1e-3`，MSE loss，\ngradient norm clipping\
+  \ 1.0。每次从随机 `64³` block 中采样10,000点。\n\n## 100例评估\n\n评估脚本按 GPU id 划分 test set；四张卡分别运行：\n\n```bash\ncd\
+  \ code\nexport PYTHONPATH=$(pwd)/..:$(pwd):$PYTHONPATH\n\nCUDA_VISIBLE_DEVICES=0 python ../scripts/eval_c2rv_v10.py\
+  \ 0 \\\n  --ckpt logs/c2rv_v10_6view_b4/ep_300.pth \\\n  --output-prefix ../eval_c2rv_v10_ep300 --cfg-root\
+  \ ../data --n-gpus 4\n```\n\nGPU 1–3 分别把命令中的可见 GPU 和位置参数改为1、2、3。脚本输出四个 NPZ，然后运行：\n\n```bash\npython\
+  \ ../scripts/summarize_metrics.py ../eval_c2rv_v10_ep300\n```\n\n它会合并 `psnr` 和 `ssim` 数组并计算100例总体均值与标准差。评估明确使用：\n\
+  \n```python\npeak_signal_noise_ratio(gt, pred, data_range=1.0)\nstructural_similarity(gt, pred, data_range=1.0,\
+  \ win_size=7)\n```\n\n## 已知限制\n\n- C²RV 与论文仍有约1.94–2.00 dB PSNR和5.80–5.97 pp SSIM差距；\n- 参数量比论文少约1.03M；\n\
+  - 当前 MS-3DV 实现按256×256 projection feature尺寸编写；\n- 当前训练仍采用随机 `64³` block 采样，而论文文字可能表示在全空间采样10,000点；\n\
+  - 作者未公开实现中的3D ResConv、FFN和具体训练细节可能与本仓库不同。\n\n这些限制应在引用结果或继续改进时明确说明。\n\n## 致谢与说明\n\n本代码是在 DIF-Net 思路与\
+  \ C²RV 论文描述基础上完成的研究性复现。请在使用时同时引用\n原始 DIF-Net 与 C²RV 工作。本仓库用于帮助后来者理解和复现实验，不代表论文作者官方实现。\n"

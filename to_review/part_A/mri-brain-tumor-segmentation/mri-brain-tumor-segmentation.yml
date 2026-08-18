@@ -1,0 +1,101 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Meng-1106/MRI-Brain-Tumor-Segmentation
+url: https://github.com/Meng-1106/MRI-Brain-Tumor-Segmentation
+platform: github
+description: LGG MRI Brain Tumor Segmentation with TransUNet — U-Net + Transformer bottleneck for medical
+  image segmentation
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-10T05:21:52Z'
+image_source: https://raw.githubusercontent.com/Meng-1106/MRI-Brain-Tumor-Segmentation/HEAD/visualizations/unet_result/segmentation_results.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# LGG MRI Brain Tumor Segmentation with a Transformer-Bottleneck U-Net (TransUNet-style)\n\
+  \n## Overview\n\nThis project evaluates 2D brain-tumor segmentation on the LGG MRI Segmentation dataset.\
+  \ It compares a convolutional U-Net baseline with a parameter-efficient variant that adds a Transformer\
+  \ bottleneck between the CNN encoder and U-Net decoder.\n\nThe research question is deliberately narrow:\
+  \ under a leakage-free patient-level split, does global context modeling at the bottleneck improve tumor\
+  \ segmentation over a conventional CNN baseline?\n\n## Motivation\n\nU-Net provides a strong inductive\
+  \ bias for medical image segmentation through local convolutional features, multi-scale representations,\
+  \ and skip connections. Self-attention offers a complementary mechanism for modeling global spatial\
+  \ context and long-range relationships.\n\nThis project investigates that trade-off rather than assuming\
+  \ that a Transformer will be better. The comparison asks whether global context modeling adds value\
+  \ for single-modality FLAIR LGG segmentation, where local appearance and boundary patterns may already\
+  \ be well represented by a CNN.\n\n## Architecture\n\nBoth models use the same U-shaped segmentation\
+  \ pipeline:\n\n- **CNN encoder:** four downsampling stages built from convolution, batch normalization,\
+  \ ReLU, and max pooling.\n- **Bottleneck:** the baseline uses convolutional blocks; the TransUNet-style\
+  \ variant tokenizes the CNN feature map and applies four Transformer encoder blocks with eight attention\
+  \ heads and learnable positional embeddings.\n- **Decoder:** transposed-convolution upsampling with\
+  \ skip connections from the CNN encoder.\n- **Output:** two-class pixel logits for background and tumor.\n\
+  \nThe hybrid model is **TransUNet-style**, not a full reproduction of the original TransUNet architecture.\
+  \ Its design was inspired by Chen et al., [*TransUNet: Transformers Make Strong Encoders for Medical\
+  \ Image Segmentation*](https://arxiv.org/abs/2102.04306) (2021).\n\n## Dataset\n\n- **Dataset:** [LGG\
+  \ MRI Segmentation](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)\n- **Input:**\
+  \ single-modality FLAIR MRI slices, resized to 256 × 256 pixels\n- **Samples:** 3,929 image-mask pairs\
+  \ from 110 patients\n- **Training split:** 3,151 slices from 88 patients\n- **Validation split:** 778\
+  \ slices from 22 patients\n- **Patient overlap:** 0\n\nThe split is produced with `GroupShuffleSplit`\
+  \ using patient identifiers as groups (`test_size=0.2`, `random_state=42`). All slices from a patient\
+  \ therefore remain entirely within either training or validation.\n\n## Experimental Setup\n\n| Setting\
+  \ | Value |\n|---|---|\n| Split protocol | Patient-level 80/20 train-validation split |\n| Input size\
+  \ | 256 × 256 |\n| Batch size | 8 |\n| Objective | DiceCE: Dice loss + 0.5 × cross-entropy loss |\n\
+  | Reported metric | Foreground tumor Dice (class 1 only) |\n| Optimizer | Adam, learning rate 3 × 10⁻⁴\
+  \ |\n| Scheduler | ReduceLROnPlateau on validation loss, factor 0.5, patience 5 |\n| Augmentation |\
+  \ Resize and random horizontal flip (`p=0.5`) with synchronized image-mask transforms |\n| Maximum epochs\
+  \ | 100 |\n| Early stopping | Validation loss, patience 10 |\n| Checkpoint selection | Highest validation\
+  \ tumor Dice |\n\nNormalization and validation preprocessing are shared between the two models. The\
+  \ same fixed patient split is used for both experiments.\n\n## Results\n\n| Model | Validation tumor\
+  \ Dice | Best checkpoint epoch | Early-stopping epoch | Parameters |\n|---|---:|---:|---:|---:|\n| U-Net\
+  \ | **0.7233** | 79 | 82 | 49.92M |\n| TransUNet-style | 0.6614 | 69 | 69 | 41.03M |\n\nThe U-Net achieved\
+  \ the higher validation tumor Dice. The TransUNet-style model used approximately 18% fewer parameters,\
+  \ but the reduced parameter count did not translate into higher segmentation performance in this setting.\n\
+  \n### Qualitative Results\n\n**U-Net**\n\n![U-Net segmentation examples](visualizations/unet_result/segmentation_results.png)\n\
+  \n**TransUNet-style**\n\n![TransUNet-style segmentation examples](visualizations/transunet_result/segmentation_results.png)\n\
+  \nEach figure shows the input MRI, ground-truth tumor mask, and predicted mask overlay for validation\
+  \ samples.\n\n### Training Curves\n\n![Training and validation curves](visualizations/training_curves.png)\n\
+  \nThe curves are generated from the final patient-level experiments. The U-Net run stopped at epoch\
+  \ 82 and the TransUNet-style run stopped at epoch 69.\n\n## Discussion\n\nThe Transformer bottleneck\
+  \ did not outperform the CNN baseline under the evaluated setting. This negative result is scientifically\
+  \ useful: adding self-attention does not guarantee an improvement when the dataset is modest and the\
+  \ task is dominated by local image appearance.\n\nOne possible explanation is that single-modality FLAIR\
+  \ LGG segmentation relies heavily on local intensity, texture, and boundary patterns. U-Net's convolutional\
+  \ inductive bias and multi-scale skip connections may therefore be sufficient, while the Transformer\
+  \ bottleneck has limited data from which to learn additional global relationships. This is a hypothesis\
+  \ rather than a causal conclusion from the present experiment.\n\nThe comparison also demonstrates why\
+  \ evaluation protocol matters. Patient-level splitting prevents slices from the same patient appearing\
+  \ on both sides of the split, producing a more credible estimate than the earlier slice-level random\
+  \ split.\n\n## Limitations\n\n- Only single-modality FLAIR images were evaluated.\n- Results come from\
+  \ one fixed patient-level split.\n- No multi-seed evaluation was performed.\n- There is no independent\
+  \ held-out test set.\n- The study uses 2D slices and does not model full volumetric context.\n- The\
+  \ architecture is a project-specific Transformer-bottleneck U-Net, not a complete TransUNet reproduction.\n\
+  \n## Related Projects\n\nThis project is the medical-imaging component of a broader Biomedical AI portfolio:\n\
+  \n1. **ECG Arrhythmia Classification** — 1D physiological-signal modeling with ResNet1D and squeeze-and-excitation\
+  \ attention.\n2. **LGG MRI Brain Tumor Segmentation** — 2D medical imaging and CNN-versus-Transformer\
+  \ segmentation.\n3. **BCI Transformer EEG Motor Imagery Decoding** — neural-signal decoding and CNN-versus-Transformer\
+  \ comparison.\n\nTogether, the projects trace a progression from ECG (1D biological signals), through\
+  \ MRI (2D spatial segmentation), to EEG/BCI (neural time-series decoding).\n\n## Future Work\n\n- Evaluate\
+  \ multi-modal MRI inputs.\n- Explore domain adaptation across acquisition sites or datasets.\n- Evaluate\
+  \ the comparison on larger patient cohorts.\n- Investigate volumetric context with 3D or slice-aware\
+  \ models.\n\nThese directions are potential extensions and are not part of the reported experiments\
+  \ or current implementation.\n\n## Repository Structure\n\n```text\n.\n├── config.yaml\n├── dataset.py\n\
+  ├── model.py\n├── train.py\n├── visualize.py\n├── plot_curves.py\n├── utils.py\n├── requirements.txt\n\
+  ├── experiments/\n│   └── exp001_baseline.md\n└── visualizations/\n    ├── training_curves.png\n   \
+  \ ├── unet_result/\n    │   └── segmentation_results.png\n    └── transunet_result/\n        └── segmentation_results.png\n\
+  ```\n\nThe dataset, checkpoints, and raw training logs are local experiment assets and are not intended\
+  \ for repository distribution.\n\n## Usage\n\nInstall the dependencies:\n\n```bash\npython -m pip install\
+  \ -r requirements.txt\n```\n\nSet `data.data_dir` in `config.yaml` to the local `kaggle_3m` directory,\
+  \ then run:\n\n```bash\n# U-Net baseline\npython train.py --use_transformer false --run_name unet\n\n\
+  # Transformer-bottleneck variant\npython train.py --use_transformer true --run_name transunet\n\n# Generate\
+  \ qualitative figures from the saved checkpoints\npython visualize.py --checkpoint checkpoints/unet.pt\
+  \ --use_transformer false \\\n  --save_dir visualizations/unet_result\npython visualize.py --checkpoint\
+  \ checkpoints/transunet.pt --use_transformer true \\\n  --save_dir visualizations/transunet_result\n\
+  \n# Plot both training logs\npython plot_curves.py\n```\n\n## Reference\n\nChen, J., Lu, Y., Yu, Q.,\
+  \ Luo, X., Adeli, E., Wang, Y., Lu, L., Yuille, A. L., & Zhou, Y. (2021). *TransUNet: Transformers Make\
+  \ Strong Encoders for Medical Image Segmentation*. arXiv:2102.04306.\n\n## Disclaimer\n\nThis repository\
+  \ is a research portfolio project for evaluating medical-image segmentation methods.\n"

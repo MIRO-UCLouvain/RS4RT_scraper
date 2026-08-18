@@ -1,0 +1,143 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: kulvait/KCT_cbct
+url: https://github.com/kulvait/KCT_cbct
+platform: github
+description: Fast, accurate and reliable software for algebraic CT reconstruction
+license: GPL-3.0
+language: C++
+keywords:
+- image-processing
+- tomographic-reconstruction
+- tomography
+stars: 30
+updated_at: '2026-07-28T08:36:04Z'
+image_source: https://raw.githubusercontent.com/kulvait/KCT_cbct/HEAD/logo/kct_cbct_logob.png
+heuristic_total_score: 18
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "<img src=\"./logo/kct_cbct_logob.png\" alt=\"KCT CBCT Logo\" width=\"250\"/>\n\n**Fast,\
+  \ accurate and reliable software for algebraic CT reconstruction.**\n\nThis software package provides\
+  \ a comprehensive suite of tools for modern CT and CBCT reconstruction, featuring highly optimized OpenCL\
+  \ implementations of advanced algorithms, including unpublished methods developed by the author. Initially\
+  \ focused on algebraic reconstruction using Krylov-based LSQR and CGLS methods, the package has since\
+  \ expanded to include other widely used techniques, such as OS-SIRT.\n\nAt the core of this software\
+  \ is the cutting voxel projector [CVP](https://doi.org/10.1016/j.jocs.2025.102573), a highly efficient\
+  \ projector that calculates voxel contributions to pixel projections based on volume integrals of voxel\
+  \ cuts. The CVP projector, implemented with OpenCL local memory optimizations, achieves remarkable computational\
+  \ speed, making it one of the fastest projector implementations available for algebraic reconstruction.\
+  \ The package also includes implementations of the TT projector and Siddon projector, providing users\
+  \ with a versatile range of reconstruction tools.\n\nThe software has been tested on multiple architectures,\
+  \ including AMD Radeon VII Vega 20 GPUs, NVIDIA GeForce RTX 2080 Ti GPUs, and Intel CPUs. Compatibility\
+  \ with [OpenCL 1.2](https://www.khronos.org/registry/OpenCL/specs/opencl-1.2.pdf) ensures portability,\
+  \ and the codebase leverages OpenCL 1.2 C++ wrappers for implementation. It could be compilled with\
+  \ OpenCL 2.2 even on NVIDIA GPUs. Specifically, testing has been conducted on NVIDIA's V100 and A100\
+  \ GPUs, with CUDA 11.8 or CUDA 12.1 OpenCL runtime.\n\nSupported platforms include Red Hat Enterprise\
+  \ Linux 9 (with GCC 11) and Debian 12 (with GCC 12), ensuring compatibility with modern Linux distributions.\n\
+  \nPresent and future development efforts focus on:\n\n- **Preconditioning for Krylov Methods:** Developing\
+  \ advanced preconditioning techniques to enhance convergence rates.\n- **Adaptive Voxel Grids:** Enabling\
+  \ computations on grids with variable voxel edge sizes to improve reconstruction quality in regions\
+  \ of interest.\n- **Regularization Techniques:** Integrating regularization methods, such as total variation\
+  \ (TV) minimization, to reduce noise and artifacts in reconstructed images.\n\nThis software represents\
+  \ a powerful toolset for researchers and engineers in tomographic imaging, offering state-of-the-art\
+  \ performance across diverse hardware platforms while maintaining flexibility and scalability for ongoing\
+  \ advancements in the field.\n\n## Algorithms\n\nThe following algorithms are implemented as part of\
+  \ this framework\n\n### Implemented iterative CT reconstruction algorithms\nCGLS algorithm with delayed\
+  \ residual computation as described in [Kulvait, Rose, 2021](https://doi.org/10.48550/arXiv.2110.13526)\n\
+  LSQR algorithm was implemented according to [Reichel, Ye 2008](https://doi.org/10.1002/nla.611)\nPSIRT\
+  \ algorithm was implemented according to [Gregor, Benson 2008](https://doi.org/10.1109/TMI.2008.923696)\n\
+  OS-SART algorithm was implemented according to [Jiang, Wang, 2003](https://doi.org/10.1109/TIP.2003.815295)\n\
+  \n### Implemented projectors\nCutting voxel projector was implemented according to [Kulvait et al.,\
+  \ 2025](https://doi.org/10.1016/j.jocs.2025.102573)\nTT projector was implemented according to [Long\
+  \ et al., 2010](https://doi.org/10.1109/TMI.2010.2050898)\nSiddon projector was implemented according\
+  \ to [Siddon, 1985](https://doi.org/10.1118/1.595715)\n\n## Repositories\n\nThe `KCT_cbct` package is\
+  \ hosted on both **GitHub** and **Bitbucket**. Clone it using the following links:\n\n### GitHub public\
+  \ repository\n\n```bash\ngit clone --recurse-submodules https://github.com/kulvait/KCT_cbct.git\n```\n\
+  \n### Bitbucket public repository\n\n```bash\ngit clone --recurse-submodules https://bitbucket.org/kulvait/kct_cbct.git\n\
+  ```\n\n\n## Submodules\n\nThe project relies on the following internal and external submodules, all\
+  \ of which are hosted on **GitHub** or **Bitbucket** and linked via the Git submodule mechanism. The\
+  \ project is tested against specific versions of these submodules stored in its Git repository.\n\n\
+  To ensure compliance with the correct versions of submodules, the recommended approach is to clone the\
+  \ repository with its submodules using:\n```bash\ngit clone --recurse-submodules\n```\nIf the repository\
+  \ is already cloned, submodule initialization can be performed using\n```bash\ngit submodule init\n\
+  ```\nAfter fetching a new version, or if the submodules are in an inconsistent state, the following\
+  \ command ensures submodules are updated to the correct versions corresponding to particular checkout\n\
+  ```bash\ngit submodule update\n```\n\n### Internal Submodules\n\nThe submodules **CTIOL** and **CTMAL**\
+  \ are developed alongside the `KCT_cbct` package to ensure reusable functionality across multiple projects.\
+  \ These submodules are also utilized in the `KCT_dentk` package for projection and volume data manipulation.\n\
+  \n**[CTIOL](https://bitbucket.org/kulvait/KCT_ctiol)**  \n- **Purpose**: Handles input/output routines\
+  \ for asynchronous, thread-safe reading and writing of CT data.  \n- Implements the **DEN** format for\
+  \ efficient data read/write operations.  \n- **License**: GNU General Public License v3.0 (GPL-3.0).\
+  \  \n\n**[CTMAL](https://bitbucket.org/kulvait/KCT_ctmal)**  \n- **Purpose**: Provides mathematical\
+  \ and algebraic algorithms to support CT data manipulation.  \n- **License**: GNU General Public License\
+  \ v3.0 (GPL-3.0).  \n\n### External Submodules\n\nThe following external submodules provide additional\
+  \ functionality to the `KCT_cbct` package. These dependencies include logging, command-line parsing,\
+  \ testing, and tools for multi-threading and visualization.\n\n**[Plog](https://github.com/SergiusTheBest/plog)**\
+  \  \n- **Purpose**: Logger used for structured, thread-safe logging within the project.  \n- **License**:\
+  \ Mozilla Public License v2.0.  \n\n**[CLI11](https://github.com/CLIUtils/CLI11)**  \n- **Purpose**:\
+  \ Command-line parser for handling program arguments efficiently and reliably.  \n- **License**: 3-Clause\
+  \ BSD License.  \n\n**[Catch2](https://github.com/catchorg/Catch2)**  \n- **Purpose**: Lightweight C++\
+  \ testing framework used for unit tests and validation.  \n- **License**: Boost Software License 1.0.\
+  \  \n\n**[matplotlib-cpp](https://github.com/lava/matplotlib-cpp)**  \n- **Purpose**: Generates plots\
+  \ and visualizations via bindings to Python’s Matplotlib library.  \n- **License**: MIT License.  \n\
+  \n**[gitversion](https://github.com/kulvait/gitversion)**  \n- **Purpose**: Enables tools to print the\
+  \ exact version they were built from, based on Git commit metadata.  \n  - For example, running `kct-krylov\
+  \ -h` may produce output like:  \n    `\"OpenCL implementation cone beam CT reconstruction operator.\
+  \ Git commit 697eecf\"`.  \n  - This is extremely useful for debugging as bug reports can include the\
+  \ precise version of the tools in use.  \n- **License**: GNU General Public License v3.0 (GPL-3.0).\
+  \  \n\n**[ctpl](https://github.com/vit-vit/ctpl)**  \n- **Purpose**: Implements thread-pool management\
+  \ for parallelism, mainly used in legacy tools like `DivideAndConquerFootprintExecutor` or `VolumeFootprintExecutor`.\
+  \  \n  - These legacy tools relied on CPU computation for projector evaluation, but recent tools now\
+  \ use `OpenCL` for parallel computing.\n  - In newer tools linked against `${CMAKE_THREAD_LIBS_INIT}`,\
+  \ CPU threading is usually not performed via `ctpl` but using C++11/C++17 primitives, e.g. in parallel\
+  \ beam partial projector.  \n- **License**: Apache-2.0 License.  \n\n## Building the Project  \n\nThe\
+  \ project uses **CMake** for building and is designed to support a variety of dependencies, including\
+  \ OpenCL, Intel MKL, and optional features like CUDA and Python.  \n\n### Features and Configuration\
+  \  \n\n- **C++ Standard**: The project requires **C++17**.  \n- **Parallel Computing**: OpenCL is mandatory\
+  \ for GPU support, with optional CUDA integration providing additional functionality (e.g., through\
+  \ the OpenCL runtime).  \n- **Mathematical Libraries**: Intel MKL is mandatory for optimized mathematical\
+  \ computations and primarily used by the **CTMAL** library for **LAPACK** primitives.  \n- **Python\
+  \ Integration**: If Python support is enabled, development versions of Python and NumPy are required\
+  \ for linking.  \n- **Threading**: Most tools are linked against `${CMAKE_THREAD_LIBS_INIT}`; thus,\
+  \ a development version of `pthread` or a similar threading library must be available on your system.\
+  \  \n\n### Dependencies  \n\n1. **CMake**: Version **3.9** or higher.  \n2. **OpenCL SDK**: Required\
+  \ for GPU acceleration.  \n3. **Intel MKL**: Mandatory for mathematical operations (see troubleshooting\
+  \ section below).  \n4. **CUDA Toolkit** (Optional): Provides OpenCL runtime and CUDA-specific optimizations\
+  \ if available.  \n5. **Python** (Optional): For Python support, install development versions of both\
+  \ Python and NumPy.  \n\n### Build Steps  \n\nTo build the project, follow these steps:  \n\n```bash\
+  \  \nmkdir build && cd build  \ncmake ..  \nmake  \n```\n\n### Installation\nBy default, the binaries\
+  \ are installed in `$HOME/KCT_bin`. To change the installation location, specify a custom prefix using\
+  \ the `CMAKE_INSTALL_PREFIX` variable\n```bash\ncmake -DCMAKE_INSTALL_PREFIX=/usr/local ..  \nmake install\n\
+  ```\n#### Building with OpenCL\n\nIf OpenCL is detected on your system, the project automatically links\
+  \ against `OpenCL::OpenCL`. Ensure the appropriate libraries and include paths are specified in your\
+  \ environment\n\n- **For CUDA GPUs:** Install the CUDA Toolkit, which also provides an OpenCL runtime.\n\
+  - **For AMD GPUs:** Use ROCm or the AMD OpenCL SDK.\n- **For Intel CPUs**: Install the Intel OpenCL\
+  \ runtime.\n\nWhen having multiple OpenCL runtimes, additional configuration might be needed to run\
+  \ on proper architecture. \nSwitch `-p PlatformID:DeviceID` is supported by KCT tools to run it on selected\
+  \ platforms and devices.\n\n#### Python Integration\nThe **Python development libraries** such as `python3-dev`\
+  \ and NumPy development headers are required for Python support. To satisfy some HPC environments hint\
+  \ is provided `set(Python3_EXECUTABLE /path/to/python)` to point to the correct Python executable. Note\
+  \ that the first version to be found by CMake is tested against presence of development libraries and\
+  \ Numpy development headers.\n\n#### Threading\nMost tools link against `${CMAKE_THREAD_LIBS_INIT}`\
+  \ for multi-threading support. Ensure you have development libraries for threading installed on your\
+  \ system, such as `pthread` e.g., `libpthread-dev` on Linux systems.\n\n#### Intel MKL\nIntel MKL is\
+  \ a third-party library used primarily by the CTMAL library for LAPACK operations. While CT reconstruction\
+  \ itself does not directly rely on MKL, the CTMAL library must still be compiled, making Intel MKL a\
+  \ mandatory dependency.\n\n**Downloading and Installing MKL**\nIntel MKL is a third-party library and\
+  \ is not bundled with this project. It must be downloaded and installed separately from the official\
+  \ Intel website. On Linux systems, MKL is often installed in nonstandard locations, so additional configuration\
+  \ may be required for the project to locate the necessary files. MKL is part of the Intel oneAPI or\
+  \ oneMKL bundle, and users will need to ensure that the appropriate libraries and include files are\
+  \ accessible. Specifically, the project requires access to the `mkl_lapacke.h` header file and the MKL\
+  \ libraries, which are typically found in directories like `${MKL_BASE_DIR}/lib/intel64_lin/`.\n\nThe\
+  \ file `cmake/FindMKL.cmake` is provided by CTIOL package and you can edit it to include your nonstandard\
+  \ instalation directories. It also read environment variables `MKL_ROOT` and `ONEAPI_ROOT` to find MKL\
+  \ installation. If you have MKL installed in a nonstandard location, you can set these environment variables\
+  \ to point to the correct directories.\n\n**Troubleshooting MKL**\n\n- **Header File Not Found:** If\
+  \ CMake cannot locate the `mkl_lapacke.h` file, ensure the `MKL_INCLUDE_DIR` is correctly set to the\
+  \ path containing the MKL headers. \n- **Library File Not Found:** If the MKL libr"

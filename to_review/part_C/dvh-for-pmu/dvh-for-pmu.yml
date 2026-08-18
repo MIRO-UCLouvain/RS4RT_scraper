@@ -1,0 +1,44 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: LexicalError/dvh-for-pmu
+url: https://github.com/LexicalError/dvh-for-pmu
+platform: github
+description: ''
+license: null
+language: Shell
+keywords: []
+stars: 0
+updated_at: '2026-06-19T18:18:31Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# DVH for PMU\n\n---\n\n## Environmental Setup\n\nMake sure to `git submodule update\
+  \ --init --recursive`\n\n**Kernel:**\nVersion: 7.0.10\n- **L0:**\n\n    ```bash\n    cd linux\n    git\
+  \ checkout <branch>\n    cp /boot/config-$(uname -r) .config\n    yes \"\" | make oldconfig\n    make\
+  \ -j`nproc`\n    make modules_install\n    make install\n    ```\n\n- **L1:**\n\n    ```bash\n    cd\
+  \ linux\n    git checkout <branch>\n    make defconfig\n    make -j`nproc`\n    ```\n\n    Then copy\
+  \ the kernel image (`arch/x86/boot/bzImage`) to `img/l0_<branch>_Image`\n\n- **L2:**\n    Same as L0,\
+  \ except you should copy the kernel image (`arch/x86/boot/bzImage`) to `img/l2_Image`\n\n**Qemu**\n\
+  **Version:** v11.0.1\n```bash\ngit clone https://gitlab.com/qemu-project/qemu.git\ncd qemu\ngit checkout\
+  \ v11.0.1\n./configure --target-list=x86_64-softmmu --disable-werror --enable-slirp\nmake -j`nproc`\n\
+  make install\n```\n\n**Disk:**\nUse `create_disk.sh` to create two disk and copy it to `img/l1.img`\
+  \ & `img/l2.img`\n```bash\ncd img\nwget https://cloud.debian.org/images/cloud/trixie/latest/debian-13-generic-amd64.tar.xz\n\
+  ../scripts/create_disk.sh l1.img debian-13-generic-amd64.tar.xz\ncp l1.img l2.img\n```\n\n## Running\
+  \ VMs\n\n**Run L1:**\n```bash\ncd scripts\n./run-l1.sh -p ../ -k <kernel>\n```\ninside there should\
+  \ be a `/host` that shares whatever you passed into the `-p` argument.\n\n**Run L2:**\nNote that in\
+  \ L1, you will need to link the compiled qemu:\n```bash\nln -s /host/qemu/build/qemu-system-x86_64 /usr/local/bin/qemu-system-x86_64\n\
+  ```\nYou will also need to install the kvm kernel modules, they can be copied out with the `cp_out.sh`\
+  \ script after compiling the kernel:\n\n```bash\ncd /linux\n../cp_out.sh ../img\n```\n\nThen you can\
+  \ install them inside L1 with the `set_pmu_pv.sh` script\n\n```bash\ncd /host/scripts\n./set_pmu_pv.sh\
+  \ 1 # Enable DVH PMU Passthrough, 0 for disable\n```\n\nFinally:\n\n```bash\ncd /host/scripts\n./run-l2.sh\
+  \ -p ../ -k <kernel>\n```\n\n(You will want to setup ssh for L1 too)\n\n## Experiments\n\n### PMU Microbench\n\
+  \nUse `./msr_microbench.sh`, you will need to compile `kvm-unit-tests` first and point the directory\
+  \ to the script, you may need to clone `kvm-unit-tests` twice to build it for L0 and L1.\nRunning the\
+  \ script on L0 launches a L1 VM and tests MSR microbenches there. Running the script in L1 launches\
+  \ a L2 VM and tests inside.\n\n### Perf Macrobench\n\nTo use perf:\n```bash\ncd linux/tools/perf\nmake\n\
+  ```\n\n`perf_bench.sh` runs the macrobench workload and should be run in L2.\n"

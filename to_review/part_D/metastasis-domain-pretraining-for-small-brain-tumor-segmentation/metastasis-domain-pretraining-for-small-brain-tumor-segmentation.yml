@@ -1,0 +1,234 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: akramrafid/Metastasis-Domain-Pretraining-for-Small-Brain-Tumor-Segmentation
+url: https://github.com/akramrafid/Metastasis-Domain-Pretraining-for-Small-Brain-Tumor-Segmentation
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-02T05:04:55Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: '# Metastasis-Domain Pretraining for Small Brain Tumor Segmentation
+
+
+  This repository contains the official, fully reproducible codebase for:
+
+  **"Metastasis-Domain Pretraining for Small Brain Tumor Segmentation: Closing the Specificity Gap in
+  Limited-Data Settings"**
+
+
+  An industry-grade, reproducible research codebase isolating domain pretraining (glioma vs. metastasis)
+  as the single variable in self-supervised learning (SSL) to evaluate false-positive control and small-lesion
+  recall in brain metastasis cohorts.
+
+
+  ---
+
+
+  ## 1. Directory Structure
+
+
+  ```
+
+  brain-mets-domain-pretrain/
+
+  ├── configs/                 # Hydra configuration files
+
+  │   ├── base.yaml            # Main hyperparameters, seed, W&B settings
+
+  │   ├── data/                # Dataset-specific modality and mask configurations
+
+  │   ├── model/               # Swin UNETR architecture parameters
+
+  │   ├── experiment/          # Experiment overrides for Arm 0, 1, 2, 3, and eval
+
+  │   └── final_run_snapshot/  # Exact config snapshot used for locked results
+
+  ├── paper/                   # Drafted publication sections (Results, Discussion, etc.)
+
+  ├── src/                     # Core library modules
+
+  │   ├── data/                # Preprocessing, Dataset, Dataloader factory
+
+  │   ├── models/              # Swin UNETR wrapper and SSL dual-head network
+
+  │   ├── training/            # SSL Pretraining, Fine-tuning loops, losses
+
+  │   └── evaluation/          # Cohort evaluator, lesion metrics, statistical tests
+
+  ├── scripts/                 # Executable entrypoints (preprocessing, training, tables, figures)
+
+  ├── scratch/archive/         # Archived diagnostic scripts & evidentiary index
+
+  ├── tests/                   # Pytest test suite (14 passing unit tests)
+
+  ├── outputs/
+
+  │   ├── results/             # Final locked CSV tables and LaTeX exports
+
+  │   └── figures/             # Qualitative figures and FP bar chart
+
+  ├── environment.yaml         # Conda environment definition
+
+  ├── environment_freeze.txt   # Exact pip freeze environment manifest
+
+  └── README.md
+
+  ```
+
+
+  ---
+
+
+  ## 2. Environment Setup
+
+
+  ### Option A: Conda Environment (Local)
+
+  Create and activate the environment using `environment.yaml`:
+
+  ```bash
+
+  conda env create -f environment.yaml
+
+  conda activate brain-mets-dr
+
+  ```
+
+
+  ### Option B: Reproducibility Manifest
+
+  To reproduce using the exact frozen environment manifest:
+
+  ```bash
+
+  pip install -r environment_freeze.txt
+
+  ```
+
+
+  ---
+
+
+  ## 3. End-to-End Reproduction Workflow
+
+
+  ### Step 1: Modality Preprocessing
+
+  Resample all cohorts to 1mm³ isotropic resolution, align to RAS orientation, skull-strip, and Z-score
+  normalize:
+
+  ```bash
+
+  python -m scripts.preprocess_all
+
+  ```
+
+
+  ### Step 2: Run All Four Experimental Arms
+
+
+  #### Arm 0: Loss-based baseline (Huang et al., 2022)
+
+  Fine-tune glioma-pretrained Swin UNETR using Sensitivity-Specificity Tradeoff loss:
+
+  ```bash
+
+  python -m scripts.run_arm0 --config-name=base experiment=arm0_glioma_pretrain_lossfix
+
+  ```
+
+
+  #### Arm 1: Mismatched domain pretraining baseline
+
+  Pretrain Swin UNETR on BraTS-GLI (glioma) and fine-tune on metastasis using DiceCE loss:
+
+  ```bash
+
+  python -m scripts.run_arm1 --config-name=base experiment=arm1_glioma_pretrain_baseline
+
+  ```
+
+
+  #### Arm 2: Proposed domain-matched pretraining
+
+  Pretrain Swin UNETR on Pretreat-MetsToBrain (metastasis) and fine-tune on metastasis using DiceCE loss:
+
+  ```bash
+
+  python -m scripts.run_arm2 --config-name=base experiment=arm2_metastasis_pretrain_proposed
+
+  ```
+
+
+  #### Arm 3: Combined proposed method
+
+  Pretrain Swin UNETR on metastasis domain and fine-tune using Sensitivity-Specificity Tradeoff loss:
+
+  ```bash
+
+  python -m scripts.run_arm3 --config-name=base experiment=arm3_combined
+
+  ```
+
+
+  ### Step 3: Run External Evaluations
+
+  Evaluate all model checkpoints across Pretreat-Mets Test, Stanford BrainMetShare (Labeled & Unlabeled),
+  and UCSF-BMSR under the BraTS Task 4 lesion-wise evaluation protocol ($\ge 27\text{ mm}^3$):
+
+  ```bash
+
+  python scripts/run_external_eval.py
+
+  ```
+
+
+  ### Step 4: Generate Statistical Significance & LaTeX/CSV Tables
+
+  Perform Wilcoxon signed-rank tests and McNemar''s tests with Benjamini-Hochberg FDR correction ($p <
+  0.05$), generating `paper_results_table.csv` and `pairwise_significance.csv`:
+
+  ```bash
+
+  python -m scripts.generate_paper_tables
+
+  ```
+
+
+  ### Step 5: Generate Publication Figures
+
+  Generate the FP/patient comparison bar chart and 4-panel qualitative segmentation slice figure:
+
+  ```bash
+
+  python scripts/generate_figures.py
+
+  ```
+
+
+  ---
+
+
+  ## 4. Testing & Verification
+
+  Execute the unit test suite:
+
+  ```bash
+
+  pytest tests/ -v
+
+  ```
+
+  All 14 unit tests (spacing assertions, connected component metrics, loss functions, data leakage audit,
+  BH-FDR router) pass cleanly.
+
+  '

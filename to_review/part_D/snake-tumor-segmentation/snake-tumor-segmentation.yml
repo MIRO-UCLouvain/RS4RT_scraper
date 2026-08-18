@@ -1,0 +1,59 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: CincaAlex/snake-tumor-segmentation
+url: https://github.com/CincaAlex/snake-tumor-segmentation
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-06-03T07:36:51Z'
+image_source: https://raw.githubusercontent.com/CincaAlex/snake-tumor-segmentation/HEAD/imgs/img1.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# Active Contour Tumor Segmentation\n\n> **University project** — Image Processing\n\n\
+  A desktop application for semi-automatic tumor segmentation in medical images using **active contour\
+  \ models** (snakes). Supports CT and ultrasound (US) images with three distinct algorithms and a PyQt6\
+  \ GUI with live parameter tuning and quantitative evaluation metrics.\n\n---\n\n## Screenshots\n\n|\
+  \ CT — example 1 | CT — example 2 | Ultrasound |\n|:-:|:-:|:-:|\n| ![CT scan 1](imgs/img1.png) | ![CT\
+  \ scan 2](imgs/img2.png) | ![Ultrasound](imgs/img3.png) |\n\n---\n\n## Algorithms\n\n| Algorithm | Reference\
+  \ | Notes |\n|---|---|---|\n| **Kass classic snake** | Kass et al., 1988 | Gradient-based external force,\
+  \ iterative matrix solve |\n| **Balloon snake** | Cohen, 1991 | Adds inflation force to prevent contour\
+  \ collapse |\n| **BFGS snake** | — | Energy minimization via quasi-Newton optimizer |\n\nAll three algorithms\
+  \ optionally use **Gradient Vector Flow (GVF)** as the external force field, which extends the capture\
+  \ range and handles concavities better than raw image gradients.\n\n---\n\n## How it works\n\n1. Load\
+  \ a grayscale medical image (CT or US — detected automatically from the filename)\n2. **Click once**\
+  \ on the image to set the center of the initial circle contour\n3. **Click again** to set the radius\n\
+  4. Choose an algorithm, tune parameters with the sliders, and hit **Run**\n5. The final contour appears\
+  \ in the right panel; if a ground-truth annotation exists in the dataset, Dice, IoU and Hausdorff distance\
+  \ are computed automatically\n\n---\n\n## Project structure\n\n```\nsrc/\n├── gui.py              #\
+  \ PyQt6 application — main entry point\n├── main.py             # Legacy CLI entry point\n├── preprocessing.py\
+  \    # Median blur / CLAHE + Gaussian smoothing\n├── edge_map.py         # Sobel gradient edge map\n\
+  ├── gvf.py              # Gradient Vector Flow computation\n├── init_contour.py     # Circle contour\
+  \ initialisation\n├── io_utils.py         # Image loading, dataset pair discovery\n├── viz.py      \
+  \        # Matplotlib static visualisation (CLI)\n└── snakes/\n    ├── kass_classic.py\n    ├── balloon.py\n\
+  \    └── bfgs_snake.py\nimgs/                   # Screenshots used in this README\n```\n\n---\n\n##\
+  \ Requirements\n\nPython 3.10 or newer.\n\n```\nPyQt6>=6.5\nmatplotlib>=3.7\nnumpy>=1.24\nscipy>=1.10\n\
+  opencv-python>=4.8\n```\n\nInstall everything at once:\n\n```bash\npip install -r requirements.txt\n\
+  ```\n\n`requirements.txt` contents:\n\n```\nPyQt6>=6.5\nmatplotlib>=3.7\nnumpy>=1.24\nscipy>=1.10\n\
+  opencv-python>=4.8\n```\n\n---\n\n## Running the GUI\n\n```bash\ncd src\npython gui.py\n```\n\n### Legacy\
+  \ CLI (no GUI)\n\n```bash\ncd src\npython main.py\n```\n\nThe CLI will prompt you to choose an algorithm,\
+  \ initialisation mode, and image path via a file dialog.\n\n---\n\n## Dataset conventions\n\nThe code\
+  \ expects a folder structure where unmarked images live next to or near their ground-truth counterparts,\
+  \ identified by the keywords `nemarcat` / `marcat` in filenames or folder names:\n\n```\nImagini/\n\
+  ├── set1_nemarcat/\n│   ├── case01.png\n│   └── case02.png\n└── set1_marcat/\n    ├── case01.png   ←\
+  \ ground truth for case01\n    └── case02.png\n```\n\nIf no annotated pair is found, the app still works\
+  \ — metrics are simply not shown.\n\n---\n\n## Evaluation metrics\n\nWhen a ground-truth annotation\
+  \ is available, three metrics are computed after each run:\n\n- **Dice score** — overlap coefficient;\
+  \ > 0.7 is considered good (shown in green)\n- **IoU** (Jaccard index) — intersection over union; >\
+  \ 0.5 good\n- **Hausdorff distance** — maximum boundary deviation in pixels\n\n---\n\n## Notes\n\n-\
+  \ Medical images from the dataset are not included in this repository. The [BUSI dataset](https://scholar.cu.edu.eg/?q=afahmy/pages/BUSI_Dataset)\
+  \ (breast ultrasound) is a publicly available alternative.\n- Modality (CT vs US) is inferred from the\
+  \ file path; images containing `ct` or `computed` in their path are treated as CT, everything else as\
+  \ ultrasound.\n- GVF computation is the most expensive step; disable it with the checkbox in the GUI\
+  \ if you need faster iterations during parameter tuning.\n"

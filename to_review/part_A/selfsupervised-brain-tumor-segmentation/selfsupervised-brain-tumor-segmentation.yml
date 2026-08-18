@@ -1,0 +1,81 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ahmedopy/selfsupervised-brain-tumor-segmentation
+url: https://github.com/ahmedopy/selfsupervised-brain-tumor-segmentation
+platform: github
+description: A self-supervised CNN-Transformer model (MIM-HeMIS) for robust brain tumor segmentation that
+  integrates heterogeneous MRI modalities, maintaining strong performance even with missing input sequences.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-27T17:53:58Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# \U0001F9E0 MIM-HeMIS: Self-Supervised Brain Tumor Segmentation under Missing MRI Modalities\n\
+  \n![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)\n![PyTorch](https://img.shields.io/badge/PyTorch-Deep%20Learning-red?logo=pytorch)\n\
+  ![Medical Imaging](https://img.shields.io/badge/Domain-Medical%20Imaging-green)\n![Status](https://img.shields.io/badge/Status-Research%20Project-success)\n\
+  ![Dataset](https://img.shields.io/badge/Dataset-BraTS%202021-orange)\n![License](https://img.shields.io/badge/License-Academic-lightgrey)\n\
+  \n---\n\n# \U0001F9E9 Overview\n\nBrain tumor segmentation from multi-modal MRI is a fundamental task\
+  \ in neuro-oncology, supporting diagnosis, treatment planning, and disease monitoring. Although recent\
+  \ deep learning methods have demonstrated remarkable performance, they generally assume that all MRI\
+  \ modalities are available during inference. In real-world clinical settings, however, MRI sequences\
+  \ are frequently missing due to acquisition artifacts, patient conditions, scanning costs, or varying\
+  \ clinical protocols.\n\nThis repository presents **MIM-HeMIS**, a novel self-supervised framework designed\
+  \ for **robust brain tumor segmentation under arbitrary missing MRI modalities**.\n\nThe proposed framework\
+  \ integrates:\n\n- **Masked Image Modeling (MIM)** for self-supervised representation learning.\n- **HeMIS\
+  \ (Hetero-Modal Image Segmentation)** for modality-invariant feature fusion.\n- A **hybrid CNN-Transformer\
+  \ architecture** for capturing both local and global contextual information.\n- A flexible fusion strategy\
+  \ capable of handling **any combination of missing MRI modalities without retraining**.\n\nUnlike conventional\
+  \ methods, the proposed model remains operational even when one or multiple MRI modalities are unavailable,\
+  \ making it highly suitable for realistic clinical deployment.\n\n---\n\n# ✨ Key Contributions\n\n✅\
+  \ Self-supervised pretraining using **Masked Image Modeling (MIM)** on multi-modal MRI volumes.\n\n\
+  ✅ A novel integration of **HeMIS and SSL representations** for robust heterogeneous modality fusion.\n\
+  \n✅ Handles **arbitrary missing MRI modalities** during inference.\n\n✅ No modality-specific retraining\
+  \ required.\n\n✅ Robust segmentation performance across **all 15 possible modality combinations**.\n\
+  \n✅ Extensive evaluation on the **BraTS 2021 benchmark dataset**.\n\n---\n\n# \U0001F3D7️ Framework\
+  \ Architecture\n\nThe proposed pipeline consists of two major stages:\n\n```text\nMulti-modal MRI Volumes\n\
+  (T1, T1ce, T2, FLAIR)\n            │\n            ▼\n──────────────────────────────\nSelf-Supervised\
+  \ Pretraining\n(Masked Image Modeling)\n──────────────────────────────\n            │\n            ▼\n\
+  Transformer-based SSL Encoder\n            │\n            ▼\n──────────────────────────────\nModality-Specific\
+  \ CNN Encoders\n──────────────────────────────\n            │\n            ▼\nHeMIS Abstraction Layer\n\
+  (Mean + Variance Fusion)\n            │\n            ▼\nFusion of SSL + HeMIS Features\n           \
+  \ │\n            ▼\nSegmentation Decoder\n            │\n            ▼\nBrain Tumor Segmentation\n(NCR,\
+  \ ED, ET)\n```\n\n---\n\n# \U0001F9E0 Model Components\n\n| Component | Description |\n|-----------|-------------|\n\
+  | Self-Supervised Learning | Masked Image Modeling (MIM) |\n| SSL Backbone | Transformer Encoder |\n\
+  | Modality Encoder | 3D CNN Encoder |\n| Fusion Strategy | HeMIS Abstraction (Mean + Variance) |\n|\
+  \ Decoder | U-Net-style Segmentation Decoder |\n| Loss Function | Weighted Cross-Entropy + Dice Loss\
+  \ |\n| Input Modalities | T1, T1ce, T2, FLAIR |\n| Output Classes | Background, NCR, ED, ET |\n\n---\n\
+  \n# \U0001F4CA Dataset\n\nThis work uses the **Brain Tumor Segmentation (BraTS) 2021** dataset.\n\n\
+  > **Note:** The BraTS 2021 dataset is **not included** in this repository due to licensing restrictions.\n\
+  \nPlease obtain the dataset from the official BraTS challenge website and organize it according to the\
+  \ expected directory structure.\n\n### Supported MRI Modalities\n\n- FLAIR\n- T1\n- T1ce\n- T2\n\n---\n\
+  \n# ⚙️ Installation\n\nClone the repository:\n\n```bash\ngit clone https://github.com/your_username/selfsup-brain-tumor-segmentation.git\n\
+  \ncd selfsup-brain-tumor-segmentation\n```\n\nCreate a virtual environment:\n\n```bash\nconda create\
+  \ -n mim-hemis python=3.10\nconda activate mim-hemis\n```\n\nInstall dependencies:\n\n```bash\npip install\
+  \ -r requirements.txt\n```\n\n---\n\n# \U0001F680 Usage\n\n## 1. Self-Supervised Pretraining\n\nPretrain\
+  \ the Transformer encoder using Masked Image Modeling:\n\n```bash\npython training/pretrain.py \\\n\
+  \    --data_dir /path/to/BraTS2021 \\\n    --epochs 300 \\\n    --mask_ratio 0.75\n```\n\n---\n\n##\
+  \ 2. Segmentation Fine-Tuning\n\nFine-tune the pretrained model for tumor segmentation:\n\n```bash\n\
+  python training/finetune.py \\\n    --data_dir /path/to/BraTS2021 \\\n    --pretrained checkpoints/ssl_pretrained.pth\n\
+  ```\n\n---\n\n## 3. Model Evaluation\n\nEvaluate the model on validation or test data:\n\n```bash\n\
+  python evaluation/evaluate.py \\\n    --checkpoint checkpoints/best_model.pth\n```\n\n---\n\n# \U0001F4C8\
+  \ Evaluation Protocol\n\nThe framework is evaluated under:\n\n- Complete MRI modality setting.\n- Single\
+  \ missing modality scenarios.\n- Multiple missing modality scenarios.\n- All **15 possible modality\
+  \ combinations**.\n\nPerformance is assessed using:\n\n| Metric |\n|---------|\n| Dice Similarity Coefficient\
+  \ (DSC) |\n| Tumor Core Dice (TC) |\n| Whole Tumor Dice (WT) |\n| Enhancing Tumor Dice (ET) |\n\n---\n\
+  \n# \U0001F52C Experimental Findings\n\n- Self-supervised pretraining significantly improves segmentation\
+  \ performance.\n- HeMIS-based fusion provides strong robustness against missing modalities.\n- The proposed\
+  \ framework consistently outperforms conventional baselines under incomplete MRI settings.\n- Performance\
+  \ degradation remains minimal even when multiple modalities are absent.\n\n---\n\n# \U0001F4DA Citation\n\
+  \nIf you find this work useful, please cite:\n\n```bibtex\n@article{yourcitation2026,\n  title={MIM-HeMIS:\
+  \ Self-Supervised Masked Image Modeling with Heterogeneous Modality Fusion for Brain Tumor Segmentation\
+  \ under Missing MRI Modalities},\n  author={Your Name},\n  year={2026}\n}\n```\n\n---\n# ⭐ Acknowledgements\n\
+  \n- BraTS 2021 Challenge\n- PyTorch\n- Medical Open Network for AI (MONAI)\n- The Brain Tumor Segmentation\
+  \ research community\n"

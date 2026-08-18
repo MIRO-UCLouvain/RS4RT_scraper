@@ -1,0 +1,132 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: chongchongyouxinxin/Lightweight-Liver-Tumor-Segmentation
+url: https://github.com/chongchongyouxinxin/Lightweight-Liver-Tumor-Segmentation
+platform: github
+description: Lightweight-Liver-Tumor-Segmentation
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-15T11:41:57Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: '# Lightweight-Liver-Tumor-Segmentation
+
+  Lightweight-Liver-Tumor-Segmentation
+
+  本项目针对肝脏肿瘤CT图像临床分割的部署痛点，构建了融合边界注意力机制的轻量化U-Net模型，在保证分割精度接近原生U-Net的前提下，将参数量压缩至4.2M，推理速度提升50%以上，可适配便携式CT设备、术中导航系统等边缘场景的实时分割需求。
+
+
+  ---
+
+
+  ### 完整版（适合GitHub README、结题报告项目概述，专业规范）
+
+  # 基于轻量化深度学习的肝脏肿瘤CT图像分割
+
+  ## 项目简介
+
+  肝脏肿瘤是全球范围内高发的恶性肿瘤，CT影像自动分割是临床诊断、手术规划与疗效评估的核心环节。针对现有深度学习分割模型普遍存在参数量大、显存占用高、难以部署于基层便携式医疗设备的痛点，本项目以经典U-Net为基础架构，结合深度可分离卷积、边界注意力机制、多尺度特征融合与知识蒸馏技术，构建了兼顾分割精度与部署效率的轻量化肝脏肿瘤CT分割模型。
+
+
+  项目基于公开LiTS肝脏肿瘤分割数据集完成全流程训练与验证，在肿瘤分割精度接近原始U-Net的前提下，将模型参数量压缩至4.2M，单张图像推理速度提升50%以上，显存占用降低近一半，可满足边缘计算场景下的实时分割需求，为基层医疗筛查、术中实时导航等场景提供了可行的轻量化技术方案。
+
+
+  ## 核心技术方案
+
+  1. **轻量化骨干网络构建**
+
+  以U-Net编码-解码架构为基础，采用深度可分离卷积替换全部标准卷积，结合逆瓶颈结构与SE通道注意力模块，在大幅压缩参数量与计算量的同时，保留医学图像所需的特征提取能力。
+
+
+  2. **边界注意力模块（BAM）设计**
+
+  针对肝脏肿瘤边界灰度梯度平缓、分割精度低的问题，通过Sobel算子提取多尺度边界梯度信息生成注意力图，嵌入U-Net跳跃连接中强化边界区域特征响应，有效提升模糊边界与不规则肿瘤的分割准确度。
+
+
+  3. **多尺度特征融合优化**
+
+  在解码器顶层引入金字塔池化模块（PPM），融合全局上下文信息，增强对直径<1cm微小肿瘤的特征捕捉能力；优化跳跃连接的自适应权重，平衡低层细节特征与高层语义特征的贡献。
+
+
+  4. **模型压缩与精度补偿**
+
+  采用知识蒸馏技术，以原始U-Net为教师模型迁移分割语义知识，弥补轻量化带来的精度损失；结合结构化剪枝与INT8量化进一步压缩模型体积，适配边缘设备的算力与显存限制。
+
+
+  ## 核心实验结果
+
+  项目在LiTS公开测试集上完成性能验证，核心指标如下：
+
+
+  | 评估指标 | 数值 |
+
+  |----------|------|
+
+  | 肝脏分割Dice系数 | 0.924 |
+
+  | 肿瘤分割Dice系数 | 0.857 |
+
+  | 模型参数量 | 4.2M |
+
+  | 256×256单图推理时间 | 265ms |
+
+  | 训练显存占用 | 3.1GB |
+
+
+  与原始U-Net相比，模型参数量压缩86.5%，推理速度提升54.3%，整体精度损失控制在1%以内，实现了轻量化与高精度的有效平衡。消融实验验证，边界注意力模块可使边界区域分割精度提升11.3%，多尺度池化模块显著改善了小肿瘤漏检问题。
+
+
+  ## 仓库文件结构
+
+  ```
+
+  ├── model/          # 模型架构定义（轻量化U-Net、BAM、PPM模块）
+
+  ├── data/           # 数据预处理、数据增强与加载脚本
+
+  ├── utils/          # 评估指标、损失函数、可视化工具函数
+
+  ├── train.py        # 模型训练入口脚本
+
+  ├── test.py         # 测试集评估与指标计算脚本
+
+  ├── inference.py    # 单张CT图像推理演示脚本
+
+  └── README.md       # 项目说明文档
+
+  ```
+
+
+  ## 环境依赖
+
+  - Python 3.9
+
+  - PyTorch 2.0
+
+  - SimpleITK
+
+  - OpenCV-Python
+
+  - scikit-image
+
+  - Matplotlib
+
+
+  ## 使用说明
+
+  1. 下载LiTS公开数据集，放置于指定数据目录
+
+  2. 运行数据预处理脚本完成CT切片、HU归一化与数据集划分
+
+  3. 执行 `python train.py` 启动模型训练
+
+  4. 执行 `python inference.py` 进行单张图像分割推理
+
+  '

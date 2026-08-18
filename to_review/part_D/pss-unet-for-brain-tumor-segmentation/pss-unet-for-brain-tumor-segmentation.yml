@@ -1,0 +1,137 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: DeepakBolleddu/PSS-UNet-for-Brain-Tumor-Segmentation
+url: https://github.com/DeepakBolleddu/PSS-UNet-for-Brain-Tumor-Segmentation
+platform: github
+description: The Progressive State-Space U-Net (PSS-UNet), which propagates learned state representations
+  across all encoder and decoder stages rather than placing state-space components only at the network
+  bottleneck.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-16T12:26:17Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# PSS-UNet for Brain Tumor Segmentation\n\nCode, data splits, and results for our BSPC\
+  \ submission, a **controlled\nreproducibility study of state-space models for 3D brain-tumor segmentation**,\n\
+  paired with a retraining-free **reliability / selective-prediction** method that\nwe test under real\
+  \ cross-dataset shift (BraTS 2021 → BraTS-Africa).\n\nThis repository is deliberately small. It is meant\
+  \ to let a reviewer confirm\nthree things without a GPU:\n\n1. **The evaluation is leak-free.** The\
+  \ 900 / 100 / 251 split is frozen in\n   [`splits/heldout_900_100_251.json`](splits/heldout_900_100_251.json);\
+  \ the 251\n   test IDs never appear in train or val, and only `evaluate.py` ever touches\n   them.\n\
+  2. **The numbers in the paper are the numbers we actually got.** Every table can\n   be regenerated\
+  \ from the per-case JSON files in [`results/`](results) with one\n   command — nothing is transcribed\
+  \ by hand.\n3. **The comparison is fair.** All models are trained by the *same*\n   `train_fair.py`\
+  \ under the *same* `configs/train_protocol.yaml` (one schedule,\n   deep supervision off for everyone,\
+  \ flips-only augmentation, seeds 42/1/2,\n   checkpoint chosen on the validation set only).\n\n\n\n\
+  ---\n\n## What's in here\n\n```\nPSS-UNet-for-Brain-Tumor-Segmentation/\n├── models/\n│   ├── pss_unet.py\
+  \                      # PSS-UNet: SE + genuine bidirectional selective SSM (S6)\n│   ├── ablation_models.py\
+  \               # BaselineVNet, VNetWithSE, VNetWithSSM (shared backbone)\n│   ├── data_loader.py  \
+  \                 # BraTS dataset; flips-only aug; 155→152 depth crop\n│   ├── train_fair.py       \
+  \             # the ONE training protocol (all models, all seeds)\n│   ├── evaluate.py             \
+  \         # single-pass Dice on test / BraTS-Africa (the only script that reads test)\n│   ├── uq_inference.py\
+  \                  # per-case uncertainty via 8-flip test-time augmentation\n│   ├── selective_prediction_analysis.py\
+  \ # risk–coverage, failure-AUROC, split-conformal Dice floor\n│   ├── reliability_study.py         \
+  \    # reliability curves, bootstrap CIs, Africa subgroups\n│   └── make_splits.py                 \
+  \  # regenerate the frozen split (seeded, with overlap asserts)\n├── preprocessing/\n│   ├── Preprocess_BRATS.py\
+  \              # DICOM → NIfTI, resample to 1mm, per-modality processing\n│   └── standardize_full_dataset.py\
+  \      # resample every case to 240×240×155\n├── splits/\n│   └── heldout_900_100_251.json         #\
+  \ the frozen, leak-free split (seed 42)\n├── configs/\n│   └── train_protocol.yaml              # frozen\
+  \ hyper-parameters (mirrors train_fair.py defaults)\n├── results/\n│   ├── segmentation_results.json\
+  \        # per-seed + mean/std Dice, all models, test + Africa\n│   ├── reliability_curves.json    \
+  \      # entropy-decile Dice bins for the reliability figure\n│   ├── training_config.json         \
+  \    # exact config emitted by a real training run\n│   ├── uq/                              # per-case\
+  \ UQ records (median seed), test + africa_std\n│   └── per_patient/                     # per-patient\
+  \ Dice for the paired significance tests\n├── requirements.txt\n└── LICENSE\n```\n\n\n**Data is not\
+  \ redistributed.** The BraTS 2021 and BraTS-Africa licenses forbid\nit. Download the datasets yourself\
+  \ (links below) and point the scripts at them.\n\n---\n\n## The five models\n\n| key in code | paper\
+  \ name | what it adds | params |\n|---|---|---|---|\n| `baseline` | V-Net baseline | encoder–decoder,\
+  \ InstanceNorm, no attention | 10.26 M |\n| `vnet_se`  | V-Net + SE | squeeze-and-excitation channel\
+  \ attention | 10.28 M |\n| `vnet_ssm` | V-Net + SSM (bottleneck) | one selective-scan block at the bottleneck\
+  \ | 9.41 M |\n| `pss_unet` | PSS-UNet | SE + bidirectional selective SSM distributed across low-res\
+  \ stages + progressive state | 14.32 M |\n| `umamba`   | U-Mamba | external SOTA SSM baseline (segmentation\
+  \ reference only) | 5.97 M |\n\n`baseline`, `vnet_se`, `vnet_ssm` and `pss_unet` share the identical\
+  \ backbone,\nfilter count, normalization and activation, so the ablation is clean. `pss_unet`\nuses\
+  \ a *real* Mamba-style S6 scan (state matrix, ZOH discretization,\ninput-dependent B/C/Δt, bidirectional),\
+  \ not a pooled channel gate — see the\nmodule docstring in [`models/pss_unet.py`](models/pss_unet.py)\
+  \ for the exact\nformulation and the honest note on where the scan is affordable.\n\n> **On U-Mamba:**\
+  \ it is included as a segmentation baseline (Table 1 / Figure 1).\n> Its model definition (`umamba_seg.py`)\
+  \ wraps the external U-Mamba/nnU-Net code\n> and depends on a CUDA build of `mamba-ssm`, so we do not\
+  \ vendor it here; install\n> [U-Mamba](https://github.com/bowang-lab/U-Mamba) and expose a `UMambaSeg`\
+  \ class\n> to reproduce it. U-Mamba is **not** part of the controlled reliability study,\n> which covers\
+  \ the four matched-backbone models.\n\n---\n\n## Setup\n\n```bash\ngit clone https://github.com/DeepakBolleddu/PSS-UNet-for-Brain-Tumor-Segmentation.git\n\
+  cd PSS-UNet-for-Brain-Tumor-Segmentation\n\npython -m venv .venv && source .venv/bin/activate\npip install\
+  \ -r requirements.txt\n```\n\nReported runs used **PyTorch 2.2.0 + CUDA 12.1** on a Tesla V100-SXM2-32GB.\n\
+  The fused `mamba-ssm` kernel is optional — `pss_unet.py` falls back to a correct\npure-PyTorch selective\
+  \ scan if it is not installed (just slower).\n\n### Data\n\n- **BraTS 2021** (training + in-distribution\
+  \ test): register at the\n  [RSNA-ASNR-MICCAI BraTS 2021 challenge](https://www.synapse.org/brats2021).\n\
+  - **BraTS-Africa** (out-of-distribution): from the\n  [BraTS 2023 SSA challenge](https://www.synapse.org/brats2023).\n\
+  \nThen preprocess to the layout the loaders expect (per-modality min–max to [0,1],\nresampled to 240×240×155,\
+  \ files named `<pid>_<flair|t1|t1ce|t2|seg>.nii.gz`):\n\n```bash\npython preprocessing/Preprocess_BRATS.py\
+  \          # DICOM → NIfTI, resample to 1mm\npython preprocessing/standardize_full_dataset.py  # resample\
+  \ every case to 240×240×155\n```\n\n`data_loader.py` and `evaluate.py` center-crop depth 155 → 152 on\
+  \ the fly, and\naugmentation is **random flips only** (`p=0.5` per axis) — nothing else. That is\nthe\
+  \ entire augmentation claim, and it lives in\n[`models/data_loader.py`](models/data_loader.py).\n\n\
+  ---\n\n## Reproduce the paper\n\nSet `DATA` to your standardized BraTS 2021 root and `AFRICA` to your\
+  \ standardized\nBraTS-Africa root, and run everything from inside `models/`:\n\n```bash\ncd models\n\
+  DATA=/path/to/BRATS2021_standardized\nAFRICA=/path/to/BRATS_Africa            # nested: 95_Glioma/ and\
+  \ 51_OtherNeoplasms/\nSPLITS=../splits/heldout_900_100_251.json\n```\n\n### 1 — Train (one identical\
+  \ protocol, three seeds)\n\nEarly stopping uses the 100-case **validation** split only; the 251-case\
+  \ test\nsplit is never loaded here.\n\n```bash\nfor M in baseline vnet_se vnet_ssm pss_unet; do\n  for\
+  \ S in 42 1 2; do\n    python train_fair.py --model $M --seed $S \\\n        --data_dir $DATA --splits_file\
+  \ $SPLITS \\\n        --output_dir ../runs/$M/seed$S \\\n        --epochs 150 --lr 1e-4 --weight_decay\
+  \ 1e-5 \\\n        --accumulation_steps 8 --patience 30 --deep_sup none\n  done\ndone\n```\n\n(These\
+  \ flags are the frozen protocol in\n[`configs/train_protocol.yaml`](configs/train_protocol.yaml).)\n\
+  \n### 2 — Evaluate → segmentation Dice (Table 1 / Figure 1)\n\n`evaluate.py` is the **only** script\
+  \ that reads the test split. Run it per model\nper seed on both the in-distribution test set and BraTS-Africa:\n\
+  \n```bash\n# in-distribution test (251)\npython evaluate.py --model pss_unet --checkpoint ../runs/pss_unet/seed42/pss_unet/best.pth\
+  \ \\\n    --data_dir $DATA --splits_file $SPLITS --split test \\\n    --out_dir ../runs/pss_unet/seed42/test\n\
+  \n# BraTS-Africa (out-of-distribution)\npython evaluate.py --model pss_unet --checkpoint ../runs/pss_unet/seed42/pss_unet/best.pth\
+  \ \\\n    --data_dir $AFRICA --africa \\\n    --out_dir ../runs/pss_unet/seed42/africa\n```\n\n### 3\
+  \ — Per-case uncertainty (test-time augmentation)\n\nEight axis-aligned flips, un-flipped and averaged;\
+  \ entropy is the uncertainty\nscore. No retraining, so it is identical for every model.\n\n```bash\n\
+  python uq_inference.py --model pss_unet --checkpoint ../runs/pss_unet/seed42/pss_unet/best.pth \\\n\
+  \    --data_dir $DATA --splits_file $SPLITS --split test \\\n    --out ../results/uq/pss_unet_seed42_test.json\n\
+  \npython uq_inference.py --model pss_unet --checkpoint ../runs/pss_unet/seed42/pss_unet/best.pth \\\n\
+  \    --data_dir $AFRICA --africa \\\n    --out ../results/uq/pss_unet_seed42_africa_std.json\n```\n\n\
+  ### 4 — Reliability & selective prediction (Tables 3–4, Figures 2–3)\n\n```bash\n# risk–coverage, failure-AUROC,\
+  \ and the split-conformal Dice floor (Table 4)\npython selective_prediction_analysis.py \\\n    --test\
+  \ ../results/uq/pss_unet_seed42_test.json \\\n    --africa ../results/uq/pss_unet_seed42_africa_std.json\
+  \ \\\n    --score entropy --fail_thr 0.80 --floor 0.80 --alpha 0.10\n\n# reliability curves, bootstrap\
+  \ 95% CIs, and the Africa subgroup breakdown\npython reliability_study.py --uq_dir ../results/uq --results_root\
+  \ ../runs\n```\n\n### 5 — Regenerate the paper tables from the shipped JSONs (no GPU)\n\nThis is the\
+  \ one-command audit trail — it reads only `results/` and prints the\nsame numbers that are in the paper:\n\
+  \n```bash\ncd ..\npython make_tables.py\n```\n\n---\n\n## Results \n\n**Table 1 — Segmentation Dice\
+  \ (mean ± seed std).** Four models overlap in and\nout of distribution; U-Mamba is level with them.\n\
+  \n| Model | Test (N=251) | BraTS-Africa |\n|---|---|---|\n| V-Net baseline | 0.9304 ± 0.0003 | 0.8906\
+  \ ± 0.0025 |\n| V-Net + SE | 0.9311 ± 0.0015 | 0.8926 ± 0.0015 |\n| V-Net + SSM (bneck) | 0.9316 ± 0.0013\
+  \ | 0.8880 ± 0.0018 |\n| PSS-UNet (SSM all) | 0.9327 ± 0.0009 | 0.8890 ± 0.0027 |\n| U-Mamba | 0.9310\
+  \ ± 0.0025 | 0.8894 |\n\n**Table 3 — Failure detection & selective prediction on BraTS-Africa**\n(TTA\
+  \ entropy, median seed, failure = Dice < 0.80). Entropy ranks failures above\nsuccesses and abstaining\
+  \ lifts retained Dice from ~0.89 to ~0.94.\n\n| Model | fail-AUROC | Spearman(ent,Dice) | Dice @100%\
+  \ | Dice @70% |\n|---|---|---|---|---|\n| V-Net baseline | 0.945 | −0.86 | 0.896 | 0.944 |\n| V-Net\
+  \ + SE | 0.962 | −0.87 | 0.897 | 0.939 |\n| V-Net + SSM (bneck) | 0.922 | −0.85 | 0.896 | 0.936 |\n\
+  | PSS-UNet | 0.899 | −0.78 | 0.896 | 0.934 |\n\nThe paired significance tests (PSS-UNet vs each alternative)\
+  \ come from the\nper-patient Dice files in [`results/per_patient/`](results/per_patient); the\nsplit-conformal\
+  \ Dice floor and the glioma-vs-other-neoplasm subgroup finding are\nproduced by the two analysis scripts\
+  \ above.\n\n---\n\n## The leak-free split, in one place\n\n[`splits/heldout_900_100_251.json`](splits/heldout_900_100_251.json)\
+  \ contains the\nfrozen `train` (900), `validation` (100) and `test` (251) patient-ID lists,\ngenerated\
+  \ with seed 42. To confirm there is no leakage:\n\n```bash\npython -c \"import json; s=json.load(open('splits/heldout_900_100_251.json'));\
+  \ \\\ntr,va,te=set(s['train']),set(s['validation']),set(s['test']); \\\nprint('sizes', len(tr),len(va),len(te));\
+  \ \\\nprint('overlaps', tr&va, tr&te, va&te)\"\n# -> sizes 900 100 251 ; overlaps set() set() set()\n\
+  ```\n\n`make_splits.py` regenerates this exact file and asserts pairwise-empty overlaps\nbefore writing.\n\
+  \n---\n\n## Citation\n\n```bibtex\n@article{bolleddu2026pssunet,\n  title   = {A Controlled Study of\
+  \ State-Space Models for Brain Tumor\n             Segmentation with Cross-Dataset Reliability},\n \
+  \ author  = {Bolleddu, Deepak and others},\n  journal = {Biomedical Signal Processing and Control},\n\
+  \  year    = {2026},\n  note    = {Under review}\n}\n```\n\n## License\n\nCode is released under the\
+  \ [MIT License](LICENSE). BraTS data is **not**\nincluded and remains under its original licenses; download\
+  \ it from the sources\nabove.\n"

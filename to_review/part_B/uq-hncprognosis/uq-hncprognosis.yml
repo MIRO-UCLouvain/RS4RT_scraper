@@ -1,0 +1,116 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: paproki/UQ-HNCPrognosis
+url: https://github.com/paproki/UQ-HNCPrognosis
+platform: github
+description: 'Utility for HNC Radiomics / Prognosis '
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-08-14T05:56:44Z'
+image_source: null
+heuristic_total_score: 24
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 9 support term(s).
+readme_excerpt: "# UQ-HNCPrognosis\n\nA focused toolkit for Head & Neck Cancer (HNC) radiation therapy\
+  \ structure analysis and radiomics feature extraction for prognosis research.\n\n## Overview\n\nThis\
+  \ repository contains specialized tools for processing radiation therapy structures and extracting prognostic\
+  \ features from Head & Neck Cancer imaging data. The tools are designed for research workflows involving\
+  \ DICOM RT-Struct conversion, radiomics analysis, and visualization.\n\n## Repository Structure\n\n\
+  ```\nUQ-HNCPrognosis/\n├── Python/                          # Python analysis tools\n│   ├── Radiomics/\
+  \                   # Radiomics feature extraction\n│   │   ├── ComputeSUVMap.py        # SUV map calculation\
+  \ for PET\n│   │   └── TestRadiomics.py        # Radiomics feature extraction\n│   ├── RTStructToNifti.py\
+  \          # Standard RTStruct conversion\n│   ├── RTStructToNifti_advanced.py # Advanced RTStruct processing\n\
+  │   ├── RTStructToNifti_RTTools.py  # RTTools-based conversion\n│   ├── FindAndConvertRTStructs.py \
+  \ # Batch RTStruct processing\n│   ├── FindRTStructFilesAndReferenceDCM.py  # RTStruct file discovery\n\
+  │   ├── Filter_unique_RTStructs.py  # ROI standardization\n│   ├── OverlaySegmentation.py      # Visualization\
+  \ overlays\n│   └── OverlaySegmentation_deepseek.py  # Enhanced visualization\n├── Configs/        \
+  \                 # Configuration files\n│   ├── HNC_Quebec_regions_tumor.json    # Quebec dataset ROI\
+  \ config\n│   └── HNC_RADCURE_regions_tumor_nodes.json  # RADCURE dataset config\n├── Clusterify/  \
+  \                    # HPC processing templates\n│   └── GenericProcessing.slurm     # SLURM job template\n\
+  └── README.md                        # This file\n```\n\n## Quick Start\n\n### Environment Setup\n\n\
+  This toolkit requires a conda environment with medical imaging and machine learning libraries:\n\n```bash\n\
+  # Create environment with required packages\nconda create -n hnc-analysis python=3.9\nconda activate\
+  \ hnc-analysis\n\n# Install core medical imaging libraries\nconda install -c conda-forge simpleitk nibabel\
+  \ pydicom\nconda install pandas numpy matplotlib scikit-image\n\n# For radiomics (choose one):\npip\
+  \ install pyradiomics              # Standard radiomics\n# OR\npip install radiomics               \
+  \ # Alternative implementation\n\n# For advanced processing (optional)\nconda install -c pytorch pytorch\
+  \ torchvision\npip install monai                    # Medical AI framework\n```\n\n### Basic Usage Examples\n\
+  \n#### 1. Convert RTStruct to NIfTI Labels\n\n```bash\n# Basic conversion\npython Python/RTStructToNifti.py\
+  \ \\\n    --rtstruct /path/to/rtstruct.dcm \\\n    --reference /path/to/ct/dicom/folder \\\n    --output\
+  \ /path/to/output_labels.nii.gz\n\n# Advanced conversion with precision options\npython Python/RTStructToNifti_advanced.py\
+  \ \\\n    --rtstruct /path/to/rtstruct.dcm \\\n    --reference /path/to/ct/dicom/folder \\\n    --output\
+  \ /path/to/output_labels.nii.gz \\\n    --structlist Configs/HNC_Quebec_regions_tumor.json \\\n    --precision-method\
+  \ precise \\\n    --subpixel-precision\n```\n\n#### 2. Batch Process Multiple Patients\n\n```bash\n\
+  # Process entire dataset with RTStruct conversion and SUV maps\npython Python/FindAndConvertRTStructs.py\
+  \ \\\n    --input_dir /path/to/patient/folders \\\n    --output_dir /path/to/results \\\n    --structlist\
+  \ Configs/HNC_RADCURE_regions_tumor_nodes.json \\\n    --id Patient001 \\\n    --dosuv --dortstruct\n\
+  ```\n\n#### 3. Extract Radiomics Features\n\n```bash\n# Compute SUV maps for PET\npython Python/Radiomics/ComputeSUVMap.py\
+  \ \\\n    --input_pet /path/to/pet/dicom/folder \\\n    --output /path/to/suv_map.nii.gz\n\n# Extract\
+  \ radiomics features\npython Python/Radiomics/TestRadiomics.py \\\n    --input_ct /path/to/ct_image.nii.gz\
+  \ \\\n    --input_mask /path/to/tumor_mask.nii.gz\n```\n\n#### 4. Create Visualizations\n\n```bash\n\
+  # Basic overlay with 5 axial slices\npython Python/OverlaySegmentation.py \\\n    /path/to/ct_image.nii.gz\
+  \ \\\n    /path/to/segmentation.nii.gz \\\n    /path/to/overlay.png\n\n# Coronal wireframe with custom\
+  \ opacity\npython Python/OverlaySegmentation.py \\\n    /path/to/ct_image.nii.gz \\\n    /path/to/segmentation.nii.gz\
+  \ \\\n    /path/to/overlay.png \\\n    --orientation coronal \\\n    --wireframe \\\n    --opacity 0.8\
+  \ \\\n    --num_slices 8\n\n# High-resolution sagittal overlay\npython Python/OverlaySegmentation.py\
+  \ \\\n    /path/to/ct_image.nii.gz \\\n    /path/to/segmentation.nii.gz \\\n    /path/to/overlay.png\
+  \ \\\n    --orientation sagittal \\\n    --num_slices 10 \\\n    --dpi 300 \\\n    --contour_width 2\n\
+  ```\n\n#### 5. Additional Utilities\n\n```bash\n# Extract unique ROI names from RTStruct files\npython\
+  \ Python/Filter_unique_RTStructs.py \\\n    --input_dir /path/to/rtstruct/files \\\n    --output /path/to/unique_rois.txt\n\
+  ```\n\n## HPC Processing\n\n### SLURM Job Submission\n\nThe repository includes a generic SLURM template\
+  \ for cluster computing:\n\n```bash\n# Edit the template for your specific needs\nnano Clusterify/GenericProcessing.slurm\n\
+  \n# Submit job\nsbatch Clusterify/GenericProcessing.slurm\n```\n\n### Template Customization\n\nModify\
+  \ the SLURM script to:\n- Adjust resource requirements (CPU, memory, GPU)\n- Change conda environment\
+  \ name\n- Add your specific processing pipeline\n- Update account and partition settings\n\n## Configuration\
+  \ Files\n\n### ROI Mapping\n\nConfiguration files define how anatomical structures are mapped to label\
+  \ values:\n\n- **`HNC_Quebec_regions_tumor.json`**: Quebec multi-center study ROI mapping\n- **`HNC_RADCURE_regions_tumor_nodes.json`**:\
+  \ RADCURE dataset primary tumor and lymph node mapping\n\nExample structure:\n```json\n{\n    \"data\"\
+  : [\n        {\n            \"ID\": \"HN-HGJ-001\",\n            \"GTVPrimary\": {\"name\": \"GTV\"\
+  , \"label\": 1},\n            \"LymphNodes\": {\"name\": \"GTV-N\", \"label\": 4}\n        }\n    ]\n\
+  }\n```\n\n## Tool Descriptions\n\n### RTStruct Processing Tools\n\n| Tool | Purpose | Key Features |\n\
+  |------|---------|--------------|\n| `RTStructToNifti.py` | Basic RTStruct conversion | Standard DICOM→NIfTI\
+  \ conversion |\n| `RTStructToNifti_advanced.py` | Enhanced conversion | Batch processing, validation\
+  \ |\n| `RTStructToNifti_RTTools.py` | RTTools integration | Alternative conversion method |\n| `FindAndConvertRTStructs.py`\
+  \ | Comprehensive processing | Patient-level batch processing |\n| `Filter_unique_RTStructs.py` | ROI\
+  \ standardization | Extract unique structure names |\n\n### Radiomics & Analysis\n\n| Tool | Purpose\
+  \ | Key Features |\n|------|---------|--------------|\n| `ComputeSUVMap.py` | PET SUV calculation |\
+  \ Decay correction, weight normalization |\n| `TestRadiomics.py` | Feature extraction | Shape, texture,\
+  \ first-order features |\n\n### Visualization Tools\n\n| Tool | Purpose | Key Features |\n|------|---------|--------------|\n\
+  | `OverlaySegmentation.py` | Advanced overlay visualization | Multi-orientation, wireframe mode, smart\
+  \ slice selection, ITK-SNAP compatible orientation |\n\n#### **OverlaySegmentation.py - Advanced Features**\n\
+  \n**Smart Slice Selection:**\n- Automatically finds slices containing anatomical structures\n- Intelligent\
+  \ spacing across the volume\n- No more empty slices in your visualizations\n\n**Medical Image Orientation:**\n\
+  - Proper radiological display conventions\n- Matches ITK-SNAP orientation exactly\n- Supports axial,\
+  \ coronal, and sagittal views\n\n**Visualization Modes:**\n- **Filled overlays**: Traditional colored\
+  \ regions with adjustable opacity\n- **Wireframe mode**: Contour-only display with customizable line\
+  \ thickness\n- **Multi-label support**: Distinct colors for each anatomical structure\n\n**Publication\
+  \ Quality:**\n- High-resolution output (configurable DPI)\n- Professional layouts with informative titles\n\
+  - Multiple output formats (PNG, PDF, SVG)\n- Automatic grid arrangement\n\n**Usage Examples:**\n```bash\n\
+  # Quick visualization with defaults\npython Python/OverlaySegmentation.py image.nii.gz labels.nii.gz\
+  \ output.png\n\n# Detailed wireframe for publications\npython Python/OverlaySegmentation.py image.nii.gz\
+  \ labels.nii.gz figure.png \\\n    --wireframe --contour_width 3 --dpi 300 --num_slices 8 \\\n    --orientation\
+  \ sagittal --opacity 0.9\n\n# Custom transparency and layout\npython Python/OverlaySegmentation.py image.nii.gz\
+  \ labels.nii.gz overlay.png \\\n    --opacity 0.4 --num_slices 12 --grid_cols 4 --orientation coronal\n\
+  ```\n\n## Typical Workflow\n\n1. **Data Organization**: Organize DICOM files by patient\n2. **RTStruct\
+  \ Conversion**: Convert radiation therapy structures to NIfTI labels\n3. **Quality Control**: Verify\
+  \ conversions and anatomical accuracy\n4. **Radiomics Extraction**: Extract quantitative imaging features\n\
+  5. **Statistical Analysis**: Correlate features with clinical outcomes\n6. **Visualization**: Create\
+  \ publication-ready figures\n\n## Research Applications\n\nThis toolkit supports research in:\n- **Radiation\
+  \ Therapy Planning**: Automated structure segmentation\n- **Prognostic Modeling**: Radiomics-based outcome\
+  \ prediction\n- **Multi-Center Studies**: Standardized processing across institutions\n- **Treatment\
+  \ Response**: Longitudinal analysis of therapy response\n\n## Important Notes\n\n### Data Requirements\n\
+  - DICOM RT-Struct files with properly named anatomical structures\n- Co-registered CT/PET imaging data\n\
+  - Patient metadata for SUV calculations\n\n### Quality Assurance\n- Always verify RTStruct conversions\
+  \ visually\n- Check coordinate system consistency between images and structures\n- Validate radiomics\
+  \ features against known benchmarks\n\n### Clinical Considerations\n- Ensure compliance with data privacy\
+  \ regulations\n- Validate results before clinical application\n- Consider inter-observer variability\
+  \ in manual contouring\n\n## Citation\n\nIf you use these tools in your research, please cite:\n```\n\
+  [Your publication/preprint information here]\n```\n\n## Support\n\nFor questions or issues:\n1. Check\
+  \ the individual script documentation (`python script.py --help`)\n2. Review the original UQUtility\
+  \ repository for additional context\n3. Contact [your contact information]\n\n## License\n\n[Specify\
+  \ your license here]"

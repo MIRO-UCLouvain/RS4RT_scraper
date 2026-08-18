@@ -1,0 +1,76 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hithetrail/pyradiomics-gui
+url: https://github.com/hithetrail/pyradiomics-gui
+platform: github
+description: GUI tool for DICOM/RTSTRUCT-based radiomics extraction using PyRadiomics, with PET/SPECT/CT
+  metadata detection and unimodal/multimodal analysis.
+license: NOASSERTION
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-22T03:28:58Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 4 support term(s).
+readme_excerpt: "# pyradiomics-gui\nGUI tool for DICOM/RTSTRUCT-based radiomics extraction using PyRadiomics,\
+  \ with PET/SPECT/CT metadata detection and unimodal/multimodal analysis.\n\n# PyRadiomics GUI / 라디오믹스\
+  \ 시연용 GUI\n\nThis repository provides a bilingual GUI application for DICOM/RTSTRUCT-based radiomics\
+  \ feature extraction using **PyRadiomics**.\n\n이 저장소는 **PyRadiomics**를 이용하여 DICOM/RTSTRUCT 기반 라디오믹스\
+  \ 특징을 추출하는 GUI 프로그램입니다.\n\nFeature extraction is based on:\n\n> van Griethuysen JJM, Fedorov A, Parmar\
+  \ C, et al.  \n> Computational Radiomics System to Decode the Radiographic Phenotype.  \n> *Cancer Research*.\
+  \ 2017;77(21):e104-e107.  \n> doi:10.1158/0008-5472.CAN-17-0339\n\n---\n\n## 1. Requirements / 필요 조건\n\
+  \nRecommended environment:\n\n```text\nWindows 10/11\nAnaconda or Miniconda\nPython 3.7\nPyRadiomics\n\
+  SimpleITK\npydicom\npandas\nopenpyxl\nnumpy\n```\n\nThis GUI was tested in a conda environment named:\n\
+  \n```text\npyradiotest\n```\n\n---\n\n## 2. Create conda environment / Conda 환경 만들기\n\nOpen **Anaconda\
+  \ Prompt**.\n\n아래 명령은 일반 CMD가 아니라 **Anaconda Prompt**에서 실행하는 것을 권장합니다.\n\n```bat\nconda create -n pyradiotest\
+  \ python=3.7 -y\nconda activate pyradiotest\n```\n\n---\n\n## 3. Install required packages / 필수 패키지\
+  \ 설치\n\n### Option A. Install from requirements.txt\n\nIf `requirements.txt` is provided:\n\n```bat\n\
+  python -m pip install --upgrade pip setuptools wheel\npython -m pip install -r requirements.txt\n```\n\
+  \n### Option B. Minimal installation\n\nIf you only want to install the core packages:\n\n```bat\npython\
+  \ -m pip install --upgrade pip setuptools wheel\npython -m pip install pyradiomics SimpleITK pydicom\
+  \ pandas openpyxl numpy\n```\n\n---\n\n## 4. Check installation / 설치 확인\n\nRun the following commands\
+  \ in the activated environment.\n\n```bat\npython -c \"import radiomics; print('PyRadiomics version:',\
+  \ radiomics.__version__)\"\n```\n\n```bat\npython -c \"from radiomics import featureextractor; extractor\
+  \ = featureextractor.RadiomicsFeatureExtractor(); print('PyRadiomics OK')\"\n```\n\n```bat\npython -c\
+  \ \"import SimpleITK as sitk; print('SimpleITK OK:', sitk.Version())\"\n```\n\nIf the following messages\
+  \ appear, the environment is ready.\n\n```text\nPyRadiomics OK\nSimpleITK OK\n```\n\n---\n\n## 5. Run\
+  \ the GUI / GUI 실행 방법\n\nActivate the conda environment first.\n\n```bat\nconda activate pyradiotest\n\
+  ```\n\nMove to the repository folder.\n\n```bat\ncd /d path\\to\\pyradiomics-gui\n```\n\nRun the GUI.\n\
+  \n```bat\npython radiomics_demo_gui.py\n```\n\nAlternatively, if a launcher file is provided:\n\n```bat\n\
+  launch_gui_pyradiotest.bat\n```\n\nIf the launcher fails with the message:\n\n```text\n'conda' is not\
+  \ recognized\n```\n\nopen **Anaconda Prompt**, then run:\n\n```bat\nconda activate pyradiotest\ncd /d\
+  \ path\\to\\pyradiomics-gui\npython radiomics_demo_gui.py\n```\n\n---\n\n## 6. Basic workflow / 기본 사용\
+  \ 순서\n\n1. Click **Check Environment / 환경 점검**\n2. Select the DICOM root folder\n3. Select the output\
+  \ folder\n4. Click **Scan DICOM Metadata / DICOM metadata 스캔**\n5. Review detected PET / SPECT / CT\
+  \ / RTSTRUCT information\n6. Open **Radiomics Settings / 라디오믹스 설정**\n7. Run **Unimodal** or **Multimodal**\
+  \ extraction\n8. Check the output folder\n\n---\n\n## 7. Unimodal and multimodal analysis / 단일 및 다중\
+  \ 모달 분석\n\nThe GUI automatically reads DICOM metadata and detects available imaging modalities.\n\n\
+  GUI는 DICOM metadata를 읽어 사용 가능한 modality를 자동으로 판별합니다.\n\nSupported modalities:\n\n```text\nPET\nSPECT\n\
+  CT\n```\n\nUnimodal analysis is available when at least one imaging modality and RTSTRUCT are detected.\n\
+  \n```text\nPET only    → PET unimodal\nSPECT only  → SPECT unimodal\nCT only     → CT unimodal\n```\n\
+  \nMultimodal analysis is available when two or more imaging modalities are detected.\n\n```text\nPET\
+  \ + CT      → PET/CT multimodal\nSPECT + CT    → SPECT/CT multimodal\nPET + SPECT   → PET/SPECT multimodal\n\
+  PET + SPECT + CT → multiple pairwise combinations\n```\n\n---\n\n## 8. Output files / 결과 파일\n\nOutput\
+  \ folders may include:\n\n```text\nunimodal/pet/\nunimodal/spect/\nunimodal/ct/\n\nmultimodal/pet/\n\
+  multimodal/spect/\nmultimodal/ct/\n\nmultimodal_combined/\n_gui_logs/\n```\n\nTypical output files:\n\
+  \n```text\nPET_radiomics_<PatientID>.xlsx\nSPECT_radiomics_<PatientID>.xlsx\nCT_radiomics_<PatientID>.xlsx\n\
+  combined_PET_CT_wide_by_ROI.xlsx\ncombined_SPECT_CT_wide_by_ROI.xlsx\nradiomics_settings_used_YYYYMMDD_HHMMSS.json\n\
+  ```\n\n---\n\n## 9. Notes on DICOM metadata detection / DICOM metadata 판별 방식\n\nThe GUI uses DICOM metadata\
+  \ such as:\n\n```text\nModality\nPatientID\nStudyInstanceUID\nSeriesInstanceUID\nFrameOfReferenceUID\n\
+  SOPClassUID\nSeriesDescription\nProtocolName\nRadiopharmaceuticalInformationSequence\nReferencedFrameOfReferenceSequence\n\
+  RTReferencedSeriesSequence\n```\n\nRTSTRUCT matching is performed based on:\n\n```text\nReferenced SeriesInstanceUID\n\
+  Referenced FrameOfReferenceUID\nStudyInstanceUID\nPatientID\n```\n\nFolder names are used only as auxiliary\
+  \ information.\n\n폴더명은 보조 정보로만 사용하며, 기본적으로 DICOM header metadata를 기반으로 modality와 RTSTRUCT를 판별합니다.\n\n\
+  ---\n\n## 10. Important notice / 주의 사항\n\nThis software is intended for research demonstration purposes\
+  \ only.\n\n본 프로그램은 연구 및 시연 목적으로만 사용됩니다.\n\nIt is not intended for clinical diagnosis, treatment planning,\
+  \ or treatment decision-making.\n\n임상 진단, 치료 계획, 치료 결정 목적으로 사용해서는 안 됩니다.\n\nDo not upload patient-identifiable\
+  \ DICOM data to a public GitHub repository.\n\n환자 식별 가능 DICOM 데이터는 public GitHub 저장소에 업로드하지 마십시오.\n\n\
+  ---\n\n## 11. Recommended files to include in GitHub / GitHub에 포함 권장 파일\n\nRecommended:\n\n```text\n\
+  radiomics_demo_gui.py\nREADME.md\nrequirements.txt\nenvironment.yml\nlaunch_gui_pyradiotest.bat\nrun_gui_after_conda_activate.bat\n\
+  .gitignore\n```\n\nDo not include:\n\n```text\nDICOM files\nRTSTRUCT files\npatient data\nradiomics\
+  \ output Excel/CSV files\nGUI logs\nlocal path configuration files\n```\n"

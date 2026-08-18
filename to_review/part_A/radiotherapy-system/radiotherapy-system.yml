@@ -1,0 +1,304 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: yongguli/radiotherapy-system
+url: https://github.com/yongguli/radiotherapy-system
+platform: github
+description: ''
+license: null
+language: JavaScript
+keywords: []
+stars: 0
+updated_at: '2026-03-27T15:28:50Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: '# 放疗流程管理系统
+
+
+  一个基于H5的放疗流程管理系统，支持多角色协作完成放疗治疗的完整流程。
+
+
+  ## 系统功能
+
+
+  ### 角色与职责
+
+
+  #### 👨‍⚕️ 医生
+
+  - **患者登记**：录入新患者的基本信息（姓名、性别、年龄、联系电话、诊断结果）
+
+  - **画靶区**：为患者绘制靶区，设置处方剂量和分割次数
+
+  - **审批计划**：审批物理师制作的放疗计划，可以批准或拒绝
+
+
+  #### 🔬 物理师
+
+  - **制作计划**：根据医生的靶区信息制作放疗计划，设置总剂量、分割次数、单次剂量等
+
+  - **计划确认**：确认医生批准的放疗计划
+
+  - **排程管理**：为患者安排治疗时间表
+
+
+  #### 👩‍⚕️ 护士
+
+  - **患者护理**：记录患者的护理情况
+
+  - **协助治疗**：协助技师完成治疗过程
+
+
+  #### 🔧 技师
+
+  - **调用计划**：查看待执行的放疗计划
+
+  - **记录放疗次数**：执行治疗并记录每次治疗的信息（日期、时间、剂量等）
+
+
+  #### 💰 收费员
+
+  - **收费管理**：根据患者的放疗次数收取费用
+
+  - **收费记录**：查看历史收费记录
+
+
+  #### 📞 协调员
+
+  - **患者沟通**：记录与患者的沟通情况（电话、面谈、短信、微信等）
+
+  - **沟通记录**：查看历史沟通记录
+
+
+  ## 系统流程
+
+
+  1. **医生登记患者** → 患者状态：待靶区
+
+  2. **医生画靶区** → 患者状态：待计划
+
+  3. **物理师制作计划** → 患者状态：待审批
+
+  4. **医生审批计划** → 患者状态：待确认（批准）或 靶区绘制中（拒绝）
+
+  5. **物理师确认计划** → 患者状态：待排程
+
+  6. **物理师排程** → 患者状态：待治疗
+
+  7. **技师执行治疗** → 记录每次治疗信息
+
+  8. **收费员收费** → 根据治疗次数收费
+
+  9. **协调员沟通** → 全程与患者保持沟通
+
+
+  ## 技术特点
+
+
+  - **响应式设计**：支持PC和移动端访问
+
+  - **数据持久化**：使用localStorage保存数据，刷新页面不丢失
+
+  - **模块化架构**：各角色功能独立，便于维护和扩展
+
+  - **状态管理**：实时跟踪患者和计划的状态变化
+
+  - **用户友好**：简洁的界面和直观的操作流程
+
+
+  ## 使用说明
+
+
+  1. 打开 [index.html](file:///c:\Users\xy\pytest\h5yans\index.html) 文件
+
+  2. 选择您的角色进入对应的工作台
+
+  3. 根据角色职责完成相应操作
+
+  4. 数据会自动保存在浏览器中
+
+
+  ## 文件结构
+
+
+  ```
+
+  h5yans/
+
+  ├── index.html          # 主页面
+
+  ├── style.css           # 样式文件
+
+  ├── app.js              # 业务逻辑
+
+  └── README.md           # 说明文档
+
+  ```
+
+
+  ## 数据模型
+
+
+  ### 患者 (Patient)
+
+  - id: 患者ID
+
+  - name: 姓名
+
+  - gender: 性别
+
+  - age: 年龄
+
+  - phone: 联系电话
+
+  - diagnosis: 诊断结果
+
+  - registrationDate: 登记日期
+
+  - status: 状态（待靶区、靶区绘制中、待计划、待审批、待确认、待排程、待治疗、治疗中、治疗完成）
+
+  - targetArea: 靶区信息
+
+
+  ### 放疗计划 (Plan)
+
+  - id: 计划ID
+
+  - patientId: 患者ID
+
+  - name: 计划名称
+
+  - dose: 总剂量
+
+  - fractionCount: 分割次数
+
+  - fractionDose: 单次剂量
+
+  - description: 计划描述
+
+  - physicist: 物理师
+
+  - creationDate: 创建日期
+
+  - status: 状态（待审批、已批准、已拒绝、已确认）
+
+  - approvalDate: 审批日期
+
+  - confirmationDate: 确认日期
+
+
+  ### 治疗记录 (TreatmentRecord)
+
+  - id: 记录ID
+
+  - patientId: 患者ID
+
+  - planId: 计划ID
+
+  - scheduleId: 排程ID
+
+  - fractionNumber: 分割序号
+
+  - treatmentDate: 治疗日期
+
+  - treatmentTime: 治疗时间
+
+  - dose: 剂量
+
+  - note: 备注
+
+  - technician: 技师
+
+  - creationDate: 创建日期
+
+
+  ### 收费记录 (PaymentRecord)
+
+  - id: 记录ID
+
+  - patientId: 患者ID
+
+  - count: 收费次数
+
+  - amount: 金额
+
+  - paymentMethod: 支付方式
+
+  - note: 备注
+
+  - cashier: 收费员
+
+  - paymentDate: 收费日期
+
+
+  ### 沟通记录 (CommunicationRecord)
+
+  - id: 记录ID
+
+  - patientId: 患者ID
+
+  - communicationDate: 沟通日期
+
+  - method: 沟通方式
+
+  - content: 沟通内容
+
+  - patientFeedback: 患者反馈
+
+  - followUp: 后续跟进
+
+  - coordinator: 协调员
+
+  - creationDate: 创建日期
+
+
+  ### 排程 (Schedule)
+
+  - id: 排程ID
+
+  - patientId: 患者ID
+
+  - planId: 计划ID
+
+  - startDate: 开始日期
+
+  - treatmentTime: 治疗时间
+
+  - frequency: 治疗频率
+
+  - note: 备注
+
+  - totalFractions: 总次数
+
+  - completedFractions: 已完成次数
+
+  - status: 状态（待治疗、治疗中、已完成）
+
+  - creationDate: 创建日期
+
+
+  ## 浏览器兼容性
+
+
+  - Chrome (推荐)
+
+  - Firefox
+
+  - Safari
+
+  - Edge
+
+
+  ## 注意事项
+
+
+  1. 数据存储在浏览器的localStorage中，清除浏览器数据会丢失所有记录
+
+  2. 建议定期导出数据备份
+
+  3. 系统为演示版本，实际使用需要连接后端数据库'

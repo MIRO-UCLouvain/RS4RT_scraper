@@ -1,0 +1,100 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: IPMI-ICNS-UKE/4d-cbct-mc
+url: https://github.com/IPMI-ICNS-UKE/4d-cbct-mc
+platform: github
+description: Monte Carlo simulation of (4D) cone beam computed tomography
+license: null
+language: C
+keywords:
+- computed-tomography
+- deep-learning
+- medical-image-analysis
+- medical-image-processing
+- medical-imaging
+- monte-carlo-simulation
+stars: 14
+updated_at: '2026-03-30T06:06:46Z'
+image_source: null
+heuristic_total_score: 19
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# 4D CBCT Monte Carlo Simulation\nThis repository contains the official code for the\
+  \ following [paper](https://doi.org/10.1016/j.phro.2024.100644):\n\n```\n@article{madesta2024,\n  title\
+  \ = {Monte Carlo-based simulation of virtual 3 and 4-dimensional cone-beam computed tomography from\
+  \ computed tomography images: An end-to-end framework and a deep learning-based speedup strategy},\n\
+  \  volume = {32},\n  ISSN = {2405-6316},\n  url = {http://dx.doi.org/10.1016/j.phro.2024.100644},\n\
+  \  DOI = {10.1016/j.phro.2024.100644},\n  journal = {Physics and Imaging in Radiation Oncology},\n \
+  \ publisher = {Elsevier BV},\n  author = {Madesta, Frederic and Sentker, Thilo and Rohling, Clemens\
+  \ and Gauer, Tobias and Schmitz, R\\\"{u}diger and Werner, René},\n  year = {2024},\n  month = oct,\n\
+  \  pages = {100644}\n}\n```\n## Overview\nThis package contains all the required code to perform the\
+  \ following tasks in a fully automated end-to-end fashion:\n\n- Deep learning-based segmentation of\
+  \ CT images into various organ and tissue classes\n- Monte Carlo simulation of 3D CBCT images from CT\
+  \ images\n- Monte Carlo simulation of 4D CBCT images from CT images with respective [correspondence\
+  \ models](https://doi.org/10.1088/0031-9155/59/5/1147) and respiratory signals\n- Reconstruction of\
+  \ 3D and 4D CBCT images from simulated projections using the [Reconstruction Toolkit (RTK)](https://www.openrtk.org/)\n\
+  \nBoth the MC as well as the reconstruction code are shipped as pre-compiled binaries in a Docker image\
+  \ for user experience reasons.\n\n\n## Installation\n### Prerequisites\n- [Docker Engine](https://docs.docker.com/engine/install/)\n\
+  - [Nvidia Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)\n\
+  - [Python 3.11 or later](https://docs.conda.io/projects/miniconda/en/latest/)\n\n### Building the Docker\
+  \ image\nThe Docker image can be built using the following command:\n\n```bash\nsh ./build-docker.sh\n\
+  ```\nThis will build the Docker image with the name `cbct-mc` and the tag `latest`.\n\n### Installing\
+  \ the Python package\nThe Python package can be installed using the following command:\n\n```bash\n\
+  pip install -e .\n```\nMake sure to execute this command in the root directory of the repository (where\
+  \ the `setup.py` file is located).\n\n## Usage\n### Data preparation\nIn general, the framework requires\
+  \ very litte data preparation:\n- The CT images should be stored in a single-file format (e.g. ```*.nii```,\
+  \ ```*.mha``` or any other format that can be read by ITK)\n- The CT images should have non-preporcessed\
+  \ Hounsfield units (HU), i.e. the HU values should be in the range [-1024, 3071]\n\n\n### General usage\n\
+  The MC simulations are performed using the following command (both 3D and 4D simulations):\n\n```bash\n\
+  (4d-cbct-mc) fmadesta@hydrogen:~/research/4d-cbct-mc$ run-mc --help\nUsage: run-mc [OPTIONS]\n\nOptions:\n\
+  \  --image-filepath FILE           CT image to use for simulation\n  --geometry-filepath FILE      \
+  \  Geometry to use for simulation. Can be\n                                  provided instead of CT\
+  \ image.\n  --output-folder DIRECTORY       Output folder for simulation results\n  --simulation-name\
+  \ TEXT          Name of the simulation. If not provided, the\n                                  name\
+  \ is derived from the image filepath.\n  --gpu INTEGER                   GPU PCI bus ID to use for simulation\
+  \ (can be\n                                  checked with nvidia-smi)  [default: 0]\n  --reference \
+  \                    Enable reference simulation\n  --reference-n-histories INTEGER\n              \
+  \                    Number of histories for reference simulation\n                                \
+  \  [default: 11903320312]\n  --speedups FLOAT                Speedup factors for simulation\n  --speedup-weights\
+  \ FILE          Weights file for speedup model  [default:\n                                  /home/fmadesta/research/4d-cbct-\n\
+  \                                  mc/cbctmc/assets/models/speedup/default.pth]\n  --segmenter-weights\
+  \ FILE        Weights file for the segmenter model\n  --segmenter-patch-shape <INTEGER INTEGER INTEGER>...\n\
+  \                                  Patch shape for the segmenter model\n                           \
+  \       [default: 256, 256, 128]\n  --segmenter-patch-overlap FLOAT RANGE\n                        \
+  \          Overlap ratio for patch-based segmentation\n                                  [default: 0.5;\
+  \ 0.0<x<=1.0]\n  --n-projections INTEGER         Number of projections for simulation\n            \
+  \                      [default: 894]\n  --reconstruct-3d                Enable 3D reconstruction\n\
+  \  --reconstruct-4d                Enable 4D reconstruction\n  --forward-projection            Enable\
+  \ forward projection\n  --no-clean                      Disable cleaning of intermediate files\n  --correspondence-model\
+  \ FILE     Correspondence model file. Must be provided\n                                  for 4D simulation.\n\
+  \  --respiratory-signal FILE       Respiratory signal file. Must be provided\n                     \
+  \             for 4D simulation.\n  --respiratory-signal-quantization INTEGER\n                    \
+  \              Quantization level for respiratory signal. A\n                                  lower\
+  \ value means that the respiratory\n                                  signal is more coarse.\n  --respiratory-signal-scaling\
+  \ FLOAT\n                                  Scaling factor for respiratory signal\n                 \
+  \                 [default: 1.0]\n  --precompile-geometries         Precompile geometries for 4D simulation\n\
+  \  --cirs-phantom                  Use CIRS phantom for simulation\n  --catphan-phantom            \
+  \   Use Catphan604 phantom for simulation\n  --dry-run                       Perform a dry run without\
+  \ executing the\n                                  simulation\n  --random-seed INTEGER           Random\
+  \ seed for simulation  [default: 42]\n  --loglevel [debug|info|warning|error|critical]\n           \
+  \                       Logging level  [default: info]\n  --help                          Show this\
+  \ message and exit.\n\n```\n\n\n### 3D CBCT simulation\nA 3D CBCT simulation is defined by the static\
+  \ (patient) geometry and the moving CBCT scan geometry (i.e. X-ray source and detector).\n\n### 4D CBCT\
+  \ simulation\nAnalog to the 3D CBCT simulation, a 4D CBCT simulation is defined by the time-resolved/dynamic\
+  \ (patient) geometry and the moving CBCT scan geometry (i.e. X-ray source and detector). In addition,\
+  \ a 4D CBCT simulation requires a correspondence model and a respiratory signal. Thus, the `run-mc`\
+  \ command has to be called with the `--correspondence-model` and `--respiratory-signal` arguments. The\
+  \ correspondence model can be fitted using the `fit-correspondence-model` command (see below). The respiratory\
+  \ signal can be obtained from a 4D CT scan.\n\n#### Correspondence model\nThe correspondence model can\
+  \ be fitted using a 4D CT and the corresponding respiratory signal.\nIf no respiratory signal is available,\
+  \ the lung volume can be used as a surrogate signal.\nThe correspondence model is readily fitted by\
+  \ the following code snippet:\n\n```python\nimport numpy as np\nfrom cbctmc.registration.correspondence\
+  \ import CorrespondenceModel\n\nimages: np.ndarray\nmasks: np.ndarray\ntimepoints: np.ndarray\n\n\n\
+  model = CorrespondenceModel.build_default(\n    images=images,\n    masks=masks,\n    timepoints=timepoints,\n\
+  \    masked_registration=False,\n    device=\"cuda:0\",\n)\nmodel.save(\"/some/folder/correspondence_model.pkl\"\
+  )\n```\n"

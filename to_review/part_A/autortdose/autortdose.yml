@@ -1,0 +1,72 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: MUZAMMILATEO/AutoRTDose
+url: https://github.com/MUZAMMILATEO/AutoRTDose
+platform: github
+description: Automatic Radiotherapy Dose Prediction
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-17T05:11:23Z'
+image_source: https://raw.githubusercontent.com/MUZAMMILATEO/AutoRTDose/HEAD/read-me-images/pipeline.png
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 6 support term(s).
+readme_excerpt: "# \U0001FA7A AutoRTDose: A _3D_ Transformer Framework for Automated Radiotherapy Segmentation\
+  \ and Dose Distribution Prediction\n<p align=\"justify\">\nRadiotherapy planning for head and neck cancer\
+  \ is a labour-intensive process that requires precise delineation of organs-at-risk (OARs) and the accurate\
+  \ estimation of dose distributions. Conventional deep learning pipelines often rely solely on convolutional\
+  \ neural networks, which struggle to capture the long-range spatial dependencies that influence clinical\
+  \ dose decisions. At the same time, fully 3D transformer models remain prohibitively expensive to train\
+  \ due to the high dimensionality of volumetric medical data. <b>AutoRTDose</b> addresses this challenge\
+  \ through a hybrid architecture that couples a <b>3D U-Net backbone</b> for rich spatial feature extraction\
+  \ with a <b>super-patch transformer module</b> designed to model contextual relationships across distant\
+  \ anatomical regions. The 3D U-Net efficiently captures fine-grained structural detail within the CT\
+  \ volume, while the transformer integrates global context by operating on learned super-patch embeddings\
+  \ rather than entire volumetric slices, significantly reducing computational overhead.\n</p>\n\n<div\
+  \ style=\"text-align: justify\">\nThis design enables the framework to:\n\n- <b>Automatically segment\
+  \ OARs and target structures</b> with clinically relevant precision;\n\n- <b>Predict voxel-wise radiotherapy\
+  \ dose distributions</b> that maintain anatomical consistency;\n\n- <b>Model long-range dose influence\
+  \ patterns</b>, particularly critical in head and neck treatment where steep gradients and complex organ\
+  \ interactions are common.\n\nAutoRTDose provides a scalable and practical foundation for advancing\
+  \ AI-assisted radiotherapy planning, supporting both research development and potential translation\
+  \ into clinical workflows.\n</div>\n\n ![](read-me-images/pipeline.png)\n\n<div align=\"center\">\n\
+  \  <img src=\"read-me-images/DVH.png\" alt=\"DVH Comparison\" width=\"95%\">\n  <p><em>Figure: Dose–Volume\
+  \ Histogram comparison between ground truth and predicted dose distribution.</em></p>\n\n  <img src=\"\
+  read-me-images/GTvsPred.png\" alt=\"Ground Truth vs Predicted Dose Distribution\" width=\"95%\">\n \
+  \ <p><em>Figure: Axial slice comparison showing spatial alignment between ground truth and predicted\
+  \ dose.</em></p>\n</div>\n\n\n---\n\n## ⚙️ Installation & Environment Setup\nClone the repository:\n\
+  ```bash\ngit clone https://github.com/MUZAMMILATEO/AutoRTDose.git\ncd AutoRTDose\n```\n\nTo ensure reproducibility,\
+  \ we recommend creating a dedicated Conda environment:\n```bash\nconda create -n AutoRTDose python=3.10\
+  \ -y\nconda activate AutoRTDose\n```\n\nUpgrade pip and install the required dependencies:\n```bash\n\
+  pip install --upgrade pip\npip install torch==2.7.1 torchvision==0.22.1 torchaudio==2.7.1 --index-url\
+  \ https://download.pytorch.org/whl/cu118\npip install -r requirements.txt\n```\n\n## \U0001F4E6 Dataset\
+  \ Acquisition\n\nThis framework utilises the OpenKBP (Open Knowledge-Based Planning) dataset for radiotherapy\
+  \ dose prediction research. Please download the dataset from the official repository:\n```bash\ngit\
+  \ clone https://github.com/ababier/open-kbp.git\n```\n\nAfter downloading, locate the folder named `provided_data`,\
+  \ and copy or move this folder into the root directory of this project (i.e., the main AutoRTDose folder).\n\
+  \n\n## \U0001F9E9 Data Preparation & Visualisation\nConvert the raw OpenKBP dataset into the processed\
+  \ format required by the framework:\n```bash\npython ./provided_code/transform_data.py ./provided-data/\n\
+  ```\n\nOptionally visualise the transformed patient data:\n```bash\npython ./provided_code/visualize_transform_data.py\
+  \ ./transformed-data/train-pats/pt_125\n```\n\n## \U0001F3A8 Generation of Overlaid 3D Volumes\n\nCreate\
+  \ multi-channel overlaid volumes for dose prediction:\n```bash\npython ./provided_code/create_overlaid_volumes.py\
+  \ /home/khanm2004/dose_prediction/open-kbp/transformed-data\n```\n\nVisualise an example overlay:\n\
+  ```bash \npython ./provided_code/visualize_overlaid_patient.py /home/khanm2004/dose_prediction/open-kbp/overlaid-data/train-pats/pt_1\n\
+  ```\n\n## \U0001F3CB️ Model Training\n\nTrain the AutoRTDose model:\n```bash\ncd 3DConvTransformer\n\
+  python train.py\n```\n\n## \U0001F52E Dose Prediction\nPredict dose for a single patient:\n```bash\n\
+  python predict.py ../overlaid-data/test-pats/pt_1\n```\n\nPredict dose for all patients in the test\
+  \ set:\n```bash\npython predict.py ../overlaid-data/test-pats/\n```\n\n## \U0001F4CA Evaluation\n\n\
+  Evaluate model performance for a single patient:\n```bash\npython eval.py ../overlaid-data/test-pats/pt_241\n\
+  ```\n\nEvaluate for all test patients:\n```bash\npython eval.py ../overlaid-data/test-pats/\n```\n\n\
+  ---\n\n## \U0001F4DA Citation\n\nIf you use **AutoRTDose** in your research, please cite:\n\n**Muzammil\
+  \ Khan**, *AutoRTDose: A 3D Transformer Framework for Automated Radiotherapy Segmentation and Dose Distribution\
+  \ Prediction*, 2025.  \nAvailable at: https://github.com/MUZAMMILATEO/AutoRTDose.git\n\n```bibtex\n\
+  @misc{khan2025autortdose,\n  title        = {AutoRTDose: A 3D Transformer Framework for Automated Radiotherapy\
+  \ Segmentation and Dose Distribution Prediction},\n  author       = {Khan, Muzammil and Siepel, Françoise},\n\
+  \  year         = {2025},\n  institution  = {University of Twente, Robotics and Mechatronics (RaM),\
+  \ TechMed Centre},\n  howpublished = {\\url{https://github.com/MUZAMMILATEO/AutoRTDose.git}},\n  note\
+  \         = {Version 0.0},\n}\n```"

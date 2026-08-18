@@ -1,0 +1,145 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Kiragroh/ESAPI_LatticeHelper
+url: https://github.com/Kiragroh/ESAPI_LatticeHelper
+platform: github
+description: Automatic 3D hot/cold LATTICE helper structures for Eclipse ESAPI with PRV-aware placement
+  and structure-limit fallback.
+license: MIT
+language: C#
+keywords:
+- csharp
+- eclipse
+- esapi
+- lattice-radiotherapy
+- medical-physics
+- radiotherapy
+stars: 5
+updated_at: '2026-08-17T05:11:14Z'
+image_source: https://raw.githubusercontent.com/Kiragroh/ESAPI_LatticeHelper/HEAD/docs/Screenshots/LatticeGUI.png
+heuristic_total_score: 22
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 10 support term(s).
+readme_excerpt: "# ESAPI_LatticeHelper\n\nAn English, write-enabled Eclipse ESAPI plug-in for automatically\
+  \ generating\nthree-dimensional LATTICE hot- and cold-spot helper structures.\n\n## Purpose\n\nThis\
+  \ write-enabled ESAPI plug-in creates an automatic three-dimensional LATTICE\ncheckerboard inside and\
+  \ around a selected GTV:\n\n- **Hot spots / peaks** are placed only in the protected inner target region.\n\
+  - **Cold spots / valleys** occupy the alternating grid positions in the broader\n  low-dose envelope.\n\
+  - Unsafe hot positions near the target border or selected PRV/OAR protection\n  regions are omitted.\n\
+  - Cold positions are deliberately retained near protection regions.\n\nThe program calculates how many\
+  \ hot and cold spots fit from the target geometry,\nspot diameter, grid spacing, border clearance, cold-envelope\
+  \ expansion, and\nselected protection structures. Cold spots must also meet the configured minimum\n\
+  estimated GTV overlap. The program does not ask for a spot count and does not\ndelete completed points\
+  \ to force a volume ratio.\n\nThe tool creates structures only. It does not prescribe dose, create a\
+  \ treatment\nplan, optimize, assess deliverability, or establish clinical suitability.\n\n## Screenshots\n\
+  \n### Configuration\n\n![ESAPI_LatticeHelper configuration in Eclipse](docs/Screenshots/LatticeGUI.png)\n\
+  \n### Placement review and completion\n\n![Automatic LATTICE placement analysis in Eclipse](docs/Screenshots/popup1.png)\n\
+  \n![Completed LATTICE generation summary in Eclipse](docs/Screenshots/popup2.png)\n\n### Generated hot/cold\
+  \ geometry\n\n![Generated LATTICE hot- and cold-spot structures in Eclipse](docs/Screenshots/Eclipse_Result.png)\n\
+  \n## Reference Geometry\n\nThe development reference geometry contained:\n\n- 31 hot spots\n- 62 cold\
+  \ spots\n- 7 occupied lattice planes\n- approximately 1.5 cm spot diameter\n- 3.0 cm adjacent grid spacing\n\
+  - approximately 2% analytical hot-spot volume relative to\n  `GTV-0.6cm_25Gy`\n\nThese observations\
+  \ provide implementation context, not a commissioned clinical\nstandard. The development DICOM dataset\
+  \ and institutional presentation are not\ndistributed with this repository.\n\n## Automatic Placement\
+  \ Logic\n\n### 1. Indexed three-dimensional grid\n\nEvery generated grid point retains integer indices\
+  \ `(i, j, k)`. The parity of\n`i + j + k` assigns the point to one of two alternating sets:\n\n```text\n\
+  even parity -> hot candidate\nodd parity  -> cold spot\n```\n\nThe script evaluates all eight combinations\
+  \ of zero and half-spacing offsets in X,\nY, and Z. It also evaluates both possible hot/cold parity\
+  \ assignments. This moves\nthe checkerboard as a whole; individual points are not rearranged manually.\n\
+  \n### 2. Cold-spot envelope\n\nCold centers are accepted inside:\n\n```text\nselected GTV + cold-envelope\
+  \ expansion\n```\n\nThe default expansion is 0.5 cm, representing the broader low-dose envelope shown\n\
+  in the reference concept. A second filter estimates how much of the complete cold\nsphere lies inside\
+  \ the selected GTV. The default minimum is 50%.\n\nThe estimate uses 513 deterministic, symmetric three-dimensional\
+  \ sample points\ninside each sphere. A cold candidate is omitted when fewer than the configured\nfraction\
+  \ of those samples lie inside the GTV. This avoids mostly external cold\nspheres while still permitting\
+  \ useful peripheral valleys. The count of omitted\ncandidates is shown before generation. The estimate\
+  \ is deterministic but is not an\nexact Boolean volume calculation; every final contour must still be\
+  \ reviewed.\n\n### 3. Hot-spot target border\n\nThe hot reference volume is:\n\n```text\nselected GTV\
+  \ - hot-spot border clearance\n```\n\nThe default clearance is 0.6 cm. To keep the complete hot sphere\
+  \ inside that\nreference volume, the allowed hot-center region is contracted by the sphere radius\n\
+  once more:\n\n```text\nhot center contraction = border clearance + sphere radius\n```\n\nHot candidates\
+  \ within the cold envelope but outside this inner region are counted\nand reported as omitted at the\
+  \ target border.\n\n### 4. PRV/OAR protection\n\nSelected protection structures affect hot candidates\
+  \ only. Each selected structure\nis expanded by:\n\n```text\nsphere radius + additional protection clearance\n\
+  ```\n\nThis prevents the complete hot sphere from overlapping the selected protection\nregion. Typical\
+  \ use:\n\n- Select an already expanded structure such as `PRV+1.5cm` and leave additional\n  clearance\
+  \ at `0.0 cm`.\n- Select the original organ/PRV and enter the desired extra protection distance.\n\n\
+  Alternating cold spots are not removed by the PRV/OAR test. This intentionally\nplaces valleys near\
+  \ critical protection regions while omitting nearby peaks.\n\n### 5. Phase and ratio selection\n\nFor\
+  \ every phase and parity assignment, the script calculates:\n\n- accepted hot spots\n- accepted cold\
+  \ spots\n- hot candidates omitted at the target border\n- hot candidates omitted for PRV/OAR protection\n\
+  - cold candidates omitted below the minimum GTV overlap\n- occupied lattice planes\n- analytical hot-volume\
+  \ ratio\n\nThe ratio is:\n\n```text\nhot spot count * analytical sphere volume\n------------------------------------------------\
+  \ * 100\nborder-contracted hot reference volume\n```\n\nThe phase selector prefers results within the\
+  \ 2-4% reference range from the\npresentation, then retains the placement with the greatest total number\
+  \ of valid\nspots. Within otherwise equal results, it prefers a ratio near the lower reference\nboundary.\
+  \ It never trims individual spots after classification.\n\nBefore creating final structures, a confirmation\
+  \ dialog displays all calculated\ncounts, omissions, the selected phase/parity, and the ratio. A ratio\
+  \ outside 2-4%\nis shown as a warning, not silently corrected.\n\n## Parameters\n\n| Parameter | Default\
+  \ | Meaning |\n| --- | ---: | --- |\n| Hot / cold spot diameter | 1.5 cm | Physical diameter of every\
+  \ peak and valley sphere |\n| Grid spacing | 3.0 cm | Distance between adjacent hot and cold centers\
+  \ |\n| Grid tilt | 0 degrees | Optional rotation around the patient left-right axis |\n| Hot-spot target-border\
+  \ clearance | 0.6 cm | Additional surface clearance for hot spots |\n| Cold-spot envelope expansion\
+  \ | 0.5 cm | Expansion of the selected GTV for cold centers |\n| Minimum cold-spot volume inside GTV\
+  \ | 50% | Deterministic sampled estimate; smaller-overlap cold spots are omitted |\n| Additional PRV/OAR\
+  \ clearance | 0.0 cm | Additional clearance beyond selected protection structures |\n| Hot-dose structure\
+  \ label | 50 Gy | Naming only; does not prescribe dose |\n\nSpacing must be at least the spot diameter.\
+  \ Tilt is restricted to -45 through\n45 degrees. Clearances cannot be negative. Cold-spot GTV overlap\
+  \ must be between\n0% and 100%. The dose label must be a whole number from 1 through 99.\n\nBoth decimal\
+  \ dots and decimal commas are accepted.\n\n## Generated Structures\n\n### Reference-style plane output\n\
+  \nThis is enabled by default. Every occupied local lattice plane receives up to two\nstructures. Output\
+  \ is grouped per grid plane, never per individual sphere:\n\n```text\nPTV_high_1_50Gy\nPTV_ColdSpot_1\n\
+  PTV_high_2_50Gy\nPTV_ColdSpot_2\n...\n```\n\nThe configured dose label replaces `50` in the hot structure\
+  \ IDs. One structure\ncan contain multiple disconnected spheres from the same plane, matching the\n\
+  included reference RTSTRUCT.\n\nHot structures are assigned magenta and cold structures blue.\n\nBefore\
+  \ writing output, the script counts the hot and cold plane structures that\nwould be required and compares\
+  \ them with the available slots below Eclipse's\n99-structure limit. Existing LATTICE outputs remain\
+  \ protected during this check and\nwhile replacement structures are prepared.\n\nIf plane output does\
+  \ not fit, the confirmation dialog states the required count,\nthe available slots, and the 99-structure\
+  \ limit. The script then automatically\nswitches to exactly one combined hot structure and one combined\
+  \ cold structure. If\neven those two replacement structures do not fit, generation stops without\nreplacing\
+  \ existing final outputs.\n\n### Combined output\n\nWhen plane output is disabled manually or selected\
+  \ automatically because of the\n99-structure limit:\n\n```text\nPTV_High_50Gy\nPTV_ColdSpots\n```\n\n\
+  The script does not create or overwrite `PTV_low_20Gy`, a clinical GTV optimization\nstructure, or a\
+  \ treatment plan.\n\n### Replacement behavior\n\nExisting final outputs remain until the new hot/cold\
+  \ geometry and contours have\nbeen created successfully. On confirmation, only exact owned output patterns\
+  \ and\nlegacy version 1.1 outputs are replaced:\n\n- `PTV_high_<plane>_<dose>Gy`\n- `PTV_ColdSpot_<plane>`\n\
+  - `PTV_High_<dose>Gy`\n- `PTV_ColdSpots`\n- legacy `LRT_Volume`, `LRT_Vertices`, and numbered `zV_...`\n\
+  \nTemporary structures use the `zzLrt...` prefix and are removed after completion,\ncancellation, or\
+  \ recoverable failure.\n\n## User Interface\n\n- English labels, tooltips, messages, and summaries\n\
+  - explicit light styles independent of the Eclipse host theme\n- white text boxes, lists, and checkboxes\n\
+  - readable checked, unchecked, selected, disabled, and validation states\n- resizable window\n- vertically\
+  \ scrollable form\n- fixed **Analyze and generate** action footer\n- target-aware protection list that\
+  \ excludes the selected target\n- field-level validation without closing the dialog\n\nEvery non-empty\
+  \ structure with DICOM type `GTV` is offered. Target size is shown\nfor review but no hidden minimum-volume\
+  \ filter is applied.\n\n## Use In Eclipse\n\n1. Open the patient and intended structure set.\n2. Run\
+  \ `LatticeGeneratorTool.esapi.dll`.\n3. Select the GTV.\n4. Review spot diameter, spacing, grid tilt,\
+  \ hot-border clearance, cold-envelope\n   expansion, and minimum cold-spot GTV overlap.\n5. Select all\
+  \ PRV/OAR protection structures relevant to hot-spot placement.\n6. Set additional protection clearance.\
+  \ Use `0.0 cm` for an already expanded PRV.\n7. Review the output mode and dose label used in structure\
+  \ names.\n8. Select **Analyze and generate**.\n9. Review the automatically calculated hot/cold counts,\
+  \ all omissions, occupied\n   planes, selected phase/parity, output mode, structure-limit notice, and\n\
+  \   analytical ratio.\n10. Confirm creation only when the reported geometry is appropriate.\n11. Inspect\
+  \ every generated contour in all relevant planes before optimization.\n\n## ESAPI Getting Started\n\n\
+  New to Eclipse scripting or building binary ESAPI plug-ins? Start with my\n[ESAPI GettingStartedMaterial](https://drive.google.com/drive/folders/1-aYUOIfyvAUKtBg9TgEETiz4SYPonDOO),\n\
+  which collects introductory material, practical examples, and supporting ESAPI\ndocumentation.\n\n##\
+  \ Build\n\n### Requirements\n\n- Windows with .NET Framework 4.8 developer tools\n- Visual Studio or\
+  \ MSBuild with C# support\n- clinic-compatible ESAPI assemblies:\n  - `..\\_Assets\\VMS.TPS.Common.Model.API.dll`\n\
+  \  - `..\\_Assets\\VMS.TPS.Common.Model.Types.dll`\n- x64 target platform\n\nNo NuGet package is required.\n\
+  \n```powershell\n& \"C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\MSBuild\\Current\\Bin\\\
+  MSBuild.exe\" `\n  .\\LatticeGeneratorTool.csproj `\n  /t:Build /p:Configuration=Release /p:Platform=x64\n\
+  ```\n\nThe assembly is named `LatticeGeneratorTool.esapi.dll`. Output directories are\ndefined in `LatticeGeneratorTool.csproj`.\n\
+  \n## Literature\n\nThe following publications provide clinical and geometrical context for LATTICE\n\
+  radiotherapy. They are references for further reading, not validation of this\nsoftware or a substitute\
+  \ for local commissioning:\n\n- Duriseti S, Kavanaugh J, Goddu S, et al. *Spatially fractionated stereotactic\n\
+  \  body radiation therapy (Lattice) for large tumors*. Advances in Radiation\n  Oncology. 2021;6(3):100639.\n\
+  \  [https://doi.org/10.1016/j.adro.2020.100639](https://doi.org/10.1016/j.adro.2020.100639)\n- Prado\
+  \ A, Martí J, García de Acilu P, et al. *Dosimetrical and geometrical\n  parameters in single-fraction\
+  \ lattice radiotherapy for the treatment of bulky\n  tumors: Insights from initial clinical experience*.\
+  \ Physica Medica.\n  2024;123:103408.\n  [https://doi.org/10.1016/j.ejmp.2024.103408](https://doi.org/10.1016/j.ejmp.2024.103408)\n\
+  \n## Clinical Disclaimer\n\nThis software is provided for research and educational use without warranty.\
+  \ It\nchanges patient structures. A qualified clinical user must "

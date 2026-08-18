@@ -1,0 +1,81 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Niya2201/Brain-Tumor-Segmentation-Project
+url: https://github.com/Niya2201/Brain-Tumor-Segmentation-Project
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-27T14:33:56Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Brain-Tumor-Segmentation-Project\n# \U0001F9E0 Brain Tumor Segmentation Using Swin-UNet\n\
+  \nA deep learning-based medical image segmentation system for accurate brain tumor detection from MRI\
+  \ scans using the **Swin-UNet** architecture. The model is trained on the **BraTS 2020** dataset and\
+  \ deployed through a **Streamlit** web application for real-time segmentation and visualization.\n\n\
+  ---\n\n## \U0001F4D6 Overview\n\nBrain tumor segmentation plays a crucial role in medical diagnosis\
+  \ and treatment planning. Manual segmentation of MRI scans is time-consuming and prone to human error.\
+  \ This project presents an automated segmentation system based on **Swin-UNet**, a Transformer-powered\
+  \ U-Net architecture that effectively captures both local and global image features.\n\nThe project\
+  \ also explores inference optimization techniques to improve deployment efficiency while maintaining\
+  \ high segmentation accuracy.\n\n---\n\n## ✨ Features\n\n- \U0001F9E0 Automatic brain tumor segmentation\
+  \ from MRI scans\n- \U0001F52C Swin-UNet Transformer-based architecture\n- \U0001F4CA Trained on the\
+  \ BraTS 2020 dataset\n- \U0001F3AF Binary tumor segmentation\n- \U0001F310 Interactive Streamlit web\
+  \ application\n- ⚡ Optimized inference pipeline\n- \U0001F4BE Pre-trained model included\n- \U0001F680\
+  \ GPU acceleration support\n\n---\n\n# \U0001F6E0 Technologies Used\n\n- Python\n- PyTorch\n- Swin-UNet\n\
+  - Streamlit\n- OpenCV\n- NumPy\n- Albumentations\n- HDF5\n- ONNX Runtime\n- TensorRT\n- Git LFS\n\n\
+  ---\n\n# \U0001F4C2 Project Structure\n\n```\nBrain-Tumor-Segmentation-Project/\n│\n├── app.py     \
+  \                    # Streamlit application\n├── backend.py                     # Segmentation backend\n\
+  ├── requirements.txt               # Required Python packages\n├── SwinUNet_best.pt               #\
+  \ Trained model\n├── demo_images/\n│   └── sample_h5_slices/\n├── .gitignore\n├── .gitattributes\n└──\
+  \ README.md\n```\n\n---\n\n# \U0001F9E0 Model Architecture\n\nThe proposed model is based on **Swin-UNet**,\
+  \ a Transformer-based semantic segmentation architecture designed for medical imaging.\n\n### Key Features\n\
+  \n- Swin Transformer Encoder\n- Window-based Multi-Head Self Attention\n- Shifted Window Mechanism\n\
+  - Hierarchical Feature Learning\n- Skip Connections\n- CNN-based Decoder\n\nUnlike conventional CNN-based\
+  \ models, Swin-UNet effectively captures both local and long-range contextual information, resulting\
+  \ in improved segmentation performance.\n\n---\n\n# \U0001F4CA Dataset\n\n**Dataset:** BraTS 2020 (Brain\
+  \ Tumor Segmentation Challenge)\n\n### MRI Modalities\n\n- T1\n- T1ce\n- T2\n- FLAIR\n\n### Dataset\
+  \ Details\n\n- Pixel-level ground truth masks\n- Converted into 2D `.h5` slices\n- Binary segmentation\
+  \ (Tumor vs Background)\n\n---\n\n# \U0001F504 Data Preprocessing\n\nThe preprocessing pipeline includes:\n\
+  \n- Loading HDF5 MRI slices\n- Converting images into HWC format\n- Binary mask generation\n- Image\
+  \ resizing (256 × 256)\n- Pixel normalization\n\n### Data Augmentation\n\n- Horizontal Flip\n- Random\
+  \ Affine Transformation\n\nThese augmentations improve model robustness and generalization.\n\n---\n\
+  \n# \U0001F4C8 Data Splitting\n\nThe dataset was divided as follows:\n\n- **70%** Training\n- **15%**\
+  \ Validation\n- **15%** Testing\n\nTo prevent data leakage, splitting was performed based on **Volume\
+  \ ID** rather than individual slices.\n\nPure background slices were removed to improve sensitivity\
+  \ toward small tumor regions.\n\n---\n\n# ⚙ Training Configuration\n\n| Parameter | Value |\n|-----------|--------|\n\
+  | Model | Swin-UNet |\n| Optimizer | AdamW |\n| Learning Rate | 0.001 |\n| Mixed Precision | FP16 |\n\
+  | Scheduler | ReduceLROnPlateau |\n| Early Stopping | Enabled |\n| Memory Format | Channels Last |\n\
+  \n---\n\n# \U0001F3AF Hybrid Loss Function\n\nThe model is trained using a **hybrid loss function**\
+  \ combining **Focal Loss** and **Tversky Loss**.\n\n```\nLoss = 0.4 × Focal Loss + 0.6 × Tversky Loss\n\
+  ```\n\n### Focal Loss\n\nFocal Loss focuses on difficult-to-classify pixels while reducing the influence\
+  \ of easy background pixels. This improves learning for highly imbalanced medical datasets.\n\n### Tversky\
+  \ Loss\n\nTversky Loss is specifically designed for medical image segmentation. It provides better control\
+  \ over false positives and false negatives, making it highly effective for detecting small tumor regions.\n\
+  \n### Advantages\n\n- Handles severe class imbalance\n- Improves segmentation of small tumors\n- Reduces\
+  \ false negatives\n- Produces accurate tumor boundaries\n- Enhances overall segmentation performance\n\
+  \n---\n\n# \U0001F4CA Evaluation Metric\n\nModel performance is evaluated using the **Dice Coefficient**.\n\
+  \n```\nDice = (2 × Intersection)\n       -------------------------\n       Prediction + Ground Truth\n\
+  ```\n\nHigher Dice scores indicate better overlap between predicted and ground truth masks.\n\n---\n\
+  \n# ⚡ Inference Optimization\n\nTo improve deployment efficiency, the trained model was evaluated using\
+  \ multiple inference frameworks.\n\n- PyTorch\n- TorchScript\n- ONNX Runtime\n- TensorRT (FP16)\n\n\
+  The objective was to reduce inference latency and memory usage while maintaining segmentation accuracy.\n\
+  \n---\n\n# \U0001F4BB Installation\n\nClone the repository\n\n```bash\ngit clone https://github.com/Niya2201/Brain-Tumor-Segmentation-Project.git\n\
+  ```\n\nMove into the project directory\n\n```bash\ncd Brain-Tumor-Segmentation-Project\n```\n\nInstall\
+  \ dependencies\n\n```bash\npip install -r requirements.txt\n```\n\n---\n\n# ▶ Running the Application\n\
+  \nLaunch the Streamlit application\n\n```bash\nstreamlit run app.py\n```\n\nOpen your browser and visit\n\
+  \n```\nhttp://localhost:8501\n```\n\nUpload an MRI `.h5` slice to generate the predicted tumor segmentation.\n\
+  \n---\n\n# \U0001F4CC Future Enhancements\n\n- Multi-class brain tumor segmentation\n- 3D Swin-UNETR\
+  \ implementation\n- DICOM image support\n- Cloud deployment\n- Explainable AI (Grad-CAM)\n- Clinical\
+  \ integration\n- Real-time hospital deployment\n\n---\n\n# \U0001F468‍\U0001F4BB Team Members\n\n- **Keerthi\
+  \ Krishna G.**\n- **Krishnapriya A. L.**\n- **Niya Aniyan**\n\n\n---\n\n# \U0001F4C4 License\n\nThis\
+  \ project was developed as part of the B.Tech Computer Science and Engineering final-year academic project.\n\
+  \nThe repository is intended for educational and research purposes.\n"

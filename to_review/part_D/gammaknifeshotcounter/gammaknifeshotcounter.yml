@@ -1,0 +1,39 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: tc722/GammaKnifeShotCounter
+url: https://github.com/tc722/GammaKnifeShotCounter
+platform: github
+description: A Python utility to query Gamma Knife TPS data, detecting shot number and unique shot patterns
+  for CPT 77300/77334 .
+license: MIT
+language: Python
+keywords:
+- gamma-knife
+- radiotherapy
+- stereotactic-radiosurgery
+stars: 0
+updated_at: '2026-01-06T15:19:38Z'
+image_source: null
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 4 support term(s).
+readme_excerpt: "# Gamma Knife Shot Pattern Counter\n\nThis Python tool connects directly to the Gamma\
+  \ Knife Treatment Planning System (TPS) database (PostgreSQL), queries the most recent patient plans,\
+  \ and automatically count the following paramters:\n1.  **Total Number of Shots** (for CPT Code **77300**)\n\
+  2.  **Total Number of Unique Shot Patterns** (for CPT Code **77334**)\n\n## How It Works\n\n### 1. Database\
+  \ Connection\nThe tool queries the TPS database to fetch the 5 most recent treatment plans, displaying\
+  \ them in a table for selection.\n\n### 2. The Logic: Unique Shot Patterns (CPT 77334)\nRotational symmetry\
+  \ is taken into account when counting the number of unique shot patterns.\n\n**Example of Equivalence:**\n\
+  The following two shots are considered as the **same physical shot pattern** due to rotational symmetry:\n\
+  \n* **Shot A:** `8 | 8 | 8 | 4 | 8 | 8 | 8 | 16`\n* **Shot B:** `4 | 8 | 8 | 8 | 16 | 8 | 8 | 8`\n\n\
+  > **Note:** The tool normalizes these patterns before counting. If a plan has 100 shots but they are\
+  \ all variations of the pattern above, the \"Unique Pattern Count\" will be **1**.\n\n## Configuration\n\
+  \n**Important:** This tool requires access to your local Gamma Knife SQL database. You will need add\
+  \ the computer where the tool is used to the allowed-list in your Gamma Knife TPS console.\n\n1. Create\
+  \ a file `config.ini`\n2. Copy the following information with your specific TPS database details:\n\n\
+  \    ```ini\n    [Database]\n    host = 192.168.x.x      ; The IP address of your GK Database\n    port\
+  \ = 5432\n    user = guest            \n    password = your_password; Verify the username and passowrd\
+  \ with your Gamma Knife physicist or Elekta support\n    name = tpsdb\n    ```\n"

@@ -1,0 +1,55 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: timskap/dental-viewer-macos
+url: https://github.com/timskap/dental-viewer-macos
+platform: github
+description: Native macOS viewer for dental CBCT scans — DICOM parser + Metal volume raycaster
+license: null
+language: Swift
+keywords: []
+stars: 0
+updated_at: '2026-04-10T07:53:22Z'
+image_source: https://raw.githubusercontent.com/timskap/dental-viewer-macos/HEAD/screenshot.jpeg
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# Dental Viewer\n\n![Dental Viewer screenshot](screenshot.jpeg)\n\nA native macOS viewer\
+  \ for dental **CBCT (cone-beam CT)** scans. Loads a folder\nof DICOM slices, stacks them into a 3D volume,\
+  \ and renders them with a Metal\nvolume raycaster — plus three orthogonal MPR (multi-planar reformat)\
+  \ slice\nviews and an interactive cross-section / clipping plane.\n\nBuilt specifically against the\
+  \ **Instrumentarium Dental OP300** OnDemand3D\ndisks (`IMGDATA/<date>/<series>/I*.dcm`), but works on\
+  \ any folder of DICOM\nslices that uses one of the standard transfer syntaxes below.\n\n## Features\n\
+  \n- **Pure-Swift DICOM parser** — no external libraries.\n  - Handles Explicit VR LE, Implicit VR LE,\
+  \ and JPEG-encapsulated PixelData\n    (Baseline / Lossless / JPEG-LS / JPEG 2000) via `ImageIO`.\n\
+  \  - Falls back gracefully when `PixelSpacing` is empty (common on OP300).\n- **Metal volume raycaster**\
+  \ with two modes:\n  - **MIP** (Maximum Intensity Projection) — the default for CBCT bone /\n    tooth\
+  \ visualization.\n  - **Composite** (front-to-back alpha accumulation) — for soft surfaces.\n- **Window\
+  \ / Level** sliders (center + width) for live contrast.\n- **Axis-aligned clipping plane** — toggle,\
+  \ pick X / Y / Z, scrub a slider\n  to slice the volume open. Flippable.\n- **Three live MPR panes**\
+  \ — Axial, Coronal, Sagittal with per-pane scroll.\n- **Drag** to orbit, **scroll** to zoom.\n\n## Requirements\n\
+  \n- macOS 13 (Ventura) or newer\n- Xcode 15+ (or just the Swift 5.9 toolchain for command-line builds)\n\
+  - Apple Silicon or Intel with a Metal-capable GPU\n\n## Run it\n\n### Option A — open in Xcode (recommended)\n\
+  \n```sh\nopen Package.swift\n```\n\nXcode treats `Package.swift` as a full project. Pick the **DentalViewer**\n\
+  scheme and hit ⌘R.\n\n### Option B — command line\n\n```sh\nswift run DentalViewer\n```\n\nThen **File\
+  \ ▸ Open DICOM Folder…** (⌘O) and pick the series folder\n(e.g. `IMGDATA/20260403/S0000017` on an OnDemand3D\
+  \ disk).\n\n## CLI smoke tests\n\nThe same binary doubles as a tiny diagnostic tool when given flags:\n\
+  \n```sh\n# Parse a single .dcm file and dump its header\nswift run DentalViewer --parse /path/to/I0005673.dcm\n\
+  \n# Walk a folder, build the volume, and print its dimensions\nswift run DentalViewer --load /path/to/IMGDATA/20260403/S0000017\n\
+  ```\n\n## Project layout\n\n```\nSources/DentalViewer/\n├── main.swift                  CLI entry /\
+  \ falls through to SwiftUI app\n├── App.swift                   SwiftUI App scene + menu commands\n\
+  ├── VolumeStore.swift           Observable model: volume + display state\n├── DICOM/\n│   ├── Volume.swift\
+  \            3D voxel grid struct (8-bit, mm spacing)\n│   ├── DICOMParser.swift       Pure-Swift DICOM\
+  \ file parser\n│   └── SeriesLoader.swift      Folder → sorted slice stack → Volume\n├── Rendering/\n\
+  │   ├── ShaderSource.swift      Inline Metal raycaster source\n│   └── VolumeMetalView.swift   MTKView\
+  \ + NSViewRepresentable + camera math\n└── UI/\n    ├── ContentView.swift       Toolbar + 3D pane +\
+  \ MPR stack + status bar\n    └── MPRSliceView.swift      Single MPR pane (axial/coronal/sagittal)\n\
+  ```\n\n## Notes & limitations\n\n- The viewer treats voxel intensities as 8-bit grayscale. For 16-bit\n\
+  \  uncompressed series, each slice is rescaled per-slice to 8 bits before\n  upload — fine for visualization,\
+  \ not appropriate for quantitative HU\n  analysis.\n- The clipping plane is axis-aligned. An arbitrary\
+  \ oblique plane would be a\n  natural follow-up.\n- No measurement tool yet — easy to add by sampling\
+  \ MPR pixel coordinates and\n  multiplying by `Volume.spacing`.\n- DICOMs with no `InstanceNumber` tag\
+  \ are sorted by `ImagePositionPatient.z`,\n  then by filename (numeric-aware).\n"

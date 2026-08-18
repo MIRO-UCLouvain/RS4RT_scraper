@@ -1,0 +1,124 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: MeetJani0/MRI-to-Synthetic-CT
+url: https://github.com/MeetJani0/MRI-to-Synthetic-CT
+platform: github
+description: Deep learning-based translation of MRI brain scans into synthetic CT using UNet, Pix2Pix,
+  and Transformer architectures.
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 4
+updated_at: '2026-06-30T13:42:49Z'
+image_source: https://raw.githubusercontent.com/MeetJani0/MRI-to-Synthetic-CT/HEAD/loss_curve.png
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "---\n\n# \U0001F9E0 MRI-to-Synthetic CT Brain Scan Translation using Deep Learning\n\n\
+  \U0001F680 **A Capstone Project by Meet Jani**\n\U0001F393 *Indian Institute of Technology (IIT) Mandi,\
+  \ in collaboration with Masai School*\n\n---\n\n## \U0001F4D6 Project Overview\n\nThis project focuses\
+  \ on generating **synthetic CT brain scans from MRI inputs** using **deep learning**.\n\nMRI offers\
+  \ excellent soft-tissue contrast, whereas CT provides superior bone and density visualization. However,\
+  \ acquiring both increases patient cost and radiation exposure.\n\nTo address this, I developed multiple\
+  \ **deep learning architectures** — from classical **U-Net** to advanced **Pix2Pix GAN** and **Swin\
+  \ Transformer-based** models — to perform **MRI → CT translation** with high accuracy and perceptual\
+  \ realism.\n\n---\n\n## \U0001F3AF Objectives\n\n✅ Develop models that generate CT-equivalent images\
+  \ from MRI slices.\n✅ Compare architectures across **MAE**, **MSE**, **PSNR**, and **SSIM** metrics.\n\
+  ✅ Design efficient preprocessing and **RAM caching** pipelines.\n✅ Deploy a **Gradio web app** for real-time\
+  \ inference and visualization.\n\n---\n\n## \U0001F4C2 Dataset\n\n**Dataset:** [SynthRAD2023 Brain Task-1](https://synthrad2023.grand-challenge.org)\n\
+  **Samples:** 180 paired T1-weighted MRI and CT volumes\n\n### \U0001F9E9 Preprocessing Pipeline\n\n\
+  * 3D MRI/CT volume alignment → 2D paired slice generation\n* Intensity normalization per slice\n* Optional\
+  \ brain masking for intracranial focus\n* Data augmentation (flips, rotations, brightness/contrast,\
+  \ Gaussian noise)\n* **RAM caching** for fast data loading during training\n\n---\n\n## \U0001F9E0 Model\
+  \ Architectures\n\n| Model               | Generator               | Discriminator | Loss Functions\
+  \          | Notes                   |\n| ------------------- | ----------------------- | -------------\
+  \ | ----------------------- | ----------------------- |\n| **UNet**            | UNet              \
+  \      | None          | L1                      | Baseline                |\n| **Pix2Pix**        \
+  \ | UNet                    | PatchGAN      | L1 + Adversarial        | Best overall trade-off  |\n\
+  | **Pix2Pix-ResUNet** | ResUNet                 | PatchGAN      | L1 + SSIM + Adversarial | Sharper\
+  \ details         |\n| **SwinPix2Pix**     | UNet + Swin Transformer | PatchGAN      | L1 + Adversarial\
+  \        | Long-range dependencies |\n| **SwinGAN**         | SwinUNet                | PatchGAN   \
+  \   | L1 + SSIM + Adversarial | Transformer-based GAN   |\n\n**Optimizer:** Adam (lr = 0.0002, β₁ =\
+  \ 0.5, β₂ = 0.999)\n**Batch Size:** 4–12 slices (GPU dependent)\n**Precision:** Mixed (AMP)\n\n---\n\
+  \n## \U0001F9E0 Pix2Pix Architecture (MRI + Mask → CT)\n\n### Model Overview\n\n**Input:** MRI + Mask\
+  \ (2 channels, 256×256)\n**Output:** CT (1 channel, 256×256)\n\n```\n-------------------------------------------------\n\
+  \      ┌───────────────────────────────┐\n      │       U-Net Generator         │\n      │  (Encoder–Decoder\
+  \ with skips) │\n      └───────────────────────────────┘\n                      │\n                \
+  \      ▼\n      ┌───────────────────────────────┐\n      │    PatchGAN Discriminator     │\n      │\
+  \ (classifies real/fake patches)│\n      └───────────────────────────────┘\n```\n\n---\n\n### \U0001F9E9\
+  \ U-Net Generator\n\n**Architecture used:** `UNet(in_ch=2, out_ch=1, features=[32,64,128,256])`\n\n\
+  **Encoder (Downsampling Path)**\n\n| Layer | Operation   | In → Out Channels | Kernel | Stride | Output\
+  \ Size | Activation |\n| ----- | ----------- | ----------------: | :----: | :----: | :---------: | :--------:\
+  \ |\n| 1     | Double Conv |            2 → 32 |   3×3  |    1   |   256×256   |    ReLU    |\n| 2 \
+  \    | MaxPool     |                 — |   2×2  |    2   |   128×128   |      —     |\n| 3     | Double\
+  \ Conv |           32 → 64 |   3×3  |    1   |   128×128   |    ReLU    |\n| 4     | MaxPool     | \
+  \                — |   2×2  |    2   |    64×64    |      —     |\n| 5     | Double Conv |         \
+  \ 64 → 128 |   3×3  |    1   |    64×64    |    ReLU    |\n| 6     | MaxPool     |                 —\
+  \ |   2×2  |    2   |    32×32    |      —     |\n| 7     | Double Conv |         128 → 256 |   3×3\
+  \  |    1   |    32×32    |    ReLU    |\n| 8     | MaxPool     |                 — |   2×2  |    2\
+  \   |    16×16    |      —     |\n\n**Bottleneck**\n\n| Layer | Operation   | In → Out Channels | Output\
+  \ Size |\n| ----- | ----------- | ----------------: | :---------: |\n| 9     | Double Conv |       \
+  \  256 → 512 |    16×16    |\n\n**Decoder (Upsampling Path)**\n\n| Step | Operation                |\
+  \ Concat Skip | In → Out Channels | Output Size |\n| ---- | ------------------------ | ----------: |\
+  \ ----------------: | :---------: |\n| 10   | ConvTranspose            |           — |        1024 →\
+  \ 256 |    32×32    |\n| 11   | Double Conv (+ skip 256) |   512 → 256 |             32×32 |       \
+  \      |\n| 12   | ConvTranspose            |           — |         512 → 128 |    64×64    |\n| 13\
+  \   | Double Conv (+ skip 128) |   256 → 128 |             64×64 |             |\n| 14   | ConvTranspose\
+  \            |           — |          256 → 64 |   128×128   |\n| 15   | Double Conv (+ skip 64)  |\
+  \    128 → 64 |           128×128 |             |\n| 16   | ConvTranspose            |           — |\
+  \          128 → 32 |   256×256   |\n| 17   | Double Conv (+ skip 32)  |     64 → 32 |           256×256\
+  \ |             |\n| 18   | Final Conv               |           — |            32 → 1 |   256×256 \
+  \  |\n\n---\n\n### ⚙️ PatchGAN Discriminator\n\n**Architecture used:** `PatchDiscriminator(in_ch=3)`\n\
+  (input = concatenation of [input(2ch), target(1ch)] = 3ch)\n\n| Layer | Operation | In → Out Channels\
+  \ | Kernel | Stride |    Norm   |   Activation   |\n| ----- | --------- | ----------------: | :----:\
+  \ | :----: | :-------: | :------------: |\n| 1     | Conv2d    |            3 → 64 |   4×4  |    2 \
+  \  |    None   | LeakyReLU(0.2) |\n| 2     | Conv2d    |          64 → 128 |   4×4  |    2   | BatchNorm\
+  \ | LeakyReLU(0.2) |\n| 3     | Conv2d    |         128 → 256 |   4×4  |    2   | BatchNorm | LeakyReLU(0.2)\
+  \ |\n| 4     | Conv2d    |           256 → 1 |   4×4  |    1   |    None   |        —       |\n\n**Output:**\n\
+  → Patch of logits (approx 16×16 map of real/fake scores)\n→ `BCEWithLogitsLoss` applied directly (no\
+  \ sigmoid inside model).\n\n---\n\n### \U0001F9EE Loss Functions & Training Hyperparams\n\n| Component\
+  \         | Loss Type        | Formula                                         |\n| -----------------\
+  \ | ---------------- | ----------------------------------------------- |\n| **Generator**     | Adversarial\
+  \ + L1 | \U0001D43F_G = BCE(G(x), 1) + λ × L1(G(x), y)           |\n| **Discriminator** | Adversarial\
+  \      | \U0001D43F_D = ½ [BCE(D(x, y), 1) + BCE(D(x, G(x)), 0)] |\n| **Validation**    | L1 + SSIM\
+  \        | \U0001D43F_val = L1(G(x), y) + SSIM(G(x), y)            |\n\n* λ (L1 weight) = **100**\n\
+  * Optimizer (G & D) = **Adam(lr=2e-4, betas=(0.5, 0.999))**\n* Mixed Precision = **Yes** (`torch.amp.autocast`)\n\
+  * Early Stopping = **patience=5**\n\n**Summary**\n\n* Image size: **256×256**\n* Input: **MRI (1ch)**\
+  \ + **mask (1ch)** = **2 channels**\n* Output: **CT (1ch)**\n* Generator: **UNet-based**\n* Discriminator:\
+  \ **PatchGAN**\n* Total parameters: **~54M** (approx; varies slightly with BN layers)\n\n---\n\n###\
+  \ \U0001F4C9 Training Loss Curves\n\n![Training Loss Curves](loss_curve.png)\n\n> The generator converges\
+  \ steadily with decreasing L1 and SSIM losses, while discriminator loss stabilizes near 0.6 — indicating\
+  \ balanced adversarial learning.\n\n---\n\n## 6️⃣ Quantitative Results\n\n| **Model**           | **Dataset**\
+  \ | **MAE** | **MSE** | **PSNR** | **SSIM** |\n| ------------------- | ----------- | ------- | -------\
+  \ | -------- | -------- |\n| **UNet**            | Test        | 0.2357  | 0.1967  | 20.13    | 0.7470\
+  \   |\n| **Pix2Pix**         | Test        | 0.1246  | 0.0954  | 23.63    | 0.8560   |\n| **Pix2Pix-ResUNet**\
+  \ | Test        | 0.1169  | 0.0884  | 23.89    | 0.8516   |\n| **SwinPix2Pix**     | Test        | 0.1596\
+  \  | 0.1427  | 21.40    | 0.7798   |\n| **SwinGAN**         | Test        | 0.4546  | 0.4369  | 16.48\
+  \    | 0.5187   |\n\n> \U0001F9E0 **Insights:**\n>\n> * **Pix2Pix** achieves the best trade-off between\
+  \ fidelity and computational efficiency.\n> * **ResUNet** improves edge detail with marginal SSIM gain.\n\
+  > * **Swin-based** models underperform due to limited data and high complexity.\n\n---\n\n### \U0001F4C8\
+  \ Quantitative Evaluation Visuals\n\n![Mean Absolute Error](output.png)\n![Peak Signal-to-Noise Ratio](output1.png)\n\
+  ![Structural Similarity Index](output2.png)\n![Cross-Patient Comparison](output3.png)\n\n> These visual\
+  \ plots represent model-wise quantitative trends across patients, confirming the superiority of Pix2Pix\
+  \ and ResUNet variants.\n\n---\n\n## 7️⃣ Qualitative Results\n\n### Representative Visuals (MRI → Ground\
+  \ Truth CT → Predicted CT → Absolute Error)\n\n| **Model**           | **Example Visualization**   \
+  \                              |\n| ------------------- | ---------------------------------------------------------\
+  \ |\n| **UNet**            | ![UNet Output](unet_comparison.png)               |\n| **Pix2Pix**    \
+  \     | ![Pix2Pix Output](pix2pix_comparison.png)         |\n| **Pix2Pix-ResUNet** | ![ResUNet Output](resunet_comparison.png)\
+  \         |\n| **SwinPix2Pix**     | ![SwinPix2Pix Output](swinpix2pix_comparison.png) |\n| **SwinGAN**\
+  \         | ![SwinGAN Output](swingan_comparison.png)         |\n\n> \U0001F9E9 **Observations:**\n\
+  >\n> * **Pix2Pix** effectively captures both bone and soft-tissue contrast.\n> * **Pix2Pix-ResUNet**\
+  \ yields sharper edges and improved cortical structure delineation.\n> * **Swin-based** outputs show\
+  \ minor artifacts due to limited dataset size.\n> * The error maps highlight minor deviations in high-density\
+  \ bone regions.\n\n---\n\n### \U0001F9E0 Visual Comparison Summary\n\n| Input MRI               | Ground\
+  \ Truth CT       | Predicted CT              |\n| ----------------------- | --------------------- |\
+  \ ------------------------- |\n| ![MRI](MRI.png) | ![CT](CT.png) | ![Pred](Pred.png) |\n\n---\n\n##\
+  \ \U0001F468‍\U0001F4BB Author\n\n**Meet Jani**\n\U0001F4E7 [janimeet59@gmail.com](mailto:janimeet59@gmail.com)\n\
+  \n\U0001F517 [**LinkedIn**](https://www.linkedin.com/in/janimeet) | [**GitHub**](https://github.com/MeetJani0)\n\
+  \n\U0001F393 *Minor in Data Science & Machine Learning — IIT Mandi (in collaboration with Masai School)*\n\
+  \n---\n\n⭐ *If you found this work useful, please consider starring the repository or connecting on\
+  \ LinkedIn!*\n\n---\n"

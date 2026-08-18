@@ -1,0 +1,66 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Arunim10/UW_Madison_GI_Tract_Segmentation
+url: https://github.com/Arunim10/UW_Madison_GI_Tract_Segmentation
+platform: github
+description: Deep learning-based solution for automatic segmentation of stomach and intestines in MRI
+  scans to streamline MR-Linac guided radiotherapy and improve cancer treatment efficiency.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2024-12-07T18:21:42Z'
+image_source: null
+heuristic_total_score: 20
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# UW_Madison_GI_Tract_Segmentation\nDeep learning-based solution for automatic segmentation\
+  \ of stomach and intestines in MRI scans to streamline MR-Linac guided radiotherapy and improve cancer\
+  \ treatment efficiency.\n\nThis repository hosts the code and solutions for an exciting deep learning\
+  \ project focused on improving cancer treatment using MRI-guided radiotherapy. The competition, supported\
+  \ by the UW-Madison Carbone Cancer Center, aims to create models that automatically segment the stomach\
+  \ and intestines on MRI scans, helping oncologists deliver more precise and efficient radiation therapy.\n\
+  \n## \U0001F680 Motivation\nEach year, millions of people are diagnosed with gastrointestinal cancers,\
+  \ and approximately half of them undergo radiation therapy. Modern technologies like MR-Linacs allow\
+  \ radiation oncologists to visualize tumors and surrounding organs in real-time. However, adjusting\
+  \ the radiation beams daily to avoid healthy tissues like the stomach and intestines is a painstaking\
+  \ manual process.\n\nThis competition challenges participants to develop a method to automate this segmentation\
+  \ process, reducing treatment times and enabling better care for patients.\n\n![Image](https://github.com/user-attachments/assets/31485428-6796-4759-bc80-cc1398a480ec)\n\
+  _In this figure, the tumor (pink thick line) is close to the stomach (red thick line). High doses of\
+  \ radiation are directed to the tumor while avoiding the stomach. The dose levels are represented by\
+  \ the rainbow of outlines, with higher doses represented by red and lower doses represented by green._\n\
+  \n## \U0001FA7A About the Competition\n### 1. Dataset:\n    The dataset consists of anonymized MRI scans\
+  \ from actual cancer patients, taken during 1–5 sessions across their radiation treatment period.\n\
+  \    Scans include variations in tumor and organ positioning across days.\n    Ground truth annotations\
+  \ outline the stomach and intestines, enabling supervised learning approaches.\n### 2. Objective:\n\
+  \    Develop a model that can accurately segment the stomach and intestines from MRI scans to assist\
+  \ in precise dose delivery and minimize damage to healthy tissues.\n\n### 3. Real-World Impact:\n  \
+  \  Speeds up radiation therapy sessions from 1 hour to approximately 15 minutes.\n    Improves treatment\
+  \ tolerability for patients.\n    Enables hospitals to treat more patients efficiently.\n\n# Methodology\n\
+  The approach to solving the problem of automatic segmentation of the stomach and intestines in MRI scans\
+  \ was designed systematically, leveraging state-of-the-art deep learning techniques. Below is the detailed\
+  \ methodology:\n\n## 1. Data Preparation\n### Mask Conversion:\n    The provided RLE-encoded masks were\
+  \ converted into image masks to prepare the data for supervised learning.\n\n### Handling Imbalance:\n\
+  \    Used StratifiedGroupKFold to address the imbalance between empty and non-empty images, ensuring\
+  \ a balanced representation in training and validation splits.\n\n## 2. Model Architecture\n    Implemented\
+  \ the U-Net model with two robust backbones:\n        EfficientNet-B1\n        ResNet-50\n    The architectures\
+  \ were selected for their capability to efficiently capture multi-scale features and handle medical\
+  \ image segmentation tasks.\n## 3. Loss Functions\n    Experimented with different loss functions to\
+  \ optimize model performance. The following combinations were tried:\n    Jaccard Loss\n    Binary Cross-Entropy\
+  \ (BCE) Loss\n    Dice Loss\n    Tversky Loss\n## 4. Data Augmentation\n    To enhance the generalization\
+  \ of the model, various augmentation techniques were applied using the Albumentations library and some\
+  \ of them are given here:\n    ShiftScaleRotate\n    Grid Distortion\n    Horizontal Flip\n    Vertical\
+  \ Flip\n    These augmentations helped the model learn from diverse variations in the data.\n\n## 5.\
+  \ Optimization and Learning Rate Schedulers\n    Experimented with multiple optimizers and learning\
+  \ rate strategies, some of them are given here:\n    Cosine Annealing Scheduler: To gradually reduce\
+  \ the learning rate over time.\n    ReduceLROnPlateau: To dynamically adjust the learning rate based\
+  \ on validation loss.\n## 6. Training and Validation\n    Utilized a StratifiedGroupKFold strategy to\
+  \ maintain balanced splits across folds.\n    Trained the models using the augmented dataset and monitored\
+  \ performance across folds to ensure robustness.\n## 7. Evaluation and Results Visualization\n    Generated\
+  \ loss curves to visualize the convergence behavior during training.\n![image](https://github.com/user-attachments/assets/90d37228-aa77-41bd-977f-2c5eaf328455)\n\
+  \n    Predicted masks were analyzed qualitatively by overlaying them on the input MRI scans to assess\
+  \ the segmentation quality.\n![image](https://github.com/user-attachments/assets/a93e885b-f33e-4c9c-b6d3-f6fb4b814e65)\n"

@@ -1,0 +1,139 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: sanghyunkim-ai/brain-mri-tumor-segmentation
+url: https://github.com/sanghyunkim-ai/brain-mri-tumor-segmentation
+platform: github
+description: Brain MRI tumor segmentation using baseline and improved U-Net with Dice-based loss, data
+  augmentation, positive oversampling, threshold optimization, and patient-level evaluation.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-20T10:44:22Z'
+image_source: https://raw.githubusercontent.com/sanghyunkim-ai/brain-mri-tumor-segmentation/HEAD/brain_mri_mask_samples.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# U-Net 기반 뇌 MRI 종양 분할\n\n뇌 MRI 영상에서 종양 영역을 픽셀 단위로 분할하고, Baseline U-Net과 개선 U-Net의 성능을\
+  \ 비교한 의료영상 Segmentation 프로젝트입니다.\n\n동일한 U-Net 구조에서 손실함수, 데이터 증강, 종양 영상 Oversampling 및 Threshold 최적화를\
+  \ 적용하여 종양 분할 성능과 미탐률의 변화를 분석했습니다.\n\n---\n\n## 프로젝트 개요\n\n의료영상 분류는 한 장의 영상이 정상인지 비정상인지 판단하는 작업입니다.\n\
+  \n반면 Segmentation은 영상의 각 픽셀을 구분하여 종양이 존재하는 정확한 영역을 예측합니다.\n\n```text\n입력: Brain MRI\n출력: 종양 영역 Binary\
+  \ Mask\n```\n\n전체 프로젝트 흐름은 다음과 같습니다.\n\n```text\nLGG Brain MRI 데이터 불러오기\n        ↓\nMRI와 정답 Mask 연결\n\
+  \        ↓\n데이터 구조 및 종양 분포 확인\n        ↓\n환자 단위 Train / Validation / Test 분할\n        ↓\nBaseline U-Net\
+  \ 학습\n        ↓\n데이터 증강 및 Positive Oversampling\n        ↓\nBCE + Dice Loss 기반 Improved U-Net 학습\n \
+  \       ↓\nValidation 데이터로 Threshold 최적화\n        ↓\n독립 Test 환자 최종 평가\n        ↓\nBaseline과 Improved\
+  \ U-Net 비교\n```\n\n---\n\n## 프로젝트 목표\n\n- Brain MRI와 종양 Mask의 정확한 연결\n- 환자 단위 데이터 분할을 통한 데이터 누수 방지\n\
+  - U-Net 기반 뇌종양 영역 분할\n- 종양이 없는 영상이 더 많은 클래스 불균형 처리\n- Baseline과 개선 모델의 공정한 비교\n- Dice와 IoU 기반 종양 분할\
+  \ 성능 평가\n- 종양 완전 누락률과 비종양 오탐률 분석\n- Validation 기반 Threshold 최적화\n- 이미지 단위 및 환자 단위 성능 평가\n- 실제 Mask와\
+  \ 예측 Mask 시각화\n\n---\n\n## 데이터셋\n\n### 데이터 출처\n\n```text\nDataset: LGG MRI Segmentation\nKaggle ID:\
+  \ mateuszbuda/lgg-mri-segmentation\n```\n\n### 데이터 구성\n\n| 항목 | 결과 |\n|---|---:|\n| 전체 환자 | 110명 |\n\
+  | 전체 MRI Slice | 3,929장 |\n| 종양이 있는 Slice | 1,373장 |\n| 종양이 없는 Slice | 2,556장 |\n| 종양 영상 비율 | 34.95%\
+  \ |\n| 비종양 영상 비율 | 65.05% |\n| MRI–Mask 누락 | 0개 |\n\n종양이 없는 영상이 전체의 약 65%이므로 데이터 불균형이 존재합니다.\n\n###\
+  \ 영상 형식\n\n| 항목 | MRI | Mask |\n|---|---|---|\n| 크기 | 256 × 256 × 3 | 256 × 256 |\n| 자료형 | uint8 | uint8\
+  \ |\n| 원본 값 | 0~255 범위 | 0 또는 255 |\n| 학습용 값 | 0~1 정규화 | 0 또는 1 |\n\n각 MRI 파일에는 파일 이름 뒤에 `_mask`가 붙은\
+  \ 정답 Mask가 연결되어 있습니다.\n\n```text\nMRI:\nTCGA_CS_4941_19960909_11.tif\n\nMask:\nTCGA_CS_4941_19960909_11_mask.tif\n\
+  ```\n\n---\n\n## MRI와 정답 Mask 예시\n\n![MRI와 종양 Mask 예시](brain_mri_mask_samples.png)\n\n- MRI: 모델에 입력되는\
+  \ 뇌 영상\n- Mask: 실제 종양 영역을 표시한 정답\n- Overlay: MRI 위에 종양 영역을 겹쳐 표시한 결과\n\nMask에서 다음 값이 사용됩니다.\n\n```text\n\
+  0: 배경\n1: 종양\n```\n\n---\n\n## 환자 단위 데이터 분할\n\n한 환자에게는 여러 장의 MRI Slice가 존재합니다.\n\n이미지 단위로 무작위 분할하면 같은\
+  \ 환자의 영상이 Train과 Test에 동시에 포함될 수 있습니다. 이를 방지하기 위해 `patient_id`를 기준으로 데이터를 분할했습니다.\n\n| 데이터셋 | 환자 수 |\
+  \ 전체 Slice | 종양 Slice | 비종양 Slice |\n|---|---:|---:|---:|---:|\n| Train | 77명 | 2,805장 | 966장 | 1,839장\
+  \ |\n| Validation | 16명 | 500장 | 190장 | 310장 |\n| Test | 17명 | 624장 | 217장 | 407장 |\n\n```text\nTrain–Validation\
+  \ 환자 중복: 0명\nTrain–Test 환자 중복: 0명\nValidation–Test 환자 중복: 0명\n```\n\nTest 데이터는 모델 학습과 Threshold 선택에\
+  \ 사용하지 않고, 마지막 성능 평가에만 사용했습니다.\n\n---\n\n## 데이터 전처리\n\nMRI와 Mask에 다음 전처리를 적용했습니다.\n\n### MRI\n\n```text\n\
+  원본 Shape: (256, 256, 3)\n        ↓\nfloat32 변환\n        ↓\n0~1 정규화\n        ↓\nChannel First 변환\n  \
+  \      ↓\nTensor Shape: (3, 256, 256)\n```\n\n### Mask\n\n```text\n원본 값: 0 또는 255\n        ↓\nBinary\
+  \ 변환\n        ↓\n0 또는 1\n        ↓\nChannel 차원 추가\n        ↓\nTensor Shape: (1, 256, 256)\n```\n\nDataLoader에서\
+  \ 하나의 Batch는 다음 형태입니다.\n\n```text\nMRI Batch:  (16, 3, 256, 256)\nMask Batch: (16, 1, 256, 256)\n```\n\
+  \n---\n\n## U-Net 구조\n\nBaseline과 Improved 모델은 동일한 U-Net 구조를 사용했습니다.\n\n| 항목 | 설정 |\n|---|---|\n| 입력\
+  \ 채널 | 3 |\n| 출력 채널 | 1 |\n| Base Channel | 16 |\n| 학습 가능한 Parameter | 1,942,577개 |\n| 출력 | 종양 Logit\
+  \ Map |\n\n두 모델의 구조와 Parameter 수를 동일하게 유지하여 학습 전략에 따른 차이를 비교했습니다.\n\nImproved U-Net은 Baseline의 학습 가중치를\
+  \ 이어받지 않고 동일한 초기 조건에서 처음부터 다시 학습했습니다.\n\n---\n\n## Baseline U-Net\n\nBaseline은 복잡한 개선 기법을 적용하지 않은 기준\
+  \ 모델입니다.\n\n| 항목 | 설정 |\n|---|---|\n| 모델 | 기본 U-Net |\n| Loss | BCEWithLogitsLoss |\n| Optimizer | Adam\
+  \ |\n| Learning Rate | 0.001 |\n| Data Augmentation | 사용하지 않음 |\n| Positive Oversampling | 사용하지 않음 |\n\
+  | Threshold | 0.50 |\n| Maximum Epoch | 20 |\n| Early Stopping Patience | 5 |\n| Best Epoch | 4 |\n\n\
+  ### BCEWithLogitsLoss\n\n각 픽셀을 다음 두 종류로 분류하도록 학습합니다.\n\n```text\n0: 배경\n1: 종양\n```\n\nBaseline 모델은 전체\
+  \ Validation Dice가 아니라 실제 종양 영상의 `Positive Dice`가 가장 높은 시점의 모델을 저장했습니다.\n\n---\n\n## Improved U-Net\n\
+  \nImproved U-Net은 Baseline과 동일한 구조에 다음 학습 전략을 추가했습니다.\n\n```text\nBCE + Dice Loss\n+\nData Augmentation\n\
+  +\nPositive Oversampling\n+\nValidation Threshold 최적화\n```\n\n### 개선 모델 설정\n\n| 항목 | 설정 |\n|---|---|\n\
+  | 모델 | Baseline과 동일한 U-Net |\n| Loss | Positive BCE + Dice Loss |\n| BCE 가중치 | 0.5 |\n| Dice 가중치 | 0.5\
+  \ |\n| Optimizer | Adam |\n| Learning Rate | 0.001 |\n| Maximum Epoch | 20 |\n| Early Stopping Patience\
+  \ | 5 |\n| Best Epoch | 20 |\n| 최종 Threshold | 0.925 |\n\n---\n\n## Data Augmentation\n\nTrain 데이터에만\
+  \ 약한 데이터 증강을 적용했습니다.\n\n### 공간 변환\n\n- 50% 확률로 좌우 반전\n- 50% 확률로 -10도에서 +10도 사이 회전\n\nMRI와 Mask의 위치가\
+  \ 어긋나지 않도록 공간 변환은 두 데이터에 동일하게 적용했습니다.\n\n### 밝기 및 대비 변환\n\nMRI 영상에만 다음 변환을 적용했습니다.\n\n```text\nContrast:\
+  \ 0.90~1.10\nBrightness: -10~10\n```\n\nMask에는 밝기와 대비 변환을 적용하지 않았습니다.\n\nValidation과 Test 데이터에는 증강을\
+  \ 적용하지 않았습니다.\n\n---\n\n## Positive Oversampling\n\nTrain 데이터에는 종양이 없는 영상이 더 많습니다.\n\n```text\nTrain\
+  \ 종양 영상: 966장\nTrain 비종양 영상: 1,839장\n```\n\n`WeightedRandomSampler`를 이용하여 학습 과정에서 종양 영상과 비종양 영상이 약 50:50의\
+  \ 확률로 선택되도록 구성했습니다.\n\n```text\n원본 종양 영상 비율: 약 34.44%\nOversampling 후 예상 비율: 약 50%\n```\n\n이는 원본 데이터를\
+  \ 복사하여 저장한 것이 아니라, DataLoader가 종양 영상을 더 자주 선택하도록 설정한 방식입니다.\n\n---\n\n## Positive BCE + Dice Loss\n\n\
+  Improved U-Net에서는 BCE Loss와 Dice Loss를 결합했습니다.\n\n### BCE Loss\n\n모든 MRI 영상의 모든 픽셀에 적용하여 배경과 종양을 구분합니다.\n\
+  \n### Dice Loss\n\n실제 종양이 있는 영상에만 적용하여 예측 영역과 정답 종양 영역이 잘 겹치도록 학습합니다.\n\n```text\nTotal Loss\n= 0.5\
+  \ × BCE Loss\n+ 0.5 × Dice Loss\n```\n\n종양이 없는 영상에는 BCE Loss만 적용하여 Empty Mask가 Dice Loss를 왜곡하는 문제를 줄였습니다.\n\
+  \n---\n\n## Threshold 최적화\n\n모델은 각 픽셀에 대해 `0~1` 사이의 종양 확률을 출력합니다.\n\nThreshold보다 높은 픽셀을 종양으로 분류합니다.\n\
+  \n```text\nProbability ≥ Threshold → 종양\nProbability < Threshold → 배경\n```\n\nThreshold가 낮으면 종양을 더 많이\
+  \ 탐지할 수 있지만 비종양 영역의 False Positive가 증가할 수 있습니다.\n\nThreshold가 높으면 False Positive는 감소하지만 실제 종양을 놓칠 수\
+  \ 있습니다.\n\n### Threshold 선택 기준\n\nValidation 데이터에서 다음 두 지표를 함께 고려했습니다.\n\n```text\nPositive Dice\n+\n\
+  Negative Specificity\n```\n\n본 프로젝트에서는 다음 사용자 정의 점수를 사용했습니다.\n\n```text\nBalanced Validation Score\n\
+  = (Positive Dice + Negative Specificity) / 2\n```\n\n> Balanced Validation Score는 본 프로젝트의 Threshold\
+  \ 선택을 위해 정의한 기준이며, 공식 의료 성능 지표가 아닙니다.\n\n### 최종 Threshold\n\n0.900부터 0.990까지 0.005 간격으로 추가 탐색한 결과 최종\
+  \ Threshold는 `0.925`로 선택했습니다.\n\n| 지표 | Validation 결과 |\n|---|---:|\n| Threshold | 0.925 |\n| Positive\
+  \ Dice | 0.7661 |\n| Positive IoU | 0.6500 |\n| Positive Missed Rate | 0.0053 |\n| Negative False Positive\
+  \ Rate | 0.3548 |\n| Balanced Validation Score | 0.7056 |\n\n![Threshold 최적화 결과](improved_refined_threshold_comparison.png)\n\
+  \nThreshold는 Validation 데이터에서만 선택했으며 Test 결과를 보고 변경하지 않았습니다.\n\n---\n\n## 평가 지표\n\n### Dice Score\n\n\
+  예측한 종양 영역과 실제 종양 영역이 얼마나 겹치는지 평가합니다.\n\n```text\n1에 가까울수록 좋은 분할 결과\n```\n\n### IoU\n\n예측 영역과 실제 영역의\
+  \ 합집합 중 교집합이 차지하는 비율입니다.\n\n### Positive Dice\n\n실제 종양이 존재하는 MRI에서만 계산한 Dice입니다.\n\n비종양 영상이 많은 데이터에서는\
+  \ 전체 Dice보다 실제 종양 분할 능력을 더 직접적으로 보여줍니다.\n\n### Positive Missed Rate\n\n실제 종양이 있지만 모델이 종양 픽셀을 하나도 예측하지\
+  \ 못한 영상의 비율입니다.\n\n```text\n낮을수록 좋음\n```\n\n### Negative False Positive Rate\n\n실제 종양이 없는 영상에서 종양 영역을\
+  \ 잘못 예측한 비율입니다.\n\n```text\n낮을수록 좋음\n```\n\n### Patient-level Dice\n\n한 환자에게 속한 여러 MRI Slice의 교집합과 예측\
+  \ 면적을 합산하여 계산한 환자 단위 Dice입니다.\n\n---\n\n## 최종 Test 결과\n\n학습과 Threshold 선택에 사용하지 않은 17명의 Test 환자, 624장의\
+  \ MRI로 최종 평가했습니다.\n\n| 평가 지표 | Baseline U-Net | Improved U-Net | 변화 |\n|---|---:|---:|---:|\n| Best\
+  \ Epoch | 4 | 20 | - |\n| Threshold | 0.500 | 0.925 | - |\n| Overall Dice | 0.7796 | 0.7123 | -0.0673\
+  \ |\n| Overall IoU | 0.7514 | 0.6748 | -0.0766 |\n| **Positive Dice** | **0.4814** | **0.6104** | **+0.1290**\
+  \ |\n| **Positive IoU** | **0.4005** | **0.5025** | **+0.1021** |\n| **Positive Missed Rate** | **32.72%**\
+  \ | **13.36%** | **-19.35%p** |\n| Negative False Positive Rate | 6.14% | 23.34% | +17.20%p |\n| **Patient-level\
+  \ Dice** | **0.5198** | **0.6096** | **+0.0898** |\n| Patient-level IoU | 0.4092 | 0.4766 | +0.0674\
+  \ |\n\n![Baseline과 Improved U-Net 최종 성능 비교](final_test_model_comparison.png)\n\n---\n\n## 결과 해석\n\n\
+  Improved U-Net은 Baseline보다 실제 종양 영상의 분할 성능이 향상되었습니다.\n\n```text\nPositive Dice\n0.4814 → 0.6104\n\n\
+  Positive IoU\n0.4005 → 0.5025\n\nPatient-level Dice\n0.5198 → 0.6096\n```\n\n특히 종양을 완전히 놓친 비율이 크게 감소했습니다.\n\
+  \n```text\n종양 완전 누락률\n32.72% → 13.36%\n```\n\n다만 종양이 없는 영상에서 종양을 잘못 예측한 비율은 증가했습니다.\n\n```text\nNegative\
+  \ False Positive Rate\n6.14% → 23.34%\n```\n\n즉, 개선 모델은 종양을 더 적극적으로 탐지하면서 미탐을 줄였지만, 비종양 영상의 오탐이 증가하는\
+  \ Trade-off를 보였습니다.\n\nBaseline의 Overall Dice가 더 높은 이유는 종양이 없는 영상에서 빈 Mask를 더 자주 정확하게 예측했기 때문입니다. 하지만\
+  \ 실제 종양이 존재하는 영상의 Positive Dice와 환자 단위 성능은 Improved U-Net이 더 높았습니다.\n\n본 프로젝트에서는 종양을 완전히 놓치는 문제를 줄이고\
+  \ 실제 종양 영역을 더 잘 분할하는 것을 중요한 개선 목표로 평가했습니다.\n\n---\n\n## 예측 결과 비교\n\n![최종 Test 예측 비교](final_test_prediction_comparison.png)\n\
+  \n이미지에서는 동일한 Test MRI에 대해 다음 결과를 비교합니다.\n\n```text\n원본 MRI\n정답 Mask\nBaseline 예측 Mask\nImproved 예측 Mask\n\
+  Baseline Overlay\nImproved Overlay\n```\n\n대표 사례는 Improved U-Net의 성능을 기준으로 다음과 같이 선택했습니다.\n\n- 성능이 가장\
+  \ 낮은 사례\n- 중간 성능 사례\n- 성능이 가장 높은 사례\n\n일부 작은 종양은 두 모델 모두 탐지하지 못했으며, 큰 종양에서는 Improved U-Net이 정답 영역과 더\
+  \ 유사한 결과를 보였습니다.\n\n---\n\n## 핵심 결과 요약\n\n```text\n전체 환자: 110명\n전체 MRI: 3,929장\n종양 MRI: 1,373장\n비종양\
+  \ MRI: 2,556장\n\nTest 환자: 17명\nTest MRI: 624장\n\nBaseline Positive Dice: 0.4814\nImproved Positive Dice:\
+  \ 0.6104\n\nBaseline 종양 완전 누락률: 32.72%\nImproved 종양 완전 누락률: 13.36%\n\nBaseline 환자 단위 Dice: 0.5198\n\
+  Improved 환자 단위 Dice: 0.6096\n```\n\n---\n\n## 저장소 구성\n\n```text\nbrain-mri-tumor-segmentation/\n├──\
+  \ README.md\n├── 4.brain_mri_tumor_segmentation_using_baseline_and_improved_U-Net.ipynb\n├── brain_mri_mask_samples.png\n\
+  ├── improved_refined_threshold_comparison.png\n├── final_test_model_comparison.png\n├── final_test_prediction_comparison.png\n\
+  ├── final_test_model_comparison.csv\n├── baseline_to_improved_changes.csv\n└── .gitignore\n```\n\n###\
+  \ 파일 설명\n\n#### `4.brain_mri_tumor_segmentation_using_baseline_and_improved_U-Net.ipynb`\n\n프로젝트의 전체\
+  \ 과정이 포함된 Jupyter Notebook입니다.\n\n- 데이터셋 다운로드\n- MRI와 Mask 연결\n- 데이터 구조 및 종양 분포 분석\n- 환자 단위 데이터 분할\n\
+  - PyTorch Dataset 및 DataLoader 구현\n- Baseline U-Net 학습\n- Data Augmentation\n- Positive Oversampling\n\
+  - BCE + Dice Loss\n- Improved U-Net 학습\n- Threshold 최적화\n- Test 평가\n- 이미지 및 환자 단위 성능 분석\n- 예측 결과 시각화\n\
+  \n#### `brain_mri_mask_samples.png`\n\nMRI, 실제 종양 Mask 및 Overlay 예시입니다.\n\n#### `improved_refined_threshold_comparison.png`\n\
+  \nValidation 데이터에서 높은 Threshold 구간을 세밀하게 비교한 결과입니다.\n\n#### `final_test_model_comparison.png`\n\nBaseline과\
+  \ Improved U-Net의 최종 Test 성능 비교 그래프입니다.\n\n#### `final_test_prediction_comparison.png`\n\n동일한 Test MRI에서\
+  \ 정답 Mask와 두 모델의 예측 결과를 비교한 이미지입니다.\n\n#### `final_test_model_comparison.csv`\n\n두 모델의 이미지 단위 및 환자 단위\
+  \ 최종 평가 지표입니다.\n\n#### `baseline_to_improved_changes.csv`\n\nBaseline에서 Improved U-Net으로 변경했을 때 주요 지표의\
+  \ 변화량입니다.\n\n---\n\n## 사용 기술\n\n- Python\n- PyTorch\n- OpenCV\n- NumPy\n- pandas\n- Matplotlib\n- scikit-learn\n\
+  - KaggleHub\n- U-Net\n- Medical Image Segmentation\n- Data Augmentation\n- WeightedRandomSampler\n-\
+  \ BCE Loss\n- Dice Loss\n- AMP\n- DataParallel\n\n---\n\n## 실행 환경\n\n| 항목 | 설정 |\n|---|---|\n| Notebook\
+  \ | Kaggle Notebook |\n| GPU | NVIDIA Tesla T4 × 2 |\n| Multi-GPU | DataParallel |\n| Mixed Precision\
+  \ | AMP |\n| Batch Size | 16 |\n| Random Seed | 42 |\n\n---\n\n## 실행 방법\n\n1. 노트북을 Kaggle Notebook에서\
+  \ 엽니다.\n2. Accelerator를 `GPU T4 × 2`로 설정합니다.\n3. 첫 번째 코드 셀부터 순서대로 실행합니다.\n4. KaggleHub를 통해 LGG MRI 데이터셋이\
+  \ 자동으로 다운로드됩니다.\n5. Baseline U-Net 학습이 끝날 때까지 기다립니다.\n6. Improved U-Net 학습과 Threshold 탐색을 진행합니다.\n7.\
+  \ 마지막 단계에서 Test 평가 결과와 시각화 파일을 확인합니다.\n\nGPU 없이도 실행은 가능하지만 학습 시간이 크게 증가할 수 있습니다.\n\n---\n\n## 한계점\n\n\
+  - 하나의 공개 LGG MRI 데이터셋만 사용했습니다.\n- 외부 의료기관 데이터로 성능을 검증하지 않았습니다.\n- 3차원 MRI Volume이 아닌 2차원 Slice 단위 모델입니다.\n\
+  - 인접한 MRI Slice 사이의 공간적 정보를 활용하지 않았습니다.\n- 종양 영상 Oversampling으로 비종양 영상의 False Positive가 증가했습니다.\n- Threshold는\
+  \ 본 프로젝트에서 정의한 Balanced Validation Score를 기준으로 선택했습니다.\n- 작은 종양은 여전히 완전히 놓치는 사례가 존재했습니다.\n- 영상 장비, 촬영\
+  \ 조건 및 환자군이 달라지면 성능이 달라질 수 있습니다.\n\n---\n\n## 향후 개선 방향\n\n- BCE와 Dice Loss 가중치 추가 비교\n- False Positive\
+  \ 억제를 위한 Loss 개선\n- 작은 종양에 대한 가중치 강화\n- Focal Loss 또는 Tversky Loss 적용\n- Attention U-Net 적용\n- 사전학습\
+  \ Encoder 기반 U-Net 적용\n- 2.5D 또는 3D U-Net 적용\n- 환자 단위 Cross Validation\n- 외부 MRI 데이터셋 검증\n- 종양 크기별 세부\
+  \ 성능 평가\n- Threshold와 후처리 방법 공동 최적화\n\n---\n\n## 주의사항\n\n본 프로젝트는 의료영상 Segmentation 기술을 학습하고 포트폴리오로 정리하기\
+  \ 위해 수행했습니다.\n\n모델이 예측한 종양 영역은 실제 의료 진단, 치료 계획 또는 임상 의사결정을 위한 결과가 아닙니다.\n\n---\n\n## 작성자\n\n김상현\n"

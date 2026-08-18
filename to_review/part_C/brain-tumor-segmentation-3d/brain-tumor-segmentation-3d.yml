@@ -1,0 +1,142 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: foroughm423/brain-tumor-segmentation-3d
+url: https://github.com/foroughm423/brain-tumor-segmentation-3d
+platform: github
+description: 3D brain tumor segmentation from multi-modal MRI (BraTS2020) using 3D U-Net (MONAI) — volumetric
+  medical image segmentation with PyTorch
+license: MIT
+language: HTML
+keywords:
+- 3d-segmentation
+- brain-tumor-segmentation
+- brats2020
+- computer-vision
+- deep-learning
+- medical-imaging
+- monai
+- pytorch
+- streamlit
+- u-net
+stars: 3
+updated_at: '2026-08-04T12:43:05Z'
+image_source: https://raw.githubusercontent.com/foroughm423/brain-tumor-segmentation-3d/HEAD/results/figures/baseline_vs_improved_comparison.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# \U0001F9E0 Brain Tumor Segmentation — 3D U-Net on Multi-Modal MRI\n\nDeep learning\
+  \ system for volumetric segmentation of brain tumors from multi-modal MRI (BraTS2020), built with a\
+  \ 3D U-Net (MONAI). The project follows a full engineering cycle — baseline, error analysis, evidence-based\
+  \ improvement, and final evaluation on a held-out test set.\n\n---\n\n## \U0001F3AF Project Overview\n\
+  \nThis project tackles 3D brain tumor segmentation on the BraTS2020 dataset, predicting three tumor\
+  \ sub-regions (necrotic core, edema, enhancing tumor) directly from 3D MRI volumes across 4 modalities\
+  \ (T1, T1ce, T2, FLAIR).\n\n**Approach:** A systematic engineering process — baseline training, per-class\
+  \ error analysis, and evidence-based extended training with a checkpoint/resume system — evaluated on\
+  \ a fully held-out test set never touched during training or model selection.\n\n### Key Results (Test\
+  \ Set, n=56 patients)\n\n| Metric | This Model | Reference Baseline* |\n|--------|-----------|---------------------|\n\
+  | **WT (Whole Tumor) Dice** | **0.864** | 0.865 |\n| **TC (Tumor Core) Dice** | **0.750** | 0.779 |\n\
+  | **ET (Enhancing Tumor) Dice** | **0.695** | 0.641 |\n\n> **Resource-constrained result:** This model\
+  \ matches WT, exceeds ET, and is close on TC — trained on a consumer GPU (RTX 4060, 8.6GB VRAM), roughly\
+  \ 1/3 the VRAM of the reference setup.\n>\n> *Reference: plain 3D U-Net baseline, BraTS2020, 50 epochs,\
+  \ RTX 3090 24GB (Inc0mple et al., [github.com/Inc0mple/3D_Brain_Tumor_Seg_V2](https://github.com/Inc0mple/3D_Brain_Tumor_Seg_V2))\n\
+  \n---\n\n## \U0001F4C1 Dataset\n\n| Dataset | Patients | Role | Source |\n|---------|----------|------|--------|\n\
+  | **BraTS2020** | 369 | Train (258) / Val (55) / Test (56) | [Kaggle](https://www.kaggle.com/datasets/awsaf49/brats20-dataset-training-validation)\
+  \ |\n\nEach patient has 4 MRI modalities (T1, T1ce, T2, FLAIR) in NIfTI format, plus expert segmentation\
+  \ labels: necrotic/non-enhancing tumor core (NCR/NET), peritumoral edema (ED), and GD-enhancing tumor\
+  \ (ET). Split performed at the patient level (not per-slice) to avoid data leakage.\n\n> **Data quality\
+  \ note:** One training patient had a non-standard mask filename (differing from the `_seg.nii` convention)\
+  \ and was corrected manually before training.\n\n---\n\n## \U0001F9E0 Model Architecture & Training\n\
+  \n### Base Model\n- **Architecture:** 3D U-Net (MONAI), 4,811,129 parameters\n- **Input:** 4-channel\
+  \ patches (96×96×96), fused from T1/T1ce/T2/FLAIR\n- **Task:** Multi-class voxel-wise segmentation (background\
+  \ + 3 tumor sub-regions)\n\n### Training Configuration\n- **Loss:** DiceFocalLoss (0.5 × Dice + 0.5\
+  \ × Focal) — chosen for severe class imbalance (tumor ≈1% of total volume)\n- **Optimizer:** AdamW (lr=1e-4,\
+  \ weight_decay=1e-5)\n- **Sampling:** Foreground-biased patch extraction (`RandCropByPosNegLabeld`)\
+  \ to counter class imbalance\n- **Baseline run:** 15 epochs → Dice 0.657 (still rising)\n- **Extended\
+  \ run:** 45 epochs with a full checkpoint/resume system (survived a real power/network outage mid-training)\
+  \ → Dice 0.686, plateauing around epoch 35-45\n\n---\n\n## \U0001F4CA Evaluation Results\n\n### Model\
+  \ Comparison\n\n| Stage | Validation Dice | Notes |\n|-------|-----------------|-------|\n| Baseline\
+  \ (15 epochs) | 0.657 | Still improving at final epoch |\n| Extended training (45 epochs) | **0.686**\
+  \ | Plateaued; +2.9 points over baseline |\n\n### Test Set Performance (never used in training or model\
+  \ selection)\n\n| Metric | Value |\n|--------|-------|\n| Overall Dice (raw per-class average) | 0.672\
+  \ |\n| NCR/NET Dice | 0.592 (weakest class) |\n| ED Dice | 0.712 |\n| ET Dice | 0.695 |\n| Validation\
+  \ → Test gap | −0.014 (small — indicates good generalization) |\n\n### \U0001F4C8 Visualizations\n\n\
+  **Baseline vs Improved Training:**\n\n\n![Training Comparison](./results/figures/baseline_vs_improved_comparison.png)\n\
+  \n\n\n**Test Set Dice Distribution:**\n\n\n![Dice Distribution](./results/figures/test_set_dice_distribution.png)\n\
+  \n\n\n**Worst-Case Prediction (Class Confusion Analysis):**\n\n\n![Worst Case](./results/figures/worst_case_predictions.png)\n\
+  \n\n\n**3D Tumor Rendering with Brain Context:**\n\n\n![3D Rendering](./results/figures/3d_tumor_rendering.png)\n\
+  \n\n\nAn interactive, rotating version is available: [3D rendering (HTML)](./results/figures/3d_tumor_rendering.html)\
+  \ · [rotation GIF](./results/figures/3d_tumor_rotation.gif)\n\n---\n\n## \U0001F50D Engineering Journey\n\
+  \nThis project followed a systematic diagnose → hypothesize → test → verify cycle:\n\n### 1. Baseline\
+  \ & Root Cause Analysis (Notebooks 03–04)\nAfter 15 epochs, baseline Dice reached 0.657 with validation\
+  \ Dice still rising — suggesting the model was undertrained rather than saturated. Per-class error analysis\
+  \ on the validation set revealed:\n- **NCR/NET was the weakest class** (mean Dice 0.513), well below\
+  \ ED (0.707) and ET (0.689)\n- **Tumor size was not the driver of poor performance** (correlation with\
+  \ Dice: r=0.177) — ruling out the simplest explanation\n- Visual inspection of the worst case showed\
+  \ the model **confusing NCR/NET with ET**, likely relying too heavily on FLAIR/T2 brightness rather\
+  \ than the T1ce contrast that best distinguishes necrotic tissue\n\n### 2. Extended Training with Checkpoint/Resume\
+  \ (Notebook 04b)\nBased on the evidence that the model was still learning, training was extended to\
+  \ 45 epochs. A full checkpoint/resume system (model + optimizer state + epoch + best Dice, saved every\
+  \ epoch) was implemented to make the ~21-hour run resilient to interruptions — it in fact survived a\
+  \ real power and network outage mid-run.\n\n**Result:** Dice improved from 0.657 to 0.686, plateauing\
+  \ around epoch 35-45 — confirming the model reached its practical ceiling with this architecture, patch\
+  \ size, and learning rate.\n\n### 3. Final Evaluation Against Literature (Notebook 05)\nStandard BraTS\
+  \ evaluation regions (WT/TC/ET) were computed on the held-out test set and benchmarked against a published\
+  \ resource-constrained baseline (Inc0mple et al.). Despite using roughly 1/3 the GPU memory, this model\
+  \ matched or exceeded the reference on 2 of 3 regions.\n\n---\n\n## \U0001F310 Interactive Web Application\n\
+  \n**Live Demo:** [Streamlit Cloud](https://brain-tumor-segmentation-3d-hlg9klbvsktmb3qyjdyzub.streamlit.app/)\n\
+  \n### Screenshots\n\n**2D Slice View (multi-modality toggle):**\n\n\n![2D Slice View](./app/assets/demo_2d_slice_view.png)\n\
+  \n\n\n**3D Rendering:**\n\n\n![3D Rendering](./app/assets/demo_3d_rendering.png)\n\n\n\n**Model Results\
+  \ Tab:**\n\n\n![Model Results](./app/assets/demo_model_results.png)\n\n\n\n**Full Walkthrough:**\n\n\
+  \n![Demo](./app/assets/demo_walkthrough.gif)\n\n\n\n### Features\n- Upload all 4 MRI modalities (T1,\
+  \ T1ce, T2, FLAIR) in NIfTI format → automatic 3D segmentation\n- 2D slice viewer with switchable background\
+  \ modality (FLAIR/T1/T1ce/T2)\n- Interactive 3D rendering (brain context + color-coded tumor sub-regions)\n\
+  - Model performance summary with standard BraTS metrics and comparison charts\n\n### Run Locally\n\n\
+  ```bash\n# Clone repository\ngit clone https://github.com/foroughm423/brain-tumor-segmentation-3d.git\n\
+  cd brain-tumor-segmentation-3d\n\n# Install dependencies\npip install -r requirements.txt\n\n# Run app\n\
+  streamlit run app/streamlit_app.py\n```\n\n> **Note:** The trained model weights are hosted privately\
+  \ on Hugging Face Hub. The live demo above uses secure token authentication via Streamlit Secrets —\
+  \ no setup needed to use the demo. To run locally, create a `.env` file with `HF_TOKEN=your_token_here`\
+  \ (a read-only token is sufficient).\n\n---\n\n## \U0001F4C2 Repository Structure\n\n```\nbrain-tumor-segmentation-3d/\n\
+  ├── README.md\n├── requirements.txt\n├── .gitignore\n├── LICENSE\n│\n├── app/\n│   ├── streamlit_app.py\
+  \            # Streamlit web application\n│   └── assets/                     # Demo screenshots and\
+  \ GIF\n│\n├── notebooks/\n│   ├── 01_data_exploration.ipynb\n│   ├── 02_data_preparation.ipynb\n│  \
+  \ ├── 03_baseline_training.ipynb\n│   ├── 04_error_analysis.ipynb\n│   ├── 04b_improvement.ipynb\n│\
+  \   └── 05_final_evaluation.ipynb\n│\n├── configs/\n│   └── dataset_split.json\n│\n└── results/\n  \
+  \  ├── figures/\n    │   ├── sample_slices.png\n    │   ├── modality_comparison.png\n    │   ├── tumor_size_distribution.png\n\
+  \    │   ├── patch_samples.png\n    │   ├── baseline_prediction_sample.png\n    │   ├── worst_case_predictions.png\n\
+  \    │   ├── baseline_vs_improved_comparison.png\n    │   ├── test_set_dice_distribution.png\n    │\
+  \   ├── 3d_tumor_rendering.png / .html\n    │   └── 3d_tumor_rotation.gif\n    └── metrics/\n      \
+  \  ├── baseline_per_patient_dice.json\n        └── final_test_dice.json\n```\n\n---\n\n## \U0001F6E0\
+  ️ Technologies\n\n- **Python 3.10**\n- **PyTorch 2.6** + CUDA 12.4 (training) / CPU (deployment)\n-\
+  \ **MONAI 1.5.2** (3D U-Net, transforms, sliding window inference)\n- **Weights & Biases** (experiment\
+  \ tracking)\n- **Plotly + scikit-image** (3D volume rendering via marching cubes)\n- **Streamlit** (web\
+  \ deployment)\n- **Hugging Face Hub** (secure model hosting)\n\n---\n\n## \U0001F680 Future Improvements\n\
+  \n- [ ] Train on the full BraTS2023 dataset (1,251 patients vs. 369 here)\n- [ ] Address the NCR/NET\
+  \ vs. ET confusion identified in error analysis (e.g., modality-specific attention)\n- [ ] Post-processing:\
+  \ remove small isolated false-positive components (largest connected component filtering)\n- [ ] Experiment\
+  \ with larger patch sizes / SegResNet given more VRAM\n- [ ] MedSAM-based refinement of segmentation\
+  \ boundaries\n\n---\n\n## \U0001F4D6 References\n\n1. [BraTS2020 Dataset](https://www.kaggle.com/datasets/awsaf49/brats20-dataset-training-validation)\
+  \ — Menze et al., Bakas et al.\n2. [MONAI](https://monai.io/) — Medical Open Network for AI\n3. Inc0mple\
+  \ et al., *3D Brain Tumor Segmentation* (SUTD) — [GitHub](https://github.com/Inc0mple/3D_Brain_Tumor_Seg_V2),\
+  \ resource-constrained reference baseline\n\n---\n\n## \U0001F517 Links\n\n- **Live Demo:** [Streamlit\
+  \ Cloud](https://brain-tumor-segmentation-3d-hlg9klbvsktmb3qyjdyzub.streamlit.app/)\n- **Source Code:**\
+  \ [GitHub](https://github.com/foroughm423/brain-tumor-segmentation-3d)\n- **Model Weights:** [Hugging\
+  \ Face Hub](https://huggingface.co/foroughm423/brain-tumor-segmentation-3d-unet) *(private)*\n- **Experiment\
+  \ Tracking:** [Weights & Biases Report](https://api.wandb.ai/links/foroughm423/19lhsvtj)\n- **Training\
+  \ Notebooks (with outputs):**\n  - [01 — Data Exploration](https://www.kaggle.com/code/foroughgh95/brain-tumor-01-data-exploration)\n\
+  \  - [02 — Data Preparation](https://www.kaggle.com/code/foroughgh95/brain-tumor-02-data-preparation)\n\
+  \  - [03 — Baseline Training](https://www.kaggle.com/code/foroughgh95/brain-tumor-03-baseline-training)\n\
+  \  - [04 — Error Analysis](https://www.kaggle.com/code/foroughgh95/brain-tumor-04-error-analysis)\n\
+  \  - [04b — Improvement](https://www.kaggle.com/code/foroughgh95/brain-tumor-04b-improvement)\n  - [05\
+  \ — Final Evaluation](https://www.kaggle.com/code/foroughgh95/brain-tumor-05-final-evaluation)\n\n---\n\
+  \n## ⚖️ License\n\nThis project is licensed under the MIT License. See [LICENSE](LICENSE) for details.\n\
+  \n---\n\n## \U0001F469‍\U0001F4BB Author\n\n**Forough Ghayyem**\n\U0001F4EB [GitHub](https://github.com/foroughm423)\
+  \ | [LinkedIn](https://www.linkedin.com/in/forough-ghayyem/) | [Kaggle](https://www.kaggle.com/foroughgh95)\n\
+  \n---\n\n## \U0001F64F Acknowledgments\n\n- BraTS2020 dataset: Multi-institutional MICCAI Brain Tumor\
+  \ Segmentation Challenge\n- MONAI Consortium\n- Model hosting: Hugging Face Hub\n\n---\n\n> ⚠️ **Medical\
+  \ Disclaimer:** This model is for research and educational purposes only. It should not be used as a\
+  \ substitute for professional medical diagnosis. Always consult a qualified radiologist or oncologist\
+  \ for proper evaluation of MRI findings.\n"

@@ -1,0 +1,77 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: PyJay77/Geant4-MR_LINAC
+url: https://github.com/PyJay77/Geant4-MR_LINAC
+platform: github
+description: 'In this project I am simulating an MR LINAC , to see the effect of the magnetic field on
+  the secondary electrons together with the absorbed dose. I am still working on hit. '
+license: null
+language: C++
+keywords: []
+stars: 0
+updated_at: '2026-01-06T12:58:44Z'
+image_source: null
+heuristic_total_score: 29
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 particle-therapy term(s).
+- Matched 6 support term(s).
+readme_excerpt: "# Monte Carlo Simulation of a Clinical Electron Beam in a Magnetic Field (MR-Linac-like\
+  \ Scenario)\n\n## Overview\n\nThis repository contains a **Geant4 Monte Carlo simulation** designed\
+  \ to study the transport of a clinical electron beam in the presence of a **confined static magnetic\
+  \ field**, representative of **MR-Linac systems** used in modern radiotherapy.\n\nThe simulation focuses\
+  \ on the impact of strong magnetic fields on electron trajectories and dose deposition in a **heterogeneous\
+  \ phantom**, highlighting key physical effects relevant to **medical physics and radiation therapy**.\n\
+  \n---\n\n## Scientific Background\n\nThe integration of **linear accelerators (Linacs)** with **magnetic\
+  \ resonance imaging (MRI)** systems has introduced new challenges in radiotherapy. Magnetic fields in\
+  \ the range of 1–3 T significantly alter the transport of charged particles, especially secondary electrons,\
+  \ leading to measurable modifications in dose distributions.\n\nMonte Carlo simulations with **Geant4**\
+  \ provide a high-fidelity framework to model:\n- Particle–matter interactions\n- Complex heterogeneous\
+  \ geometries\n- Electromagnetic fields\n\nThis makes Geant4 an ideal tool for investigating **MR-Linac-related\
+  \ dosimetric effects**.\n\n---\n\n## Objectives\n\nThe main goal of this project is to investigate how\
+  \ a **uniform, confined magnetic field** affects the dose distribution produced by a clinical electron\
+  \ beam in a heterogeneous phantom.\n\nSpecific objectives include:\n- Studying electron beam deflection\
+  \ due to the **Lorentz force**\n- Analyzing the **Electron Return Effect (ERE)** at material interfaces\n\
+  - Evaluating changes in lateral and depth dose profiles\n- Comparing dose distributions **with and without\
+  \ magnetic field**\n\n---\n\n## Simulation Geometry\n\nThe simulation uses a **Cartesian coordinate\
+  \ system**, with the **Z-axis aligned with the beam direction**.\n\n### World Volume\n- Shape: Box \
+  \ \n- Dimensions: 150 × 150 × 300 cm³  \n- Material: Air (G4_AIR)  \n\nThe world volume fully contains\
+  \ the experimental setup, avoiding boundary effects.\n\n---\n\n### Collimation System\n\nA simplified\
+  \ multi-layer collimation system is used to define the irradiation field and introduce realistic lateral\
+  \ scattering.\n\n**Tungsten Collimator**\n- Shape: Box  \n- Dimensions: 10 × 10 × 3 cm³  \n- Material:\
+  \ G4_W  \n- Central cylindrical aperture:\n  - Radius: 1.5 cm\n  - Length: 3 cm\n\n**Stainless Steel\
+  \ Collimator**\n- Shape: Box  \n- Dimensions: 10 × 10 × 2 cm³  \n- Material: G4_STAINLESS-STEEL  \n\
+  - Central cylindrical aperture:\n  - Radius: 1.8 cm\n  - Length: 2 cm\n\n**Collimator position:** Z\
+  \ = −70 cm\n\n---\n\n### Magnetic Field Region\n\nA dedicated region mimics the imaging volume of an\
+  \ MR-Linac system.\n\n- Shape: Box  \n- Dimensions: 50 × 50 × 50 cm³  \n- Material: Air  \n- Center:\
+  \ Z = +20 cm  \n\nA **uniform static magnetic field** is applied only inside this region.\n\n---\n\n\
+  ### Heterogeneous Phantom\n\nThe phantom is entirely contained within the magnetic field region.\n\n\
+  **Main Phantom (Soft Tissue)**\n- Shape: Box  \n- Dimensions: 30 × 30 × 30 cm³  \n- Material: G4_TISSUE_SOFT_ICRP\
+  \  \n\n**Lung Insert**\n- Shape: Box  \n- Dimensions: 10 × 10 × 10 cm³  \n- Material: G4_LUNG_ICRP \
+  \ \n- Position: (0, 0, +10 cm)\n\n**Bone Insert**\n- Shape: Cylinder  \n- Radius: 2 cm  \n- Height:\
+  \ 10 cm  \n- Material: G4_BONE_COMPACT_ICRU  \n- Position: (+5 cm, 0, −5 cm)\n\n---\n\n## Magnetic Field\
+  \ Configuration\n\n- Type: Uniform magnetic field  \n- Intensity: **1.5 T**  \n- Direction: X-axis \
+  \ \n- Applied only inside the magnetic field region  \n\nThe field induces electron trajectory curvature\
+  \ in the **Y–Z plane**, leading to lateral dose shifts.\n\n---\n\n## Primary Beam Characteristics\n\n\
+  - Particle: Electrons (e⁻)\n- Mean energy: **7 MeV**\n- Energy spread: Gaussian, σ = 3%\n- Spatial distribution:\
+  \ Gaussian, σ = 3 mm\n- Angular divergence: Cone with 2° maximum opening\n- Mean direction: +Z\n- Source\
+  \ position: Z = −120 cm\n\n---\n\n## Physics Models and Simulation Parameters\n\n- Physics list: `FTFP_BERT\
+  \ + G4EmStandardPhysics_option4`\n- Production cuts:\n  - 0.1 mm in the phantom\n  - 1 mm in the rest\
+  \ of the geometry\n- Magnetic field stepper: High-order **Dormand–Prince** integrator\n\n---\n\n## Scoring\
+  \ and Observables\n\nThe following quantities can be calculated using this simulation setup:\n- 3D absorbed\
+  \ dose in the phantom (1 × 1 × 1 mm³ voxels)\n- Percentage Depth Dose (PDD)\n- Lateral dose profiles\
+  \ at multiple depths\n- Dose behavior at air–tissue and tissue–bone interfaces\n\n---\n\n## Relevance\
+  \ and Applications\n\nThis simulation provides a controlled framework to study key dosimetric effects\
+  \ introduced by magnetic fields in radiotherapy. It is well-suited for:\n- MR-Linac dosimetry studies\n\
+  - Validation against published literature\n- Extension toward more realistic clinical geometries\n\n\
+  ---\n\n## Technologies Used\n\n- **Geant4**\n- **C++**\n- Monte Carlo particle transport\n- Medical\
+  \ physics–oriented geometry and scoring\n\n---\n## How to Run the Simulation\n\nThis project follows\
+  \ a standard **out-of-source Geant4 build workflow**.\n\n### Prerequisites\n- A working **Geant4 installation**\
+  \ (compiled with multithreading support recommended)\n- **CMake** (version 2.6 or later)\n- A C++ compiler\
+  \ compatible with your Geant4 build\n\nMake sure that the Geant4 environment is properly configured\
+  \ (e.g. `geant4.sh` sourced).\n\n---\n\n### Build and Run\n\nFrom the root directory of the repository:\n\
+  \n```bash\n# Create the build directory\nmkdir build\ncd build\n\n# Configure the project\ncmake ..\n\
+  \n# Compile\nmake \n\n# Run the simulation\n./mrlinac.exe\n"

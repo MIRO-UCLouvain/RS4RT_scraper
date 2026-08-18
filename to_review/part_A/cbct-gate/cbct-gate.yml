@@ -1,0 +1,56 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: HungBuiTien/CBCT-GATE
+url: https://github.com/HungBuiTien/CBCT-GATE
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 2
+updated_at: '2023-03-06T03:07:06Z'
+image_source: https://github.com/HungBuiTien/CBCT-GATE/blob/main/results.png
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Mô phỏng hệ thống chụp cắt lớp hình nón (CBCT) sử dụng GATE #\n\n## Tóm tắt: \nHệ thống\
+  \ cắt lớp công nghiệp sử dụng chùm tia hình nón có vai trò rất quan trọng trong việc đánh giá, kiểm\
+  \ tra phục vụ trong các ngành công nghiệp khác nhau. \nNghiên cứu này sử dụng mã mô phỏng GATE (một\
+  \ bộ công cụ được xây dựng dựa trên Geant4) để mô phỏng một hệ CBCT đơn giản nhằm nghiên cứu ảnh hưởng\
+  \ của hiệu ứng \"làm cứng chùm tia\".\n\n## Yêu cầu:\n+ Nếu sử dụng Linux hãy cài đặt Geant4, ROOT và\
+  \ GATE.\n+ Nếu sử dụng Window có thể dùng V-Gate chạy trên máy ảo.\n\n## Hướng dẫn sử dụng:\n1. Hướng\
+  \ dẫn thay đổi thông số mô phỏng\n- Thay đổi vị trí của phantom bằng cách thay đổi giá trị 841.25 mm\
+  \ trong tệp *cbct-geo-phantom-cylinder.mac*:\n```c++\n/gate/cylSam/placement/setTranslation        \
+  \   841.25 0 0 mm\n```\n\n- Thay đổi độ phân giải của tấm FPD bằng cách đổi giá trị (1472 1176) trong\
+  \ tệp *cbct-actor.mac*:\n```c++\n/gate/actor/DetectorActor/setResolution     1 1472 1176\n```\n\n\n\n\
+  2. Hướng dẫn chạy mô phỏng\n- Để chạy tính toán đơn nhân sử dụng lệnh sau:\n```Linux Kernel Module\n\
+  $ Gate mac/cbct.mac\n```\n\n- Tính toán song song:\n\nHãy cài HTCondor trên Linux trước bằng các lệnh\
+  \ sau:\n```Linux Kernel Module\n$ sudo apt-get install htcondor\n$ sudo condor_master\n```\n\nKiểm tra\
+  \ xem HTCondor đã cài thành công hay chưa bằng một trong hai lệnh dưới đây:\n```Linux Kernel Module\n\
+  $ condor_q\n$ condor_statuts\n``` \n\nThay đổi sang chế độ mô phỏng song song bằng dòng:\n\n```c++\n\
+  /gate/application/startDAQCluster\n```\n\nDùng lệnh sau để phân chia chương trình:\n```Linux Kernel\
+  \ Module\n$ .../Gate/cluster_tools/jobsplitter/gjs -numberofsplits n -clusterplatform condor -condorscript\
+  \ .../Gate/cluster_tools/jobsplitter/script/condor.script file_name.mac\n``` \n\nĐể submit tệp vào trình\
+  \ quản lý HTCondor sử dụng lệnh sau:\n```Linux Kernel Module\n$ condor_submit file_name.submit\n```\
+  \ \nKiểm tra tiến trình bằng lệnh:\n```Linux Kernel Module\n$ condor_q\n``` \n- Trường hợp HTCondor\
+  \ bị lỗi không hoạt động, người sử dụng sẽ phải sao chép tất cả các tệp main sau khi được phân tách\
+  \ sang thư mục cùng với tệp main lúc đầu.\nSử dụng lệnh screen và chạy lệnh giống như đối với trường\
+  \ hợp chạy đơn nhân cho từng tệp đầu vào được phân chia. Cách làm này tuy sẽ mất thời gian và công sức\
+  \ nhưng sẽ giúp người sử dụng tránh được nhiều vấn đề khi sử dụng với HTCondor.\n\n3. Hướng dẫn vẽ kết\
+  \ quả\n+ Hãy thay đổi năng lượng chùm tia, loại phantom trước khi chạy\n+ Sử dụng lệnh sau để chạy mô\
+  \ phỏng\n\n\n  \n + Sử dụng mã Python để hiển thị kết quả\n <img src=\"https://github.com/HungBuiTien/CBCT-GATE/blob/main/results.png\"\
+  \ width=\"700\" alt=\"...\">\n \n  Hình 1. Kết quả mô phỏng với 1E8 sự kiện\n  \n ## Mô tả:\n ### Hình\
+  \ học:\n - Khối World: có kích thước 200x200x200 cm3, chứa không khí\n - Tấm FPD:\n - Phantom: có dạng\
+  \ hình trụ gồm 7 bậc, được cấu tạo từ nhôm\n  \n   <img src=\"https://github.com/HungBuiTien/CBCT-GATE/blob/main/phantom.png\"\
+  \ width=\"700\">\n   \n   Hình 2. Kích thước phantom nhôm\n   \n   \n   <img src=\"https://github.com/HungBuiTien/CBCT-GATE/blob/main/geometry.png\"\
+  \ width=\"700\">\n   \n   Hình 3. Hình ảnh mô phỏng với 50 sự kiện\n   \n   \n ### Quá trình vật lý:\n\
+  \ - Loại hạt e+, e- và gamma\n - Quá trình vật lý cho e+: Bremsstrahlung, ElectronIonisation\n - Quá\
+  \ trình vật lý cho e-: Bremsstrahlung,  ElectronIonisation\n - Quá trình vật lý cho gamma: Compton,\
+  \ PhotoElectric, RayleighScattering\n \n ### Nguồn phát:\n ### Ghi nhận:\n \n ## Đóng góp:\n \n ## Tác\
+  \ giả:\n **Bùi Tiến Hưng**\n \n Nghiên cứu viên - Viện Năng lượng nguyên tử Việt Nam (VINATOM)\n \n\
+  \ Email: _hungbuitien19081997@gmail.com_\n"

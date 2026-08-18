@@ -1,0 +1,61 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: sigjhl/screen_radiomics_win
+url: https://github.com/sigjhl/screen_radiomics_win
+platform: github
+description: Windows live screen radiomics prototype and PyInstaller build package
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-18T08:53:12Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Screen Radiomics Win\n\nWindows application for live 2D radiomics from screen-captured\
+  \ CT images.\n\nThe app captures a selected monitor with Windows Graphics Capture, validates the display/capture\
+  \ path with a grayscale ramp, reconstructs display values using the supplied WW/WL, lets the user mark\
+  \ an ROI, and computes PyRadiomics features. It does not read DICOM files or export from PACS.\n\n##\
+  \ !!Link for the .exe Bundle!! You only need this to try it. \nhttps://drive.google.com/file/d/1hk50H7HbgYJADVz5oBUI0A8scx46To8t/view?usp=sharing\n\
+  \n## Repository Layout\n\n- `build_exe.ps1`: builds the standalone Windows executable.\n- `requirements.txt`:\
+  \ pinned Python build/runtime dependencies.\n- `screen_radiomics/radiomics_runner.py`: PyRadiomics wrapper\
+  \ used by the app.\n- `tools/live_radiomics/live_screen_radiomics.py`: Tk application, capture pipeline,\
+  \ calibration, ROI, overlays, and feature extraction.\n- `tools/live_radiomics/live_screen_radiomics.spec`:\
+  \ PyInstaller configuration.\n- `tools/live_radiomics/*.yaml`: PyRadiomics feature settings.\n- `tools/live_radiomics/FEATURE_RELIABILITY_FULL300.*`:\
+  \ full-300 validation reliability tables.\n- `tools/offline_windows_collector/`: Windows Graphics Capture\
+  \ and calibration helpers.\n- `analysis/numeric_equivalence.py`: reproduces the manuscript numeric-equivalence\
+  \ numbers from the canonical raw results CSV.\n\n## Build\n\nRequirements:\n\n- Windows 11\n- Python\
+  \ 3.11\n- Internet access for the initial dependency install\n\nBuild from the repository root:\n\n\
+  ```powershell\n.\\build_exe.ps1\n```\n\nThe executable is created at:\n\n```text\ndist\\live-screen-radiomics.exe\n\
+  ```\n\n## Smoke Test\n\n```powershell\n.\\dist\\live-screen-radiomics.exe --self-test-radiomics\n```\n\
+  \nExpected output includes:\n\n```text\nradiomics_self_test=ok feature_count=18\nradiomics_self_test=ok\
+  \ feature_count=17\nradiomics_self_test=ok feature_count=102\nradiomics_self_test=ok feature_count=92\n\
+  ```\n\n## Run From Source\n\nAfter the build environment is created:\n\n```powershell\n.\\.venv-live-radiomics\\\
+  Scripts\\python.exe .\\tools\\live_radiomics\\live_screen_radiomics.py\n```\n\nFor executable use, see\
+  \ `QUICKSTART.md`.\n\n## Feature Presets\n\nFeature-count labels use `with pixel spacing / without pixel\
+  \ spacing`. Pixel spacing means both row and column pixel size in mm are entered.\n\n- `First-order\
+  \ only (18 with pixel spacing; 17 without)`: PyRadiomics first-order class using default-enabled features.\
+  \ Without pixel spacing, `TotalEnergy` is skipped.\n- `Full validated suite (102 with pixel spacing;\
+  \ 92 without)`: firstorder, shape2D, GLCM, GLDM, GLRLM, GLSZM, and NGTDM. Without pixel spacing, shape2D\
+  \ and `TotalEnergy` are skipped.\n\n## Validation and Numeric Equivalence\n\nThe screen-capture radiomics\
+  \ pipeline was validated against source-image (DICOM) PyRadiomics extraction on the AMOS22 full-300\
+  \ dataset. Per-feature reliability tables live in `tools/live_radiomics/FEATURE_RELIABILITY_FULL300.{csv,md}`.\n\
+  \nThe manuscript reports **numeric equivalence** between a source feature value and a screen/virtual\
+  \ value using the scalar analogue of R's [`all.equal`](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/all.equal)\
+  \ with its default numeric tolerance `sqrt(.Machine$double.eps)` ≈ `1.4901161e-08`. For a DICOM/source\
+  \ reference `a` and a comparison value `b`, the pair is equivalent when `|a - b| <= tol * |a|` (relative\
+  \ test, used when `|a| > tol`) or `|a - b| <= tol` (absolute test, used near zero). The test is applied\
+  \ per row. The `exact %` columns in `tools/live_radiomics/FEATURE_RELIABILITY_FULL300.{csv,md}` are\
+  \ computed under this `all.equal` tolerance, matching the manuscript (for example, mask-only `shape2D`\
+  \ features are 100% equivalent).\n\nTo regenerate every numeric-equivalence figure in the manuscript\
+  \ (overall, by feature class, per organ, both grid arms, the screen-vs-virtual capture check, and the\
+  \ per-`(arm, organ, feature)` rates used for Figure 3 / S1 panel b):\n\n```bash\npython analysis/numeric_equivalence.py\
+  \ path/to/canonical_real_vs_dicom_raw_full300.csv\n```\n\nThe canonical raw results CSV is the large\
+  \ per-row validation output and is not committed to this repository; see the header of `analysis/numeric_equivalence.py`\
+  \ for the expected columns and how to obtain it. The within-adjacent-slice \"pass\" metric is definition-independent\
+  \ (`abs_error <= adjacent_gap`) and is not affected by the equivalence tolerance.\n"

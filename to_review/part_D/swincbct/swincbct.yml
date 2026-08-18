@@ -1,0 +1,125 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Leechion/swinCBCT
+url: https://github.com/Leechion/swinCBCT
+platform: github
+description: CBCT重建
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-08-17T01:22:47Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# SwinCBCT\n\n基于深度学习的锥束CT（CBCT）投影图像修复与三维重建框架。\n\n## 简介\n\nCBCT成像中，稀疏采样或低剂量扫描会导致投影数据缺失，严重影响重建质量。本项目提供多种深度学习模型修复2D投影图像，并通过FDK算法实现高质量3D体积重建。\n\
+  \n**核心流程：**\n\n```\n原始投影 (TIFF) → 块级稀疏遮挡 → 深度学习修复 → FDK 三维重建 → 3D 体数据\n```\n\n## 模型\n\n| 模型 | 参数量 |\
+  \ 输出模式 | 特点 |\n|------|--------|---------|------|\n| **LDCTNet_Swin** | ~7.2M | 直接输出 (sigmoid) | 双分支频率分解\
+  \ + Swin Transformer + U-Net 解码器 |\n| **TransCT** | ~15M | 内置残差 (tanh+x) | 三分支 Transformer（content/texture/high-freq）\
+  \ |\n| **HINTNet** | ~5M | tanh 残差 | 层级 Swin + 多尺度像素重组（MPD）+ 相对位置偏置 |\n| **RED-CNN** | ~0.5M | tanh\
+  \ 残差 | 5层残差编解码，轻量级 |\n| **U-Net** | ~31M | tanh 残差 | 经典4层编解码，InstanceNorm |\n\n输出模式说明：\n- **直接输出**:\
+  \ 模型内部 sigmoid，`model(x)` 直接输出修复投影 [0,1]\n- **内置残差**: 模型 forward 包含 `tanh(reconstruction) + x`\n- **tanh\
+  \ 残差**: 训练/推理都用 `(x + tanh(raw_out)).clamp(0,1)`\n\n### LDCTNet_Swin 架构\n\n```\n输入 (1, H, W)\n    │\n\
+  \    ├── 可学习高斯滤波 → 低频 → CNN编码器(4阶段) → Swin×3 ──┐\n    │                                            \
+  \            │\n    └── 相减得高频 → CNN编码器(4阶段) → Swin×3 → 残差融合 ──┤\n                                  \
+  \                            │\n    输出 ← Sigmoid ← 1×1 Conv ← U-Net解码器(3阶段) ← 特征融合 ←┘\n```\n\n## 环境\n\
+  \n- Python ≥ 3.8\n- CUDA ≥ 11.0\n- PyTorch ≥ 2.0\n- ASTRA Toolbox ≥ 2.1\n\n```bash\nsource /data/lixiang/mimiconda3/etc/profile.d/conda.sh\
+  \ && conda activate torch_py310\npip install -r requirements.txt\n```\n\n## 快速开始\n\n```bash\n# 1. 生成数据集\n\
+  python scripts/preprocess_sparse_blocks.py --mode fixed  --keep_ratio 0.95\npython scripts/preprocess_sparse_blocks.py\
+  \ --mode random --keep_ratio 0.90\n\n# 2. 训练\npython train.py --cfg configs/swin_fixed5.yaml\n\n# 3.\
+  \ 测试\npython test.py --model swin --checkpoint experiments/swin_fixed5_xxx/checkpoints/best_ssim.pth\n\
+  \n# 4. FDK 重建\npython test.py --model swin --fdk\n```\n\n## 数据\n\n### 数据集（4 套预置）\n\n| 数据集 | 遮挡率 | 模式\
+  \ | 路径 |\n|--------|--------|------|------|\n| fixed_5 | 5% | 全图固定 mask | `data/sparse_sampling_walnut10_fixed_5/`\
+  \ |\n| random_5 | 5% | 全图随机 mask | `data/sparse_sampling_walnut10_random_5/` |\n| fixed_9 | 10% | 全图固定\
+  \ mask | `data/sparse_sampling_walnut10_fixed_9/` |\n| random_9 | 10% | 全图随机 mask | `data/sparse_sampling_walnut10_random_9/`\
+  \ |\n\n每套数据集结构：\n```\nsparse_sampling_walnut10_{mode}_{pct}/\n├── sparse/          # 稀疏投影（模型输入）\n├──\
+  \ full/            # 原始投影（ground truth）\n├── mask/            # mask 文件（png）\n├── train_files.txt  #\
+  \ 训练集 (1020 对)\n└── val_files.txt    # 验证集 (180 对)\n```\n\n原始分辨率 768×972，16-bit TIFF，不 resize，降归一化到\
+  \ [0,1]。\n\n### 生成数据\n\n```bash\n# 全图均匀块遮挡，4×4 块\npython scripts/preprocess_sparse_blocks.py --mode\
+  \ fixed  --keep_ratio 0.95 --block_size 4\npython scripts/preprocess_sparse_blocks.py --mode random\
+  \ --keep_ratio 0.90 --block_size 4\n```\n\n| 参数 | 默认值 | 说明 |\n|------|--------|------|\n| `--mode` |\
+  \ fixed | fixed（单mask）/ random（每图独立mask） |\n| `--keep_ratio` | 0.95 | 保留像素比例 |\n| `--block_size` | 4\
+  \ | 遮挡块边长 |\n| `--seed` | 42 | 随机种子 |\n| `--input_dir` | walnut10/.../tubeV1 | 原始投影目录 |\n\n## 训练\n\n\
+  ### 统一入口（推荐）\n\n```bash\n# YAML 配置驱动，自动建实验目录\npython train.py --cfg configs/swin_fixed5.yaml\n\n# 命令行覆盖参数\n\
+  python train.py --cfg configs/swin_fixed5.yaml --epochs 50 --lr 5e-5\n\n# 断点续训（恢复模型+优化器+scaler+epoch+LR）\n\
+  python train.py --cfg configs/swin_fixed5.yaml \\\n    --resume experiments/swin_fixed5_0701_1200/checkpoints/last_epoch.pth\n\
+  ```\n\n配置文件位于 `configs/`，包含模型、数据、训练参数、loss 配置、LR 策略。\n\n### 传统脚本（兼容保留）\n\n```bash\npython training/train_swin.py\
+  \    --data_dir ./data/sparse_sampling_walnut10_fixed_5\npython training/train_transct.py --data_dir\
+  \ ./data/sparse_sampling_walnut10_fixed_5\npython training/train_hint.py    --data_dir ./data/sparse_sampling_walnut10_fixed_5\n\
+  python training/train_redcnn.py  --data_dir ./data/sparse_sampling_walnut10_fixed_5\npython training/train_unet.py\
+  \    --data_dir ./data/sparse_sampling_walnut10_fixed_5\n```\n\n### 训练参数\n\n| 参数 | 默认值 | 说明 |\n|------|--------|------|\n\
+  | `epochs` | 150 | 训练轮数 |\n| `batch_size` | 1 | 批大小 |\n| `lr` | 1e-4 | 初始学习率 |\n| `weight_decay` | 1e-6\
+  \ | 权重衰减 |\n| `resize` | null | 缩放尺寸（null=原始768×972） |\n| `loss.type` | HybridLoss | SSIM + MSE + 感知损失\
+  \ |\n| `lr_schedule` | CosineAnnealingWarmRestarts | warmup 5ep → T0=30, Tmult=2 |\n\n### 实验目录（自动生成）\n\
+  \n```\nexperiments/swin_fixed5_0730_1437/\n├── config.yaml              # 完整实验配置\n├── log.txt      \
+  \            # 训练日志\n├── metrics.csv              # epoch级指标 (SSIM/PSNR/RMSE/MAE/LR)\n├── tensorboard/\
+  \             # TensorBoard events\n├── environment.txt          # Python/PyTorch/CUDA/GPU 版本\n├── checkpoints/\n\
+  │   ├── best_ssim.pth        # 验证集最佳 SSIM\n│   ├── best_psnr.pth        # 验证集最佳 PSNR\n│   └── last_epoch.pth\
+  \       # 每 10 轮保存，用于断点续训\n└── visualization/\n    └── epoch050/            # input, prediction, groundtruth,\
+  \ difference (TIFF)\n```\n\n## 推理\n\n### 统一入口（推荐）\n\n```bash\n# 推理 + 指标计算 + Excel 报告\npython test.py\
+  \ --model swin --checkpoint experiments/xxx/checkpoints/best_ssim.pth\n\n# 指定数据集\npython test.py --model\
+  \ swin --data_dir ./data/sparse_sampling_walnut10_fixed_9\n\n# 推理后自动 FDK 重建评价\npython test.py --model\
+  \ swin --fdk\n```\n\n输出结构：\n```\nresults/swin/\n├── scan_*.tif                  # 修复后的投影\n├── per_image_metrics.csv\
+  \       # 每张投影的 PSNR/SSIM/RMSE/MAE\n├── results.xlsx                # Excel 表格 + 汇总统计\n├── summary.json\n\
+  └── visualization/\n    ├── sample000_input.tif / prediction.tif / groundtruth.tif / difference.tif\n\
+  \    ├── sample599_*.tif\n    └── sample1199_*.tif\n```\n\n### 按模型推理脚本\n\n```bash\npython test/infer_swin.py\
+  \                           # Swin（直接输出）\npython test/infer_transct.py                        # TransCT（内置残差）\n\
+  python test/infer_tanh_residual.py --model hint     # HINT\npython test/infer_tanh_residual.py --model\
+  \ redcnn   # RED-CNN\npython test/infer_tanh_residual.py --model unet     # U-Net\n```\n\n每个推理脚本与对应训练脚本输出处理完全一致。\n\
+  \n## 实验矩阵\n\n### 用法\n\n```bash\n# 全部 20 组（5 模型 × 4 数据集）\npython run_experiments.py\n\n# 指定模型\npython\
+  \ run_experiments.py --models swin redcnn\n\n# 指定遮挡率\npython run_experiments.py --occlusions 5\npython\
+  \ run_experiments.py --occlusions 5 10\n\n# 指定模式\npython run_experiments.py --modes fixed\npython run_experiments.py\
+  \ --modes fixed random\n\n# 组合筛选\npython run_experiments.py --models swin hint --occlusions 5 --modes\
+  \ fixed\n\n# 仅查看计划（不执行）\npython run_experiments.py --dry-run\n\n# 跳过训练，仅测试（需要已有权重）\npython run_experiments.py\
+  \ --skip-train\n\n# 自定义 epoch 数\npython run_experiments.py --epochs 200\n```\n\n| 参数 | 默认 | 说明 |\n|------|------|------|\n\
+  | `--models` | 全部 5 个 | swin / transct / hint / redcnn / unet |\n| `--occlusions` | 5 10 | 遮挡率（%） |\n\
+  | `--modes` | fixed random | mask 模式 |\n| `--epochs` | 150 | 每组训练 epoch 数 |\n| `--dry-run` | — | 仅打印实验计划\
+  \ |\n| `--skip-train` | — | 跳过训练，仅运行测试和对比 |\n\n### 流程\n\n```\nrun_experiments.py 自动执行三步:\n\n  Step 1\
+  \ — 训练\n  ┌─────────────────────────────────────────┐\n  │  遍历 (模型 × 数据集) 组合              │\n  │  →\
+  \ 自动生成 YAML 配置文件                │\n  │  → 调用 train.py --cfg <config>         │\n  │  → 输出到 experiments/<model>_<dataset>_<time>/\
+  \  │\n  │     ├── config.yaml                     │\n  │     ├── metrics.csv                     │\n\
+  \  │     ├── log.txt                         │\n  │     ├── training_curves.png  (SCI 风格) │\n  │   \
+  \  ├── environment.txt                 │\n  │     ├── checkpoints/                    │\n  │     │ \
+  \  ├── best_ssim.pth               │\n  │     │   ├── best_psnr.pth               │\n  │     │   └──\
+  \ last_epoch.pth              │\n  │     └── visualization/                  │\n  │         └── epoch005/\
+  \ ... epoch150/     │\n  └─────────────────────────────────────────┘\n           │\n           ▼\n \
+  \ Step 2 — 测试\n  ┌─────────────────────────────────────────┐\n  │  用 best_ssim.pth 对全量投影推理         │\n\
+  \  │  → 调用 test.py --model <m>             │\n  │  → 输出到 results/<model>_<dataset>/    │\n  │     ├──\
+  \ per_image_metrics.csv            │\n  │     ├── results.xlsx                    │\n  │     ├── summary.json\
+  \                    │\n  │     └── visualization/                  │\n  └─────────────────────────────────────────┘\n\
+  \           │\n           ▼\n  Step 3 — 对比分析（自动）\n  ┌─────────────────────────────────────────┐\n  │\
+  \  扫描 results/ 下所有结果                │\n  │  → 调用 compare_models.py               │\n  │  → 输出到 results/\
+  \                      │\n  │     ├── comparison_bar.png   (柱状图)   │\n  │     ├── comparison_box_*.png\
+  \ (箱线图)   │\n  │     ├── sample_comparison_*.png (样本)  │\n  │     └── comparison.xlsx      (汇总表)   │\n\
+  \  └─────────────────────────────────────────┘\n```\n\n### 最终输出\n\n训练完成后在 `results/` 下自动生成：\n\n```\n\
+  results/\n├── comparison.xlsx              # 所有模型×数据集 对比总表\n├── comparison_bar.png           # SCI 风格柱状图（PSNR/SSIM/RMSE/MAE）\n\
+  ├── comparison_box_fixed_5.png   # 箱线图（per-image SSIM 分布）\n├── sample_comparison_fixed_5.png # 样本修复可视化（多模型并列）\n\
+  ├── swin_fixed_5/\n│   ├── scan_*.tif               # 修复后的投影\n│   ├── per_image_metrics.csv    # 每张\
+  \ PSNR/SSIM/RMSE/MAE\n│   ├── results.xlsx\n│   └── summary.json\n├── redcnn_fixed_5/\n│   └── ...\n\
+  └── ...\n```\n\n也可单独运行对比分析（不重新训练）：\n\n```bash\npython compare_models.py                          # 对比所有已完成结果\n\
+  python compare_models.py --models swin redcnn     # 指定模型\npython compare_models.py --dataset fixed_5\
+  \        # 指定数据集\n```\n\n## FDK 三维重建\n\n```bash\npython reconstruction/fdk_reconstruct.py\n```\n\n|\
+  \ 参数 | 默认值 | 说明 |\n|------|--------|------|\n| `walnut_id` | 1 | 核桃样本 ID |\n| `orbit_id` | 2 | 射线源位置（1高/2中/3低）\
+  \ |\n| `angular_sub_sampling` | 1 | 角度下采样因子 |\n| `voxel_per_mm` | 10 | 体素密度 |\n\n## 评估指标\n\n| 指标 | 说明\
+  \ | 方向 |\n|------|------|------|\n| PSNR | 峰值信噪比（>35dB 优秀） | ↑ |\n| SSIM | 结构相似度（>0.95 优秀） | ↑ |\n|\
+  \ RMSE | 均方根误差 | ↓ |\n| MAE | 平均绝对误差 | ↓ |\n\n## 项目结构\n\n```\nswinCBCT/\n├── train.py              \
+  \   # 统一训练入口\n├── test.py                  # 统一测试入口\n├── run_experiments.py       # 实验矩阵自动运行\n├── configs/\
+  \                 # YAML 配置文件\n├── models/                  # 模型定义\n├── training/                # 训练脚本\
+  \ + 数据加载器 + 损失函数\n├── test/                    # 按模型推理脚本\n├── reconstruction/          # FDK 三维重建\n\
+  ├── scripts/                 # 数据预处理\n├── utils/                   # 指标计算工具\n├── doc/              \
+  \       # 设计文档\n├── experiments/             # 实验输出（自动生成）\n├── results/                 # 测试结果 + comparison.xlsx\n\
+  ├── checkpoints/             # 默认权重目录\n├── data/                    # 数据集 + 日志\n└── requirements.txt\n\
+  ```\n\n## 训练与推理一致性\n\n| 模型 | 模型 forward | 训练处理 | 推理处理 |\n|------|-------------|---------|---------|\n\
+  | Swin | `sigmoid(x)` | `model(x)` | `model(x)` |\n| TransCT | `tanh(rec)+x` | `model(x).clamp(0,1)`\
+  \ | `model(x).clamp(0,1)` |\n| HINT | raw | `(x+tanh(raw)).clamp(0,1)` | `(x+tanh(raw)).clamp(0,1)`\
+  \ |\n| RED-CNN | raw | `(x+tanh(raw)).clamp(0,1)` | `(x+tanh(raw)).clamp(0,1)` |\n| U-Net | raw | `(x+tanh(raw)).clamp(0,1)`\
+  \ | `(x+tanh(raw)).clamp(0,1)` |\n\n训练和推理使用相同的数据预处理（`np.clip(x/65535, 0, 1)`，float32）、相同尺寸（原始 768×972，不\
+  \ resize）、相同输出处理。\n\n## 参考\n\n- [A Cone-Beam X-Ray CT Data Collection Designed for Machine Learning](https://doi.org/10.1038/s41597-021-00963-2)\
+  \ — Der Sarkissian et al., CWI Amsterdam\n- Feldkamp-Davis-Kress (FDK) 锥束CT重建算法\n- [Swin Transformer:\
+  \ Hierarchical Vision Transformer using Shifted Windows](https://arxiv.org/abs/2103.14030) — Liu et\
+  \ al., ICCV 2021\n\n## License\n\n本项目仅供学术研究使用。\n"

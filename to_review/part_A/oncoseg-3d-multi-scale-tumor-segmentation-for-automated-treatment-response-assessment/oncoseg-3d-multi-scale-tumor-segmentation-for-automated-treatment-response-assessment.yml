@@ -1,0 +1,137 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: youseihuayu-wonderful/OncoSeg-3D-Multi-Scale-Tumor-Segmentation-for-Automated-Treatment-Response-Assessment
+url: https://github.com/youseihuayu-wonderful/OncoSeg-3D-Multi-Scale-Tumor-Segmentation-for-Automated-Treatment-Response-Assessment
+platform: github
+description: 'OncoSeg: 3D Multi-Scale Tumor Segmentation for Automated Treatment Response Assessment —
+  Hybrid CNN-Transformer architecture with uncertainty quantification for oncology clinical trials'
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-26T02:52:47Z'
+image_source: https://raw.githubusercontent.com/youseihuayu-wonderful/OncoSeg-3D-Multi-Scale-Tumor-Segmentation-for-Automated-Treatment-Response-Assessment/HEAD/docs/architecture_3d_preview.gif
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# OncoSeg\n\n### 3D Multi-Scale Tumor Segmentation for Automated Treatment Response Assessment\n\
+  \n[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)\n\
+  [![PyTorch 2.1+](https://img.shields.io/badge/PyTorch-2.1+-ee4c2c.svg)](https://pytorch.org/)\n[![MONAI\
+  \ 1.3+](https://img.shields.io/badge/MONAI-1.3+-green.svg)](https://monai.io/)\n[![Tests](https://img.shields.io/badge/tests-167-blue.svg)]()\n\
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n\
+  \n<div align=\"center\">\n\n### \U0001F9EC [**▶ Explore the project — results & interactive architecture\
+  \ →**](https://youseihuayu-wonderful.github.io/OncoSeg-3D-Multi-Scale-Tumor-Segmentation-for-Automated-Treatment-Response-Assessment/)\n\
+  \n[![OncoSeg interactive 3D architecture](docs/architecture_3d_preview.gif)](https://youseihuayu-wonderful.github.io/OncoSeg-3D-Multi-Scale-Tumor-Segmentation-for-Automated-Treatment-Response-Assessment/)\n\
+  \n<p><em>Click the preview to open the project page — it <strong>leads with the validated results</strong>,\
+  \ then presents the architecture both as a static render and as a live, rotatable 3D model with three\
+  \ views: <strong>3D Architecture</strong>, <strong>Why Each Module</strong> (per-module physical meaning\
+  \ + what breaks without it), and a <strong>Deep Dive</strong> into the cross-attention skip with a hand-worked\
+  \ example.</em></p>\n\n</div>\n\n---\n\n## Summary\n\nWhen treating cancer, doctors decide whether a\
+  \ treatment is working by **measuring the patient's tumor on CT/MRI scans over time**. Today that's\
+  \ done manually — slow (15–30 min per scan), subjective (two radiologists disagree by 20–40% on the\
+  \ tumor edge), and traditionally limited to a single 2D diameter.\n\n**OncoSeg automates this end-to-end:**\
+  \ it segments the tumor in 3D, produces an **uncertainty map** that flags where the model is unsure,\
+  \ and automatically reports the standard treatment-response category (shrinking / stable / growing,\
+  \ per RECIST 1.1).\n\nUnlike heavier deep-learning models, OncoSeg **matches the accuracy of a standard\
+  \ 3D U-Net while using 5× fewer parameters** (3.7M vs 19.2M), measured on 96 brain-MRI cases from the\
+  \ Medical Segmentation Decathlon. Boundary error (HD95) was also lower on this run (15.4 mm vs 21.0\
+  \ mm), though from a single run and not significance-tested — see **Limitations** for the full set of\
+  \ caveats.\n\n**Next steps:** extend beyond brain to multi-organ tumors, and integrate into hospital\
+  \ imaging systems (PACS) so it runs inside real radiology workflows.\n\n---\n\n## Abstract\n\nManual\
+  \ tumor measurement in oncology clinical trials is slow, subjective, and limited to 2D RECIST criteria.\
+  \ Radiologists spend 15-30 minutes per patient per timepoint, with 20-40% inter-reader variability on\
+  \ tumor boundaries.\n\n**OncoSeg** is a hybrid CNN-Transformer architecture for automated 3D tumor segmentation\
+  \ and treatment response assessment. Key contributions:\n\n1. **Hybrid Swin Transformer-CNN U-Net**\
+  \ with cross-attention skip connections — decoder selectively queries encoder features instead of blind\
+  \ concatenation\n2. **Uncertainty-Aware Segmentation** via Monte Carlo Dropout — highlights ambiguous\
+  \ tumor boundaries for radiologist review\n3. **Automated RECIST 1.1 Response Assessment** — computes\
+  \ longest axial diameters, volumes, and classifies treatment response (CR/PR/SD/PD) directly from segmentation\
+  \ outputs\n4. **Temporal Attention** for longitudinal scan comparison — cross-attention between baseline\
+  \ and follow-up scans captures tumor evolution\n\n## Architecture\n\n```\nInput: 4-channel 3D MRI [B,\
+  \ 4, 128, 128, 128]\n       (T1, T1-contrast, T2, FLAIR)\n│\n▼\n┌──────────────────────────────────────────────────┐\n\
+  │  Encoder: 3D Swin Transformer                     │\n│  ├── Stage 1: C=48,  res=H/4   (patch embed)\
+  \     │\n│  ├── Stage 2: C=96,  res=H/8   (patch merge)     │\n│  ├── Stage 3: C=192, res=H/16  (patch\
+  \ merge)     │\n│  └── Stage 4: C=384, res=H/32  (bottleneck)      │\n│                            \
+  \                        │\n│  Optional: Temporal Attention at bottleneck        │\n│  (fuses baseline\
+  \ + follow-up for response assess.) │\n└───────────────────┬──────────────────────────────┘\n      \
+  \              │  Cross-Attention Skip Connections\n                    ▼\n┌──────────────────────────────────────────────────┐\n\
+  │  Decoder: CNN Upsampling Path                     │\n│  ├── Stage 4→3: TransConv3D + Cross-Attn Skip\
+  \     │\n│  ├── Stage 3→2: TransConv3D + Cross-Attn Skip     │\n│  ├── Stage 2→1: TransConv3D + Cross-Attn\
+  \ Skip     │\n│  ├── 4x Upsample Head (recover patch embed)       │\n│  └── Deep Supervision at each\
+  \ decoder stage       │\n└───────────────────┬──────────────────────────────┘\n                    ▼\n\
+  ┌──────────────────────────────────────────────────┐\n│  Output                                    \
+  \       │\n│  ├── Segmentation: [B, 4, H, W, D]               │\n│  ├── Uncertainty map (MC Dropout\
+  \ entropy)         │\n│  └── RECIST: diameter, volume, CR/PR/SD/PD        │\n└──────────────────────────────────────────────────┘\n\
+  ```\n\n## Model Comparison\n\n| Model | Type | Parameters | Architecture |\n|-------|------|-----------|-------------|\n\
+  | **OncoSeg (Ours)** | **Swin + CNN** | **3.7M / 14.0M** | **Cross-attention skips + deep supervision\
+  \ + MC Dropout + temporal attention** |\n| UNet3D | Pure CNN | 19.2M | 5-level encoder-decoder, channels\
+  \ [32,64,128,256,512] |\n| Swin UNETR | Swin + CNN | 62.2M | MONAI's Swin Transformer U-Net (standard\
+  \ concatenation skips) |\n| UNETR | ViT + CNN | 130.8M | Vision Transformer encoder (12 layers, 768-dim)\
+  \ + CNN decoder |\n\nOncoSeg achieves competitive performance with **6x fewer parameters** than UNETR\
+  \ and **5x fewer** than Swin UNETR.\n\n## Dataset\n\nPrimary dataset: [MSD Task01 Brain Tumour](https://medicaldecathlon.com/)\
+  \ (484 subjects, 4 MRI modalities)\n\n| Label | Class | Description |\n|-------|-------|-------------|\n\
+  | 0 | Background | Healthy tissue |\n| 1 | Edema | Peritumoral edema |\n| 2 | Non-enhancing | Necrotic\
+  \ / non-enhancing tumor core |\n| 3 | Enhancing | GD-enhancing tumor |\n\nAdditional configs ready for:\
+  \ BraTS 2023, KiTS23, LiTS, BTCV\n\n## Evaluation Metrics\n\n| Metric | What It Measures |\n|--------|-----------------|\n\
+  | Dice Score | Volume overlap (higher = better) |\n| Hausdorff Distance 95% | Worst-case boundary error\
+  \ in mm (lower = better) |\n| Average Surface Distance | Mean boundary error in mm (lower = better)\
+  \ |\n| Sensitivity | Fraction of tumor correctly detected |\n| Specificity | Fraction of healthy tissue\
+  \ correctly excluded |\n\nAll metrics computed per BraTS region: Enhancing Tumor (ET), Tumor Core (TC),\
+  \ Whole Tumor (WT).\n\n## Ablation Study\n\nComprehensive ablation isolating the contribution of each\
+  \ OncoSeg component:\n\n| Variant | Modification | Purpose |\n|---------|-------------|---------|\n\
+  | OncoSeg (full) | None — all components enabled | Baseline |\n| w/o Cross-Attention | Additive skip\
+  \ connections instead of cross-attention | Test cross-attention contribution |\n| w/o Deep Supervision\
+  \ | Deep supervision heads removed | Test auxiliary loss contribution |\n| w/o MC Dropout | Dropout\
+  \ rate set to 0 | Test uncertainty regularization |\n| Small (embed=24) | Half embedding dimension (24\
+  \ vs 48) | Test model capacity requirement |\n\nRun ablation training: `python scripts/run_ablation.py\
+  \ --epochs 100 --device cuda`\nOr use section 10 of the Colab notebook for GPU training of all 4 variants.\n\
+  \n## Results\n\n### Segmentation Performance (MSD Brain Tumor, 96 val subjects)\n\n| Model | Dice TC\
+  \ | Dice WT | Dice ET | Dice Mean | HD95 Mean (mm) | Params |\n|-------|---------|---------|---------|-----------|----------------|--------|\n\
+  | **OncoSeg** | 0.7898 | 0.8529 | 0.7481 | 0.7969 | **15.35** | **3.7M** |\n| UNet3D | 0.7849 | 0.8522\
+  \ | 0.7462 | 0.7944 | 21.03 | 19.2M |\n\nOncoSeg **matches** UNet3D's Dice accuracy (mean 0.7969 vs\
+  \ 0.7944) while using **5× fewer parameters** (3.7M vs 19.2M). The per-region Dice gaps are within noise:\
+  \ a paired Wilcoxon signed-rank test on per-subject Dice finds **no region where OncoSeg is significantly\
+  \ better**, and on WT the per-subject comparison actually favours UNet3D (it wins 67 of 96 subjects,\
+  \ two-sided p ≈ 0.009). OncoSeg's measurable advantage on this run is **parameter efficiency** and a\
+  \ **lower HD95 boundary error** (15.35 mm vs 21.03 mm) — note HD95 was computed once and is sensitive\
+  \ to outliers; it has **not** been significance-tested (no per-subject HD95 was saved). See **Limitations**.\n\
+  \n> Numbers come from a **single** 50-epoch run on MSD Brain Tumor (388 train / 96 val, embed_dim=24,\
+  \ roi_size=96, Apple Silicon MPS) — no repeated seeds or confidence intervals, and the UNet3D baseline\
+  \ was truncated early by an OOM crash (see Limitations). SwinUNETR/UNETR baselines and the ablation\
+  \ study require a CUDA GPU and have not been run.\n\n### Training Curves\n\n![Training Curves](experiments/local_results/training_curves.png)\n\
+  \n### Per-Region Dice Comparison\n\n![Dice Comparison](experiments/local_results/dice_comparison.png)\n\
+  \n### Qualitative Comparison (best / median / worst cases)\n\n![Qualitative](figures/qualitative_comparison.png)\n\
+  \nOncoSeg predictions track GT boundaries even on the median case (Dice 0.85); the worst case (Dice\
+  \ 0.24, BRATS_077) exhibits a small, diffuse tumor that both models under-segment — see the per-case\
+  \ breakdown in `experiments/local_results/failure_analysis.json`. (Note: the \"dominant failure region\"\
+  \ figure previously quoted here was produced by a NaN-handling bug and has been removed pending a corrected\
+  \ recomputation — see Limitations.)\n\n**Worst-case root-cause analysis** (`scripts/diagnose_worst_case.py`,\
+  \ full writeup in `docs/Paper_Results_Draft.md` §4): BRATS_077 is a 17.7th-percentile-small tumor with\
+  \ TC occupying only 6.7% of WT, ~3× weaker modality contrast than the median case, and 31 fragmented\
+  \ WT components (vs 14). See `figures/worst_case_comparison.png`.\n\nSee `docs/Paper_Results_Draft.md`\
+  \ for the full Results section (accuracy, calibration, failure modes, RECIST pipeline, limitations).\n\
+  \n### MC Dropout Uncertainty (median case)\n\n![Uncertainty](figures/uncertainty_map.png)\n\nUncertainty\
+  \ concentrates along tumor boundaries. **Calibration caveat:** the ECE of 0.0101 quoted in earlier versions\
+  \ was computed over *all* voxels, ~98% of which are background and trivially easy — it does not reflect\
+  \ calibration where it matters. Measured on **foreground voxels only**, the model is in fact **over-confident**\
+  \ (foreground ECE ≈ 0.49; voxels predicted at ~0.99 confidence are correct only ~40% of the time). The\
+  \ MC-Dropout estimate is also near-degenerate (5 samples, one subject, MC variance ~2.7e-6). Calibration\
+  \ is a **known limitation, not a strength**:\n\n![Calibration](figures/uncertainty_calibration.png)\n\
+  ![Uncertainty vs Error](figures/uncertainty_vs_error.png)\n\n### RECIST Response Pipeline — Synthetic\
+  \ Sanity Check\n\n![RECIST demo](figures/recist_demo.png)\n\n> **This is a synthetic demonstration,\
+  \ not clinical validation.** The follow-up timepoints are **not** real scans — they are generated from\
+  \ a single baseline (BRATS_407) by hand-tuned tumor-evolution functions with a fixed seed. The parameters\
+  \ are chosen so each scenario crosses a specific RECIST threshold, so the table below only confirms\
+  \ that the CR/PR/SD/PD classifier *wiring* behaves as designed. It does **not** measure accuracy on\
+  \ real longitudinal data. Validation on real scans is scripted in `scripts/evaluate_lumiere.py` but\
+  \ **has not yet been run** (requires the LUMIERE dataset).\n\n| Scenario | Synthetic tumor model | Designed\
+  \ category | Classifier output |\n|----------|----------------------|-------------------|-------------------|\n\
+  | Complete Response | Total elimination | CR | CR |\n| Partial Response | Exponential peripheral decay\
+  \ | PR | PR |\n| Stable Disease | Heterogeneous subclonal | SD | SD |\n| Progressive Disease | Gompertz\
+  \ growth | PD | PD |\n\nSee `notebooks/recist_response_demo.ipynb`. (The RECIST longest-diameter measurement\
+  \ itself currently uses a single axial slice and underestimates elongated lesions — see Limitations.)\n\
+  \n###"

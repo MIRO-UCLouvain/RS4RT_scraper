@@ -1,0 +1,65 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: SimonGustafsson-Git/Skeletal_Muscle_Radiomics
+url: https://github.com/SimonGustafsson-Git/Skeletal_Muscle_Radiomics
+platform: github
+description: Contains the necessary code used to implement the radiomics workflow used in my masters thesis.
+  This includes feature extraction with PyRadiomics, a feature selection and ranking pipeline, and classification
+  performance using the RadiomiX framework.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-03T12:44:35Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "Skeletal Muscle Radiomics Worklow - Code Implementation\n\nThis repository contains the\
+  \ core scripts used to run the radiomics workflow for distinguishing children diagnosed with cerebral\
+  \ palsy from typically developing children. This includes feature extraction using PyRadiomics, a feature\
+  \ selection and ranking pipeline, a statistical analysis using a Mann-Whitney U test, and classification\
+  \ using RadiomiX. Additional scripts demonstrating how MuscleMap segmentation can be performed and adjustments\
+  \ used in the RadiomiX framework are also included. The goal is to allow easy reproducibility and future\
+  \ radiomic analysis using a similar workflow. \n\nNo medical data is or should be included in this repository.\
+  \ The provided code can be implemented on medical data of different types but may have to be altered\
+  \ depending on data format.\n\n\n## Design: This project is intentionally split into different stages\
+  \ with clear inputs and outputs.\n\n01. **Feature extraction (PyRadiomics)**\n   - Script: `01_feature_extraction.py`\n\
+  \   - Input: Image and segmentation mask with correct format and same spatial geometry. If not already\
+  \ done, another script converting mask to the same spatial geometry should be done beforehand.\n   -\
+  \ Output: Extracted feature values. \n   Note: This script currently shows a framework for how feature\
+  \ extraction should be used for one image and mask. In practice, this is easiest converted to a loop\
+  \ going though several images+masks and saving the extracted feature values to a CSV for further use.\
+  \  \n\n02. **Feature selection and ranking pipeline**\n   - Script: `02_feature_selection_and_ranking_pipeline.py`\n\
+  \   - Input: Multiple CSV files of feature values from two different subject groups, multiple muscles\
+  \ and sexes.\n   - Output: Most important features averaged across folds.\n   Note: The script is organized\
+  \ after one CSV naming convention where features are extracted from subject types, image contrast, muscles,\
+  \ and sex individually. This can differ by study and may therefore need to be altered.\n\n03. **Statistical\
+  \ significance analysis**\n   - Script: `03_statistical_significance.py`\n   - Input: 10 most important\
+  \ features from script 02 from two subject groups for group comparison.\n   - Output: p-values following\
+  \ Mann-Whitney U test.\n\n04. **RadiomiX model evaluation**\n   - Script: `04_classification.py`\n \
+  \  - Input: 10 most important features from script 02 from two subject groups for group classification.\n\
+  \   - Output: Folder containing performance results for different RadiomiX model combinations. This\
+  \ includes averaged AUC, accuracy and F1 scores as well as best performing parameters.\n   Note: RadiomiX\
+  \ scripts were edited to account for this dataset and reduced computation costs. \n\nExtra scripts:\n\
+  \n  **Seperate segmentation stage**\n   - Script: `MuscleMap_segmentation.py`\n   - Input: Image with\
+  \ correct format. \n   - Output: Generated segmentation mask corresponding to input image. \n\n  **Custom\
+  \ RadiomiX framework**\n   - Script: `radiomix_edit.py`\n   - Note: RadiomiX framework adjusted to account\
+  \ for data used in this study. Use instead of radiomix.py inside of RadiomiX folder.\n\n  **Custom parameter\
+  \ combination**\n   - Script: `custom_params.json`\n   - Note: Parameter combination search space adjusted\
+  \ for this study.\n\n\n\n## How to Run ##\n\nThis code currently uses script level configuration blocks,\
+  \ (constants at the top of each script). Make sure all file paths and inputs are correct before running.\n\
+  \nThe workflow requires the installation of PyRadiomics, RadiomiX, and MuscleMap. These packages are\
+  \ open source and publicly available to download from GitHub, and should be run from separate Python\
+  \ environments. Additional requirments for scripts 01-03 are Python 3.9+, SimpleITK, NumPy, pandas,\
+  \ SciPy, scikit-learn, matplotlib, and additional dependencies that should be installed together with\
+  \ RadiomiX.\n\n1: Make sure to have images and segmented masks with the same spatial geometry so that\
+  \ PyRadiomics can extract features in 01.\n2: Use 01 framework, expand to loop across subjects and save\
+  \ to CSV files for individual cases such as one subject group and muscle. \n3: Manually enter necessary\
+  \ inputs based on CSV format and naming convention used when running 01, thereafter run either 03 and\
+  \ 04 to get results. When running 04, define which model combinations to use in `custom_params.json`.\
+  \ \nX: Try MuscleMap segmentation using XX.  \n"

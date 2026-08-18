@@ -1,0 +1,53 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Aryaman-Jaiswal/3D-UMamba-Brain-Tumor-Segmentation
+url: https://github.com/Aryaman-Jaiswal/3D-UMamba-Brain-Tumor-Segmentation
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 1
+updated_at: '2026-06-29T10:59:50Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# 3D-UMamba-Brain-Tumor-Segmentation\n\n## Overview\n\nThis repository contains a fully\
+  \ 3D volumetric brain tumor segmentation pipeline utilizing the **U-Mamba architecture**. Developed\
+  \ as a robust alternative to traditional Vision Transformers (ViTs) and CNNs, this system accurately\
+  \ delineates highly aggressive brain tumors (gliomas) from multi-modal MRI scans.\n\nBy leveraging continuous-time\
+  \ State Space Models (SSMs), the U-Mamba network achieves the infinite global receptive field of a Transformer\
+  \ while maintaining linear computational complexity. This allows the model to process high-resolution\
+  \ 3D medical data in its original form without the severe memory limitations that often force researchers\
+  \ to slice 3D volumes into 2D images.\n\nLink to Kaggle notebook: https://www.kaggle.com/code/aryamanjaiswal001/brain-tumor-project/edit\n\
+  \n## Key Features\n\n* **3D Volumetric Processing:** Replaces 2D slice-by-slice processing to fully\
+  \ utilize Z-axis depth information and spatial continuity.\n\n\n* **Linear-Time Sequence Modeling:**\
+  \ Uses a Vision Mamba bottleneck to capture long-range global dependencies efficiently using hardware-aware\
+  \ parallel prefix scans.\n\n\n* **Custom Morphological Boundary Loss:** Implements a pure PyTorch-based\
+  \ boundary loss function (via 3D Max Pooling) combined with Dice Cross-Entropy. This bypasses heavy\
+  \ C++ compilation constraints on cloud GPUs while forcing the network to learn intricate, spiky tumor\
+  \ margins.\n\n\n* **Algorithmic False Positive Suppression:** Utilizes a Size-Aware Connected Component\
+  \ Analysis filter during post-processing to isolate the main tumor mass and eliminate isolated \"phantom\
+  \ tumor\" artifacts.\n\n\n* **Sliding Window Inference:** Smoothly merges overlapping 3D patches across\
+  \ unseen patient volumes using Gaussian blending.\n\n\n\n## Dataset\n\nThe model is trained and evaluated\
+  \ on the **BraTS 2020** dataset.\n\n* **Inputs:** Multi-modal 3D NIfTI volumes (T1, T1ce, T2, FLAIR).\n\
+  \n\n* **Targets:** Multi-class sub-region segmentation:\n* Whole Tumor (WT) \n\n\n* Tumor Core (TC)\
+  \ \n\n\n* Enhancing Tumor (ET) \n\n\n\n\n\n## Architecture Details\n\nThe network is a well-optimized,\
+  \ U-shaped encoder-decoder composition:\n\n1. **Encoder:** Standard 3D Residual Convolutional Blocks\
+  \ extract high-frequency local textures (e.g., micro-vascular proliferation).\n\n\n2. **Bottleneck:**\
+  \ A 3D Vision Mamba block flattens low-resolution 3D feature maps into a 1D sequence, applies a selective\
+  \ state space mechanism to map global dependencies, and reshapes the tensor back to a 3D volume.\n\n\
+  \n3. **Decoder:** 3D Upsampling blocks utilize skip connections to restore exact anatomical borders\
+  \ during reconstruction.\n\n\n\n## Results\n\nThe model was tested on a 73-patient validation dataset\
+  \ and achieved a **Mean Dice Similarity Coefficient (DSC) of 81.58%** after just 75 epochs of training.\n\
+  \nVisual analysis confirms that the extended training alongside the connected component post-processing\
+  \ filter successfully separated the main glioma mass and removed healthy-tissue false positives.\n\n\
+  \n*<img width=\"799\" height=\"738\" alt=\"Screenshot 2026-06-28 003357\" src=\"https://github.com/user-attachments/assets/775b549f-bba0-4e88-ac63-419b10afd84f\"\
+  \ />*\n\n## Tech Stack\n\n* **Deep Learning Framework:** PyTorch 2.6.0 (CUDA 12.1) \n\n\n* **Medical\
+  \ Imaging:** MONAI 1.4.0 \n\n\n* **State Space Models:** `mamba-ssm` 2.2.3, `causal-conv1d` 1.4.0 \n\
+  \n\n* **Environment:** Kaggle Interactive Notebooks (Dual NVIDIA Tesla T4 GPUs) \n\n\n\n## Author\n\n\
+  **Aryaman Jaiswal** Vellore Institute of Technology (VIT)\n"

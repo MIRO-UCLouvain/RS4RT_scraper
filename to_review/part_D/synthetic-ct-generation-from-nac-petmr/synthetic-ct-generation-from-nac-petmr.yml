@@ -1,0 +1,53 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: xli2245/Synthetic-CT-generation-from-NAC-PETMR
+url: https://github.com/xli2245/Synthetic-CT-generation-from-NAC-PETMR
+platform: github
+description: Synthetic CT generation from NAC PET for PET/MR reconstrunction and attenuation correction
+license: null
+language: Python
+keywords:
+- keras-tensorflow
+- machine-learning
+- perceptual-loss
+- pet-reconstrunction
+- python-3
+- sct-generation
+- u-net
+- vgg16
+stars: 0
+updated_at: '2024-01-08T21:04:00Z'
+image_source: https://github.com/xli2245/Synthetic-CT-generation-from-NAC-PETMR/blob/master/sCT.png
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Synthetic-CT-generation-from-NAC-PETMR \nSimultaneous PET/MR scanners combine the high\
+  \ sensitivity of MR imaging with the functional imaging of PET. However, attenuation correction of breast\
+  \ PET/MR imaging is technically challenging. The purpose of this study is to establish a robust attenuation\
+  \ correction algorithm for breast PET/MR images that relies on deep learning (DL) to recreate the missing\
+  \ portions of the patient’s anatomy (truncation completion), as well as to provide bone information\
+  \ for attenuation correction from only the PET data. Three DL models, U-Net with mean absolute error\
+  \ loss (DL_MAE) model, U-Net with mean squared error loss (DL_MSE) model, and U-Net with perceptual\
+  \ loss (DL_Perceptual) model, were trained to predict synthetic CT images (sCT) for PET attenuation\
+  \ correction (AC) given non-attenuation corrected (NAC) PET (PET/MR) images as inputs. The DL and Dixon-based\
+  \ sCT reconstructed PET images were compared against those reconstructed from CT images by calculating\
+  \ the percent error of the standardized uptake value (SUV) and conducting Wilcoxon signed rank statistical\
+  \ tests.\n![sCT from test dataset](https://github.com/xli2245/Synthetic-CT-generation-from-NAC-PETMR/blob/master/sCT.png)\n\
+  ## Table of Contents\n- [Setup](#setup)\n- [Environment](#environment)\n- [Perceptual Loss Framework](#perceptual-loss-framework)\n\
+  \  - [Discriminator](#discriminator)\n  - [Generator](#generator)\n- [Results](#results)\n\n## Setup\n\
+  Clone this repo:\n```\ngit clone https://github.com/xli2245/Synthetic-CT-generation-from-NAC-PETMR\n\
+  ```\n## Environment\nThis project is implemented using Keras.\n1. create a conda environment\n```\n\
+  conda create -n tf2 python=3.7\nconda activate tf2\n```\n2. install necessary packages\n```\nconda install\
+  \ -c anaconda keras-gpu=2.3.1\nconda install -c anaconda tensorflow-gpu=1.14.0\nconda install -c conda-forge\
+  \ nibabel\nconda install -c conda-forge matplotlib=3.4.3\nconda install -c anaconda scikit-learn\nconda\
+  \ install -c anaconda scikit-image\n```\n## Perceptual Loss Framework\n![Main framework](https://github.com/xli2245/Synthetic-CT-generation-from-NAC-PETMR/blob/master/framework.png)\n\
+  ### Discriminator\nVGG 16 is used for perceptual loss calculation. In the first round, the VGG model\
+  \ was trained to discriminate the NAC PET and CT images\n```\npython ./discriminator/discriminator_PET.py\n\
+  ```\nIn the second round, it was trained to discriminate the sCT and CT images for better image feature\
+  \ caption.\n```\npython ./discriminator/discriminator_sCT.py\n```\n### Generator\n1.  Model training\n\
+  ```\npython ./generator/main.py\n```\n2. Model prediction\n```\npython ./generator/predict.py\n```\n\
+  \n\n\n\n\n"

@@ -1,0 +1,120 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: jeswintobias/Multimodal-Brain-Tumor-Segmentation-via-VLMs-on-BraTS-2020
+url: https://github.com/jeswintobias/Multimodal-Brain-Tumor-Segmentation-via-VLMs-on-BraTS-2020
+platform: github
+description: Multimodal brain tumor segmentation using FLAIR MRI + radiology reports. Combines a ResNet-34
+  Attention U-Net with CLIP-based cross-attention and FiLM conditioning to fuse image and text features.
+  Achieves Dice 0.8589 on BraTS 2020 — within 3.4% of the 3D multi-modal SOTA using only 2D FLAIR slices
+  and text.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-05-30T06:53:03Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Multimodal-Brain-Tumor-Segmentation-via-VLMs-on-BraTS-2020\n\n\n> **Text-Guided Brain\
+  \ Tumor Segmentation using Vision-Language Models with FLAIR MRI and Radiology Reports**\n\nMultimodal\
+  \ deep learning framework for brain tumor segmentation that fuses FLAIR MRI images with radiology text\
+  \ descriptions. Combines a ResNet-34 Attention U-Net with CLIP-based cross-attention and FiLM conditioning\
+  \ — achieving **Dice 0.8589** on BraTS 2020, within 3.4% of the 3D multi-modal SOTA using only 2D FLAIR\
+  \ slices and text.\n\n**Authors:** Kishore K (CS23B2016) · Jeswin Tobias J (CS23I1013) — Deep Learning\
+  \ Project, Jan–May 2026\n\n---\n\n## Table of Contents\n\n- [Overview](#overview)\n- [Datasets](#datasets)\n\
+  - [Architecture](#architecture)\n- [Training Strategy](#training-strategy)\n- [Results](#results)\n\
+  - [Ablation Study](#ablation-study)\n- [Lessons Learned](#lessons-learned)\n- [Setup & Usage](#setup--usage)\n\
+  - [References](#references)\n\n---\n\n## Overview\n\nBrain tumor segmentation from MRI is critical for\
+  \ treatment planning and surgical guidance. While traditional methods rely solely on imaging, this project\
+  \ demonstrates that integrating radiology text descriptions via Vision-Language Models (VLMs) provides\
+  \ complementary semantic signal that measurably improves segmentation.\n\n**Key contributions:**\n-\
+  \ Multimodal fusion of FLAIR MRI + radiology reports via CLIP cross-attention and FiLM conditioning\n\
+  - Diagnosed and resolved an all-ones prediction collapse caused by class imbalance\n- Focal Loss + cosine\
+  \ LR warmup training pipeline that trains stably from the first epoch\n- Dice **0.8589** / IoU **0.8188**\
+  \ using only 2D slices and text — no 3D volumes, no additional MRI modalities\n\n---\n\n## Datasets\n\
+  \n### Image — BraTS 2020 FLAIR\n[Kaggle: hussainnasirkhan/flair-brats2020](https://www.kaggle.com/datasets/hussainnasirkhan/flair-brats2020)\n\
+  \n| Split | Volumes | Slices | Tumor | Non-Tumor |\n|---|---|---|---|---|\n| Train | 258 | 33,024 |\
+  \ 17,317 | 15,707 |\n| Validation | 86 | 11,008 | 5,959 | 5,049 |\n\nEach volume is 128 × 128 × 128\
+  \ voxels. 4-channel BraTS masks (necrotic core, edema, enhancing tumor, background) are collapsed into\
+  \ a single binary whole-tumor mask via logical OR.\n\n### Text — Text-BraTS 2020\n[Google Drive](https://drive.google.com/file/d/17YKI4nwPW8qMKlg9k53dVax7F_1JCk9B/view?usp=drivesdk)\n\
+  \n- 344 patients, one radiology-style `.txt` report per patient\n- Each patient's 128 image slices share\
+  \ the same text embedding\n- Reports describe tumor location, edema characteristics, and structural\
+  \ properties\n\n### Preprocessing\n\n| Step | Details |\n|---|---|\n| Image | Axial slices → resize\
+  \ to 224×224 → normalize [0,1] → 3-channel (RGB-equiv) |\n| Mask | 4-channel BraTS → single binary whole-tumor\
+  \ via logical OR |\n| Text | OpenCLIP (ViT-B/32) tokenization → 512-dim embeddings; default embedding\
+  \ for missing reports |\n| Augmentation | Random horizontal/vertical flips, random rotation ±15° |\n\
+  \n---\n\n## Architecture\n\n**Multimodal Attention U-Net** — 56,937,707 parameters\n\n```\nFLAIR MRI\
+  \ (224×224×3)\n      │\n  ResNet-34 Encoder (pretrained)\n      │  ├─ L1: 64 × 112 × 112\n      │  ├─\
+  \ L2: 64 × 56 × 56\n      │  ├─ L3: 128 × 28 × 28\n      │  ├─ L4: 256 × 14 × 14\n      │  └─ L5 (bottleneck):\
+  \ 512 × 7 × 7\n      │                │\nRadiology Text ──► OpenCLIP (ViT-B/32)\n                  \
+  \      │\n                   512-dim embedding\n                        │\n              ┌─────────┴──────────┐\n\
+  \         Cross-Attention         FiLM\n         (Q=image, K/V=text)   γ(t)⊙x + β(t)\n             \
+  \ └─────────┬──────────┘\n                        │\n            Attention U-Net Decoder\n         \
+  \   (transposed conv upsampling)\n            + Attention Gates on skip connections\n            + Deep\
+  \ supervision at ¼ and ⅛ scale\n                        │\n            Binary Segmentation Mask\n```\n\
+  \n**Components:**\n\n- **Image Encoder (ResNet-34):** Pretrained backbone extracting 5-level multi-scale\
+  \ features\n- **Attention Gates:** Each skip connection applies a learned gate to suppress background\
+  \ and focus on tumor-relevant regions: `α = σ(Wψ · ReLU(Wg·g + Wx·x + b))`\n- **CLIP Cross-Attention:**\
+  \ Text embeddings fused into bottleneck features via: `CrossAttn(Q,K,V) = softmax(QKᵀ/√dk)V`\n- **FiLM\
+  \ Conditioning:** Channel-wise affine modulation of bottleneck by text: `FiLM(x) = γ(t) ⊙ x + β(t)`\n\
+  - **Deep Supervision:** Auxiliary segmentation heads at ¼ and ⅛ resolution\n\n---\n\n## Training Strategy\n\
+  \n| Hyperparameter | Value |\n|---|---|\n| Optimizer | AdamW, weight decay 1e-4 |\n| Learning rate |\
+  \ 6e-5 (reduced 10× from initial 6e-4) |\n| LR scheduler | Cosine annealing with 3-epoch linear warmup\
+  \ |\n| Batch size | 16 |\n| Epochs | 25 |\n| Precision | FP16 (PyTorch AMP) |\n| Gradient clipping |\
+  \ Max norm 1.0 |\n| Hardware | NVIDIA T4 GPU (Kaggle) |\n| Seed | 42 |\n\n**Loss Function:**\n\n```\n\
+  L_total = L_Dice + L_Focal + 0.3 · (L_DS4 + L_DS3)\n```\n\nFocal Loss: `L_Focal = -α(1-pt)^γ · log(pt)`\
+  \ with α=0.75, γ=2.0\n\nBCE was replaced by Focal Loss to handle class imbalance — see [Lessons Learned](#lessons-learned).\n\
+  \n---\n\n## Results\n\n### Final Metrics (Validation Set)\n\n| Metric | Image-Only | Multimodal | Δ\
+  \ |\n|---|---|---|---|\n| Dice Coefficient | 0.8493 | **0.8589** | +0.0096 |\n| IoU (Jaccard) | 0.8087\
+  \ | **0.8188** | +0.0101 |\n| Precision | 0.9107 | **0.9187** | +0.0080 |\n| Recall | 0.8846 | **0.8875**\
+  \ | +0.0028 |\n| Hausdorff Distance | 34.55 | **32.25** | −2.30 |\n| BLEU-4 (text) | — | 0.7732 | —\
+  \ |\n| ROUGE-L (text) | — | 0.9498 | — |\n\n### Benchmark Comparison\n\n| Method | Modalities | Dim\
+  \ | Dice (WT) |\n|---|---|---|---|\n| nnU-Net (BraTS 2020 winner) | 4 MRI modalities | 3D | 0.8895 |\n\
+  | Typical Attention U-Net | 4 MRI modalities | 3D | 0.80–0.88 |\n| **Ours (Multimodal)** | **FLAIR +\
+  \ Text** | **2D** | **0.8589** |\n| Ours (Image-Only) | FLAIR only | 2D | 0.8493 |\n\nOur model using\
+  \ only 2D FLAIR slices and text is within **3.4%** of the BraTS 2020 winner that uses all four 3D MRI\
+  \ modalities.\n\n### Error Analysis\n\n- Multimodal mean Dice: 0.7617 ± 0.3053\n- Image-Only mean Dice:\
+  \ 0.7593 ± 0.3052\n- High std driven by bimodal distribution: non-tumor slices score 0.0, tumor slices\
+  \ cluster at 0.85–0.95\n- Primary failure cases: very small tumors (< 5% of image area) or boundary\
+  \ slices with minimal tumor extent\n\n---\n\n## Ablation Study\n\nThe ablation compares `use_text=False`\
+  \ (image-only) vs `use_text=True` (cross-attention + FiLM), trained identically for 25 epochs with the\
+  \ same hyperparameters and augmentation.\n\n| Finding | Detail |\n|---|---|\n| Dice improvement | +0.96%\
+  \ |\n| IoU improvement | +1.01% |\n| Hausdorff improvement | −2.30 units (better boundary precision)\
+  \ |\n| Precision vs Recall gain | +0.80% vs +0.28% — text guidance primarily reduces false positives\
+  \ |\n\n---\n\n## Lessons Learned\n\n### Iteration 1 — Model Collapse (All-Ones Prediction)\n**Symptom:**\
+  \ After 20 hours of training: Dice=0.087, Recall=1.0, Hausdorff=242.1  \n**Root cause:** Standard Dice\
+  \ + BCE loss collapsed to predicting every pixel as tumor (local minimum satisfying BCE while keeping\
+  \ non-zero Dice)  \n**Fix:** Replaced BCE with Focal Loss (α=0.75, γ=2.0) to downweight easy background\
+  \ pixels and focus on hard boundary pixels\n\n### Iteration 2 — Learning Rate Too High\n**Symptom:**\
+  \ Early training instability from LR=6e-4  \n**Fix:** Reduced LR 10× to 6e-5; added 3-epoch linear warmup\
+  \ before cosine annealing to let pretrained ResNet-34 weights adapt gradually\n\n### Iteration 3 — Text\
+  \ Branch Not Contributing\n**Symptom:** Multimodal and image-only models produced identical outputs\
+  \  \n**Root cause:** The all-ones collapse masked the text branch's contribution entirely  \n**Fix:**\
+  \ Once the base model was stabilized (Focal Loss + LR warmup), the text branch produced a measurable\
+  \ +0.96% Dice improvement\n\n---\n\n## Setup & Usage\n\n### Requirements\n\n```bash\npip install torch\
+  \ torchvision open-clip-torch scikit-learn scipy\n```\n\nKey libraries:\n- PyTorch 2.x + CUDA 12.1\n\
+  - OpenCLIP (ViT-B/32, `laion2b_s34b_b79k`)\n- torchvision (ResNet-34 pretrained weights)\n- scikit-learn\
+  \ (t-SNE)\n- scipy (Hausdorff distance)\n\n### Data Preparation\n\n1. Download BraTS 2020 FLAIR from\
+  \ [Kaggle](https://www.kaggle.com/datasets/hussainnasirkhan/flair-brats2020)\n2. Download Text-BraTS\
+  \ 2020 from [Google Drive](https://drive.google.com/file/d/17YKI4nwPW8qMKlg9k53dVax7F_1JCk9B/view?usp=drivesdk)\n\
+  3. Match each patient's FLAIR volume to the corresponding `<patient_id>_flair_text.txt` file\n\n###\
+  \ Training\n\nOpen and run the Jupyter notebook. All output cells are visible for reproducibility. Random\
+  \ seed is fixed at 42.\n\n```python\n# Multimodal model\nmodel = MultimodalAttentionUNet(use_text=True)\n\
+  \n# Image-only baseline\nmodel = MultimodalAttentionUNet(use_text=False)\n```\n\n---\n\n## Future Work\n\
+  \n- Extend to 3D segmentation using volumetric convolutions\n- Incorporate additional MRI modalities\
+  \ (T1, T1ce, T2)\n- Explore learnable text prompts (prompt tuning) instead of fixed CLIP embeddings\n\
+  - Apply HD95 (95th percentile Hausdorff) for fairer comparison with published benchmarks\n\n---\n\n\
+  ## References\n\n1. Menze et al. — \"The Multimodal Brain Tumor Image Segmentation Benchmark (BRATS)\"\
+  \ — IEEE Trans. Medical Imaging, 2015\n2. Isensee et al. — \"nnU-Net: a self-configuring method for\
+  \ deep learning-based biomedical image segmentation\" — Nature Methods, 2021\n3. Oktay et al. — \"Attention\
+  \ U-Net: Learning Where to Look for the Pancreas\" — MIDL, 2018\n4. Radford et al. — \"Learning Transferable\
+  \ Visual Models From Natural Language Supervision (CLIP)\" — ICML, 2021\n5. Perez et al. — \"FiLM: Visual\
+  \ Reasoning with a General Conditioning Layer\" — AAAI, 2018\n6. Lin et al. — \"Focal Loss for Dense\
+  \ Object Detection\" — ICCV, 2017\n7. Bakas et al. — \"Advancing The Cancer Genome Atlas glioma MRI\
+  \ collections with expert segmentation labels and radiomic features\" — Scientific Data, 2017\n"

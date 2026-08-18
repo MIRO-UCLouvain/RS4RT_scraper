@@ -1,0 +1,54 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: taitran12310/ALI_CBCT
+url: https://github.com/taitran12310/ALI_CBCT
+platform: github
+description: Custom from Maxlo24/ALI_CBCT
+license: null
+language: Python
+keywords: []
+stars: 2
+updated_at: '2025-10-17T11:57:21Z'
+image_source: https://user-images.githubusercontent.com/46842010/159336503-827d70d5-2212-4dea-8ccc-46fc420be2e2.png
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Automatic Landmark Identification in 3D Cone-Beam Computed Tomography scans\n\nAuthors:\n\
+  Maxime Gillot\nBaptiste Baquero\nAntonio Ruellas\nMarcela Gurgel\nNajla Al Turkestani\nElizabeth Biggs\n\
+  Marilia Yatabe\nJonas Bianchi\nLucia Cevidanes\nJuan Carlos Prieto\n\nWe propose a novel approach that\
+  \ reformulates landmark detection as a classification problem through a virtual agent placed inside\
+  \ a 3D Cone-Beam Computed Tomography (CBCT) scan. This agent is trained to navigate in a multi-scale\
+  \ volumetric space to reach the estimated landmark position.\n\nLandmark placed in the CBCT:\ngit: https://github.com/Maxlo24/ALI_CBCT.git\n\
+  ![LM_SELECTION_Trans](https://user-images.githubusercontent.com/46842010/159336503-827d70d5-2212-4dea-8ccc-46fc420be2e2.png)\n\
+  \n\n\nScripts for Automatic Landmark Identification in CBCT\n\n## Prerequisites\n\npython 3.8.8 with\
+  \ the anaconda environment \"ALI_environment.yml\":\n\n**Main librairies:**\n\n> monai==0.7.0 \\\n>\
+  \ torch==1.10.1 \\\n> itk==5.2.1 \\\n> numpy==1.20.1 \\\n> simpleitk==2.1.1\n\n# Running the code\n\n\
+  ## Using Docker\nYou can get the ALI CBCT docker image by running the folowing command lines.\n\n**Informations**\n\
+  - A ***test scan*** \"MG_scan_test.nii.gz\" is provided in the Data folder of the ALI_CBCT repositorie.\n\
+  - If the prediction with the ***GPU is not working***, make sure you installed the NVIDIA Container\
+  \ Toolkit : \nhttps://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker\n\
+  \n**Building using the DockerFile**\n\nFrom the DockerFile directory:\n```\ndocker pull dcbia/alicbct:latest\n\
+  ```\n\nFrom the DockerFile directory:\n\n```\ndocker build -t alicbct .\n```\n\n**Automatic landmark\
+  \ identification**\n*Running on CPU*\n\n```\ndocker run --rm --shm-size=5gb -v <Folder_with_the_scans_to_segment>:/app/data/scans\
+  \ -v <Folder_with_the_models_to_use>:/app/data/models  alicbct:latest python3 /app/ALI_CBCT/predict_landmarks.py\n\
+  ```\n*Running on GPU*\n```\ndocker run --rm --shm-size=5gb --gpus all -v <Folder_with_the_scans_to_segment>:/app/data/scans\
+  \ -v <Folder_with_the_models_to_use>:/app/data/models  alicbct:latest python3 /app/ALI_CBCT/predict_landmarks.py\n\
+  ```\n\n**options/arguments**\n- By default, only *Ba* and *S* landmarks are selected.\n    To choose\
+  \ which structure to segment, you can use the following arguments:\n    ```\n    -lm Ba S\n    ```\n\
+  \    <!-- To deactivate the merging step, you can use the following argument:\n    ```\n    -m False\n\
+  \    ``` -->\n\n___\n\n\n\n\n\n**Pre-process**\n\nTo run the preprocess to prepare the files and set\
+  \ them at the wanted spacing for the training:\n\nFor the Upper, Lower and Cranial base landmarks\n\
+  ```\npython3 init_training_data_ULCB.py -i \"path of the input folder with the scans and the fiducial\
+  \ list\" -o \"path of the output folder\"\n```\n\nFor the canine impaction landmarks\n```\npython3 init_training_data_Canine.py\
+  \ -i \"path of the input folder with the scans and the fiducial list\" -o \"path of the output folder\"\
+  \n```\n\n\nBy default the spacing is set at 1 and 0.3 but we can change and add other spacing with the\
+  \ argument :\n```\n-sp x.xx x.xx\n````\nA contrast adjustment is also applied but can be turned off\
+  \ with \n```\n-ch False\n````\n---\n\n\n\n\n#Images\n\nEnvironment, low resolution and high resolution:\n\
+  ![2environement_label_zoom](https://user-images.githubusercontent.com/46842010/159337231-0e79e134-a027-4987-ab44-edc2ad54d244.png)\n\
+  \n\nAgent architecture:\n![agent_label](https://user-images.githubusercontent.com/46842010/159341624-5d17e5a3-c4b7-4b93-bd7d-0b1348c7ad31.png)\n\
+  \nSearch steps of the agent to find one landmark:\n![Search_3Steps_labeled](https://user-images.githubusercontent.com/46842010/159337300-ecb9e70e-7a65-45e1-96b1-490ad7286aa7.png)\n"

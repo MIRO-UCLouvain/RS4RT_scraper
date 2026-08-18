@@ -1,0 +1,77 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: agravgaard/cbctrecon
+url: https://gitlab.com/agravgaard/cbctrecon
+platform: gitlab
+description: CBCT Reconstruction toolkit for Varian and Elekta
+license: null
+language: null
+keywords: []
+stars: 1
+updated_at: '2025-08-08T20:42:31.134Z'
+image_source: null
+heuristic_total_score: 21
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# CbctRecon\r\n\r\nCBCT Reconstruction toolkit for Elekta and Varian type cone beam projections\r\
+  \n\r\n[![pipeline status](https://gitlab.com/agravgaard/cbctrecon/badges/master/pipeline.svg)](https://gitlab.com/agravgaard/cbctrecon/commits/master)\r\
+  \n[![coverage report](https://gitlab.com/agravgaard/cbctrecon/badges/master/coverage.svg)](https://gitlab.com/agravgaard/cbctrecon/commits/master)\r\
+  \n\r\n## Proton dose calculation on scatter-corrected CBCT image: Feasibility study for adaptive proton\
+  \ therapy\r\nhttp://dx.doi.org/10.1118/1.4923179\r\n\r\n## Supported OS/compilers\r\n - Windows 10\r\
+  \n   - MSVC 2019\r\n - Linux Manjaro rolling/Ubuntu Eoan and MacOS High Sierra\r\n   - GCC (8) 9+\r\n\
+  \   - Clang 9.0.1+\r\n\r\nSome compilers and OSs are not tested as often.\r\nI expect the code to compile\
+  \ on most systems with a C++17 compatible compiler.\r\n\r\n(clang 9.0.0 has has an ICE when compiling\
+  \ Abseil charconv, which we need, it's fixed in 9.0.1)\r\n\r\nIn order to compile the software, you\
+  \ must have installed the following prerequisites.\r\n\r\n## Prerequisites\r\n - Git\r\n - Cmake >3.14\r\
+  \n - Qt 5.X\r\n   - On Windows Set `CMAKE_PREFIX_PATH=\"[Qt install dir]/5.[X.Y]/msvc20[ZZ]_64/\"`\r\
+  \n - OpenCL \r\n   - Use `-DRTK_USE_OPENCL=ON` to get OpenCL versions of the CUDA algorithms\r\n\r\n\
+  ## Optional, but recommended, dependencies\r\n - FFTW - Add directory to PATH\r\n - CUDA > 8.0\r\n \
+  \  - C++ compiler compatible with your version of CUDA. (See [this table](https://gist.github.com/ax3l/9489132))\r\
+  \n\r\n## Below is downloaded and compiled automatically, if `USE_SYSTEM_XXXX=OFF`\r\n - [DCMTK](https://github.com/DCMTK/DCMTK)\r\
+  \n - [ITK](https://github.com/InsightSoftwareConsortium/ITK) (MSVC: Automatic download and configuration\
+  \ is broken, see \"Build ITK for `USE_SYSTEM_ITK=ON`\" below)\r\n - [RTK](https://github.com/SimonRit/RTK)\r\
+  \n - [Plastimatch](https://gitlab.com/plastimatch/plastimatch)\r\n - [dlib](https://github.com/davisking/dlib)\r\
+  \n\r\n## goPMC Extension (The GPU monte carlo based proton dose calculation engine)\r\nBefore installation\
+  \ consider:\r\ngoPMC binary files and a Visual Studio 2013 Debug Compiler is needed for goPMC support\r\
+  \nand the goPMC app must be compiled seperately.\r\n\r\n## How to build\r\nI recommend that you look\
+  \ at the short bash script, [ci/ci.sh](https://gitlab.com/agravgaard/cbctrecon/blob/master/ci/ci.sh),\
+  \ for an example of how to configure and build the project.\r\n\r\nPossible config and build on linux,\
+  \ with CUDA:\r\n\r\n```\r\ngit clone https://gitlab.com/agravgaard/cbctrecon.git\r\nmkdir build\r\n\
+  cd build\r\n\r\ncmake -GNinja ../cbctrecon \\\r\n  -DCMAKE_BUILD_TYPE=RelWithDebInfo \\\r\n  -DCMAKE_INSTALL_PREFIX=/home/user/cbctrecon_install\
+  \ \\\r\n  -DHUNTER_ENABLED=ON \\\r\n  -DUSE_CUDA=ON \\\r\n  -DEXACT_GCC=/ust/bin/gcc-8 \\\r\n  -DUSE_SYSTEM_ITK=OFF\
+  \ \\\r\n  -DUSE_SYSTEM_DCMTK=OFF \\\r\n  -DUSE_SYSTEM_Plastimatch=OFF \\\r\n  -DUSE_SYSTEM_ZLIB=OFF\
+  \ \\\r\n  -DUSE_SYSTEM_dlib=OFF\r\n\r\nninja\r\nninja INSTALL\r\n```\r\n\r\n`EXACT_GCC` is needed for\
+  \ CUDA to work with newer versions of gcc or clang, it's an internal variable used in plastimatch and\
+  \ RTK, which may soon be deprecated.\r\n\r\n`CMAKE_INSTALL_PREFIX` must be a path the user has write\
+  \ permissions in, otherwise temporary files can't be created at runtime.\r\n\r\n(using ninja because\
+  \ it's much faster than Make and msbuild)\r\n\r\nPossible config and build on Windows, with OpenCL 2.1:\r\
+  \nIn the \"x64 Native Tools Command Prompt for VS 2019\"\r\n\r\n```\r\nREM cd %userprofile% or whereever\
+  \ you want the project\r\n\r\ngit clone https://gitlab.com/agravgaard/cbctrecon.git\r\nmkdir build\r\
+  \ncd build\r\n\r\ncmake -G\"Visual Studio 16 2019\" -A\"x64\" ../cbctrecon ^\r\n  -DCMAKE_BUILD_TYPE=RelWithDebInfo\
+  \ ^\r\n  -DCMAKE_PREFIX_PATH=\"C:/Qt/5.14.1/msvc2017_64/\" ^\r\n  -DCMAKE_INSTALL_PREFIX=\"C:/Users/user/cbctrecon_install/\"\
+  \ ^\r\n  -DHUNTER_ENABLED=ON ^\r\n  -DRTK_USE_OPENCL=ON ^\r\n  -DCBCTRECON_OPENCL_VERSION=210 ^\r\n\
+  \  -DITK_DIR=\"C:/Program Files (x86)/ITK/lib/cmake/ITK-5.1\" ^\r\n  -DUSE_SYSTEM_DCMTK=OFF ^\r\n  -DUSE_SYSTEM_Plastimatch=OFF\
+  \ ^\r\n  -DUSE_SYSTEM_ZLIB=OFF ^\r\n  -DUSE_SYSTEM_dlib=OFF\r\n\r\ncmake --build . --config RelWithDebInfo\
+  \ -j N\r\nREM Where N is the number of CPU cores you want to assign to compiling\r\n\r\ncmake --build\
+  \ . --config RelWithDebInfo --target INSTALL\r\n```\r\nAssuming git and cmake is in path\r\n\r\n## Build\
+  \ ITK for `USE_SYSTEM_ITK=ON`\r\n\r\nCertain option are necessary when you configure ITK manually:\r\
+  \n\r\n```\r\n// For RTK\r\nModule_RTK=ON\r\n\r\n// Optional for Cuda\r\nModule_ITKCudaCommon=ON\r\n\
+  RTK_USE_CUDA=ON\r\n\r\n// For Plastimatch\r\nModule_Review=ON\r\nModule_ITKDeprecated=ON\r\n\r\n// Optional\
+  \ but recommended for saving time and space:\r\nBUILD_TESTING=OFF\r\nITK_BUILD_DEFAULT_MODULES=OFF\r\
+  \nBUILD_EXAMPLES=OFF\r\nITK_USE_KWSTYLE=OFF\r\n\r\n// Optional for more performance\r\nITK_USE_SYSTEM_FFTW=ON\
+  \ // Just download the binary, or use MKL or cuFFT\r\nITK_USE_FFTWD=ON\r\nITK_USE_FFTWF=ON\r\nModule_TBB=ON\
+  \ // A bit difficult to configure, as you'll have to generate the TBBConfig.cmake yourself\r\n\r\n```\r\
+  \n\r\n## Build DCMTK for `USE_SYSTEM_DCMTK=ON`\r\n```\r\nDCMTK_OVERWRITE_WIN32i_COMPILER_FLAGS=OFF\r\
+  \n```\r\n\r\n## Build Plastimatch for `USE_SYSTEM_Plastimatch=ON`\r\nThese options are necessary to\
+  \ avoid linking errors (because the supertbuild would conflict with the ITK and DCMTK we need) and support\
+  \ C++ 17 (requires a newer version of dlib than the one included in plastimatch)\r\n```\r\nPLM_CONFIG_ENABLE_SUPERBUILD=OFF\r\
+  \nITK_DIR=/*Whereever you built or installed ITK*/\r\nDCMTK_DIR=/*Whereever you built or installed DCMTK*/\r\
+  \ndlib_DIR=/*wherever you installed dlib*/\r\n```\r\n\r\n## Avoiding DLL and linker hell\r\nThis is\
+  \ only a Windows problem. Make sure that all projects were compiled with the same linker option (shared\
+  \ / static) in all `CMAKE_CXX_FLAGS_*` and `CMAKE_C_FLAGS_*`, either `/MD` or `/MT`. These doesn't mix\
+  \ well. Prefer `/MT` and set `BUILD_SHARED_LIBS=OFF` in all projects, this seems to be the most stable\
+  \ configuration, although it's not forwarded by hunter (at least not to dlib).\r\n\r\n\r\n"

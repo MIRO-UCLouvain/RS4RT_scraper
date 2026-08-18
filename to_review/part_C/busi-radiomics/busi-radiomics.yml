@@ -1,0 +1,133 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Epiphany-QS/BUSI_Radiomics
+url: https://github.com/Epiphany-QS/BUSI_Radiomics
+platform: github
+description: BUSI Radiomics — Breast Ultrasound Image Radiomics Analysis
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 6
+updated_at: '2026-08-07T15:10:05Z'
+image_source: https://raw.githubusercontent.com/Epiphany-QS/BUSI_Radiomics/HEAD/BUSI_Radiomics/docs/figures/pipeline_flow.svg
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# BUSI Radiomics — Breast Ultrasound Image Radiomics Analysis\n\n[![Python](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/)\n\
+  [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)\n[![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-orange.svg)](https://jupyter.org/)\n\
+  [![scikit-learn](https://img.shields.io/badge/sklearn-1.3%2B-red.svg)](https://scikit-learn.org/)\n\
+  [![XGBoost](https://img.shields.io/badge/XGBoost-2.0%2B-darkblue.svg)](https://xgboost.readthedocs.io/)\n\
+  \n---\n\n> **English** · [中文](#中文概述)\n\n## English\n\n### Overview\n\n**BUSI Radiomics** is an end-to-end\
+  \ machine learning pipeline for breast\nultrasound image classification using radiomics features. It\
+  \ covers the complete\nworkflow from PyRadiomics feature extraction to statistical analysis, machine\n\
+  learning modeling, external validation, and SHAP-based model interpretability.\n\nThe project uses the\
+  \ publicly available **BUSI dataset** (Baheya Hospital,\nCairo) with 647 images (210 malignant, 437\
+  \ benign) and the **BUS-UCLM dataset**\n(263 images) as an independent external validation cohort.\n\
+  \n### Pipeline\n\n![Pipeline](BUSI_Radiomics/docs/figures/pipeline_flow.svg)\n\n### Key Results\n\n\
+  | Model | CV AUC (5-fold) | AP | External Validation | Key Innovation |\n|-------|-----------------|-----|---------------------|----------------|\n\
+  | **Random Forest** | 0.909 ± 0.027 | 0.855 | — | MI top-10 + 5 mandatory features |\n| **XGBoost (v1)**\
+  \ | **0.932 ± 0.019** | **0.895** | ✓ | Sphericity binarization |\n| **XGBoost (v2)** | 0.931 ± 0.017\
+  \ | 0.894 | ✓ | + Entropy tertiarization |\n| **Logistic Regression** | — | — | — | Associative study\
+  \ (OR, VIF, BI-RADS) |\n\n> **\U0001F4CC Note**: The Logistic Regression model is designed for **clinical\n\
+  > association analysis** (Odds Ratios, VIF diagnostics), not for prediction.\n> Its 5 key features —\
+  \ Sphericity, PerimeterSurfaceRatio, Entropy, Minimum,\n> Range — are used as mandatory variables in\
+  \ the ML models.\n\n### Dataset\n\n| Dataset | Source | Samples | Classes | Usage |\n|---------|--------|---------|---------|-------|\n\
+  | **BUSI** | [Baheya Hospital, Cairo](https://www.kaggle.com/datasets/aryashah2k/breast-ultrasound-images-dataset)\
+  \ | 647 | Benign (437) / Malignant (210) / Normal (133) | Training + CV |\n| **BUS-UCLM** | [Universidad\
+  \ de Castilla-La Mancha](https://data.mendeley.com/datasets/7fvgj4wsp9/1) | 263 | Benign (173) / Malignant\
+  \ (90) | External Validation |\n\n> **⚠️ Raw images are NOT included in this repository** (263 MB).\n\
+  > Download the BUSI dataset from the link above and place it as\n> `../Dataset_BUSI/data_with_GT/` (a\
+  \ sibling directory to this repo),\n> or set the environment variable `BUSI_DATA_ROOT`.\n\nPre-extracted\
+  \ feature CSVs (`busi_radiomics_features.csv`, `processed_features.csv`)\nare included in `data/` so\
+  \ you can run the analysis notebooks directly without\nre-running feature extraction.\n\n### Project\
+  \ Structure\n\n```\nBUSI_Radiomics/\n├── README.md                          # This file\n├── requirements.txt\
+  \                   # Python dependencies\n├── .gitignore\n├── LICENSE                            #\
+  \ MIT\n│\n├── notebooks/                         # 7 cleaned Jupyter notebooks\n│   ├── 00_feature_extraction.ipynb\
+  \    # PyRadiomics extraction (BUSI)\n│   ├── 01_external_data_validation.ipynb  # PyRadiomics extraction\
+  \ (BUS-UCLM)\n│   ├── 02_missing_analysis.ipynb      # EDA: target distribution, missing values\n│ \
+  \  ├── 03_logistic.ipynb              # Statistical logistic regression\n│   ├── 04_RF.ipynb       \
+  \             # Random Forest + 5-fold CV\n│   ├── 05_XGBoost.ipynb               # XGBoost + 5-fold\
+  \ CV + SHAP\n│   └── 052_adj.ipynb                  # XGBoost variant (Entropy discretization)\n│\n\
+  ├── src/busi_radiomics/                # Modular Python package\n│   ├── config.py                 \
+  \     # Portable path resolution\n│   ├── feature_extraction.py          # PyRadiomics extraction pipeline\n\
+  │   ├── preprocessing.py               # Data loading, target encoding, discretization\n│   ├── statistics.py\
+  \                  # Univariate screening, correlation networks\n│   ├── evaluation.py             \
+  \     # ROC/PR/Calibration curve plotting\n│   ├── explainability.py              # SHAP analysis suite\n\
+  │   └── modeling/                      # Model implementations\n│       ├── feature_selection.py   \
+  \    # MI + mandatory feature selection\n│       ├── logistic.py                # Statsmodels GLM, VIF,\
+  \ OR tables\n│       ├── random_forest.py           # RF + 5-fold CV pipeline\n│       └── xgboost_model.py\
+  \           # XGBoost + 5-fold CV + external validation\n│\n├── scripts/\n│   ├── rebuild_notebooks.py\
+  \           # Notebook translation & cleaning\n│   ├── rebuild_notebooks_part2.py\n│   └── make_pipeline_diagram.py\
+  \       # Pipeline diagram generation (matplotlib)\n│\n├── data/                              # Pre-extracted\
+  \ CSVs (small files)\n│   ├── busi_radiomics_features.csv    # 647 × 100 (BUSI features)\n│   └── processed_features.csv\
+  \         # 263 × 98 (BUS-UCLM features + target)\n│\n├── results/                           # Generated\
+  \ figures\n│   ├── 01_target_distribution.png\n│   ├── 05_pvalue_comparison.png\n│   ├── 05b_effect_size_comparison.png\n\
+  │   ├── 08a_correlation_matrix.png\n│   ├── 09_radiomics_correlation_network.png\n│   └── shap_plots/\
+  \                    # SHAP beeswarm, bar, dependence, waterfall\n│\n└── docs/\n    ├── figures/pipeline_flow.svg\
+  \       # Hand-authored pipeline diagram\n    ├── PORTABILITY_NOTES.md            # Bilingual non-portable\
+  \ code report\n    └── ROADMAP.md                      # Development roadmap + branch strategy\n```\n\
+  \n### Notebook Guide\n\n| # | Notebook | Purpose | Runtime |\n|---|----------|---------|---------|\n\
+  | 00 | `00_feature_extraction` | Extract 97 pyradiomics features from BUSI images | ⏳ ~10 min |\n| 01\
+  \ | `01_external_data_validation` | Extract features from external BUS-UCLM dataset | ⏳ ~8 min |\n|\
+  \ 02 | `02_missing_analysis` | Exploratory data analysis: distribution, missing values | ⚡ Fast |\n\
+  | 03 | `03_logistic` | Statistical association study (logistic regression, OR, VIF) | ⚡ Fast |\n| 04\
+  \ | `04_RF` | Random Forest classifier with 5-fold CV | ⚡ ~2 min |\n| 05 | `05_XGBoost` | XGBoost +\
+  \ external validation + SHAP analysis | ⚡ ~2 min |\n| 052 | `052_adj` | XGBoost variant with Entropy\
+  \ tertiarization | ⚡ ~2 min |\n\n> **Recommended flow**: Run 00 first (or skip if CSVs already exist)\
+  \ → 02 (EDA) →\n> 03 (statistical context) → 04 + 05 (ML models) → 052 (improved variant).\n\n### Environment\
+  \ Setup\n\n**Prerequisites**: Python 3.12+\n\n```bash\n# Clone this repository\ngit clone <repo-url>\n\
+  cd BUSI_Radiomics\n\n# Install dependencies\npip install -r requirements.txt\n\n# Verify installation\n\
+  python3 -c \"import pandas, numpy, sklearn, xgboost, shap; print('OK')\"\n```\n\n**Using conda** (recommended\
+  \ for radiomics packages):\n```bash\nconda create -n busi_rad python=3.12\nconda activate busi_rad\n\
+  pip install -r requirements.txt\n```\n\n**Using uv** (fast):\n```bash\nuv venv\nsource .venv/bin/activate\n\
+  uv pip install -r requirements.txt\n```\n\n### How to Run\n\n#### Option A: Jupyter Notebooks (recommended\
+  \ for exploration)\n\n```bash\njupyter notebook notebooks/\n```\n\nStart with `02_missing_analysis.ipynb`\
+  \ for EDA, then proceed to the modeling notebooks.\n\n#### Option B: Python scripts (for production\
+  \ / batch processing)\n\n```python\nfrom busi_radiomics.config import FEATURES_CSV, EXTERNAL_CSV\nfrom\
+  \ busi_radiomics.preprocessing import load_busi_features, encode_target, split_features_target\nfrom\
+  \ busi_radiomics.modeling.xgboost_model import xgb_cross_validate, external_validate\n\n# Load data\n\
+  df = encode_target(load_busi_features(FEATURES_CSV))\nX, y = split_features_target(df)\n\n# Run XGBoost\
+  \ CV\nresults = xgb_cross_validate(X, y)\nprint(f\"XGBoost CV AUC: {results['mean_auc']:.4f} ± {results['std_auc']:.4f}\"\
+  )\n\n# External validation\ndf_ext = pd.read_csv(EXTERNAL_CSV, encoding='utf-8-sig')\ny_true, y_proba\
+  \ = external_validate(results['worst_fold'], df_ext)\n```\n\n### Results\n\n#### Exploratory Data Analysis\n\
+  \n![Target Distribution](BUSI_Radiomics/results/01_target_distribution.png)\n\n*The dataset is severely\
+  \ imbalanced: 437 benign vs 210 malignant (ratio 0.48).\nClass weights and `scale_pos_weight` were used\
+  \ to address this in ML models.*\n\n#### Statistical Analysis (Logistic Regression)\n\n![Effect Size\
+  \ Comparison](BUSI_Radiomics/results/05b_effect_size_comparison.png)\n\n*Effect sizes (Cohen's d) for\
+  \ numeric features. Five features showed both\nstatistical significance (p < 0.05 FDR-corrected) and\
+  \ clinically meaningful\neffect sizes (|d| > 0.1).*\n\n#### Correlation Network\n\n![Correlation Network](BUSI_Radiomics/results/09_radiomics_correlation_network.png)\n\
+  \n*High-correlation network (|r| ≥ 0.8). MajorAxisLength and MinorAxisLength\nare strongly correlated\
+  \ with Perimeter, PixelSurface, and MeshSurface.\nClinical interpretation drove the final variable selection.*\n\
+  \n#### Model Evaluation\n\n![SHAP Beeswarm](BUSI_Radiomics/results/shap_plots/shap_beeswarm.png)\n\n\
+  *SHAP beeswarm plot on the external validation set (n=263). Features are ranked\nby mean |SHAP|. MinorAxisLength,\
+  \ Sphericity, and Entropy are the top contributors\nto the model's prediction.*\n\n![SHAP Bar](BUSI_Radiomics/results/shap_plots/shap_bar_importance.png)\n\
+  \n*Feature importance based on mean |SHAP value|. The top 5 features account for\nthe majority of the\
+  \ model's predictive power.*\n\n### Portability\n\nAll hardcoded Windows paths, Chinese fonts, and environment-specific\
+  \ constants\nfrom the original notebooks have been addressed. See\n[docs/PORTABILITY_NOTES.md](BUSI_Radiomics/docs/PORTABILITY_NOTES.md)\
+  \ for a detailed catalogue.\n\n### Roadmap\n\nSee [docs/ROADMAP.md](BUSI_Radiomics/docs/ROADMAP.md)\
+  \ for the development plan.\nKey upcoming items:\n- [ ] DCA (Decision Curve Analysis) for clinical utility\n\
+  - [ ] Hyperparameter tuning (Optuna / GridSearchCV)\n- [ ] Deep learning branch (CNN/ViT on raw images)\n\
+  - [ ] Multi-class classification (Benign vs Malignant vs Normal)\n- [ ] CI/CD + unit tests\n\n### Branch\
+  \ Strategy\n\n| Branch | Purpose |\n|--------|---------|\n| `main` | Stable releases |\n| `dev` | Active\
+  \ development integration |\n| `feature/*` | Isolated feature development |\n\n### Citation\n\nIf you\
+  \ use this code in your research, please cite:\n\n```bibtex\n@misc{busi_radiomics,\n  title   = {BUSI\
+  \ Radiomics — Breast Ultrasound Image Radiomics Analysis},\n  author  = {},\n  year    = {2025},\n \
+  \ url     = {}\n}\n```\n\n### License\n\nMIT — see [LICENSE](LICENSE).\n\n---\n\n## 中文概述\n\n### 项目简介\n\
+  \n**BUSI Radiomics** 是一个面向乳腺超声影像的端到端机器学习流水线，\n涵盖 PyRadiomics 特征提取、探索性数据分析（EDA）、统计分析（Logistic 回归）、\n\
+  机器学习建模（Random Forest / XGBoost）、外部验证以及基于 SHAP 的模型可解释性分析。\n\n使用公开的 **BUSI 数据集**（埃及开罗 Baheya 医院，647 张图像：210\
+  \ 恶性、437 良性）和\n**BUS-UCLM 数据集**（西班牙，263 张图像）作为独立外部验证队列。\n\n### 核心结果\n\n| 模型 | 5折CV AUC | AP | 外部验证 |\
+  \ 关键创新 |\n|------|-----------|-----|----------|----------|\n| **Random Forest** | 0.909 ± 0.027 | 0.855\
+  \ | — | MI 前10 + 5个必选特征 |\n| **XGBoost (v1)** | **0.932 ± 0.019** | **0.895** | ✓ | Sphericity 二值化 |\n\
+  | **XGBoost (v2)** | 0.931 ± 0.017 | 0.894 | ✓ | + Entropy 三分类 |\n| **Logistic 回归** | — | — | — | 关联性研究（OR、VIF、BI-RADS）\
+  \ |\n\n### 教程 Notebook 指南\n\n| # | Notebook | 目的 |\n|---|----------|------|\n| 00 | `00_feature_extraction`\
+  \ | 从 BUSI 超声图像中提取 97 个 PyRadiomics 特征 |\n| 01 | `01_external_data_validation` | 从 BUS-UCLM 外部数据集提取特征\
+  \ |\n| 02 | `02_missing_analysis` | EDA：目标分布、缺失值分析 |\n| 03 | `03_logistic` | 统计分析：Logistic 回归、OR 值、VIF\
+  \ 共线性诊断 |\n| 04 | `04_RF` | 随机森林 + 5 折交叉验证 |\n| 05 | `05_XGBoost` | XGBoost + 外部验证 + SHAP 可解释性分析 |\n\
+  | 052 | `052_adj` | XGBoost 改进版（Entropy 三分类工程） |\n\n### 代码可移植性\n\n原始代码中所有硬编码的 Windows 路径、中文字体、环境特定常量均已处理。\n\
+  详见 [docs/PORTABILITY_NOTES.md](BUSI_Radiomics/docs/PORTABILITY_NOTES.md)（中英双语）。\n\n### 后续开发\n\n参见 [docs/ROADMAP.md](docs/ROADMAP.md)。\n\
+  短期计划：DCA 决策曲线、超参数调优、深度学习分支、多分类模型。\n\n---\n\n> *This project follows the tutorial style of [ml4health](https://github.com/IILab-Resource/ml4health)\n\
+  > and is intended as a replicable, well-documented reference for medical ML research.*\n"

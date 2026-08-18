@@ -1,0 +1,38 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Wangwangjiang0608/ut-endomri-segmentation-radiomics-reliability
+url: https://github.com/Wangwangjiang0608/ut-endomri-segmentation-radiomics-reliability
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-18T13:27:15Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Interrater Variability in Ovarian Segmentation and Radiomic Feature Reliability in\
+  \ Endometriosis MRI\n\nSecondary analysis of the public UT-EndoMRI dataset (Dataset 1, D1_MHS) quantifying\
+  \ inter-rater segmentation variability across the uterus, ovary, and endometrioma, and its impact on\
+  \ 851 radiomic features per structure. The manuscript is reported with reference to GRRAS; the CLEAR\
+  \ and STROBE checklists accompany the submission.\n\n本仓库仅包含分析代码、配置、锁定数据和结果表格；**原始 MRI 影像和分割掩膜不在本仓库内**（属于公开数据集\
+  \ UT-EndoMRI，非商业用途，使用时须引用源数据论文）。\n\n## Repository structure\n\n```text\nanalysis_code/          核心分析代码（Python\
+  \ 包 endo_disagree）与配置\n  config.yaml           技术保留/排除决策的唯一配置源\n  pyproject.toml        Python 包定义\n\
+  \  uv.lock               依赖锁定文件\n  pyradiomics_parameters.json    PyRadiomics 完整参数记录\n  software_versions.json\
+  \        软件版本清单\n  README_复现分析.md            复现说明（中文）\n  src/endo_disagree/    分析流水线、指标、统计、影像组学、绘图代码\n\
+  \  tests/                单元测试\ndata/                   锁定绘图输入数据（CSV）\nresults/\n  tables/          \
+  \     论文表格对应的汇总 CSV（Table S1–S11 等）\n  machine_readable/     机器可读补充数据（文件清单、QC 记录、特征级 ICC 等）\n  locked/\
+  \               锁定结果汇总（xlsx 与 md）\nfigure_scripts/         正文 Figure 1–6 与补充 Figure S1–S3 的可复现 R 脚本\n\
+  ```\n\n## Reproduction\n\n### Python analysis\n\nPython 3.11 环境，建议使用 `uv`：\n\n```bash\ncd analysis_code\n\
+  uv sync            # 或 pip install -e .\npython -m pytest -q tests\npython -m endo_disagree.pipeline\
+  \ --config config.yaml\n```\n\n`config.yaml` 中的 `technical_pair_qc` 是保留/排除决策的唯一配置源。发布的掩膜已在源数据集中接受专家审阅；本研究的决策仅针对技术可比性（坐标框架、视野）。若后续新增独立裁决并改变保留/排除决策，应修改该配置并重跑全部分析，不得手工修改结果数字。\n\
+  \n### Figures\n\n正文 Figure 1–3、5–6 与补充 Figure S1–S3 可由 `figure_scripts/` 中的 R 脚本直接复现（仅读取 `data/` 中的锁定\
+  \ CSV，不重新计算统计结果）。Figure 4 使用源数据集 MRI 影像与掩膜，原始 NIfTI 不随本仓库发布，故未提供该图脚本。\n\n## Data notes\n\n- 源数据：UT-EndoMRI（Dataset\
+  \ 1），公开数据集，非商业科研用途，使用须引用源数据论文。\n- `data/` 与 `results/` 中的 CSV 均为锁定输出，保留小数点精度高于论文正文表格。\n- 缺失文件在主分析中按“未知”处理；`empty_mask`\
+  \ 情景是明确标注的未经验证编码，不得解释为结构临床缺失。\n\n## License\n\n代码许可待作者确认后补充（建议 MIT）。数据的使用受 UT-EndoMRI 数据集自身条款约束。\n"

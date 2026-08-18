@@ -1,0 +1,100 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: vincentho7/3D-Tumor-tracking
+url: https://github.com/vincentho7/3D-Tumor-tracking
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-10-25T22:08:36Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Tumor Change Tracking from 3D Medical Scans\n\nAuthors: noe.topeza vincent.thong maxime.boy-arnould\n\
+  \n## Project Objective\n\nThe goal of this project is to analyze and track changes in a brain tumor\
+  \ using two medical scans of the same patient taken at different dates.\nThis involves image registration,\
+  \ segmentation, and 3D visualization to observe tumor evolution over time.\n\n## Team Contributions\n\
+  | Task | Contributor(s) |\n|------|----------------|\n| Image Registration | Vincent |\n| Segmentation\
+  \ | Noé |\n| Analysis & Visualization (VTK) | Maxime, Noé, Vincent |\n\n---\n\n# Usage\n\nRun the pipeline\
+  \ with default settings: ```python Pipeline.py ```\n\nTo specify custom inputs and seed: ``` python\
+  \ Pipeline.py file1 file2 seed ```\n\nfile1, file2 are input scans (NRRD format) and seed is seed value\
+  \ for segmentation\n\nBy default, the script runs on test images using a predefined segmentation seed.\n\
+  \n--- \n\n# Technical Details\n## Registration\n\nThe following optimizer parameters were used during\
+  \ experimentation: \n- Learning rate: 0.4 or 0.1\n\n- Minimum step length: 0.001 or 0.01\n\n- Iterations:\
+  \ 200 or 50\n\nOur Best Result are with TranslationTransform\n\n- The scans primarily required simple\
+  \ translations along the three axes.\n- This transform provided the best metric performance and the\
+  \ simplest setup for 3D NRRD data (no centering needed).\n\n### Tested Transforms\n\n| Transform   \
+  \               | Result / Issue                                                                   |\n\
+  | -------------------------- | --------------------------------------------------------------------------------\
+  \ |\n| **BSplineTransform**       | Implementation error: `ComputeJacobianWithRespectToPosition not\
+  \ yet implemented` |\n| **Similarity3DTransform**  | Very long computation times; poor metric performance\
+  \                             |\n| **AffineTransform**        | Fast but results similar to Similarity3D\
+  \ despite hyperparameter tuning           |\n| **CompositeTransform**     | Tested but no improvement\
+  \                                                        |\n| **Rigid3DTransform**       | Required\
+  \ value matrices; results remained poor                                   |\n| **VersorRigid3DTransform**\
+  \ | Easier to use but still underperformed                                           |\n\n\n#### Similarity\
+  \ Metrics\n\n- MattesMutualInformationImageToImageMetricv4\n- MeanSquaresImageToImageMetricv4\n\n####\
+  \ Optimizers\n\n- RegularStepGradientDescentOptimizerv4 (best results)\n- GradientDescentOptimizerv4\n\
+  \n#### Registration Pipeline\n\nImplemented with ImageRegistrationMethodv4:\n\n```python\nregistration.SetNumberOfLevels(1)\n\
+  registration.SetShrinkFactorsPerLevel([2, 1, 1])\nregistration.SetSmoothingSigmasPerLevel([5, 1, 0])\n\
+  ```\n\n\n\nThese settings improved metric values significantly — from ~5800 down to ~1400 for the TranslationTransform.\n\
+  \n## Segmentation\n\nWe used ITK’s ConnectedThresholdImageFilter algorithm for segmentation.\nAlthough\
+  \ we wanted to test other segmentation methods, most ITK filters failed to process 3D images.\n\nNote\
+  \ (by Noé): It would be helpful if ITK’s documentation specified which algorithms support 3D images.\n\
+  \n## Visualization\n\nFor rendering, we used:\n\nvtkPolyDataMapper + vtkContourFilter for surface modeling\n\
+  → produced smoother, more aesthetic results than vtkSmartVolumeMapper\n\nThe VTK filters were flexible\
+  \ and easy to chain for 3D image processing.\n(Developed by Noé & Maxime)\n\n## Results\n\nSuccessfully\
+  \ segmented and visualized the main tumor in the right frontal lobe.\n\nObserved clear size variations\
+  \ between the two scans.\n\nSmaller white regions in the brain were ambiguous — possibly too small to\
+  \ confirm as tumors.\n\n## Future Improvements\n\nAdd a visualization of the registration optimization\
+  \ process\n\nInclude detection of secondary tumors\n\nIntegrate 3D Slicer for advanced visualization\
+  \ and analysis\n\n## Challenges and Limitations ( in 2023 ) \n\n- Limited ITK & VTK Documentation (2023)\
+  \ and Python examples\n\n- Lack of clarity on rotation and translation parameters in transforms\n\n\
+  - Several ITK functions not implemented in Python \n\n- Ambiguity in defining what qualifies as a tumor\n\
+  \n\n\n\n\n\n--- \nFR VERSION\n# Mini projet ITK/VTK : étude longitudinale de l'évolution d'une tumeur\
+  \ \n\n## Objectif du projet:\n\nL'objectif de projet est de réaliser le suivi des changements d'une\
+  \ tumeur à partir de deux scans effectués sur un même patient à des dates différentes.\n\n## Répartition\
+  \ des Réalisations\n- Recalage: Vincent \n- Segmentation: Noé\n- Analyse et Visualisation avec VTK:\
+  \ Maxime, Noé, Vincent\n\n## Utilisation:\nLancer le fichier Pipeline.py sans argument le lancera par\
+  \ défaut sur les images de test, avec la seed par defaut pour la segmentation.\nPour modifier les inputs:\
+  \ `python Pipeline.py file1 file2 seed`\n\n## Choix techniques:\n\n### Recalage:\n\n#### Transformation\
+  \ testés :  \nLes paramètes de l'optimiseurs pour comparer les tests sont : Learning rate 4/10, Minimum\
+  \ Steplength 0.001/0.01, Iteration 200 ou 50.\n\n- TranslationTransform: les images nécessitaient de\
+  \ simples translations selon les différents axes. De plus Les résultats étaient meilleurs selon les\
+  \ différentes metriques avec cette transformation. L'utilisation semblait aussi plus facile que les\
+  \ autres pour les scans nrrd 3D. ( il nécessitait pas de centrage)\n\n- Autres transformations testées:\n\
+  \  - BSplineTransform : une erreur d'implémentation apparaît concernant l'implementation jacobienne(ComputeJacobianWithRespectToPosition\
+  \ not yet implemented)\n  - Similarity 3D Transform: les temps de calcul étaient longs, et les résultats\
+  \ malgré la modification des paramètres n'étaientt pas probants avec les deux métriques utilisés.\n\
+  \  - AffineTransform : Temps d'execution rapide mais les résultats sont les même que Similarity3D malgrés\
+  \ le changement des hyperparamètres ou l'ajout de centrage.\n  - CompositeTransform\n  - Rigide3Dtransform\
+  \ : nécessite une matrice de valeurs, ayant testés plusieurs, nous n'avons pas de bons résultats.\n\
+  \  - VersorRigid3DTransform : plus simple à utiliser que le précédent mais toujours de mauvais résultats.\n\
+  \n\n#### Métriques de similarité utilisés:\n-   MattesMutualInformationImageToImageMetricv4\n-   MeanSquaresImageToImageMetricv4\n\
+  #### Optimiseur:\n- RegularStepGradientDescentOptimizerv4 \n- Autres :  GradientDescentOptimizerv4\n\
+  #### Pipeline de recalage : ImageRegistrationMethodv4\n-  registration.SetNumberOfLevels(1) :  l'augmentation\
+  \ du nombre de niveau diminue la metric value, la qualité du recalage, et sa vitesse.\n-  SetShrinkFactorsPerLevel([2,\
+  \ 1, 1]) && registration.SetSmoothingSigmasPerLevel([5, 1, 0]): ont beaucoup amélioré la metric value\n\
+  on passe de ~5800 à 1400 pour TranslationTransform.\n\n### Segmentation:\n\nOn utilise l'algorythme\
+  \ de segmentation d'itk ConnectedThresholdImageFilter.\nOn aurait beaucoup aimer utiliser d'autre algo\
+  \ de segmentation mais tous les autres refusaient de fonctionner avec des images 3D. (Ce serais vraiment\
+  \ pratique que la documentation précise avec quelle nombre de dimensions les algos fonctionnent) - Par\
+  \ Noé\n\n\n### Visualisation:\nOn utilise la modélisation vtkPolyDataMapper + vtkContourFilter, plus\
+  \ esthétique que vtkSmartVolumeMapper. Il est plutôt facile de manier les différents filtres de traitement\
+  \ d'image. - Par Noé et Maxime\n\n## Résultats:\n\nNous avons bien réussi à segmenter et modéliser la\
+  \ principale tumeur dans le lobe frontale du côté droit, ainsi que son changement de taille.\nMais nous\
+  \ n'étions pas sûre que les autres tâches blanches présentes dans le cerveau étaient bien des tumeurs\
+  \ vu leurs faibles tailles.\nPiste d'amélioration de ce projet : ajouter un moyen de visualiser l'optimisation\
+  \ du recalage ; ajouter les autres tumeurs, utiliser un 3DSlicer.\n\nPS: Après quelque recherche, il\
+  \ semblerait que la tache noir soit simplement les tissu mort. Et que les taches blanches soit les tumeurs.\
+  \ Il serait bien de le précisier au préalable dans les consignes.\n\n## Inconvénients et difficultés\
+  \ lors de ce projet:\n\n- Le manque de documentation et d'exemples en python;\n- le manque de clarté\
+  \ sur les paramètres rotation et translation des transformations;\n- les fonctions qui sont pas implémentés;\n\
+  - La précision de ce qui représente une tumeur ou non\n\n"

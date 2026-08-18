@@ -1,0 +1,108 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: leerani/3D-Brain-MRI-Tumor-Segmentation-Pipeline
+url: https://github.com/leerani/3D-Brain-MRI-Tumor-Segmentation-Pipeline
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-31T23:57:04Z'
+image_source: https://raw.githubusercontent.com/leerani/3D-Brain-MRI-Tumor-Segmentation-Pipeline/HEAD/assets/pipeline_overview.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# 3D Brain MRI Tumor Segmentation Pipeline (BraTS)\n\n## 1. Project Overview\n\nThis\
+  \ project implements a **3D medical image segmentation pipeline** for brain tumor segmentation using\
+  \ multi-modal MRI data from the BraTS dataset.\n\nThe goal of this project was not only to train a segmentation\
+  \ model, but to build and analyze a practical 3D segmentation workflow:\n\n- loading multi-modal 3D\
+  \ MRI volumes\n- converting BraTS labels into binary whole-tumor masks\n- training a 3D U-Net with patch-based\
+  \ sampling\n- evaluating full-volume predictions with sliding-window inference\n- analyzing false positives\
+  \ through prediction threshold tuning\n- visualizing prediction masks against ground truth\n\nThis project\
+  \ was approached as a **pipeline design, evaluation, and optimization task**, rather than a simple model\
+  \ implementation.\n\nThe final pipeline was validated on a held-out test set and achieved Dice 0.6366\
+  \ and IoU 0.4882 for binary whole-tumor segmentation.\n\n---\n\n## 2. Problem Definition\n\nBrain tumor\
+  \ segmentation from MRI is challenging because:\n\n- MRI data is volumetric and must be handled in 3D\n\
+  - different MRI modalities provide complementary tumor information\n- tumor boundaries can be ambiguous\n\
+  - tumor regions occupy a much smaller area than background tissue\n- prediction masks can easily become\
+  \ over-segmented\n\nIn this project, the task was simplified into:\n\n> **Binary whole-tumor segmentation\
+  \ from multi-modal 3D MRI volumes**\n\nAll non-zero BraTS tumor labels were converted into a single\
+  \ tumor class:\n\n```python\nlabel > 0  -> tumor\nlabel == 0 -> background\n```\n\n---\n\n## 3. Dataset\
+  \ and Input Design\n\n### 3.1 Dataset\n\n- Dataset: BraTS 2024 training data subset\n- Final experiment\
+  \ setup:\n  - 100 selected cases\n  - 80 training cases\n  - 10 validation cases\n  - 10 held-out test\
+  \ cases\n\nEach case includes four MRI modalities and one segmentation label:\n\n- T1n\n- T1c\n- T2w\n\
+  - T2-FLAIR\n- segmentation label\n\n---\n\n### 3.2 Multi-modal Input Strategy\n\nThe four MRI modalities\
+  \ were combined into a 4-channel input volume:\n\n```text\nInput = [T1n, T1c, T2w, T2-FLAIR]\n```\n\n\
+  Each modality provides different information:\n\n| Modality | Role |\n|---|---|\n| T1n | anatomical\
+  \ structure |\n| T1c | contrast-enhancing tumor information |\n| T2w | fluid and tissue contrast |\n\
+  | T2-FLAIR | edema and tumor-related abnormal regions |\n\n---\n\n## 4. Pipeline Design\n\n## Pipeline\
+  \ Overview\n\n![Pipeline Overview](assets/pipeline_overview.png)\n\n### 4.1 Preprocessing\n\nThe preprocessing\
+  \ pipeline was implemented with MONAI transforms:\n\n- NIfTI volume loading\n- channel-first conversion\n\
+  - channel-wise intensity normalization\n- foreground cropping\n- tensor conversion\n\nFor training,\
+  \ patch-based sampling was used:\n\n```text\nPatch size = 96 × 96 × 96\n```\n\nThis was necessary because\
+  \ full 3D MRI volumes are too large to train directly under GPU memory constraints.\n\n---\n\n### 4.2\
+  \ Training Strategy\n\nPatch-based training was used with positive/negative sampling so that the model\
+  \ could learn from both tumor-containing and background regions.\n\nTraining augmentation included:\n\
+  \n- random flip\n- random 90-degree rotation\n\nThe model was trained as a binary segmentation model\
+  \ using whole-tumor masks.\n\n---\n\n## 5. Model Architecture\n\nThe model used in this project was\
+  \ a MONAI 3D U-Net.\n\n| Item | Setting |\n|---|---|\n| Model | 3D U-Net |\n| Framework | MONAI / PyTorch\
+  \ |\n| Input channels | 4 |\n| Output channels | 1 |\n| Task | Binary whole-tumor segmentation |\n|\
+  \ Inference | Sliding-window inference |\n\nThe 3D U-Net was selected because it is a strong and practical\
+  \ baseline for medical image segmentation tasks.\n\n---\n\n## 6. Training Setup\n\nThe final training\
+  \ setup used:\n\n- Loss: DiceCE Loss\n- Optimizer: Adam\n- Learning rate scheduler: ReduceLROnPlateau\n\
+  - Patch size: 96 × 96 × 96\n- Validation method: full-volume sliding-window inference\n- Prediction\
+  \ activation: sigmoid\n- Final prediction threshold: 0.95\n\nThe loss function used sigmoid internally\
+  \ during training. During validation and evaluation, sigmoid was applied explicitly before thresholding\
+  \ the prediction mask.\n\n---\n\n## 7. Evaluation Method\n\nEvaluation was performed on the validation\
+  \ split using full-volume sliding-window inference.\n\nMetrics:\n\n- Dice Score\n- IoU\n\nThe evaluation\
+  \ pipeline used:\n\n```text\nmodel logits -> sigmoid -> threshold -> binary prediction mask\n```\n\n\
+  Because the model initially produced over-segmented masks, prediction thresholds were compared on the\
+  \ validation set.\n\n---\n\n## 8. Quantitative Results\n\n### 8.1 Threshold Tuning\n\nThe model initially\
+  \ produced prediction masks that were larger than the ground truth masks. To reduce false positives,\
+  \ sigmoid prediction thresholds were compared.\n\n| Prediction Threshold | Dice Score | IoU |\n|---:|---:|---:|\n\
+  | 0.85 | 0.6632 | 0.5114 |\n| 0.90 | 0.6762 | 0.5255 |\n| 0.95 | **0.6830** | **0.5320** |\n\nThe best\
+  \ validation result was achieved with a threshold of **0.95**.\n\n---\n\n### 8.2 Final Result\n\n###\
+  \ Validation Result\n\nTask       : BraTS Whole Tumor Binary Segmentation\nCases      : 10\nThreshold\
+  \  : 0.95\nDice       : 0.6830\nIoU        : 0.5320\n\n### Held-out Test Result\n\nTask       : BraTS\
+  \ Whole Tumor Binary Segmentation\nCases      : 10\nThreshold  : 0.95\nDice       : 0.6366\nIoU    \
+  \    : 0.4882\n\n---\n\n## 9. Qualitative Results\n\nThe model was visualized using four panels:\n\n\
+  1. MRI input slice\n2. Ground truth mask\n3. Prediction mask\n4. Prediction overlay on MRI\n\nExample\
+  \ layout:\n\n```text\nMRI (T2-FLAIR) | Ground Truth | Prediction | Overlay\n```\n\nQualitative observations:\n\
+  \n- the model captures the main tumor region\n- predicted masks generally overlap with the ground truth\n\
+  - boundary details are still less precise\n- irregular tumor shapes remain challenging\n\nAdd result\
+  \ images here:\n\n### Case 1\n\n![Case1](assets/case1.png)\n\n### Case 2\n\n![Case2](assets/case2.png)\n\
+  \n### Case 3\n\n![Case3](assets/case3.png)\n\n---\n\n## 10. Error Analysis\n\n### 10.1 Initial Problem:\
+  \ Over-segmentation\n\nDuring evaluation, the model tended to predict tumor regions too broadly.\n\n\
+  This was confirmed by comparing predicted voxel counts with ground truth voxel counts:\n\n```text\n\
+  predicted tumor voxels > ground truth tumor voxels\n```\n\nThis caused many false positives and reduced\
+  \ IoU.\n\n---\n\n### 10.2 Threshold Analysis\n\nLower thresholds produced wider prediction masks and\
+  \ increased false positives.\n\nHigher thresholds reduced the predicted mask size and improved Dice/IoU.\n\
+  \nThe best result was obtained at threshold 0.95, indicating that the model required a stricter decision\
+  \ threshold to reduce over-segmentation.\n\n---\n\n## 11. Strengths\n\n- implemented a complete 3D medical\
+  \ image segmentation pipeline\n- used 4-channel multi-modal MRI input\n- applied patch-based 3D U-Net\
+  \ training\n- evaluated full 3D volumes with sliding-window inference\n- analyzed prediction behavior\
+  \ using voxel counts and threshold tuning\n- produced both quantitative metrics and qualitative visualizations\n\
+  \n---\n\n## 12. Limitations\n\n- the task was simplified to binary whole-tumor segmentation\n- tumor\
+  \ sub-regions were not modeled separately\n- the model still struggles with fine boundaries and irregular\
+  \ tumor shapes\n- validation was performed on a subset of the full dataset\n- threshold tuning was selected\
+  \ on the validation set and evaluated on a held-out test set\n\n---\n\n## 13. Future Work\n\nPossible\
+  \ improvements include:\n\n- training with more BraTS cases\n- multi-class segmentation for tumor sub-regions\n\
+  - experimenting with stronger architectures such as Attention U-Net or UNETR\n- adding 3D connected\
+  \ component post-processing\n- improving probability calibration\n- optimizing inference speed and memory\
+  \ usage\n\n---\n\n## 14. Key Takeaways\n\nThis project showed that 3D medical image segmentation requires\
+  \ more than simply training a model.\n\nImportant lessons:\n\n- multi-modal input design is critical\
+  \ for MRI segmentation\n- patch-based training enables 3D learning under GPU memory limits\n- full-volume\
+  \ sliding-window inference is necessary for realistic validation\n- Dice/IoU should be evaluated on\
+  \ full 3D volumes, not only selected slices\n- threshold tuning can reveal and reduce false positive\
+  \ behavior\n- qualitative visualization is important for understanding segmentation errors\n\n---\n\n\
+  ## 15. Conclusion\n\nThis project demonstrates a complete MONAI-based 3D brain tumor segmentation pipeline.\n\
+  \nThe final pipeline includes:\n\n- multi-modal MRI loading\n- binary whole-tumor label conversion\n\
+  - patch-based 3D U-Net training\n- full-volume sliding-window inference\n- Dice/IoU validation\n- threshold-based\
+  \ false positive analysis\n- qualitative result visualization\n\nFinal Results\n\nValidation:\n> **Dice\
+  \ 0.6830 / IoU 0.5320**\n\nHeld-out Test:\n> **Dice 0.6366 / IoU 0.4882**\n\nThe main contribution of\
+  \ this project is not only the final score, but the process of building, evaluating, debugging, and\
+  \ improving a practical 3D medical image segmentation pipeline."

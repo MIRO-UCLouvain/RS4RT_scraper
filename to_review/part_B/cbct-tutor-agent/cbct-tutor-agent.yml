@@ -1,0 +1,53 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: daiyu-lihua/cbct-tutor-agent
+url: https://github.com/daiyu-lihua/cbct-tutor-agent
+platform: github
+description: GOAI competition
+license: MIT
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-08-13T12:47:13Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# 牙影智学 CBCT Tutor Agent\n\n本项目是一个面向 CBCT 阅片教学的规则化 Demo。当前版本采用“结构化选项选择”流程：学生选择病例后，逐个完成待检区域观察参数，系统检查是否完成必检区域和必填参数，并在提交后显示校验结果与标准答案。\n\
+  \n当前项目不连接真实患者数据，不输出临床诊断或治疗建议。`data/demo-case.json` 为模拟教学病例。\n\n## 当前功能\n\n- 单页 Streamlit 工作台：病例选择、待检区域显示、关键图提示、结构化参数选择、提交校验、标准答案显示。\n\
+  - `get_case_evidence(case_id, region_code)`：按病例和区域返回关键图路径、观察提示和 evidence ID。\n- `validate_report(case_id,\
+  \ draft)`：检查结构化观察结果的完整性和合法性。\n- `retrieve_teaching_note(topic)`：从病例内置教学材料中检索短知识片段。\n- 页面状态清理：通过 `APP_STATE_VERSION`\
+  \ 清理旧版 Streamlit 状态，避免旧校验结果残留。\n\n## 项目结构\n\n```text\ncbct-tutor-agent/\n  app/\n    app.py\n    helpers_app.py\n\
+  \  data/\n    demo-case.json\n  docs/\n    data_sources.md\n    disclaimer.md\n    licenses.md\n   \
+  \ task-board.md\n  src/\n    evidence.py\n    validate.py\n    retrieve.py\n    helpers.py\n  tests/\n\
+  \    test_evidence.py\n  README.md\n```\n\n## 运行页面\n\n在 `cbct-tutor-agent` 目录下运行：\n\n```powershell\n\
+  python -m streamlit run app\\app.py --server.address 127.0.0.1 --server.port 8502 --server.headless\
+  \ true\n```\n\n浏览器打开：\n\n```text\nhttp://127.0.0.1:8502\n```\n\n如果页面显示旧状态，刷新浏览器页面。当前页面状态版本为 `structured-options-v7`。\n\
+  \n## 页面流程\n\n1. 左侧侧边栏选择病例，初始为空。\n2. 选择病例后，左侧显示病例名称和待检区域中文名。\n3. 右侧按区域显示工作台模块。\n4. 每个区域模块包含关键图提示、区域状态、结构化观察参数和观察建议。\n\
+  5. “显示观察建议”按钮只负责展开内容，展开后不再隐藏。\n6. 点击“确认提交”后：\n   - 若存在空白参数，不提交，并标红缺失字段标题；\n   - 若所有参数已选择，直接冻结选项并显示校验结果。\n\
+  7. 提交后可点击“显示标准答案”查看病例标准答案。\n\n## 数据文件\n\n当前病例文件：\n\n```text\ndata/demo-case.json\n```\n\n主要字段：\n\n-\
+  \ `case_id`：病例 ID。\n- `required_regions`：必检区域列表。\n- `region_observation_schema`：每个区域的结构化参数和选项。\n- `evidence`：每个区域对应的关键图路径、观察建议和\
+  \ evidence ID。\n- `teaching_notes`：教学知识片段，供 `retrieve_teaching_note` 检索。\n- `gold_report`：当前病例的教师标准报告答案。\n\
+  - `validator_rules`：当前启用的校验规则。\n\n## 工具接口\n\n### get_case_evidence\n\n位置：\n\n```python\nfrom src.evidence\
+  \ import get_case_evidence\n```\n\n功能：\n\n根据 `case_id` 和 `region_code` 返回当前教学病例中该区域的证据卡。\n\n示例：\n\n\
+  ```python\nget_case_evidence(\"demo-case-b\", \"mandibular_canal_demo\")\n```\n\n常见返回内容：\n\n- `evidence_id`\n\
+  - `region_code`\n- `asset_uri`\n- `asset_exists`\n- `teaching_prompt`\n- `source`\n- `errors`\n- `warnings`\n\
+  \n### validate_report\n\n位置：\n\n```python\nfrom src.validate import validate_report\n```\n\n功能：\n\n\
+  当前版本用于校验结构化观察结果，不再校验自由文本报告草稿。它主要检查：\n\n- 必检区域是否存在；\n- 区域状态是否为允许值；\n- 区域状态是否仍为未评估；\n- 每个区域参数是否非空；\n-\
+  \ 参数值是否属于该字段允许选项。\n\n示例：\n\n```python\nvalidate_report(\"demo-case-b\", draft)\n```\n\n当前 `draft` 结构：\n\
+  \n```python\n{\n    \"case_id\": \"demo-case-b\",\n    \"region_states\": {\n        \"tooth_region_demo\"\
+  : {\n            \"status\": \"assessed\",\n            \"parameters\": {\n                \"laterality\"\
+  : \"right\"\n            }\n        }\n    }\n}\n```\n\n说明：\n\n当前 `validate_report` 还没有进行“学生选择 vs 标准结构化答案”的医学教学比对。后续更新病例标准答案后，可将它升级为结构化答案校验器。\n\
+  \n### retrieve_teaching_note\n\n位置：\n\n```python\nfrom src.retrieve import retrieve_teaching_note\n\
+  ```\n\n功能：\n\n根据 `topic` 从病例内置教学材料中检索短知识片段。找不到时返回空列表，不生成或编造内容。\n\n示例：\n\n```python\nretrieve_teaching_note(\"\
+  侧别\")\n```\n\n## 当前已知限制\n\n- 关键图文件尚未提供，页面会显示“关键图文件暂缺”。\n- `gold_report` 是一段文本标准答案，尚未拆成结构化标准观察项。\n- `validate_report`\
+  \ 当前主要做完整性和合法性检查，尚未做标准答案比对。\n- 页面暂不接入大模型。\n- 页面暂不提供“重新开始”按钮，重新开始可刷新页面后重新选择病例。\n- 项目目录中可能存在 Python 或\
+  \ pytest 生成的缓存文件，例如 `__pycache__`、`.pytest_cache` 或临时 cache 目录；这些不是核心代码。\n\n## 基本测试\n\n在 `cbct-tutor-agent`\
+  \ 目录下运行：\n\n```powershell\npython -B -c \"import ast, pathlib; files=['app/app.py','app/helpers_app.py','src/evidence.py','src/helpers.py','src/validate.py','src/retrieve.py'];\
+  \ [ast.parse(pathlib.Path(f).read_text(encoding='utf-8'), filename=f) for f in files]; print('syntax\
+  \ ok')\"\npython -m pytest tests/test_evidence.py\n```\n\n当前已验证：\n\n```text\napp 语法检查：通过\napp import：通过\n\
+  tests/test_evidence.py：9 passed\n```\n"

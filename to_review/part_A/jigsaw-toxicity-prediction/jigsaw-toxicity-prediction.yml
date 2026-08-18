@@ -1,0 +1,60 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: youssefhessain1102/Jigsaw-Toxicity-Prediction
+url: https://github.com/youssefhessain1102/Jigsaw-Toxicity-Prediction
+platform: github
+description: End-to-end NLP system for detecting toxic content across 6 categories (toxic, severe toxic,
+  obscene, threat, insult, identity hate). Built with HuggingFace Transformers, served via FastAPI, and
+  visualized through a Streamlit interface.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-04-03T08:12:07Z'
+image_source: https://raw.githubusercontent.com/youssefhessain1102/Jigsaw-Toxicity-Prediction/HEAD/assets/demo.png
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Jigsaw Toxicity Prediction\r\n\r\nEnd-to-end NLP system for detecting toxic content\
+  \ across 6 categories. Fine-tuned DistilBERT on 160k samples, served via FastAPI, and visualized through\
+  \ a Streamlit interface.\r\n\r\n---\r\n\r\n## Demo\r\n\r\n> Enter any text → get per-label toxicity\
+  \ predictions instantly.\r\n\r\n![demo](assets/demo.png)\r\n\r\n---\r\n\r\n## Labels\r\n\r\n| Label\
+  \ | Description |\r\n|---|---|\r\n| `toxic` | General toxicity |\r\n| `severe_toxic` | Highly aggressive\
+  \ language |\r\n| `obscene` | Profane or vulgar content |\r\n| `threat` | Direct threats of harm |\r\
+  \n| `insult` | Personal attacks |\r\n| `identity_hate` | Hate based on identity |\r\n\r\n---\r\n\r\n\
+  ## Architecture\r\n\r\n```\r\nUser Input (Streamlit UI)\r\n        │\r\n        ▼\r\nPOST /api/v1/predict\
+  \  (FastAPI)\r\n        │\r\n        ▼\r\nPredictService\r\n  ├── clean_text()          ← preprocessor\r\
+  \n  ├── DistilBertTokenizer   ← HuggingFace\r\n  ├── DistilBERTClassifier  ← fine-tuned model\r\n  └──\
+  \ per-label thresholds  ← tuned on val set\r\n        │\r\n        ▼\r\n{\"toxic\": 1, \"obscene\":\
+  \ 0, ...}\r\n```\r\n\r\n---\r\n\r\n## Model\r\n\r\n- **Base:** `distilbert-base-uncased`\r\n- **Dataset:**\
+  \ [Jigsaw Toxic Comment Classification](https://huggingface.co/datasets/anitamaxvim/jigsaw-toxic-comments)\
+  \ (~160k samples)\r\n- **Training:** Last 2 transformer layers fine-tuned, BCEWithLogitsLoss with `pos_weight`\
+  \ for label imbalance\r\n- **Thresholds:** Per-label threshold tuning to maximize F1 per class\r\n\r\
+  \n---\r\n\r\n## Project Structure\r\n\r\n```\r\n├── api/\r\n│   ├── main.py        # FastAPI app + lifespan\r\
+  \n│   ├── router.py      # prediction endpoint\r\n│   └── schemas.py     # Pydantic request/response\
+  \ models\r\n├── app/\r\n│   └── app.py         # Streamlit UI\r\n├── src/\r\n│   ├── model.py      \
+  \ # DistilBERTClassifier\r\n│   ├── predict.py     # PredictService (inference)\r\n│   ├── train.py\
+  \       # training script\r\n│   ├── trainer.py     # Trainer class\r\n│   ├── dataset.py     # dataset\
+  \ loading\r\n│   ├── preprocessor.py\r\n│   └── utils/\r\n│       ├── constants.py\r\n│       └── logger.py\r\
+  \n├── models/            # saved model weights + thresholds\r\n├── config.yaml        # all paths and\
+  \ hyperparameters\r\n├── Dockerfile.api\r\n├── Dockerfile.ui\r\n└── docker-compose.yml\r\n```\r\n\r\n\
+  ---\r\n\r\n## Quickstart\r\n\r\n**1. Clone the repo**\r\n```bash\r\ngit clone https://github.com/youssefhessain1102/Jigsaw-Toxicity-Prediction.git\r\
+  \ncd Jigsaw-Toxicity-Prediction\r\n```\r\n\r\n**2. Install dependencies**\r\n```bash\r\npip install\
+  \ -r requirements.txt\r\n```\r\n\r\n**3. Start the API** (terminal 1)\r\n```bash\r\nuvicorn api.main:app\
+  \ --reload\r\n```\r\n\r\n**4. Start the UI** (terminal 2)\r\n```bash\r\nstreamlit run app/app.py\r\n\
+  ```\r\n\r\n**5. Open** `http://localhost:8501`\r\n\r\n---\r\n\r\n## API\r\n\r\n**Endpoint:** `POST /api/v1/predict`\r\
+  \n\r\n**Request:**\r\n```json\r\n{\r\n  \"text\": \"I hate you so much\"\r\n}\r\n```\r\n\r\n**Response:**\r\
+  \n```json\r\n{\r\n  \"predictions\": {\r\n    \"toxic\": 1,\r\n    \"severe_toxic\": 0,\r\n    \"obscene\"\
+  : 0,\r\n    \"threat\": 0,\r\n    \"insult\": 0,\r\n    \"identity_hate\": 0\r\n  },\r\n  \"text_received\"\
+  : \"I hate you so much\"\r\n}\r\n```\r\n\r\nInteractive docs available at `http://localhost:8000/docs`\r\
+  \n\r\n---\r\n\r\n## Docker\r\n\r\nDockerfiles and `docker-compose.yml` are included for containerized\
+  \ deployment:\r\n\r\n```bash\r\ndocker compose up --build\r\n```\r\n\r\n---\r\n\r\n## Tech Stack\r\n\
+  \r\n- [HuggingFace Transformers](https://huggingface.co/docs/transformers) — DistilBERT\r\n- [PyTorch](https://pytorch.org/)\
+  \ — model training & inference\r\n- [FastAPI](https://fastapi.tiangolo.com/) — REST API\r\n- [Streamlit](https://streamlit.io/)\
+  \ — UI\r\n- [Pydantic](https://docs.pydantic.dev/) — request validation\r\n- [Docker](https://www.docker.com/)\
+  \ — containerization\r\n"

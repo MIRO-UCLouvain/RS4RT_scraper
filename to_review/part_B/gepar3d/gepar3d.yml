@@ -1,0 +1,91 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: tomek1911/GEPAR3D
+url: https://github.com/tomek1911/GEPAR3D
+platform: github
+description: '[MICCAI 2025] Official repository for the 2025 MICCAI Paper "GEPAR3D: Geometry Prior-Assisted
+  Learning for 3D Tooth Segmentation"'
+license: MIT
+language: Jupyter Notebook
+keywords:
+- cbct
+- deeplearning
+- geometric-deep-learning
+- medical-imaging
+- tooth-segmentation
+stars: 19
+updated_at: '2026-07-07T15:28:08Z'
+image_source: https://raw.githubusercontent.com/tomek1911/GEPAR3D/HEAD/images/GEPAR3D.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# GEPAR3D: Geometry Prior-Assisted Learning for 3D Tooth Segmentation\n\n[![ProjectPage](https://img.shields.io/badge/Website-GEPAR3D.github.io-blue)](https://tomek1911.github.io/GEPAR3D/)\
+  \ [![Model on HF](https://huggingface.co/datasets/huggingface/badges/resolve/main/model-on-hf-md-dark.svg)](https://huggingface.co/tomek1911/GEPAR3D)\
+  \ [![arXiv](https://img.shields.io/badge/arXiv-2508.00155-red)](https://arxiv.org/pdf/2508.00155) [![Dataset](https://img.shields.io/badge/Dataset-GEPAR3D%20Zenodo-green)](https://zenodo.org/records/15739014)\
+  \ [![Assets](https://img.shields.io/badge/Assets-Google%20Drive-yellow)](https://drive.google.com/drive/folders/1CqqLdaJSA9bT1whKnUvPfax654psx9YE?usp=drive_link)\
+  \ [![MICCAI](https://img.shields.io/badge/MICCAI-Open%20Access-purple)](https://papers.miccai.org/miccai-2025/0375-Paper1833.html)\n\
+  \nThis is the official code for \"GEPAR3D: Geometry Prior-Assisted Learning for 3D Tooth Segmentation\"\
+  \ accepted for the 28th International Conference on Medical Image Computing and Computer Assisted Intervention\
+  \ - MICCAI 2025, Daejeon, Republic of Korea.\n---\n\n\nTooth segmentation in Cone-Beam Computed Tomography\
+  \ (CBCT) remains challenging, especially for fine structures like root apices, which is critical for\
+  \ assessing root resorption in orthodontics. We introduce `GEPAR3D`, a novel approach that unifies instance\
+  \ detection and multi-class segmentation into a single step tailored to improve root segmentation. Our\
+  \ method integrates a Statistical Shape Model of dentition as a geometric prior, capturing anatomical\
+  \ context and morphological consistency without enforcing restrictive adjacency constraints. We leverage\
+  \ a deep watershed method, modeling each tooth as a continuous 3D energy basin encoding voxel distances\
+  \ to boundaries. This instance-aware representation ensures accurate segmentation of narrow, complex\
+  \ root apices. Trained on publicly available CBCT scans from a single center, our method is evaluated\
+  \ on external test sets from two in-house and two public medical centers. `GEPAR3D` achieves the highest\
+  \ overall segmentation performance, averaging a Dice Similarity Coefficient (DSC) of 95.0% (+2.8% over\
+  \ the second-best method) and increasing recall to 95.2% (+9.5%) across all test sets. Qualitative analyses\
+  \ demonstrated substantial improvements in root segmentation quality, indicating significant potential\
+  \ for more accurate root resorption assessment and enhanced clinical decision-making in orthodontics.\n\
+  \n![GEPAR3D Overview](images/GEPAR3D.png)\n\n## We obtained improved sensitivity to root apices\nExisting\
+  \ methods struggle to segment accurately root apices, crucial for toot resporption assesment and treatment\
+  \ planning. We present qualitative comparison of GEPAR3D with the two best-performing methods. Surface\
+  \ Hausdorff Distance heatmaps are overlaid on GT labels (greend = low, purple = high) highlight apex\
+  \ deviations. GEPAR3D shows superior root sensitivity versus tooth-specific baselines. Missing teeth\
+  \ are shown in gray. \n\n![HD error heatmap](images/HDerror.png)\n\n## We leverage geometric prioir\
+  \ based on Satistical Shape Model of normal dentition\nWe present intermediate step in the computation\
+  \ of the Wasserstein loss, where penalties are assigned to each class based on the Wasserstein distance\
+  \ from a designated references tooth. A 3D heatmap visualization, overlaid on the segmentation GT label,\
+  \ is shown for two different reference teeth (indicated by arrows and gray overlays). The highest misclassification\
+  \ penalties correspond to teeth that are both morphologically dissimilar and spatially distant from\
+  \ the reference.\n\n![GWD Loss Computation](images/wasserstein_loss.png)\n![Wasserstein Matrix](images/wasserstein_matrix_ssm.png)\n\
+  \n## We adapt 3D Deep Watershed towards stronger morpogological inductive bias - morphology-informed\
+  \ energy learning in 3D\nWe present Energy Map in the axial (xy) plane. A representative slice from\
+  \ the 3D scan is shown, selected near the contact points where adjacent tooth crowns exhibit close anatomical\
+  \ proximity. This region, characterized by broad interproximal contact and parallel axial walls, presents\
+  \ a challenging condition for separating anatomically congruent and tangentially aligned teeth. The\
+  \ energy map highlights the model’s ability to resolve individual instances despite the absence of clear\
+  \ interproximal gaps or distinct morphological transitions between adjacent crowns. \n\n![Energy Map\
+  \ and Direction Map](images/direction_xyz.png)\n\n### Data\nDatasets related to this paper:\n- https://zenodo.org/records/15739014\
+  \ - GEPAR3D T.Szczepański et al.\n- https://www.nature.com/articles/s41467-022-29637-2  - Z.Cui et al.\n\
+  - https://ditto.ing.unimore.it/toothfairy2/ - F.Bolelli et al.\n\n\n### Source code details\n\n- configs/data_split.json\
+  \ - exact patient IDS used for evaluation\n- configs/experiment_config.yaml - configuration for experiments:\
+  \ table 1 and table 2\n- configs/requirements.yaml - conda environment configuration\n- configs/roi_binary_coarse_segmentation.yaml\
+  \ - configuration for ROI preprocessing coarse UNet, binary segmentation\n- configs/geometric_prior_multitask.yaml\
+  \ - configuration for GEPAR3D method\n- scripts/ablation_study/train.py - script to train all experiments\
+  \ of ablation study, including proposed solution\n- scripts/ablation_study/inference.py - script to\
+  \ run inference of models within ablation study, including proposed solution\n- scripts/general_segmentation_methods/train.py\
+  \ - script to train all general segmentation methods, table 1\n\n### Prerequisites\nEnsure you have\
+  \ the following installed:\n- Miniconda or Anacondas\n- NVIDIA GPU with CUDA 11 support \n- Python 3.9\n\
+  \n\n#### Create and Activate a Conda Environment\n```\nconda env create -f requirements.yaml -n gepar3d\n\
+  conda activate gepar3d\n```\n\n#### Training\n\nTo train the model, follow these steps:\n\n1. **Preprocessed\
+  \ Data**\\\n  Obtain annotated labels of dataset from GEPAR3D Zenodo and scans from Z.Cui et al. Structure\
+  \ data properly in folders. Generate required assets with scripts in ```src/generate_data```.      \n\
+  3. **Run Training**\\\n   Once the data is prepared, start the required training process. To train `GEPAR3D`\
+  \ method run ```scripts/ablation_study/train.py```. The configuration yaml files are by deafult the\
+  \ proposed solution.\n\n\n#### Inference\n\nTo run inference, one can use the provided checkpoints or\
+  \ train them oneself. To run full pipeline leverage ROI binary segmentation and multi-class GEPAR3D\
+  \ method: ```scripts/ablation_study/inference.py```.\n\n\n### Citation\nIf you find this work useful,\
+  \ please cite:\n\n```bibtex\n@inproceedings{szczepanski2025gepar3d,\n  title={Gepar3d: Geometry prior-assisted\
+  \ learning for 3d tooth segmentation},\n  author={Szczepa{\\'n}ski, Tomasz and P{\\l}otka, Szymon and\
+  \ Grzeszczyk, Michal K and Adamowicz, Arleta and Fudalej, Piotr and Korzeniowski, Przemys{\\l}aw and\
+  \ Trzci{\\'n}ski, Tomasz and Sitek, Arkadiusz},\n  booktitle={International Conference on Medical Image\
+  \ Computing and Computer-Assisted Intervention},\n  pages={218--228},\n  year={2025},\n  organization={Springer}\n\
+  }\n```\n"

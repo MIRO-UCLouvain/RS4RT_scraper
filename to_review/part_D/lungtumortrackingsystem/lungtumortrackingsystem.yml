@@ -1,0 +1,106 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: IchimD/LungTumorTrackingSystem
+url: https://github.com/IchimD/LungTumorTrackingSystem
+platform: github
+description: ''
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-15T22:46:08Z'
+image_source: null
+heuristic_total_score: 20
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 5 support term(s).
+readme_excerpt: "# Lung Tumor Tracking System in Radiotherapy\n\n**Bachelor Degree Project**\n\n---\n\n\
+  ## Project Overview\n\nThis project builds a deep-learning pipeline to automatically **segment** and\
+  \ **track** lung tumors across different breathing phases from medical imaging data (CT scans). In radiotherapy,\
+  \ the tumor moves with each breath; knowing its exact position at every phase is critical for precise\
+  \ dose delivery and minimizing damage to healthy tissue.\n\n**Pipeline summary:**\n1. Train a U-Net\
+  \ from scratch to semantically segment the tumor in each image slice/phase.\n2. Use the segmentation\
+  \ output to track the tumor's 3D position across the full breathing cycle.\n\n---\n\n## Project Plan\n\
+  \n### Phase 0 — Background Research & Setup\n**Goal:** Understand the domain and establish the development\
+  \ environment.\n\n| Task | Details |\n|------|---------|\n| Literature review | Study U-Net (Ronneberger\
+  \ et al., 2015), 4D-CT concepts, respiratory motion models, and relevant radiotherapy segmentation papers\
+  \ |\n| Dataset survey | Identify publicly available datasets: DIR-Lab (4D CT with expert landmarks),\
+  \ TCIA RIDER Lung CT, LUNA16 |\n| Environment setup | Python 3.10+, PyTorch, SimpleITK, nibabel, NumPy,\
+  \ OpenCV, Matplotlib, scikit-learn, MLflow (experiment tracking) |\n| Repository structure | Define\
+  \ folder layout (see below) |\n\n**Deliverable:** Literature summary, selected dataset, working Python\
+  \ environment, initial repo structure.\n\n---\n\n### Phase 1 — Data Acquisition & Preprocessing\n**Goal:**\
+  \ Produce clean, normalised, annotated image/mask pairs ready for training.\n\n| Task | Details |\n\
+  |------|---------|\n| 1.1 Data collection | Download 4D-CT dataset (e.g., DIR-Lab: 10 patients × 10\
+  \ breathing phases) with doctor-provided tumor contours |\n| 1.2 DICOM → NumPy | Convert DICOM/NIfTI\
+  \ files to NumPy arrays using SimpleITK; preserve voxel spacing metadata |\n| 1.3 Mask generation |\
+  \ Convert doctor-annotated contours (RTStruct / landmark files) into binary segmentation masks |\n|\
+  \ 1.4 Intensity normalisation | Apply window/level (lung window: W=1500, L=-600) and min-max or z-score\
+  \ normalisation |\n| 1.5 Resampling | Resample all volumes to a uniform voxel spacing (e.g., 1×1×1 mm)\
+  \ |\n| 1.6 Patch / slice extraction | Extract 2D slices or 3D patches centred on lung region; handle\
+  \ class imbalance (tumor << background) |\n| 1.7 Data augmentation | Random flips, rotations (±15°),\
+  \ elastic deformations, intensity jitter, Gaussian noise |\n| 1.8 Dataset split | 70% train / 15% validation\
+  \ / 15% test — split by **patient**, not by slice |\n\n**Deliverable:** Preprocessed dataset saved as\
+  \ `.npy` or HDF5; dataset statistics report; sample visualisations.\n\n---\n\n### Phase 2 — U-Net Semantic\
+  \ Segmentation (from Scratch)\n**Goal:** Train a U-Net to produce a binary mask (tumor vs. background)\
+  \ for each input image.\n\n#### 2.1 Architecture Design\n- Standard encoder–decoder U-Net with skip\
+  \ connections\n- Encoder: 4 down-sampling blocks (Conv→BN→ReLU ×2, MaxPool)\n- Bottleneck: 2× Conv block\n\
+  - Decoder: 4 up-sampling blocks (Bilinear upsample / TransposedConv, skip concat, Conv→BN→ReLU ×2)\n\
+  - Output: 1×H×W sigmoid map (binary segmentation)\n- All weights initialised from scratch (no pretrained\
+  \ backbone)\n\n#### 2.2 Loss Function\n- **Primary:** Dice Loss + Binary Cross-Entropy (combined)\n\
+  - **Optional:** Focal Loss to handle extreme class imbalance\n\n#### 2.3 Training Setup\n| Hyperparameter\
+  \ | Starting value |\n|----------------|---------------|\n| Input size | 256×256 (2D slices) |\n| Batch\
+  \ size | 8–16 |\n| Optimiser | Adam (lr=1e-4) |\n| LR scheduler | ReduceLROnPlateau |\n| Epochs | 100–150\
+  \ with early stopping |\n| Hardware | GPU (CUDA) |\n\n#### 2.4 Evaluation Metrics\n- **Dice Similarity\
+  \ Coefficient (DSC)** — primary metric\n- **Intersection over Union (IoU)**\n- **Hausdorff Distance\
+  \ (HD95)** — boundary accuracy\n- **Sensitivity / Specificity**\n\n#### 2.5 Experiments & Ablations\n\
+  - Baseline 2D U-Net vs. 2.5D (multi-slice input) vs. 3D U-Net\n- Loss function comparison\n- Augmentation\
+  \ impact study\n\n**Deliverable:** Trained model checkpoint; training curves; quantitative results table;\
+  \ qualitative segmentation visualisations.\n\n---\n\n### Phase 3 — Tumor Tracking Across Breathing Phases\n\
+  **Goal:** Use segmentation masks from all phases to track the tumor's position through the breathing\
+  \ cycle.\n\n| Task | Details |\n|------|---------|\n| 3.1 Apply segmentation | Run trained U-Net on\
+  \ all 10 breathing phases for each patient → 10 binary mask volumes |\n| 3.2 Centroid extraction | Compute\
+  \ 3D centroid (x, y, z) and bounding box from each phase mask using connected-component analysis |\n\
+  | 3.3 Trajectory construction | Build a trajectory curve: centroid position as a function of breathing\
+  \ phase index |\n| 3.4 Motion modelling | Fit a smooth parametric model (B-spline or sinusoidal) to\
+  \ the trajectory for interpolation between phases |\n| 3.5 Tracking evaluation | Compare predicted centroids\
+  \ to doctor-provided ground-truth landmarks; compute **Target Registration Error (TRE)** in mm |\n|\
+  \ 3.6 Visualisation | Animate tumor position overlay across all breathing phases; plot 3D motion trajectory\
+  \ |\n\n**Deliverable:** Per-patient tracking trajectories; TRE statistics; motion visualisation videos/GIFs.\n\
+  \n---\n\n### Phase 4 — Integration & System Pipeline\n**Goal:** Connect all components into a single\
+  \ end-to-end pipeline.\n\n```\nInput 4D-CT (DICOM)\n        │\n        ▼\n Preprocessing module\n  \
+  \      │\n        ▼\n  U-Net segmentation\n  (per-phase masks)\n        │\n        ▼\n Centroid extraction\n\
+  \        │\n        ▼\n Motion model fitting\n        │\n        ▼\n Tracked trajectory → report / visualisation\n\
+  ```\n\n- Write a CLI/script (`run_pipeline.py`) that accepts a patient folder and outputs masks + trajectory\n\
+  - Logging with MLflow or TensorBoard\n\n**Deliverable:** Working end-to-end script; example output report\
+  \ for one patient.\n\n---\n\n### Phase 5 — Evaluation, Writing & Presentation\n**Goal:** Validate results,\
+  \ write the thesis, prepare the defence.\n\n| Task | Details |\n|------|---------|\n| 5.1 Full test-set\
+  \ evaluation | Report DSC, IoU, HD95, TRE on held-out test patients |\n| 5.2 Comparison | Compare against\
+  \ a simple baseline (threshold-based segmentation, or centroid from largest blob) |\n| 5.3 Error analysis\
+  \ | Identify failure cases (low-contrast tumors, large motion artifacts) |\n| 5.4 Thesis writing | Introduction,\
+  \ Related Work, Methodology, Experiments, Conclusions |\n| 5.5 Defence preparation | Slides, demo |\n\
+  \n---\n\n## Proposed Repository Structure\n\n```\nLungTumorTrackingSystem/\n├── data/\n│   ├── raw/\
+  \                  # Original DICOM / NIfTI files\n│   ├── processed/            # Resampled volumes\
+  \ and masks (.npy / HDF5)\n│   └── splits/               # train/val/test patient lists\n├── src/\n\
+  │   ├── data/\n│   │   ├── preprocess.py     # DICOM→NumPy, normalisation, resampling\n│   │   ├── dataset.py\
+  \        # PyTorch Dataset class\n│   │   └── augmentation.py   # Augmentation pipeline\n│   ├── models/\n\
+  │   │   └── unet.py           # U-Net architecture (from scratch)\n│   ├── training/\n│   │   ├── train.py\
+  \          # Training loop\n│   │   ├── loss.py           # Dice + BCE loss\n│   │   └── metrics.py\
+  \        # DSC, IoU, HD95\n│   ├── tracking/\n│   │   ├── extract_centroid.py\n│   │   └── motion_model.py\
+  \   # B-spline / sinusoidal fitting\n│   └── visualisation/\n│       └── plot.py\n├── notebooks/\n│\
+  \   ├── 01_data_exploration.ipynb\n│   ├── 02_model_training.ipynb\n│   └── 03_tracking_results.ipynb\n\
+  ├── configs/\n│   └── config.yaml           # All hyperparameters in one place\n├── run_pipeline.py\
+  \           # End-to-end script\n├── requirements.txt\n└── README.md\n```\n\n---\n\n## Technology Stack\n\
+  \n| Category | Tools |\n|----------|-------|\n| Language | Python 3.10+ |\n| Deep learning | PyTorch\
+  \ + torchvision |\n| Medical imaging I/O | SimpleITK, nibabel, pydicom |\n| Data handling | NumPy, pandas,\
+  \ h5py |\n| Visualisation | Matplotlib, seaborn, napari |\n| Experiment tracking | MLflow / TensorBoard\
+  \ |\n| Evaluation | scikit-learn, surface-distance |\n\n---\n\n## Key Milestones\n\n```\nWeek 1–2  \
+  \ Phase 0  — Research & environment setup\nWeek 3–5   Phase 1  — Data preprocessing pipeline\nWeek 6–10\
+  \  Phase 2  — U-Net design, training & evaluation\nWeek 11–13 Phase 3  — Tracking system\nWeek 14  \
+  \  Phase 4  — Integration\nWeek 15–16 Phase 5  — Evaluation, thesis writing, defence prep\n```\n\n---\n\
+  \n## References (starting point)\n- Ronneberger, O. et al. (2015). *U-Net: Convolutional Networks for\
+  \ Biomedical Image Segmentation.* MICCAI.\n- Castillo, R. et al. (2009). *DIR-Lab 4D CT dataset.* Medical\
+  \ Physics.\n- Milletari, F. et al. (2016). *V-Net: Fully Convolutional Neural Networks for Volumetric\
+  \ Medical Image Segmentation.*\n- Fu, Y. et al. (2021). *A review of deep learning-based methods for\
+  \ medical image segmentation.* Neurocomputing.\n"

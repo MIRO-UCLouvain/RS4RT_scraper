@@ -1,0 +1,114 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: rezo935/RT-contouring-by-AI
+url: https://github.com/rezo935/RT-contouring-by-AI
+platform: github
+description: Radiotherapy auto-contouring using AI - Pelvis OAR segmentation with nnU-Net
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-03-29T16:19:13Z'
+image_source: null
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+- Matched 6 support term(s).
+readme_excerpt: "# RT Auto-Contouring by AI\n\nAutomated radiotherapy organ-at-risk (OAR) contouring using\
+  \ deep learning with nnU-Net for pelvis structures.\n\n## Overview\n\nThis project provides a complete\
+  \ pipeline for automated segmentation of pelvic organs at risk (OARs) in radiotherapy planning, using\
+  \ the state-of-the-art nnU-Net deep learning framework.\n\n### Target Structures (Pelvis)\n\n- **Bladder**\
+  \ ✓\n- **Rectum** ✓\n- **Bowel (Bowel Bag)** ✓\n- **Femoral Head Left** ✓\n- **Femoral Head Right**\
+  \ ✓\n- **Penile Bulb** (male) ✓\n- **Vaginal Canal** (female) ✓\n- **Lymph Nodes** (future)\n\n### Key\
+  \ Features\n\n- \U0001F50D **Quality Assessment**: Automated dataset quality evaluation with volume\
+  \ checks and outlier detection\n- \U0001F504 **DICOM Integration**: Full support for DICOM CT and RTSTRUCT\
+  \ import/export\n- \U0001F9E0 **nnU-Net v2**: State-of-the-art deep learning segmentation\n- \U0001F4CA\
+  \ **Comprehensive Workflow**: From raw DICOM to production-ready contours\n- \U0001F680 **FastAPI Service**:\
+  \ REST API for integration with PACS/TPS systems\n- \U0001F4C8 **Quality Reports**: Detailed metrics\
+  \ and visualizations\n- \U0001F3A8 **Eclipse-Compatible**: Structure colors matching TPS conventions\n\
+  \n## Quick Start\n\n### Installation\n\n```bash\n# Clone repository\ngit clone https://github.com/rezo935/RT-contouring-by-AI.git\n\
+  cd RT-contouring-by-AI\n\n# Create virtual environment\npython -m venv venv\nvenv\\Scripts\\activate\
+  \  # Windows\nsource venv/bin/activate  # Linux/Mac\n\n# Install PyTorch with CUDA\npip install torch\
+  \ torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118\n\n# Install dependencies\n\
+  pip install -r requirements.txt\npip install -e .\n```\n\nFor detailed installation instructions, see\
+  \ [INSTALLATION.md](docs/INSTALLATION.md).\n\n### ✨ Next Steps After Installation\n\n**New to the project?**\
+  \ Follow our step-by-step guide:\n\n\U0001F449 **[GETTING STARTED GUIDE](docs/GETTING_STARTED.md)**\
+  \ - Complete workflow from installation to training\n\nThis guide walks you through:\n- Organizing your\
+  \ DICOM data\n- Running quality assessment\n- Preprocessing datasets\n- Training your first model\n\
+  - Running inference\n\n### Basic Usage\n\n#### 1. Quality Assessment\n\n```bash\npython scripts/run_quality_assessment.py\
+  \ \\\n    data/dicom_raw \\\n    --visualize \\\n    --select-cohort \\\n    --min-quality-score 70.0\n\
+  ```\n\n#### 2. Data Preprocessing\n\n```bash\npython scripts/run_preprocessing.py full \\\n    data/dicom_raw\
+  \ \\\n    --dataset-id 1 \\\n    --dataset-name PelvisOAR \\\n    --cohort-file data/quality_reports/training_cohort.txt\n\
+  ```\n\n#### 3. Training\n\n```bash\n# Preprocess\npython scripts/run_training.py preprocess --dataset-id\
+  \ 1\n\n# Train\npython scripts/run_training.py train \\\n    --dataset-id 1 \\\n    --configuration\
+  \ 3d_fullres \\\n    --all-folds\n```\n\n#### 4. Inference\n\n```bash\npython scripts/run_inference.py\
+  \ \\\n    path/to/ct/dicom \\\n    --dataset-id 1 \\\n    --create-rtstruct \\\n    --output-dir results/\n\
+  ```\n\n## Documentation\n\n- \U0001F680 **[Getting Started Guide](docs/GETTING_STARTED.md)** - Quick\
+  \ path from installation to training (START HERE!)\n- \U0001F4D8 [Installation Guide](docs/INSTALLATION.md)\
+  \ - Detailed setup instructions for Windows\n- \U0001F4D7 [Data Preparation](docs/DATA_PREPARATION.md)\
+  \ - How to prepare and organize your training data\n- \U0001F4D9 [Training Guide](docs/TRAINING.md)\
+  \ - Complete training workflow and best practices\n\n## Project Structure\n\n```\nRT-contouring-by-AI/\n\
+  ├── config/                      # Configuration modules\n│   ├── structures.py           # Structure\
+  \ definitions, aliases, colors\n│   └── paths.py                # Path configuration\n├── src/     \
+  \                   # Source code\n│   ├── data_quality/          # Dataset quality assessment\n│  \
+  \ ├── dicom_listener/        # DICOM Storage SCP for receiving files\n│   ├── preprocessing/       \
+  \  # DICOM to NIfTI conversion\n│   ├── training/              # nnU-Net training wrapper\n│   ├── inference/\
+  \             # Inference and prediction\n│   └── service/               # FastAPI service\n├── scripts/\
+  \                    # CLI scripts\n│   ├── run_quality_assessment.py\n│   ├── run_preprocessing.py\n\
+  │   ├── run_training.py\n│   ├── run_inference.py\n│   └── run_dicom_listener.py\n├── notebooks/   \
+  \               # Jupyter notebooks\n│   └── 01_data_exploration.ipynb\n├── docs/                  \
+  \     # Documentation\n│   ├── INSTALLATION.md\n│   ├── DATA_PREPARATION.md\n│   └── TRAINING.md\n├──\
+  \ requirements.txt            # Python dependencies\n└── setup.py                   # Package setup\n\
+  ```\n\n## DICOM Listener\n\nThe DICOM Storage SCP (Service Class Provider) allows you to receive CT\
+  \ and RTSTRUCT files directly from Eclipse TPS or other DICOM sources for training data collection.\n\
+  \n### Starting the Listener\n\n```bash\npython scripts/run_dicom_listener.py --ae-title AUTOCONTOUR\
+  \ --port 11112\n```\n\nCommand-line options:\n- `--ae-title`: AE Title for the DICOM SCP (default: AUTOCONTOUR)\n\
+  - `--port`: Port number to listen on (default: 11112)\n- `--output`: Output directory for received files\
+  \ (default: platform-dependent - see below)\n- `--ip`: Local IP address to display in banner (default:\
+  \ auto-detected)\n- `-v, --verbose`: Enable verbose logging\n\n**Default Output Directory:**\n- Windows\
+  \ IBA workstation: `C:\\Users\\IBA\\RadiotherapyData\\DICOM_exports`\n- Other systems: `~/RadiotherapyData/DICOM_exports`\n\
+  \n### Eclipse TPS Configuration\n\nTo send files from Eclipse to the DICOM listener:\n\n1. **Open Eclipse**\
+  \ and go to External Beam Planning\n2. **Configure DICOM Export** destination:\n   - AE Title: `AUTOCONTOUR`\n\
+  \   - IP Address: Your workstation IP (displayed in the listener startup banner)\n   - Port: `11112`\n\
+  3. **Export CT and RTSTRUCT** by selecting the patient case and choosing \"Export to DICOM\"\n\n**Note:**\
+  \ The listener will display your local IP address when it starts. Use this IP address in the Eclipse\
+  \ configuration.\n\n### Received Data Organization\n\nFiles are automatically organized in the output\
+  \ directory by patient and study:\n\n```\n<output_dir>/\n├── PatientID_001/\n│   └── 20260201/\n│  \
+  \     ├── CT_0001.dcm\n│       ├── CT_0002.dcm\n│       ├── ...\n│       └── RS_label.dcm\n├── PatientID_002/\n\
+  │   └── 20260115/\n│       ├── CT_0001.dcm\n│       ├── ...\n│       └── RS_ProstatePelvis.dcm\n...\n\
+  ```\n\n**File Naming Convention:**\n- CT Images: `CT_XXXX.dcm` (where XXXX is the instance number)\n\
+  - RT Structure Sets: `RS_<StructureSetLabel>.dcm`\n\n### Statistics\n\nWhen you stop the listener (Ctrl+C),\
+  \ it displays statistics:\n- Total files received\n- Number of CT images and RT structures\n- Number\
+  \ of unique patients\n- Uptime and error count\n\n## API Service\n\nStart the FastAPI service for production\
+  \ deployment:\n\n```bash\npython -m src.service.pipeline\n```\n\nAPI endpoints:\n- `POST /contour` -\
+  \ Submit auto-contouring job\n- `GET /task/{task_id}` - Check task status\n- `GET /task/{task_id}/result`\
+  \ - Download RTSTRUCT\n- `GET /health` - Service health check\n\n## Development\n\n### Running Tests\n\
+  \n```bash\npip install -e \".[dev]\"\npytest\n```\n\n### Code Formatting\n\n```bash\nblack src/ scripts/\n\
+  flake8 src/ scripts/\n```\n\n### Interactive Exploration\n\n```bash\npip install -e \".[notebooks]\"\
+  \njupyter notebook notebooks/01_data_exploration.ipynb\n```\n\n## Performance\n\nExpected performance\
+  \ with 50-100 training cases:\n\n| Structure | Dice Score | Training Time |\n|-----------|-----------|---------------|\n\
+  | Bladder | 0.93-0.96 | ~36 hours |\n| Rectum | 0.91-0.94 | ~36 hours |\n| Femoral Heads | 0.94-0.97\
+  \ | ~36 hours |\n| Bowel | 0.78-0.85 | ~36 hours |\n\n*Training times for RTX 3090, 3d_fullres configuration,\
+  \ all 5 folds*\n\n## System Requirements\n\n### Hardware\n- **GPU**: NVIDIA GPU with 11+ GB VRAM (RTX\
+  \ 3080/A5000 or better)\n- **RAM**: 32 GB minimum (64 GB recommended)\n- **Storage**: 500 GB+ for datasets\
+  \ and models\n\n### Software\n- **Python**: 3.10 or 3.11\n- **CUDA**: 11.8 or higher\n- **OS**: Windows\
+  \ 10/11, Linux\n\n## Citation\n\nIf you use this project, please cite:\n\n```bibtex\n@software{rt_contouring_ai,\n\
+  \  title = {RT Auto-Contouring by AI},\n  author = {RT Contouring AI Team},\n  year = {2026},\n  url\
+  \ = {https://github.com/rezo935/RT-contouring-by-AI}\n}\n```\n\nAnd the nnU-Net paper:\n\n```bibtex\n\
+  @article{isensee2021nnu,\n  title={nnU-Net: a self-configuring method for deep learning-based biomedical\
+  \ image segmentation},\n  author={Isensee, Fabian and Jaeger, Paul F and Kohl, Simon AA and Petersen,\
+  \ Jens and Maier-Hein, Klaus H},\n  journal={Nature methods},\n  volume={18},\n  number={2},\n  pages={203--211},\n\
+  \  year={2021},\n  publisher={Nature Publishing Group}\n}\n```\n\n## License\n\nThis project is licensed\
+  \ under the MIT License - see the LICENSE file for details.\n\n## Acknowledgments\n\n- [nnU-Net](https://github.com/MIC-DKFZ/nnUNet)\
+  \ - Deep learning framework\n- [rt-utils](https://github.com/qurit/rt-utils) - DICOM RTSTRUCT utilities\n\
+  - [SimpleITK](https://simpleitk.org/) - Medical image processing\n\n## Contributing\n\nContributions\
+  \ are welcome! Please:\n\n1. Fork the repository\n2. Create a feature branch\n3. Make your changes\n\
+  4. Submit a pull request\n\n## Support\n\nFor questions and issues:\n- \U0001F4EB Open an issue on GitHub\n\
+  - \U0001F4D6 Check the documentation\n- \U0001F4AC Review existing issues and discussions\n\n## Roadmap\n\
+  \n- [ ] Support for additional body sites (head & neck, thorax)\n- [ ] Multi-modality support (MRI,\
+  \ PET)\n- [ ] Real-time inference optimization\n- [ ] Integration with commercial TPS systems\n- [ ]\
+  \ Uncertainty quantification\n- [ ] Active learning for continuous improvement\n\n---\n\n**Project Status**:\
+  \ Active Development\n\n**Last Updated**: February 2026\n"

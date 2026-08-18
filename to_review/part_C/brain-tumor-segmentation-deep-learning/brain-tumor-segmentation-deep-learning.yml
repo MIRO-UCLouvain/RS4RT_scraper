@@ -1,0 +1,199 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: leninandreus/brain-tumor-segmentation-deep-learning
+url: https://github.com/leninandreus/brain-tumor-segmentation-deep-learning
+platform: github
+description: Deep Learning (MONAI/PyTorch) para segmentación de tumores cerebrales en resonancia magnética
+  — dataset MSD
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-08-06T20:09:01Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: '# 🧠 Segmentación de tumores cerebrales con Deep Learning
+
+
+  Comparación de dos redes neuronales convolucionales 3D — **U-Net** y **SegResNet** — para la segmentación
+  automática de tumores cerebrales en imágenes de resonancia magnética multimodal, implementadas con **MONAI**
+  y **PyTorch**.
+
+
+  Trabajo Fin de Máster — *Máster Universitario en Inteligencia Artificial*, VIU (Universidad Internacional
+  de Valencia).
+
+
+  ---
+
+
+  ## 🎯 Objetivo
+
+
+  Segmentar de forma automática las tres subregiones tumorales de un glioma a partir de resonancia magnética,
+  y **comparar el desempeño de dos arquitecturas** de segmentación 3D sobre el mismo pipeline de datos
+  y evaluación.
+
+
+  Las regiones segmentadas siguen el estándar BraTS:
+
+  - **TC** — *Tumor Core* (núcleo tumoral)
+
+  - **WT** — *Whole Tumor* (tumor completo)
+
+  - **ET** — *Enhancing Tumor* (tumor con realce)
+
+
+  ---
+
+
+  ## 🗂️ Datos
+
+
+  - **Fuente:** Medical Segmentation Decathlon (MSD) — tarea de tumores cerebrales (BraTS), cargada automáticamente
+  con `DecathlonDataset` de MONAI.
+
+  - **Modalidad:** resonancia magnética multimodal (FLAIR, T1, T1ce, T2) en formato NIfTI.
+
+  - **Preprocesamiento:** conversión de etiquetas multiclase a formato **multietiqueta One-Hot** (TC/WT/ET),
+  normalización de intensidad, recorte y *data augmentation* (volteos, escalado y desplazamiento de intensidad).
+
+
+  ---
+
+
+  ## 🧠 Metodología
+
+
+  | Componente | Configuración |
+
+  |-----------|---------------|
+
+  | **Arquitecturas** | U-Net 3D y SegResNet (MONAI) |
+
+  | **Función de pérdida** | `DiceLoss` (sigmoide, multietiqueta) |
+
+  | **Optimizador** | Adam |
+
+  | **Scheduler** | Cosine Annealing LR |
+
+  | **Inferencia** | *Sliding window* con `roi_size` 224×224×144 |
+
+  | **Entrenamiento** | *Mixed precision* (AMP) + entrenamiento determinista |
+
+  | **Métrica** | Dice Score por región (TC, WT, ET) y Dice medio |
+
+
+  ---
+
+
+  ## 📈 Resultados
+
+
+  Dice Score en validación:
+
+
+  | Modelo | Épocas | Dice medio | TC | WT | ET |
+
+  |--------|:---:|:---:|:---:|:---:|:---:|
+
+  | U-Net | 200 | 0.752 | 0.801 | 0.888 | 0.565 |
+
+  | **SegResNet** | **70** | **0.773** | **0.817** | **0.905** | **0.593** |
+
+
+  **Hallazgo principal:** SegResNet alcanzó un Dice medio superior al de U-Net (**0.773 vs 0.752**) **con
+  menos de la mitad de épocas de entrenamiento** (70 frente a 200), mostrando una convergencia notablemente
+  más eficiente. Ambos modelos segmentan muy bien el tumor completo (WT ≈ 0.90), mientras que la región
+  de realce (ET) es la más difícil — un patrón consistente con la literatura de BraTS, donde ET es la
+  clase más pequeña y variable.
+
+
+  ---
+
+
+  ## 🗂️ Contenido del repositorio
+
+
+  ```
+
+  brain-tumor-segmentation-deep-learning/
+
+  ├── TFM_UNET_VF.ipynb      # Pipeline completo con arquitectura U-Net
+
+  ├── TFM_SEGRESNET.ipynb    # Pipeline completo con arquitectura SegResNet
+
+  └── README.md
+
+  ```
+
+
+  Cada cuaderno cubre el flujo de extremo a extremo: instalación del entorno, carga de datos con MONAI,
+  transformaciones, definición del modelo, entrenamiento con *mixed precision* y evaluación con Dice por
+  región.
+
+
+  ---
+
+
+  ## 🚀 Cómo ejecutarlo
+
+
+  Los cuadernos están pensados para ejecutarse en un entorno con GPU (p. ej. Google Colab o Kaggle). El
+  dataset se descarga automáticamente vía `DecathlonDataset`.
+
+
+  ```bash
+
+  # Instalar dependencias principales
+
+  pip install "monai[all]" torch matplotlib
+
+
+  # Abrir cualquiera de los dos cuadernos y ejecutarlo de arriba a abajo
+
+  jupyter notebook TFM_SEGRESNET.ipynb
+
+  ```
+
+
+  > ⚠️ El entrenamiento completo requiere GPU. La primera ejecución descarga el dataset MSD (varios GB).
+
+
+  ---
+
+
+  ## 🔧 Stack
+
+
+  `Python` · `PyTorch` · `MONAI` · `NumPy` · `Matplotlib` · segmentación de imágenes médicas 3D
+
+
+  ---
+
+
+  ## 💡 Posibles mejoras
+
+
+  - Aumentar el peso de la clase ET en la pérdida (p. ej. `DiceFocalLoss`) para mejorar la región más
+  difícil.
+
+  - Ensamblado de ambos modelos (U-Net + SegResNet).
+
+  - Validación cruzada por paciente y métricas adicionales (Hausdorff).
+
+
+  ---
+
+
+  📄 **Contexto:** Trabajo Fin de Máster en Inteligencia Artificial — VIU
+
+  📫 **Autor:** Lenin Oñate — [LinkedIn](https://www.linkedin.com/in/lenin11/)
+
+  '

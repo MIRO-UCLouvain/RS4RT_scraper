@@ -1,0 +1,137 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Naish06/Comparative-Study-of-SWIN-MEDSAM-and-VLM-for-Brain-Tumor-Segmentation-on-BraTS-2020
+url: https://github.com/Naish06/Comparative-Study-of-SWIN-MEDSAM-and-VLM-for-Brain-Tumor-Segmentation-on-BraTS-2020
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-04T09:30:39Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# Brain Tumor Segmentation on BraTS 2020 Using SWIN-UNET, MEDSAM and VLM\n\nA comparative\
+  \ deep learning study evaluating three model architectures — **Swin-UNet**, **MedSAM**, and a **VLM\
+  \ adapter** — for multi-class glioma segmentation on multimodal MRI scans. Models are trained to delineate\
+  \ three clinically distinct tumor sub-regions: Necrotic Core (NCR/NET), Peritumoral Edema (ED), and\
+  \ Enhancing Tumor (ET).\n## Table of Contents\n\n- [Overview](#overview)\n- [Dataset](#dataset)\n- [Tumor\
+  \ Sub-regions](#tumor-sub-regions)\n- [Models](#models)\n- [Project Structure](#project-structure)\n\
+  - [Setup & Installation](#setup--installation)\n- [Data Preparation](#data-preparation)\n- [Train /\
+  \ Val / Test Split](#train--val--test-split)\n- [Running the Pipeline](#running-the-pipeline)\n- [Results](#results)\n\
+  - [Evaluation Metrics](#evaluation-metrics)\n- [Key Findings](#key-findings)\n- [Limitations](#limitations)\n\
+  \n---\n\n## Overview\n\nThis project implements an end-to-end segmentation pipeline on the [BraTS 2020](https://www.med.upenn.edu/cbica/brats2020/)\
+  \ dataset. Each patient volume contains four MRI modalities (T1, T1Gd, T2, FLAIR), and the goal is to\
+  \ produce voxel-level predictions for four classes — background, NCR/NET, edema, and enhancing tumor\
+  \ — across all axial slices.\n\nThe pipeline covers:\n\n- Exploratory data analysis and class distribution\
+  \ visualization\n- Before/after preprocessing comparison with intensity histograms\n- Parallel training\
+  \ of three architectures with identical data splits and loss functions\n- Per-epoch logging of accuracy,\
+  \ precision, recall, F1, and per-class Dice\n- Post-training evaluation including confusion matrices,\
+  \ HD95, and per-class accuracy\n- Comparative analysis across all three models on train, val, and test\
+  \ splits\n\n---\n\n## Dataset\n\n**Source:** [Brain Tumor Segmentation (BraTS2020) — Kaggle](https://www.kaggle.com/datasets/awsaf49/brats2020-training-data)\n\
+  hosted by [@awsaf49](https://www.kaggle.com/awsaf49), derived from the official BraTS 2020 Challenge\
+  \ data.\n\n| Property | Value |\n|---|---|\n| Kaggle dataset | `awsaf49/brats2020-training-data` |\n\
+  | Volumes | 369 pre-operative MRI patient cases |\n| Modalities | T1, T1Gd (contrast), T2, FLAIR |\n\
+  | Format | HDF5 (`.h5`), pre-processed and converted from NIfTI |\n| Resolution | 1 mm³ isotropic |\n\
+  | Annotations | Manual segmentation, approved by experienced neuro-radiologists |\n| Institutions |\
+  \ 19 contributing clinical sites |\n| Metadata | `volume_no`, `slice_no`, `target` stored per slice\
+  \ |\n\nAll volumes are skull-stripped, co-registered to a common anatomical template, and resampled\
+  \ to 1 mm³. The Kaggle version packages all slices into HDF5 format for reduced memory overhead. Each\
+  \ file contains one patient volume with keys `t1`, `t1ce`, `t2`, `flair`, and `mask`.\n\n**Download\
+  \ the dataset:**\n\n```bash\n# Using the Kaggle API (recommended)\npip install kaggle\nkaggle datasets\
+  \ download -d awsaf49/brats2020-training-data\nunzip brats2020-training-data.zip -d ./data/brats2020/\n\
+  ```\n\nOr download manually from [kaggle.com/datasets/awsaf49/brats2020-training-data](https://www.kaggle.com/datasets/awsaf49/brats2020-training-data)\
+  \ and extract into `./data/brats2020/`.\n\n> **Kaggle API setup:** Place your `kaggle.json` credentials\
+  \ file at `~/.kaggle/kaggle.json` before running the command above. Instructions at [kaggle.com/docs/api](https://www.kaggle.com/docs/api).\n\
+  \n---\n\n## Tumor Sub-regions\n\nBraTS uses a 4-class label scheme. This project remaps label 4 → 3\
+  \ for contiguous indexing:\n\n| Class | Original Label | Remapped | Description | Approx. Voxel % |\n\
+  |---|---|---|---|---|\n| Background | 0 | 0 | Healthy brain, CSF, white matter — everything outside\
+  \ the tumor | ~98.7% |\n| NCR/NET | 1 | 1 | Necrotic and non-enhancing tumor core — dead/inactive tissue\
+  \ at the center | ~0.25% |\n| Edema | 2 | 2 | Peritumoral edema — swelling surrounding the tumor mass\
+  \ | ~0.77% |\n| Enhancing Tumor | 4 | 3 | Active tumor rim, visibly bright on T1Gd contrast scans |\
+  \ ~0.26% |\n\n> **Note:** Background accounts for ~98.7% of all voxels. Overall accuracy is therefore\
+  \ not a meaningful headline metric — per-class Dice scores and HD95 are the primary evaluation criteria,\
+  \ consistent with BraTS challenge standards.\n\nThe three clinically reported composite regions are:\n\
+  - **Whole Tumor (WT)** = ED + ET + NCR/NET\n- **Tumor Core (TC)** = ET + NCR/NET\n- **Enhancing Tumor\
+  \ (ET)** = ET only\n\n---\n\n## Models\n\n### Swin-UNet\nSwin Transformer encoder with a UNet-style\
+  \ convolutional decoder. Window-based multi-head self-attention captures long-range spatial dependencies\
+  \ across the brain slice, which is critical for irregular glioma shapes. Pretrained on ImageNet; fine-tuned\
+  \ end-to-end on BraTS.\n\n### MedSAM\nSegment Anything Model (SAM) with a ViT-B backbone, adapted for\
+  \ medical image segmentation. Trained here in a dense prediction setting without explicit bounding-box\
+  \ prompts. Six transformer encoder layers process 4-channel MRI input.\n\n### VLM Adapter\nVision-Language\
+  \ Model style encoder inspired by BioViL-T / CLIP, with a CNN visual backbone and a segmentation head.\
+  \ Pretrained visual representations provide medical imaging priors that improve generalization on unseen\
+  \ patient data.\n\nAll three models:\n- Accept input shape `(B, 4, 128, 128)` — 4 MRI modalities, resized\
+  \ to 128×128\n- Produce output shape `(B, 4, 128, 128)` — 4-class logit maps\n- Are trained with the\
+  \ same **Combined Dice + Cross-Entropy loss** to handle class imbalance\n\n---\n\n## Project Structure\n\
+  \n```\nbrats_pipeline/\n│\n├── section1_config.py               # Hyperparameters, paths, device, split\
+  \ ratios\n├── section2_dataset.py              # HDF5 Dataset class + volume-level train/val/test split\n\
+  ├── section3_eda.py                  # Class distribution, ground truth samples, modality grid\n├──\
+  \ section4_preprocessing_viz.py   # Before/after normalization, histograms, augmentation viz\n├── section5_models.py\
+  \               # SwinUNet, MedSAM, VLM architectures + CombinedLoss\n├── section6_training.py     \
+  \        # Training loop, per-epoch metrics, curve plots\n├── section7_evaluation.py           # Confusion\
+  \ matrix, per-class accuracy, HD95, reports\n├── section8_comparative_and_main.py # Comparative plots,\
+  \ final table, main() runner\n│\n├── data/\n│   └── brats2020/                   # Place .h5 patient\
+  \ volumes here\n│\n├── outputs/\n│   ├── eda/                         # Class distribution, GT sample,\
+  \ modality grid figures\n│   ├── preprocessing/               # Before/after normalization figures\n\
+  │   ├── training/                    # Loss/metric curves per model + 3-model comparison\n│   ├── predictions/\
+  \                 # Train & test prediction overlays per model\n│   └── evaluation/                \
+  \  # Confusion matrices, reports, final comparison table\n│\n└── checkpoints/                     #\
+  \ Best model .pth checkpoint per architecture\n```\n\n---\n\n## Setup & Installation\n\n**Requirements:**\
+  \ Python 3.9+, CUDA 11.8+ recommended\n\n```bash\n# Clone the repository\ngit clone https://github.com/your-username/brats2020-segmentation.git\n\
+  cd brats2020-segmentation\n\n# Create a virtual environment\npython -m venv venv\nsource venv/bin/activate\
+  \        # Linux / macOS\nvenv\\Scripts\\activate           # Windows\n\n# Install dependencies\npip\
+  \ install torch torchvision --index-url https://download.pytorch.org/whl/cu118\npip install numpy pandas\
+  \ matplotlib seaborn scikit-learn scipy h5py Pillow\n```\n\n**Tested environment:**\n\n| Package | Version\
+  \ |\n|---|---|\n| Python | 3.10 |\n| PyTorch | 2.1.0 |\n| CUDA | 11.8 |\n| scikit-learn | 1.3.2 |\n\
+  | h5py | 3.10.0 |\n\n---\n\n## Data Preparation\n\n1. Download the dataset from [Kaggle](https://www.kaggle.com/datasets/awsaf49/brats2020-training-data)\
+  \ — HDF5 files are already pre-converted, no NIfTI processing needed\n2. Extract and place all `.h5`\
+  \ files in `./data/brats2020/`\n3. Verify at least one file loads correctly: `python -c \"import h5py;\
+  \ f=h5py.File('./data/brats2020/BraTS20_Training_001.h5','r'); print(list(f.keys()))\"`\n\nExpected\
+  \ HDF5 structure per file:\n\n```\nBraTS20_Training_001.h5\n  ├── t1      → shape (155, H, W), float32\n\
+  \  ├── t1ce    → shape (155, H, W), float32\n  ├── t2      → shape (155, H, W), float32\n  ├── flair\
+  \   → shape (155, H, W), float32\n  └── mask    → shape (155, H, W), uint8   [labels: 0, 1, 2, 4]\n\
+  ```\n\n---\n\n## Train / Val / Test Split\n\nSplits are performed at **volume (patient) level** — never\
+  \ at slice level — to prevent data leakage.\n\n> If split at slice level, slices from the same patient\
+  \ would appear in both training and test sets. Since adjacent slices share anatomy, the model would\
+  \ be tested on data it has effectively already seen, inflating all metrics.\n\n| Split | Ratio | Approx.\
+  \ Volumes (n=369) |\n|---|---|---|\n| Train | 70% | ~258 volumes / ~40,000 slices |\n| Validation |\
+  \ 15% | ~55 volumes / ~8,500 slices |\n| Test | 15% | ~56 volumes / ~8,700 slices |\n\nImplementation\
+  \ uses two-step `sklearn.train_test_split`:\n\n```python\n# Step 1: carve out train\ntrain_paths, temp_paths\
+  \ = train_test_split(all_volumes, test_size=0.30, random_state=42)\n\n# Step 2: split remainder equally\
+  \ into val and test\nval_paths, test_paths = train_test_split(temp_paths, test_size=0.50, random_state=42)\n\
+  ```\n\nTo change ratios, edit `TRAIN_RATIO`, `VAL_RATIO`, `TEST_RATIO` in `section1_config.py`.\n\n\
+  ---\n\n## Running the Pipeline\n\n**Run the full pipeline end-to-end:**\n\n```bash\npython section8_comparative_and_main.py\n\
+  ```\n\nThis sequentially runs EDA → preprocessing viz → trains all 3 models → evaluates on all splits\
+  \ → generates comparative analysis. Estimated runtime: 8–14 hours on a single A100 GPU for 50 epochs.\n\
+  \n**Run individual sections:**\n\n```bash\n# EDA only (no training required)\npython section3_eda.py\n\
+  \n# Preprocessing visualizations only\npython section4_preprocessing_viz.py\n\n# Train a single model\n\
+  python -c \"\nfrom section1_config import *\nfrom section2_dataset import get_dataloaders\nfrom section5_models\
+  \ import get_model\nfrom section6_training import train_model\nloaders = get_dataloaders(DATA_DIR)\n\
+  model = get_model('swin_unet', device=DEVICE)\ntrain_model(model, 'swin_unet', loaders[0], loaders[1],\
+  \ DEVICE)\n\"\n```\n\n**Key hyperparameters** (edit in `section1_config.py`):\n\n```python\nIMG_SIZE\
+  \     = 128       # spatial resize\nBATCH_SIZE   = 8\nNUM_EPOCHS   = 50\nLR           = 1e-4\nWEIGHT_DECAY\
+  \ = 1e-5\n```\n\n---\n\n## Results\n\nAll metrics reported on the **held-out test split** (15% of volumes,\
+  \ never seen during training or validation).\n\n### Overall performance\n\n| Model | Accuracy | Precision\
+  \ | Recall | F1 (macro) | Mean Dice | Inference (ms/slice) |\n|---|---|---|---|---|---|---|\n| **Swin-UNet**\
+  \ | **0.9957** | **0.8291** | **0.7980** | **0.8125** | **0.7505** | 6.70 |\n| VLM | 0.9954 | 0.8239\
+  \ | 0.7711 | 0.7958 | 0.7283 | **6.19** |\n| MedSAM | 0.9935 | 0.7429 | 0.6851 | 0.7110 | 0.6154 | 8.68\
+  \ |\n\n### Per-class Dice score (test split)\n\n| Model | NCR/NET | Edema | Enhancing Tumor | Mean Dice\
+  \ |\n|---|---|---|---|---|\n| **Swin-UNet** | 0.6743 | **0.7876** | **0.7896** | **0.7505** |\n| VLM\
+  \ | 0.6455 | 0.7735 | 0.7659 | 0.7283 |\n| MedSAM | 0.5306 | 0.6764 | 0.6392 | 0.6154 |\n\n### Hausdorff\
+  \ Distance 95 — boundary precision (lower is better)\n\n| Model | HD95 NCR (px) | HD95 Edema (px) |\
+  \ HD95 ET (px) |\n|---|---|---|---|\n| MedSAM | **7.81** | 24.01 | 3.00 |\n| **Swin-UNet** | 8.54 |\
+  \ **19.03** | **1.00** |\n| VLM | 8.60 | 19.86 | 1.41 |\n\n### Generalization gap (train F1 → test F1)\n\
+  \n| Model | Train F1 | Test F1 | Absolute Drop | Relative Drop |\n|---|---|---|---|---|\n| **VLM** |\
+  \ 0.8807 | 0.7958 | −0.0849 | **9.6%** |\n| Swin-UNet | 0.9049 | 0.8125 | −0.0924 | 10.2% |\n| MedSAM\
+  \ | 0.8180 | 0.7110 | −0.1070 | 13.1% |\n\n---\n\n## Evaluation Metrics\n\n| Metric | What it measures\
+  \ | Where reported |\n|---|---|---|\n| **Dice Score** | Overlap between predicted and ground truth mask.\
+  \ Range 0–1, higher is better | Per class, per model |\n| **HD95** | 95th percentile of boundary point\
+  \ distances in pixels. Lower = tighter boundary | Per tumor class, test split |\n| **Precision** | Of\
+  \ all voxels predicted as class X, how many truly are X | Per class per split |\n| **Recall** | Of all\
+  \ true class X voxels, ho"

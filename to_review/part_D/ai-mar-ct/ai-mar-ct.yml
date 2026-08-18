@@ -1,0 +1,136 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: harshitAgr/AI-MAR-CT
+url: https://github.com/harshitAgr/AI-MAR-CT
+platform: github
+description: ' collection of deep learning-based metal artifact reduction articles for CT/CBCT Imaging'
+license: MIT
+language: null
+keywords: []
+stars: 40
+updated_at: '2026-08-03T07:07:44Z'
+image_source: null
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# AI-MAR-CT\n\n\n [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)\n\
+  [![Made With Love](https://img.shields.io/badge/Made%20With-Love-red.svg)](https://github.com/chetanraj/awesome-github-badges)\n\
+  [![DOI](https://zenodo.org/badge/744644178.svg)](https://doi.org/10.5281/zenodo.19651643)\n\n Collection\
+  \ of deep learning-based metal artifact reduction (MAR) articles for CT/CBCT Imaging.\n\n## Citation\n\
+  \nIf you use this collection, please cite it via the Zenodo DOI. The **concept DOI** below always resolves\
+  \ to the latest release; use a specific version DOI from Zenodo for a pinned citation.\n\n```bibtex\n\
+  @misc{agrawal_ai_mar_ct,\n  author       = {Agrawal, Harshit},\n  title        = {{AI-MAR-CT: A curated\
+  \ collection of deep learning-based metal artifact reduction papers for CT/CBCT imaging}},\n  howpublished\
+  \ = {\\url{https://github.com/harshitAgr/AI-MAR-CT}},\n  publisher    = {Zenodo},\n  doi          =\
+  \ {10.5281/zenodo.19651643},\n  url          = {https://doi.org/10.5281/zenodo.19651643}\n}\n```\n\n\
+  \ 1. **ReMAR-DS: Recalibrated Feature Learning for Metal Artifact Reduction and CT Domain Transformation**\
+  \ <img src=\"https://img.shields.io/badge/Supervised-blue.svg\" alt=\"Supervised\"> \\\n*Mubashara Rehman,\
+  \ Niki Martinel, Michele Avanzo, Riccardo Spizzo, Christian Micheloni* \\\n**Summary** \\\nReMAR-DS\
+  \ is a 2D encoder-decoder network that jointly performs metal artifact reduction and image-domain transformation\
+  \ from kilovoltage CT (kVCT) to megavoltage CT (MVCT) for radiotherapy re-planning, taking 512x512 kVCT\
+  \ slices as input and producing artifact-corrected, MVCT-domain-consistent slices as output; the encoder\
+  \ builds hierarchical features via Conv-BN-ReLU stages and Enhanced Residual Blocks (EnResB) that use\
+  \ depthwise separable convolutions to cut parameter count, skip connections are routed through Recalibrated\
+  \ concurrent Spatial and Channel Squeeze-and-Excitation (RcsSE) blocks that generate sigmoid spatial-attention\
+  \ maps (via 1x1 convolution) and channel-wise recalibration (via global average pooling and FC layers)\
+  \ to focus reconstruction on artifact-corrupted regions, and the bottleneck latent representation is\
+  \ perturbed with learnable-scale Gaussian noise (sigma_L) as a regularizer, with input-level noise sigma_k=0.01\
+  \ also injected during training; the decoder upsamples through CBR layers to restore resolution. Training\
+  \ is fully supervised on paired kVCT (32-slice Toshiba Aquilion) and MVCT (Hi-Art II TomoTherapy) scans\
+  \ from 52 cancer patients at Centro di Riferimento Oncologico di Aviano IRCCS, patient-wise split 70/30\
+  \ train/test, with an artifact-heavy subset (HU > 2000 in kVCT) comprising ~14.78% of slices; the loss\
+  \ combines a weighted L1 term (weight 100), SSIM/MS-SSIM, and a Focal Frequency Loss for high-frequency\
+  \ fidelity, optimized with AdamW (lr 1e-4, halved every 20 epochs, weight decay 5e-4, batch size 4,\
+  \ up to 100 epochs with early stopping at patience 15) using flip and affine augmentation, on an NVIDIA\
+  \ A100 GPU with a 188 GB-RAM Xeon host. On the full test set, ReMAR-DS achieves PSNR 30.690 dB / SSIM\
+  \ 0.759 (computed within clinician-defined ROI masks), outperforming MAR-DTN (30.02 dB / 0.73), AttU-Net\
+  \ (30.12 dB / 0.73), Pix2Pix (28.7 dB / 0.69), and SwinIR (29.00 dB / 0.66); ablations show removing\
+  \ the RcsSE blocks drops performance to 30.410 dB / 0.751 and removing the noise regularization to 30.322\
+  \ dB / 0.747, while on the artifact-heavy subset alone the full loss configuration reaches 27.670 dB\
+  \ / 0.703 SSIM versus 27.260 dB / 0.700 for weighted-L1-only. Per-image inference time is not reported.\
+  \ The authors note the ground-truth MVCT data used for training/evaluation is itself not entirely artifact-free,\
+  \ and flag future work on improving contrast consistency, refining HU accuracy, and extending the approach\
+  \ from 2D slices to full 3D volumes. \\\n[[arXiv](https://arxiv.org/abs/2506.19531)] ICIAP, 2025. [[doi](https://doi.org/10.1007/978-3-032-10192-1_18)]\n\
+  \n 1. **Deep Learning-Based Metal Artifact Reduction in CT for Total Knee Arthroplasty (KMAR-Net)**\
+  \ <img src=\"https://img.shields.io/badge/Supervised-blue.svg\" alt=\"Supervised\"> \\\n*J. Lee, H.-D.\
+  \ Chae, H. Cho, J. M. Kim, S. H. Hong, J.-Y. Choi, H. J. Yoo, S.-J. Ye* \\\n**Summary** \\\nKMAR-Net\
+  \ is a supervised, image-domain CNN designed specifically for post-operative knee CT after total knee\
+  \ arthroplasty (TKA), where large high-atomic-number femoral and tibial implants produce severe streak\
+  \ artifacts that are difficult for generic MAR methods to handle. Unlike dual-domain networks, KMAR-Net\
+  \ does not require projection data at inference, does not use an explicit metal segmentation step, and\
+  \ does not rely on a-priori knowledge of implant shape — the metal-corrupted axial slice is fed directly\
+  \ to the network and the artifact-reduced slice is produced end-to-end, which sidesteps the secondary-artifact\
+  \ problem caused by segmentation errors in projection-completion pipelines. Training data is generated\
+  \ via a sinogram-handling simulation pipeline: axial knee CT scans from 50 patients without any metallic\
+  \ implant are used as artifact-free references, simplified virtual metal shapes mimicking commonly used\
+  \ TKA components (distal femur, proximal tibia, long-stem variants) are manually designed with randomised\
+  \ size, orientation and position, and each metal-inserted image is forward-projected, metal-trace-replaced,\
+  \ and back-projected to obtain a paired artifact/clean slice — 500 pairs per patient, 25,000 pairs in\
+  \ total, split 15,000 / 5,000 / 5,000 for training / validation / simulated-test. A 44-patient clinical\
+  \ test set with prior TKA (18 unilateral, 26 bilateral) is used for the real-world evaluation, and a\
+  \ separate CTDI-phantom experiment (stainless-steel and aluminium rods, varying count, tube voltage\
+  \ 100/120 kVp, slice thickness 1/2 mm, bone and standard kernels) with 474 simulated pairs (330 / 72\
+  \ / 72) plus 80 real phantom images is used to check feasibility under controlled conditions. The network\
+  \ is implemented in PyTorch 1.1.0; architectural specifics and training hyper-parameters (loss, optimiser,\
+  \ learning rate, inference time, exact GPU model) are deferred to the paper's supplementary material,\
+  \ with source code released at github.com/ljm861/KMAR-Net. On the simulated test set KMAR-Net reaches\
+  \ Pearson correlation coefficient (PCC) 0.995, PSNR 41.49 dB and SSIM 0.996 against the artifact-free\
+  \ reference. On the 44-patient clinical test set the area of dark streak artifacts (≤ −200 HU pixels\
+  \ within the knee outline) drops from 2,165.2±576.5 mm² (Non-MAR) and 1,554.6±566.3 mm² (O-MAR, the\
+  \ commercial projection-based orthopaedic MAR baseline) to 100.6±94.5 mm² (KMAR-Net); mean attenuation\
+  \ within the streaks rises from −724.9±71.8 HU (Non-MAR) / −424.2±59.4 HU (O-MAR) to −247.7±28.0 HU\
+  \ (KMAR-Net), and the intra-streak SD collapses from 295.7±11.7 / 218.8±35.4 HU to 68.5±50.3 HU — all\
+  \ differences significant at p < 0.001. On the phantom, KMAR-Net (PCC 0.994 / PSNR 39.64 dB / SSIM 0.988;\
+  \ mean HU 117.3 / SD 19.2) is the closest to the metal-free reference (mean HU 118.7 / SD 19.9) and\
+  \ clearly beats O-MAR (0.985 / 35.85 / 0.938 ; 108.2 HU / 49.1 SD) and Non-MAR (0.928 / 31.27 / 0.895\
+  \ ; 94.2 HU / 182.9 SD). Two musculoskeletal radiologists graded KMAR-Net superior to O-MAR for overall\
+  \ artifact level and soft-tissue depiction on all 44 clinical cases (5-point Likert, all P < 0.001),\
+  \ with bone-conspicuity superiority significant for the less-experienced reader (P < 0.001) but not\
+  \ the 6-year reader (P = 0.080); pseudocement artifacts dropped from 37/44 (84%) in O-MAR to 16/44 (36%)\
+  \ in KMAR-Net (P < 0.001). The authors note several limitations: (1) a newly introduced band-like soft-tissue\
+  \ blurring appears in 27/44 (61%) of KMAR-Net cases (absent from O-MAR), concentrated where the original\
+  \ streak burden was most severe, and cannot be explained analytically — a fundamental drawback of data-driven\
+  \ MAR; (2) the sinogram-handling simulation does not fully reproduce real-world physics (cone-beam effects,\
+  \ tube-current modulation, scatter, non-linear partial volume), so there is a residual simulated-to-real\
+  \ domain gap; (3) the 44-case clinical cohort is small, female-dominant, and restricted to four implant\
+  \ families (Vanguard, Attune, LPS-Flex, LCCK), limiting generalizability across sex, anatomy and implant\
+  \ design; (4) the only comparison is against commercial O-MAR — no head-to-head with dual-energy, hybrid,\
+  \ transformer, or diffusion-based DL MAR methods. \\\nScientific Reports, 2025. [[doi](https://doi.org/10.1038/s41598-025-21012-7)]\
+  \ [![Open Access](https://img.shields.io/badge/Open%20Access-brightgreen.svg)](https://www.nature.com/articles/s41598-025-21012-7)\
+  \ [![Code](https://img.shields.io/badge/Code-purple.svg)](https://github.com/ljm861/KMAR-Net)\n\n 1.\
+  \ **FIND-Net: Fourier-Integrated Network with Dictionary Kernels for Metal Artifact Reduction** <img\
+  \ src=\"https://img.shields.io/badge/Supervised-blue.svg\" alt=\"Supervised\"> \\\n*F. Tasharofi, F.\
+  \ Fan, M. Qahqaie, M. Thies, A. Maier* \\\n**Summary** \\\nFIND-Net is a supervised, image-domain deep-unfolding\
+  \ MAR network that extends DICDNet's convolutional-dictionary model with joint spatial / frequency-domain\
+  \ processing to address CNNs' limited receptive fields. The underlying physical model decomposes a metal-corrupted\
+  \ CT image Y into an artifact-free component X and an artifact term A = Σₙ Kₙ⊗Mₙ, where Kₙ are learnable\
+  \ dictionary kernels that encode metal-artifact patterns and Mₙ are their feature maps; the masked reconstruction\
+  \ objective min_{M,X} ‖I⊙(Y−X−A)‖²_F + λ₁P₁(M) + λ₂P₂(X) is unrolled into 10 iterative stages, each\
+  \ containing an M-Net (updates M via a proximal step) and an X-Net (updates X via a proximal step),\
+  \ both implemented as ResNets whose standard 3×3 convolutions are replaced by FE-ResBlocks (Frequency-Enhanced\
+  \ ResBlocks) built on GFFC — a modified Fast Fourier Convolution that splits channels into a Local Branch\
+  \ for spatial convolutions and a Global Branch that applies FFT → trainable Gaussian filter Gσ,c(u,v)\
+  \ = exp(−((D²−c²)/(D·σ+ε))²) → 1×1 conv → IFFT, with learnable σ and c giving per-layer adaptive frequency\
+  \ selection. The Global-Branch channel fraction α increases across stages from 0.0 to 0.8, so early\
+  \ stages emphasise local spatial refinement while later stages emphasise global frequency-domain artifact\
+  \ suppression; X⁽⁰⁾ is initialised with linear interpolation (LI). Training uses a multi-term stage-wise\
+  \ loss L = Σₛ ωₛ‖I⊙(X−X⁽ˢ⁾)‖²_F + γ₁Σₛ ωₛ‖I⊙(X−X⁽ˢ⁾)‖₁ + γ₂Σₛ ωₛ‖I⊙(Y−X−A⁽ˢ⁾)‖₁, combining a Frobenius\
+  \ reconstruction term with L1 sparsity and artifact-consistency terms. The network is trained on the\
+  \ AAPM CT-MAR Grand Challenge dataset (XCIST-simulated from NIH DeepLesion body scans and UCLH Stroke\
+  \ EIT head scans, with realistic quantum noise / beam hardening / scatter) at 512×512: 5,500 training\
+  \ cases (1,300 head + 4,200 body), 700 validation and 700 test cases, plus a 29-case real-world evaluation\
+  \ set without ground truth. Implementation is in PyTorch on an NVIDIA A100 (80 GB HBM2) with AdamW (β₁=0.9,\
+  \ β₂=0.999), LR 1×10⁻⁴, weight decay 1×10⁻⁵, linear warm-up + cosine annealing, batch size 6, up to\
+  \ 200 epochs with early stopping. Across metal sizes FIND-Net reports average MAE/SSIM/PSNR of 17.9\
+  \ / 0.952 / 42.8 dB, versus LI (26.6 / 0.913 / 38.9), DICDNet (18.3 / 0.951 / 42.4), OSCNet (18.8 /\
+  \ 0.948 / 41.7), OSCNet+ (18.8 / 0.948 / 42.0), and the FIND-Net (No-GF) ablation (18.2 / 0.951 / 42.5);\
+  \ the relative improvements over the DICDNet baseline — −3.07% MAE, +0.18% SSIM, +0.90% PSNR — are statistically\
+  \ significant at the 95% CI level. On seven artifact-free anatomical patches (where an ideal MAR should\
+  \ not change the image), FIND-Net achieves the best preservation (MAE 0.005 / SSIM 0.97 / PSNR 43.23\
+  \ dB) vs. DICDNet-level baselines (~MAE 0.007 / SSIM 0.94 / PSNR 40.4 dB). Computational complexity\
+  \ drops ~16% (334.45 → 279.55 GFLOPs) via FFT-based operations, but per-image inference time grows from\
+  \ 0.15 s (DICDNet) to 1.07 s because of the fr"

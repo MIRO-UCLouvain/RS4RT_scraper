@@ -1,0 +1,123 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: NewLeaf-ai/aitrium-dvh
+url: https://github.com/NewLeaf-ai/aitrium-dvh
+platform: github
+description: ''
+license: null
+language: Rust
+keywords: []
+stars: 0
+updated_at: '2026-06-17T01:45:17Z'
+image_source: null
+heuristic_total_score: 26
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 7 support term(s).
+readme_excerpt: "# Aitrium DVH Calculator\n\nHigh-performance Dose-Volume Histogram (DVH) calculation\
+  \ library for radiotherapy treatment planning, written in Rust.\n\n## Overview\n\nThis crate provides\
+  \ a Rust implementation of DVH calculation that aims for parity with the Python `dicompylercore.dvhcalc`\
+  \ library while offering significant performance improvements.\n\n## Testing Parity Between Implementations\n\
+  \n### Prerequisites\n\n#### For Python Implementation (dicompylercore)\n```bash\n# Create a virtual\
+  \ environment\npython3 -m venv dvh_env\nsource dvh_env/bin/activate  # On macOS/Linux\n# or\ndvh_env\\\
+  Scripts\\activate  # On Windows\n\n# Install required packages\npip install pydicom numpy matplotlib\n\
+  pip install git+https://github.com/dicompyler/dicompyler-core.git\n```\n\n#### For Rust Implementation\n\
+  ```bash\n# Build the Rust DVH calculator\ncargo build --release --bin dvh_full\n```\n\n### Running Direct\
+  \ Comparisons\n\n#### Method 1: Using the Existing Python Implementation\n\nThe repository includes\
+  \ the original Python DVH generator at `python/dvh_generator/main.py`:\n\n```bash\n# Activate your Python\
+  \ environment first\nsource dvh_env/bin/activate\n\n# Run Python implementation\npython python/dvh_generator/main.py\
+  \ /Volumes/T9/dvh_test_plans/test_dataset_A\n\n# Run Rust implementation\ncargo run --release --bin\
+  \ dvh_full /Volumes/T9/dvh_test_plans/test_dataset_A\n\n# Compare the JSON outputs manually or with\
+  \ diff tools\n```\n\n#### Method 2: Side-by-Side Comparison Script\n\nCreate a file `compare_implementations.py`:\n\
+  \n```python\n#!/usr/bin/env python3\n\"\"\"Compare Rust and Python DVH implementations on the same dataset.\"\
+  \"\"\n\nimport json\nimport subprocess\nimport sys\nfrom pathlib import Path\nimport pydicom\nfrom dicompylercore\
+  \ import dvhcalc\n\ndef run_rust_dvh(dicom_dir):\n    \"\"\"Run Rust DVH and return JSON results.\"\"\
+  \"\n    # Assumes you're in the aitrium_dvh directory\n    result = subprocess.run(\n        [\"cargo\"\
+  , \"run\", \"--release\", \"--bin\", \"dvh_full\", dicom_dir],\n        capture_output=True, text=True\n\
+  \    )\n    if result.returncode != 0:\n        print(f\"Rust error: {result.stderr}\")\n        return\
+  \ None\n    return json.loads(result.stdout)\n\ndef run_python_dvh(dicom_dir):\n    \"\"\"Run Python\
+  \ DVH with dicompylercore.\"\"\"\n    dicom_path = Path(dicom_dir)\n    \n    # Find RTDOSE and RTSTRUCT\
+  \ files\n    rtdose_file = None\n    rtstruct_file = None\n    \n    for f in dicom_path.glob(\"*.dcm\"\
+  ):\n        try:\n            dcm = pydicom.dcmread(str(f), force=True, stop_before_pixels=True)\n \
+  \           if hasattr(dcm, 'Modality'):\n                if dcm.Modality == 'RTDOSE':\n           \
+  \         rtdose_file = f\n                elif dcm.Modality == 'RTSTRUCT':\n                    rtstruct_file\
+  \ = f\n        except:\n            pass\n    \n    if not rtdose_file or not rtstruct_file:\n     \
+  \   print(\"Error: Could not find RTDOSE and RTSTRUCT files\")\n        return None\n    \n    # Load\
+  \ DICOM files\n    rtss = pydicom.dcmread(str(rtstruct_file))\n    results = {\"dvhs\": []}\n    \n\
+  \    # Calculate DVH for each ROI\n    for roi in rtss.StructureSetROISequence:\n        try:\n    \
+  \        # Calculate with NO interpolation for fair comparison\n            # (Rust doesn't have interpolation\
+  \ yet)\n            dvh = dvhcalc.get_dvh(\n                str(rtstruct_file), \n                str(rtdose_file),\
+  \ \n                roi.ROINumber,\n                interpolation_resolution=None,\n               \
+  \ interpolation_segments_between_planes=0\n            )\n            \n            if dvh and dvh.volume\
+  \ > 0.01:\n                results[\"dvhs\"].append({\n                    \"roi_name\": roi.ROIName,\n\
+  \                    \"stats\": {\n                        \"total_cc\": float(dvh.volume),\n      \
+  \                  \"min_gy\": float(dvh.min),\n                        \"max_gy\": float(dvh.max),\n\
+  \                        \"mean_gy\": float(dvh.mean),\n                    },\n                   \
+  \ \"cumulative\": dvh.counts.tolist()[:100],  # First 100 bins\n                })\n        except Exception\
+  \ as e:\n            print(f\"Warning: Failed DVH for {roi.ROIName}: {e}\")\n    \n    return results\n\
+  \ndef compare_results(rust_data, python_data):\n    \"\"\"Compare and display differences.\"\"\"\n \
+  \   if not rust_data or not python_data:\n        print(\"Error: Missing data from one implementation\"\
+  )\n        return\n        \n    rust_rois = {d[\"roi_name\"]: d for d in rust_data.get(\"dvhs\", [])}\n\
+  \    python_rois = {d[\"roi_name\"]: d for d in python_data.get(\"dvhs\", [])}\n    \n    print(\"\\\
+  n\" + \"=\"*70)\n    print(\"DVH COMPARISON: RUST vs PYTHON (dicompylercore)\")\n    print(\"=\"*70)\n\
+  \    \n    common_rois = set(rust_rois.keys()) & set(python_rois.keys())\n    \n    total_diff_volume\
+  \ = 0\n    total_diff_mean = 0\n    count = 0\n    \n    for roi_name in sorted(common_rois):\n    \
+  \    rust = rust_rois[roi_name][\"stats\"]\n        python = python_rois[roi_name][\"stats\"]\n    \
+  \    \n        if python[\"total_cc\"] < 1.0:  # Skip tiny volumes\n            continue\n        \n\
+  \        vol_diff_pct = abs(rust['total_cc'] - python['total_cc']) / python['total_cc'] * 100\n    \
+  \    mean_diff_pct = abs(rust['mean_gy'] - python['mean_gy']) / max(python['mean_gy'], 0.01) * 100\n\
+  \        \n        total_diff_volume += vol_diff_pct\n        total_diff_mean += mean_diff_pct\n   \
+  \     count += 1\n        \n        print(f\"\\n{roi_name}:\")\n        print(f\"  Volume: Rust={rust['total_cc']:.2f}\
+  \ cc, Python={python['total_cc']:.2f} cc\")\n        print(f\"          Difference: {vol_diff_pct:.1f}%\"\
+  )\n        \n        print(f\"  Mean:   Rust={rust['mean_gy']:.2f} Gy, Python={python['mean_gy']:.2f}\
+  \ Gy\")\n        print(f\"          Difference: {mean_diff_pct:.1f}%\")\n    \n    if count > 0:\n \
+  \       print(\"\\n\" + \"-\"*70)\n        print(\"AVERAGE DIFFERENCES:\")\n        print(f\"  Volume:\
+  \ {total_diff_volume/count:.1f}%\")\n        print(f\"  Mean Dose: {total_diff_mean/count:.1f}%\")\n\
+  \        \n        # Clinical acceptability\n        print(\"\\nCLINICAL ACCEPTABILITY:\")\n       \
+  \ if total_diff_volume/count < 2.0 and total_diff_mean/count < 3.0:\n            print(\"  ✓ PASS -\
+  \ Differences within clinical tolerance\")\n        else:\n            print(\"  ✗ FAIL - Differences\
+  \ exceed clinical tolerance\")\n            print(\"  Note: This is expected without interpolation implemented\"\
+  )\n\nif __name__ == \"__main__\":\n    if len(sys.argv) != 2:\n        print(f\"Usage: {sys.argv[0]}\
+  \ <dicom_directory>\")\n        sys.exit(1)\n    \n    dicom_dir = sys.argv[1]\n    \n    print(\"Running\
+  \ Rust implementation...\")\n    rust_results = run_rust_dvh(dicom_dir)\n    \n    print(\"Running Python\
+  \ implementation (dicompylercore)...\")\n    python_results = run_python_dvh(dicom_dir)\n    \n    compare_results(rust_results,\
+  \ python_results)\n```\n\n### Test Datasets\n\nTest datasets are provided at `/Volumes/T9/dvh_test_plans/`:\n\
+  - **test_dataset_A**: Brain radiotherapy plan\n- **test_dataset_B**: Prostate radiotherapy plan (same\
+  \ as `/Volumes/T9/patient_x`)\n\n### Running the Comparison\n\n```bash\n# Make sure you're in the aitrium_dvh\
+  \ directory\ncd /Users/spencerjohnson/projects/newleaf/newleaf-native/crates/aitrium_dvh\n\n# Activate\
+  \ Python environment with dicompylercore\nsource dvh_env/bin/activate\n\n# Run comparison on dataset\
+  \ A (Brain)\npython compare_implementations.py /Volumes/T9/dvh_test_plans/test_dataset_A\n\n# Run comparison\
+  \ on dataset B (Prostate)\npython compare_implementations.py /Volumes/T9/dvh_test_plans/test_dataset_B\n\
+  ```\n\n## Current Implementation Status\n\n### Completed Features (with parity fixes)\n- ✅ DICOM RTSTRUCT\
+  \ contour parsing\n- ✅ DICOM RTDOSE pixel data reading (32-bit unsigned support)\n- ✅ Dose→cGy binning\
+  \ matching numpy.histogram semantics\n- ✅ Maxdose calculation: `int(dosemax * scaling * 100) + 1`\n\
+  - ✅ Volume calculation using mean LUT spacing\n- ✅ Late rescale pattern (accumulate counts, then scale\
+  \ to volume)\n- ✅ Missing dose plane handling with `calculate_full_volume` flag\n- ✅ Cumulative DVH\
+  \ calculation (volume receiving ≥ dose)\n- ✅ DVH statistics (D-metrics, mean dose)\n- ✅ XOR for contour\
+  \ holes\n\n### Not Yet Implemented (Affecting Accuracy)\n- ❌ **XY bilinear interpolation** (2x oversampling\
+  \ with power-of-2 adjustment)\n- ❌ **Z-plane duplication** between slices\n- ❌ Structure extents optimization\n\
+  - ❌ Power-of-2 spacing validation\n\n### Expected Differences Without Interpolation\n\nThe lack of interpolation\
+  \ is the primary source of differences:\n\n| Metric | Expected Difference | Clinical Impact |\n|--------|-------------------|-----------------|\n\
+  | Volume | 0-5% | Acceptable for most cases |\n| Mean Dose | 0-3% | Within tolerance |\n| D95/D50/D5\
+  \ | 0-2 Gy | May exceed tolerance for small structures |\n\n**Important**: For clinical use, the Python\
+  \ implementation with interpolation remains the gold standard until interpolation is implemented in\
+  \ Rust.\n\n## Performance Comparison\n\nTypical performance on test datasets:\n\n| Implementation |\
+  \ Time per ROI | Speedup |\n|---------------|--------------|---------|\n| Python (with interpolation)\
+  \ | 100-200ms | 1x |\n| Python (no interpolation) | 50-100ms | 2x |\n| Rust (no interpolation) | 5-10ms\
+  \ | 10-20x |\n\n## Building and Testing\n\n```bash\n# Development build\ncargo build\n\n# Release build\
+  \ (optimized, recommended for testing)\ncargo build --release\n\n# Run unit tests\ncargo test\n\n# Run\
+  \ with test data\ncargo run --release --bin dvh_full /Volumes/T9/dvh_test_plans/test_dataset_A\n```\n\
+  \n## Library API Usage\n\n```rust\nuse aitrium_dvh::{DvhOptions, compute_dvh};\n\nlet options = DvhOptions\
+  \ {\n    calculate_full_volume: false,\n    use_structure_extents: false,\n    interpolation_resolution_mm:\
+  \ None,\n    interpolation_segments_between_planes: 0,\n    limit_cgy: None,\n    ..DvhOptions::default()\n\
+  };\n\nlet result = compute_dvh(\n    \"path/to/rtstruct.dcm\",\n    \"path/to/rtdose.dcm\", \n    roi_number,\n\
+  \    &options\n)?;\n\nprintln!(\"Volume: {} cc\", result.total_volume_cc);\nprintln!(\"Mean dose: {}\
+  \ Gy\", result.stats.mean_gy);\n```\n\n## Next Steps for Full Parity\n\n1. **Implement XY interpolation**\
+  \ - Critical for accuracy with coarse dose grids\n2. **Implement Z duplication** - Important for structures\
+  \ spanning few dose planes\n3. **Add structure extents** - Performance optimization\n4. **Create golden\
+  \ test suite** - Automated parity testing\n\n## Contributing\n\nTo contribute to parity improvements:\n\
+  \n1. Run comparison tests on your datasets\n2. Report differences exceeding clinical thresholds\n3.\
+  \ Submit PRs with test cases that fail parity checks"

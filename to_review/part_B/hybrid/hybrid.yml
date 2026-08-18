@@ -1,0 +1,143 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: cyrilvoyant/Hybrid
+url: https://github.com/cyrilvoyant/Hybrid
+platform: github
+description: Statistical tests (Wilcoxon, Kruskal-Wallis, Spearman, ROC/AUC) used for the paper "Hybrid
+  VMAT-3DCRT as breast cancer treatment improvement tool" (Scientific Reports, 2023).
+license: MIT
+language: MATLAB
+keywords:
+- breast-cancer
+- dosimetry
+- matlab
+- medical-physics
+- radiotherapy
+- vmat
+stars: 2
+updated_at: '2026-07-22T13:18:41Z'
+image_source: null
+heuristic_total_score: 23
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 8 support term(s).
+readme_excerpt: '# Hybrid VMAT-3DCRT for Breast Cancer Radiotherapy
+
+
+  MATLAB code and de-identified dosimetric data supporting the statistical analysis in:
+
+
+  > C. Voyant, M. Pinpin, D. Leschi, S. Prapant, F. Savigny, M.-A. Acquaviva, "Hybrid VMAT-3DCRT as breast
+  cancer treatment improvement tool," *Scientific Reports* 13, 23110 (2023). https://doi.org/10.1038/s41598-023-50538-x
+
+
+  Preprints: [HAL](https://hal.science/hal-03995648) · [arXiv:2302.12009](https://arxiv.org/abs/2302.12009)
+
+
+  ## Overview
+
+
+  Whole-breast radiotherapy is typically delivered with either **3D conformal radiotherapy (3DCRT)** —
+  robust but limited in conformality — or **volumetric modulated arc therapy (VMAT)** — highly conformal
+  but spreading a larger low-dose bath to surrounding organs at risk (OAR). This repository provides the
+  statistical toolkit used to evaluate a **Hybrid 3DCRT+VMAT** planning strategy against both baselines
+  on the same 30 breast cancer cases (bilateral, i.e. right and left breast planned independently), comparing:
+
+
+  - **Target coverage / conformity** (`VC.csv`): PTV dose statistics (D98, D2, D50, homogeneity index
+  HI), volume-based coverage (V95, V98, V107) and conformity indices, for the PTV-breast (PTV50) and the
+  nodal PTV (PTV47/PTV-Nodes).
+
+  - **Organs at risk** (`OAR.csv`): mean/threshold doses and NTCP-relevant volumes for lungs (ipsilateral/contralateral),
+  heart, LAD (IVA), liver, contralateral breast, thyroid, spinal cord PRV, esophagus, and trachea.
+
+
+  Each of the 45 OAR columns and 39 target-volume columns is repeated three times — once per technique
+  (3DCRT, VMAT, Hybrid) — so the same statistical test can be run pairwise across all three (see `main.m`,
+  section "Config matrix").
+
+
+  ## Statistical methods implemented (`main.m`)
+
+
+  - **Descriptive summaries**: per-technique means for every OAR and target-coverage metric (bilateral,
+  right-only, and left-only breast subsets).
+
+  - **Wilcoxon rank-sum tests** (`ranksum`) for each metric, pairwise across the three techniques (3DCRT
+  vs VMAT, 3DCRT vs Hybrid, VMAT vs Hybrid), reporting only the metrics with p < 0.05.
+
+  - **Kruskal-Wallis tests** (`kruskalwallis`) accompanying violin/box plots (`al_goodplot.m`) of the
+  OAR and target-coverage distributions across the three techniques.
+
+  - **Spearman correlation matrices** (`corr(...,''Type'',''Spearman'')`) between all target-coverage
+  and OAR metrics, per technique, visualized as significance heatmaps (p < 0.05 highlighted).
+
+  - **ROC/AUC analysis**: for each OAR metric with a defined clinical constraint (`CG_OAR`, e.g. mean
+  lung dose < 15 Gy), an optimal threshold on **BMI**, **age**, or **PTV50 evaluation volume** is searched
+  (finest 1000-step grid) that best separates cases meeting vs. failing the constraint, reporting the
+  threshold at minimum distance to the perfect classifier (sensitivity = specificity = 1) whenever AUC
+  > 0.7. This is what supports the paper''s finding that the hybrid approach is particularly beneficial
+  for right-sided tumors, BMI > 23, age > 48, or PTV50 evaluation volume > 350 cc.
+
+
+  ## Data
+
+
+  - **`OAR.csv`** (30 rows x 45 columns, `;`-separated, comma decimals): organ-at-risk dose/volume metrics,
+  15 metrics x {3DCRT, VMAT, Hybrid}.
+
+  - **`VC.csv`** (30 rows x 39 columns, same format): target-volume coverage metrics, 13 metrics x {3DCRT,
+  VMAT, Hybrid}.
+
+  - **`param2.csv`** (30 rows x 2 columns): patient **BMI** and **age**, de-identified, used as the candidate
+  predictors in the ROC/AUC threshold search.
+
+  - **`Bilan.pdf`**: supplementary dosimetric report accompanying the analysis (image-based scan; not
+  machine-readable).
+
+
+  All 30 rows are paired right/left breast cases (rows 1-15 = right, 16-30 = left in the bilateral analyses),
+  fully de-identified (only BMI, age, and dosimetric endpoints — no patient identifiers).
+
+
+  ## Requirements
+
+
+  - MATLAB with **Statistics and Machine Learning Toolbox** (`ranksum`, `kruskalwallis`, `corr`).
+
+  - `al_goodplot.m` (bundled) for the violin/box plots — a third-party plotting utility with no license
+  header in this repository; verify its original source before further redistribution if you plan to reuse
+  it outside this analysis.
+
+
+  ## Usage
+
+
+  ```matlab
+
+  % Add al_goodplot.m, OAR.csv, param2.csv, VC.csv, and main.m to the MATLAB path, then:
+
+  main
+
+  ```
+
+
+  The script prints the per-technique means and the significant (p < 0.05) pairwise comparisons to the
+  console, and generates the violin plots, Spearman heatmaps, and ROC curves as MATLAB figures.
+
+
+  ## Citation
+
+
+  If you use this code or data, please cite the paper above (see [`CITATION.cff`](CITATION.cff)).
+
+
+  ## License
+
+
+  MIT. See [`LICENSE`](LICENSE). This applies to the code; the de-identified dosimetric data (`OAR.csv`,
+  `VC.csv`, `param2.csv`) is shared as supplementary material for the associated publication.
+
+  '

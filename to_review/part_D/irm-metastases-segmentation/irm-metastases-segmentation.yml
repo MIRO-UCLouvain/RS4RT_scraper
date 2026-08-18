@@ -1,0 +1,143 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: HuguesSib/IRM-Metastases-Segmentation
+url: https://github.com/HuguesSib/IRM-Metastases-Segmentation
+platform: github
+description: Segmenting brain metastases with minimal annotations for radiotherapy applications.
+license: null
+language: Python
+keywords:
+- computer-vision
+- medical-image-processing
+- segmentation
+stars: 1
+updated_at: '2026-05-08T16:56:04Z'
+image_source: https://raw.githubusercontent.com/HuguesSib/IRM-Metastases-Segmentation/HEAD/results/project_overview.png
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# IRM-Metastases-Segmentation\n\n## Brain Metastases Segmentation with Minimal Annotations\
+  \ for Radiotherapy Applications\n\n**Semester Project by Hugues Sibille | July 2022 | University Hospital\
+  \ of Zürich (USZ)**\n\nThis repository contains the implementation of a deep learning framework for\
+  \ automated segmentation of brain metastases in MRI images, designed specifically for radiotherapy treatment\
+  \ planning. The project investigates and compares transformer-based models (UNETR) with traditional\
+  \ CNN architectures for medical image segmentation, focusing on achieving high segmentation accuracy\
+  \ with minimal manual annotations.\n\n![Project Overview](./results/project_overview.png)\n*Overview\
+  \ of the brain metastases segmentation pipeline*\n\n## \U0001F3AF Project Objectives\n\n- **Automated\
+  \ Segmentation**: Develop robust deep learning models for brain metastases segmentation\n- **Transformer\
+  \ Investigation**: Compare Vision Transformer-based models (UNETR) with traditional CNN approaches\n\
+  - **Clinical Application**: Optimize segmentation for radiotherapy treatment planning workflows\n- **Multi-Cancer\
+  \ Support**: Handle metastases from 4 different primary cancer types\n- **Minimal Annotations**: Reduce\
+  \ the annotation burden while maintaining clinical-grade accuracy\n\n## \U0001F4CA Dataset\n\nThe project\
+  \ uses a comprehensive dataset from the **University Hospital of Zürich (USZ)**:\n- **273 patients**\
+  \ with 3D MRI images and expert radiologist annotations\n- **4 types of cancers** represented in the\
+  \ dataset\n- **Mean metastases per patient**: 3 ± 2 (maximum: 27 metastases)\n- **Mean metastases size**:\
+  \ 22.3 ± 16.5 mm\n- **Split**: 217 training samples, 54 validation samples\n- **Image type**: T1-weighted\
+  \ contrast-enhanced MRI with bias correction using N4 algorithm\n\n### Data Structure\n```\ndataset/\n\
+  ├── dataset_0.json          # Primary dataset configuration\n├── dataset_1.json          # Alternative\
+  \ dataset split\n├── split_0.json to split_4.json    # 5-fold cross-validation splits\n```\n\n## \U0001F3D7\
+  ️ Architecture & Models\n\nThe framework supports multiple state-of-the-art 3D segmentation architectures,\
+  \ with special focus on transformer-based approaches:\n\n### Supported Models\n- **UNETR** (A. Hatamizadeh\
+  \ et al.): Vision Transformer-based encoder with CNN decoder via skip connections\n- **3D U-Net** (O.\
+  \ Ronneberger et al.): Classic encoder-decoder architecture adapted for 3D volumes  \n- **SegResNet**\
+  \ (A. Myronenko): Residual network-based segmentation model\n- **Attention U-Net** (O. Oktay et al.):\
+  \ U-Net enhanced with attention mechanisms\n\n![Model Architecture](./results/model_architecture.png)\n\
+  *Comparison of different model architectures used in the study*\n\n### UNETR Architecture Details\n\
+  - **Transformer-based encoder**: Takes linearly embedded 3D patches of input images\n- **CNN-based decoder**:\
+  \ Connected via skip connections for final segmentation prediction\n- **State-of-the-art performance**:\
+  \ Demonstrated on BTCV and MSD datasets\n- **3D patch processing**: Handles volumetric medical images\
+  \ effectively\n\n### Model Configuration\n- **Input**: Single-channel T1-weighted contrast-enhanced\
+  \ MRI (128×128×128 patches)\n- **Output**: Binary segmentation masks (background vs. tumor)\n- **Preprocessing**:\
+  \ Intensity normalization [0,1], bias correction (N4), foreground cropping\n- **Data Augmentation**:\
+  \ Random flips (3 directions), rotation, intensity scaling\n\n## \U0001F680 Getting Started\n\n### Prerequisites\n\
+  ```bash\n# Core dependencies\npython >= 3.8\ntorch >= 1.9.0\nmonai >= 0.9.0\nnumpy\nmatplotlib\nscikit-image\n\
+  ```\n\n### Installation\n```bash\n# Clone the repository\ngit clone https://github.com/username/IRM-Metastases-Segmentation.git\n\
+  cd IRM-Metastases-Segmentation\n\n# Install dependencies\npip install -r requirements.txt\n```\n\n###\
+  \ Environment Setup\nThe project uses MONAI (Medical Open Network for AI) as the primary framework for\
+  \ medical image processing and deep learning.\n\n## \U0001F4DA Usage\n\n### 1. Training a Model\n\n\
+  #### Basic Training\n```bash\ncd scripts\npython train.py --network unetr --epochs 350 --batch_size\
+  \ 2\n```\n\n#### UNETR Training (as used in the study)\n```bash\npython train.py \\\n    --network unetr\
+  \ \\\n    --epochs 1400 \\\n    --batch_size 2 \\\n    --lr 0.0001 \\\n    --dataset_folder ../dataset/dataset_1.json\
+  \ \\\n    --patch_size 128 128 128 \\\n    --spacing 1.0 1.0 1.0\n```\n\n#### U-Net Training (best performing\
+  \ model)\n```bash\npython train.py \\\n    --network UNet \\\n    --epochs 350 \\\n    --batch_size\
+  \ 2 \\\n    --lr 0.0001 \\\n    --dataset_folder ../dataset/dataset_1.json\n```\n\n#### Available Parameters\n\
+  | Parameter | Default | Description |\n|-----------|---------|-------------|\n| `--network` | `unetr`\
+  \ | Model architecture (unetr, UNet, SegResNet, Attention) |\n| `--epochs` | `350` | Number of training\
+  \ epochs |\n| `--batch_size` | `2` | Training batch size (4 patches per batch) |\n| `--lr` | `0.0001`\
+  \ | Learning rate |\n| `--patch_size` | `128,128,128` | Input patch dimensions |\n| `--spacing` | `1.0,1.0,1.0`\
+  \ | Voxel spacing for resampling |\n| `--workers` | `16` | Number of data loading workers |\n| `--gpus`\
+  \ | `0` | GPU configuration |\n\n### 2. Model Evaluation\n\n#### Inference and Visualization\n```bash\n\
+  python inference.py \\\n    --network unetr \\\n    --test_pretrain /path/to/model.pth \\\n    --dataset_folder\
+  \ ../dataset/dataset_1.json\n```\n\n#### Comprehensive Metrics Evaluation\n```bash\npython metrics.py\
+  \ \\\n    --network unetr \\\n    --test_pretrain /path/to/model.pth \\\n    --dataset_folder ../dataset/dataset_1.json\n\
+  ```\n\n### 3. Region of Interest (ROI) Training\n\nFor training on focused regions around metastases:\n\
+  ```bash\npython ROI_training.py \\\n    --network unetr \\\n    --epochs 350 \\\n    --batch_size 4\n\
+  ```\n\n## \U0001F4C8 Results & Performance\n\n### Quantitative Results\n\n#### Model Performance Comparison\n\
+  | Model | Best Val Mean Dice | Training Time | Performance Ranking |\n|-------|------------|-------------|---------|\n\
+  | **Attention U-Net** | **0.7133+** | ~30h | \U0001F947 **Best** |\n| **U-Net** | **0.7133** | ~30h\
+  \ (350 epochs) | \U0001F948 **Second** |\n| **SegResNet** | **0.6500+** | ~25h | \U0001F949 **Third**\
+  \ |\n| **UNETR** | **0.5755** | ~120h (1400 epochs) | \U0001F538 **Fourth** |\n\n*Note: + indicates\
+  \ approximate values based on cross-validation performance*\n\n#### Cross-Validation Results\n- **5-fold\
+  \ cross-validation** performed on all models\n- **Attention U-Net** showed the best metrics across all\
+  \ splits\n- **Consistent performance** across different data splits\n- **Statistical significance**\
+  \ confirmed for model rankings\n\n### Qualitative Results\n\n![Segmentation Examples](./results/segmentation_examples.png)\n\
+  *Examples of brain metastases segmentation results across different models*\n\n#### Key Findings:\n\
+  - **Overall good segmentation** by each network\n- **UNETR performed below** the three CNN-based models\n\
+  - **Lower brain regions** more challenging for all networks\n- **Small structures** difficult to segment\
+  \ across all architectures\n- **False negatives** more common than false positives\n\n## \U0001F52C\
+  \ Methodology\n\n### Data Preprocessing Pipeline\n1. **Bias Field Correction**: N4 algorithm for intensity\
+  \ inhomogeneity removal\n2. **Label Thresholding**: Outlier removal and annotation refinement\n3. **Intensity\
+  \ Normalization**: Scaling to [0,1] range\n4. **Foreground Cropping**: Removal of non-brain regions\n\
+  5. **Patch Extraction**: Random crop of 4 patches (128×128×128) per image\n\n### Training Strategy\n\
+  - **Loss Function**: Dice Loss + Cross-Entropy Loss\n- **Optimization**: Adam optimizer\n- **Validation**:\
+  \ 5-fold cross-validation\n- **Batch Size**: 4 preprocessed patches of size (128,128,128)\n- **Data\
+  \ Augmentation**: 3D flips, rotation, intensity scaling\n\n### Evaluation Metrics\n- **Dice Similarity\
+  \ Coefficient (DSC)**: Primary segmentation accuracy metric\n- **95th percentile Hausdorff Distance**:\
+  \ Boundary accuracy assessment\n- **Precision**: False positive control\n- **Recall**: True positive\
+  \ detection rate\n\n## \U0001F4C1 Project Structure\n\n```\nIRM-Metastases-Segmentation/\n├── scripts/\n\
+  │   ├── init.py              # Configuration and argument parsing\n│   ├── train.py             # Main\
+  \ training script\n│   ├── inference.py         # Inference and visualization\n│   ├── metrics.py  \
+  \         # Comprehensive evaluation metrics\n│   ├── ROI_training.py      # Region-of-interest focused\
+  \ training\n│   ├── utils.py             # Utility functions\n│   ├── get_dataset.py       # Dataset\
+  \ preparation utilities\n│   ├── bias_correction.py   # N4 bias field correction\n│   └── bash.sh  \
+  \            # Batch execution script\n├── dataset/\n│   ├── dataset_0.json       # Primary dataset\
+  \ configuration\n│   ├── dataset_1.json       # Alternative dataset configuration\n│   └── split_*.json\
+  \         # 5-fold cross-validation splits\n├── logs/\n│   ├── validation/          # Validation results\n\
+  │   └── *.out               # Training logs for different experiments\n├── results/                \
+  \ # Generated plots and visualizations\n├── README.md               # This file\n├── requirements.txt\
+  \        # Python dependencies\n└── SemThesis Final Presentation.pdf  # Original presentation\n```\n\
+  \n## \U0001F527 Advanced Features\n\n### Multi-GPU Training\n```bash\npython train.py --gpus 0,1,2,3\
+  \ --batch_size 8\n```\n\n### Model Checkpointing\nThe training script automatically saves:\n- Best model\
+  \ based on validation Dice score\n- Training curves and metrics plots\n- Detailed logs for experiment\
+  \ tracking\n\n### Custom Data Augmentation\nIncludes comprehensive augmentation strategies:\n- Random\
+  \ spatial flips along all axes (3 directions)\n- Intensity scaling and shifting\n- Rotation augmentation\n\
+  \n## \U0001F4CA Key Findings & Discussion\n\n### \U0001F3C6 **Main Results**\n1. **CNN models outperformed\
+  \ Transformer-based UNETR** on this dataset\n2. **Attention U-Net achieved the best performance** across\
+  \ all metrics\n3. **U-Net showed excellent performance** with faster training time\n4. **UNETR required\
+  \ significantly more training time** (~120h vs ~30h) for inferior results\n\n### \U0001F50D **Clinical\
+  \ Observations**\n- **Lower brain regions** present segmentation challenges for all models\n- **Small\
+  \ metastases** (<10mm) are harder to detect accurately\n- **Multiple metastases patients** show consistent\
+  \ performance\n- **Expert-level annotations** are crucial for training quality\n\n### \U0001F4A1 **Technical\
+  \ Insights**\n- **Patch-based training** (128³) effective for 3D medical images\n- **Data augmentation**\
+  \ critical for small medical datasets\n- **5-fold cross-validation** ensures robust performance estimates\n\
+  - **MONAI framework** provides excellent medical imaging tools\n\n## \U0001F6A6 Known Limitations\n\n\
+  - **Small Lesion Detection**: Performance decreases for metastases <10mm\n- **Lower Brain Regions**:\
+  \ Anatomical complexity affects segmentation quality\n- **UNETR Training Time**: Requires 4x longer\
+  \ training than CNN models\n- **Dataset Size**: Limited to 273 patients from single institution\n\n\
+  ## \U0001F52E Future Work\n\n- **Multi-Modal Integration**: Combine T1-weighted with T2-weighted and\
+  \ FLAIR sequences\n- **Larger Datasets**: Expand to multi-institutional data for better generalization\n\
+  - **Hybrid Architectures**: Combine best aspects of CNN and Transformer models\n- **Real-Time Inference**:\
+  \ Optimize for clinical deployment\n- **Longitudinal Analysis**: Track metastases progression over time\n\
+  \n\n## \U0001F4DA References\n\n1. Ali Hatamizadeh et al. \"UNETR: Transformers for 3D medical image\
+  \ segmentation\", 2021.\n2. Olaf Ronneberger et al. \"U-Net: Convolutional networks for biomedical image\
+  \ segmentation\", 2015.\n3. Andriy Myronenko. \"3D MRI brain tumor segmentation using autoencoder regularization\"\
+  , 2018.\n4. Ozan Oktay et al. \"Attention U-Net: Learning where to look for the pancreas\", 2018.\n\
+  5. Nicholas J. Tustison et al. \"N4ITK: improved N3 bias correction\", IEEE TMI, 2010.\n6. Alexey Dosovitskiy\
+  \ et al. \"An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale\", 2020.\n\n##\
+  \ \U0001F4DE Contact\n\n- **Author**: Hugues Sibille\n- **Institution**: ETH Zurich\n- **Project Type**:\
+  \ Semester Project\n- **Date**: July 12, 2022\n\n## \U0001F4DC License\n\nThis project is licensed under\
+  \ the MIT License - see the [LICENSE](LICENSE) file for details.\n\n---\n\n**Note**: This project represents\
+  \ research conducted as part of a semester project at ETH Zurich. Results have been v"

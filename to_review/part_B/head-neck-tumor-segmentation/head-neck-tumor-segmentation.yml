@@ -1,0 +1,110 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: cristian-assumma/head-neck-tumor-segmentation
+url: https://github.com/cristian-assumma/head-neck-tumor-segmentation
+platform: github
+description: End-to-end Deep Learning pipeline for Head & Neck tumor (GTVp) and lymph node (GTVn) segmentation
+  on MRI. Features Rician denoising, a 2D U-Net (MMSegmentation) with custom composite loss for extreme
+  class imbalance, and 3D morphological post-processing.
+license: null
+language: Python
+keywords:
+- computer-vision
+- deep-learning
+- healhtech
+- image-processing
+- medical-imaging
+- medtech
+- mmsegmentation
+- mri-segmentation
+- pytorch
+- unet
+stars: 0
+updated_at: '2026-06-08T15:22:45Z'
+image_source: https://raw.githubusercontent.com/cristian-assumma/head-neck-tumor-segmentation/HEAD/docs/images/pipeline.png
+heuristic_total_score: 19
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 5 support term(s).
+readme_excerpt: "# Head & Neck Tumor Segmentation (Deep Learning MRI)\r\n\r\n![Python](https://img.shields.io/badge/Python-3.10%2B-blue)\r\
+  \n![PyTorch](https://img.shields.io/badge/PyTorch-2.1.0-EE4C2C)\r\n![MMSegmentation](https://img.shields.io/badge/MMSegmentation-1.2.2-green)\r\
+  \n![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED)\r\n![Testing](https://img.shields.io/badge/PyTest-Passing-brightgreen)\r\
+  \n\r\n## \U0001F4CC Clinical & Architectural Overview\r\n\r\nAutomated segmentation of primary tumor\
+  \ volumes ($GTV_p$) and metastatic lymph nodes ($GTV_n$) in Head and Neck Cancer (HNC) is a critical\
+  \ bottleneck in radiotherapy (RT) planning.\r\n\r\nThis repository provides an **End-to-End Deep Learning\
+  \ Infrastructure Proof-of-Concept**. While it implements a 2D U-Net baseline for segmentation on T2-weighted\
+  \ MRI scans, the primary focus of this project is the **software engineering of the clinical workflow**:\
+  \ automated data stratification, Rician noise enhancement, robust NIfTI/DICOM file handling, 3D morphological\
+  \ post-processing, and containerized deployment for reproducible inference.\r\n\r\n## \U0001F3D7️ Architecture\
+  \ & Pipeline\r\n\r\nThe project is structured as a complete end-to-end medical imaging pipeline.\r\n\
+  \r\n![Pipeline Architecture](docs/images/pipeline.png) \r\n*> Full workflow: from raw volumetric data\
+  \ to 3D morphological post-processing.*\r\n\r\n### 1. Data Stratification & Extraction\r\n* **Dataset:**\
+  \ 120 unique patients (pre-RT and mid-RT scans).\r\n* **Stratification:** Balanced split (Train 68%,\
+  \ Val 32%, Test 20%) maintaining clinical variance based on tumor presence and volumetric size.\r\n\
+  * **Slicing:** Extraction of 2D axial slices with a $\\pm 5$ slice contextual buffer to ensure spatial\
+  \ coherence.\r\n\r\n### 2. Image Pre-processing (Enhancement Engine)\r\nMRI T2 scans suffer from Rician\
+  \ noise and ambiguous tissue boundaries. The pipeline applies:\r\n1. **Min-Max Normalization** to [0,\
+  \ 255] uint8 format.\r\n2. **Custom Rician Denoising:** Utilizing Non-Local Means (NLM) coupled with\
+  \ Otsu's thresholding on a morphological gradient to clean homogeneous areas while preserving high-frequency\
+  \ edges.\r\n3. **Median Filtering** ($3\\times3$) to suppress salt-and-pepper artifacts.\r\n4. **Edge\
+  \ Enhancement:** Sobel operators isolate biological contours, amplifying local contrast by a factor\
+  \ of 2.0 without boosting background noise.\r\n\r\n![Pre-processing Steps](docs/images/preprocessing.png)\r\
+  \n*> Pre-processing steps applied sequentially to each slice.*\r\n\r\n### 3. Deep Learning Model & Composite\
+  \ Loss\r\n* **Architecture:** 2D U-Net implemented via `MMSegmentation`.\r\n* **Transfer Learning:**\
+  \ Initialized with Cityscapes pre-trained weights to accelerate convergence on a limited medical dataset.\r\
+  \n* **Optimization:** Batch Normalization (BN) utilized across the backbone and decode heads for stability.\r\
+  \n\r\n![U-Net Architecture](docs/images/unet_architecture.png)\r\n*> U-Net architecture used in this\
+  \ repo.*\r\n\r\n### 4. Tackling Severe Class Imbalance (Composite Loss)\r\nThe dataset presents a critical\
+  \ imbalance: **98% background**, 1% $GTV_p$, and 1% $GTV_n$. Relying on standard Cross-Entropy leads\
+  \ to a collapsed model. I engineered a composite loss function:\r\n* **Weighted CrossEntropyLoss (0.3):**\
+  \ Ensures stable gradient propagation.\r\n* **Lovász-Softmax Loss (0.3):** Provides a differentiable\
+  \ surrogate to directly optimize the Intersection over Union (IoU) metric.\r\n* **Tversky Loss (0.4):**\
+  \ Configured with $\\alpha=0.7$ and $\\beta=0.3$ to strictly penalize False Negatives (prioritizing\
+  \ clinical sensitivity over specificity).\r\n\r\n### 5. 3D Morphological Post-Processing\r\n2D predictions\
+  \ often lack spatial continuity. 2D masks are stacked back into NIfTI volumes and refined using 3D mathematical\
+  \ morphology:\r\n* **Spurious Artifact Removal:** Filtering out isolated connected components (< 50\
+  \ voxels for $GTV_p$, < 1200 voxels for $GTV_n$).\r\n* **3D Morphological Closing:** Utilizing spherical\
+  \ structuring elements (radius 1 for $GTV_p$, radius 3 for $GTV_n$) to fill internal voids and regularize\
+  \ anatomical surfaces.\r\n\r\n![Post-processing Results](docs/images/postprocessing.png)\r\n*> Ground\
+  \ Truth vs Raw Prediction vs Post-processed Prediction.*\r\n\r\n---\r\n\r\n## \U0001F6E1️ Automated\
+  \ Testing & Quality Assurance\r\n\r\nTo improve software reliability and prevent silent regressions\
+  \ in volumetric calculations and metric evaluations, the core logic is covered by automated unit tests.\r\
+  \n\r\nRun the test suite locally:\r\n\r\n```bash\r\npytest tests/\r\n```\r\n\r\n### Covered Components\r\
+  \n\r\n- NIfTI volume loading and reconstruction.\r\n- File matching and metadata integrity.\r\n- Morphological\
+  \ post-processing.\r\n- Dice Score calculations.\r\n- Inference pipeline utilities.\r\n\r\n---\r\n\r\
+  \n## \U0001F4CA Performance Baseline (Proof-of-Concept)\r\n\r\nWhile the complex and varied nature of\
+  \ HNC limits absolute accuracy on a basic 2D U-Net, the integration of targeted pre-processing and 3D\
+  \ post-processing yielded measurable improvements across the test cohort (24 patients).\r\n\r\n| Metric\
+  \ | $GTV_p$ (Primary) | $GTV_n$ (Nodes) |\r\n| :--- | :--- | :--- |\r\n| **DSC (Pre-processing only)**\
+  \ | 0.262 ± 0.252 | 0.295 ± 0.237 |\r\n| **DSC (+ 3D Post-processing)** | **0.269 ± 0.257** | **0.319\
+  \ ± 0.275** |\r\n\r\n> **Note:** The current metrics reflect the inherent limitations of 2D architectures\
+  \ on highly complex 3D HNC morphological variations. This U-Net serves strictly as an architectural\
+  \ baseline to validate the data pipeline and deployment infrastructure.\r\n\r\nIn a production clinical\
+  \ setting, the inference engine is designed to seamlessly swap the baseline model with volumetric architectures\
+  \ such as:\r\n\r\n- 3D U-Net\r\n- V-Net\r\n- MONAI-based segmentation networks\r\n\r\nwithout requiring\
+  \ modifications to the surrounding workflow.\r\n\r\n---\r\n\r\n## \U0001F680 Usage & Reproducibility\
+  \ (Docker Deployment)\r\n\r\nTo eliminate dependency conflicts and ensure reproducibility across Linux,\
+  \ Windows, and macOS, the inference pipeline is fully containerized.\r\n\r\n### 1. Build the Environment\r\
+  \n\r\nEnsure Docker is installed, then build the image:\r\n\r\n```bash\r\ndocker build -t hn-segmentation:v1\
+  \ .\r\n```\r\n\r\nThe container includes:\r\n\r\n- PyTorch 2.1\r\n- CUDA 12.1 support\r\n- MMSegmentation\r\
+  \n- MONAI dependencies\r\n- Medical imaging libraries (SimpleITK, nibabel, etc.)\r\n\r\n### 2. Quickstart\
+  \ Demo (Containerized Inference)\r\n\r\nDownload the required sample files (model weights and NIfTI\
+  \ volumes) and place them in the corresponding directories:\r\n\r\n```text\r\nmodels/\r\n└── best_model.pth\r\
+  \n\r\ndata/\r\n└── Dataset_gz/\r\n```\r\n\r\nRun inference:\r\n\r\n```bash\r\ndocker run --rm \\\r\n\
+  \  -v \"$(pwd)/data:/app/data\" \\\r\n  -v \"$(pwd)/models:/app/models\" \\\r\n  hn-segmentation:v1\
+  \ \\\r\n  --dataset-dir /app/data/Dataset_gz \\\r\n  --excel-path /app/data/sample_test.xlsx \\\r\n\
+  \  --output-dir /app/data/Inference_Results \\\r\n  --config src/training/unet_config.py \\\r\n  --checkpoint\
+  \ /app/models/best_model.pth\r\n```\r\n\r\n> **Windows PowerShell users:** replace `$(pwd)` with `${PWD}`.\r\
+  \n\r\nThe pipeline automatically:\r\n\r\n1. Matches MRI volumes and metadata.\r\n2. Processes 2D slices.\r\
+  \n3. Performs model inference.\r\n4. Reconstructs 3D masks.\r\n5. Applies morphological closing.\r\n\
+  6. Saves the final output as:\r\n\r\n```text\r\nSEG_<patient_id>_post.nii.gz\r\n```\r\n\r\ninside the\
+  \ results directory.\r\n\r\n---\r\n\r\n## \U0001F9F0 Technology Stack\r\n\r\n| Category | Technologies\
+  \ |\r\n|-----------|-------------|\r\n| Deep Learning | PyTorch, MMSegmentation |\r\n| Medical Imaging\
+  \ | SimpleITK, nibabel |\r\n| Data Processing | NumPy, Pandas |\r\n| Computer Vision | OpenCV, scikit-image\
+  \ |\r\n| Testing | PyTest |\r\n| Deployment | Docker |\r\n| Version Control | Git, GitHub |\r\n\r\n\
+  ---\r\n\r\n## \U0001F4EC Contact\r\n\r\n**Ing. Cristian Assumma**  \r\n*MSc Biomedical Engineer | AI\
+  \ Healthcare & MedTech*\r\n\r\n* [LinkedIn](https://www.linkedin.com/in/cristian-assumma-08890b224)\r\
+  \n* [GitHub](https://github.com/cristian-assumma)\r\n\r\n---\r\n\r\n"

@@ -1,0 +1,83 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Fanli8807/HCC_MVI_ITH_radiomics_reproducibility
+url: https://github.com/Fanli8807/HCC_MVI_ITH_radiomics_reproducibility
+platform: github
+description: Reproducibility code for MRI-based ITH radiomics prediction of MVI in HCC.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-23T16:37:18Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "\uFEFF# HCC MVI ITH Radiomics Reproducibility Package\n\nThis repository provides reproducibility\
+  \ code for the study:\n\n**Preoperative MRI-based intratumoral heterogeneity radiomics for predicting\
+  \ microvascular invasion and stratifying recurrence-free survival in hepatocellular carcinoma**\n\n\
+  The package is designed for methodological verification under privacy constraints. It runs end-to-end\
+  \ on fully synthetic demonstration data and uses the same entry points for institutional patient-level\
+  \ data when such data are available under appropriate ethics and data-use approvals.\n\n## Important\
+  \ scope statement\n\nPatient-level MRI, clinical tables, original fitted coefficients, and institution-specific\
+  \ model artifacts are **not bundled**. This is intentional: the study data are restricted by privacy,\
+  \ institutional governance, and ethics approvals. The included `demo_data/` contains two synthetic,\
+  \ format-compatible cases only. The demo verifies executability, data flow, leakage-control logic, and\
+  \ output structure; it is **not** intended to reproduce the reported AUC, C-index, survival curves,\
+  \ or subgroup estimates.\n\n## What this package verifies\n\n- training-set-only fitting of scaling,\
+  \ GMM, feature-selection, model, and threshold parameters;\n- locked validation and external testing\
+  \ without using held-out data for feature selection, classifier benchmarking, hyperparameter tuning,\
+  \ or Youden-threshold derivation;\n- tumor + 5-mm peritumoral GTR construction;\n- 24-dimensional voxel-wise\
+  \ local feature matrix for GMM habitat assignment;\n- k = 3 GMM habitat model and locked habitat assignment\
+  \ rules;\n- closed-form 3D ITH fragmentation score using 26-connectivity;\n- GTR, ITH, GTR-ITH, Clinical,\
+  \ and Fusion model blocks;\n- diagnostic metrics, calibration, decision-curve analysis, DeLong comparison\
+  \ helper, threshold bootstrap, and prevalence-adjusted PPV/NPV;\n- optional RFS and SHAP helper scripts\
+  \ for full-cohort analyses.\n\n## Repository structure\n\n```text\nconfig/                    analysis\
+  \ and demo pipeline settings\nscripts/                   executable entry points\ndocs/            \
+  \          data dictionary, methods crosswalk, reproducibility checklist\nsrc/hcc_mvi_ith/         \
+  \  implementation modules\ntests/                     unit tests for key statistics and ITH score\n\
+  demo_data/                 fully synthetic two-case NIfTI demo data\n```\n\n## Quick start\n\n```bash\n\
+  conda env create -f environment.yml\nconda activate hcc-mvi-ith\nbash run_demo.sh\n```\n\nor, with an\
+  \ existing Python environment:\n\n```bash\npip install -r requirements.txt\npython scripts/run_demo.py\n\
+  PYTHONPATH=src pytest -q tests\n```\n\nOn Windows, `python scripts/run_demo.py` is the preferred cross-platform\
+  \ demo entry\npoint. It now also writes the Hosmer-Lemeshow consistency check that `run_demo.sh`\ncreates\
+  \ on Unix-like systems.\n\nExpected outputs are generated under `results/demo_run/` after running the\
+  \ demo:\n\n```text\nfeatures.csv\npredictions.csv\nmetrics.json\ngmm_k_search.csv\nhabitat_maps/\nfigures/\n\
+  model_artifacts.joblib\nhl_check_validation_fusion.txt\n```\n\nThe Hosmer-Lemeshow helper can also be\
+  \ run independently:\n\n```bash\npython scripts/check_hosmer_lemeshow.py --chi2 14.56 --df 8\n# p_value\
+  \ = 0.068287\n```\n\n## Full cohort run\n\nFull-cohort training requires the complete environment in\
+  \ `environment.yml`,\nincluding SimpleITK and PyRadiomics. In `train` mode the pipeline uses\nPyRadiomics\
+  \ with `config/pyradiomics.yml`; the lightweight fallback extractor is\nrestricted to the synthetic\
+  \ demo run and is not used for full-cohort\nfeature extraction.\n\nPrepare a case-folder structure and\
+  \ clinical table according to `docs/data_dictionary.md`. If the clinical CSV includes a `split` column\
+  \ with values `train`, `validation`, and `external_test`, the training split is the only split used\
+  \ for GMM fitting, feature selection, classifier tuning, model fitting, and threshold derivation.\n\n\
+  ```bash\npython scripts/train_pipeline.py \\\n  --data-dir /path/to/case_folders \\\n  --clinical /path/to/clinical_variables.csv\
+  \ \\\n  --output results/full_run \\\n  --config config/pipeline.yml \\\n  --mode train\n```\n\nWhen\
+  \ `split` is supplied, `metrics.json` reports Fusion performance separately\nfor `train`, `validation`,\
+  \ and `external_test` at both the training-derived\nYouden threshold and the published locked threshold.\
+  \ These split-specific\nmetrics should be used for reported performance tables rather than pooled all-case\n\
+  performance.\n\n## Optional analysis helpers\n\n```bash\npython scripts/compare_delong.py \\\n  --predictions\
+  \ results/full_run/predictions.csv \\\n  --label-col MVI_label \\\n  --model-a Fusion_probability \\\
+  \n  --model-b Clinical_probability \\\n  --output results/full_run/delong_fusion_vs_clinical.json\n\n\
+  python scripts/survival_analysis.py \\\n  --input results/full_run/predictions_with_rfs.csv \\\n  --score-col\
+  \ Fusion_probability \\\n  --duration-col RFS_months \\\n  --event-col RFS_event \\\n  --threshold 0.473\
+  \ \\\n  --output results/full_run/survival\n\npython scripts/shap_interpretability.py \\\n  --artifacts\
+  \ results/full_run/model_artifacts.joblib \\\n  --features results/full_run/features.csv \\\n  --output\
+  \ results/full_run/shap\n```\n\n## Method constants\n\n- Random seed: 42.\n- GTR ROI: tumor mask + 5-mm\
+  \ peritumoral margin.\n- GMM habitat number: k = 3.\n- GMM input: six local first-order statistics in\
+  \ a 3 × 3 × 3 neighborhood across DWI, arterial, portal venous, and delayed phases.\n- ITH score: `1\
+  \ - (1 / S_total) * sum_i(S_i,max / n_i)`, using 26-connectivity.\n- PyRadiomics bin width: 25.\n- Clinical\
+  \ covariates: HBV infection, maximum tumor diameter, non-smooth tumor margin, and pseudocapsule.\n-\
+  \ Published Fusion threshold: 0.473.\n\n## Reproducibility safeguards\n\n- The external test set is\
+  \ never used during scaling, GMM fitting, feature selection, classifier benchmarking, hyperparameter\
+  \ tuning, model fitting, or threshold derivation.\n- Scaling and GMM parameters are fitted on the training\
+  \ set and then frozen.\n- Validation and external test sets are used only for performance evaluation.\n\
+  - No postoperative pathological variable enters the predictive models; histologic differentiation is\
+  \ handled only as a baseline/subgroup variable.\n- The demo deliberately reports that it is synthetic\
+  \ and underpowered, preventing over-claiming of clinical performance from the bundled data.\n\nSee `docs/methods_crosswalk.md`\
+  \ and `docs/reproducibility_checklist.md` for analysis-to-code mapping.\n"

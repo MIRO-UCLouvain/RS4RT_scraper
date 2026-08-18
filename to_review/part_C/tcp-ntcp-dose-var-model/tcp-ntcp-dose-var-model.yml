@@ -1,0 +1,57 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: mbolt01/TCP-NTCP-dose_var_model
+url: https://github.com/mbolt01/TCP-NTCP-dose_var_model
+platform: github
+description: Python code used to model the variation in TCP and NTCP with dose fraction specific dose
+  variations
+license: null
+language: Python
+keywords: []
+stars: 11
+updated_at: '2025-03-24T00:33:44Z'
+image_source: null
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# TCP/NTCP Radiobiological model\nPython code used to model the variation in TCP and\
+  \ NTCP with dose fraction specific dose variations.\nThere is huge flexibility in variation of the delivered\
+  \ dose per fraction.\nDoses can be generated within the model (as used heavily within the thesis) or\
+  \ can be supplied as a list of doses (which must be done for the NTCP model; a list of doses can easily\
+  \ be gneerated from the TCP model and then supplied for NTCP calcualtions).\n\n## Example usage\nThis\
+  \ example generates a set of TCP reuslts for 1000 patients and then plots the individual results and\
+  \ the population mean.\nThere are 1000 patients with alpha/beta mean of 10 and standard deviation of\
+  \ 20% of the mean.\nNominal dose is 2Gy/#. There is no offset of dose from the mean, but delivered dose\
+  \ per fraction has a standard deviation of 1.5%.\nA 5% drift in beam output per year is included and\
+  \ specific results are returned at 74Gy.\nUsage of the NTCP model is similar.\n\n```python\n# Import\
+  \ the modules\nimport TCP_NTCP as model\nimport matplotlib.pyplot as plt\n\n\n# Generate a set TCP of\
+  \ results\nresults = model.completeTCPcalc(n=1000,                     # number of patients in population\
+  \ to model\n                                alphabeta_use=10,           # mean alpha/beta\n        \
+  \                        alphabeta_sd_use=20,        # SD of alpha/beta (%)\n                      \
+  \          d=2,                        # nominal dose (Gy/fraction)\n                              \
+  \  d_shift=0,                  # initial dose difference (%)\n                                d_sd=1.5,\
+  \                   # standard deviation of delivered dose (%)\n                                d_trend=5/365,\
+  \              # dose drift (%/day)\n                                max_d=100,                  # maximum\
+  \ dose for which TCP is calcualted (Gy)\n                                dose_of_interest=74,      \
+  \  # results of TCP at this dose are returned seperately for simpler analysis.\n                   \
+  \             n0 = 74)                    # Specified N0 value (can be determined by fitting to a defined\
+  \ population)\n\n\n# Produce a plot the results\n\n# plot the first 100 individual curves\nfor i in\
+  \ range(100):\n    plt.plot(results['nom_doses'],results['TCPs'][i],c='C1',alpha=0.3,lw=1)\n    \n#\
+  \ plot population mean\nplt.plot(results['nom_doses'],results['TCP_pop'],ls='-',c='C0',marker='o',ms=3)\n\
+  plt.show()\n\n# Generate set of NTCP results\n\nntcp_results = model.complete_NTCP_calc(d_data=[64,74],\
+  \             # dose values on NTCP curve\n                                       ntcp_data=[0.36,0.47],\
+  \       # NTCP values corresponding to the above doses\n                                       irrad_perc\
+  \ = 100,            # scaling factor\n                                       frac_doses=all_d_array,\
+  \      # this will be a list of dose values to compute the NTCP for\n                              \
+  \         max_dose=100,                # maximum calculation dose\n                                \
+  \       ntcp_params={'td50_1':(31.4,0),\n                                                    'v': (0.72,0),\
+  \ ## v=1 for parotid (e.g. low for rectum (0.08,10))\n                                             \
+  \       'm':(0.53,0),   # m paremter in NTCP equation (may have ot be found through optimisation\n \
+  \                                                   'n':(1,0)},     # n parameter in NTCP equation\n\
+  \                                       fit_vals=False)['patient_ntcps'] #[0][29] ## this will reuturn\
+  \ the NTCP after 30#\n```\n"

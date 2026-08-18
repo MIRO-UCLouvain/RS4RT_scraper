@@ -1,0 +1,70 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: pepefcp/dual-roi-muscle-radiomics
+url: https://github.com/pepefcp/dual-roi-muscle-radiomics
+platform: github
+description: Dual-ROI radiomic muscle ultrasound for detection of pathological muscle in children — locked
+  SAP and analysis pipeline
+license: NOASSERTION
+language: null
+keywords: []
+stars: 0
+updated_at: '2026-05-07T08:51:38Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# dual-roi-muscle-radiomics\n\n**Dual-ROI radiomic muscle ultrasound for detection of\
+  \ pathological muscle in children: a single-center proof-of-concept study**\n\nThis repository contains\
+  \ the locked Statistical Analysis Plan (SAP), analysis code, and derived results for the manuscript\
+  \ currently under review at *Muscle & Nerve*.\n\n---\n\n## Pre-registration\n\nThe Statistical Analysis\
+  \ Plan (`SAP_v1.1_LOCKED.docx` / `SAP_v1.1_LOCKED.md`) was finalized **before model fitting on the locked\
+  \ final cohort under the locked protocol**, and was archived at the Open Science Framework prior to\
+  \ analysis.\n\n- **OSF DOI:** *[pending — registration submitted, awaiting approval]*\n- **OSF Project\
+  \ URL:** https://osf.io/9pc4g\n\nAny deviation from the SAP is recorded in `DEVIATIONS_LOG.md` and explicitly\
+  \ flagged in the manuscript text. Post-hoc analyses are labelled as such.\n\n---\n\n## Cohort summary\n\
+  \n| Group | n |\n|---|---|\n| Healthy controls | 23 |\n| Pathological — myogenic | 16 |\n| Pathological\
+  \ — neurogenic | 13 |\n| Pathological — SMA-I/II/III | 3 + 4 + 3 |\n| **Total** | **62** |\n\n---\n\n\
+  ## Endpoints (locked, see SAP §5)\n\n| Endpoint | Definition | n | Status |\n|---|---|---|---|\n| Primary\
+  \ | Healthy vs Pathological detection, full cohort | 62 | confirmatory |\n| Exploratory | Healthy vs\
+  \ Pathological within Heckmatt-analogue Grade 2 | 16 | exploratory |\n| Sensitivity | Healthy vs Pathological,\
+  \ SMA excluded | 52 | sensitivity |\n\n**Primary contrast.** Model 7 (Dual-ROI full radiomics) vs Model\
+  \ 2 (continuous mean echointensity).\n\n**Inferential test.** Participant-level paired bootstrap on\
+  \ aggregated out-of-fold predictions, BCa 95% CI, 2000 resamples, two-sided α = 0.05.\n\n**Primary result.**\
+  \ ΔAUC = +0.220 (BCa 95% CI +0.113 to +0.358; bootstrap p<0.001; DeLong p<0.001). Null hypothesis rejected\
+  \ per the prespecified criterion.\n\n---\n\n## Repository structure\n\n```\n.\n├── SAP_v1.1_LOCKED.docx\
+  \         # Locked Statistical Analysis Plan (Word)\n├── SAP_v1.1_LOCKED.md           # Locked SAP (markdown\
+  \ source)\n├── DEVIATIONS_LOG.md            # Post-lock deviations record\n├── RESULTS_SYNTHESIS.md\
+  \         # Plain-text synthesis of all results\n├── requirements.txt             # Pinned Python environment\n\
+  ├── seeds.json                   # 50 random seeds (locked at SAP deposit)\n├── README.md\n├── LICENSE\n\
+  ├── src/\n│   ├── 01_load_and_prepare.py   # Cohort assembly per SAP §4\n│   ├── 02_descriptives.py\
+  \       # Table 1 + Figure 2\n│   ├── 03_primary_analysis.py   # Models 1–7, primary endpoint, primary\
+  \ contrast\n│   ├── 04_grade2_analysis.py    # Heckmatt-analogue Grade 2 exploratory analysis\n│   ├──\
+  \ 05_sensitivity.py        # SMA-excluded, age covariate, classifier sensitivity\n│   ├── 06_permutation.py\
+  \        # Permutation null distribution (supportive)\n│   └── lib/\n│       └── analysis.py       \
+  \   # CV, feature selection, models, metrics, contrasts\n└── results/\n    ├── tables/             \
+  \     # Tables 1–4 + supplementary (CSV)\n    ├── figures/                 # Figures 2–4 + supplementary\
+  \ (PNG/PDF)\n    └── logs/                    # Execution logs\n```\n\n---\n\n## Reproducibility\n\n\
+  All preprocessing, feature selection, and hyperparameter tuning operations are restricted to the training\
+  \ fold within each cross-validation iteration to prevent data leakage. The analysis pipeline is deterministic\
+  \ given the seeds in `seeds.json`.\n\n```bash\n# 1. Create environment\npython3.10 -m venv .venv\nsource\
+  \ .venv/bin/activate\npip install -r requirements.txt\n\n# 2. Run analysis pipeline\npython src/01_load_and_prepare.py\n\
+  python src/02_descriptives.py\npython src/03_primary_analysis.py\npython src/04_grade2_analysis.py\n\
+  python src/05_sensitivity.py\npython src/06_permutation.py\n```\n\nAll outputs are written to `results/`.\n\
+  \n---\n\n## Data availability\n\nThis repository **does not contain raw patient data**.\n\n- **De-identified\
+  \ summary tables** with aggregated cohort statistics are provided in `results/tables/`.\n- **Raw DICOM\
+  \ ultrasound images** are not released under the IRB approval (Ref. HULP/PI-248-2017) and the Spanish\
+  \ Biomedical Research Law 14/2007 framework. Access on reasonable request to the corresponding author\
+  \ and subject to ethical review.\n- **Cohort cleaning script** (`src/01_load_and_prepare.py`) references\
+  \ participants by anonymous identifiers (`PARTICIPANT_001` … `PARTICIPANT_006`) in the public release.\
+  \ The cleaning logic is unchanged from the locked SAP record.\n\n---\n\n## Citation\n\n*[To be added\
+  \ on manuscript acceptance.]*\n\n---\n\n## License\n\n- **Code:** MIT License (see `LICENSE`)\n- **Statistical\
+  \ Analysis Plan and manuscript text:** CC-BY 4.0\n\n---\n\n## Corresponding author\n\n**José Fernández-Cuesta\
+  \ Peñafiel, MD**\nORCID: [0000-0003-3080-1100](https://orcid.org/0000-0003-3080-1100)\n\n---\n\n## Acknowledgments\n\
+  \nThis work was supported by a research grant from the **Sociedad Española de Neurología Pediátrica\
+  \ (SENEP)**. Radiomic feature extraction used the **QUIBIM QP-Discovery** platform (QUIBIM S.L., Valencia,\
+  \ Spain).\n"

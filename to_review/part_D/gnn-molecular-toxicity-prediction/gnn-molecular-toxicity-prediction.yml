@@ -1,0 +1,55 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Ayush-Bhalerao4/GNN-Molecular-Toxicity-Prediction
+url: https://github.com/Ayush-Bhalerao4/GNN-Molecular-Toxicity-Prediction
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-08T12:12:09Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# \U0001F9EC MolPropNet — GNN Molecular Analysis\n\n**Python 3.13 compatible port of\
+  \ the original TensorFlow/Keras GNN project.**  \nReplaces TensorFlow with pure **NumPy + scikit-learn**\
+  \ — zero heavy-framework dependencies.\n\n---\n\n## Why not TensorFlow?\n\nTensorFlow 2.x does not support\
+  \ Python 3.13 (as of 2025). This project implements all four\nGNN architectures from scratch in NumPy\
+  \ so the full pipeline runs on any modern Python.\n\n| Library | Original | This port |\n|---------|----------|-----------|\n\
+  | DL framework | TensorFlow 2 / Keras | **NumPy (built-in)** |\n| Metrics | sklearn | sklearn (same)\
+  \ |\n| SMILES parsing | RDKit (required) | Pure Python (RDKit optional) |\n| Web app | — | **Flask**\
+  \ |\n| Python support | 3.9–3.11 | **3.9–3.13+** |\n\n---\n\n## Quick start\n\n```bash\n# 1. Install\n\
+  pip install flask numpy scikit-learn matplotlib\n\n# 2. Run web app\npy -3.13 app.py\n# → http://localhost:5000\n\
+  \n# 3. Train (uses local CSVs from `data/raw/`)\npy -3.13 main.py --dataset tox21 --model gat --epochs\
+  \ 20\npy -3.13 main.py --dataset bbbp  --model gin --epochs 10\n\n# 4. Visualise attention\npy -3.13\
+  \ visualize.py --smiles \"CC(=O)Oc1ccccc1C(=O)O\" --dataset tox21\n```\n\n---\n\n## Project structure\n\
+  \n```\ngnn_project/\n├── app.py                  Flask web application\n├── requirements.txt\n├── README.md\n\
+  │\n├── data/\n│   ├── data_utils.py       SMILES → numpy arrays (RDKit or pure-Python)\n│   └── raw/\
+  \                Place tox21_raw.csv / bbbp_raw.csv here\n│\n├── models/\n│   └── models.py        \
+  \   GCN · GAT · MPNN · GIN  (pure NumPy)\n│\n├── train/\n│   ├── main.py             Training entry\
+  \ point\n│   └── train_utils.py      AdamW · masked BCE · early stopping · metrics\n│\n├── visualize/\n\
+  │   └── visualize.py        Attention heatmap · ROC bars · molecule graph\n│\n├── templates/\n│   └──\
+  \ index.html          Flask UI\n│\n└── checkpoints/            Auto-created; stores best_gat.npz / best_gin.npz\n\
+  ```\n\n---\n\n## Using real MoleculeNet datasets\n\n```bash\n# Place these CSVs here (file names must\
+  \ match):\ndata/raw/tox21_raw.csv   # columns: smiles, NR-AR, NR-AR-LBD, ..., SR-p53\ndata/raw/bbbp_raw.csv\
+  \    # columns: smiles, p_np, name\n\n# Re-run training\npy -3.13 main.py --dataset tox21 --model gat\n\
+  ```\n\n---\n\n## Models\n\n| Model | Key advantage | Best for |\n|-------|--------------|----------|\n\
+  | **GCN** | Fast baseline aggregation | Initial benchmarks |\n| **GAT** | Per-bond attention weights\
+  \ | Toxicophore explainability |\n| **MPNN** | Edge feature messages (bond type) | Bond-sensitive prediction\
+  \ |\n| **GIN** | Maximum graph discriminative power | Final accuracy |\n\n---\n\n## Upgrading to PyTorch\
+  \ (optional)\n\n```bash\npip install torch torch-geometric\n# Then replace models/models.py forward()\
+  \ with PyG layers\n# and train/train_utils.py with torch.optim.AdamW + autograd\n```\n\n---\n\n## API\
+  \ endpoints\n\n| Method | Route | Description |\n|--------|-------|-------------|\n| GET | `/` | Web\
+  \ UI |\n| POST | `/analyze` | `{\"query\": \"aspirin\"}` → full JSON result |\n| GET | `/molecules`\
+  \ | Autocomplete name list |\n\n---\n\n## Evaluation metrics (Section 10.4)\n\n- **ROC-AUC** — primary;\
+  \ handles class imbalance\n- **PR-AUC** — precision-recall; sensitive to rare positives\n- **F1-Score**\
+  \ — harmonic mean; balanced measure\n\n---\n\n## References\n\n- Kipf & Welling (2017) — GCN\n- Veličković\
+  \ et al. (2018) — GAT\n- Gilmer et al. (2017) — MPNN\n- Xu et al. (2019) — GIN\n- MoleculeNet: Wu et\
+  \ al. (2018)"

@@ -1,0 +1,133 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: joaovcpessoa/sbrt_2026_mts_classification_embedded_systems
+url: https://github.com/joaovcpessoa/sbrt_2026_mts_classification_embedded_systems
+platform: github
+description: SBRT 2026
+license: GPL-3.0
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-25T18:25:40Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Multivariate Time Series Classification in Resource-Constrained Embedded Systems\n\n\
+  - **Autores:** João Vítor C. Pessoa, Rafael S. Chaves e Marcello L. R. de Campos\n- **Instituição:**\
+  \ Universidade Federal do Rio de Janeiro\n- **Publicação:** XLIII Brazilian Symposium on Telecommunications\
+  \ and Signal Processing (SBrT 2026)  \n- **Evento:** 29 de setembro a 2 de outubro de 2026, Salvador,\
+  \ BA\n\n## Sumário\n\n- [Objetivo](#objetivo)\n- [Visão Geral](#visão-geral)\n- [Arquitetura](#arquitetura)\n\
+  - [Pré-requisitos](#pré-requisitos)\n- [Instalação](#instalação)\n- [Estrutura de Diretórios](#estrutura-de-diretórios)\n\
+  - [Configuração](#configuração)\n- [Uso](#uso)\n- [Saídas Geradas](#saídas-geradas)\n- [Detalhes Técnicos](#detalhes-técnicos)\n\
+  - [Referências](#referências)\n\n## Objetivo\n\nComparar características de uma MLP implementada para\
+  \ um problema de classificação com:\n- Ponto flutuante (FP32)\n- Ponto fixo (INT8, INT16, INT32)\nAvaliação:\n\
+  - Tempo de inferência\n- Uso de memória\n- Erro numérico\n- Precisão da classificação\n- Energia\n\n\
+  ### Representação em ponto fixo\n\nUse quantização uniforme:\n\n$$x_q = \\text{round}(x \\cdot 2^n)$$\n\
+  ​\n$$x \\approx \\frac{x_q}{2^n}$$\n\nOnde $n$ = número de bits fracionários.\n\nFormatos de teste:\n\
+  \n| Formato | Comprimento | Bits |\n| ------ | ----------- | ---------------- | \n| Q7\t   | 8 bits\t\
+  \     | 7                | \n| Q15\t   | 16 bits     | 15               | \n| Q31\t   | 32 bits    \
+  \ | 31               |\n\n### Estratégia de Quantização\n\nEscalonamento por camada:\n\n$$S=\\frac{2^{n−1}-1}{max(∣x∣)}$$\n\
+  \n$$x_q=round(S \\cdot x)$$\n\nIsso evita estouro de capacidade e é padrão em redes neurais quantizadas.\n\
+  \n### O que será medido?\n\n**Acurácia**\n\n$$ Acurácia = \\frac{\\text{correct predictions}}{\\text{total\
+  \ samples}} $$\n​\n**Erro**\n\nComparar a saída em ponto flutuante com a saída em ponto fixo:\n\n$$RMSE=\\\
+  sqrt{\\frac{1}{N} \\sum (y_{float} - y_{fixed})^2}$$\n\n$$SNR=10log10 (\\frac{\\sum y^2_{float}}{\\\
+  sum (y_{float} - y_{fixed})^2})$$\n \n**Tempo de inferência**\n\n$$ \\text{Tempo de inferência} = \\\
+  frac{\\text{Total time}}{\\text{Number of samples}} $$\n\n**Uso de memória**\n\n$$ \\text{Memória} =\
+  \ \\text{weights} + \\text{activations}$$\n\nA ideia para o código foi criar um pipeline modular em\
+  \ Python capaz de executar essas tarefas de forma ordenada e fácil de compreender. Nosso objetivo principal\
+  \ foi a detecção de eventos em poços de petróleo usando o dataset 3W, contruído pela Petrobrás. O projeto\
+  \ segue o seguinte fluxo: \n- pré-processamento com windowing\n- treinamento de uma MLP\n- avaliação\
+  \ das medidas\n- quantização pós-treinamento (INT8/INT16/INT32)\n- geração automática de sketches para\
+  \ microcontroladores AVR\n\n\n\n## Visão Geral\n\nO dataset 3W contém séries temporais de sensores de\
+  \ poços de petróleo rotuladas com eventos anômalos. Este pipeline:\n\n1. Carrega e limpa os dados via\
+  \ `ThreeWToolkit`, criado pela Petrobrás para manipular o dataset\n2. Aplica janelamento espectral (Hann)\
+  \ no sinal e janelamento Boxcar nos rótulos\n3. Treina uma MLP com PyTorch\n4. Avalia acurácia e mede\
+  \ consumo energético (Joules/Wh) e emissões de CO₂ com a biblioteca CodeCarbon\n5. Quantiza o modelo\
+  \ treinado em INT8, INT16 e INT32 usando aritmética de ponto fixo Q31\n6. Exporta sketches `.ino` autocontidos\
+  \ para validação embarcada em placas Arduino AVR\n\n## Arquitetura\n\nO código é organizado em seis\
+  \ classes com responsabilidades bem definidas:\n\n```txt\nPipelineConfig          ← Configuração centralizada\
+  \ (dataclass)\n│\n├── DataProcessor       ← Carregamento, windowing e split treino/teste\n├── ModelManager\
+  \        ← Treinamento e avaliação FP32 com rastreamento de CO₂\n├── Quantizer           ← Quantização\
+  \ PTQ (INT8 / INT16 / INT32)\n├── ArduinoExporter     ← Geração de sketches .ino para AVR\n│\n└── Pipeline\
+  \            ← Orquestrador: coordena todas as etapas\n```\n\n### Fluxo de execução\n\n```txt\nDataset\
+  \ 3W (Parquet)\n        │\n        ▼\n  DataProcessor\n  ┌─────────────────────────────────┐\n  │  Windowing\
+  \ Hann  →  Features    │\n  │  Windowing Boxcar → Labels      │\n  │  Train / Test split (80/20)   \
+  \  │\n  └─────────────────────────────────┘\n        │\n        ▼\n  ModelManager\n  ┌─────────────────────────────────┐\n\
+  \  │  Treina MLP (PyTorch)           │\n  │  Avalia com EmissionsTracker    │\n  │  → Acurácia, Energia,\
+  \ CO₂      │\n  └─────────────────────────────────┘\n        │\n        ▼\n  Quantizer  (para cada largura\
+  \ de bits)\n  ┌─────────────────────────────────┐\n  │  Calibração de escalas          │\n  │  Quantização\
+  \ de pesos (Q31)     │\n  │  Avaliação: SNR, RMSE, Flash    │\n  └─────────────────────────────────┘\n\
+  \        │\n        ▼\n  ArduinoExporter\n  ┌─────────────────────────────────┐\n  │  Gera mlp_3w_int{8,16,32}.ino\
+  \  │\n  │  Com PROGMEM, requant, argmax   │\n  └─────────────────────────────────┘\n        │\n    \
+  \    ▼\n  outputs/\n  ├── logs/session.log\n  ├── models/\n  └── sketches/mlp_3w_int{8,16,32}.ino\n\
+  ```\n\n## Pré-requisitos\n\n- Python 3.10+\n- PyTorch 2.x\n- Dataset 3W baixado localmente ([Petrobras/3W\
+  \ no GitHub](https://github.com/petrobras/3W))\n\n### Dependências Python\n\n```\nnumpy\npandas\ntorch\n\
+  codecarbon\nThreeWToolkit\n```\n\n> `ThreeWToolkit` é a biblioteca oficial de utilitários do dataset\
+  \ 3W.  \n> Consulte o repositório do projeto para instruções de instalação.\n\n## Instalação\n\n```bash\n\
+  # 1. Clone este repositório\ngit clone https://github.com/seu-usuario/quantized_mlp_inference_mcu_sbrt_2026.git\n\
+  cd quantized_mlp_inference_mcu_sbrt_2026\n\n# 2. Crie e ative um ambiente virtual\npython -m venv .venv\n\
+  source .venv/bin/activate        # Linux / macOS\n.venv\\Scripts\\activate           # Windows\n\n#\
+  \ 3. Instale as dependências\npip install numpy pandas torch codecarbon\n\n# 4. Instale o ThreeWToolkit\
+  \ (siga as instruções do repositório oficial)\n```\n\n## Estrutura de Diretórios\n\n```txt\nquantized_mlp_inference_mcu_sbrt_2026/\n\
+  │\n├── experiment.py      ← Código principal\n├── experiment.ipynb   ← Jupyter Notebook\n├── README.md\n\
+  │\n└── outputs/                          ← Criado automaticamente na primeira execução\n    ├── logs/\n\
+  \    │   └── session.log               ← Log completo da sessão\n    ├── models/                   \
+  \    ← Reservado para checkpoints futuros\n    ├── plots/                        ← Reservado para os\
+  \ imagens\n    └── sketches/\n        ├── mlp_3w_int8.ino\n        ├── mlp_3w_int16.ino\n        └──\
+  \ mlp_3w_int32.ino\n```\n\n## Configuração\n\nToda a parametrização do experimento está centralizada\
+  \ na dataclass `PipelineConfig`. Para um novo experimento, basta alterar os valores na função `main()`\
+  \ — sem tocar no restante do código.\n\n```python\nconfig = PipelineConfig(\n    dataset_path=r\"/caminho/para/3W\"\
+  , # Caminho para o dataset 3W\n    selected_col=\"T-TPT\",             # Coluna de sinal utilizada\n\
+  \    target_class=[1, 2],              # Classes de eventos alvo (1 = Abrupt BSW Increase, 2 = Spurious\
+  \ Closure of DHSV)\n    # Janelamento\n    window_size=1000,        # Número de amostras por janela\n\
+  \    window_type=\"hann\",      # Janela espectral para o sinal\n    overlap=0.5,             # Sobreposição\
+  \ entre janelas (50%)\n    # Modelo\n    hidden_sizes=(32, 16),   # Neurônios por camada oculta\n  \
+  \  output_size=3,           # Número de classes de saída\n    epochs=20,\n    learning_rate=0.001,\n\
+  \    # Quantização e exportação\n    quantization_bits=[8, 16, 32],\n    n_export=10,             #\
+  \ Amostras embarcadas no sketch Arduino\n    # Diretório raiz dos outputs\n    output_dir=Path(\"./outputs\"\
+  ),\n)\n```\n\n### Parâmetros principais\n\n| Parâmetro | Padrão | Descrição |\n|---|---|---|\n| `dataset_path`\
+  \ | — | Caminho local para o dataset 3W |\n| `selected_col` | `\"T-TPT\"` | Coluna de sinal do evento\
+  \ |\n| `target_class` | `[1, 2]` | Classes de eventos a incluir |\n| `window_size` | `1000` | Tamanho\
+  \ da janela temporal |\n| `overlap` | `0.5` | Sobreposição entre janelas |\n| `hidden_sizes` | `(32,\
+  \ 16)` | Arquitetura da MLP (camadas ocultas) |\n| `epochs` | `20` | Épocas de treinamento |\n| `learning_rate`\
+  \ | `0.001` | Taxa de aprendizado (Adam) |\n| `quantization_bits` | `[8, 16, 32]` | Larguras de bits\
+  \ para quantização |\n| `n_export` | `10` | Amostras exportadas para o sketch Arduino |\n| `calib_samples`\
+  \ | `2000` | Amostras usadas na calibração da quantização |\n| `random_seed` | `2026` | Semente global\
+  \ para reprodutibilidade |\n\n## Uso\n\n### Execução completa do pipeline\n\n```bash\npython experiment.py\n\
+  ```\n\n### Execução por etapas (modo programático)\n\n```python\nfrom pathlib import Path\nfrom experiment\
+  \ import Pipeline, PipelineConfig\n\nconfig = PipelineConfig(dataset_path=\"/dados/3W\", epochs=30)\n\
+  pipeline = Pipeline(config)\n\n# Execute etapas individualmente conforme necessário\npipeline.step_load_data()\n\
+  pipeline.step_train()\nreport = pipeline.step_evaluate()\npipeline.step_quantize_and_export()\n```\n\
+  \n### Apenas exportar para Arduino (com modelo já treinado)\n\n```python\nfrom experiment import ArduinoExporter,\
+  \ Quantizer, PipelineConfig\n\nconfig = PipelineConfig(...)\nquantizer = Quantizer(config)\nexporter\
+  \  = ArduinoExporter(config)\n\nq = quantizer.quantize_model(trained_model, X_train, bits=8)\nexporter.export_sketch(q,\
+  \ X_test, y_test)\n```\n\n## Saídas Geradas\n\n### Log de sessão (`outputs/logs/session.log`)\n\nRegistra\
+  \ todas as etapas com timestamp, incluindo métricas de avaliação FP32:\n\n```\n2026-05-01 14:32:10 \
+  \ INFO      ModelManager – Métricas de teste        : {'accuracy': 0.9412}\n2026-05-01 14:32:10  INFO\
+  \      ModelManager – Tempo total de inferência (FP32)  : 1.847 s\n2026-05-01 14:32:10  INFO      ModelManager\
+  \ – Energia consumida (FP32)          : 0.0231 J  /  0.000006 Wh\n2026-05-01 14:32:10  INFO      ModelManager\
+  \ – CO₂ estimado              : 0.000003 kg\n```\n\n### Relatório de quantização (no log)\n\nPara cada\
+  \ largura de bits:\n\n```\nINFO  Quantizer – INT8 – Divergência FP32 vs INT8: 2.5%  |  SNR: 38.74 dB\
+  \  |  RMSE: 0.000412  |  Flash: ~2.1 KB\n```\n\n### Sketches Arduino (`outputs/sketches/`)\n\nArquivos\
+  \ `.ino` autocontidos com:\n- Pesos e biases quantizados em `PROGMEM`\n- Amostras de teste balanceadas\
+  \ por classe\n- Função `mlp_predict()` com aritmética inteira Q31\n- Medição de tempo (`micros()`) e\
+  \ energia por inferência via `setup()`\n\n## Detalhes Técnicos\n\n### Quantização pós-treinamento (PTQ)\n\
+  \nA quantização utiliza escalonamento por valor absoluto máximo (*absmax*) com fator de regularização\
+  \ ε = 1e-8 para evitar divisão por zero. O multiplicador de re-quantização é representado no formato\
+  \ Q31 (31 bits fracionários), garantindo aritmética inteira pura no microcontrolador.\n\nTipos por largura\
+  \ de bits:\n\n| Bits | Pesos (`W`) | Biases (`b`) | Acumulador |\n|------|-------------|--------------|------------|\n\
+  | 8    | `int8_t`    | `int32_t`    | `int32_t`  |\n| 16   | `int16_t`   | `int32_t`    | `int64_t`\
+  \  |\n| 32   | `int32_t`   | `int64_t`    | `int64_t`  |\n\n### Métricas de qualidade da quantização\n\
+  \n- **Divergência**: percentual de amostras em que `argmax(FP32) ≠ argmax(INTn)` — avalia impacto real\
+  \ na classificação.\n- **SNR** (Signal-to-Noise Ratio): relação sinal-ruído entre logits FP32 e dequantizados,\
+  \ em dB.\n- **RMSE**: erro quadrático médio entre os logits originais e dequantizados.\n\n### Geração\
+  \ de energia no Arduino\n\nO sketch embarcado estima energia por inferência com base em constantes de\
+  \ hardware típicas de um AVR:\n\n```c\nconst float VCC      = 5.0;    // Tensão de alimentação (V)\n\
+  const float I_ACTIVE = 0.020;  // Corrente ativa estimada (A)\nconst float POWER_W  = VCC * I_ACTIVE;\n\
+  // Energia (J) = POWER_W × duração (s)\n```\n"

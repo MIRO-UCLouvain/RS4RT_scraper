@@ -1,0 +1,65 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Haitao-Lee/SeedPro
+url: https://github.com/Haitao-Lee/SeedPro
+platform: github
+description: 'The official repository for “SeedPro: Place Brachytherapy Seeds like Expert Clinicians via
+  Hierarchical Reinforcement Agents”'
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-26T06:17:34Z'
+image_source: https://raw.githubusercontent.com/Haitao-Lee/SeedPro/HEAD/fig/fig1.png
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 6 support term(s).
+readme_excerpt: "# SeedPro: Place Brachytherapy Seeds like Expert Clinicians via Hierarchical Reinforcement\
+  \ Agents\n\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n\
+  [![MICCAI 2026](https://img.shields.io/badge/MICCAI-2026-blue.svg)](https://conferences.miccai.org/2026/)\n\
+  \n## News\n\n- **[2026/05]** Our paper has been **provisionally accepted to MICCAI 2026** (top 9% of\
+  \ 4,601 submissions)!\n\n**SeedPro** is an automatic and fine-grained preoperative planning framework\
+  \ for brachytherapy driven by hierarchical reinforcement learning agents. It efficiently produces expert-level\
+  \ treatment plans with reduced computational costs.\n\n![SeedPro Framework](fig/fig1.png)\n\n## Highlights\n\
+  \n- **Expert-like Planning**: Mimics clinical decision-making through hierarchical state space construction\n\
+  - **Minimized Puncture**: Prioritizes reducing needle count over seed count, following real-world clinical\
+  \ principles\n- **SOTA Performance**: Achieves 12-20% reduction in OAR exposure and 25% fewer punctures\
+  \ compared to existing methods\n- **High Success Rate**: 100% success rate in achieving V100 > 90% and\
+  \ D90 >= 120 Gy\n\n## Method\n\nSeedPro consists of three core components:\n\n### 1. Multi-level State\
+  \ Space Construction\n\nConstructs candidate trajectories by sampling directions within a conical region\
+  \ around the reference axis. The state space is hierarchically built from single-trajectory to multi-trajectory\
+  \ combinations, filtering by dosimetric quality at each level.\n\n### 2. Hierarchical Reinforcement\
+  \ Learning\n\n- **High-level Agent**: Selects optimal trajectory combinations from the candidate state\
+  \ space\n- **Low-level Agent**: Performs fine-grained seed placement within selected trajectories\n\n\
+  ### 3. Segmented Adaptive Objective Function\n\nA multi-objective reward mechanism that:\n- Ensures\
+  \ sufficient tumor dose coverage (DVH compliance)\n- Penalizes excessive dose to organs at risk (OARs)\n\
+  - Encourages reduced puncture trajectories\n\n## Project Structure\n\n```\nSeedPro/\n├── main.py   \
+  \              # Entry point for planning\n├── config.py               # Configuration and arguments\n\
+  ├── core.py                 # Core planning algorithms\n├── utils.py                # Utility functions\n\
+  ├── models.py               # Neural network models (BrachyPlanNet)\n├── geometry.py             # Geometric\
+  \ operations\n├── reinforcement.py        # Hierarchical RL implementation\n├── visualizer.py      \
+  \     # Visualization tools\n├── dose_pre/               # Dose prediction module\n│   ├── myDoseNet.py\
+  \        # Dose calculation network (U-Net)\n│   ├── functions.py        # Dose calculation functions\n\
+  │   └── predict_crop.py     # Prediction utilities\n├── data/                   # Data directory (place\
+  \ your data here)\n└── fig/                    # Figures\n```\n\n## Installation\n\n### Prerequisites\n\
+  \n- Python 3.8+\n- CUDA-capable GPU (recommended)\n\n### Install Dependencies\n\n```bash\ngit clone\
+  \ https://github.com/Haitao-Lee/SeedPro.git\ncd SeedPro\npip install -r requirements.txt\n```\n\n###\
+  \ Download Model Weights\n\nDownload the pre-trained dose calculation model and place it in `dose_pre/`:\n\
+  \n```bash\n# The dose_model.pth file should be placed at:\n# dose_pre/dose_model.pth\n```\n\n## Usage\n\
+  \n### 1. Prepare Data\n\nPlace your NIfTI files in the `data/` directory:\n- CT scan: `data/pt_XXX_ct.nii.gz`\n\
+  - Segmentation label: `data/pt_XXX_label.nii.gz`\n\n### 2. Configure Parameters\n\nEdit `config.py`\
+  \ to set your parameters:\n\n```python\nparser.add_argument('--case_name', default='pt_163')\nparser.add_argument('--dose_image_path',\
+  \ default='./data/pt_163_ct.nii.gz')\nparser.add_argument('--target_image_path', default='./data/pt_163_label.nii.gz')\n\
+  parser.add_argument('--DVH_rate', default=0.9)  # Target coverage rate\n```\n\n### 3. Run Planning\n\
+  \n```bash\npython main.py\n```\n\n### 4. Output\n\nResults are saved to `./output_rf/{case_name}/`:\n\
+  - `seed_X_Y.stl`: 3D seed geometry files\n- `dose_X_Y.nii.gz`: Dose distribution files\n\n![Experimental\
+  \ Results](fig/exp.png)\n\n## Citation\n\nIf you find this work useful, please cite:\n\n```bibtex\n\
+  @inproceedings{li2026seedpro,\n  title={SeedPro: Place Brachytherapy Seeds like Expert Clinicians via\
+  \ Hierarchical Reinforcement Agents},\n  author={Li, Haitao and Liu, Jiaxuan and Huang, Wei and Wang,\
+  \ Zhongmin and Chen, Xiaojun},\n  booktitle={International Conference on Medical Image Computing and\
+  \ Computer-Assisted Intervention (MICCAI)},\n  year={2026}\n}\n```\n\n## License\n\nThis project is\
+  \ released under the [MIT License](LICENSE).\n\n## Acknowledgments\n\nThis work was supported by Shanghai\
+  \ Jiao Tong University School of Mechanical Engineering.\n"

@@ -1,0 +1,57 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: oussama20mouden/Automation-of-HU-RED-calibration-Development-
+url: https://github.com/oussama20mouden/Automation-of-HU-RED-calibration-Development-
+platform: github
+description: Automated HU–RED calibration QA for radiotherapy CT. Python tool that extracts HU–RED calibration
+  curves automatically from DICOM phantom scans (CIRS 062, Easy Cube, Catphan), exports CSV/JSON, generates
+  plots, and supports monthly constancy testing vs baseline with tolerance checks.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-04-23T16:23:21Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 4 support term(s).
+readme_excerpt: "# Automated HU–RED Calibration & Monthly Constancy QA (Radiotherapy CT)\n\nRadiotherapy\
+  \ delivers high doses of radiation to tumors, requiring careful optimization and quality management\
+  \ to maximize tumor control while minimizing normal tissue damage. To ensure dose calculation accuracy,\
+  \ quality assurance (QA) protocols led by certified medical physicists must keep CT-to-density calibration\
+  \ within tight tolerances.\n\nThis repository provides a **Python-based automated quality management\
+  \ procedure** for **monthly calibration and constancy testing** of the **CT Hounsfield unit to relative\
+  \ electron density (HU–RED) conversion**. The tool automates the extraction of HU–RED calibration curves\
+  \ from phantom CT scans, reducing manual workload, minimizing human error, and improving reproducibility.\n\
+  \n## What the code does\nFrom a DICOM CT series acquired with a calibration phantom, the script:\n-\
+  \ Loads and sorts a CT DICOM series and converts pixel values to **Hounsfield Units (HU)**\n- Automatically\
+  \ selects the most relevant slice (largest phantom cross-section)\n- Segments the phantom body and detects\
+  \ material inserts automatically\n- Measures **mean HU** and **HU standard deviation** inside circular\
+  \ ROIs (edge-avoiding ROI strategy)\n- Matches measured inserts to a **known RED table** (configurable\
+  \ per phantom)\n- Generates:\n  - **CSV** output (HU/STD/RED + acquisition metadata)\n  - **JSON** summary\
+  \ report\n  - Optional **HU–RED curve plot (PNG)**\n  - Optional **ROI overlay image** for QA verification\n\
+  - Supports **monthly constancy testing** by comparing results to a baseline CSV and applying per-material\
+  \ tolerance thresholds, with pass/fail reporting and Pearson correlation.\n\n## Supported phantoms\n\
+  - **CIRS Model 062 (062M)**\n- **Easy Cube**\n- **Catphan (CTP404 module)**\n\n> Note: Exact RED values\
+  \ depend on the phantom certificate and insert set. The repository supports overriding phantom insert\
+  \ definitions and tolerances via an external JSON config.\n\n## Why this matters\nManual HU–RED curve\
+  \ generation is time-consuming and prone to user variability (ROI placement, slice selection, insert\
+  \ identification). Automation improves:\n- Consistency of measurements across users and months\n- Efficiency\
+  \ (major reduction in analysis time compared to manual workflows)\n- Traceability with standardized\
+  \ exports and metadata logging\n- Safety by supporting systematic QA programs aligned with international\
+  \ radiotherapy recommendations\n\n## Typical workflow\n1. Scan the calibration phantom with the clinical\
+  \ CT protocol\n2. Run the script on the DICOM series folder\n3. Export curve + report\n4. Compare to\
+  \ baseline for monthly constancy QA\n## Paper / related publication (RPC)\nA published study in *Radiation\
+  \ Physics and Chemistry* (RPC) provides additional context on HU–density calibration in radiotherapy\
+  \ and uses the **EasyCube HU–density curve as a reference** when comparing calibration curves derived\
+  \ from a novel phantom in pediatric radiotherapy planning.  [oai_citation:0‡ScienceDirect](https://www.sciencedirect.com/science/article/pii/S0969806X25005602)\n\
+  \nDOI:\n\nhttps://doi.org/10.1016/j.radphyschem.2025.113068\n## Example commands\n```bash\n# Auto-detect\
+  \ phantom type\npython hu_red_calibration.py --dicom /path/to/dicom_series --outdir ./out --phantom\
+  \ auto --debug-overlay\n\n# Force phantom type\npython hu_red_calibration.py --dicom /path/to/dicom_series\
+  \ --outdir ./out --phantom cirs062\npython hu_red_calibration.py --dicom /path/to/dicom_series --outdir\
+  \ ./out --phantom easycube\npython hu_red_calibration.py --dicom /path/to/dicom_series --outdir ./out\
+  \ --phantom catphan_ctp404\n\n# Monthly constancy test vs baseline\npython hu_red_calibration.py --dicom\
+  \ /path/to/dicom_series --outdir ./out --phantom cirs062 --baseline ./baseline/hu_red_cirs062.csv\n"

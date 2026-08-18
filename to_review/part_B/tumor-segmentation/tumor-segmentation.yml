@@ -1,0 +1,193 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Mukesh-coder6374/tumor_segmentation
+url: https://github.com/Mukesh-coder6374/tumor_segmentation
+platform: github
+description: Founding the location of the lung in CT
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-13T01:40:05Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: '# Lung Field Segmentation using CNN (PyTorch)
+
+
+  This project implements a **Convolutional Neural Network (CNN)** for **lung CT image segmentation**,
+  built entirely with **PyTorch**.
+
+  The model learns to detect and outline the **lung region** from CT scan images, producing a pixel-wise
+  mask of the lung field.
+
+
+  The project is modular, with clean scripts for data loading, model definition, training, evaluation,
+  and utility functions.
+
+
+  > **Note:** This model performs **lung field segmentation** (isolating the lungs from the surrounding
+  chest CT), not tumor-level segmentation. Isolating the lung region is a common first preprocessing step
+  in medical imaging pipelines, since it narrows the search area before any downstream tumor detection.
+  See [Roadmap](#-roadmap) for what''s needed to extend this to tumor segmentation.
+
+
+  ---
+
+
+  ## 🚀 Features
+
+
+  - Custom **PyTorch Dataset & DataLoader** for CT scans and masks
+
+  - **CNN-based encoder-decoder architecture** (inspired by U-Net)
+
+  - Training with **Binary Cross Entropy (BCE) loss**
+
+  - Evaluation using **Dice Coefficient**
+
+  - Visualization of **input image, ground truth mask, and prediction**
+
+
+  ---
+
+
+  ## 🧠 How It Works
+
+
+  1. **Data loading** (`data_loader.py`) — Loads CT scan images and their corresponding ground-truth masks,
+  converts them to grayscale, resizes to 128×128, and batches them using a PyTorch `DataLoader`.
+
+  2. **Model** (`model.py`) — A `SimpleCNN` encoder-decoder: the encoder compresses the image through
+  convolution + pooling layers to learn features, and the decoder upsamples back to full resolution using
+  transposed convolutions, ending in a sigmoid layer that outputs a per-pixel mask probability.
+
+  3. **Training** (`train.py`) — Trains the model using BCE loss and the Adam optimizer over multiple
+  epochs, printing the average loss per epoch.
+
+  4. **Evaluation** (`evaluate.py`) — Scores the trained model using the Dice Coefficient, which measures
+  the overlap between predicted and ground-truth masks.
+
+
+  ---
+
+
+  ## 📁 Project Structure
+
+
+  ```
+
+  tumor_segmentation/
+
+  ├── data_loader.py   # Dataset & DataLoader for CT images and masks
+
+  ├── model.py         # SimpleCNN encoder-decoder architecture
+
+  ├── train.py         # Training loop
+
+  ├── evaluate.py       # Dice Coefficient evaluation
+
+  ├── utils.py         # Helper / visualization functions
+
+  ├── main.py          # Entry point tying the pipeline together
+
+  └── README.md
+
+  ```
+
+
+  ---
+
+
+  ## ⚙️ Requirements
+
+
+  - Python 3.x
+
+  - PyTorch
+
+  - torchvision
+
+  - Pillow (PIL)
+
+  - tqdm
+
+
+  Install with:
+
+  ```bash
+
+  pip install torch torchvision pillow tqdm
+
+  ```
+
+
+  ---
+
+
+  ## ▶️ Usage
+
+
+  ```bash
+
+  python main.py
+
+  ```
+
+
+  This loads the dataset, trains the model, evaluates it on the Dice Coefficient, and can visualize predictions
+  against ground truth.
+
+
+  ---
+
+
+  ## 📊 Evaluation Metric
+
+
+  **Dice Coefficient** — measures overlap between predicted and true masks:
+
+
+  ```
+
+  Dice = (2 × overlap area) / (predicted area + true area)
+
+  ```
+
+
+  A score of 1.0 means a perfect match; 0.0 means no overlap. Dice is preferred over plain pixel accuracy
+  for segmentation tasks because the region of interest is often a small fraction of the full image.
+
+
+  ---
+
+
+  ## 🗺️ Roadmap
+
+
+  To extend this project from lung field segmentation to true **tumor segmentation**:
+
+  - Use tumor-annotated ground-truth masks (rather than lung outline masks)
+
+  - Add skip connections between encoder and decoder layers (full U-Net) so small structures aren''t lost
+  during downsampling
+
+  - Add data augmentation (rotation, flipping) to improve generalization on limited data
+
+  - Try a Dice loss or a combined BCE + Dice loss, which handles small/imbalanced regions better than
+  BCE alone
+
+
+  ---
+
+
+  ## 📄 License
+
+
+  Feel free to use and modify this project for learning purposes.
+
+  '

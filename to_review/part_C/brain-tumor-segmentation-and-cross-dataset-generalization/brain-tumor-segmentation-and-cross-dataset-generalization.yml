@@ -1,0 +1,288 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: MD-SAZID-HOSSAIN/Brain-tumor-segmentation-and-cross-dataset-generalization
+url: https://github.com/MD-SAZID-HOSSAIN/Brain-tumor-segmentation-and-cross-dataset-generalization
+platform: github
+description: A U-Net trained to segment brain tumors from MRI scans, then tested on a second, independent
+  dataset to see how well it holds up on scans it never saw during training.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-08-03T18:13:38Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: '# Brain tumor segmentation and cross-dataset generalization
+
+
+  A U-Net trained to segment brain tumors from MRI scans, then tested on a second, independent dataset
+  to see how well it holds up on scans it never saw during training.
+
+
+  ## The question
+
+
+  Most segmentation projects report a single accuracy number from a model tested on data that looks like
+  what it trained on. That number is usually optimistic. In a real deployment, a model trained on scans
+  from one hospital will eventually see scans from a different scanner, a different protocol, maybe a
+  different patient population entirely.
+
+
+  This project trains on one brain MRI dataset and evaluates on a second, unrelated one, to measure that
+  drop directly instead of assuming it away.
+
+
+  ## Datasets
+
+
+  **LGG MRI Segmentation** (training and primary test set)
+
+  110 patients, 3,929 FLAIR MRI slices with hand-drawn tumor masks, from The Cancer Imaging Archive /
+  TCGA lower-grade glioma collection.
+
+  https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation
+
+
+  **Figshare brain tumor dataset** (generalization test set, never seen during training)
+
+  3,064 T1-weighted contrast-enhanced slices from 233 patients, covering three tumor types: glioma, meningioma,
+  and pituitary tumor. Collected at Nanfang Hospital and Tianjin Medical University.
+
+  https://www.kaggle.com/datasets/ashkhagan/figshare-brain-tumor-dataset
+
+
+  The two datasets differ in scan type (FLAIR vs. T1), source institution, and tumor type coverage. That
+  difference is the point of the experiment, not a flaw in the setup.
+
+
+  ## Method
+
+
+  **Split.** LGG slices were split by patient, not by slice, into train/validation/test (roughly 70/15/15).
+  Slices from one patient look nearly identical to each other, so a slice-level split would let near-duplicate
+  images end up in both train and test, inflating the score. A patient-level split avoids that.
+
+
+  **Model.** A U-Net with a ResNet-34 encoder pretrained on ImageNet (`segmentation-models-pytorch`),
+  trained on 256x256 images.
+
+
+  **Loss.** An equal mix of binary cross-entropy and Dice loss. Tumor pixels are a small fraction of each
+  image, so cross-entropy alone tends to underweight them; Dice loss corrects for that.
+
+
+  **Training.** Adam optimizer, learning rate 1e-4 with `ReduceLROnPlateau`, mixed-precision training,
+  early stopping after 7 epochs with no improvement in validation Dice. Training stopped at epoch 30 (of
+  a 30-epoch budget) with a best validation Dice of 0.918.
+
+
+  ## Results
+
+
+  ### Same-source test (LGG held-out patients)
+
+
+  | metric | value |
+
+  |---|---|
+
+  | images | 1,212 |
+
+  | Dice (all slices) | 0.908 |
+
+  | IoU (all slices) | 0.879 |
+
+  | Dice (tumor-containing slices only) | 0.801 |
+
+  | sensitivity | 0.878 |
+
+  | specificity | 0.999 |
+
+  | Dice per patient, mean ± std | 0.895 ± 0.074 (17 patients) |
+
+
+  The all-slice Dice is higher than the tumor-only Dice because most slices in this dataset contain no
+  tumor at all, and the model correctly predicts an empty mask on most of them. The tumor-only number
+  is the more honest measure of how well it actually finds a tumor when one is present.
+
+
+  ### Cross-dataset test (Figshare, unseen source)
+
+
+  | metric | value |
+
+  |---|---|
+
+  | images | 3,064 |
+
+  | Dice | 0.268 |
+
+  | IoU | 0.229 |
+
+  | sensitivity | 0.251 |
+
+  | specificity | 0.9997 |
+
+
+  Dice drops from 0.908 to 0.268, a fall of 0.640. That is not a small generalization gap. The rest of
+  this section works through why.
+
+
+  ### Breaking the drop down by tumor type
+
+
+  | tumor type | Dice | average tumor size (pixels) | count |
+
+  |---|---|---|---|
+
+  | meningioma | 0.635 | 4,655 | 708 |
+
+  | pituitary | 0.257 | 2,164 | 930 |
+
+  | glioma | 0.092 | 5,779 | 1,426 |
+
+
+  The model trained only on glioma, so the expectation going in was that glioma would score best on Figshare
+  and the unfamiliar tumor types would score worse. The opposite happened: glioma scored lowest, and meningioma,
+  a type the model never trained on, scored highest.
+
+
+  ### Ruling out tumor size as the explanation
+
+
+  Glioma has the largest average tumor size in the Figshare set and the worst score. If smaller tumors
+  were simply harder to segment, glioma should have scored well. It didn''t, so tumor size does not explain
+  the pattern. A scatter of tumor size against Dice score (`size_vs_dice.png`) shows scores clustering
+  near 1.0 or near 0.0 across all sizes, rather than declining smoothly as tumors get smaller — consistent
+  with the model either finding the tumor or missing it outright, not with a boundary-precision problem
+  tied to size.
+
+
+  ### Ruling out low confidence as the explanation
+
+
+  If the model were finding the right region but with low confidence, lowering the decision threshold
+  should recover a large part of the score. Testing thresholds from 0.5 down to 0.1 on a 400-image sample:
+
+
+  | threshold | Dice |
+
+  |---|---|
+
+  | 0.5 | 0.287 |
+
+  | 0.3 | 0.295 |
+
+  | 0.2 | 0.299 |
+
+  | 0.1 | 0.306 |
+
+
+  The change is small, about 0.02 across a wide threshold range. A genuine confidence problem would show
+  a much larger recovery. This rules out simple under-confidence as the explanation.
+
+
+  ### Ruling out the channel format as the explanation
+
+
+  LGG images have three MRI-derived channels (pre-contrast, FLAIR, post-contrast); Figshare images are
+  single-channel grayscale, converted to three channels by repeating the same channel three times to match
+  the model''s input shape. To check whether that format mismatch alone was hurting the score, the same
+  repeated-channel input was tested on LGG''s own test set, where no domain shift is involved:
+
+
+  | input format | Dice |
+
+  |---|---|
+
+  | normal 3-channel LGG input | 0.919 |
+
+  | single channel repeated 3x | 0.900 |
+
+
+  The drop from the channel format itself is about 0.019, far too small to account for the 0.64 drop seen
+  on Figshare. This rules out the channel mismatch as a meaningful factor.
+
+
+  ### What''s left
+
+
+  Three explanations were tested and ruled out: tumor size, model confidence, and channel format. What
+  remains is the most likely cause going in: the model learned features specific to FLAIR-sequence, low-grade-glioma
+  appearance, and those features do not transfer to T1-weighted scans, regardless of tumor type or size.
+  This is a scan-type domain shift, and it accounts for the drop better than any of the alternatives that
+  were checked and rejected.
+
+
+  ## What this shows
+
+
+  A model can score above 0.9 Dice on held-out data from its own training distribution and still fail
+  on data from a different scanner and protocol, even when the underlying task — find the tumor — is conceptually
+  the same. The failure here isn''t a bug in the code; three specific alternative explanations were tested
+  and each one failed to account for the size of the drop. Reporting a single in-distribution score would
+  have missed this entirely.
+
+
+  ## Limitations
+
+
+  - Single training run per configuration; no repeated runs to estimate variance from random initialization.
+
+  - The threshold and channel-format checks were run on samples (400 and 150 images) rather than the full
+  test sets, for speed.
+
+  - No attempt was made to close the gap through domain adaptation, T1 fine-tuning, or intensity normalization
+  across datasets. That would be a reasonable next step but is outside the scope of this project.
+
+  - This is an engineering demonstration, not a clinically validated tool. Sensitivity and specificity
+  are reported because they''re clinically relevant metrics, not because the model is fit for clinical
+  use.
+
+
+  ## Repository contents
+
+
+  ```
+
+  brain_tumor_seg.py       training + evaluation script
+
+  results.json             final metrics for both datasets
+
+  lgg_per_image.csv        per-image scores, LGG test set
+
+  figshare_per_image.csv   per-image scores, Figshare set
+
+  gallery_best.png         best-scoring LGG tumor cases
+
+  gallery_worst.png        worst-scoring LGG tumor cases
+
+  gallery_false_pos.png    LGG slices where the model predicted a tumor that wasn''t there
+
+  gallery_figshare.png     sample predictions on Figshare
+
+  size_vs_dice.png         tumor size vs. Dice score, by tumor type
+
+  best.pt                  trained model weights
+
+  ```
+
+
+  ## Running it
+
+
+  Add both datasets as Kaggle inputs (`lgg-mri-segmentation` and `figshare-brain-tumor-dataset`), turn
+  on GPU and internet, and run `brain_tumor_seg.py` top to bottom. A full run with the default settings
+  (30 epochs, early stopping) takes roughly 25-30 minutes on a Kaggle P100.
+
+
+
+  Kaggle link - https://www.kaggle.com/code/sazidhossain27/brain-tumors
+
+
+  '

@@ -1,0 +1,35 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: whisney/DoseDiff
+url: https://github.com/whisney/DoseDiff
+platform: github
+description: 'DoseDiff: Distance-aware Diffusion Model for Dose Prediction in Radiotherapy'
+license: MIT
+language: Python
+keywords: []
+stars: 38
+updated_at: '2026-08-17T05:10:31Z'
+image_source: https://raw.githubusercontent.com/whisney/DoseDiff/HEAD/pic/Figure1.jpg
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# DoseDiff\nThis is the repository for the paper \"DoseDiff: Distance-aware Diffusion\
+  \ Model for Dose Prediction in Radiotherapy\".\n\n![DoseDiff](/pic/Figure1.jpg)\n\n## Requirements\n\
+  * python 3.6\n* pytorch 1.10\n* pydicom\n* albumentations\n* tensorboardX\n* SimpleITK\n\n## Training\
+  \ and evaluation on OpenKBP\n### Data Preparation\nDownload [OpenKBP challenge repository](https://github.com/ababier/open-kbp),\
+  \ and copy the data folder \"provided-data\" into this repository. You can run data preprocess step\
+  \ with the following command:\n```\ncd DoseDiff-main\n\n# Convert csv data into nii format\npython csv2nii.py\n\
+  \n# Generate distance map and missing ROI\npython PSDM_OpenKBP.py\n\n# Convert 3D into 2D for training\n\
+  python NII_to_npy.py\n```\n### Model training\n```\nCUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch\
+  \ --nproc_per_node=2 --master_port=9999 train.py --gpu 0,1 --bs 16 --T 1000 --epoch 1600\n```\n### Model\
+  \ evaluation\n```\nCUDA_VISIBLE_DEVICES=0 python pred.py --gpu 0 --bs 64 --model_path trained_models/T1000_bs32_epoch1600/model_best_mae.pth\
+  \ --TTA 1 --T 1000 --ddim 8\n```\n\n## Citation\nif you find this repository useful in your research,\
+  \ please consider citing:\n```\n@ARTICLE{10486983,\n  author={Zhang, Yiwen and Li, Chuanpu and Zhong,\
+  \ Liming and Chen, Zeli and Yang, Wei and Wang, Xuetao},\n  journal={IEEE Transactions on Medical Imaging},\
+  \ \n  title={DoseDiff: Distance-Aware Diffusion Model for Dose Prediction in Radiotherapy}, \n  year={2024},\n\
+  \  volume={43},\n  number={10},\n  pages={3621-3633},\n  keywords={Computed tomography;Predictive models;Planning;Biomedical\
+  \ imaging;Training;Radiation therapy;Noise reduction;Deep learning;diffusion model;dose prediction;radiotherapy;signed\
+  \ distance map},\n  doi={10.1109/TMI.2024.3383423}}\n```\n"

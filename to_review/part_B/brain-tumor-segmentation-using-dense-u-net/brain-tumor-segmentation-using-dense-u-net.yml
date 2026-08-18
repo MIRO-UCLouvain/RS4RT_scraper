@@ -1,0 +1,77 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: roja18-lakshmi/Brain-Tumor-Segmentation-Using-Dense-U-Net
+url: https://github.com/roja18-lakshmi/Brain-Tumor-Segmentation-Using-Dense-U-Net
+platform: github
+description: ''
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-29T20:20:05Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Brain Tumor Segmentation using Optimized Depthwise Separable Convolutional Neural Network\
+  \ with Dense U-Net\n\nA deep learning project for automated brain tumor segmentation from multi-modal\
+  \ MRI scans using the **DSCNN-DU-Net** architecture. The model segments three clinically significant\
+  \ tumor regions—**Enhancing Tumor (ET)**, **Tumor Core (TC)**, and **Whole Tumor (WT)**—to assist in\
+  \ diagnosis and treatment planning.\n\n---\n\n## Overview\n\nBrain tumor segmentation plays a crucial\
+  \ role in medical diagnosis and treatment planning. Manual segmentation of MRI scans is time-consuming,\
+  \ subjective, and difficult to scale for large datasets.\n\nThis project implements the **DSCNN-DU-Net**\
+  \ architecture proposed in the research paper *\"Brain Tumor Segmentation using Optimized Depthwise\
+  \ Separable Convolutional Neural Network with Dense U-Net\"* for automatic segmentation of brain tumors\
+  \ using multi-modal MRI images.\n\n---\n\n## Objectives\n\n* Implement the DSCNN-DU-Net architecture\
+  \ for brain tumor segmentation.\n* Segment the three tumor sub-regions:\n\n  * Enhancing Tumor (ET)\n\
+  \  * Tumor Core (TC)\n  * Whole Tumor (WT)\n* Utilize four MRI modalities (T1, T1ce, T2, and FLAIR).\n\
+  * Apply preprocessing techniques to improve feature representation.\n* Train the network using a hybrid\
+  \ Dice + Binary Cross-Entropy loss.\n* Evaluate segmentation performance using medical imaging metrics.\n\
+  \n---\n\n## Dataset\n\n**BraTS 2020 (Brain Tumor Segmentation Challenge)**\n\nDataset Statistics:\n\n\
+  * 369 patients\n* 4 MRI modalities:\n\n  * T1\n  * T1ce\n  * T2\n  * FLAIR\n* 155 slices per patient\n\
+  * Total images: **57,195**\n* Image size: **240 × 240**\n\nDataset Split:\n\n| Dataset    | Patients\
+  \ | Slices |\n| ---------- | -------: | -----: |\n| Training   |      258 | 25,397 |\n| Validation |\
+  \       55 |  8,525 |\n| Test       |       56 |  8,680 |\n\n---\n\n## Data Preprocessing\n\nThe following\
+  \ preprocessing techniques were applied before training:\n\n* Min-Max Normalization\n* Two-stage Gaussian\
+  \ Filtering\n* Histogram Equalization\n* Z-score Normalization\n\nOnly slices containing tumors, along\
+  \ with a limited number of empty slices, were retained to reduce class imbalance.\n\n---\n\n## Feature\
+  \ Extraction\n\nThe model uses both image information and handcrafted features.\n\n### MRI Modalities\n\
+  \n* T1\n* T1ce\n* T2\n* FLAIR\n\n### Global Features\n\n* Major Axis Length\n* Size\n* Area\n* Perimeter\n\
+  * Roundness\n\n### Statistical Features\n\n* Mean\n* Standard Deviation\n* Variance\n* Skewness\n* Kurtosis\n\
+  \nThese features were combined to create a **14-channel input tensor** for the segmentation model.\n\
+  \n---\n\n## Data Augmentation\n\nTo improve generalization and reduce overfitting, the training data\
+  \ was augmented using:\n\n* Rotations (0°, 90°, 180°, 270°)\n* Vertical Flip\n\nThis increased the effective\
+  \ training dataset by **8×**.\n\n---\n\n## Model Architecture\n\nThe proposed DSCNN-DU-Net consists\
+  \ of:\n\n* Depthwise Separable Convolution (DSConv) blocks\n* Encoder-Decoder architecture\n* Dense\
+  \ bottleneck block\n* Skip Connections\n* Bilinear Upsampling\n* Final 1×1 Convolution with Sigmoid\
+  \ activation\n\nThe network predicts segmentation masks for:\n\n* Enhancing Tumor (ET)\n* Tumor Core\
+  \ (TC)\n* Whole Tumor (WT)\n\n---\n\n## Loss Function\n\nThe model was trained using a hybrid loss function:\n\
+  \n* Dice Loss (50%)\n* Binary Cross-Entropy Loss (50%)\n\nThis combination improves overlap accuracy\
+  \ while addressing severe class imbalance.\n\n---\n\n## Evaluation Metrics\n\nThe model was evaluated\
+  \ using:\n\n* Mean Dice Coefficient\n* Dice Score (ET)\n* Dice Score (TC)\n* Dice Score (WT)\n* Jaccard\
+  \ Index (IoU)\n* Sensitivity\n* Specificity\n* Pixel Accuracy\n\n---\n\n## Training Configuration\n\n\
+  * Optimizer: Adam\n* Learning Rate: 0.0001\n* Batch Size: 16\n* Epochs: 50\n* Learning Rate Scheduler:\
+  \ ReduceLROnPlateau\n\nThe project was developed and trained using **Google Colab (T4 GPU)**.\n\n---\n\
+  \n## Technologies Used\n\n* Python\n* TensorFlow\n* Keras\n* OpenCV\n* NumPy\n* Pandas\n* Matplotlib\n\
+  * Scikit-learn\n* Google Colab\n\n---\n\n## Repository Structure\n\n```text\nBrain-Tumor-Segmentation/\n\
+  │\n├── Brain_Tumor_Segmentation.ipynb\n├── README.md\n├── requirements.txt\n├── LICENSE\n├── .gitignore\n\
+  ├── images/\n└── outputs/\n```\n\n---\n\n## Installation\n\n```bash\ngit clone https://github.com/your-username/Brain-Tumor-Segmentation.git\n\
+  cd Brain-Tumor-Segmentation\n```\n\nInstall the required libraries:\n\n```bash\npip install tensorflow\
+  \ keras opencv-python nibabel numpy pandas matplotlib scikit-learn scipy\n```\n\n---\n\n## Usage\n\n\
+  1. Download the BraTS 2020 dataset.\n2. Open the notebook in Google Colab or Jupyter Notebook.\n3. Install\
+  \ the required dependencies.\n4. Run the notebook to preprocess the data, train the model, and generate\
+  \ segmentation masks.\n\n---\n\n## Future Work\n\n* Train on larger computational resources for additional\
+  \ epochs.\n* Evaluate on newer BraTS datasets.\n* Develop a web-based interface for MRI segmentation.\n\
+  * Improve segmentation accuracy through further architecture optimization.\n\n---\n\n## References\n\
+  \n* BraTS 2020 Dataset\n* TensorFlow\n* Keras\n* Brain Tumor Segmentation using Optimized Depthwise\
+  \ Separable Convolutional Neural Network with Dense U-Net\n\n---\n## Model Weights\n\nThe repository\
+  \ includes:\n\n- `best_model.weights.h5` – Model weights with the best validation performance.\n- `last_model.weights.h5`\
+  \ – Model weights saved after the final training epoch.\n- \n## Authors\n\n**M. Roja Lakshmi**\n\n**Sarada\
+  \ Prasanna Behera**\n\n**Satyendar Kumar**\n\nDepartment of Computer Science and Engineering\n\nNational\
+  \ Institute of Technology Andhra Pradesh\n\n---\n\n⭐ If you found this project useful, consider giving\
+  \ it a star.\n"

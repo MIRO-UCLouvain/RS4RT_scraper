@@ -1,0 +1,138 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Rokibul1022/Brain-Tumor-Segmentation_with-Self-Supervised-Learning_with-10-percent-labeled-data
+url: https://github.com/Rokibul1022/Brain-Tumor-Segmentation_with-Self-Supervised-Learning_with-10-percent-labeled-data
+platform: github
+description: The project is about to check 10% labeled data is enough to learn a medical section like
+  brain tumer - the idea basically comes form sementic segmentaion with self supervised. same time it
+  reduces the annotations cost and time, and then the model can be used for other sections also here I
+  used the brain stroke data set-can be used any medical side
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-05T06:43:35Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# \U0001F9E0 Brain Tumor Segmentation with Self-Supervised Learning\n\n<div align=\"\
+  center\">\n\n**A Label-Efficient Deep Learning Approach for Medical Image Segmentation**\n\n[![Python\
+  \ 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)\n[![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-red.svg)](https://pytorch.org/)\n\
+  [![License](https://img.shields.io/badge/license-Educational-green.svg)](LICENSE)\n[![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-FF4B4B.svg)](https://streamlit.io/)\n\
+  \n</div>\n\n---\n\n##  Table of Contents\n\n- [Overview](#-overview)\n- [Key Achievements](#-key-achievements)\n\
+  - [Architecture](#-architecture)\n- [Results](#-results)\n- [Installation](#-installation)\n- [Usage](#-usage)\n\
+  - [Training Pipeline](#-training-pipeline)\n- [Technical Details](#-technical-details)\n- [Project Structure](#-project-structure)\n\
+  - [Documentation](#-documentation)\n- [Demo Application](#-demo-application)\n- [Performance Analysis](#-performance-analysis)\n\
+  - [Future Work](#-future-work)\n- [Citation](#-citation)\n- [Acknowledgments](#-acknowledgments)\n\n\
+  ---\n\n##  Overview\n\nThis project demonstrates **label-efficient medical image segmentation** using\
+  \ self-supervised learning techniques. By combining DINO (Self-Distillation with No Labels) and STEGO\
+  \ (Self-supervised Transformer with Energy-based Graph Optimization), we achieve competitive brain tumor\
+  \ segmentation performance using only **10% of labeled training data**.\n**Demo** - https://github.com/Rokibul1022/Brain-Tumor-Segmentation_with-Self-Supervised-Learning_with-10-percent-labeled-data/blob/main/others/project_demo1.mp4\n\
+  ###  Research Problem\n\n**Traditional Supervised Learning Challenges:**\n- Requires 100% labeled data\
+  \ (expensive and time-consuming)\n- Medical image annotation costs: $50-100 per scan\n- Expert radiologist\
+  \ time: 5-10 minutes per scan\n- Total cost for 15,564 images: **$778,200** and **1,297 hours**\n\n\
+  **Our Solution:**\n- Use self-supervised learning to learn from unlabeled data\n- Fine-tune with only\
+  \ 10% labeled data\n- Achieve **90% cost savings** ($700,380 saved)(approximate)\n- Maintain competitive\
+  \ performance (96.8% background, 14.5% tumor Dice)\n\n###  Academic Contribution\n\nThis project makes\
+  \ several key contributions:\n\n1. **First Application** of DINO+STEGO to medical imaging\n2. **Novel\
+  \ Hybrid 2D-3D Architecture** for transfer learning\n3. **Comprehensive Class Imbalance Solutions**\
+  \ (1712% improvement)\n4. **Label Efficiency Analysis** across multiple label fractions\n5. **Cross-Disease\
+  \ Transfer Learning** (Brain Tumors → Stroke Lesions)\n\n---\n\n##  Key Achievements\n\n###  Cost Efficiency\n\
+  \n| Metric | Traditional (100%) | Our Method (10%) | Savings |\n|--------|-------------------|------------------|---------|\n\
+  | **Images Labeled** | 15,564 | 1,556 | 90% |\n| **Annotation Cost** | $778,200 | $77,820 | $700,380\
+  \ |\n| **Time Required** | 1,297 hours | 130 hours | 1,167 hours |\n| **Background Dice** | 98.2% |\
+  \ 96.8% | -1.4% |\n| **Tumor Dice** | 72.5% | 14.5% | -58% |\n\n*Key Insight:* 90% cost reduction with\
+  \ acceptable performance for screening applications.\n\n###  Performance Highlights\n\n- ✅ **96.8% Background\
+  \ Dice** - Excellent healthy tissue detection\n- ✅ **14.5% Tumor Mean Dice** - Acceptable for screening\
+  \ with 10% labels\n- ✅ **21.6% Necrotic Dice** - Best tumor subtype performance\n- ✅ **7.9% Stroke Lesion\
+  \ Dice** - Successful transfer learning (2.2× better than 2D)\n- ✅ *24 hours Total Training* - Efficient\
+  \ pipeline on single GPU\n\n###  Technical Innovations\n\n1. *Self-Supervised Pretraining*\n   - DINO\
+  \ learns brain anatomy without labels\n   - 88.3% loss reduction (8.10 → 0.949)\n   - 384-dim features\
+  \ per 16×16 patch\n\n2. *Unsupervised Clustering*\n   - STEGO discovers 4 tissue types automatically\n\
+  \   - 99.5% loss reduction (2.45 → 0.012)\n   - Boundary-aware representations\n\n3. *Label-Efficient\
+  \ Fine-tuning*\n   - Only 1.1M trainable parameters (4.8% of total)\n   - Weighted loss + oversampling\
+  \ + augmentation\n   - Temperature scaling for inference\n\n4. **3D Transfer Learning**\n   - Hybrid\
+  \ 2D-3D architecture\n   - 2.2× improvement over 2D approach\n   - Generalizes across diseases\n\n---\n\
+  \n##  Architecture\n\n### Four-Stage Pipeline\n\n```\n┌─────────────────────────────────────────────────────────────────┐\n\
+  │                    STAGE 1: DINO PRETRAINING                     │\n│                         (Unsupervised)\
+  \                            │\n├─────────────────────────────────────────────────────────────────┤\n\
+  │ • Input: 15,564 unlabeled MRI images                            │\n│ • Model: Vision Transformer (ViT-Small/8)\
+  \                       │\n│ • Method: Teacher-Student self-distillation                     │\n│ •\
+  \ Output: 384-dim features per patch                            │\n│ • Training: 13 epochs, 6 hours,\
+  \ Loss: 8.10 → 0.949             │\n│ • Hardware: Single GPU (RTX 3090)                            \
+  \   │\n└─────────────────────────────────────────────────────────────────┘\n                       \
+  \       ↓\n┌─────────────────────────────────────────────────────────────────┐\n│                  \
+  \ STAGE 2: STEGO CLUSTERING                      │\n│                         (Unsupervised)       \
+  \                     │\n├─────────────────────────────────────────────────────────────────┤\n│ • Input:\
+  \ Frozen DINO features (384-dim)                         │\n│ • Model: Projection head (384 → 128) \
+  \                           │\n│ • Method: Contrastive learning + boundary detection             │\n\
+  │ • Output: 4 pseudo-label clusters                               │\n│ • Training: 20 epochs, 4 hours,\
+  \ Loss: 2.45 → 0.012             │\n│ • Clusters: Background, Necrotic, Edema, Enhancing           \
+  \  │\n└─────────────────────────────────────────────────────────────────┘\n                        \
+  \      ↓\n┌─────────────────────────────────────────────────────────────────┐\n│                   \
+  \  STAGE 3: FINE-TUNING                         │\n│                    (10% Labeled Data)         \
+  \                   │\n├─────────────────────────────────────────────────────────────────┤\n│ • Input:\
+  \ 1,556 labeled images (10% of dataset)                  │\n│ • Model: SimpleDecoder (128 → 4 classes)\
+  \                        │\n│ • Method: Weighted CE + class balancing + augmentation          │\n│ •\
+  \ Output: Pixel-wise segmentation (224×224×4)                   │\n│ • Training: 100 epochs, 8 hours,\
+  \ Loss: 2.45 → 0.441            │\n│ • Performance: 96.8% BG Dice, 14.5% Tumor Dice                \
+  \ │\n└─────────────────────────────────────────────────────────────────┘\n                         \
+  \     ↓\n┌─────────────────────────────────────────────────────────────────┐\n│                  STAGE\
+  \ 4: TRANSFER LEARNING                      │\n│                    (Optional - ISLES)             \
+  \               │\n├─────────────────────────────────────────────────────────────────┤\n│ • Input: ISLES\
+  \ stroke dataset (200 volumes, 10% labeled)        │\n│ • Model: 3D Decoder (128 → 2 classes)      \
+  \                     │\n│ • Method: Hybrid 2D-3D approach with 3D convolutions            │\n│ • Output:\
+  \ Volumetric segmentation (128×128×16×2)                │\n│ • Training: 50 epochs, 6 hours, Loss: 1.85\
+  \ → 0.35              │\n│ • Performance: 7.9% Lesion Dice (2.2× better than 2D)          │\n└─────────────────────────────────────────────────────────────────┘\n\
+  \nTotal Training Time: 24 hours | Total Cost Savings: $700,380 (90%)\n```\n\n### Model Components\n\n\
+  **1. DINO Backbone (Frozen)**\n- Architecture: Vision Transformer Small (ViT-S/8)\n- Parameters: ~22M\
+  \ (frozen after Stage 1)\n- Input: 224×224×3 (grayscale repeated)\n- Output: 196 patches × 384 dimensions\n\
+  - Patch size: 16×16 pixels\n\n**2. STEGO Projection Head (Frozen)**\n- Architecture: 2-layer MLP with\
+  \ BatchNorm\n- Parameters: ~0.5M (frozen after Stage 2)\n- Input: 196×384 features\n- Output: 196×128\
+  \ projected features\n- Includes boundary detection branch\n\n**3. SimpleDecoder (Trainable)**\n- Architecture:\
+  \ 4-layer transposed convolutions\n- Parameters: ~1.1M (only trainable component)\n- Input: 196×128\
+  \ features\n- Output: 224×224×4 segmentation\n- Channel reduction: 128→64→32→16→4\n\n**4. Decoder3D\
+  \ (Transfer Learning)**\n- Architecture: 4-layer 3D convolutions\n- Parameters: ~0.29M\n- Input: 16×196×128\
+  \ volume features\n- Output: 16×128×128×2 segmentation\n- Kernel size: 3×3×3\n\n---\n\n##  Results\n\
+  \n### BraTS 2020 (Brain Tumor Segmentation)\n\n**Performance with 10% Labels:**\n\n| Class | Dice Score\
+  \ | Precision | Recall | Status |\n|-------|-----------|-----------|--------|--------|\n| **Background**\
+  \ | 96.8% | 97.2% | 96.4% | ✅ Excellent |\n| **Necrotic** | 21.6% | 28.5% | 17.3% |  Moderate |\n| **Edema**\
+  \ | 3.1% | 5.2% | 2.1% |  Low |\n| **Enhancing** | 18.8% | 24.1% | 15.2% |  Moderate |\n| **Tumor Mean**\
+  \ | **14.5%** | **19.3%** | **11.5%** |  Acceptable |\n| **Pixel Accuracy** | **96.8%** | - | - | ✅\
+  \ Excellent |\n\n**Label Efficiency Analysis:**\n\n| Label % | Images | BG Dice | Tumor Dice | Cost\
+  \ | Training Time |\n|---------|--------|---------|------------|------|---------------|\n| 1% | 156\
+  \ | 92.5% | 3.2% | $7,800 | 2 hours |\n| 5% | 778 | 95.2% | 8.1% | $38,900 | 4 hours |\n| **10%** |\
+  \ **1,556** | **96.8%** | **14.5%** | **$77,820** | **8 hours** |\n| 25% | 3,891 | 97.1% | 28.7% | $194,550\
+  \ | 15 hours |\n| 50% | 7,782 | 97.8% | 52.3% | $389,100 | 25 hours |\n| 100% | 15,564 | 98.2% | 72.5%\
+  \ | $778,200 | 40 hours |\n\n**Key Observation:** 10% labels provide the best cost-performance trade-off.\n\
+  \n### ISLES 2022 (Stroke Lesion Segmentation)\n\n**Transfer Learning Results:**\n\n| Metric | 2D Approach\
+  \ | 3D Approach | Improvement |\n|--------|-------------|-------------|-------------|\n| **Background\
+  \ Dice** | 99.8% | 99.8% | - |\n| **Lesion Dice** | 3.5% | 7.9% | **2.2×** |\n| **Precision** | 8.2%\
+  \ | 15.3% | 1.9× |\n| **Recall** | 2.1% | 5.8% | 2.8× |\n| **F1 Score** | 3.4% | 8.5% | 2.5× |\n| **False\
+  \ Positives** | 1,250 | 420 | 3.0× less |\n| **False Negatives** | 2,850 | 1,680 | 1.7× less |\n\n**Key\
+  \ Insight:** 3D context is crucial for detecting tiny stroke lesions (0.1-0.3% of volume).\n\n### Training\
+  \ Metrics\n\n**Stage 1 - DINO:**\n```\nEpoch 1:  Loss = 8.100 | LR = 0.00017 | Time = 30min\nEpoch 5:\
+  \  Loss = 1.670 | LR = 0.00045 | Time = 30min\nEpoch 10: Loss = 0.980 | LR = 0.00018 | Time = 30min\n\
+  Epoch 13: Loss = 0.949 | LR = 0.00001 | Time = 30min\n\nTotal: 88.3% loss reduction, 6 hours\n```\n\n\
+  **Stage 2 - STEGO:**\n```\nEpoch 1:  Loss = 2.450 (Contrast: 2.10, Boundary: 0.30)\nEpoch 10: Loss =\
+  \ 0.320 (Contrast: 0.20, Boundary: 0.10)\nEpoch 20: Loss = 0.012 (Contrast: 0.005, Boundary: 0.006)\n\
+  \nTotal: 99.5% loss reduction, 4 hours\n```\n\n**Stage 3 - Fine-tuning:**\n```\nEpoch 1:   Loss = 2.450\
+  \ | BG: 82.0% | Tumor: 5.0%\nEpoch 50:  Loss = 0.520 | BG: 96.2% | Tumor: 13.0%\nEpoch 100: Loss = 0.441\
+  \ | BG: 96.8% | Tumor: 14.5%\n\nTotal: 82.0% loss reduction, 8 hours\n```\n\n**Stage 4 - Transfer:**\n\
+  ```\nEpoch 1:  Loss = 1.850 | Lesion Dice: 2.0%\nEpoch 25: Loss = 0.420 | Lesion Dice: 7.0%\nEpoch 50:\
+  \ Loss = 0.350 | Lesion Dice: 7.9%\n\nTotal: 81.1% loss reduction, 6 hours\n```\n\n---\n\n##  Installation\n\
+  \n### Prerequisites\n\n**System Requirements:**\n- Operating System: Windows 10/11, Linux, or macOS\n\
+  - Python: 3.10 or higher\n- GPU: NVIDIA GPU with CUDA support (recommended)\n- RAM: 8GB minimum, 16GB\
+  \ recommended\n- Storage: 10GB free space\n\n**Software Dependencies:**\n- CUDA 11.8+ (for GPU acceleration)\n\
+  - cuDNN 8.0+ (for GPU acceleration)\n- Git (for cloning repository)\n\n### Step 1: Clone Repository\n\
+  \n```bash\n# Clone the repository\ngit clone https://github.com/YOUR_USERNAME/stego-mri.git\ncd stego-mri\n\
+  ```\n\n### Step 2: Create Virtual Environment\n\n**On Windows:**\n```bash\n# Create virtual environment\n\
+  python -m venv .venv\n\n# Activate virtual environment\n.venv\\Scripts\\activate\n```\n\n**On Linux/macOS:**\n\
+  ```bash\n# Create virtual environment\npython3 -m venv .venv\n\n# Activate virtual environment\nsource\
+  \ .venv/bin/activate\n```\n\n### Step 3: Install Dependencies\n\n```bash\n# Upgrade pip\npip install\
+  \ --upgrade pip\n\n# Install PyTorch (with CUDA support)\npip install torch torchvision torchaudio --index-url\
+  \ https://download.pytorch.org/whl/cu118\n\n# Install other dependencies\npip install -r requirements.txt"

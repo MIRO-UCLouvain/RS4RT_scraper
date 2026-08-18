@@ -1,0 +1,67 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: GeorgeMihaylov/Tox21-Toxicity-Prediction
+url: https://github.com/GeorgeMihaylov/Tox21-Toxicity-Prediction
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-03-05T14:46:45Z'
+image_source: https://raw.githubusercontent.com/GeorgeMihaylov/Tox21-Toxicity-Prediction/HEAD/reports/figures/roc_curve_xgb_adv.png
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Tox21 NR-AR: прогноз токсичности по структуре молекулы\n\nПроект: бинарная классификация\
+  \ активности соединений против мишени **NR-AR** (андрогеновый рецептор) на базе датасета **Tox21**.\n\
+  \n<p align=\"center\">\n  <img src=\"reports/figures/roc_curve_xgb_adv.png\" alt=\"ROC: XGBoost (advanced)\"\
+  \ width=\"650\"/>\n</p>\n\n## 1. Постановка задачи\nЦель — построить воспроизводимый ML-пайплайн, который\
+  \ по строке **SMILES** предсказывает, является ли молекула **активной/токсичной** (класс 1) или **неактивной**\
+  \ (класс 0) в in vitro тесте NR-AR.\n\nКлючевая сложность задачи — сильный дисбаланс классов и неполная\
+  \ разметка по задачам внутри Tox21.\n\n## 2. Датасет (Tox21 / MoleculeNet)\n\n### 2.1. Формат данных\n\
+  Исходный файл содержит:\n- `smiles` — строковое представление структуры молекулы\n- `mol_id` — идентификатор\n\
+  - 12 бинарных таргетов (NR-* и SR-*), по которым имеются пропуски (NaN)\n\n### 2.2. Покрытие разметкой\
+  \ по задачам\nЧисло размеченных молекул различается по задачам (таргетам), поэтому при выборе конкретной\
+  \ мишени меняется фактический размер обучающего набора.\n\n<p align=\"center\">\n  <img src=\"reports/figures/tox21_labeled_counts_by_task.png\"\
+  \ alt=\"Labeled counts by task\" width=\"850\"/>\n</p>\n\nДоля активных (pos_rate) также различается\
+  \ по задачам — это означает, что степень дисбаланса не одинакова для разных таргетов.\n\n<p align=\"\
+  center\">\n  <img src=\"reports/figures/tox21_positive_rate_by_task.png\" alt=\"Positive rate by task\"\
+  \ width=\"850\"/>\n</p>\n\nДля выбранной задачи **NR-AR** (см. `reports/tox21_dataset_summary.csv`):\n\
+  - `n_total = 7831`\n- `n_labeled = 7265`, `missing_rate ≈ 0.072`\n- `pos = 309`, `neg = 6956`, `pos_rate\
+  \ ≈ 0.043`\n\n## 3. Подготовка данных\n1. Фильтрация по таргету NR-AR: удаление строк с NaN в `NR-AR`.\n\
+  2. Валидация SMILES через RDKit и удаление невалидных структур.\n3. (Опционально) Дедупликация по каноническому\
+  \ SMILES.\n\nИтоговый очищенный набор: `data/tox21_nr_ar_cleaned.csv`.\n\n## 4. EDA и интерпретируемые\
+  \ признаки\nБыли вычислены 2D-дескрипторы RDKit:\n- `MW`, `LogP`, `TPSA`, `HBD`, `HBA`, `RotBonds`,\
+  \ `Rings`\n\nСдвиги распределений по классам показывают, что глобальные физико-химические свойства несут\
+  \ сигнал для классификации и дополняют структурные фингерпринты.\n\n<p align=\"center\">\n  <img src=\"\
+  reports/figures/nr_ar_descriptors_boxplot.png\" alt=\"Descriptor boxplots by class\" width=\"900\"/>\n\
+  </p>\n\nКорреляции между дескрипторами помогают понимать избыточность (например, сильная связь TPSA\
+  \ с HBA/HBD).\n\n<p align=\"center\">\n  <img src=\"reports/figures/nr_ar_descriptors_corr.png\" alt=\"\
+  Descriptor correlations\" width=\"650\"/>\n</p>\n\nАртефакт с дескрипторами сохранён в `reports/nr_ar_descriptors.csv`.\n\
+  \n## 5. Feature Engineering\nФинальная матрица признаков включает:\n- **Morgan fingerprints** (радиус\
+  \ 2, 2048 бит)\n- 6 численных дескрипторов (`MW`, `LogP`, `TPSA`, `HBD`, `HBA`, `RotBonds`)\n\nИтоговый\
+  \ файл: `data/tox21_nr_ar_features_adv.csv`.\n\n## 6. Модели и оценка качества\n\n### 6.1. Почему не\
+  \ Accuracy\nИз-за дисбаланса классов (редкий класс 1) Accuracy плохо отражает качество модели. Основная\
+  \ метрика:\n- **ROC-AUC**\nДополнительно:\n- Precision / Recall / F1 для класса 1\n\n### 6.2. Модель\n\
+  Использована модель **XGBoost** с учётом дисбаланса через `scale_pos_weight` и масштабирование численных\
+  \ признаков.\n\n### 6.3. ROC и PR кривые\nROC-AUC для XGBoost с расширенными признаками около **0.718**.\n\
+  \n<p align=\"center\">\n  <img src=\"reports/figures/roc_curve_xgb_adv.png\" alt=\"ROC curve\" width=\"\
+  650\"/>\n</p>\n\nПри сильном дисбалансе информативна также Precision–Recall кривая (AP около **0.455**).\n\
+  \n<p align=\"center\">\n  <img src=\"reports/figures/pr_curve_xgb_adv.png\" alt=\"PR curve\" width=\"\
+  650\"/>\n</p>\n\n## 7. Threshold tuning (подбор порога)\nПо умолчанию класс 1 выбирается при threshold=0.5.\
+  \ Здесь порог подбирался перебором, выбирая значение, максимизирующее **F1**.\n\n<p align=\"center\"\
+  >\n  <img src=\"reports/figures/threshold_sweep_xgb_adv.png\" alt=\"Threshold sweep\" width=\"750\"\
+  />\n</p>\n\nТабличный артефакт: `reports/threshold_sweep_xgb_adv.csv`.\n\n## 8. Итоги\nПри пороге около\
+  \ **0.89** получаем режим high-confidence screening: очень мало ложно-отрицательных срабатываний.\n\n\
+  \n## 9. Структура репозитория\n- `src/`\n  - `step1_download_inspect.py` — загрузка и первичный осмотр\n\
+  \  - `step2_clean_data.py` — валидация SMILES (RDKit)\n  - `step3_eda.py` — базовый EDA\n  - `step4_features.py`\
+  \ — генерация fingerprints + дескрипторов\n  - `step5_models.py` — обучение и метрики\n  - `step6_visualizations.py`\
+  \ — расширенная визуализация + отчёты\n- `data/` — данные (локально)\n- `reports/` — таблицы отчётов\
+  \ и визуализации\n\n## 10. Как воспроизвести\nПримерный порядок:\n```bash\npython src/step1_download_inspect.py\n\
+  python src/step2_clean_data.py\npython src/step4_features.py\npython src/step5_models.py\npython src/step6_visualizations.py\n"

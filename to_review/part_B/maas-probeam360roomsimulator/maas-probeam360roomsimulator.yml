@@ -1,0 +1,93 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Varian-MedicalAffairsAppliedSolutions/MAAS-ProBeam360RoomSimulator
+url: https://github.com/Varian-MedicalAffairsAppliedSolutions/MAAS-ProBeam360RoomSimulator
+platform: github
+description: ESAPI plugin for visualizing a ProBeam 360 treatment room in 3D and checking setup geometry
+  against the patient and couch for proton plans.
+license: NOASSERTION
+language: C#
+keywords: []
+stars: 0
+updated_at: '2026-08-09T23:59:18Z'
+image_source: https://raw.githubusercontent.com/Varian-MedicalAffairsAppliedSolutions/MAAS-ProBeam360RoomSimulator/HEAD/Screenshot1.png
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 4 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# MAAS ProBeam 360 Room Simulator\n\n`MAAS-PB360RoomSimulator` is an Eclipse Scripting\
+  \ API (ESAPI) plugin for visualizing a ProBeam 360 treatment room in 3D and checking setup geometry\
+  \ against the patient and couch for proton plans.  Orginal code by Peter Klenovsky\n\n> [!IMPORTANT]\n\
+  > This application is presented in the code as a **non-clinical, research/evaluation-only** tool. The\
+  \ UI also distinguishes validated and non-validated use at runtime.\n\n## What it does\n\nThe plugin\
+  \ builds a WPF-based 3D scene from embedded OBJ assets and lets a user:\n\n- load the treatment room,\
+  \ gantry, snout, couch, panels, and isocenter markers\n- select a proton field from the current ion\
+  \ plan\n- apply gantry angle and snout position from the plan or manually override them\n- auto-align\
+  \ the couch to the patient body and then fine-tune couch longitudinal, lateral, vertical, and rotational\
+  \ values\n- retract/extend Panel A and Panel B\n- simulate gantry rotation for CBCT-style dry runs\n\
+  - switch into BEV mode for beam-eye-view inspection\n- calculate a depth map and click in BEV mode to\
+  \ measure distance along the beam direction\n- warn on proximity/collision between the snout, patient\
+  \ body, and couch\n\nCollision feedback is color-coded in the 3D view:\n\n- **Yellow**: proximity warning\
+  \ (within 30 mm)\n- **Orange-red**: collision\n\n## Repository layout\n\n- [Projects/MachineModel3D/](/C:/Users/amagliar/source/repos/Varian-MedicalAffairsAppliedSolutions/MAAS-PB360RoomSimulator/Projects/MachineModel3D)\
+  \ - original WPF/HelixToolkit-based Visual Studio solution and ESAPI project\n- [Projects/MachineModel3D/MachineModel3D.cs](/C:/Users/amagliar/source/repos/Varian-MedicalAffairsAppliedSolutions/MAAS-PB360RoomSimulator/Projects/MachineModel3D/MachineModel3D.cs)\
+  \ - main script, WPF UI, 3D scene setup, and collision logic for the original renderer\n- [Projects/MachineModel3D/Resources/](/C:/Users/amagliar/source/repos/Varian-MedicalAffairsAppliedSolutions/MAAS-PB360RoomSimulator/Projects/MachineModel3D/Resources)\
+  \ - embedded OBJ geometry and texture assets for the original renderer\n- [D3D11/Projects/DXModel3D/](/C:/Users/amagliar/source/repos/Varian-MedicalAffairsAppliedSolutions/MAAS-PB360RoomSimulator/D3D11/Projects/DXModel3D)\
+  \ - Direct3D 11 / SharpDX solution, project, packages, and renderer sources\n- [D3D11/Projects/Shaders/](/C:/Users/amagliar/source/repos/Varian-MedicalAffairsAppliedSolutions/MAAS-PB360RoomSimulator/D3D11/Projects/Shaders)\
+  \ - standalone shader source and compiled shader artifacts used to maintain the Direct3D 11 renderer\n\
+  - [D3D11/Screenshots/](/C:/Users/amagliar/source/repos/Varian-MedicalAffairsAppliedSolutions/MAAS-PB360RoomSimulator/D3D11/Screenshots)\
+  \ - Direct3D 11 screenshot gallery used below to contrast the alternate renderer with the original WPF\
+  \ version\n- [D3D11/Plugins/](/C:/Users/amagliar/source/repos/Varian-MedicalAffairsAppliedSolutions/MAAS-PB360RoomSimulator/D3D11/Plugins)\
+  \ - plugin output folder used by the Direct3D 11 build\n- [Plugins/](/C:/Users/amagliar/source/repos/Varian-MedicalAffairsAppliedSolutions/MAAS-PB360RoomSimulator/Plugins)\
+  \ - plugin output folder used by the original project build\n\n## Requirements\n\n- Windows\n- Visual\
+  \ Studio capable of building .NET Framework projects\n- .NET Framework 4.8\n- Varian Eclipse / ESAPI\
+  \ environment with the assemblies referenced by the project\n  - `VMS.TPS.Common.Model.API`\n  - `VMS.TPS.Common.Model.Types`\n\
+  - Access to a loaded **patient** and **proton plan** in Eclipse when running the script\n\nThe original\
+  \ WPF project is configured as:\n\n- **Platform**: `x64`\n- **Output type**: class library\n- **Assembly\
+  \ output**: `MachineModel3D.esapi`\n- **Build output folder**: `Plugins\\`\n\nThe Direct3D 11 project\
+  \ is configured as:\n\n- **Platform**: `x64`\n- **Output type**: class library\n- **Assembly output**:\
+  \ `DXModel3D.esapi`\n- **Build output folder**: `D3D11\\Plugins\\`\n- **Additional dependency set**:\
+  \ bundled SharpDX packages under [D3D11/Projects/DXModel3D/packages/](/C:/Users/amagliar/source/repos/Varian-MedicalAffairsAppliedSolutions/MAAS-PB360RoomSimulator/D3D11/Projects/DXModel3D/packages)\n\
+  \n## Building\n\n### Original renderer\n\n1. Open [MachineModel3D.sln](/C:/Users/amagliar/source/repos/Varian-MedicalAffairsAppliedSolutions/MAAS-PB360RoomSimulator/Projects/MachineModel3D/MachineModel3D.sln)\
+  \ in Visual Studio.\n2. Ensure the ESAPI references resolve on the machine you are building on.\n3.\
+  \ Build the `x64` configuration.\n4. The compiled plugin is written to [Plugins/](/C:/Users/amagliar/source/repos/Varian-MedicalAffairsAppliedSolutions/MAAS-PB360RoomSimulator/Plugins).\n\
+  \n### Direct3D 11 renderer\n\n1. Open [DXModel3D.sln](/C:/Users/amagliar/source/repos/Varian-MedicalAffairsAppliedSolutions/MAAS-PB360RoomSimulator/D3D11/Projects/DXModel3D/DXModel3D.sln)\
+  \ in Visual Studio.\n2. Ensure the ESAPI references resolve on the machine you are building on.\n3.\
+  \ Restore or verify the bundled SharpDX references under [D3D11/Projects/DXModel3D/packages/](/C:/Users/amagliar/source/repos/Varian-MedicalAffairsAppliedSolutions/MAAS-PB360RoomSimulator/D3D11/Projects/DXModel3D/packages).\n\
+  4. Build the `x64` configuration.\n5. The compiled plugin is written to [D3D11/Plugins/](/C:/Users/amagliar/source/repos/Varian-MedicalAffairsAppliedSolutions/MAAS-PB360RoomSimulator/D3D11/Plugins).\n\
+  \n## Running in Eclipse\n\n1. Load a patient in Eclipse.\n2. Open a proton plan (`IonPlanSetup`).\n\
+  3. Launch the compiled `MachineModel3D.esapi` plugin.\n4. On first use, accept the agreement/license\
+  \ flow shown by the script.\n5. Select a field from the combo box to populate gantry, snout, isocenter,\
+  \ and couch values from the active plan.\n\n## Main workflow\n\n### 1. Review the imported field geometry\n\
+  \nSelecting a field updates the displayed plan/field details and applies:\n\n- gantry angle\n- snout\
+  \ position\n- patient isocenter shift\n- couch rotation and initial couch alignment\n\n### 2. Adjust\
+  \ room and couch geometry\n\nUse the right-side controls to:\n\n- edit gantry angle and snout position,\
+  \ then click **Apply**\n- extend/retract Panel A and Panel B\n- show or hide the isocenter lasers\n\
+  - move the couch using `Lng`, `Lat`, `Vrt`, and `Rtn`\n\n### 3. Inspect setup risk\n\n- **Simulate CBCT**\
+  \ rotates the gantry continuously until stopped\n- collision checks run as geometry changes\n- **BEV\
+  \ Mode** repositions the camera onto the beam axis for inspection\n- in BEV mode, clicking the model\
+  \ reports the distance to the clicked point along the beam direction\n- **Calculate Depth Map** generates\
+  \ a depth map view from the current camera/beam perspective\n\n## Screenshots\n\nThe repository now\
+  \ contains screenshot sets for both renderer implementations:\n\n- **Original WPF renderer** - the established\
+  \ HelixToolkit/WPF presentation that shipped with the original project\n- **Direct3D 11 renderer** -\
+  \ the newer SharpDX-based rendering path with the alternate viewport presentation shown in the imported\
+  \ D3D11 build\n\n### Original WPF renderer gallery\n\n<p>\n  <img src=\"Screenshot1.png\" alt=\"Original\
+  \ WPF renderer screenshot 1\" width=\"48%\" />\n  <img src=\"Screenshot2.png\" alt=\"Original WPF renderer\
+  \ screenshot 2\" width=\"48%\" />\n</p>\n<p>\n  <img src=\"Screenshot3.png\" alt=\"Original WPF renderer\
+  \ screenshot 3\" width=\"48%\" />\n  <img src=\"Screenshot4.png\" alt=\"Original WPF renderer screenshot\
+  \ 4\" width=\"48%\" />\n</p>\n<p>\n  <img src=\"Screenshot5.png\" alt=\"Original WPF renderer screenshot\
+  \ 5\" width=\"48%\" />\n  <img src=\"Screenshot6.png\" alt=\"Original WPF renderer screenshot 6\" width=\"\
+  48%\" />\n</p>\n<p>\n  <img src=\"Screenshot7.png\" alt=\"Original WPF renderer screenshot 7\" width=\"\
+  48%\" />\n</p>\n\n### Direct3D 11 renderer gallery\n\nThese additional screenshots come from the Direct3D\
+  \ 11 branch of the simulator and highlight the alternate renderer's viewport look, lighting, and presentation\
+  \ compared with the original WPF images above.\n\n<p>\n  <img src=\"D3D11/Screenshots/D3D11-Screenshot1.png\"\
+  \ alt=\"Direct3D 11 renderer screenshot 1\" width=\"48%\" />\n  <img src=\"D3D11/Screenshots/D3D11-Screenshot2.png\"\
+  \ alt=\"Direct3D 11 renderer screenshot 2\" width=\"48%\" />\n</p>\n<p>\n  <img src=\"D3D11/Screenshots/D3D11-Screenshot3.png\"\
+  \ alt=\"Direct3D 11 renderer screenshot 3\" width=\"48%\" />\n  <img src=\"D3D11/Screenshots/D3D11-Screenshot4.png\"\
+  \ alt=\"Direct3D 11 renderer screenshot 4\" width=\"48%\" />\n</p>\n<p>\n  <img src=\"D3D11/Screenshots/D3D11-Screenshot5.png\"\
+  \ alt=\"Direct3D 11 renderer screenshot 5\" width=\"48%\" />\n</p>\n\n## Notes\n\n- The script stores\
+  \ agreement/license state in the user's AppData folder.\n- The assembly includes an expiration attribute,\
+  \ and the runtime checks for expiry unless bypass files are present.\n- The 3D room is assembled from\
+  \ embedded resource files under [Resources/](/C:/Users/amagliar/source/repos/Varian-MedicalAffairsAppliedSolutions/MAAS-PB360RoomSimulator/Projects/MachineModel3D/Resources).\n"

@@ -1,0 +1,97 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: sille1994/Automated-Cholesteatoma-Detection-Using-Quantitative-Tissue-Relationships
+url: https://github.com/sille1994/Automated-Cholesteatoma-Detection-Using-Quantitative-Tissue-Relationships
+platform: github
+description: 'A CBCT-Based Framework for Automated Cholesteatoma Detection Using Quantitative Tissue Relationships '
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-03T07:19:26Z'
+image_source: null
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# Automatic Cholesteatoma Feature Extraction from CBCT\n\nThis repository contains a\
+  \ fully automated pipeline for extracting\nradiological features from cone-beam CT (CBCT) scans of the\
+  \ temporal\nbone. The pipeline combines anatomical segmentation, automatic ossicle\nsegmentation, region-of-interest\
+  \ (ROI) generation, tissue\nclassification, and feature extraction for cholesteatoma research.\n\nThe\
+  \ workflow was developed as part of a Master's thesis investigating\nautomatic detection of middle ear\
+  \ cholesteatoma using CBCT.\n\n------------------------------------------------------------------------\n\
+  \n# Pipeline Overview\n\nThe pipeline consists of six sequential processing steps:\n\n  -----------------------------------------------------------------------\n\
+  \  Step                   Description\n  ---------------------- ------------------------------------------------\n\
+  \  **STEP 1**             Segment the CBCT scan into air, bone and soft\n                         tissue\
+  \ using unsupervised clustering.\n\n  **STEP 2**             Generate a temporal bone mask by morphological\n\
+  \                         processing of the skull segmentation.\n\n  **STEP 3**             Refine and\
+  \ fill the temporal bone mask.\n\n  **STEP 4**             Create a cylindrical ROI around the ossicles\
+  \ and\n                         classify tissue inside the ROI using K-means\n                     \
+  \    clustering.\n\n  **STEP 5**             Detect the ossicles and generate the final\n          \
+  \               middle ear ROI.\n\n  **STEP 6**             Extract volumetric and ratio-based radiological\n\
+  \                         features and export them to a CSV file.\n  \n  \n-----------------------------------------------------------------------\n\
+  \n------------------------------------------------------------------------\n\n# Repository Structure\n\
+  \n``` text\nScans/\n    00001/\n    00002/\n    ...\n\nSeg/\n    seg_auto_00001.nii\n    seg_auto_00002.nii\n\
+  \    ...\n\nResults/\nResults_seg/\n\nSTEP_1_Segmenting.py\nSTEP_2_InderSegmentation.py\nSTEP_3_Mask_filler.py\n\
+  STEP_4_ROI_Kmean.py\nSTEP_5_ROI_ossicles.py\nSTEP_6_Measurements.py\n\nBatch_running.py\n```\n\n------------------------------------------------------------------------\n\
+  \n# Requirements\n\nPython 3.10 or newer is recommended.\n\nRequired packages:\n\n``` text\nnumpy\n\
+  scipy\nscikit-image\nscikit-learn\npandas\nmatplotlib\nnibabel\npydicom\nSimpleITK\n```\n\nInstall them\
+  \ with:\n\n``` bash\npip install numpy scipy scikit-image scikit-learn pandas matplotlib nibabel pydicom\
+  \ SimpleITK\n```\n\n------------------------------------------------------------------------\n\n# Automatic\
+  \ Ossicle Segmentation\n\nThis pipeline relies on the automatic temporal bone segmentation model\ndeveloped\
+  \ by the Auditory Biophysics Laboratory (ABL), Western\nUniversity.\n\nBefore running this repository:\n\
+  \n1.  Install Docker Desktop.\n2.  Pull the ABL Docker image.\n3.  Generate automatic ossicle segmentations.\n\
+  4.  Place the generated segmentation files in the **Seg/** folder.\n\nThe segmentation files should\
+  \ follow the naming convention:\n\n``` text\nSeg/\n    seg_auto_00075.nii\n    seg_auto_00102.nii\n\
+  ```\n\nExample Docker command:\n\n``` bash\ndocker pull uwoabl/temporal-bone-segmentation:latest\n```\n\
+  \n------------------------------------------------------------------------\n\n# Input Data\n\nOrganize\
+  \ the CBCT scans as:\n\n``` text\nScans/\n\n    00075/\n        DICOM files...\n\n    00102/\n     \
+  \   DICOM files...\n```\n\nEach patient folder should contain a single CBCT DICOM series.\n\n------------------------------------------------------------------------\n\
+  \n# Running the Pipeline\n\nRun the scripts in the following order:\n\n``` text\nSTEP_1_Segmenting.py\n\
+  STEP_2_InderSegmentation.py\nSTEP_3_Mask_filler.py\nSTEP_4_ROI_Kmean.py\nSTEP_5_ROI_ossicles.py\nSTEP_6_Measurements.py\n\
+  ```\n\nEach script accepts the patient ID:\n\n``` bash\npython STEP_1_Segmenting.py 00075\n```\n\n------------------------------------------------------------------------\n\
+  \n# Batch Processing\n\nTo process multiple scans automatically, edit:\n\n``` python\nSCRIPT = \"STEP_1_Segmenting.py\"\
+  \n```\n\ninside:\n\n``` text\nBatch_running.py\n```\n\nThen execute:\n\n``` bash\npython Batch_running.py\n\
+  ```\n\nThe batch runner launches a new Python process for every patient. This\nautomatically releases\
+  \ memory after each case and prevents memory\naccumulation during large batch analyses.\n\nFiltering\
+  \ can optionally be enabled to process only a selected subset of\npatients.\n\n------------------------------------------------------------------------\n\
+  \n# Running the Complete Pipeline (STIL IN WORK)\n\nThe repository includes a master batch runner (`Pipeline_runner.py`)\
+  \ that automatically executes the complete image-processing pipeline. For most users, this is the **only\
+  \ script that needs to be executed**.\n\nRun the pipeline using:\n\n```bash\npython Pipeline_runner.py\n\
+  ```\n\nThe batch runner will automatically:\n\n- Search the `Scans/` directory for patient folders.\n\
+  - Create the `Results/` and `Results_seg/` directories if they do not already exist.\n- Execute all\
+  \ processing steps in the correct order:\n  1. `STEP_1_Segmenting.py`\n  2. `STEP_2_InnerSegmentation.py`\n\
+  \  3. `STEP_3_Mask_filler.py`\n  4. `STEP_4_ROI_Kmean.py`\n  5. `STEP_5_ROI_Ossicles.py`\n  6. `STEP_6_Measurements.py`\n\
+  - Launch every processing step in a new Python process, ensuring that memory is released after each\
+  \ script and preventing memory accumulation during large batch analyses.\n- Write all console output,\
+  \ warnings, and errors to `Pipeline_log.txt`.\n\n\n# Resume Interrupted Processing\n\nThe pipeline supports\
+  \ automatic resumption of interrupted analyses.\n\nBefore executing each processing step, the batch\
+  \ runner checks whether the expected output file already exists. If the output is found, the corresponding\
+  \ step is skipped automatically.\n\nIf the final feature table already exists for a patient, the entire\
+  \ patient is skipped.\n\nThis allows interrupted batch runs to continue from the last unfinished step\
+  \ instead of restarting from the beginning.\n\nThe behaviour can be controlled at the top of `Pipeline_runner.py`:\n\
+  \n```python\nSKIP_COMPLETED = True\nFORCE_RERUN = False\n```\n\n- `SKIP_COMPLETED = True` automatically\
+  \ skips completed processing steps.\n- `FORCE_RERUN = True` forces all processing steps to be executed\
+  \ again, regardless of existing output files.\n\n\n# Optional Patient Filtering\n\nProcessing can optionally\
+  \ be restricted to a predefined subset of patients.\n\n```python\nUSE_FILTER = False\n```\n\nWhen enabled,\
+  \ only patient IDs listed in the `valid_patients` set will be processed.\n\n\n# Log File\n\nDuring execution,\
+  \ all messages, warnings, and errors are written to:\n\n```text\nPipeline_log.txt\n```\n\nThis log file\
+  \ can be used to monitor progress and troubleshoot failed processing steps.\n\n\n# Typical Workflow\n\
+  \n1. Place the CBCT DICOM folders inside `Scans/`.\n2. Generate the automatic ossicle segmentations\
+  \ using the ABL segmentation model and place them in `Seg/`.\n3. Run:\n\n```bash\npython Pipeline_runner.py\n\
+  ```\n\n4. The extracted radiological features will automatically be saved in the output directory after\
+  \ all processing steps have completed.\n\n------------------------------------------------------------------------\n\
+  \n# Output\n\nThe pipeline generates:\n\n``` text\nResults/\n```\n\n-   Intermediate processing files\n\
+  -   Cached volumes\n-   Tissue segmentations\n\n``` text\nResults_seg/\n```\n\n-   ROI masks\n-   K-means\
+  \ tissue classifications\n-   Detected ossicles\n-   Debug figures\n-   Intermediate masks\n\n``` text\n\
+  feature_table_reference_*.csv\n```\n\n-   Final quantitative radiological features\n\n------------------------------------------------------------------------\n\
+  \n# Adjustable Parameters\n\nSeveral parameters can easily be modified inside the scripts, including:\n\
+  \n-   ROI radius\n-   Cylinder dimensions\n-   Number of K-means clusters\n-   Visualization options\n\
+  -   Debug mode\n-   CSV export\n-   Batch filtering\n\nIntermediate files are cached to avoid recomputation\
+  \ when rerunning the\npipeline.\n\n------------------------------------------------------------------------\n\
+  \n# Citation\n\nIf you use this repository in your research, please cite the associated\nMaster's thesis\
+  \ and acknowledge the Auditory Biophysics Laboratory\n(Western University) for providing the automatic\
+  \ ossicle segmentation\nmodel.\n\n"

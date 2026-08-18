@@ -1,0 +1,128 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: RadOncDev/SRSAutoPlan
+url: https://github.com/RadOncDev/SRSAutoPlan
+platform: github
+description: ESAPI based script for automating treatment planning for intracranial stereotactic radiosurgery
+license: GPL-3.0
+language: C#
+keywords: []
+stars: 2
+updated_at: '2026-07-30T18:59:24Z'
+image_source: https://raw.githubusercontent.com/RadOncDev/SRSAutoPlan/HEAD/Doc/images/01_folder_structure.jpg
+heuristic_total_score: 21
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+- Matched 7 support term(s).
+readme_excerpt: "<div style=\"display: flex; flex-direction: column; justify-content: center; align-items:\
+  \ center; height: 100vh; text-align: center;\">\n    <h1 style=\"font-size: 48px; border-bottom: none;\
+  \ margin: 0px 0px 200px 0px;\">SRS AutoPlan\n    <br>Standalone ESAPI AutoPlan tool\n    <br>Deployment\
+  \ Guide</h1>\n    <h2 style=\"font-size: 24px; border-bottom: none; margin: 0;\">Department of Radiation\
+  \ Oncology</h2>\n    <h2 style=\"font-size: 20px; border-bottom: none; margin: 0;\">University of Michigan</h2>\n\
+  \    <h3 style=\"font-size: 20px; border-bottom: none; margin: 10;\">October 17, 2025</h3>\n</div>\n\
+  \n\n<div style=\"page-break-after: always;margin-bottom:120px;\"></div>\n\n\n\n# Disclaimer\n\n NOTICE:\
+  \ © 2022 The Regents of the University of Michigan\n\n The Chuck Mayo Lab - https://medicine.umich.edu/dept/radonc/research/research-laboratories/physics-laboratories\
+  \ \n\n The software is solely for non-commercial, non-clinical research and education use in support\
+  \ of the publication.\n It is a decision support tool and not a surrogate for professional clinical\
+  \ guidance and oversight.\n The software calls APIs that are owned by Varian Medical Systems, Inc. (referred\
+  \ to here as Varian),\n and you should be aware you will need to obtain an API license from Varian in\
+  \ order to be able to use those APIs.\n Extending the [No Liability] aspect of these terms, you agree\
+  \ that as far as the law allows,\n Varian and Michigan will not be liable to you for any damages arising\
+  \ out of these terms or the use or nature of the software,\n under any kind of legal claim, and by using\
+  \ the software, you agree to indemnify the licensor and Varian in the event that the\n licensor or Varian\
+  \ is joined in any lawsuit alleging injury or death or any other type of damage (e.g., intellectual\
+  \ property infringement)\n arising out of the dissemination or use of the software.\n\n\n<div style=\"\
+  page-break-after: always;margin-bottom:120px;\"></div>\n\n\n# Overview\n\nGitHub repository [SRS_AutoPlan](https://github.com/CSMayoLab/SRSAutoPlan)\
+  \ contains source code for compiling, configuring, and deploying standalone desktop application **SRS\
+  \ AutoPlan**, which can automatically create SRS VMAT treatment plans, using Varian Eclipse Scripting\
+  \ API (ESAPI, writable version v15 or above).\n\nEclipse Scripting API based Automatic planner for SRS\
+  \ VMAT. The software is solely for non-commercial, non-clinical research and education use in support\
+  \ of the publication.\n\n- [Overview](#overview)\n- [Compile the code](#compile-the-code)\n- [Configuration](#configuration)\n\
+  - [Script Approval](#script-approval)\n- [Script Launcher](#script-launcher)\n\n<div style=\"page-break-after:\
+  \ always;margin-bottom:120px;\"></div>\n\n# Compile the code\n\nClone from GitHub repository [SRS_AutoPlan](https://github.com/CSMayoLab/SRSAutoPlan)\
+  \ to a local machine where Varian Eclipse treatment planning system is installed (thick Eclipse client).\n\
+  \nOpen the solution file **GitHub_SRS_AutoPlan_Standalone_App** with [Visual Studio](https://visualstudio.microsoft.com/).\
+  \ \n\n<div style=\"text-align: center;\">\n    <img src=\"./Doc/images/01_folder_structure.jpg\" alt=\"\
+  Sample Image\" width=\"500\" style=\"border: 2px solid gray;\"/>\n</div>\n<br>\n\nThe code needs to\
+  \ be compiled with x64 configuration. Open **Configuration Manager** and make sure each project have\
+  \ **Platform** set as **x64**.\n\n<div style=\"text-align: center;\">\n    <img src=\"./Doc/images/02_configuration_manager.jpg\"\
+  \ alt=\"Sample Image\" width=\"400\" style=\"border: 2px solid gray;\"/>\n</div>\n<br>\n\n<div style=\"\
+  page-break-after: always;margin-bottom:120px;\"></div>\n\n\nIf you don't see **x64** exist in the pulldown\
+  \ list, create it from \\<New...\\> option.\n\n<div style=\"text-align: center;\">\n    <img src=\"\
+  ./Doc/images/021_x64.jpg\" alt=\"Sample Image\" width=\"400\" style=\"border: 2px solid gray;\"/>\n\
+  </div>\n<br>\n\n\nCreate x64 platform by 'Copy settings from' Any CPU. Click OK.\n\n\n<div style=\"\
+  text-align: center;\">\n    <img src=\"./Doc/images/022_new_x64.jpg\" alt=\"Sample Image\" width=\"\
+  250\" style=\"border: 2px solid gray;\"/>\n</div>\n<br>\n\n\nMake sure **x64** is selected for all projects\
+  \ in this solution:\n\n\n<div style=\"text-align: center;\">\n    <img src=\"./Doc/images/023_all_x64.jpg\"\
+  \ alt=\"Sample Image\" width=\"400\" style=\"border: 2px solid gray;\"/>\n</div>\n<br>\n\n\n\n<div style=\"\
+  page-break-after: always;margin-bottom:120px;\"></div>\n\n\nAdd reference to two VMS.TPS dll files.\
+  \ (If you are on a thick client where Eclipse is installed locally, this should happen automatically\
+  \ when you build the solution, since the two dlls are already in system GAC. If not, manually locate\
+  \ these two dll on your machine.)\n\n<div style=\"text-align: center;\">\n    <img src=\"./Doc/images/04_VMS.dll_reference.jpg\"\
+  \ alt=\"Sample Image\" width=\"800\" style=\"border: 2px solid gray;\"/>\n</div>\n<br>\n\nAdd the same\
+  \ dll reference for project **AP_lib**.\n\n\n<div style=\"page-break-after: always;margin-bottom:120px;\"\
+  ></div>\n\n\nSet project **SRS_AutoPlan_app** as **startup** project, build the solution and Start.\
+  \ (This only happens on a thick Eclipse client. If not, build the project and see section below about\
+  \ **Script Launcher**)\n\n\n<div style=\"text-align: center;\">\n    <img src=\"./Doc/images/03_setup_startup_project.jpg\"\
+  \ alt=\"Sample Image\" width=\"400\" style=\"border: 2px solid gray;\"/>\n</div>\n<br>\n\n\n<div style=\"\
+  page-break-after: always;margin-bottom:120px;\"></div>\n\nYou should be able to see the following UI\
+  \ panel for interaction:\n\n<div style=\"text-align: center;\">\n    <img src=\"./Doc/images/05_start_run.jpg\"\
+  \ alt=\"Sample Image\" width=\"600\" style=\"border: 2px solid gray;\"/>\n</div>\n<br>\n\n<div style=\"\
+  page-break-after: always;margin-bottom:120px;\"></div>\n\nIf you build and run successfully. You should\
+  \ be able to see the following files in folder `\\SRS_AutoPlan_app\\bin\\x64\\Debug`:\n\n\n<div style=\"\
+  text-align: center;\">\n    <img src=\"./Doc/images/06_built_output.jpg\" alt=\"Sample Image\" width=\"\
+  600\" style=\"border: 2px solid gray;\"/>\n</div>\n<br>\n\n- **Exe file** - The resulting `AutoPlan_SRS_v1.1.51.2.exe`\
+  \ and `AP_lib_v1.1.51.2.dll`. These two files will need to be approved for usage in Clinic Eclipse environment.\n\
+  \  \n- **Configuration file** -  `AutoPlan_SRS_v1.1.51.2.exe.config`\n\n- **Log file** - per user log\
+  \ file (will be created when a user first use the script)\n\n- **Script Launcher** - `Launcher_AutoPlan_SRS_v1.1.51.2.esapi.dll`\
+  \ (copied from folder `\\ScriptLauncher\\bin\\x64\\Debug`)\n\n<div style=\"page-break-after: always;margin-bottom:120px;\"\
+  ></div>\n\n\n# Configuration\n\nConfiguration file `AutoPlan_SRS_v1.1.51.2.exe.config` has a few settings\
+  \ that must be changed to reflect local deployment environment:\n\n<div style=\"text-align: center;\"\
+  >\n    <img src=\"./Doc/images/07_config_file.jpg\" alt=\"Sample Image\" width=\"800\" style=\"border:\
+  \ 2px solid gray;\"/>\n</div>\n<br>\n\n\n**MachineIDs** needs to be changed to the available machines\
+  \ on site. Each available machine ID is separated by a semicolon `;`. \n\n<div style=\"text-align: center;\"\
+  >\n    <img src=\"./Doc/images/072_machineid.jpg\" alt=\"Sample Image\" width=\"500\" style=\"border:\
+  \ 2px solid gray;\"/>\n</div>\n<br>\n\n\n**PhotonVMATOptimization** and **PhotonVolumeDose** specify\
+  \ the algorithms to use for Optimization and Volume Dose calculation:\n\n<div style=\"text-align: center;\"\
+  >\n    <img src=\"./Doc/images/073_algorithms.jpg\" alt=\"Sample Image\" width=\"500\" style=\"border:\
+  \ 2px solid gray;\"/>\n</div>\n<br>\n\n\n\n# Script Approval\n\n Varian requires writable script be\
+  \ approved before use in Clinical environment. In order to use this SRS AutoPlan program (script) in\
+  \ clinical Eclipse environment, you will need to approve two files: `AutoPlan_SRS_v....exe` and `AP_lib_v....dll`\
+  \ \n\n<div style=\"text-align: center;\">\n    <img src=\"./Doc/images/081_approval.jpg\" alt=\"Sample\
+  \ Image\" width=\"400\" style=\"border: 2px solid gray;\"/>\n</div>\n<br>\n\n\n<div style=\"text-align:\
+  \ center;\">\n    <img src=\"./Doc/images/082_approve.jpg\" alt=\"Sample Image\" width=\"800\" style=\"\
+  border: 2px solid gray;\"/>\n</div>\n<br>\n\n<div style=\"page-break-after: always;margin-bottom:120px;\"\
+  ></div>\n\nIf for some reason you need to re-compile the code. To pass the above approval steps, you\
+  \ need to increase file versions. (we recommend putting version number in file names and increasing\
+  \ them as well). For example, here is how you do it for project `SRS_AutoPlan`:\n\n<div style=\"text-align:\
+  \ center;\">\n    <img src=\"./Doc/images/083_project_property.jpg\" alt=\"Sample Image\" width=\"400\"\
+  \ style=\"border: 2px solid gray;\"/>\n</div>\n<br>\n\n\n<div style=\"text-align: center;\">\n    <img\
+  \ src=\"./Doc/images/084_increase_version.jpg\" alt=\"Sample Image\" width=\"800\" style=\"border: 2px\
+  \ solid gray;\"/>\n</div>\n<br>\n\n**Remember to increase version number for project `AP_lib` and then\
+  \ approve it as well**\n\nIf renaming AP_lib 'Assembly name' with new version number breaks the reference\
+  \ between SRS_AutoPlan_app and AP_lib project in Visual Studio, delete and re-add the reference.\n\n\
+  <div style=\"page-break-after: always;margin-bottom:120px;\"></div>\n\n# Script Launcher\n\nOn a thick\
+  \ client where Eclipse is installed locally, user can directly double click `AutoPlan_SRS_vx.x.x.x.exe`\
+  \ to run the script.\n\nIf a user needs to run from Citrix environment, we need a script launcher to\
+  \ trick Eclipse to load our standalone exe file through a script plugin esapi.dll.\n\nWhen you build\
+  \ the solution, under project `\\ScriptLauncher` bin folder `\\bin\\x64\\Debug`, the launcher files\
+  \ are created. Copy them into the same folder with `AutoPlan_SRS_vx.x.x.x.exe` \n\n<div style=\"text-align:\
+  \ center;\">\n    <img src=\"./Doc/images/09_launcher.jpg\" alt=\"Sample Image\" width=\"400\" style=\"\
+  border: 2px solid gray;\"/>\n</div>\n<br>\n\nNext, in Eclipse External Beam Planning, go to **Tools**\
+  \ -> **Scripts...**\n\n<div style=\"text-align: center;\">\n    <img src=\"./Doc/images/092_script.jpg\"\
+  \ alt=\"Sample Image\" width=\"400\" style=\"border: 2px solid gray;\"/>\n</div>\n<br>\n\n<div style=\"\
+  page-break-after: always;margin-bottom:120px;\"></div>\n\nChange folder to where `AutoPlan_SRS_vx.x.x.x.exe`\
+  \ and `Launcher_AutoPlan_SRS_vvx.x.x.x.esapi.dll` are located and open the folder. You should see the\
+  \ launcher `Launcher_AutoPlan_SRS_vvx.x.x.x.esapi.dll` show up in the script list, double click to run.\n\
+  \n<div style=\"text-align: center;\">\n    <img src=\"./Doc/images/093_script_change_dir.jpg\" alt=\"\
+  Sample Image\" width=\"800\" style=\"border: 2px solid gray;\"/>\n</div>\n<br>\n\nHere, Eclipse Script\
+  \ window only recognizes files ending with esapi.dll. Launcher `AutoPlan_SRS_vx.x.x.x.esapi.dll` will\
+  \ load our real exe program `AutoPlan_SRS_vx.x.x.x.exe` and execute it. \n\n\n<div style=\"page-break-after:\
+  \ always;margin-bottom:120px;\"></div>\n\nIf everything goes well, you should be able to create plans\
+  \ with SRS AutoPlan now:\n\n<div style=\"text-align: center;\">\n    <img src=\"./Doc/images/10_success.jpg\"\
+  \ alt=\"Sample Image\" width=\"500\" style=\"border: 2px solid gray;\"/>\n</div>\n<br>\n\nIf you experience\
+  \ some error, please consult the log file produced in the same folder first. And contact the developer\
+  \ if needed."

@@ -1,0 +1,32 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: wkt84/pydicom-tools
+url: https://github.com/wkt84/pydicom-tools
+platform: github
+description: pydicomを用いてDICOM RT解析するときのツール
+license: MIT
+language: Python
+keywords: []
+stars: 5
+updated_at: '2022-06-01T06:11:35Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# pydicom tools\r\n\r\npydicomを用いてDICOM RTを解析するときのツール群です。\r\n\r\n## 3次元CTデータの構築\r\n\r\
+  \n以下の方法で変数`ct`に3次元Volumeを読み込みます。\r\n\r\n```python\r\nfrom pydicom_tools import CTImage\r\nct = CTImage()\r\
+  \nct.load(path_to_ct)\r\n```\r\n\r\n## DRRの生成\r\n\r\n以下の方法でDRRを生成します。\r\nDRRの作成にはITKが必要です。事前にpipなどでインストールしてください。\r\
+  \n\r\n```console\r\npip install itk\r\n```\r\n\r\n```python\r\nfrom pydicom_tools import DRR\r\ndrr\
+  \ = DRR(ct, beam, size)\r\n```\r\n\r\n`ct`は`CTImage`クラスのインスタンス、`beam`はBeamSequenceのオブジェクト、\r\n`size`はDRRのmm単位のサイズです。\r\
+  \n\r\n\r\n## RT Structure Setの読み込み\r\n\r\n以下の方法でRT Structure Setを読み込みます。\r\n\r\n```python\r\nfrom pydicom_toos\
+  \ import RTSS\r\nss = RTSS('path/to/rtss')\r\n\r\n# 輪郭名一覧を表示\r\nprint(ss.structures)\r\n\r\n# z座標をkeyとする輪郭点座標の辞書へアクセス\r\
+  \npoints = ss.points['Structure Name']\r\n\r\n# z座標をkeyとするmatplotlib.path.Pathクラスのオブジェクトへアクセス\r\npaths\
+  \ = ss.paths['Structure Name']\r\n\r\n# 輪郭の体積を計算\r\nvolume = ss.calc_volume('Structure Name')\r\n```\r\
+  \n\r\n## RT Doseの読み込み\r\n\r\n以下の方法でRT Doseを読み込みます。\r\n\r\n```python\r\nfrom pydicom_tools import Dose\r\
+  \ndose_data = Dose('path/to/dose')\r\n\r\n# 3次元線量分布\r\ndose = dose_data.dose\r\n\r\n# z = 0 [mm] の axial断面取り出し\r\
+  \ndose_ax = dose_data.get_2d_plane(0, axis='axial')\r\n\r\n# (x, y, z) = (0, 0, 0) [mm] の点線量の取り出し\r\n\
+  dose_point = dose_data.get_point_dose([0, 0, 0])\r\n```\r\n"

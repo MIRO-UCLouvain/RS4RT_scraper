@@ -1,0 +1,69 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: mohamedrajap22/neurovista-3d-brain-tumor-segmentation
+url: https://github.com/mohamedrajap22/neurovista-3d-brain-tumor-segmentation
+platform: github
+description: End-to-end 3D brain tumor segmentation graduation project using a residual 3D Attention U-Net,
+  ONNX CPU inference, FastAPI, React and Three.js, with multimodal MRI visualization, reporting and role-based
+  access.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-15T12:34:10Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# NeuroVista 3D Brain Tumor Segmentation\n\nAn end-to-end graduation project for **binary\
+  \ whole-tumour segmentation from multimodal 3D brain MRI**. The repository combines the research pipeline\
+  \ used to prepare data, train and evaluate a residual 3D Attention U-Net with a local clinical workstation\
+  \ that serves the exported model through ONNX Runtime on CPU.\n\n> **Research use only:** NeuroVista\
+  \ is an educational prototype. It is not a medical device, does not provide a diagnosis, and must not\
+  \ be used for autonomous clinical decisions.\n\n## Project components\n\n| Component | Purpose | Main\
+  \ technologies |\n|---|---|---|\n| [`training/`](training/) | Data preparation, duplicate control, training,\
+  \ evaluation, reconstruction, inference and ONNX export | Python, PyTorch, MONAI, NiBabel |\n| [`notebooks/`](notebooks/)\
+  \ | Complete experiment record, including setup, dataset download, training recovery, evaluation and\
+  \ ONNX verification | Google Colab, Kaggle API, Google Drive |\n| [`workstation/`](workstation/) | Role-based\
+  \ MRI upload, CPU inference, 2D/3D review, reports, history and audit logs | FastAPI, React, TypeScript,\
+  \ Three.js, SQLite, ONNX Runtime |\n| [`docs/`](docs/) | Dataset, reproducibility and repository guidance\
+  \ | Markdown |\n\n## End-to-end workflow\n\n```mermaid\nflowchart TD\n    A[\"BraTS 2021 + MSD Task01\"\
+  ] --> B[\"Canonical preprocessing\"]\n    B --> C[\"3D Attention U-Net training\"]\n    C --> D[\"Held-out\
+  \ evaluation\"]\n    D --> E[\"ONNX export\"]\n    E --> F[\"FastAPI CPU inference\"]\n    F --> G[\"\
+  2D/3D clinical review\"]\n```\n\nThe locked model contract is:\n\n- Input tensor: `[N, 4, D, H, W]`\n\
+  - Channel order: `T1, T1CE, T2, FLAIR`\n- Deployment patch: `[96, 128, 128]` in `D,H,W` order\n- Output:\
+  \ one binary whole-tumour logit channel\n- Activation: sigmoid\n- Segmentation threshold: `0.65`\n-\
+  \ Export: ONNX opset 18\n\n## Reported experiment results\n\nThe supplied experiment notebook and model\
+  \ metadata record the following held-out results:\n\n| Metric | Reported value |\n|---|---:|\n| Best\
+  \ validation Dice | 0.915385 |\n| Test Dice | 0.9348 |\n| Test Dice 95% CI | 0.9250–0.9437 |\n| Test\
+  \ IoU | 0.8823 |\n| Test sensitivity | 0.9427 |\n| Test specificity | 0.9988 |\n| Test cases | 155 |\n\
+  \nThese values are preserved from the submitted experiment artifacts. They have not been independently\
+  \ recomputed while assembling this repository; follow [`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md)\
+  \ to reproduce or audit them.\n\n## Quick start: clinical workstation on Windows\n\nRequirements: Python\
+  \ 3.11 or newer and a modern web browser. An NVIDIA GPU is not required.\n\n```powershell\ncd workstation\n\
+  .\\setup_windows.bat\n.\\start_windows.bat\n```\n\nOpen `http://127.0.0.1:8000` if the browser does\
+  \ not open automatically.\n\nDemo accounts are intended only for a local presentation:\n\n| Role | Email\
+  \ | Password |\n|---|---|---|\n| Radiologist | `radiologist@neurovista.local` | `Radio123!` |\n| Doctor\
+  \ / Surgeon | `doctor@neurovista.local` | `Doctor123!` |\n| Researcher / Student | `researcher@neurovista.local`\
+  \ | `Research123!` |\n| Administrator | `admin@neurovista.local` | `Admin123!` |\n\nChange the seed\
+  \ credentials and `NEUROVISTA_SECRET_KEY` before using the application outside a local demonstration.\
+  \ Do not upload identifiable patient data.\n\n## Quick start: training in Google Colab\n\n1. Open [`training/notebooks/Brain_Tumor_3D_Attention_UNet_BraTS2021_A100.ipynb`](training/notebooks/Brain_Tumor_3D_Attention_UNet_BraTS2021_A100.ipynb)\
+  \ in Colab.\n2. Select an A100 runtime for the supplied training configuration.\n3. Provide the Kaggle\
+  \ API token only through the notebook's hidden prompt.\n4. Mount Google Drive so checkpoints survive\
+  \ runtime interruptions.\n5. Run the cells in order.\n\nThe longer [`notebooks/G_project.ipynb`](notebooks/G_project.ipynb)\
+  \ is retained as the complete working experiment record. It includes recovery and troubleshooting cells\
+  \ and is therefore less suitable as a first-run tutorial.\n\n## Repository policy\n\n- Source code,\
+  \ documentation, the deployment metadata and the 40 MB ONNX model are included.\n- BraTS/MSD datasets,\
+  \ NIfTI/DICOM inputs, SQLite data, checkpoints and exported case results are excluded.\n- No Kaggle\
+  \ token or other private credential is stored in the repository.\n- Uploaded MRI modalities must already\
+  \ be aligned; the workstation validates geometry but does not perform registration.\n- The current model\
+  \ segments whole tumour only and does not separately classify enhancing tumour, tumour core or oedema.\n\
+  \n## Testing\n\nTraining package:\n\n```bash\ncd training\nPYTHONPATH=. python -m pytest -q\n```\n\n\
+  Workstation backend:\n\n```bash\ncd workstation\npython -m pytest backend/tests -q\n```\n\nFrontend:\n\
+  \n```bash\ncd workstation/frontend\nnpm ci\nnpm run build\n```\n\nSee the component READMEs for detailed\
+  \ commands:\n\n- [`training/README.md`](training/README.md)\n- [`workstation/README.md`](workstation/README.md)\n\
+  - [`workstation/MODEL_CARD.md`](workstation/MODEL_CARD.md)\n- [`workstation/API.md`](workstation/API.md)\n"

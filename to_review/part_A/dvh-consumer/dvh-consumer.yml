@@ -1,0 +1,140 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: mdw-nl/DVH_Consumer
+url: https://github.com/mdw-nl/DVH_Consumer
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-27T11:09:09Z'
+image_source: null
+heuristic_total_score: 28
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 7 support term(s).
+readme_excerpt: "# DVH Service (DICOM_solver)\n\nA service that computes **Dose Volume Histograms (DVH)**\
+  \ from radiotherapy DICOM data.\n\nIt runs two things in one process:\n\n1. **A RabbitMQ consumer**\
+  \ — the main path. Receives a `study_instance_uid`, looks up that study's DICOM files in Postgres, computes\
+  \ DVH curves for every structure, and writes the results to Postgres and GraphDB.\n2. **A FastAPI HTTP\
+  \ server** on port `8000` — for on-demand single-structure queries and for re-running a study.\n\nRepository:\
+  \ `mdw-nl/DVH_Consumer` · Image: `ghcr.io/mdw-nl/dvh_consumer`\n\n---\n\n## Table of contents\n\n- [How\
+  \ it works](#how-it-works)\n- [Prerequisites](#prerequisites)\n- [Database schema](#database-schema)\n\
+  - [Configuration](#configuration)\n- [Running the service](#running-the-service)\n- [HTTP API](#http-api)\n\
+  - [Dose handling and summation](#dose-handling-and-summation)\n- [ROI combination and standardized names](#roi-combination-and-standardized-names)\n\
+  - [DVH metrics produced](#dvh-metrics-produced)\n- [File cleanup (`DELETE_END`)](#file-cleanup-delete_end)\n\
+  - [Monitoring and troubleshooting](#monitoring-and-troubleshooting)\n- [Development](#development)\n\
+  - [Known gotchas](#known-gotchas)\n- [Project layout](#project-layout)\n\n---\n\n## How it works\n\n\
+  This service does **not** receive DICOM files directly. An upstream listener stores the files on a shared\
+  \ filesystem, records one row per file in the `dicom_insert` table, and then publishes the study UID\
+  \ to RabbitMQ. This service consumes that UID.\n\n```\nUpstream listener ──> writes DICOM files to shared\
+  \ disk\n                 └──> INSERT rows into dicom_insert\n                 └──> publish study_instance_uid\
+  \ ──> RabbitMQ queue \"DICOM_Processor\"\n                                                         \
+  \ │\n                                                          ▼\n                                 \
+  \             ┌────────────────────────┐\n                                              │  This service\
+  \          │\n                                              │  callback_tread()      │\n           \
+  \                                   └────────────────────────┘\n                                   \
+  \                       │\n   1. ack message immediately, look up patient_id         │\n   2. query\
+  \ dicom_insert by study_instance_uid            │\n   3. verify required modalities are present    \
+  \          │\n   4. group files into DicomBundles                       │\n   5. triage / sum RT Doses\
+  \                               │\n   6. compute DVH per structure                           │\n   7.\
+  \ write dvh_results + calculation_status              │\n   8. upload JSON-LD to GraphDB           \
+  \                │\n   9. delete source files if DELETE_END                   │\n```\n\n### The bundle\
+  \ model\n\nA **`DicomBundle`** is one unit of DVH calculation: one RT Plan + one RT Struct + one *effective\
+  \ dose* + optionally the CT series directory.\n\nBundles are built in [`collect_patients_dicom`](DICOM_solver/dicom_operation.py)\
+  \ by fanning out:\n\n- Plan UIDs are collected from the `referenced_rt_plan_uid` of **RTDOSE rows only**\
+  \ (this is what links doses to their plan).\n- For each plan UID, its RT Doses are triaged into one\
+  \ or more *effective doses* (see [dose summation](#dose-handling-and-summation)).\n- The result is one\
+  \ bundle per **(plan × struct × effective dose)** combination.\n\nSo a study with 1 plan, 1 struct,\
+  \ and 2 independent PLAN doses produces 2 bundles → 2 sets of DVH rows, distinguishable by the `rt_plan_path`\
+  \ / `rt_dose_paths` / `effective_dose_type` columns.\n\n### Modality verification\n\nBefore any calculation,\
+  \ [`verify_full`](DICOM_solver/dicom_operation.py) checks that each patient in the study has `RTSTRUCT`,\
+  \ `RTPLAN`, `RTDOSE`, and — if `dvh-settings.ct_required` is `true` — `CT`. If anything is missing,\
+  \ the study fails with a message listing which modalities *were* present.\n\n### RTSTRUCT fallback\n\
+  \nSome studies arrive without an RTSTRUCT because the struct lives under a different study UID for the\
+  \ same patient. [`get_all_uid`](DICOM_solver/utilities.py) handles this: if the study query returns\
+  \ no RTSTRUCT row, it pulls the **single most recent RTSTRUCT for that same `patient_id`** and appends\
+  \ it, logging a warning.\n\nEverything else (RTPLAN, RTDOSE, CT) still comes strictly from the study\
+  \ UID query, and the result set is then filtered to rows matching the study's expected `patient_id`.\n\
+  \n---\n\n## Prerequisites\n\n| Dependency | Purpose | Required |\n|---|---|---|\n| **PostgreSQL** |\
+  \ Reads `dicom_insert`; writes `dvh_results` and `calculation_status` | Yes |\n| **RabbitMQ** | Source\
+  \ of study UIDs to process | Yes for the consumer; the HTTP API works without it |\n| **Shared filesystem**\
+  \ | The DICOM files referenced by `dicom_insert.file_path` must be readable at the same paths inside\
+  \ this container | Yes |\n| **GraphDB + upload API** | JSON-LD result upload | Optional — failures are\
+  \ logged and do not fail the calculation |\n\nPython 3.12 (per the Dockerfile). `libgl1` and `libglib2.0-0`\
+  \ system packages are needed by `rt_utils`.\n\n---\n\n## Database schema\n\n### `dicom_insert` (read-only\
+  \ — owned by the upstream listener)\n\nThe service queries these columns:\n\n| Column | Used for |\n\
+  |---|---|\n| `study_instance_uid` | Primary lookup key |\n| `patient_id` | Grouping and the patient-based\
+  \ API path |\n| `modality` | `CT` / `RTSTRUCT` / `RTPLAN` / `RTDOSE` |\n| `file_path` | Absolute path\
+  \ to the file on the shared disk |\n| `sop_instance_uid` | Matching an RT Plan to a dose's `referenced_rt_plan_uid`\
+  \ |\n| `referenced_rt_plan_uid` | Linking RT Doses to their plan (`\"UNKNOWN\"`/NULL are skipped) |\n\
+  | `timestamp` | Ordering for the RTSTRUCT fallback |\n\n### `dvh_results` (written)\n\n```sql\nCREATE\
+  \ TABLE IF NOT EXISTS dvh_results (\n    id                  bigserial PRIMARY KEY,\n    patient_id\
+  \          text,\n    study_uid           text,\n    structure_name      text,\n    min_dose_gy    \
+  \     double precision,\n    mean_dose_gy        double precision,\n    max_dose_gy         double precision,\n\
+  \    volume_cc           double precision,\n    color               text,          -- \"r,g,b\"\n  \
+  \  metrics             jsonb,         -- {\"V10\": 12.3, \"D95\": 45.6, ...}\n    dvh_points       \
+  \   jsonb,         -- [{\"d_point\": .., \"v_point\": ..}, ...]\n    payload             jsonb,    \
+  \     -- the full structure output object\n    rt_plan_path        text,          -- which plan produced\
+  \ this row\n    rt_dose_paths       jsonb,         -- which dose file(s) contributed\n    effective_dose_type\
+  \ text,          -- SINGLE | PLAN | BEAM | FRACTION |\n                                       -- SUMMED_BEAM\
+  \ | SUMMED_FRACTION | FALLBACK\n    created_at          timestamptz DEFAULT now()\n);\n```\n\nOne row\
+  \ per structure per bundle. Rows are **appended, never replaced** — re-running a study adds a second\
+  \ generation of rows; distinguish them by `created_at`.\n\n### `calculation_status` (written)\n\n```sql\n\
+  CREATE TABLE IF NOT EXISTS calculation_status (\n    id         bigserial PRIMARY KEY,\n    study_uid\
+  \  text,\n    status     boolean,      -- true = success, false = failure\n    timestamp  timestamp,\n\
+  \    patient_id text,\n    error      jsonb         -- {\"type\": ..., \"message\": ..., \"traceback\"\
+  : ...} on failure\n);\n```\n\nOne row per processing attempt. The `error` column holds the exception\
+  \ type, message (truncated to 2000 chars), and traceback (truncated to 5000 chars).\n\n### Migration\
+  \ for existing deployments\n\nIf you are upgrading from a version before dose summation landed, add\
+  \ the four new columns before starting the new build — otherwise every insert fails:\n\n```sql\nALTER\
+  \ TABLE calculation_status ADD COLUMN IF NOT EXISTS error jsonb;\nALTER TABLE dvh_results\n  ADD COLUMN\
+  \ IF NOT EXISTS rt_plan_path text,\n  ADD COLUMN IF NOT EXISTS rt_dose_paths jsonb,\n  ADD COLUMN IF\
+  \ NOT EXISTS effective_dose_type text;\n```\n\n`text` works instead of `jsonb` for the JSON columns\
+  \ — the code passes `json.dumps()` strings either way.\n\n---\n\n## Configuration\n\n### `DICOM_solver/Config/config.yaml`\n\
+  \nThe single config file the service reads. It is **baked into the Docker image** and read from the\
+  \ package directory — there is no environment-variable override, so changing it means rebuilding the\
+  \ image or bind-mounting over the file.\n\n```yaml\nrabbitMQ:\n  host: \"host.docker.internal\"\n  port:\
+  \ \"5672\"\n  username: \"user\"\n  password: \"password\"\n  queue_name: \"DICOM_Processor\"\n\npostgres:\n\
+  \  host: \"host.docker.internal\"\n  port: \"5432\"\n  username: \"postgres\"\n  password: \"postgres\"\
+  \n  db: \"postgres\"\n\nGraphDB:\n  host: \"host.docker.internal\"\n  port: \"7200\"\n  repo: \"protrait\"\
+  \n\nAPI:                      # the intermediate upload service that fronts GraphDB\n  host: \"host.docker.internal\"\
+  \n  port: \"8666\"\n\nV-values: [1, 2, 3, 4, 5, 10, 20, 30, 40, 50, 60]\nD-values: [20, 30, 40, 50,\
+  \ 60, 95, 98]\n\ndvh-settings:\n  ct_required: true       # false = CT optional; ROI combination and\
+  \ renaming are then skipped\n\ndvh-calculations:         # ROI combinations to create before calculating\n\
+  \  - P-LUNG:\n      roi: \"Lung_L + Lung_R\"\n  - MeanDoseIpsiLateralParotidGland:\n      roi: \"Parotid_Ipsilateral\"\
+  \n```\n\n| Key | Meaning |\n|---|---|\n| `rabbitMQ` | Broker connection and queue name |\n| `postgres`\
+  \ | Database connection |\n| `GraphDB` | Target repository — the URL becomes `http://{host}:{port}/repositories/{repo}/statements`\
+  \ |\n| `API` | The `/upload_json` service that actually posts to GraphDB |\n| `V-values` | Which `Vx`\
+  \ metrics to compute (volume receiving ≥ x Gy) |\n| `D-values` | Which `Dx` metrics to compute (dose\
+  \ to x% of volume) |\n| `dvh-settings.ct_required` | Whether CT is mandatory for a study to be considered\
+  \ complete |\n| `dvh-calculations` | ROI combination expressions — see below |\n\n### Environment variables\n\
+  \n| Variable | Default | Effect |\n|---|---|---|\n| `DELETE_END` | `false` in code, **`True` in the\
+  \ Dockerfile** | Delete all source DICOM files after a successful study |\n| `PYTHONPATH` | set to `/DICOM_solver`\
+  \ in the image | Import resolution |\n\n`DELETE_END` is truthy for `true`, `1`, or `yes` (case-insensitive).\n\
+  \n### `DICOM_solver/Config/roi_name_mappings.yaml`\n\nMaps vendor/site-specific ROI names onto standardized\
+  \ names. Format is `standard_name: [synonym, ...]`:\n\n```yaml\nLung_R:\n  - Lung-R\n  - LungR\n  -\
+  \ Lung R\n  - lung_right\n```\n\nAt runtime this is inverted into a `synonym -> standard_name` lookup.\
+  \ Any ROI in the RT Struct whose name matches a synonym gets a **duplicate ROI added** under the standard\
+  \ name (the original is left in place). This is what makes the `dvh-calculations` expressions portable\
+  \ across sites.\n\n---\n\n## Running the service\n\n### Docker (recommended)\n\n```bash\ndocker run\
+  \ -d --name dvh-service \\\n  -p 8000:8000 \\\n  -e DELETE_END=false \\\n  -v /path/to/dicom/storage:/path/to/dicom/storage\
+  \ \\\n  ghcr.io/mdw-nl/dvh_consumer:main\n```\n\nThe volume mount matters: `dicom_insert.file_path`\
+  \ values must resolve to the same absolute paths inside the container as the upstream listener wrote\
+  \ them.\n\nTo override config without rebuilding:\n\n```bash\n  -v /path/to/your/config.yaml:/DICOM_solver/DICOM_solver/Config/config.yaml:ro\n\
+  ```\n\n### Local\n\n```bash\npython -m venv venv && source venv/bin/activate\npip install -r requirements.txt\n\
+  python main.py\n```\n\n`main.py` starts the RabbitMQ consumer on a daemon thread and then runs uvicorn\
+  \ on `0.0.0.0:8000` in the foreground.\n\n### Build\n\n```bash\ndocker build -t dvh-service .\n```\n\
+  \nCI ([`.github/workflows/create-and-publish.yml`](.github/workflows/create-and-publish.yml)) builds\
+  \ and pushes to GHCR on every push to `main`, and can be triggered manually via `workflow_dispatch`.\n\
+  \n---\n\n## HTTP API\n\nInteractive docs at `http://localhost:8000/docs`.\n\n### `GET /calculate_DVH`\n\
+  \nCompute the DVH for **one structure** of **one patient**, on demand. Synchronous — returns the result\
+  \ directly, writes nothing to Postgres or GraphDB.\n\n| Parameter | Type | Description |\n|---|---|---|\n\
+  | `patient_id` | query, required | Patient identifier |\n| `structure` | query, required | Exact structure\
+  \ name to compute |\n\n```bash\ncurl \"http://localhost:8000/calculate_DVH?patient_id=PAT001&structure=Lung_L\"\
+  \n```\n\nReturns `200` with `applicati"

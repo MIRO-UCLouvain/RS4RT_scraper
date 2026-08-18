@@ -1,0 +1,60 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: charugirhe/brain-tumor-segmentation-3D-unet
+url: https://github.com/charugirhe/brain-tumor-segmentation-3D-unet
+platform: github
+description: Automated brain tumor segmentation and clinical report generation using 3D U-Net trained
+  on BraTS 2020  built with PyTorch, MONAI, Streamlit, PostgreSQL, and Gemini AI.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-07T07:43:50Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# \U0001F9E0 Brain Tumor Analysis System\n\nAn AI-powered 3D MRI segmentation, analysis,\
+  \ and clinical report generation system. It uses a **3D U-Net model** (trained on the BraTS 2020 dataset)\
+  \ and **Google Gemini AI** to automate brain tumor detection and generate detailed clinical reports.\n\
+  \n---\n\n## \U0001F31F Key Features\n\n1. **AI-Powered 3D Segmentation:** Auto-detects and segments\
+  \ brain tumors into three regions:\n   - \U0001F534 **NCR** (Necrotic Tumor Core)\n   - \U0001F7E2 **ED**\
+  \ (Peritumoral Edema)\n   - \U0001F535 **ET** (Enhancing Tumor)\n2. **Multi-Modal Support:** Upload\
+  \ your own FLAIR, T1, T1CE, and T2 scans, or load directly from the BraTS dataset.\n3. **Multi-Agent\
+  \ Collaboration:** A cooperative agent system acts like a team of doctors to register patients, run\
+  \ scan inference, compare historical data, and draft reports.\n4. **Historical Comparison:** Automatically\
+  \ tracks tumor volume changes (growth/shrinkage) for returning patients.\n5. **AI Neuro-Radiologist\
+  \ Reports:** Generates professional medical reports using Google's Gemini API.\n6. **PDF Reports & Visualization:**\
+  \ View overlay images in 3D-like views and download a complete, clinical-style PDF report.\n\n---\n\n\
+  ## \U0001F680 How to Run the Project\n\n### 1. Prerequisites\nEnsure you have Python installed (Python\
+  \ 3.8+ recommended).\n\n### 2. Install Dependencies\nOpen your terminal inside the project directory\
+  \ and install the required libraries:\n```bash\npip install -r requirements.txt\n```\n\n### 3. Configure\
+  \ Environment Variables\nCreate a file named `.env` in the root folder (this is already ignored by Git\
+  \ for security) and add:\n```env\nGEMINI_API_KEY=your_gemini_api_key_here\nBRATS_DATASET_PATH=C:/path/to/your/brats_dataset\
+  \  # (Optional)\n```\n\n### 4. Run the Streamlit Web Application\nLaunch the app with Streamlit:\n```bash\n\
+  streamlit run app.py\n```\nOpen the local link (usually `http://localhost:8501`) in your browser to\
+  \ view the application!\n\n---\n\n## \U0001F6E0️ Project Structure\n\n- `app.py`: The main Streamlit\
+  \ user interface.\n- `agents.py`: Orchestrates the AI agents (Reception, Scan, Comparison, Report Generator).\n\
+  - `model_inference.py`: Runs the 3D U-Net deep learning model inference.\n- `database.py`: Handles patient\
+  \ registration and scan history using SQLite.\n- `report_generator.py`: Generates the printable PDF\
+  \ reports with visualizations.\n- `config.py`: Loads the configuration settings.\n\n---\n\n## \U0001F4D0\
+  \ System Architecture\n\nHere is how the data flows through the different cooperative agents inside\
+  \ the system:\n\n```mermaid\ngraph TD\n    %% Define styles\n    classDef agent fill:#1a237e,stroke:#3949ab,stroke-width:2px,color:#fff;\n\
+  \    classDef database fill:#2e7d32,stroke:#1b5e20,stroke-width:2px,color:#fff;\n    classDef ui fill:#e65100,stroke:#ef6c00,stroke-width:2px,color:#fff;\n\
+  \    classDef model fill:#006064,stroke:#00838f,stroke-width:2px,color:#fff;\n\n    %% Elements\n  \
+  \  UI[streamlit app.py]:::ui\n    Agent1[Agent 1: Reception Agent]:::agent\n    DB[(SQLite Database)]:::database\n\
+  \    Agent2[Agent 2: Scan Analysis / Inference Agent]:::agent\n    UNet[3D U-Net Deep Learning Model]:::model\n\
+  \    Agent3[Agent 3: Comparison Agent]:::agent\n    Agent4[Agent 4: Report Generator Agent]:::agent\n\
+  \    Gemini[Google Gemini API]:::model\n    PDF[PDF Report Generator]:::ui\n\n    %% Workflow\n    UI\
+  \ -->|Input: Patient ID & MRI Scans| Agent1\n    Agent1 -->|Check if patient exists| DB\n    DB -->|Return\
+  \ patient history| Agent1\n    Agent1 -->|New/Returning patient details| UI\n\n    UI -->|Process MRI\
+  \ Modalities| Agent2\n    Agent2 -->|Run Inference| UNet\n    UNet -->|Return Tumor Volume & Images|\
+  \ Agent2\n    Agent2 -->|Save Scan Details| DB\n\n    Agent2 -->|Scan Data| Agent3\n    DB -->|Fetch\
+  \ Last Scan| Agent3\n    Agent3 -->|Calculate growth/shrinkage metrics| UI\n\n    Agent2 & Agent3 -->|Raw\
+  \ metrics & changes| Agent4\n    Agent4 -->|Generate Medical Report Prompt| Gemini\n    Gemini -->|AI\
+  \ Medical Report| Agent4\n    Agent4 -->|Draft Report| UI\n    \n    UI -->|Compile metrics, overlays,\
+  \ and report| PDF\n    PDF -->|Downloadable PDF File| UI\n```\n"

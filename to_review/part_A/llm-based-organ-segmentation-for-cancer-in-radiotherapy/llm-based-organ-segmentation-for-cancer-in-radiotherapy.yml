@@ -1,0 +1,70 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: yashaswip/LLM-Based-Organ-Segmentation-for-Cancer-in-Radiotherapy
+url: https://github.com/yashaswip/LLM-Based-Organ-Segmentation-for-Cancer-in-Radiotherapy
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-07-04T20:22:20Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Medical Image Segmentation with Multimodal Learning\n## Technical Documentation\n\n\
+  ![WhatsApp Image 2025-05-07 at 21 13 34](https://github.com/user-attachments/assets/55544941-d2d1-468d-8ad9-7fc7d4bcfbcc)\n\
+  \n![WhatsApp Image 2025-05-07 at 21 22 21](https://github.com/user-attachments/assets/2ff5fd95-bbef-4670-9dec-5b0c75d64b80)\n\
+  ![Screenshot 2025-04-25 at 11 18 23 AM](https://github.com/user-attachments/assets/a30d9ae2-def7-4ae5-910a-3e5616be34eb)\n\
+  \nData Efficiency Analysis:\n  Maintained 83% performance with 90% of the data\n  Effective even in\
+  \ low-data scenarios\nRobustness Analysis:\n  Handles anatomical variability\n  Adapts to complex structures\n\
+  \n\n\n\n![Screenshot 2025-04-25 at 11 14 51 AM](https://github.com/user-attachments/assets/adf593f5-b17e-4023-8a4d-d0709a57e1fe)\n\
+  \n![Screenshot 2025-04-11 at 1 43 15 PM](https://github.com/user-attachments/assets/f9526a71-992a-4edf-a19e-d4b8d3b1d7b1)\n\
+  \n\n### 1. Implementation Overview\n\n#### 1.1 Core Technologies\n- **Deep Learning Framework**: PyTorch\
+  \ 2.0.1\n- **Programming Language**: Python 3.9\n- **Primary Libraries**:\n  - MONAI (Medical Open Network\
+  \ for AI)\n  - Transformers (Hugging Face)\n  - Llama-2 (Meta AI)\n  - TensorBoardX (for visualization)\n\
+  \n\n![image](https://github.com/user-attachments/assets/4837dee9-1d73-4a97-a036-35c448256588)\n\n\n\n\
+  \n#### 1.2 System Requirements\n- **Operating System**: Linux (Ubuntu recommended) / Windows with WSL\n\
+  - **GPU**: NVIDIA GPU with CUDA support (45GB+ VRAM recommended)\n\n- **RAM**: 64GB+ recommended\n-\
+  \ **Storage**: 100GB+ free space\n\n### 2. Installation Guide\n\n#### 2.1 System Dependencies\n```bash\n\
+  # For Ubuntu/Debian\nsudo apt-get update\nsudo apt-get install python3.9 python3.9-distutils git-lfs\n\
+  ```\n\n#### 2.2 Python Environment Setup\n```bash\n# Install pip for Python 3.9\ncurl -sS https://bootstrap.pypa.io/get-pip.py\
+  \ | python3.9\n\n# Create and activate virtual environment (recommended)\npython3.9 -m venv venv\nsource\
+  \ venv/bin/activate  # Linux\n# or\n.\\venv\\Scripts\\activate  # Windows\n```\n\n#### 2.3 Package Installation\n\
+  ```bash\n# Install PyTorch with CUDA support\npip install torch==2.0.1 torchvision torchaudio --index-url\
+  \ https://download.pytorch.org/whl/cu118\n\n# Install project dependencies\npip install -r requirements.txt\n\
+  ```\n\n### 3. Project Structure\n\n```\nproject/\n├── main.py              # Entry point for training\
+  \ and inference\n├── trainer.py           # Training and evaluation logic\n├── model/              \n\
+  │   ├── llama2/         # Llama-2 model integration\n│   └── segmentation/   # Segmentation model architecture\n\
+  ├── utils/              \n│   ├── data_utils.py   # Data processing utilities\n│   └── metrics.py  \
+  \    # Evaluation metrics\n├── dataset/            \n│   └── external1/      # Dataset storage\n├──\
+  \ optimizers/         # Custom optimizer implementations\n├── ckpt/               # Model checkpoints\n\
+  └── requirements.txt    # Project dependencies\n```\n\n### 4. Dataset Preparation\n\n#### 4.1 Data Format\n\
+  - Input: 3D medical images in NPZ format\n- Labels: Segmentation masks in NPZ format\n- Text Reports:\
+  \ Excel/CSV format\n\n#### 4.2 Directory Structure\n```\ndataset/\n└── external1/\n    └── [case_id]/\n\
+  \        ├── data.npz    # 3D medical image\n        └── label.npz   # Segmentation mask\n```\n\n###\
+  \ 5. Model Architecture\n\n#### 5.1 Components\n1. **Image Encoder**: 3D UNet-based architecture\n2.\
+  \ **Text Encoder**: Llama-2 7B model\n3. **Multimodal Fusion**: Custom attention mechanism\n\n#### 5.2\
+  \ Key Features\n- 3D medical image processing\n- Text report integration\n- Multi-scale feature extraction\n\
+  - Attention-based fusion\n\n### 6. Training Process\n\n#### 6.1 Training Command\n```bash\npython main.py\
+  \ \\\n    --pretrained_dir ./ckpt/multimodal \\\n    --context True \\\n    --n_prompts 2 \\\n    --context_length\
+  \ 8 \\\n    --batch_size 1 \\\n    --roi_x 64 \\\n    --roi_y 352 \\\n    --roi_z 352\n```\n\n#### 6.2\
+  \ Training Parameters\n- Batch Size: 1 (adjustable based on GPU memory)\n- Learning Rate: 1e-4\n- Optimizer:\
+  \ AdamW\n- Loss Function: DiceCELoss\n- Mixed Precision: Enabled\n\n### 7. Inference\n\n#### 7.1 Inference\
+  \ Command\n```bash\npython main.py \\\n    --pretrained_dir ./ckpt/multimodal \\\n    --context True\
+  \ \\\n    --n_prompts 2 \\\n    --context_length 8 \\\n    --test_mode 2\n```\n\n#### 7.2 Output Format\n\
+  - Segmentation masks in NIfTI format\n- Evaluation metrics in CSV format\n- TensorBoard logs for visualization\n\
+  \n### 8. Performance Considerations\n\n#### 8.1 Memory Requirements\n- GPU Memory: 45GB+ recommended\n\
+  - RAM: 64GB+ recommended\n- Storage: 100GB+ for dataset and models\n\n#### 8.2 Optimization Tips\n1.\
+  \ Adjust batch size based on available GPU memory\n2. Use gradient accumulation for larger effective\
+  \ batch sizes\n3. Enable mixed precision training\n4. Utilize data prefetching\n\n### 9. Troubleshooting\n\
+  \n#### 9.1 Common Issues\n1. **CUDA Out of Memory**\n   - Reduce batch size\n   - Enable gradient checkpointing\n\
+  \   - Use mixed precision training\n\n2. **Installation Errors**\n   - Ensure correct Python version\
+  \ (3.9)\n   - Install CUDA toolkit matching PyTorch version\n   - Use virtual environment\n\n3. **Data\
+  \ Loading Issues**\n   - Verify NPZ file format\n   - Check file permissions\n   - Validate data directory\
+  \ structure\n\n\n\n\n\n"

@@ -1,0 +1,85 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Shahoud867/-Project--Brain-Tumor-Segmentation-with-YOLO-11-and-SAM2
+url: https://github.com/Shahoud867/-Project--Brain-Tumor-Segmentation-with-YOLO-11-and-SAM2
+platform: github
+description: ''
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-28T18:06:17Z'
+image_source: https://raw.githubusercontent.com/Shahoud867/-Project--Brain-Tumor-Segmentation-with-YOLO-11-and-SAM2/HEAD/assets/pipeline_placeholder.svg
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# Brain Tumor Detection & Segmentation — YOLO + SAM2\n\n[![CI](https://github.com/Shahoud867/-Project--Brain-Tumor-Segmentation-with-YOLO-11-and-SAM2/actions/workflows/ci.yml/badge.svg)](https://github.com/Shahoud867/-Project--Brain-Tumor-Segmentation-with-YOLO-11-and-SAM2/actions/workflows/ci.yml)\n\
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)\n[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)\n\
+  [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)\n\
+  [![Ruff](https://img.shields.io/badge/lint-ruff-red.svg)](https://github.com/astral-sh/ruff)\n\nA two-stage\
+  \ pipeline for MRI-based brain tumor analysis: **YOLO** detects candidate tumor\nregions, and **SAM2**\
+  \ turns each detection into a precise segmentation mask. Detects and\nsegments four tumor types plus\
+  \ a \"no tumor\" class.\n\n<p align=\"center\">\n  <img src=\"assets/pipeline_placeholder.svg\" alt=\"\
+  Pipeline diagram\" width=\"640\">\n</p>\n\n> **Status**: the detection stage (YOLOv8) has a trained\
+  \ baseline (see [Results](#results)\n> below). The SAM2 mask-refinement stage has the full integration\
+  \ code in place\n> (`src/tumorseg/models/segmenter.py`) but has not yet been run end-to-end against\
+  \ a labeled\n> segmentation dataset on a GPU — see the [Roadmap](#roadmap). This README describes the\n\
+  > project as it exists today, not aspirationally.\n\n## Table of contents\n\n- [Why this project](#why-this-project)\n\
+  - [Architecture](#architecture)\n- [Installation](#installation)\n- [Usage](#usage)\n- [Results](#results)\n\
+  - [Configuration](#configuration)\n- [Testing](#testing)\n- [Docker](#docker)\n- [Roadmap](#roadmap)\n\
+  - [Contributing](#contributing)\n- [License](#license)\n\n## Why this project\n\nManual review of MRI\
+  \ slices for tumor presence, type, and extent is slow and\ninter-observer variability is well documented\
+  \ in the radiology literature. This project\nexplores a practical two-stage approach that mirrors how\
+  \ a clinician might work: first\nlocalize anything suspicious (detection), then delineate its exact\
+  \ boundary (segmentation).\nSplitting the problem this way lets each stage use the model best suited\
+  \ to it — YOLO for\nfast, well-studied object localization, and SAM2 for high-quality, prompt-driven\n\
+  segmentation — instead of training a single monolithic segmentation network from scratch.\n\n## Architecture\n\
+  \n```\nMRI slice ──▶ YOLO detector ──▶ bounding boxes ──▶ SAM2 predictor ──▶ per-tumor masks\n     \
+  \           (src/tumorseg/            (prompts)      (src/tumorseg/\n                 models/detector.py)\
+  \                      models/segmenter.py)\n```\n\nSee [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)\
+  \ for the full module layout, the data-quality\nvalidation step, and the design rationale (why `Detector`/`Segmenter`\
+  \ are `Protocol`s, why\nthe heavy ML deps are lazy-imported, etc).\n\n```\nsrc/tumorseg/\n├── config.py\
+  \          # typed, YAML-loaded configuration (no hardcoded paths/hyperparams)\n├── data/\n│   ├── dataset.py\
+  \      # validates YOLO-format datasets before training (fails loudly)\n│   └── download.py     # scripted\
+  \ + checksummed dataset download (no manual upload step)\n├── models/\n│   ├── detector.py     # YoloDetector:\
+  \ image -> Detection[]\n│   └── segmenter.py    # Sam2Segmenter: image + boxes -> SegmentationResult[]\n\
+  ├── pipeline.py         # TumorSegmentationPipeline: wires detector + segmenter together\n├── metrics.py\
+  \           # IoU / Dice for mask evaluation\n├── visualize.py         # draws boxes + mask overlays\
+  \ for review\n└── cli.py               # `tumorseg train|infer|validate-data`\n```\n\n## Installation\n\
+  \nRequires Python 3.10+.\n\n```bash\ngit clone https://github.com/Shahoud867/-Project--Brain-Tumor-Segmentation-with-YOLO-11-and-SAM2.git\n\
+  cd -Project--Brain-Tumor-Segmentation-with-YOLO-11-and-SAM2\npython -m venv .venv && source .venv/bin/activate\
+  \  # .venv\\Scripts\\activate on Windows\npip install -e \".[dev]\"\n```\n\nSAM2 is not published on\
+  \ PyPI; install it separately to run inference/training locally:\n\n```bash\npip install -e \".[sam2]\"\
+  \n```\n\nDownload a SAM2 checkpoint per [Meta's instructions](https://github.com/facebookresearch/sam2#getting-started)\n\
+  and point `configs/default.yaml`'s `segmenter.checkpoint` at it. See\n[docs/MODELS.md](docs/MODELS.md)\
+  \ for exact checkpoint URLs and expected file layout.\n\n## Usage\n\n**1. Validate a dataset** before\
+  \ training on it (checks for out-of-range classes, orphaned\nlabels, mixed box/segmentation annotations,\
+  \ and duplicate label lines):\n\n```bash\ntumorseg validate-data --config configs/default.yaml\n```\n\
+  \n**2. Train the YOLO detector:**\n\n```bash\ntumorseg train --config configs/default.yaml\n```\n\n\
+  **3. Run detection + segmentation on a single image:**\n\n```bash\ntumorseg infer --config configs/default.yaml\
+  \ --image path/to/mri_slice.jpg --output result.png\n```\n\n**4. Try the interactive demo:**\n\n```bash\n\
+  pip install -e \".[demo,sam2]\"\npython app/gradio_app.py\n# open http://localhost:7860\n```\n\n## Results\n\
+  \nThe current YOLOv8n detection baseline (see [notebooks/01_yolo_detection_baseline.ipynb](notebooks/01_yolo_detection_baseline.ipynb)\n\
+  for the original training run) on a 5-class Roboflow tumor-detection dataset:\n\n| Metric   | Value\
+  \ |\n|----------|-------|\n| mAP50    | 0.627 |\n| mAP50-95 | 0.486 |\n| Epochs   | 5 (CPU) |\n\nThis\
+  \ is a smoke-test-quality baseline, not a production model — see\n[Roadmap](#roadmap) for the planned\
+  \ GPU retraining run with a realistic epoch count, and\n[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)\
+  \ for why these numbers should be treated as a\nstarting point rather than a final result.\n\n## Configuration\n\
+  \nAll paths and hyperparameters live in YAML configs under [`configs/`](configs/), loaded via\n[`tumorseg.config.PipelineConfig`](src/tumorseg/config.py).\
+  \ Copy `configs/default.yaml` and\noverride only the fields you need — unspecified fields fall back\
+  \ to sensible defaults.\n\n## Testing\n\n```bash\npytest tests -v\nruff check src tests\nblack --check\
+  \ src tests\n```\n\nThe test suite (33 tests, see [`tests/`](tests/)) covers config loading, dataset\
+  \ validation,\nIoU/Dice math, and the detection→segmentation pipeline glue logic — the latter via\n\
+  lightweight fakes (see [`tests/test_pipeline.py`](tests/test_pipeline.py)), so it runs in CI\nwithout\
+  \ needing GPU hardware, a SAM2 checkpoint, or ultralytics installed.\n\n## Docker\n\n```bash\ndocker\
+  \ build -t tumorseg .\ndocker run -p 7860:7860 tumorseg\n```\n\n## Roadmap\n\n- [ ] Retrain the YOLO\
+  \ detector on GPU for a realistic epoch count (currently 5 epochs/CPU)\n- [ ] Run the SAM2 segmentation\
+  \ stage end-to-end against ground-truth masks and report Dice/IoU\n- [ ] Publish per-class precision/recall\
+  \ and a confusion matrix alongside the headline mAP\n- [ ] Deploy the Gradio demo to a public endpoint\
+  \ (e.g. Hugging Face Spaces)\n- [ ] Add 3D/volumetric MRI support (currently single-slice only)\n\n\
+  ## Contributing\n\nSee [CONTRIBUTING.md](CONTRIBUTING.md) and our [Code of Conduct](CODE_OF_CONDUCT.md).\n\
+  \n## Security\n\nSee [SECURITY.md](SECURITY.md) for how to report a vulnerability.\n\n## License\n\n\
+  [MIT](LICENSE)\n"

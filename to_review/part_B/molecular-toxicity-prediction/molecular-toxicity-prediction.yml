@@ -1,0 +1,82 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: lucaskojo02/molecular-toxicity-prediction
+url: https://github.com/lucaskojo02/molecular-toxicity-prediction
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-03-08T07:37:28Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Molecular Toxicity Prediction Pipeline\n\nA **supervised machine learning pipeline**\
+  \ for predicting whether molecular compounds are **Toxic** or **NonToxic** based on high-dimensional\
+  \ molecular descriptors.\n\nThis project demonstrates a **leakage-safe machine learning workflow**,\
+  \ integrating preprocessing, dimensionality reduction, class imbalance handling, hyperparameter tuning,\
+  \ and evaluation.\n\n---\n\n# Project Overview\n\nDrug discovery and chemical safety assessment often\
+  \ require determining whether a compound is **toxic**.\n\nThis project builds a **predictive classification\
+  \ model** that learns toxicity patterns from molecular descriptor data.\n\nThe pipeline focuses on:\n\
+  \n- Preventing **data leakage**\n- Handling **high-dimensional features**\n- Managing **class imbalance**\n\
+  - Evaluating models using **precision-recall metrics**\n\n---\n\n# Machine Learning Pipeline\n\nThe\
+  \ pipeline follows a strict structure to ensure reliable evaluation.\n```bash\nRaw Dataset\n│\n▼\nData\
+  \ Cleaning & Exploration\n│\n▼\nFeature Filtering (VarianceThreshold)\n│\n▼\nFeature Scaling (StandardScaler)\n\
+  │\n▼\nDimensionality Reduction (PCA)\n│\n▼\nClass Imbalance Handling (SMOTE)\n│\n▼\nModel Training\n\
+  │\n▼\nCross Validation\n│\n▼\nModel Evaluation\n```\n\n\nAll steps are implemented inside a **Scikit-Learn\
+  \ Pipeline** to prevent **data leakage**.\n\n---\n\n# Dataset\n\nThe dataset contains **molecular descriptors**\
+  \ representing chemical properties of compounds.\n\n## Target Variable\n\n| Class | Meaning |\n|------|--------|\n\
+  | 0 | NonToxic |\n| 1 | Toxic |\n\n## Dataset Characteristics\n\n- High-dimensional feature space\n\
+  - Binary classification problem\n- Class imbalance present\n- No missing values\n\n---\n\n# Data Preprocessing\n\
+  \nSeveral preprocessing techniques were applied.\n\n## 1️⃣ Feature Filtering\n\nLow variance features\
+  \ were removed using:\n\n```python\nVarianceThreshold(threshold=0.01)\n```\n\nThis eliminates descriptors\
+  \ with little predictive power.\n\n## 2️⃣ Feature Scaling\n\nFeatures were standardized using:\n\n```python\n\
+  StandardScaler\n```\nThis is necessary for models such as SVM that are sensitive to feature magnitude.\n\
+  \n## 3️⃣ Dimensionality Reduction\n\nHigh dimensional data was reduced using **Principal Component Analysis\
+  \ (PCA)**.\n\n```python\nPCA(n_components=0.95)\n```\n\nThis preserves 95% of the dataset variance while\
+  \ reducing dimensionality.\n\n## 4️⃣ Handling Class Imbalance\n\nThe dataset had imbalanced classes,\
+  \ so **SMOTE** was applied.\n\n**SMOTE (Synthetic Minority Oversampling Technique)** generates synthetic\
+  \ samples for the minority class to improve model learning.\n\n---\n\n## Train-Test Split\n\nThe dataset\
+  \ was split using **stratified sampling**:\n\n- **Training set:** 80%\n- **Testing set:** 20%\n\n---\n\
+  \n## Cross-Validation\n\n**StratifiedKFold (5 folds)** was used.\n\nThis preserves the **class distribution\
+  \ across folds**.\n\n---\n\n# Models Implemented\n\nThree machine learning models were trained and optimized.\n\
+  \n---\n\n## 1️⃣ Random Forest Classifier\n\n### Pipeline\nStandardScaler\n→ PCA\n→ SMOTE\n→ RandomForestClassifier\n\
+  \n\n### Hyperparameters Tuned\n\n- `n_estimators`\n- `max_depth`\n\n---\n\n## 2️⃣ Support Vector Machine\
+  \ (SVC)\n\n### Pipeline\nStandardScaler\n→ PCA\n→ SMOTE\n→ SVC\n\n\n### Hyperparameters Tuned\n\n- `C`\n\
+  - `kernel`\n\n---\n\n## 3️⃣ HistGradientBoosting Classifier\n\n### Pipeline\nStandardScaler\n→ PCA\n\
+  → SMOTE\n→ HistGradientBoostingClassifier\n\n\n### Hyperparameters Tuned\n\n- `learning_rate`\n- `max_iter`\n\
+  \n---\n\n# Model Performance\n\n| Model | Accuracy | PR-AUC | Average Precision |\n|------|------|------|------|\n\
+  | Random Forest | 0.5143 | 0.3108 | 0.3450 |\n| SVC | 0.5714 | 0.3032 | 0.3401 |\n| HistGradientBoosting\
+  \ | 0.5714 | 0.3196 | 0.3640 |\n\n---\n\n# Key Observations\n\n- **SVC** and **HistGradientBoosting**\
+  \ achieved the **highest accuracy (57.14%)**\n- **HistGradientBoosting** produced the **best PR-AUC\
+  \ and Average Precision**\n- **Random Forest** performed slightly worse on the **minority class**\n\
+  - Since the dataset is **imbalanced**, **PR-AUC** is more informative than **accuracy**\n\n---\n\n#\
+  \ Example Prediction\n\nExample of generating predictions from the trained model:\n\n```python\ntest_samples\
+  \ = X_test.head(10)\nactual_labels = le.inverse_transform(y_test[:10])\n\nprint(f\"{'Actual':<15} |\
+  \ {'RF Pred':<15} | {'SVC Pred':<15} | {'HGB Pred':<15}\")\nprint(\"-\" * 65)\n\nrf_preds = le.inverse_transform(rf_gs.predict(test_samples))\n\
+  svc_preds = le.inverse_transform(svc_gs.predict(test_samples))\nhgb_preds = le.inverse_transform(hgb_gs.predict(test_samples))\n\
+  \nfor actual, rf, svc, hgb in zip(actual_labels, rf_preds, svc_preds, hgb_preds):\n    print(f\"{actual:<15}\
+  \ | {rf:<15} | {svc:<15} | {hgb:<15}\")\n```\n\n##### Output\n```bash\nActual          | RF Pred   \
+  \      | SVC Pred        | HGB Pred       \n-----------------------------------------------------------------\n\
+  NonToxic        | NonToxic        | Toxic           | NonToxic       \nNonToxic        | NonToxic  \
+  \      | NonToxic        | NonToxic       \nToxic           | NonToxic        | NonToxic        | NonToxic\
+  \       \nNonToxic        | NonToxic        | NonToxic        | NonToxic       \nToxic           | NonToxic\
+  \        | NonToxic        | NonToxic       \nToxic           | NonToxic        | NonToxic        |\
+  \ Toxic          \nNonToxic        | NonToxic        | NonToxic        | NonToxic       \nNonToxic \
+  \       | NonToxic        | NonToxic        | NonToxic       \nNonToxic        | Toxic           | Toxic\
+  \           | Toxic          \nNonToxic        | Toxic           | Toxic           | Toxic    \n\n```\n\
+  \n## Technologies Used\n\n- **Python**\n- **Jupyter Notebook**\n- **pandas**\n- **numpy**\n- **matplotlib**\n\
+  - **seaborn**\n- **scikit-learn**\n- **imbalanced-learn**\n\n---\n\n## Project Structure\n\n```bash\n\
+  molecular-toxicity-prediction\n│\n├── supervised.ipynb # Main analysis notebook\n├── data.csv # Molecular\
+  \ descriptor dataset\n└── README.md # Project documentation\n```\n\n\n---\n\n## How to Run the Project\n\
+  \n### 1️⃣ Clone the Repository\n\n```bash\ngit clone https://github.com/lucaskojo02/molecular-toxicity-prediction\n\
+  cd molecular-toxicity-prediction\n```\n\n## 2️⃣ Install Dependencies\n\n```bash\npip install pandas\
+  \ numpy matplotlib seaborn scikit-learn imbalanced-learn\n```\n\n## 3️⃣ Launch the Notebook\n\n```bash\n\
+  jupyter notebook\n```\n\nOpen the notebook file:\n\n```bash\nsupervised.ipynb\n```"

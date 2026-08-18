@@ -1,0 +1,83 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: gusSCIMOV/Glioma_RadSurv
+url: https://github.com/gusSCIMOV/Glioma_RadSurv
+platform: github
+description: Radiomics and Machine learning pipeline for Survival Analysis
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 5
+updated_at: '2026-03-13T05:34:15Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# Glioma_RadSurv\nRadiomics and Machine learning pipeline for Survival Analysis\n\nsee\
+  \ the project_tree.txt to look at the project hierarchy\n\n![pipeline](https://github.com/user-attachments/assets/f1f9a3d6-74f8-4c35-9b7e-7cc9e63c0ac3)\n\
+  \n# Radiomics Risk Score (RRS) Pipeline\n\nThis repository contains a Python-based pipeline for computing\
+  \ a **Radiomics Risk Score (RRS)** for survival stratification in gliomas. The pipeline integrates morphological,\
+  \ textural, and biophysically informed signatures using multiple preprocessing and machine learning\
+  \ techniques.\n\n## **Framework Overview**\n- [Project Structure](#project-structure)\n- [Installation](#installation)\n\
+  - [Modules Configuration](#modules-configuration)\n- [Usage](#usage)\n- [License](#license)\n- [Acknowledgments](#acknowledgments)\n\
+  \n---\n\n## **Project Structure**\n\nLook at the project_tree.txt to see the folder hierarchy\n\n##\
+  \ **Installation**\nSystem Requeriments:\n\n* Python =+3.9\n* docker: nvcr.io/nvidia/pytorch:24.01-py3\n\
+  * Ubuntu 22.04\n\nTo set up the project environment, follow these steps:\n\n```sh\n# Clone this repository\n\
+  git clone https://github.com/gusSCIMOV/Glioma_RadSurv.git\n\n# Change directory\ncd Glioma_RadSurv\n\
+  \n# Install dependencies\npip install -r requirements.txt\nbash bash_requeriments.sh \n```\n\n## **Data\
+  \ Preparation**\n\nFind out some sample data (TCGA-GBM) over : https://uwmadison.box.com/s/t2258zrb4izrwp6te5jjqedl7rzjmgs5\
+  \ . Make sure to get the whole source downloaded. To run nifti_selection you must make sure that nifti_raw_modalities_niiQuery.csv\
+  \ is inside of the data/{mri_site}/logs folder and keep the \"dirs\" entries preprocessing_config.ymal\
+  \ as set up by default, particuarly, for the 'raw_nifti' name (see below [Modules Configuration](#modules-configuration)).\n\
+  \nInput (nifti_raw) and output (preprocessed) Data and Logs/Metadata are expected to have this Hierarchy\
+  \ (below) per MRI collection. It is \n```txt\n\n|TCGA-GBM (site1)\n\n|--dicom_structuralMRI\n   |---{Patient_ID}​\n\
+  \         | --time_point_0​ (or Baseline for Pre-Op)\n         | {patient_ID}_{Ax T1} (dcm folder)\n\
+  \         | {patient_ID}_{Ax [T2, GRE]}​ (dcm folder)\n         | {patient_ID}_{Ax 3D [SPGR T1 c+ gd]}\
+  \ (dcm folder)​\n         | {patient_ID}_{Ax T2-FLAIR} (dcm_folder)\n|--nifit_raw\n   |---{Patient_ID}​\n\
+  \         | --time_point_0​ (or Baseline for Pre-Op)\n         | {patient_ID}_{Ax T1}.nii.gz \n         |\
+  \ {patient_ID}_{Ax [T2, GRE]}.nii.gz​ \n         | {patient_ID}_{Ax 3D [SPGR T1 c+ gd]}.nii.gz \n  \
+  \       | {patient_ID}_{Ax T2-FLAIR}.nii.gz  \n\n |--preprocessed   (Before preprocessing)\n    |---{Patient_ID}​\n\
+  \         | --time_point_0​ (or Baseline for Pre-Op)\n         | {patient_ID}_T1.nii.gz​\n         |\
+  \ {patient_ID}_T2.nii.gz​\n         | {patient_ID}_T1c.nii.gz​\n         | {patient_ID}_FLAIR.nii.gz\n\
+  \n  |--preprocessed​   (after preprocessing)\n     |---{Patient_ID}​\n          | --time_point_0​ (or\
+  \ Baseline for Pre-Op)\n          | {patient_ID}_T1.nii.gz​\n          | {patient_ID}_T1_{pipeline}.nii.gz​\n\
+  \          | {patient_ID}_T2.nii.gz​\n          | {patient_ID}_T2_{pipeline}.nii.gz​\n          | {patient_ID}_T1_C.nii.gz​\n\
+  \          | {patient_ID}_T1c_{pipeline}.nii.gz​\n          | {patient_ID}_FLAIR.nii.gz\n          |\
+  \ {patient_ID}_FLAIR_{pipeline}.nii.gz​\n          |---{patient_ID}_segmentation_{network}.nii.gz\n\n\
+  \   |--logs\n   --nifti_raw_modalities_niiQuery.csv (unique per dataset to retrive strcutural modalities)​\n\
+  \   \n   |--Metadata​\n   --{data_set}_lables.csv (survival times, demographics, clinics: final datset)​\n\
+  \   --{data_set}_QC.xlsx (Quality check results, missing modality, low quality images)​\n   --{data_set}_completness.xlsx\
+  \ (other dataset annotations, info)​\n```\n\n## **Modules Configuration**\nSee the ./config files \n\
+  \n### **General Seetings (main_config.ymal)**\n\nModify the dict entries accordingly. If you want single\
+  \ site-validation on the test data (TCGA-GBM), enable mri_data: [\"site3\"] (see  below). Then, enable\
+  \ the desired steps (by setting True).\n\n```yaml\n\n#root_path: 'Y:/Groups/IDIAGroup/Data/_Brain/Radiology/_Adult/_Glioma'\
+  \ # data root path in your volume/system\nroot_path : ~./data # to use the project's data sample \n\n\
+  mri_sites:  # add as many dataset as nedeed (coded by site{n})\n  site0: \"UCSF-PDGM\"\n  site1: \"\
+  LUMIERE\"\n  site2: \"CCF\"\n  site3: \"TCGA-GBM\"\n\nmri_data: [\"site1\", \"site2\"] # data to be\
+  \ included in the pipeline\n\nsubmodule_configs:\n  preprocessing: \"config/preprocessing_config.yaml\"\
+  \n  radiomics: \"config/radiomics_config.yaml\"\n\n# Enabling modules\nrun_dicomSelection: True\nrun_dicomConversion:\
+  \ False\nrun_niftiSelection: False \nrun_preprocessing: False\nrun_segmentation: False\nrun_radiomics:\
+  \ True\n\n```\n### **Preprocessing Seetings (preprocessing_config.ymal)**\n\nMRi preprocessig can be\
+  \ set via the preprocessing_config.ymal either for the ANTs or FeTs pipeline\n\n#### **ANTs Pipeline**\n\
+  \n```yaml\ndirs:  # Modify the parent directories which store the preprocessing steps outputs and log\
+  \ files \n  raw_dicoms: 'dicom_raw'\n  input_dicoms: 'dicom_structuralMRI'\n  raw_nifti: 'nifti_raw'\n\
+  \  preprocessed: \"nifti_preprocessed\"\n  metadata: \"Metadata\"\n  logs: \"Logs\"\n\n#pre-processign\
+  \ pipelines / parameters \npreprocessing_settings:\n  query_nifti_file: 'niiQuery.csv' # {dataset}_niiQuery.csv\
+  \ contains the 4 MRI modalities to be included (see oen example at ~./data/TCGA-GBM/Metadata)\n  acquisition_tag:\
+  \ 'Baseline' # time point to be analyzed\n  query_key: 'included_modality' #df key inside of \n  mri_modalities:\
+  \ [\"T1c\",\"T1\",\"T2\",\"FLAIR\"] # Strcutural MRI identifiers (strings. T1c might be also eferred\
+  \ as T1gd)\n\nants_preprocessing:\n  first_step: \n    name: \"Modality_2_atlas_reg\"\n    mri_str:\
+  \ \"T1c\" \n    atlas_str: \"SRI24\"\n    ext: \".nii.gz\"\n    mask_str: None\n    aff_metric : \"\
+  mattes\"\n    type_of_transform : \"Affine\"\n    transforming_mask: False\n    brain_mask: None # HD_BET\
+  \ or Atlas_mask Default= None\n\n  second_step: \n    name: \"Modalities_coregistration\"\n    ext:\
+  \ \".nii.gz\"\n    aff_metric : \"mattes\"\n    type_of_transform : \"Affine\"\n    transforming_mask:\
+  \ False\n    SkullStripp: None # HD_BET or Atlas_mask Default= None\n\n  third_step: \n    name: \"\
+  HD_SkullStripp\"\n\n  fourth_step: \n    name: \"N4Bias_correction\"\n  fifth_step:  \n    name: \"\
+  IntensityScaling\"\n\n```\n#### **FeTs Pipeline (The Federated Tumor Segmentation)**\n\n```md\n\nCheck\
+  \ out this related project: [Processing the Data for FeTS](https://fets-ai.github.io/Front-End/process_data#pre-processing)\n\
+  \n```\n\nModify the preprocessing_fets_config.ymal accordingly\n\n\n```yaml\ncoming soon !\n```\n---\n\
+  \n\n## **Segmentation (SwinTransformer and FeTs)**\n\n\n\n---\n## **Usage**\n\n\n```sh\n\n# Change directory\n\
+  cd Glioma_RadSurv\n\n# run the main()\npython radiomics_rscore_main.py\n\n```\n\n\n"

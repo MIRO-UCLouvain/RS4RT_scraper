@@ -1,0 +1,145 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: akarlin3/pancData3
+url: https://github.com/akarlin3/pancData3
+platform: github
+description: A MATLAB-based analysis pipeline for pancreatic DWI (Diffusion-Weighted Imaging) research.
+license: AGPL-3.0
+language: MATLAB
+keywords:
+- deep-learning
+- diffusion-mri
+- matlab
+- medical-imaging
+- mri
+- pancreatic-cancer
+- python
+- radiotherapy
+- survival-analysis
+stars: 1
+updated_at: '2026-06-06T03:41:16Z'
+image_source: https://raw.githubusercontent.com/akarlin3/pancData3/HEAD/docs/media/synthetic_longitudinal_D.png
+heuristic_total_score: 40
+heuristic_reasons:
+- Matched 6 strong particle-therapy term(s) in metadata/content.
+- Matched 10 support term(s).
+readme_excerpt: "# pancData3\n\n[![MATLAB](https://img.shields.io/badge/MATLAB-R2024a-blue?logo=mathworks)](https://www.mathworks.com/products/matlab.html)\n\
+  [![Python](https://img.shields.io/badge/Python-3.12%2B-blue?logo=python)](https://www.python.org/)\n\
+  [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](https://github.com/akarlin3/pancData3/blob/main/LICENSE)\n\
+  [![Version](https://img.shields.io/badge/version-2.4.0-blue)](#citation)\n[![Tests](https://img.shields.io/badge/tests-133%20MATLAB%20%2B%2047%20Python%20files-brightgreen)](#running-tests)\n\
+  \n> **Reviewing this repo?** Start with [FOR_REVIEWERS.md](FOR_REVIEWERS.md) for the 5-minute version.\n\
+  \n**An open-source MATLAB and Python pipeline for MRI-guided pancreatic cancer radiotherapy research.**\n\
+  \nDeveloped at [Memorial Sloan Kettering Cancer Center](https://www.mskcc.org/), this pipeline processes\
+  \ diffusion-weighted MRI data to fit biophysical models, apply deep learning denoising, quantify tumor–dose\
+  \ relationships, and predict treatment outcomes using survival analysis — all from a single configuration\
+  \ file.\n\n**Current version:** 2.4.0 — see [CHANGELOG.md](CHANGELOG.md) for details.\n\n---\n\n## Why\
+  \ This Exists\n\nPancreatic cancer has some of the lowest survival rates of any solid tumor. MRI-guided\
+  \ adaptive radiotherapy is emerging as a promising treatment approach, but analyzing diffusion-weighted\
+  \ imaging (DWI) data to predict which patients will respond is a complex, multi-step computational problem.\
+  \ This pipeline automates the entire workflow: from raw DICOM images through diffusion model fitting,\
+  \ deep learning denoising, dose–response quantification, and survival modeling — enabling researchers\
+  \ to go from scan to clinical prediction in a single reproducible run.\n\n---\n\n## What You Need To\
+  \ Know First (Plain-Language Primer)\n\nNew to the project? Read this once and the rest of the README\
+  \ will make sense. None of these definitions are exhaustive — they are the minimum needed to follow\
+  \ what the code is doing.\n\n**The clinical setting.** 42 pancreatic cancer patients were treated on\
+  \ an **Elekta Unity MR-Linac** — a radiation-therapy machine with a built-in 1.5-tesla MRI scanner,\
+  \ so the tumor can be imaged on the same day it is irradiated. Treatment was delivered in 5 daily sessions\
+  \ (\"fractions\", Fx1–Fx5). Each session prescribed two dose levels at once (a \"**SIB**\" — simultaneous\
+  \ integrated boost): about **33 Gy** to the whole tumor and **50 Gy** to a smaller, more aggressive\
+  \ sub-region. Dose is measured in **gray (Gy)**, energy absorbed per kg of tissue.\n\n**What we image.**\
+  \ At every fraction we acquire a **DWI** scan — **diffusion-weighted imaging**, an MRI sequence whose\
+  \ signal depends on how freely water molecules move inside tissue. Water diffuses freely in fluid and\
+  \ slowly inside dense, cellular tumor. Diffusion is quantified two ways:\n\n- **ADC** — *apparent diffusion\
+  \ coefficient*, units mm²/s (~10⁻³). One number per voxel from a simple mono-exponential fit. Low ADC\
+  \ ≈ dense cellular tissue (likely viable tumor); high ADC ≈ necrosis or fluid.\n- **IVIM** — *intravoxel\
+  \ incoherent motion*, a richer bi-exponential model that separates three numbers per voxel: **D** (true\
+  \ tissue diffusion, mm²/s), **D\\*** (fast \"pseudo-diffusion\" from blood flowing through capillaries,\
+  \ ~10× D), and **f** (the perfusion fraction, 0–1, how much of the signal comes from blood vs. tissue\
+  \ water).\n\n**Tumor regions.** The radiation oncologist hand-draws a **GTV** (*gross tumor volume*)\
+  \ mask on each scan — the visible tumor. The pipeline then tries to find a *sub-region* of the GTV that\
+  \ is the most treatment-resistant (typically the densest, lowest-ADC part). That sub-region is called\
+  \ the \"**core**\" throughout the code, and there are 11 candidate methods for defining it (threshold-based,\
+  \ clustering-based, spatial, etc.).\n\n**Dose-coverage metrics.** Once we know which voxels belong to\
+  \ the resistant core, we ask: did those voxels actually receive the boost dose?\n\n- **D95** — the dose\
+  \ that 95 % of the core volume received (Gy). If D95 = 36.9 Gy, then 95 % of the resistant tissue got\
+  \ at least 36.9 Gy.\n- **V50** — the fraction of the core volume that received at least 50 Gy. If V50\
+  \ = 69 %, then only 69 % of the resistant tissue hit the boost prescription.\n\n**Outcomes.** Each patient\
+  \ is followed up after treatment and labeled **LC** (*local control* — tumor stayed controlled at the\
+  \ treated site) or **LF** (*local failure* — tumor regrew at the treated site). Some patients die of\
+  \ unrelated causes before either is observed; survival models handle this as a **competing risk**.\n\
+  \n**The three workstreams.** The codebase organizes its analyses into three threads, referred to throughout\
+  \ as WS1 / WS2 / WS3:\n\n- **WS1 — Cross-pipeline agreement.** Run the same patient through all 3 DWI\
+  \ processing strategies (Standard / dnCNN / IVIMnet) and all 11 core-extraction methods, then measure\
+  \ how much the resulting masks agree (Dice overlap, HD95 boundary distance). Tells you which method\
+  \ choices are interchangeable and which materially change the answer.\n- **WS2 — Method pruning.** Drop\
+  \ core-extraction methods that fail too often (no voxels survive the threshold, or fewer than 10 voxels\
+  \ remain). The default cutoff is `max_core_failure_rate = 0.25`; about 6 of 11 methods survive. `adc_threshold`\
+  \ is always kept as a safety fallback.\n- **WS3 — Dose coverage vs. outcome (the headline result).**\
+  \ For each surviving core method, compute D95 / V50 on the resistant sub-volume and test whether under-dosing\
+  \ it predicts local failure. The current finding: the ADC-defined resistant region receives ≈ 26 % less\
+  \ dose than the radical-intent threshold, and lower D95 correlates with higher local-failure signal\
+  \ (Spearman ρ ≈ −0.37).\n\n---\n\n## Architecture Map\n\nEnd-to-end view of the pipeline, including\
+  \ the MATLAB ↔ Python handoff. The ASCII version in [Pipeline Architecture](#pipeline-architecture)\
+  \ below shows the same flow in more detail.\n\n```mermaid\nflowchart TD\n    subgraph IN[\"Inputs (per\
+  \ patient)\"]\n        DICOM[\"DWI DICOM series<br/>(b-values, Fx1–Fx5)\"]\n        GTV[\"GTV mask<br/>(oncologist\
+  \ contour)\"]\n        DOSE[\"RT dose map<br/>(Gy per voxel)\"]\n        CLIN[\"Clinical spreadsheet<br/>(outcomes,\
+  \ dates)\"]\n    end\n\n    subgraph MATLAB[\"MATLAB pipeline — run_dwi_pipeline.m / execute_all_workflows.m\"\
+  ]\n        LOAD[\"1. LOAD<br/>dcm2niix · IVIM/ADC fitting<br/>(optionally DnCNN or IVIMnet)\"]\n   \
+  \     SANITY[\"2. SANITY<br/>fit convergence · units · alignment\"]\n        BASE[\"3. metrics_baseline<br/>core\
+  \ extraction (11 methods)\"]\n        LONG[\"4. metrics_longitudinal<br/>Fx-to-Fx parameter change\"\
+  ]\n        DOSI[\"5. metrics_dosimetry<br/>D95 / V50 / DVH on core\"]\n        STATS[\"6. metrics_stats_*<br/>group\
+  \ comparisons · elastic net\"]\n        SURV[\"7. metrics_survival<br/>Cox · CSH · IPCW · KM\"]\n  \
+  \      VIS[\"8. visualize_results<br/>parameter maps · figures\"]\n        CMP[\"9. compare_core_methods\
+  \ (opt.)<br/>Dice · HD95\"]\n    end\n\n    OUT[\"saved_files_YYYYMMDD_HHMMSS/<br/>.mat results · figures\
+  \ · diary logs\"]\n\n    subgraph PY[\"Python analysis — analysis/run_analysis.py\"]\n        PARSE[\"\
+  log + CSV + .mat parsers\"]\n        VISION[\"vision graph analysis<br/>(Gemini / Claude)\"]\n     \
+  \   XREF[\"cross_reference/<br/>WS1 agreement · WS2 pruning\"]\n        REPORT[\"report/sections/<br/>HTML\
+  \ + PDF\"]\n    end\n\n    FINAL[\"analysis_report.pdf<br/>(WS1 · WS2 · WS3 figures)\"]\n\n    DICOM\
+  \ --> LOAD\n    GTV --> LOAD\n    LOAD --> SANITY --> BASE --> LONG --> DOSI --> STATS --> SURV -->\
+  \ VIS\n    BASE -.opt..-> CMP\n    DOSE --> DOSI\n    CLIN --> STATS\n    CLIN --> SURV\n    VIS -->\
+  \ OUT\n    SURV --> OUT\n    DOSI --> OUT\n    CMP --> OUT\n    OUT --> PARSE\n    OUT --> VISION\n\
+  \    PARSE --> XREF --> REPORT --> FINAL\n    VISION --> REPORT\n```\n\n**Legend.** Rectangles = code\
+  \ modules. Solid arrows = required data flow. Dotted arrow = optional step (`compare_cores`, opt-in\
+  \ via `steps_to_run`). Everything in the `MATLAB` cluster runs in MATLAB R2024a; everything in `PY`\
+  \ runs under Python 3.12+. The handoff is filesystem-based: MATLAB writes a timestamped `saved_files_*/`\
+  \ folder, and Python reads it back. The Python layer is also where the **WS1 / WS2 / WS3** rollups live\
+  \ — `analysis/cross_reference/` for WS1 + WS2, `analysis/report/sections/` for the WS3 dose-coverage\
+  \ figures.\n\n---\n\n## Headline Result (v2.4)\n\n| Metric | Value | Interpretation |\n|---|---|---|\n\
+  | D95 (ADC sub-volume) | ≈ 36.9 Gy | 26% below the 50 Gy SIB prescription |\n| V50 (ADC sub-volume)\
+  \ | ≈ 69% | Below the 90% radical-intent target |\n| Spearman ρ (D95 vs LF proxy) | −0.37 (p ≈ 0.016)\
+  \ | Lower dose coverage → higher local-failure signal |\n| GTV-volume confounding | <5% HR change |\
+  \ Signal is not driven by tumor size |\n| Cohort | 42 patients (12 LF, 30 LC) | Underpowered; nominally\
+  \ significant |\n\nSee [FOR_REVIEWERS.md](FOR_REVIEWERS.md) for interpretation and caveats.\n\n---\n\
+  \n## Try it (synthetic demo)\n\nThe clinical pipeline runs on PHI (real patient DICOMs under IRB consent),\
+  \ so it can't ship a runnable example. Instead there is a **fully synthetic, PHI-free demo**: it generates\
+  \ phantom DWI volumes from a *known* IVIM ground truth, runs the **real pipeline fitter** (`pipeline/core/fit_models.m`,\
+  \ unmodified) on them, and reproduces the headline figures. Every \"patient\" is simulated — there is\
+  \ no patient data anywhere in the demo.\n\n```bash\n# MATLAB:        run('demo/run_demo.m')\n# Octave\
+  \ (CLI):  octave demo/run_demo.m\n```\n\nOne command does: phantom generation → real IVIM/ADC fit →\
+  \ recover-known-truth validation → figures (written to `demo/output/`). The generator uses a fixed random\
+  \ seed, so results are reproducible and obviously phantom; the ground-truth parameter ranges (and the\
+  \ physics behind them) are documented in [`demo/synthetic_ivim.m`](demo/synthetic_ivim.m), which is\
+  \ written as a heavily-commented **teaching reference** for the IVIM forward model and Rician noise.\n\
+  \n**Headline figure — longitudinal D trajectory, recovered by the real fitter** (responders' true-diffusion\
+  \ D rises as cellularity falls during RT; non-responders stay flat):\n\n![Synthetic longitudinal D by\
+  \ outcome](docs/media/synthetic_longitudinal_D.png)\n\n*Synthetic phantom data — not clinical.*\n\n\
+  **Recover-known-truth validation** — because the ground truth is known, the demo doubles as a correctness\
+  \ check on the fitter. As SNR falls, true diffusion **D** (and **ADC**) recover well while perfusion\
+  \ fraction **f** and especially pseudo-diffusion **D\\*** degrade — the documented IVIM ill-conditioning,\
+  \ demonstrated on data where the answer is known:\n\n![Synthetic IVIM recovery error vs SNR](docs/media/synthetic_recovery_vs_snr.png)\n\
+  \n| SNR | D median err | ADC median err | f median err | D\\* median err |\n|----:|----:|----:|----:|----:|\n\
+  | 10 | 38.0% | 21.5% | 100% | 100% |\n| 20 | 20.6% | 11.1% | 78.0% | 67.6% |\n| 40 | 10.4% | 5.6% |\
+  \ 32.2% | 43.8% |\n| 80 | 5.6% | 2.8% | 16.8% | 28.4% |\n\nSee [`demo/`](demo/) for the generator, the\
+  \ validation script, and the entry point.\n\n---\n\n## Key Technical Highlights\n\n| Area | What It\
+  \ Does |\n|------|-------------|\n| **Deep Learning** | DnCNN and IVIMnet models for MRI denoising and\
+  \ diffusion parameter estimation |\n| **Biophysical Modeling** | IVIM (segmented, Bayesian) and mono-exponential\
+  \ ADC fitting on DWI data |\n| **Survival Analysis** | Competing risks (Cause-Specific Hazards), IPCW\
+  \ weighting, Kaplan-Meier estimation |\n| **Predictive Modeling** | Cross-validated elastic net with\
+  \ strict train/test data leakage prevention and optional Firth penalized refit |\n| **Tumor Segmentation**\
+  \ | 11 core delineation methods with pairwise spatial agreement benchmarking (Dice, HD95) |\n| **Dose–Response**\
+  \ | Dose-volume histogram analysis correlating diffusion-defined GTV subvolumes with radiotherapy dose\
+  \ maps |\n| **Reproducibility** | Docker support, parallel-safe checkpointing, config-driven execution,\
+  \ 180-file test suite |\n| **Cross-Platform** | Runs on Linux, macOS, and Windows with platform-aware\
+  \ shell escaping and path handling |\n\n---\n\n## Pipeline Architecture\n\n```\n┌───────────────"

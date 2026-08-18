@@ -1,0 +1,75 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: HammadRehmanAwan/pediatric-brain-tumor-ai
+url: https://github.com/HammadRehmanAwan/pediatric-brain-tumor-ai
+platform: github
+description: Multi-task AI for pediatric brain tumor detection, segmentation, classification & survival
+  prognosis from multiparametric MRI
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-06T15:05:51Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# Pediatric Brain Tumor AI\n\n**Multi-task AI for Detection, Segmentation, Classification\
+  \ & Prognosis of Pediatric Brain Tumors**\n\n[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)\n\
+  [![PyTorch](https://img.shields.io/badge/PyTorch-2.x-orange.svg)](https://pytorch.org/)\n[![MONAI](https://img.shields.io/badge/MONAI-latest-green.svg)](https://monai.io/)\n\
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)\n\n> Pediatric brain\
+  \ tumors (PBTs) are the #1 cause of cancer-related death in children. This project builds a purpose-built\
+  \ AI pipeline — not retrofitted adult models — targeting the unique biology and data constraints of\
+  \ the pediatric population.\n\n---\n\n## Overview\n\n| Task | Architecture | Target Metric |\n|------|-------------|---------------|\n\
+  | **Segmentation** | nnU-Net v2 (3D + ensemble) | DSC ≥ 0.88 (whole tumor) |\n| **Classification** |\
+  \ ResNet50 + ViT-B/16 + age fusion | AUC-ROC ≥ 0.90 |\n| **Prognosis** | DeepSurv / SurvTRACE + radiomics\
+  \ | C-index ≥ 0.70 |\n| **Federated Learning** | NVIDIA FLARE (FedAvg / FedProx) | <5% perf drop vs\
+  \ centralised |\n\n**Target tumor types:** DMG/DIPG · Medulloblastoma · Ependymoma · Low-grade Astrocytoma\
+  \ · ATRT\n\n**Primary modality:** Multiparametric MRI — T1, T1CE, T2, T2-FLAIR\n\n---\n\n## Project\
+  \ Structure\n\n```\npediatric-brain-tumor-ai/\n├── configs/                    # YAML configs for training\
+  \ runs\n├── data/\n│   ├── raw/                    # Downloaded datasets (gitignored)\n│   ├── processed/\
+  \              # Preprocessed NIfTI files\n│   └── splits/                 # Train/val/test JSON splits\n\
+  ├── models/                     # Saved checkpoints (gitignored)\n├── notebooks/                  #\
+  \ EDA and result analysis\n├── results/                    # Evaluation outputs, plots\n├── scripts/\n\
+  │   ├── download_brats_peds.sh  # TCIA BraTS-PEDs downloader\n│   ├── download_tcia.py        # Generic\
+  \ TCIA downloader\n│   └── setup_env.sh            # Environment setup\n├── src/\n│   ├── preprocessing/\
+  \          # MRI preprocessing pipeline\n│   ├── segmentation/           # nnU-Net training & inference\n\
+  │   ├── classification/         # CNN-ViT classification model\n│   ├── prognosis/              # Survival\
+  \ prediction\n│   ├── federated/              # FL orchestration\n│   ├── explainability/         #\
+  \ Grad-CAM, SHAP\n│   └── utils/                  # Shared utilities\n└── tests/\n```\n\n---\n\n## Datasets\n\
+  \nMost datasets require free registration and a Data Use Agreement (DUA). Run the setup script:\n\n\
+  ```bash\npython scripts/download_datasets.py --list       # show all datasets\npython scripts/download_datasets.py\
+  \ --dataset brats_peds   # download BraTS-PEDs\npython scripts/download_datasets.py --dataset brats_2024\
+  \   # BraTS 2024 challenge\n```\n\n| Dataset | Size | Access | Script |\n|---------|------|--------|--------|\n\
+  | **BraTS-PEDs** (TCIA) | ~50 GB | Free, no registration | `--dataset brats_peds` |\n| **BraTS 2024\
+  \ PED** (Synapse) | ~20 GB | Free registration | `--dataset brats_2024` |\n| **BraTS Lighthouse 2025**\
+  \ | ~25 GB | Free registration | `--dataset brats_2025` |\n| **CBTN** | 4,700+ subjects | Application\
+  \ required | [cbtn.org](https://cbtn.org) |\n| **Kids First DRC** | Multi-omic | Application required\
+  \ | [kidsfirstdrc.org](https://kidsfirstdrc.org) |\n| **OpenPedCan** | Genomics | Free (CAVATICA) |\
+  \ [cavatica.sbgenomics.com](https://cavatica.sbgenomics.com) |\n\nSee [`scripts/README_DATASETS.md`](scripts/README_DATASETS.md)\
+  \ for detailed access instructions.\n\n---\n\n## Quickstart\n\n```bash\n# 1. Clone and install\ngit\
+  \ clone https://github.com/HammadRehmanAwan/pediatric-brain-tumor-ai.git\ncd pediatric-brain-tumor-ai\n\
+  bash scripts/setup_env.sh\n\n# 2. Download BraTS-PEDs (no registration needed)\npython scripts/download_datasets.py\
+  \ --dataset brats_peds --output data/raw/\n\n# 3. Preprocess\npython src/preprocessing/run_preprocessing.py\
+  \ --input data/raw/brats_peds --output data/processed/\n\n# 4. Train segmentation model\npython src/segmentation/train.py\
+  \ --config configs/segmentation_nnunet.yaml\n\n# 5. Evaluate\npython src/segmentation/evaluate.py --checkpoint\
+  \ models/best_seg.pth --split test\n```\n\n---\n\n## 18-Month Roadmap\n\n| Phase | Months | Goals |\n\
+  |-------|--------|-------|\n| **Phase 1** | 1–3 | Data curation, preprocessing pipeline, IRB/DUA |\n\
+  | **Phase 2** | 4–8 | nnU-Net segmentation, DSC ≥ 0.88 |\n| **Phase 3** | 9–13 | CNN-ViT classification\
+  \ + survival model |\n| **Phase 4** | 14–18 | Federated learning, Grad-CAM/SHAP, clinical prototype\
+  \ |\n\n---\n\n## Tech Stack\n\n- **DL Framework:** PyTorch 2.x + MONAI\n- **Segmentation:** nnU-Net\
+  \ v2\n- **Classification:** timm (ViT, EfficientNet, ResNet)\n- **Survival:** lifelines, pycox, SurvTRACE\n\
+  - **Radiomics:** PyRadiomics\n- **Federated Learning:** NVIDIA FLARE\n- **Explainability:** Captum (Grad-CAM,\
+  \ SHAP)\n- **Experiment Tracking:** Weights & Biases\n- **Data Versioning:** DVC\n\n---\n\n## Ethical\
+  \ & Regulatory Notes\n\n- All data access requires institutional IRB approval and DUA compliance\n-\
+  \ Patient data must remain de-identified; face-strip 3D volumes before processing\n- Clinical deployment\
+  \ requires FDA 510(k) or CE-MDR clearance\n- Bias audits required across age, sex, scanner site, and\
+  \ geographic region\n\n---\n\n## Citation\n\nIf you use this codebase, please cite the foundational\
+  \ works:\n\n```bibtex\n@article{brats_peds_2024,\n  title={BraTS-PEDs: Results of the Multi-Parametric\
+  \ MRI Brain Tumor Segmentation Challenge},\n  journal={arXiv:2404.15009},\n  year={2024}\n}\n@article{fl_pedbrain_2024,\n\
+  \  title={Federated Learning for Pediatric Brain Tumors},\n  journal={Nature Communications},\n  year={2024}\n\
+  }\n```\n\n---\n\n## License\n\nMIT License — see [LICENSE](LICENSE). Dataset licenses vary; consult\
+  \ each source's DUA.\n"

@@ -1,0 +1,109 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: PetrouK/brain-mri-radiomics-pipeline
+url: https://github.com/PetrouK/brain-mri-radiomics-pipeline
+platform: github
+description: Brain MRI preprocessing and radiomics pipeline for longitudinal multiple sclerosis lesion
+  analysis.
+license: MIT
+language: Python
+keywords:
+- brain-mri
+- flair
+- image-registration
+- lesion-segmentation
+- medical-imaging
+- mri
+- multiple-sclerosis
+- radiomics
+stars: 0
+updated_at: '2026-08-18T02:07:46Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Brain MRI Radiomics Pipeline\n\nCommand-line pipeline for longitudinal brain MRI preprocessing,\
+  \ lesion/white matter mask preparation, ROI cleaning, and radiomics extraction.\n\nThe project supports\
+  \ research workflows where **Post/follow-up lesions are manually segmented** and compared with corresponding\
+  \ Pre/baseline MRI data. Manual Post lesion masks should preferably be drawn on the registered Post\
+  \ image so that Pre, Post, white matter masks, lesion masks, healthy mirrored ROIs, and radiomics features\
+  \ are in the same image space.\n\nResearch use only. This is not a clinical diagnostic tool. The workflow\
+  \ has been tested on brain MRI data acquired on a 3 Tesla MRI system.\n\n## Features\n\n- Organize MRI\
+  \ files by sequence and timepoint.\n- Preprocess FLAIR images with N4, registration, skull stripping,\
+  \ and normalization.\n- Save and reuse registration transforms.\n- Create histogram-matched Pre/Post\
+  \ difference images.\n- Generate white matter masks with SynthSeg.\n- Generate lesion masks with FLAMeS.\n\
+  - Mirror manual lesion ROIs to create healthy control ROIs.\n- Clean lesion and healthy ROIs using white\
+  \ matter and exclusion masks.\n- Extract PyRadiomics features with `binWidth` or `binCount`.\n\n## Installation\n\
+  \n```bash\ngit clone https://github.com/PetrouK/brain-mri-radiomics-pipeline.git\ncd brain-mri-radiomics-pipeline\n\
+  pip install -r requirements.txt\npython run_pipeline.py --help\n```\n\nExternal tools are required for\
+  \ some steps and are not redistributed here:\n\n- HD-BET for skull stripping.\n- FLAMeS / nnU-Net v2\
+  \ for lesion segmentation.\n- SynthSeg for anatomical segmentation / white matter masks.\n\nConfigure\
+  \ local paths in `config.yaml` or in a private ignored file such as `config.local.yaml`.\n\n## Radiomics\
+  \ Environment\n\nPyRadiomics is best installed in a separate environment to avoid conflicts with deep\
+  \ learning dependencies.\n\n```bash\nconda create -n radiomics_env python=3.10 -y\nconda activate radiomics_env\n\
+  pip install -r requirements-radiomics.txt\n```\n\nRun only radiomics commands from this environment.\n\
+  \n## Input Layout\n\nRecommended longitudinal input:\n\n```text\nInput/\n  Patients/\n    Patient_ID/\n\
+  \      Pre/\n        pre_flair.nii.gz\n      Post/\n        post_flair.nii.gz\n  Transforms/\n    Pre/\n\
+  \      Patient_ID/\n        optional_pre_transform.tfm\n    Post/\n      Patient_ID/\n        optional_post_transform.tfm\n\
+  ```\n\nIf transforms are missing, registration is computed and saved under the output folder.\n\n##\
+  \ Output Layout\n\n```text\nOutput/\n  By_Sequence/\n  Preprocessed_FLAIR/\n  Difference_Images/\n \
+  \ Organized_Pre/\n  Organized_Post/\n  Transforms/\n\n  Lesions/\n    Patient_ID/\n      manual_post_lesion_masks.nii.gz\n\
+  \n  FLAMeS_Lesions/\n    Existing_Pre/\n      Patient_ID/\n    Post/\n      Patient_ID/\n\n  Masks/\n\
+  \    White_Matter/\n      Patient_ID/\n        Pre/\n        Post/\n\n  Healthy/\n    Patient_ID/\n\n\
+  \  Cleaned_ROIs/\n    Lesions/\n      Patient_ID/\n    Healthy/\n      Patient_ID/\n\n  Radiomics/\n\
+  ```\n\n`Lesions/` is for manually segmented Post/new lesions. `FLAMeS_Lesions/` is reserved for FLAMeS\
+  \ outputs.\n\n## Common Commands\n\nRun preprocessing, difference images, and organization:\n\n```bash\n\
+  python run_pipeline.py run --config \"config.local.yaml\" --input \"/data/Input\" --output \"/data/Output\"\
+  \ --steps split-sequences preprocess-flair make-diff-images split-normalizations --preprocess-steps\
+  \ n4 registration skull-strip diff normalization\n```\n\nGenerate white matter masks:\n\n```bash\npython\
+  \ run_pipeline.py segment-white-matter --config \"config.local.yaml\" --input \"/data/Output/Preprocessed_FLAIR\"\
+  \ --output \"/data/Output\" --registered-only\n```\n\nOrganize normalized outputs without overwriting\
+  \ existing files:\n\n```bash\npython run_pipeline.py split-normalizations --config \"config.local.yaml\"\
+  \ --input \"/data/Output/Preprocessed_FLAIR\" --output \"/data/Output\"\n```\n\nGenerate FLAMeS masks:\n\
+  \n```bash\npython run_pipeline.py segment-lesions --config \"config.local.yaml\" --input \"/data/Output/Organized_Pre/Pre\"\
+  \ --output \"/data/Output\" --lesion-folder Existing_Pre\npython run_pipeline.py segment-lesions --config\
+  \ \"config.local.yaml\" --input \"/data/Output/Organized_Post/Post\" --output \"/data/Output\" --lesion-folder\
+  \ Post\n```\n\nMirror manual lesion masks to healthy control ROIs:\n\n```bash\npython run_pipeline.py\
+  \ mirror-roi-masks --input \"/data/Output/Lesions\" --output \"/data/Output/Healthy\"\n```\n\nThe mirror\
+  \ step renames `Segmentation` to `Healthy`, for example:\n\n```text\nPatient_ID_Segmentation_1.nii ->\
+  \ Patient_ID_Healthy_1.nii\n```\n\nClean manual lesion ROIs:\n\n```bash\npython run_pipeline.py clean-roi-masks\
+  \ --roi-root \"/data/Output/Lesions\" --allowed-root \"/data/Output/Masks/White_Matter\" --allowed-timepoint\
+  \ Post --exclusion-root \"/data/Output/FLAMeS_Lesions/Existing_Pre\" --output \"/data/Output/Cleaned_ROIs/Lesions\"\
+  \n```\n\nClean healthy ROIs:\n\n```bash\npython run_pipeline.py clean-roi-masks --roi-root \"/data/Output/Healthy\"\
+  \ --allowed-root \"/data/Output/Masks/White_Matter\" --allowed-timepoint Post --exclusion-root \"/data/Output/FLAMeS_Lesions/Existing_Pre\"\
+  \ --output \"/data/Output/Cleaned_ROIs/Healthy\"\n```\n\nUse `--exclusion-dilation 0` to remove only\
+  \ overlapping voxels. Use `--exclusion-dilation 1` to also remove voxels touching the exclusion mask.\n\
+  \nBy default, existing outputs are skipped. Add `--overwrite-existing` only when outputs should be regenerated.\n\
+  \n## Radiomics\n\nRadiomics extraction expects image and ROI case folder names to match.\n\n```text\n\
+  Images/\n  case_001/\n    image.nii.gz\n\nROIs/\n  Lesions/\n    case_001/\n      lesion_1.nii.gz\n\
+  \  Healthy/\n    case_001/\n      healthy_1.nii.gz\n```\n\nThe first folder level under `ROIs/` becomes\
+  \ the `ROI_Label`. Each mask becomes one row per discretization value.\n\n```bash\npython run_pipeline.py\
+  \ extract-radiomics --image-root \"/data/Images\" --roi-root \"/data/ROIs\" --output \"/data/Radiomics\"\
+  \ --discretization-mode binCount --discretization-values 32 64 128 --max-workers 8\n```\n\nDirect `binWidth`\
+  \ values:\n\n```bash\npython run_pipeline.py extract-radiomics --image-root \"/data/Images\" --roi-root\
+  \ \"/data/ROIs\" --output \"/data/Radiomics\" --discretization-mode binWidth --discretization-values\
+  \ 5 10 20 --max-workers 8\n```\n\nTarget bin counts converted to `binWidth`:\n\n```bash\npython run_pipeline.py\
+  \ extract-radiomics --image-root \"/data/Images\" --roi-root \"/data/ROIs\" --output \"/data/Radiomics\"\
+  \ --discretization-mode binWidth --discretization-values 32 64 128 --values-are-target-bins --max-workers\
+  \ 8\n```\n\n## Notes\n\n- Keep personal paths in `config.local.yaml`; do not commit that file.\n- Do\
+  \ not commit NIfTI images, transforms, model files, or external tool repositories.\n- `tools/` can be\
+  \ used locally for FLAMeS or SynthSeg and should remain ignored by Git.\n\n## References\n\n* Isensee,\
+  \ F., Schell, M., Tursunova, I., Brugnara, G., Bonekamp, D., Neuberger, U., Wick, A., Schlemmer, H.\
+  \ P., Heiland, S., Wick, W., Bendszus, M., Maier-Hein, K. H., & Kickingereder, P. (2019). Automated\
+  \ brain extraction of multisequence MRI using artificial neural networks. *Human Brain Mapping, 40*(17),\
+  \ 4952-4964. https://doi.org/10.1002/hbm.24750\n\n* Billot, B., Greve, D. N., Puonti, O., Thielscher,\
+  \ A., Van Leemput, K., Fischl, B., Dalca, A. V., & Iglesias, J. E. (2023). SynthSeg: Segmentation of\
+  \ brain MRI scans of any contrast and resolution without retraining. *Medical Image Analysis, 86*, 102789.\
+  \ https://doi.org/10.1016/j.media.2023.102789\n\n* Dereskewicz, E., La Rosa, F., Dos Santos Silva, J.,\
+  \ et al. (2025). A novel convolutional neural network for automated multiple sclerosis brain lesion\
+  \ segmentation. *Journal of Neuroimaging, 35*(5), e70085. https://doi.org/10.1111/jon.70085\n\n* Isensee,\
+  \ F., Jaeger, P. F., Kohl, S. A. A., Petersen, J., & Maier-Hein, K. H. (2021). nnU-Net: A self-configuring\
+  \ method for deep learning-based biomedical image segmentation. *Nature Methods, 18*(2), 203-211. https://doi.org/10.1038/s41592-020-01008-z\n\
+  \n* van Griethuysen, J. J. M., Fedorov, A., Parmar, C., Hosny, A., Aucoin, N., Narayan, V., Beets-Tan,\
+  \ R. G. H., Fillion-Robin, J. C., Pieper, S., & Aerts, H. J. W. L. (2017). Computational radiomics system\
+  \ to decode the radiographic phenotype. *Cancer Research, 77*(21), e104-e107. https://doi.org/10.1158/0008-5472.CAN-17-0339\n\
+  \n## License\n\nReleased under the MIT License. See `LICENSE` for details.\n"

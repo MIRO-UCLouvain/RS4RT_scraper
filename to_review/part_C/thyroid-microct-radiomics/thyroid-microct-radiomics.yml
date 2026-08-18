@@ -1,0 +1,89 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: kiataj/thyroid-microCT-radiomics
+url: https://github.com/kiataj/thyroid-microCT-radiomics
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-19T17:57:07Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Thyroid Micro-CT Radiomics\n\n[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20563520.svg)](https://doi.org/10.5281/zenodo.20563520)\n\
+  \nCode and data for the paper **\"3D Radiomics Profiling of Thyroid Tumors Using Micro-CT\"**.\n\nRadiomics\
+  \ features were extracted from 3D micro-CT scans of next-generation tissue microarray (ngTMA) punches\
+  \ (600 µm diameter, 5 µm voxel size) from 418 thyroid tumor patients. A multilayer perceptron (MLP)\
+  \ classifier was trained on these features for several clinically relevant classification tasks.\n\n\
+  ---\n\n## Repository structure\n\n```\n.\n├── radiomics_v6.csv       # PyRadiomics feature matrix (one\
+  \ row per punch)\n├── ngTMA_table.csv        # Sample metadata and labels\n├── run_pipeline.py     \
+  \   # Main entry point\n├── visualize.py           # Figure generation\n├── requirements.txt       #\
+  \ Python dependencies\n└── radiomics/             # Pipeline package\n    ├── config.py          # Paths,\
+  \ diagnosis map, task configuration\n    ├── data.py            # Data loading and label merging\n \
+  \   ├── preprocessing.py   # Feature filtering, batch correction, redundancy reduction\n    ├── cv.py\
+  \              # Stratified patient-level k-fold splitter\n    ├── mlp.py             # PyTorch MLP\
+  \ module\n    ├── models.py          # TaskRunner: cross-validation loop\n    ├── evaluation.py    \
+  \  # Metrics, bootstrap CI, JSD\n    ├── explainability.py  # SHAP analysis\n    └── umap_utils.py \
+  \     # UMAP projection utilities\n```\n\n---\n\n## Data files\n\n### `radiomics_v6.csv`\n\nPyRadiomics\
+  \ feature matrix. Each row corresponds to one ngTMA punch. Features are extracted from the original\
+  \ image and seven filter classes: Laplacian of Gaussian (sigma = 10 µm), wavelet (Haar, level 1, all\
+  \ directions except HHH), logarithm, square root, gradient, exponential, and square. Six feature classes\
+  \ are computed per filter image: first-order statistics, GLCM, GLRLM, GLDM, GLSZM, and NGTDM. Shape\
+  \ features are not extracted. Total: 1302 features before filtering.\n\n### `ngTMA_table.csv`\n\nSample\
+  \ metadata and mutation labels with the following columns:\n\n| Column          | Description      \
+  \                                                                          |\n| --------------- | ------------------------------------------------------------------------------------------\
+  \ |\n| `ID`          | Internal sample identifier                                                  \
+  \               |\n| `PID`         | Patient identifier (used for patient-level CV grouping)       \
+  \                             |\n| `tissue`      | Tissue type:`N` (non-neoplastic) or `Tu` (neoplastic)\
+  \                                  |\n| `TMA`         | TMA block identifier                       \
+  \                                                |\n| `Grid`        | Grid identifier within the TMA\
+  \ block                                                       |\n| `x`, `y`    | Punch coordinates within\
+  \ the grid                                                          |\n| `TERT`        | TERT promoter\
+  \ mutation status (0 = wild-type, 1 = mutant; determined by Sanger sequencing) |\n| `Diagnosis`   |\
+  \ Histological diagnosis string                                                              |\n| `Relapse\
+  \ p/n` | Relapse status (0 = disease-free, 1 = relapsed)                                           \
+  \ |\n| `BRAF p/n`    | BRAF V600E mutation status (0 = wild-type, 1 = mutant; determined by IHC, VE1\
+  \ clone)       |\n| `RAS`         | RAS Q61R mutation status (0 = wild-type, 1 = mutant; determined\
+  \ by IHC, SP174 antibody)    |\n\n---\n\n## Installation\n\nPython 3.9 or later is recommended.\n\n\
+  ```bash\npip install -r requirements.txt\n```\n\n---\n\n## Usage\n\nRun all classification tasks:\n\n\
+  ```bash\npython run_pipeline.py\n```\n\nRun specific tasks:\n\n```bash\npython run_pipeline.py --task-1\
+  \          # Tissue type (non-neoplastic vs neoplastic)\npython run_pipeline.py --task-2          #\
+  \ Tumor type (PTC vs FTN)\npython run_pipeline.py --task-3          # BRAF V600E mutation status\npython\
+  \ run_pipeline.py --tert            # TERT Mann-Whitney U analysis\npython run_pipeline.py --fvptc \
+  \          # FVPTC similarity analysis\npython run_pipeline.py --task-2 --shap   # Run task with SHAP\
+  \ analysis\n```\n\n---\n\n## Pipeline\n\n### 1. Feature preprocessing (global, before cross-validation)\n\
+  \nAll preprocessing steps are applied to the full dataset prior to cross-validation:\n\n1. **Zero-variance\
+  \ filter** — removes features with no variation across the dataset.\n2. **ICC filtering** — retains\
+  \ features with intraclass correlation coefficient ICC > 0.75 (p < 0.05) between two scans of the same\
+  \ block acquired under substantially different conditions. Results are cached in `results/icc_features.txt`.\n\
+  3. **Sign-preserving log transform** — `sign(x) * log1p(|x|)` applied to stabilize variance and reduce\
+  \ skewness.\n4. **ComBat batch correction** — corrects batch effects across the six ngTMA batches (four\
+  \ blocks, two of which contained two grids each). Batch label is TMA + Grid.\n5. **Pearson redundancy\
+  \ reduction** — iteratively removes one feature from each pair with |r| > 0.75 (p < 0.05). Results are\
+  \ cached in `results/retained_feature_names.txt`.\n\n### 2. Classification\n\nEach task is evaluated\
+  \ using stratified patient-level 5-fold cross-validation (`StratifiedGroupKFold`): all punches from\
+  \ one patient stay in the same fold, and class balance is maintained across folds. Within each fold,\
+  \ features are standardized to zero mean and unit variance using statistics from the training partition\
+  \ only.\n\nThe classifier is a multilayer perceptron (MLP) with three hidden layers, ReLU activations,\
+  \ and dropout. Optimizer: Adam (lr = 1e-3, weight decay = 1e-3). Learning rate scheduler: ExponentialLR\
+  \ (gamma = 0.9).\n\nPerformance is reported as mean AUC ± SD across 5 folds, with 95% confidence intervals\
+  \ from 2000-iteration bootstrap resampling.\n\n### 3. Classification tasks\n\n| Task   | Description\
+  \                                                             | Samples           |\n| ------ | -----------------------------------------------------------------------\
+  \ | ----------------- |\n| Task 1 | Non-neoplastic vs neoplastic tissue                            \
+  \         | 336 N, 405 Tu     |\n| Task 2 | PTC vs follicular thyroid neoplasm (FTN = FA + FTC)    \
+  \                 | 97 PTC, 116 FTN   |\n| Task 3 | BRAF V600E wild-type vs mutant (PTC only)      \
+  \                         | 159 WT, 80 mutant |\n| TERT   | Exploratory Mann-Whitney U test (TERT WT\
+  \ vs mutant)                     | 103 WT, 8 mutant  |\n| FVPTC  | Out-of-distribution similarity analysis\
+  \ using trained Task 2 classifier | 47 FVPTC          |\n\n### 4. Outputs\n\nAll outputs are written\
+  \ to the `results/` directory:\n\n- Per-fold metrics CSV\n- Bootstrap confidence intervals CSV\n- Aggregated\
+  \ validation probabilities CSV\n- ROC curves CSV\n- SHAP summary plots (when `--shap` is passed)\n-\
+  \ FVPTC KDE similarity plot\n- TERT Mann-Whitney results CSV\n\n---\n\n## Citation\n\nIf you use this\
+  \ code or data, please cite:\n\nTajbakhsh, K., Stanowska, O., Buljan, M. et al. 3D radiomics profiling\
+  \ of thyroid tumors using micro-CT. *Sci Rep* (2026). https://doi.org/10.1038/s41598-026-57746-1\n"

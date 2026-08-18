@@ -1,0 +1,135 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: nicholas-camarda/uveal-melanoma
+url: https://github.com/nicholas-camarda/uveal-melanoma
+platform: github
+description: Comparing clinical outcomes in uveal melanoma patients treated with Gamma Knife Stereotactic
+  Radiosurgery (GKSRS) or Plaque Brachytherapy (PBT)
+license: null
+language: R
+keywords: []
+stars: 1
+updated_at: '2026-08-17T17:17:06Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# Uveal Melanoma Treatment Outcomes Analysis\n\nThis repository contains the analysis\
+  \ pipeline for comparing clinical outcomes after Gamma Knife stereotactic radiosurgery (GKSRS) and plaque\
+  \ brachytherapy (PBT) in uveal melanoma. It produces cohort-specific tables, figures, workbooks, and\
+  \ validation outputs for efficacy, safety, repeat-radiation, and biomarker-validation workflows.\n\n\
+  ## Quick Start\n\nThis repository does not include the clinical source spreadsheet. To reproduce the\
+  \ analysis, you need a copy of the repository plus the shared project data file.\n\n### Reproduce From\
+  \ Scratch\n\n1. Clone the repository and enter it.\n\n```sh\ngit clone https://github.com/nicholas-camarda/uveal-melanoma.git\n\
+  cd uveal-melanoma\n```\n\n2. Restore the locked R 4.4.3 package environment.\n\n```sh\nRscript scripts/bootstrap_packages.R\n\
+  ```\n\nThe committed `renv.lock` is the source of truth for package versions. The\nrepository does not\
+  \ use npm or maintain a Node dependency lockfile.\n\n3. Place the shared input spreadsheet in the expected\
+  \ raw-data folder.\n\nCanonical source, runtime, raw-data, and publish paths are defined in `scripts/config/project_paths.R`.\
+  \ Keep the shared spreadsheet outside the repository; see the [path model](#path-model) for the default\
+  \ layout and configuration options.\n\nThe expected filename is the value of `INPUT_FILENAME` in `scripts/utils/config_constants.R`.\n\
+  \nOn another machine, use the supported absolute-path overrides described in the [path model](#path-model)\
+  \ rather than editing tracked configuration.\n\n4. Run the full pipeline.\n\n```sh\nRscript -e \"source('scripts/load_all.R');\
+  \ main_execution()\"\n```\n\n5. Review outputs.\n\nThe [path model](#path-model) below shows the default\
+  \ output layout and how to relocate it on another machine.\n\n### Prerequisites\n\n- R 4.4.3\n- Access\
+  \ to the project input spreadsheet\n- A local clone of this repository\n\n### Run the full pipeline\n\
+  \nFrom the repository root:\n\n```sh\nRscript -e \"source('scripts/load_all.R'); main_execution()\"\n\
+  ```\n\n### Run a single cohort or objective\n\n```sh\nRscript -e \"source('scripts/load_all.R'); run_my_analysis('uveal_melanoma_full_cohort')\"\
+  \nRscript -e \"source('scripts/load_all.R'); run_specific_objective('uveal_melanoma_full_cohort', 4)\"\
+  \n```\n\nAvailable runtime dataset IDs:\n\n- `uveal_melanoma_full_cohort`\n- `uveal_melanoma_restricted_cohort`\n\
+  - `uveal_melanoma_gksrs_only_cohort`\n\n### Customize local runs with `scripts/main.R`\n\nFor repeated\
+  \ local use, you can also edit `scripts/main.R`.\n\n- Set `cohorts_to_run` to choose which cohorts to\
+  \ analyze\n- Set `objectives_to_run` to choose which objectives to run\n- Uncomment `main_execution()`\
+  \ if you want that script to launch the full pipeline instead\n\nThen run:\n\n```sh\nRscript scripts/main.R\n\
+  ```\n\nThis is best treated as a local convenience entrypoint for custom runs. For reproducible documentation\
+  \ and shared instructions, prefer the explicit `Rscript -e \"source('scripts/load_all.R'); ...\"` commands\
+  \ above.\n\n### Interactive use\n\nIf you prefer to work inside an R session:\n\n```r\nsource(\"scripts/load_all.R\"\
+  )\nmain_execution()\n```\n\n### Run tests\n\nProject activation selects an `renv` library from the content\
+  \ hash of\n`renv.lock`. The canonical checkout and every worktree using the same lockfile\ntherefore\
+  \ share one cached package-link library, while a changed lockfile uses\na separate library. Restore\
+  \ a lockfile environment once before its first use:\n\n```sh\nRscript scripts/bootstrap_packages.R\n\
+  ```\n\nRun project commands without `--vanilla` so R loads `.Rprofile`. Do not prepend\nanother checkout's\
+  \ library with `.libPaths()` or install packages into a\ncheckout-specific library.\n\n```sh\n# Complete\
+  \ portable suite required for pull requests and master pushes\nRscript scripts/tools/run_portable_suite.R\n\
+  \n# Local read-only actual-data integration suite\nOCULAR_INTEGRATION_RAW_DATA_DIR='/absolute/path/to/raw-data'\
+  \ \\\nOCULAR_INTEGRATION_PROCESSED_DATA_DIR='/absolute/path/to/processed-data' \\\nRscript scripts/tools/run_testthat.R\
+  \ tests/integration\n```\n\nThe synthetic fixture exercises portable schema, missingness, censoring,\
+  \ GEP,\nPRAME, treatment, sparse-group, and one-arm paths. It is not a substitute for\nthe local data-backed\
+  \ validation of scientific estimates. The actual-data lane\nrequires explicit input directories, reads\
+  \ those inputs without copying them,\nand writes its outputs only beneath the process temporary directory.\n\
+  All three test directories carry checked-in file manifests, so deleting or\nadding a test file without\
+  \ updating the intended suite inventory fails closed.\n\n## Path Model\n\n`scripts/config/project_paths.R`\
+  \ is the only source of truth for filesystem paths. The pipeline resolves complete absolute paths there;\
+  \ do not edit individual output locations. Configure the relevant root instead.\n\nThe runtime root\
+  \ is local and generated artifacts stay below it. Its default child locations are fixed:\n\n```text\n\
+  RUNTIME_ROOT                         # Override with OCULAR_RUNTIME_ROOT\n├── Analytic Dataset/    \
+  \            # PROCESSED_DATA_DIR\n├── Analysis/                        # OUTPUT_DIR\n│   └── merged_tables/\
+  \               # MERGED_TABLES_DIR\n├── logs/                            # LOGS_DIR\n├── tools_output/\
+  \                    # TOOLS_OUTPUT_DIR\n├── test_output/                     # TEST_OUTPUT_DIR\n└──\
+  \ share_packets/                   # SHARE_PACKETS_DIR\n```\n\nThe raw-input and published-output locations\
+  \ share a separately configured export root:\n\n```text\nEXPORT_ROOT                           # Derived\
+  \ from OCULAR_EXPORT_PARENT_DIR\n├── Original Files/                  # RAW_DATA_DIR\n│   └── Data Dictionary.xlsx\
+  \         # DATA_DICTIONARY_PATH\n└── outputs/                         # EXPORT_ANALYSIS_DIR\n    └──\
+  \ <snapshot-id>/\n```\n\nOn a new machine, set `OCULAR_RUNTIME_ROOT` and `OCULAR_EXPORT_PARENT_DIR`\
+  \ to absolute paths. Use `RAW_DATA_DIR` only when the input spreadsheet lives somewhere else. The narrower\
+  \ `PROCESSED_DATA_DIR`, `OUTPUT_DIR`, `LOGS_DIR`, `TOOLS_OUTPUT_DIR`, `TEST_OUTPUT_DIR`, `MERGED_TABLES_DIR`,\
+  \ `SHARE_PACKETS_DIR`, and `DATA_DICTIONARY_PATH` overrides are available for an intentional nonstandard\
+  \ layout. `scripts/config/project_paths.R` contains the maintained default root values for the maintainer\
+  \ environment.\n\n## Study Scope\n\nThe pipeline works with three intentionally overlapping analytic\
+  \ cohorts created from the same cleaned master dataset.\n\n| Cohort | Runtime dataset id | Primary role\
+  \ |\n|--------|--------------------|--------------|\n| Full | `uveal_melanoma_full_cohort` | All-comers\
+  \ treatment cohort for real-world comparison |\n| Restricted | `uveal_melanoma_restricted_cohort` |\
+  \ Dual-eligibility cohort for a more balanced treatment comparison |\n| GKSRS-only | `uveal_melanoma_gksrs_only_cohort`\
+  \ | Patients ineligible for PBT, used to characterize GKSRS in challenging cases |\n\nThe current cohort\
+  \ counts and summary totals are written to `Analytic Dataset/cohort_summary_statistics.json` whenever\
+  \ the pipeline is rerun (see the [path model](#path-model)).\n\nThe analysis is organized into four\
+  \ main research objectives:\n\n| Objective | Focus | Primary outputs |\n|-----------|-------|-----------------|\n\
+  | 1 | Efficacy | Event summaries, survival outputs, tumor-height analyses, subgroup forest plots |\n\
+  | 2 | Safety | Vision summaries, adverse-event models, diagnostics, effect-summary workbooks |\n| 3\
+  \ | Repeat radiation | PFS-2 summaries, survival outputs, skip artifacts when data are sparse |\n| 4\
+  \ | GEP validation | Consolidated workbooks, technical workbooks, narrative summaries, KM/CIF displays\
+  \ |\n\nFor a collaborator-facing overview of the study aims and eligibility logic, see [docs/OBJECTIVES.md](docs/OBJECTIVES.md).\n\
+  \n## Output Map\n\nPipeline outputs are primarily written to the runtime analysis tree:\n\n```text\n\
+  Runtime output root\n|- Analytic Dataset/\n|  |- cohort_summary_statistics.json\n|  |- uveal_melanoma_full_cohort.{rds,xlsx}\n\
+  |  |- uveal_melanoma_restricted_cohort.{rds,xlsx}\n|  `- uveal_melanoma_gksrs_only_cohort.{rds,xlsx}\n\
+  |- Analysis/\n|  |- uveal_full/\n|  |- uveal_restricted/\n|  |- gksrs/\n|  `- merged_tables/\n|- logs/\n\
+  |- test_output/\n`- tools_output/\n```\n\nWithin each cohort folder, outputs follow a consistent layout:\n\
+  \n- `00_General/`: baseline characteristics, cohort summaries, treatment-duration summaries, exclusion\
+  \ summaries, reconciliation audit workbooks (including manual date-correction audit sheets), and Objective\
+  \ 0 validation bundles\n- `01_Efficacy/`: recurrence, metastasis, survival, tumor-height, and subgroup\
+  \ outputs; primary endpoint artifacts use typed `01_`–`06_` subfolders and subgroup outputs use `g_subgroup_analysis/`.\
+  \ Only the restricted cohort also has `h_propensity_score_sensitivity/`, containing the overlap-weighted\
+  \ sensitivity workbook, plots, narrative summary, and technical audit.\n- `02_Safety/`: vision and radiation-related\
+  \ adverse-event outputs (descriptive → adjusted models → effect summary; vision adds `04_sensitivity/`)\n\
+  - `03_Repeat_Radiation/`: PFS-2 cohort support, survival artifacts, and PH diagnostics under `a_pfs2/`\n\
+  - `04_GEP_Validation/`: Objective 4 workbooks, plots, and unified summaries\n\nObjective 4 has a deliberate\
+  \ reading path:\n\n1. Start here for the high-level purpose and output location.\n2. Use [docs/STATISTICAL_METHODS.md](docs/STATISTICAL_METHODS.md#gep-validation-metrics)\
+  \ for the formal validation framework.\n3. Use [docs/INTERPRETATION_GUIDE.md](docs/INTERPRETATION_GUIDE.md#understanding-gep-analysis)\
+  \ for workbook-first reading guidance.\n4. Use [docs/TECHNICAL.md](docs/TECHNICAL.md#objective-4-gep-predictive-accuracy)\
+  \ for implementation and artifact contracts.\n\n## Publish Workflow\n\nPublishing is an optional manual\
+  \ step that copies selected deliverables from the runtime analysis directory into a dated export snapshot.\
+  \ If you are reproducing the analysis locally, you can usually ignore this section and work directly\
+  \ from the runtime outputs.\n\nRaw inputs remain in the configured input directory; generated and intermediate\
+  \ artifacts remain in the local runtime tree. Approved snapshots use `outputs/<snapshot-id>/` under\
+  \ the configured export root and never overwrite an existing snapshot. See the [path model](#path-model)\
+  \ for the exact defaults.\n\n```r\nsource(\"scripts/load_all.R\")\n\n# Review the candidate snapshot\
+  \ first\npublish_outputs(dry_run = TRUE)\n\n# Copy the approved deliverables into the dated export snapshot\n\
+  publish_outputs(dry_run = FALSE)\n```\n\nThe publish step copies only registry-approved deliverables.\
+  \ It excludes `.rds`, diagnostics workbooks, caches, logs, test output, and ad hoc intermediate files\
+  \ by design.\n\nThe direct command interface is dry-run by default:\n\n```sh\nRscript scripts/workflow/publish_outputs.R\
+  \ --dry-run\nRscript scripts/workflow/publish_outputs.R --execute --snapshot-id YYYY-MM-DD\n```\n\n\
+  Use `--cohorts cohort1,cohort2` to limit the copy and `--no-merged-tables` to omit merged tables. `--execute`\
+  \ performs the copy and writes `publish_manifest.csv`; review the dry-run report first.\n\n## Configuration\n\
+  \nAnalysis settings live in `scripts/utils/config_constants.R`; canonical filesystem roots and supported\
+  \ path overrides live in `scripts/config/project_paths.R`. Typical execution settings to review before\
+  \ a fresh run are:\n\n```r\nRECREATE_ANALYTIC_DATASETS <- FALSE\nUSE_LOGS <- TRUE\n```\n\n`INPUT_FILENAME`\
+  \ is maintained in the data-processing policy. If the shared spreadsheet has a different name, provide\
+  \ it at the configured raw-data location under that expected name, or make a deliberate local configuration\
+  \ change before recreating analytic datasets.\n\nObjective 4 grouping and display settings are also\
+  \ centralized there through `GEP_GROUPING_SPECS` and `GEP_OBJECTIVE4_GROUPING`.\n\n## Documentation\n\
+  \n- [docs/OBJECTIVES.md](docs/OBJECTIVES.md): study aims, objective definitions, subgroup scope, and\
+  \ cohort eligibility logic\n- [docs/TECHNICAL.md](docs/TECHNICAL.md): workflow orchestration, directory\
+  \ structure, configuration, artifact contracts, and QA\n- [docs/CALCULATIONS.md](docs/CALCULATIONS.md):\
+  \ derived-variable definitions, endpoint construction, and sign con"

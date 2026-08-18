@@ -1,0 +1,69 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Kookiekhu/head_and_neck_tumor_segmentation
+url: https://github.com/Kookiekhu/head_and_neck_tumor_segmentation
+platform: github
+description: ''
+license: MIT
+language: null
+keywords: []
+stars: 0
+updated_at: '2026-06-10T13:13:53Z'
+image_source: null
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Head & Neck Tumour Segmentation — Comparative U-Net Study\n\nA research implementation\
+  \ comparing five U-Net architectures for automated head and neck tumour segmentation on 3D MRI, with\
+  \ cross-domain transfer learning from the BraTS dataset. This project formed the basis of an MSc dissertation\
+  \ and a first-author abstract accepted at **ISMRM 2026**.\n\n---\n\n## Overview\n\nAccurate delineation\
+  \ of head and neck tumours from MRI is a critical but labour-intensive step in radiotherapy planning.\
+  \ This project benchmarks five U-Net variants under identical training conditions to evaluate which\
+  \ architectural choices best handle the domain shift, class imbalance, and volumetric complexity characteristic\
+  \ of this task.\n\n**Models compared:**\n- Vanilla U-Net — baseline encoder-decoder with skip connections\n\
+  - Attention U-Net — gated attention on skip connections to suppress irrelevant activations\n- U-Net++\
+  \ — nested dense skip pathways for multi-scale feature reuse\n- U-Net+++ — extended dense connectivity\
+  \ with full-scale feature aggregation\n- nnU-Net — self-configuring framework that adapts preprocessing\
+  \ and architecture to the dataset\n\n**Transfer learning:** The nnU-Net was initialised with weights\
+  \ pretrained on the BraTS brain tumour dataset and fine-tuned on head and neck MRI, probing how well\
+  \ learned features transfer across anatomical domains.\n\n├── My_Modules/\n│   ├── data_loader.py  \
+  \                # Custom dataset class and patch sampling\n│   ├── dataloader_nii.py              \
+  \ # NIfTI-specific data loading pipeline\n│   ├── data_loader_with_preprocessing.py  # Preprocessing\
+  \ + augmentation pipeline\n│   ├── unet_trainer.py                 # Training loop, AMP, loss functions,\
+  \ LR scheduling\n│   ├── evaluation.py                   # Dice, HD95, and surface distance metrics\n\
+  │   ├── loss.py                         # Combined Dice + Cross-Entropy loss implementations\n│   ├──\
+  \ transfer_helper.py              # BraTS transfer learning utilities\n│   └── Unets/\n│       ├── Unet.py\
+  \                     # Vanilla U-Net baseline\n│       ├── Attention.py                # Attention\
+  \ U-Net\n│       ├── UnetPlusPlus.py             # U-Net++\n│       ├── Unet3Plus.py               \
+  \ # U-Net+++ (full-scale skip connections)\n│       ├── ResUnet.py                  # Residual U-Net\n\
+  │       └── nnUnet.py                   # Self-configuring nnU-Net\n│\n├── Head_and_Neck_training/\n\
+  │   ├── Training.ipynb                  # End-to-end training pipeline with config and logging\n│  \
+  \ ├── model_evaluation.ipynb          # Cross-model metrics comparison and statistical analysis\n│ \
+  \  └── meta_data/                      # Train/val split metadata\n│\n└── predictions/             \
+  \           # Saved model outputs and segmentation masks\n\n## Methods\n\n**Data:** Head and neck MRI\
+  \ (preRT and midRT timepoints) from [dataset source]. 142 patients, ~23,700 axial slices. Two distinct\
+  \ acquisition protocols handled via separate normalisation pipelines.\n\n**Preprocessing:** Per-volume\
+  \ intensity normalisation using precomputed statistics; patch-based sampling (64×64×64) with foreground\
+  \ oversampling to address class imbalance.\n\n**Training:** PyTorch with MONAI, mixed precision (AMP),\
+  \ CosineAnnealingLR scheduler, combined Dice + Cross-Entropy loss. Sliding window inference at validation.\n\
+  \n**Augmentation:** Affine transforms, random flips, intensity jitter via Albumentations.\n\n**Evaluation\
+  \ metrics:** Volumetric Dice Similarity Coefficient (DSC), Hausdorff Distance 95th percentile (HD95).\n\
+  \n---\n\n## Key Findings\n\n- Attention U-Net and U-Net++ outperformed the vanilla baseline in DSC,\
+  \ confirming the benefit of richer skip pathway design for this anatomy.\n- nnU-Net demonstrated strong\
+  \ out-of-the-box performance with minimal manual tuning.\n- Transfer learning from BraTS could not perform\
+  \ as well as training head and neck , even across anatomical domains with significant appearance differences.\n\
+  \n\n\n---\n\n## Setup\n\n**Requirements**\n\n```bash\npip install torch torchvision monai albumentations\
+  \ numpy nibabel matplotlib\n```\n\n**Run training**\n\nOpen `training/training.ipynb` and configure\
+  \ the data paths and hyperparameters in the first cell. All architecture choices are selectable via\
+  \ a single config flag.\n\n**Visualise predictions**\n\nOpen `training/visualise_prediction.ipynb` with\
+  \ a trained checkpoint path. Outputs side-by-side ground truth vs prediction overlays for qualitative\
+  \ review.\n\n**Evaluate**\n\nOpen `training/evaluation.ipynb` to compute per-model metrics and generate\
+  \ comparison plots across all five architectures.\n\n---\n\n## Citation\n\nIf this work is useful to\
+  \ you, please cite the associated ISMRM abstract:\n\n> [Your Name et al.], \"Comparative Analysis of\
+  \ U-Net Architectures Using Cross-Domain Transfer Learning for Head and Neck Tumour Segmentation\",\
+  \ *ISMRM 2026*.\n\n---\n\n## Author\n\n**Khushi** — MSc Data Science  \nResearch focus: Biomedical AI,\
+  \ medical image segmentation, computational oncology  \n[LinkedIn](#) · [GitHub](#)\n"

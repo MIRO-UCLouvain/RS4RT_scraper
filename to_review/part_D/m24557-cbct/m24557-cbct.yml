@@ -1,0 +1,80 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: jigejiqiangshou/M24557-CBCT
+url: https://github.com/jigejiqiangshou/M24557-CBCT
+platform: github
+description: 头部CT陪位
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-06-18T11:56:17Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# M24557-CBCT：CBCT → pCT 3D 刚性配准\n\n将锥形束 CT（CBCT）配准到计划 CT（pCT）的物理空间，输出与 pCT 同网格、同方向的\
+  \ `registered_CBCT.nii.gz`，供放疗计划或剂量计算等下游流程使用。\n\n**核心技术栈**：SimpleITK（Mattes 互信息 + 多分辨率金字塔）、dicom2nifti\
+  \ / GDCM 读取 DICOM。\n\n---\n\n## 目录结构\n\n```\nM24557-CBCT/\n├── register_cbct_to_pct.py   # 主配准脚本\n├──\
+  \ README.md\n├── output/                   # 默认输出目录（可自定义）\n│   ├── pCT.nii.gz            # pCT 中间体（DICOM\
+  \ 转换）\n│   ├── CBCT.nii.gz           # CBCT 中间体（含 S-I 切片倒序）\n│   ├── registered_CBCT.nii.gz # 配准结果（与\
+  \ pCT 同空间）\n│   └── final_transform.tfm   # 可选：刚体变换矩阵\n├── M24557-CBCT/              # 原始 CBCT DICOM（数据目录，见\
+  \ .gitignore）\n└── M24557-pCT/               # 原始 pCT DICOM（数据目录，见 .gitignore）\n```\n\n> 原始 DICOM 数据目录名可按实际路径修改；`.gitignore`\
+  \ 已忽略 `*.nii.gz`、`*.tfm` 及数据文件夹，避免大文件进入版本库。\n\n---\n\n## 环境要求\n\n- **操作系统**：Windows 10/11（已在 Windows\
+  \ 上验证）\n- **Conda 环境名**：`medical_reg`\n- **Python**：3.10.20\n- **环境路径**：`C:\\Users\\Zhaoji\\miniconda3\\\
+  envs\\medical_reg`\n\n### 激活环境\n\n**PowerShell / CMD：**\n\n```powershell\nconda activate medical_reg\n\
+  ```\n\n若未创建该环境，可参考下文 [环境依赖表](#环境依赖表) 使用 `pip` 安装核心包，或从已有环境克隆：\n\n```powershell\nconda create -n medical_reg\
+  \ python=3.10 -y\nconda activate medical_reg\npip install numpy scipy pydicom dicom2nifti nibabel simpleitk\
+  \ python-gdcm\n```\n\n---\n\n## 快速开始\n\n1. 将 **pCT** 与 **CBCT** 的 DICOM 序列分别放在两个文件夹中（每个文件夹仅含**同一序列**的切片）。\n\
+  2. 在项目根目录打开终端，激活 `medical_reg`。\n3. 运行配准脚本（将路径替换为你的实际路径）。\n\n**PowerShell 示例：**\n\n```powershell\ncd\
+  \ C:\\Users\\Zhaoji\\Desktop\\M24557-CBCT\n\npython register_cbct_to_pct.py `\n  --pct-dicom \"C:\\\
+  Users\\Zhaoji\\Desktop\\M24557-CBCT\\M24557-pCT\" `\n  --cbct-dicom \"C:\\Users\\Zhaoji\\Desktop\\M24557-CBCT\\\
+  M24557-CBCT\" `\n  --output-dir \"C:\\Users\\Zhaoji\\Desktop\\M24557-CBCT\\output\" `\n  --save-transform\n\
+  ```\n\n**CMD 示例（使用 `^` 续行）：**\n\n```cmd\npython register_cbct_to_pct.py ^\n  --pct-dicom \"D:\\data\\\
+  pCT_dicom\" ^\n  --cbct-dicom \"D:\\data\\CBCT_dicom\" ^\n  --output-dir \"D:\\data\\registration_output\"\
+  \ ^\n  --save-transform\n```\n\n运行成功后，主要结果文件为：\n\n`output\\registered_CBCT.nii.gz`\n\n---\n\n## 命令行参数\n\
+  \n| 参数 | 必填 | 默认值 | 说明 |\n|------|------|--------|------|\n| `--pct-dicom` | 是 | — | 计划 CT（pCT）DICOM\
+  \ 文件夹，配准中的 **Fixed（固定）** 图像 |\n| `--cbct-dicom` | 是 | — | 锥形束 CT（CBCT）DICOM 文件夹，配准中的 **Moving（浮动）**\
+  \ 图像 |\n| `--output-dir` | 否 | `./output` | 输出目录：中间 NIfTI 与配准结果 |\n| `--pct-nii` | 否 | `<output-dir>/pCT.nii.gz`\
+  \ | 自定义 pCT 中间 NIfTI 路径 |\n| `--cbct-nii` | 否 | `<output-dir>/CBCT.nii.gz` | 自定义 CBCT 中间 NIfTI 路径 |\n\
+  | `--moments-threshold` | 否 | `-500.0` | 初对齐 MOMENTS 掩膜 HU 下限；低于该值的体素置 0，减少床板/空气对重心估计的干扰 |\n| `--save-transform`\
+  \ | 否 | 不保存 | 额外写出 `final_transform.tfm` 刚体变换，便于后续复用 |\n\n查看完整帮助：\n\n```powershell\npython register_cbct_to_pct.py\
+  \ --help\n```\n\n---\n\n## 处理流程说明\n\n脚本按四个步骤执行，控制台会打印进度与配准迭代日志。\n\n### 步骤 1：DICOM → NIfTI\n\n- **pCT**：优先使用\
+  \ `dicom2nifti` 转换；失败时回退到 SimpleITK GDCM。\n- **CBCT**：使用 SimpleITK **倒序堆叠切片**（`reverse_slices=True`），纠正部分导出数据的头脚（S-I）方向问题。\n\
+  - 若目标 `.nii.gz` 已存在，**跳过转换**，直接加载（可节省重复运行时间）。\n- 对缺少标准 DICM 头的导出文件，自动启用 `pydicom_read_force` 强制读取。\n\
+  \n### 步骤 2：鲁棒初始对齐\n\n- 使用 **MOMENTS**（灰度重心）而非 GEOMETRY，适应 pCT 与 CBCT **视野（FOV）差异大** 的情况。\n- 在 HU &lt;\
+  \ `--moments-threshold`（默认 -500）区域应用掩膜，使重心落在人体组织上。\n\n### 步骤 3：多分辨率刚性配准\n\n- **度量**：Mattes 互信息（50 bins），随机采样\
+  \ 10%。\n- **优化器**：RegularStep 梯度下降，最多 200 次迭代。\n- **金字塔**：三层收缩因子 `[4, 2, 1]`，物理空间高斯平滑。\n- 控制台会打印每次迭代的\
+  \ **互信息 Metric** 与 **当前步长**；Metric 上升通常表示对齐改善。\n\n### 步骤 4：重采样与保存\n\n- 将 CBCT 重采样到 **pCT 的体素网格与物理坐标**。\n\
+  - 线性插值；视场外默认 **-1000 HU**（空气）。\n- 输出 `registered_CBCT.nii.gz`；若指定 `--save-transform`，同时保存 `final_transform.tfm`。\n\
+  \n---\n\n## 输出文件说明\n\n| 文件 | 说明 |\n|------|------|\n| `pCT.nii.gz` | pCT 中间体，Fixed 参考 |\n| `CBCT.nii.gz`\
+  \ | CBCT 中间体（已做 S-I 纠正） |\n| `registered_CBCT.nii.gz` | **最终结果**：CBCT 配准到 pCT 空间 |\n| `final_transform.tfm`\
+  \ | 可选，SimpleITK 刚体变换，可用 `sitk.ReadTransform` 加载 |\n\n在 ITK-SNAP、3D Slicer 等软件中，将 `pCT.nii.gz` 与 `registered_CBCT.nii.gz`\
+  \ 叠加显示，可目视检查配准质量。\n\n---\n\n## 常见问题\n\n**Q：提示 DICOM 目录中未识别到有效影像？**  \n确认目录内为同一 CT 序列，且文件为有效 DICOM（部分导出无\
+  \ 128 字节头，脚本已尝试强制读取）。\n\n**Q：想重新做 DICOM 转换？**  \n删除 `output` 下对应的 `pCT.nii.gz` 或 `CBCT.nii.gz` 后重新运行。\n\
+  \n**Q：配准结果方向仍不对？**  \n检查原始 CBCT DICOM 的切片顺序与 Image Orientation；必要时在数据预处理阶段单独校正。\n\n**Q：迭代 Metric 不收敛或发散？**\
+  \  \n可尝试调整 `--moments-threshold`，或检查 pCT/CBCT 是否为同一患者、同一治疗部位。\n\n---\n\n## 环境依赖表\n\n以下列表导出自本机 Conda\
+  \ 环境 **`medical_reg`**（`C:\\Users\\Zhaoji\\miniconda3\\envs\\medical_reg`），导出时间：2026-05-24。\n\n### 运行时核心依赖（配准脚本直接使用）\n\
+  \n| 包名 | 版本 | 安装来源 | 用途 |\n|------|------|----------|------|\n| Python | 3.10.20 | conda | 解释器 |\n|\
+  \ numpy | 2.2.6 | pypi | 数值计算 |\n| scipy | 1.15.3 | pypi | 科学计算（dicom2nifti 等间接依赖） |\n| pydicom | 3.0.2\
+  \ | pypi | DICOM 读写 |\n| dicom2nifti | 2.6.2 | pypi | DICOM 序列 → NIfTI |\n| nibabel | 5.4.2 | pypi |\
+  \ NIfTI 支持（dicom2nifti 依赖） |\n| simpleitk | 2.5.5 | pypi | 配准、重采样、GDCM 读取 |\n| python-gdcm | 3.2.6 |\
+  \ pypi | GDCM DICOM 解码（SimpleITK 回退路径） |\n\n### 传递依赖\n\n| 包名 | 版本 | 安装来源 |\n|------|------|----------|\n\
+  | importlib-resources | 7.1.0 | pypi |\n| typing-extensions | 4.15.0 | pypi |\n| packaging | 26.0 |\
+  \ conda |\n\n### Conda 基础与系统库（完整 `conda list`）\n\n| 包名 | 版本 | Build | Channel |\n|------|------|-------|---------|\n\
+  | bzip2 | 1.0.8 | h2bbff1b_6 | — |\n| ca-certificates | 2026.5.14 | haa95532_0 | — |\n| libexpat | 2.8.0\
+  \ | hd7fb8db_0 | — |\n| libffi | 3.4.8 | h2b21627_2 | — |\n| libzlib | 1.3.1 | h1c6eee0_1 | — |\n| openssl\
+  \ | 3.5.6 | hbb43b14_0 | — |\n| pip | 26.0.1 | pyhc872135_1 | — |\n| setuptools | 82.0.1 | py310haa95532_0\
+  \ | — |\n| sqlite | 3.51.2 | hee5a0db_0 | — |\n| tk | 8.6.15 | hf199647_0 | — |\n| tzdata | 2026a |\
+  \ he532380_0 | — |\n| ucrt | 10.0.22621.0 | haa95532_0 | — |\n| vc | 14.3 | h2df5915_12 | — |\n| vc14_runtime\
+  \ | 14.44.35208 | h4927774_12 | — |\n| vs2015_runtime | 14.44.35208 | ha6b5a95_12 | — |\n| wheel | 0.46.3\
+  \ | py310haa95532_0 | — |\n| xz | 5.8.2 | h53af0af_0 | — |\n| zlib | 1.3.1 | h1c6eee0_1 | — |\n\n###\
+  \ 一键复现（pip freeze 核心包）\n\n```\ndicom2nifti==2.6.2\nnibabel==5.4.2\nnumpy==2.2.6\npydicom==3.0.2\npython-gdcm==3.2.6\n\
+  scipy==1.15.3\nsimpleitk==2.5.5\n```\n\n在已激活的 Python 3.10 环境中安装：\n\n```powershell\npip install dicom2nifti==2.6.2\
+  \ nibabel==5.4.2 numpy==2.2.6 pydicom==3.0.2 python-gdcm==3.2.6 scipy==1.15.3 simpleitk==2.5.5\n```\n\
+  \n---\n\n## 许可证与引用\n\n本项目为 M24557 相关 CBCT–pCT 配准工具。使用 SimpleITK 时请遵循其 [许可证](https://simpleitk.org/)\
+  \ 要求。\n"

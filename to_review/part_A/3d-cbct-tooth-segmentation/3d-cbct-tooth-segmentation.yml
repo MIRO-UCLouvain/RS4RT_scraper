@@ -1,0 +1,138 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ASHMEET555/3D-CBCT-Tooth-Segmentation
+url: https://github.com/ASHMEET555/3D-CBCT-Tooth-Segmentation
+platform: github
+description: ''
+license: null
+language: HTML
+keywords: []
+stars: 0
+updated_at: '2026-03-12T20:17:22Z'
+image_source: https://raw.githubusercontent.com/ASHMEET555/3D-CBCT-Tooth-Segmentation/HEAD/VideoDemo.gif
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# 3D CBCT Tooth Segmentation Pipeline\n\nA deep-learning pipeline for automated tooth\
+  \ segmentation in CBCT volumes with FDI numbering, restoration/pathology detection, and jaw separation.\n\
+  # Visualization Path: results/ToothFairy2F_025_0000_viewer_balanced.html \n## \U0001F3A5 Demo\n\n![Demo](VideoDemo.gif)\n\
+  \n---\n\n## Pipeline Overview\n\n```\nCBCT Input (.mha / .nii / .nii.gz / DICOM)\n        │\n      \
+  \  ▼\n  Preprocessing\n  ├── Resampling → 0.4mm isotropic\n  ├── HU Clipping → [-1000, 3000]\n  ├──\
+  \ Normalization → Z-score\n  └── Patch Extraction → 128³ patches\n        │\n        ▼\n  nnU-Net v2\
+  \ (3D Full-Resolution)\n  ├── Encoder: ResEncL backbone\n  ├── Deep supervision\n  └── Learned postprocessing\n\
+  \        │\n        ▼\n  Postprocessing\n  ├── Connected component analysis\n  ├── FDI tooth ID assignment\
+  \ (jaw + quadrant + index)\n  ├── Restoration vs. Pathology classification\n  └── Jaw separation (upper\
+  \ / lower)\n        │\n        ▼\n  Output\n  ├── mask.nii.gz  (per-tooth instance labels)\n  ├── labels.json\
+  \  (FDI IDs + metadata)\n  └── viewer.html  (interactive 3D viewer)\n```\n\n---\n\n## Design Choices\n\
+  \n| Decision | Choice | Reason |\n|---|---|---|\n| Framework | nnU-Net v2 | State-of-the-art auto-config,\
+  \ proven on CBCT |\n| Backbone | ResEncL | Best Dice on ToothFairy2 leaderboard |\n| Dataset | ToothFairy2\
+  \ (500 volumes) | Official benchmark, multi-class labels |\n| Spacing | 0.4 mm isotropic | Balances\
+  \ detail vs. GPU memory |\n| Patch size | 128³ | Fits in 24 GB VRAM with batch 2 |\n| Loss | DiceCE\
+  \ + deep supervision | Standard nnU-Net, stable convergence |\n| FDI mapping | Centroid-based + jaw\
+  \ separation | Clinically interpretable |\n| Viewer | Three.js + NIfTI.js | Self-contained single HTML,\
+  \ no server needed |\n\n---\n\n## Dataset\n\n- **Primary**: [ToothFairy2](https://ditto.ing.unimore.it/toothfairy2)\
+  \ — 500 CBCT volumes, 42 tooth labels  \n- **Split**: 400 train / 50 val / 50 test (stratified, seed=42,\
+  \ documented in `data/splits/`)\n- No external data used beyond ToothFairy2.\n\n---\n\n## Quick Start\n\
+  \n```bash\n# 1. Environment setup\ndocker build -t cbct-seg .\ndocker run --gpus all -v $(pwd)/data:/workspace/data\
+  \ cbct-seg\n\n# OR with pip\npip install -r requirements.txt\n\n# 2. Download dataset\npython scripts/download_dataset.py\
+  \ --output data/raw/\n\n# 3. Preprocess\npython src/preprocessing/preprocess.py \\\n    --input data/raw/\
+  \ --output data/processed/ --workers 8\n\n# 4. Train\npython src/training/train.py \\\n    --config\
+  \ configs/train_config.yaml --gpus 1\n\n# 5. Inference on a new volume\npython src/inference/predict.py\
+  \ \\\n    --input path/to/scan.nii.gz \\\n    --weights weights/best_model.pth \\\n    --output results/\n\
+  \n# 6. Launch viewer\nopen results/viewer.html\n```\n\n---\n\n## Repository Structure\n\n```\ncbct-segmentation/\n\
+  ├── src/\n│   ├── preprocessing/   # Resample, normalize, patch extraction\n│   ├── models/        \
+  \  # nnU-Net wrapper + custom heads\n│   ├── training/        # Trainer, loss functions, metrics\n│\
+  \   ├── inference/       # Sliding-window prediction + postprocessing\n│   └── visualization/   # HTML\
+  \ viewer generator\n├── configs/             # YAML configs for train/inference\n├── scripts/      \
+  \       # Dataset download, split generation\n├── data/splits/         # train.txt / val.txt / test.txt\n\
+  ├── demo/                # Example volume + pre-run output\n├── tests/               # Unit tests\n\
+  ├── Dockerfile\n└── requirements.txt\n```\n\n---\n\n## Results\n\n| Metric | Val Set |\n|---|---|\n\
+  | Mean Dice (all teeth) | 0.934 |\n| Mean IoU | 0.881 |\n| Jaw Sep. Accuracy | 99.2% |\n| FDI Assignment\
+  \ Acc. | 96.8% |\n\n*Trained for 10 epochs on 4× \n\n---\n\n## Detailed Code Walkthrough\n\nThis section\
+  \ keeps the original README intact and adds a repository-specific runbook for the code that is currently\
+  \ in this workspace.\n\n### End-to-End Flow In This Repository\n\nThe implemented flow is:\n\n1. Raw\
+  \ CBCT scans and labels are stored in ToothFairy2 format.\n2. `scripts/generate_splits.py` creates `train.txt`,\
+  \ `val.txt`, and `test.txt` split files.\n3. `src/preprocessing/preprocess.py` resamples volumes to\
+  \ isotropic spacing, clips intensities, normalizes the image, and writes processed NIfTI files.\n4.\
+  \ `src/preprocessing/dataset.py` loads processed images and labels, samples fixed-size training patches,\
+  \ applies augmentation, and returns tensors.\n5. `src/models/nnunet_resencl.py` builds the 3D residual\
+  \ encoder-decoder segmentation network.\n6. `src/training/train.py` performs optimization, validation,\
+  \ checkpointing, and TensorBoard logging.\n7. `src/inference/predict.py` loads a trained checkpoint,\
+  \ preprocesses one scan, runs sliding-window inference, postprocesses the label map, and saves visualization\
+  \ artifacts.\n8. `src/inference/postprocess.py` converts raw predicted labels into clinically interpretable\
+  \ FDI metadata and restoration flags.\n9. `src/visualization/html_viewer.py` generates a standalone\
+  \ HTML viewer from the predicted scan, mask, and JSON metadata.\n\n### How Preprocessing Works\n\n`src/preprocessing/preprocess.py`\
+  \ is the preprocessing entry point.\n\n- `CBCTPreprocessor.process(...)` loads an image and an optional\
+  \ label volume.\n- `_resample(...)` converts both image and label volumes to `0.4 x 0.4 x 0.4 mm` spacing.\n\
+  - Image volumes use B-spline interpolation, while label volumes use nearest-neighbor interpolation to\
+  \ preserve class IDs.\n- Image intensities are clipped to `[-1000, 3000]` and then normalized with a\
+  \ foreground z-score.\n- Processed images are written to `data/processed/images/` and labels to `data/processed/labels/`.\n\
+  \nThe dataset matching logic strips the `_0000` modality suffix from image filenames when needed so\
+  \ that:\n\n- image: `ToothFairy2F_025_0000.mha`\n- label: `ToothFairy2F_025.mha`\n\ncan still be paired\
+  \ correctly during preprocessing.\n\n### How The Training Dataset Works\n\n`src/preprocessing/dataset.py`\
+  \ builds the PyTorch dataset used by the trainer.\n\n- `build_datasets(...)` reads split files from\
+  \ `data/splits/`.\n- `CBCTDataset.__getitem__(...)` loads one processed image and its matching processed\
+  \ label.\n- In training mode, `_sample_random_patch(...)` extracts a patch of shape `patch_size`.\n\
+  - Foreground-biased sampling is used when labels are available so that the model sees tooth voxels more\
+  \ often.\n- `_force_shape(...)` is used as a safety clamp so every returned tensor has exactly the configured\
+  \ patch size.\n\nThis is why the trainer can batch patches consistently even when the source volumes\
+  \ have different shapes.\n\n### How The Augmentation Pipeline Works\n\n`src/preprocessing/transforms.py`\
+  \ defines the augmentation pipeline used in training.\n\nTraining transforms include:\n\n- random flips\n\
+  - 90-degree rotations\n- small-angle rotations\n- random scaling\n- elastic deformation\n- Gaussian\
+  \ noise\n- Gaussian blur\n- brightness / contrast jitter\n- gamma augmentation\n\nThese transforms operate\
+  \ on 3D numpy arrays and preserve the final patch shape expected by the model.\n\n### Model Architecture:\
+  \ ResEncLUNet\n\nThe network implementation is in `src/models/nnunet_resencl.py`.\n\nThe model is a\
+  \ 3D encoder-decoder architecture with residual blocks.\n\n#### Encoder\n\n- The input is single-channel\
+  \ CBCT data.\n- The stem block is a `Conv3d + InstanceNorm3d + LeakyReLU` block.\n- The encoder has\
+  \ 5 downsampling stages after the stem.\n- Each stage starts with a residual block with `stride=2`,\
+  \ followed by extra residual blocks with `stride=1`.\n\nChannel progression:\n\n- `[32, 64, 128, 256,\
+  \ 512, 512]`\n\nResidual block counts per stage:\n\n- `[1, 3, 4, 6, 6, 2]`\n\n#### Decoder\n\n- Each\
+  \ decoder stage upsamples with `ConvTranspose3d`.\n- The upsampled feature map is concatenated with\
+  \ the corresponding encoder skip connection.\n- Two convolutional refinement blocks are then applied.\n\
+  \n#### Heads\n\n- `out_head` produces the final segmentation logits.\n- During training, deep supervision\
+  \ heads (`ds_heads`) are attached to intermediate decoder outputs.\n- During inference, deep supervision\
+  \ is disabled and only the main output head is used.\n\n#### Output Classes\n\nThe current repository\
+  \ is configured for `49` classes total:\n\n- class `0` = background\n- classes `1..48` = ToothFairy2\
+  \ / FDI-coded tooth labels used by this workspace\n\n### How Training Works\n\n`src/training/train.py`\
+  \ is the training driver.\n\n- It loads the YAML config.\n- It builds train and validation datasets.\n\
+  - It creates DataLoaders.\n- It builds the segmentation model with `build_model(...)`.\n- It builds\
+  \ the loss using `build_loss(...)` from `src/training/losses.py`.\n- It optimizes using SGD with Nesterov\
+  \ momentum.\n- It uses automatic mixed precision through `torch.amp.autocast` and `GradScaler`.\n- It\
+  \ writes TensorBoard logs into `weights/tensorboard/`.\n- It writes `weights/last_model.pth` and `weights/best_model.pth`.\n\
+  \n#### Loss Stack\n\nThe training loss is:\n\n- multi-class Dice loss\n- plus Cross-Entropy loss\n-\
+  \ wrapped with deep supervision when the model returns multiple decoder-scale outputs\n\n#### Learning\
+  \ Rate Schedule\n\nThe scheduler is polynomial decay:\n\n- base learning rate comes from `config/train_config.yaml`\n\
+  - at epoch `e`, LR is scaled by `(1 - e / total_epochs) ^ poly_exp`\n\n### How Inference Works\n\n`src/inference/predict.py`\
+  \ is the single-volume inference entry point.\n\nIt performs these steps:\n\n1. Load the input scan.\n\
+  2. Reuse the preprocessing logic from `CBCTPreprocessor`.\n3. Run sliding-window inference with overlap.\n\
+  4. Merge patch logits using a Gaussian importance map.\n5. Convert class probabilities to a label map\
+  \ with `argmax`.\n6. Postprocess the label map into cleaned connected components and FDI metadata.\n\
+  7. Save mask, labels JSON, copied scan, and HTML viewer.\n\n### Sliding-Window Predictor\n\n`src/inference/sliding_window.py`\
+  \ handles large volumes.\n\n- The volume is padded if needed.\n- Overlapping patches are generated.\n\
+  - Patches are run through the model in small batches.\n- Predictions are fused with a Gaussian weighting\
+  \ map so that patch centers contribute more strongly than patch borders.\n- Optional flip-based test-time\
+  \ augmentation is supported.\n\n### Postprocessing And FDI Mapping\n\n`src/inference/postprocess.py`\
+  \ converts raw predicted labels into usable dental metadata.\n\nIt does three main jobs:\n\n1. remove\
+  \ tiny connected components\n2. map ToothFairy2 class IDs to FDI numbers\n3. estimate jaw assignment\
+  \ and restoration presence\n\nThe file contains an explicit `TOOTHFAIRY2_TO_FDI` lookup table so that\
+  \ predicted class labels can be reported in FDI numbering form.\n\n### HTML Visualization\n\n`src/visualization/html_viewer.py`\
+  \ generates a standalone viewer.\n\nThe viewer includes:\n\n- axial, coronal, and sagittal slice views\n\
+  - segmentation overlay\n- per-tooth color coding by FDI quadrant\n- restoration highlighting\n- embedded\
+  \ data, so no external server is required\n\nFor the current demo output in this workspace, the generated\
+  \ visualization file is:\n\n- `results/ToothFairy2F_025_0000_viewer_balanced.html`\n\n\n---\n\n## Verified\
+  \ Commands Used In This Workspace\n\nThe commands below are the actual commands used to get this repository\
+  \ working in this workspace.\n\n### Environment\n\nActivate the project virtual environment:\n\n```bash\n\
+  source  3D-CBCT-Tooth-Segmentation/.venv/bin/activate\n```\n\nInstall repository dependencies into the\
+  \ virtual environment:\n\n```bash\ncd  3D-CBCT-Tooth-Segmentation &&  3D-CBCT-Tooth-Segmentation/.venv/bin/python\
+  \ -m pip install -r requirements.txt\n```\n\n### Dataset Extraction\n\nThe ToothFairy2 archive was extracted\
+  \ onto the larger disk mount:\n\n```bash\ncd  3D-CBCT-Tooth-Segmentation/data/raw\nmkdir -p /mnt/hdd1/toothfairy_data\n\
+  nohup unzip -o dataset.zip -d /mnt/hdd1/toothfairy_data > /mnt/hdd1/toothfairy_data/unzip.log 2>&1 &\n\
+  tail -f /mnt/hdd1/toothfairy_data/unzip.log\n```\n\nTo make the extracted folder layout compatible with\
+  \ the scripts, the following symlinks were used:\n\n```bash\ncd  3D-CBCT-Tooth-Segmentation\nln -sfn\
+  \ /mnt/hdd1/toothfairy_data/Dataset112_ToothFairy2/imagesTr /mnt/hdd1/toothfairy_data/Dataset112_ToothFairy2/images\n\
+  ln -sfn /mnt/hdd1/toothfairy_data/Dataset112_ToothFairy2/labelsTr /mnt/hdd1/toothfairy_data/Dataset112_ToothFairy2/labels\n\
+  ```\n\n### Split Generation\n\nThe split generation command used here was:\n\n```bash\ncd  3D-CBCT-Toot"

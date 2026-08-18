@@ -1,0 +1,48 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: YMZ1998/CBCT-to-CT
+url: https://github.com/YMZ1998/CBCT-to-CT
+platform: github
+description: CBCT generates pseudo CT.
+license: MIT
+language: Python
+keywords: []
+stars: 8
+updated_at: '2026-03-02T03:21:20Z'
+image_source: https://raw.githubusercontent.com/YMZ1998/CBCT-to-CT/HEAD/figure/result.png
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# [CBCT-to-CT](https://github.com/YMZ1998/CBCT-to-CT)\n\nCBCT (Cone Beam Computed Tomography)\
+  \ generates pseudo CT images, which are essential for applications where traditional\nCT scans are unavailable\
+  \ or difficult to acquire.\n\n## Dataset\n\n[Synthrad2023](https://synthrad2023.grand-challenge.org/)\n\
+  \n[SynthRAD2023 Grand Challenge](https://github.com/SynthRAD2023)\n\nData structure\n\n```\nBrain_Pelvis\n\
+  -train\n|-brain\n  |-1BA001\n    |-ct.nii.gz\n    |-cbct.nii.gz\n    |-mask.nii.gz\n  |- ...\n  |-1BA005\n\
+  \    |-ct.nii.gz\n    |-cbct.nii.gz\n    |-mask.nii.gz\n|-pelvis\n  |-1PA001\n    |-ct.nii.gz\n    |-cbct.nii.gz\n\
+  \    |-mask.nii.gz\n  |- ...\n  |-1PA004\n    |-ct.nii.gz\n    |-cbct.nii.gz\n    |-mask.nii.gz\n\n\
+  -test\n|-brain\n  |- ...\n|-pelvis\n  |- ...\n```\n\n## Usage\n\n### 1. Data Split\n\n```bash\npython\
+  \ data_split.py\n```\n\n### 2. Make Dataset\n\n```bash\npython make_dataset.py\n```\n\n### 3. Train,\
+  \ Test & Predict\n\n```bash\npython train.py\npython test.py\npython predict.py\n```\n\n## [Metric](https://github.com/SynthRAD2023/metrics)\n\
+  \n## [Preprocess](https://github.com/SynthRAD2023/preprocessing)\n\n## Result\n\n![image](/figure/result.png)\n\
+  \n## Environment\n\n```bash\nconda env create -f env.yml\n```\n\n```bash\nconda activate lj_py\n```\n\
+  \n```bash\nconda env export --no-builds > env.yml\n```\n\n## PyInstaller Installation Guide:\n\n###\
+  \ 1. Create and Activate Conda Environment\n\n```bash\nconda create --name cbct2ct python=3.9\n```\n\
+  \n```bash\nconda activate cbct2ct\n```\n\n### 2. Install Required Python Packages\n\n```bash\npip install\
+  \ -i https://pypi.tuna.tsinghua.edu.cn/simple pyinstaller\npip install -i https://pypi.tuna.tsinghua.edu.cn/simple\
+  \ SimpleITK\npip install -i https://pypi.tuna.tsinghua.edu.cn/simple onnxruntime\npip install -i https://pypi.tuna.tsinghua.edu.cn/simple\
+  \ tqdm\n```\n\n### 3. Use PyInstaller to Package Python Script\n\n```bash\npyinstaller --name CBCT2CT\
+  \ --onefile --icon=cbct2ct.ico CBCT2CT.py\n```\n\n### 4. Clean the Build Cache and Temporary Files\n\
+  \n```bash\npyinstaller --clean CBCT2CT.spec\n```\n\n### 5. Run the Executable\n\nOnce the build is complete,\
+  \ you can run the generated `CBCT2CT.exe` with the required parameters:\n\n```bash\nCBCT2CT.exe --cbct_path\
+  \ ./test_data/brain/cbct.nii.gz --mask_path ./test_data/brain/mask.nii.gz --result_path ./result --anatomy\
+  \ brain\n```\n\n```bash\nCBCT2CT.exe --cbct_path ./test_data/pelvis/cbct.nii.gz --mask_path ./test_data/pelvis/mask.nii.gz\
+  \ --result_path ./result --anatomy pelvis\n```\n\n- `--cbct_path`: Path to the input CBCT image file.\n\
+  - `--mask_path`: Path to the input mask file.\n- `--result_path`: Path where the results will be saved.\n\
+  - `--anatomy`: Choose a model based on anatomical region.\n\n### 6. Deactivate and Remove Conda Environment\n\
+  \n```bash\nconda deactivate\nconda remove --name cbct2ct --all\n```\n\n## Reference\n\n[A Simple Two-stage\
+  \ Residual Network for MR-CT Translation](https://github.com/ZhangZhiHao233/MR-to-CT)\n\n[CBCTLiTS](https://www.kaggle.com/datasets/maximiliantschuchnig/cbct-liver-and-liver-tumor-segmentation-test-data)"

@@ -1,0 +1,59 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: lik-586/Jigsaw_Toxicity_Prediction
+url: https://github.com/lik-586/Jigsaw_Toxicity_Prediction
+platform: github
+description: ''
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-21T16:28:59Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Jigsaw Toxicity Prediction\n\n基于深度学习的多标签有毒评论分类项目，使用 DistilRoBERTa 和 TextCNN 两种模型对评论文本进行毒性检测。\n\
+  \n## 项目概述\n\n本项目针对 Jigsaw Toxic Comment Classification 竞赛任务，对评论文本进行六类毒性标签的预测，包括：\n\n- `toxic`（有毒）\n\
+  - `severe_toxic`（严重有毒）\n- `obscene`（淫秽）\n- `threat`（威胁）\n- `insult`（侮辱）\n- `identity_hate`（身份仇恨）\n\n\
+  支持两种深度学习模型：\n\n| 模型 | 特点 | 适用场景 |\n|------|------|----------|\n| DistilRoBERTa | 基于 Transformer 的预训练语言模型，准确率高\
+  \ | 追求精度的场景 |\n| TextCNN | 轻量级卷积神经网络，训练速度快 | 资源受限或快速迭代的场景 |\n\n## 项目结构\n\n```\n.\n├── data/        \
+  \                # 数据集目录\n│   ├── sample_submission.csv    # 提交样例\n│   ├── test_labels.csv         \
+  \ # 测试集标签\n│   ├── train.csv                # 训练数据（需自行放置）\n│   └── test.csv                 # 测试数据（需自行放置）\n\
+  ├── src/                         # 源代码目录\n│   ├── __init__.py              # 主包导出\n│   ├── config.py\
+  \                # 全局配置与超参数\n│   ├── data/\n│   │   ├── __init__.py          # 数据模块导出\n│   │   ├── loader.py\
+  \            # 数据加载与清洗\n│   │   └── dataset.py           # PyTorch Dataset 定义\n│   ├── models/\n│  \
+  \ │   ├── __init__.py          # 模型模块导出\n│   │   ├── roberta.py           # DistilRoBERTa 模型\n│   │\
+  \   └── textcnn.py           # TextCNN 模型\n│   ├── scripts/\n│   │   ├── train_roberta.py     # RoBERTa\
+  \ 训练脚本\n│   │   └── train_cnn.py         # TextCNN 训练脚本\n│   └── utils/\n│       ├── __init__.py   \
+  \       # 工具模块导出\n│       └── trainer.py           # 训练与评估函数\n├── test_project.py              # 单元测试脚本\n\
+  ├── outputs/                     # 模型输出目录（自动创建）\n├── .gitignore                   # Git 忽略规则\n├── README.md\
+  \                    # 项目说明文档\n└── requirements.txt             # Python 依赖列表\n```\n\n## 安装步骤\n\n###\
+  \ 环境要求\n\n- Python **3.8 - 3.12**（Python 3.13 暂不支持 PyTorch）\n- CUDA >= 11.0（GPU 训练可选）\n\n### 1. 克隆仓库\n\
+  \n```bash\ngit clone <repository-url>\ncd Jigsaw_Toxicity_Prediction\n```\n\n### 2. 创建虚拟环境（推荐）\n\n```bash\n\
+  python -m venv venv\nsource venv/bin/activate  # Linux/macOS\n# 或 venv\\Scripts\\activate  # Windows\n\
+  ```\n\n### 3. 安装依赖\n\n```bash\npip install -r requirements.txt\n```\n\n### 4. 准备数据\n\n将 `train.csv`\
+  \ 和 `test.csv` 放置于 `data/` 目录下。数据文件应包含以下列：\n\n- `id`：评论唯一标识\n- `comment_text`：评论文本内容\n- `toxic`, `severe_toxic`,\
+  \ `obscene`, `threat`, `insult`, `identity_hate`：毒性标签（0/1）\n\n## 使用方法\n\n### 训练 DistilRoBERTa 模型\n\n\
+  ```bash\npython -m src.scripts.train_roberta\n```\n\n训练过程中会自动保存最优模型至 `outputs/best_model.bin`，并生成损失曲线图\
+  \ `outputs/roberta_loss.png` 和提交文件 `outputs/submission.csv`。\n\n### 训练 TextCNN 模型\n\n```bash\npython\
+  \ -m src.scripts.train_cnn\n```\n\n训练完成后会生成：\n- `outputs/textcnn_metrics.png`（包含训练/验证损失曲线和准确率曲线）\n-\
+  \ `outputs/submission_cnn.csv`（预测提交文件）\n\n### 运行单元测试\n\n```bash\npython test_project.py\n```\n\n测试覆盖配置模块、数据加载、数据集类、模型定义、训练函数等核心功能，包含正常流程和边界条件测试。\n\
+  \n### 自定义配置\n\n修改 `src/config.py` 中的配置类可调整超参数：\n\n```python\nclass RobertaConfig(Config):\n    MODEL_NAME\
+  \ = \"distilroberta-base\"\n    TRAIN_BATCH_SIZE = 128\n    VALID_BATCH_SIZE = 128\n    MAX_LENGTH =\
+  \ 64\n    EPOCHS = 3\n    LEARNING_RATE = 2e-5\n    DROPOUT = 0.2\n\nclass TextCNNConfig(Config):\n\
+  \    EMBEDDING_DIM = 100\n    MAX_VOCAB_SIZE = 20000\n    N_FILTERS = 100\n    FILTER_SIZES = [3, 4,\
+  \ 5]\n    HIDDEN_DIM = 128\n    BATCH_SIZE = 64\n    EPOCHS = 5\n    LEARNING_RATE = 0.001\n    DROPOUT\
+  \ = 0.5\n```\n\n## 功能说明\n\n- **数据清洗**：自动填充缺失文本，过滤标签为 -1 的无效样本\n- **分层采样**：训练/验证集划分采用分层抽样，保证标签分布一致\n\
+  - **多标签分类**：每个评论可同时属于多个毒性类别\n- **模型保存**：自动保存验证损失最低的模型权重\n- **可视化**：自动生成训练损失与准确率曲线\n- **结果提交**：自动生成符合竞赛格式的\
+  \ CSV 提交文件\n- **单元测试**：完整的测试套件覆盖核心功能模块\n\n## 技术实现\n\n### DistilRoBERTa 模型\n\n基于 HuggingFace `transformers`\
+  \ 库的预训练语言模型，通过 fine-tuning 适配多标签分类任务。模型输出层使用 `BCEWithLogitsLoss` 损失函数。\n\n### TextCNN 模型\n\n轻量级卷积神经网络，包含：\n\
+  - Embedding 层：词向量表示\n- 多尺度卷积层：3、4、5 窗口大小\n- 最大池化层：提取关键特征\n- 全连接层：输出分类概率\n\n## 贡献指南\n\n欢迎提交 Issue 和 Pull\
+  \ Request。\n\n1. Fork 本仓库\n2. 创建功能分支：`git checkout -b feature/xxx`\n3. 提交修改：`git commit -m \"feat: add\
+  \ xxx\"`\n4. 推送分支：`git push origin feature/xxx`\n5. 创建 Pull Request\n\n请确保代码通过语法检查和单元测试，并保持与现有代码风格一致。\n\
+  \n## 许可证\n\n本项目采用 [MIT License](LICENSE) 开源许可证。\n"

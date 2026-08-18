@@ -1,0 +1,65 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: peterrhone/dicom_sqlite
+url: https://github.com/peterrhone/dicom_sqlite
+platform: github
+description: A number of tools and documentation for automated AI based CBCT image segmentation for Prostate
+  Cancer treatment
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 1
+updated_at: '2025-10-16T22:56:13Z'
+image_source: null
+heuristic_total_score: 18
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 6 support term(s).
+readme_excerpt: "# Training and Using a U-Net Model for Pelvic Organ Detection in CBCTs\n\n## Overview\n\
+  This project provides a pipeline for training and applying a U-Net model to detect pelvic organs (e.g.,\
+  \ prostate, bladder, rectum) in Cone Beam Computed Tomography (CBCT) images. It is designed to assist\
+  \ in treatment planning and dose delivery for radiation oncology, particularly for prostate cancer treatment.\n\
+  \n## Requirements\n\n### Hardware\n- **GPU**: Minimum 16 GB of RAM\n  - Recommended: NVIDIA RTX 3000\
+  \ Series or newer, or AMD RX 7000 Series or newer with PyTorch support\n\n### Software\n- **Python**:\
+  \ Version 3.10 or higher\n- **PyTorch**: Required for model training and inference\n- **Additional Modules**:\
+  \ See `requirements.txt` for a complete list\n- **Operating System**: Linux is recommended due to GTK\
+  \ elements in the GUI. Windows compatibility is untested and may require additional configuration.\n\
+  \n## Workflow\n> **Note**: If you are only interested in inference with pretrained models, you can skip\
+  \ to **Step 5**. Pretrained models are included in the repository (see `models/` directory). However,\
+  \ these models expect CBCT inputs of size 512x512x88. If your CBCT dimensions differ, you must adjust\
+  \ the model or retrain it (see Step 4).\n\n### 1. Data Preparation\n- **Acquire Data**: Collect sufficient\
+  \ CBCT data for training.\n- **Data Structure**:\n  - Create a data directory (e.g., `/data/`).\n  -\
+  \ Place one zip file per patient in the data directory (e.g., `P001.zip`, `P002.zip`, etc.).\n  - Each\
+  \ zip file should contain a subdirectory named after the patient (e.g., `P001/`) with hundreds of DICOM\
+  \ files, including Cone Beam CT images and their corresponding contours (e.g., CT and RTSTRUCT files).\n\
+  \  - Expected image dimensions: 512x512x88. If dimensions differ, adjust parameters in the training\
+  \ notebooks.\n- **Example Zip Structure** (e.g., `P001.zip`):\n  ```\n  P001/\n      CT1.2.752.XXXXXX.dcm\n\
+  \      CT1.2.752.XXXXXX.dcm\n      REG1.XXXXXX.dcm\n      RS1.XXXXXX.dcm\n      ...\n  ```\n\n### 2.\
+  \ Data Processing with `sqlite_dicom2.py`\n- **Purpose**: Parses all zip files, extracts DICOM series,\
+  \ and creates a SQLite database containing sagittal slices and masks for the selected organ (e.g., prostate).\n\
+  - **Output**: A SQLite database file (e.g., `images_prostate.sqlite`) used for training.\n- **Usage**:\n\
+  \  - Run `sqlite_dicom2.py` and select the data directory.\n  - Choose the organ (e.g., \"Prostate\"\
+  ) and \"Save\" mode.\n  - The script processes all zip files and stores sagittal slices and masks in\
+  \ the database.\n\n### 3. Inspect Data with `sqlite_viewer.py`\n- **Purpose**: Allows browsing and verification\
+  \ of images and masks stored in the SQLite database, which serve as inputs for training.\n- **Features**:\n\
+  \  - View CBCT images and corresponding masks.\n  - Delete specific images from the database.\n  - Toggle\
+  \ mask overlay to verify contour accuracy.\n- **Controls**:\n  - **Mouse Wheel or Arrow Keys**: Scroll\
+  \ through images.\n  - **D Key**: Delete the current image from the database. Careful! No confirmation!\n\
+  \  - **M Key**: Toggle mask overlay (red transparent overlay).\n- **Usage**:\n  - Run `sqlite_viewer.py`\
+  \ and select the SQLite database (e.g., `images_prostate.sqlite`).\n  - Use the interface to inspect\
+  \ and manage data.\n\n### 4. Model Training\n- **Location**: Jupyter notebooks (see project directory\
+  \ for specific notebooks).\n- **Process**: Training scripts for specific organs (e.g., prostate, bladder,\
+  \ rectum) are documented in the notebooks.\n- **Requirements**: Ensure the SQLite database from Step\
+  \ 2 is available and contains sufficient data.\n\n### 5. Model Application and Testing with `demo.py`\n\
+  - **Purpose**: Apply the trained U-Net model to new data (inference) and visually inspect its performance.\n\
+  - **Important**: Use patient data from the *validation set* (as listed in the Jupyter notebooks) to\
+  \ ensure a realistic evaluation of the model’s capabilities. Using training data may overestimate performance.\n\
+  - **Usage**:\n  - Run `demo.py` and select patient data from the validation set.\n  - Inspect the model’s\
+  \ predictions visually to assess detection accuracy.\n\n## Notes\n- Ensure all dependencies in `requirements.txt`\
+  \ are installed before running scripts.\n- If processing data with non-standard dimensions, modify parameters\
+  \ in the training notebooks accordingly.\n- For issues with the GUI on non-Linux systems, consider running\
+  \ in a Linux environment or virtual machine.\n- Pretrained models are located in the `models/` directory.\
+  \ Verify CBCT dimensions match the expected 512x512x88 before using them."

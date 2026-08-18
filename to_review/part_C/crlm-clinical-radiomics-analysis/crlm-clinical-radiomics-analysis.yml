@@ -1,0 +1,91 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: kaitlyn-kobayashi/CRLM_Clinical_Radiomics_Analysis
+url: https://github.com/kaitlyn-kobayashi/CRLM_Clinical_Radiomics_Analysis
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-10-03T20:39:43Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Improving Preoperative Risk Stratification in Colorectal Liver Metastases: A Multi-Institutional\
+  \ Evaluation of Multimodal Prediction Models\n\nThis repository contains a pipeline for preprocessing\
+  \ clinical and radiomic data, training unimodal and multimodal models, and evaluating models for the\
+  \ purposes of predicting hepatic disease-free survival (HDFS) and overall survival (OS) following curative\
+  \ intent resection. \n\n## Installation and Requirements\n```bash\ngit clone https://github.com/<user>/CRLM_Clinical_Radiomics_Analysis.git\n\
+  pip install -r requirements.txt\n```\nR packages which are required to are listed at the top of each\
+  \ of the R scripts. \n\n## CRLM Clinicoradiomic Analysis\n\n### Feature Extraction \nPlease refer to\
+  \ this [README.md](https://github.com/kaitlyn-kobayashi/CRLM_Clinical_Radiomics_Analysis/blob/main/Feature_Extraction/README.md)\
+  \ within the Feature_Extraction folder for more information.\n\n### Preprocessing \nBelow details the\
+  \ preprocessing steps used to prepare the clinical and radiomic feature data for further modelling.\
+  \ **Note that these steps were for the unimodal statistical and machine learning models and the multimodal\
+  \ late-fusion models. Different preprocessing was used for the deep learning models based on the architecture\
+  \ and computational limitations. For more information, please refer to the scripts within the [Deep_Learning](https://github.com/kaitlyn-kobayashi/CRLM_Clinical_Radiomics_Analysis/tree/main/Deep_Learning)\
+  \ folder**\n\nPreprocessing includes: \n* *clin_MICE.R* --> Prepares clinical data for and executes\
+  \ Multivariate Imputation by Chained Equations (MICE) to handle clinical features with missing values.\
+  \ \n* *clin_train_test_bias.R* --> Utilizes 2-sample t-tests and chi-squared tests to see if there are\
+  \ significant differences in clinical variables in the training and testing split. \n* *preprocess_clin_radiomic_data*\
+  \ --> Calculates additional clinical features from base data, preprocesses radiomic features (checking\
+  \ for uniqueness, normalizing features, clamping features based on quantile range) from all regions\
+  \ of interest, and exports the relevant train and test information for downstream modelling.\n* *train_test_splitting.py*\
+  \ --> Creates a train-test split stratified by the binary survival censor.\n* *transform_clin_data.py*\
+  \ --> A script created specific to our dataset which calculates survival times and defines survival\
+  \ censors, defines variable names to be more readable, and recodes binary variables. \n\n### Feature\
+  \ Selection\nAll feature selection methods were used on the training splits only.\n* *clin_univariate_analysis.R*\
+  \ --> For each of the outcomes of interest, performs univariate Cox regression for the clinical variables.\n\
+  * *rad_MRMR.R* --> Performs feature selection for radiomic features using minimum redundancy maximum\
+  \ relevance (mRMR)\n\n### Survival Modelling - Deep Learning\nAutomated 3-D deep-learning pipeline for\
+  \ **liver-only colorectal cancer liver metastasis (CRLM)** survival prediction.\n\n![GPU](https://img.shields.io/badge/GPU-RTX%20A6000-77B900?logo=nvidia&logoColor=white)\n\
+  ![CUDA](https://img.shields.io/badge/CUDA-12.4-1482C5?logo=nvidia)\n![PyTorch](https://img.shields.io/badge/PyTorch-2.1-E34F26?logo=pytorch&logoColor=white)\n\
+  \nThe repository provides six runnable scripts—one per region-of-interest (ROI) × endpoint pair:\n\n\
+  | ROI (3-D mask)   | Endpoint | Script               |\n|------------------|---------|----------------------|\n\
+  | **Whole Liver**  | Overall Survival (OS) | `Whole_Liver_OS.py` |\n|                  | Hepatic DFS\
+  \ (HDFS)   | `Whole_Liver_HDFS.py` |\n| **Liver Parenchyma** | OS    | `Liver_OS.py` |\n|          \
+  \            | HDFS  | `Liver_HDFS.py` |\n| **Tumor Volume** | OS    | `Tumor_OS.py` |\n|          \
+  \        | HDFS  | `Tumor_HDFS.py` |\n\n---\n\n#### Technical Specs ⚙️\n\n* \U0001F5A5️ Single **NVIDIA\
+  \ RTX A6000** (driver `550.90.07`, CUDA `12.4`)  \n* \U0001F525 **PyTorch 2.1** with Automatic Mixed\
+  \ Precision (AMP)\n\nAll experiments were executed on this hardware configuration.\n\n---\n\n#### Installation\n\
+  ```bash\ngit clone https://github.com/<user>/CRLM_Clinical_Radiomics_Analysis.git\ncd CRLM_Clinical_Radiomics_Analysis/Deep_Learning\n\
+  \n# Conda example\nconda create -n crlm_dl python=3.10\nconda activate crlm_dl\npip install -r requirements.txt\n\
+  ```\n#### Software Requirements\n- `torch==2.1`\n- `torchvision==0.16`\n- `scikit-learn>=1.4`\n- `scikit-survival>=0.22`\n\
+  - `numpy>=1.26`\n- `pandas>=2.2`\n- `nibabel>=5.2`\n- `scipy>=1.13`\n- `scikit-image>=0.23`\n- `rich>=13.7`\n\
+  \n### Survival Modelling - Statistical, Machine Learning, and Late Fusion\nThe scripts for training\
+  \ and evaluating these models require a specific file organization for configuration:\n```\n.\n└── survival_late_fusion_data/\n\
+  \    ├── clin_train\n    ├── clin_test\n    ├── hyperparams\n    ├── Late_Fusion_Param_Grids\n    ├──\
+  \ late_hyperparams\n    ├── rad_mRMR_train\n    ├── rad_test\n    └── ref_files\n```\n\nThe folders\
+  \ under `survival_late_fusion_data` must have the same names as above for the scripts to find the correct\
+  \ data. Below are descriptions of data to put within each of these folders (all in csv format): \n*\
+  \ *clin_train* --> Training data for clinical-only models. Contains clinical variables after preprocessing\
+  \ and feature selection, survival times, and survival binary censor. \n* *clin_test* --> Testing data\
+  \ for clinical-only models. Contains clinical variables after preprocessing (before or after feature\
+  \ selection), survival times, and survival binary censor. \n* *hyperparams* --> Results of hyperparameter\
+  \ tuning for unimodal models. \n* *Late_Fusion_Param_Grids* --> Parameter grids for combinations of\
+  \ models and features to run in late fusion hyperparameter tuning. File contains only one column called\
+  \ `param_grid`, with each row containing a json-formatted parameter grid. \n* *late_hyperparams* -->\
+  \ Results of late fusion hyperparameter tuning. \n* *rad_mRMR_train* --> Training data for radiomic-only\
+  \ models. Contains radiomic variables after preprocessing and feature selection, survival times, and\
+  \ survival binary censor. \n* *rad_test* --> Testing data for radiomic-only models. Contains radiomic\
+  \ variables after preprocessing (before or after feature selection), survival times, and survival binary\
+  \ censor. \n* *ref_files* --> Contains training data before feature selection. Used to add back Patient\
+  \ ID after preprocessing and feature selection only. Assumes Patient ID order stays the same throughout\
+  \ preprocessing and feature selection. \n\nBoth the hyperparameter tuning and survival modelling scripts\
+  \ make use of specifying substrings within the column headers of data and file names. This is used to\
+  \ ensure the proper variables and clinical endpoints are selected. For example, files containing specific\
+  \ survival endpoints (e.g. OS) should put `OS` in the names of the survival time and censor variables\
+  \ (e.g. `OSTime`) and in the name of the file (e.g. `name_of_file_OS.csv`). Similarly, radiomic variables\
+  \ and clinical variables should have their own unique identifying substring within their file names\
+  \ (e.g. `rad_OS_train.csv`). These substrings also correspond to how the features get filtered in runs\
+  \ in case multiple types of features exist in the same file. An example of this is in the `generate_run_params`\
+  \ function in `all_purpose_hp_tuning.py`.\n\nAn example setup of how to run hyperparameter tuning and\
+  \ model training and evaluation are within the `survmodel_example_setup.ipynb` notebook [here](https://github.com/kaitlyn-kobayashi/CRLM_Clinical_Radiomics_Analysis/blob/main/Survival_Modeling/survmodel_example_setup.ipynb).\n\
+  \nFor any questions or concerns regarding these specific scripts, please reach out to kaitlyn.kobayashi@queensu.ca.\
+  \ \n"

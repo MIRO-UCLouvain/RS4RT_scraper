@@ -1,0 +1,76 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: smichi23/DICOM_RT_context_extractor
+url: https://github.com/smichi23/DICOM_RT_context_extractor
+platform: github
+description: ''
+license: NOASSERTION
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-02-04T18:00:31Z'
+image_source: https://raw.githubusercontent.com/smichi23/DICOM_RT_context_extractor/HEAD/dicom_rt_extractor.png?raw=true
+heuristic_total_score: 29
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 8 support term(s).
+readme_excerpt: "## DICOM_RT_context_extractor\n\nThe goal of this labrary is to offer a tool to convert\
+  \ DICOM RT files into simplified Python objects, allowing \na faster reusability of the data. The library\
+  \ is based on the [pydicom](https://pydicom.github.io/pydicom/stable/index.html) library.\n\nThe library\
+  \ is split into extractors and storage classes. Each extractor is responsible for extracting a specific\n\
+  DICOM RT object (e.g., RT Structure Set, RT Plan, RT Dose, etc.). The storage classes are responsible\
+  \ for storing the\nextracted data into a simplified Python object.\n\nSince this was developped during\
+  \ a MSc. projec and that developer moved on, maintenance may be limited. However, the\ncode is open\
+  \ source and can be used by anyone. If you have any questions, please contact the author.\n\n\n## License\n\
+  \nThe DICOM_RT_context_extractor code (all pieces of code associated with the egs_brachy code system)\n\
+  is copyrighted Samuel Ouellet. DICOM_RT_context_extractor is distributed as free software according\
+  \ to the terms\nof the GNU Affero General Public License as published by the Free Software\nFoundation,\
+  \ either version 3 of the License, or (at your option), any later\nversion (http://www.gnu.org/licenses/).\n\
+  \n## Documentation\n*Please note that the following documentation was automatically translated from\
+  \ french\ntext using DeepL. It may contain some errors.\n\nThe general aim of this library is to facilitate\
+  \ the manipulation of DICOM information\nfrom the radiotherapy (RT) series in Python. Each of the three\
+  \ modules \n(contour_extrac-tion_as_masks, dosimetry_extraction, sources_information_extraction,\nas\
+  \ illustrated in figure 2.1) has a central method that extracts information from the\nRTSTRUCT, RTDOSE\
+  \ and RTPLAN DICOMs respectively. Unlike the other two, only the plan\ninformation extractor is specific\
+  \ to LDR brachytherapy. When extracting RTSTRUCT,\nthe nomenclature for designating the various organs\
+  \ or structures can be inconsistent.\nTo fill this gap, a Python dictionary containing a vocabulary\
+  \ is built beforehand\nto group together all the variants of the same structure name that are observed\
+  \ throughout\nthe entire database. The central methods of these 3 modules will return Structures, Dosimetry\n\
+  and LDRBrachyPlan storage objects respectively, as illustrated in the following image.\n\n![alt text](./dicom_rt_extractor.png?raw=true)\n\
+  \nThe Dosimetry and LDRBrachyPlan classes essentially contain all the information related to the dose\
+  \ grid (the grid itself, its dimensions, voxel dimensions, etc.) and to the brachytherapy treatment\
+  \ plan (source positions, source model, source power). power). The Structures object offers far more\
+  \ functionality than the other two. Firstly, the Structures object is made up of Mask objects associated\
+  \ with each organ or structure. structures, which in turn are made up of SliceMask objects, representing\
+  \ each contour made on a CT slice by a 2D binary mask. These 2D binary masks are obtained\nusing the\
+  \ ImageDraw module of the Python Pillow library. In the Mask object, you can\na 3D binary mask by calling\
+  \ the get_3d_mask() function. This function uses the unique identifier associated with each\nTDM slice\
+  \ used to make each 2D contour, in order to order the 2D masks in a 3D matrix of the same dimensions\
+  \ as the TDM.\nContours are sometimes made in leaps of 2, 3 or even 4 slices, thus implying unfilled\
+  \ zones when converting to a binary\nmask. The basic solution offered by the get_3d_mask() method, when\
+  \ the filled_z parameter is True, is to fill the\nregions between the contoured slices with successive\
+  \ binary dilation and erosion based on the methods of Scipy's\nmorphology library and a kernel of (X,\
+  \ 3, 3), where is the number of non-contoured slices between each contours. \nThis process is illustrated\
+  \ in the following image (sorry for the french captions):\n\n![alt text](./figure_filling.png?raw=true)\n\
+  \nFinally, from the Structures object, it is possible to obtain the 3D binary masks for all organs or\
+  \ structures, as\nwell as the CT image, using the get_3d_image_with_all_masks() method. If additional\
+  \ contour segmentation is performed\nretrospectively, the new 3D binary masks produced can be added\
+  \ to the Structures object using the add_mask_from_3d_array()\nmethod. At any time, the user can decide\
+  \ to reproduce a new RTSTRUCT from all the binary masks contained in the\nStructures object, using the\
+  \ recreate_rt_struct_from_current_structure method.\n\n### Usage\n\nTo come ...\n\n## Installation\n\
+  \nTo install this package, one can simply use the following command:\n\n```bash\npip install git+https://gitlab.chudequebec.ca/sam23/dicom_rt_context_extractor.git\n\
+  ```\nPlease note that this package was developped using Python 3.8. It is not guaranteed to work with\
+  \ other versions of Python.\n\nTo run the tests, one can use the following command:\n\n```bash\npython\
+  \ python -m unittest discover -s tests -p *test.py\n```\n\n## Contact\n\nFor more information about\
+  \ DICOM_RT_context_extractor please contact:\n\n- Samuel Ouellet <samuel.ouellet.10@ulaval.ca>\n- Luc\
+  \ Beaulieu <luc.beaulieu@phy.ulaval.ca>\n\n## Citing DICOM_RT_context_extractor\n\nCitations of DICOM_RT_context_extractor\
+  \ use the following reference:\n\nOuellet, S. et al. A Monte Carlo dose recalculation pipeline for durable\
+  \ datasets: an I-125 LDR prostate brachytherapy use case.   Physics in Medicine & Biology 68, 235001\
+  \ (2023).\n\n## Reporting Bugs\n\nPlease report any issues you find using the [issue\ntracker on GitLab](https://gitlab.chudequebec.ca/sam23/dicom_rt_context_extractor/-/issues)\n\
+  \n## Contributing to DICOM_RT_context_extractor\n\nBug fixes and additional features are welcomed via\
+  \ pull requests on\nGitlab.\n\n## Commit history (change log)\n\nThe complete commit history (i.e.,\
+  \ change log) can be consulted https://gitlab.chudequebec.ca/sam23/dicom_rt_context_extractor/-/commits/master."

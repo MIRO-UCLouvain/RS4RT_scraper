@@ -1,0 +1,106 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: shihab13j/DenseUNet-SC-Joint-Brain-Tumor-Segmentation-and-Classification
+url: https://github.com/shihab13j/DenseUNet-SC-Joint-Brain-Tumor-Segmentation-and-Classification
+platform: github
+description: '**Paper:** *A Densely Connected Deep Learning Method for Joint Brain Tumor Segmentation
+  and Classification* **Venue:** Healthcare Analytics (Elsevier)'
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-01T04:40:52Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# DenseUNet-SC: Densely Connected Multi-Task Learning for Brain Tumor Segmentation and\
+  \ Classification\n\nThis repository provides the official implementation of **DenseUNet-SC**, a densely\
+  \ connected shared-encoder deep learning framework for brain tumor segmentation and tumor-type classification\
+  \ from 2D MRI slices.\n\nThe model uses a **shared DenseNet-style encoder** with two parallel task-specific\
+  \ branches:\n\n1. **Segmentation branch:** a U-Net-style decoder predicts a binary tumor/background\
+  \ mask.\n2. **Classification branch:** a global-average-pooling classification head predicts tumor type.\n\
+  \nThe predicted segmentation mask is **not directly fed into the classification head**. Instead, segmentation\
+  \ and classification are coupled implicitly through the shared encoder and weighted multi-task optimization.\n\
+  \n---\n\n## Paper\n\n**Title:** DenseUNet-SC: A Densely Connected Deep Learning Method for Joint Brain\
+  \ Tumor Segmentation and Classification\n**Journal:** Healthcare Analytics\n**Code availability:** https://github.com/your-username/DenseUNet-SC-Joint-Brain-Tumor-Segmentation-and-Classification\n\
+  \n---\n\n## Repository Structure\n\n```text\n.\n├── train_denseunetsc.py\n├── train_classification_baselines.py\n\
+  ├── train_segmentation_baselines.py\n├── run_ablation.py\n├── evaluate_subject_level.py\n├── requirements.txt\n\
+  ├── README.md\n```\n\n---\n\n## Main Features\n\n* DenseUNet-SC shared-encoder multi-task architecture\n\
+  * Binary brain tumor segmentation\n* Three-class tumor-type classification\n* Subject-level train/validation/test\
+  \ splitting\n* Leakage-prevention assertions for train, validation, and test sets\n* Subject-level classification\
+  \ evaluation using averaged slice probabilities\n* Fixed 3-class confusion matrix evaluation\n* Inference-time\
+  \ reporting\n* Classification baselines:\n\n  * ResNet-50\n  * DenseNet-121\n  * EfficientNet-B0\n*\
+  \ Segmentation baselines:\n\n  * U-Net\n  * Attention U-Net\n  * DenseUNet segmentation-only model\n\
+  * Ablation experiments:\n\n  * Full joint model\n  * No dense encoder\n  * Segmentation-only\n  * Classification-only\n\
+  \  * Equal-loss weighting\n\n---\n\n## Datasets\n\nThis implementation supports two public brain tumor\
+  \ MRI datasets.\n\n### 1. Figshare Brain Tumor Dataset\n\nUsed for three-class tumor-type classification\
+  \ and joint segmentation-classification experiments where both tumor masks and class labels are available.\n\
+  \nClasses:\n\n```text\n0: Meningioma\n1: Glioma\n2: Pituitary tumor\n```\n\nExpected folder structure:\n\
+  \n```text\ndata/figshare/\n├── 1/\n│   ├── *.mat\n├── 2/\n│   ├── *.mat\n└── 3/\n    ├── *.mat\n```\n\
+  \nThe implementation uses the patient identifier field from the `.mat` file when available. This is\
+  \ used to perform subject-level splitting before training, validation, and testing.\n\n### 2. BraTS\
+  \ 2021 Dataset\n\nUsed for binary tumor segmentation experiments only.\n\nBraTS 2021 does not provide\
+  \ the three tumor-type labels required for the Figshare classification protocol. Therefore, this implementation\
+  \ does not compute three-class classification metrics on BraTS.\n\nExpected folder structure:\n\n```text\n\
+  data/brats2021/\n├── BraTS2021_00000/\n│   ├── BraTS2021_00000_flair.nii.gz\n│   ├── BraTS2021_00000_seg.nii.gz\n\
+  ├── BraTS2021_00001/\n│   ├── BraTS2021_00001_flair.nii.gz\n│   ├── BraTS2021_00001_seg.nii.gz\n└──\
+  \ ...\n```\n\n---\n\n## Data Leakage Prevention\n\nAll splitting is performed at the subject level before\
+  \ slice extraction and augmentation.\n\nThe implementation enforces:\n\n```text\ntrain_subjects ∩ val_subjects\
+  \ = ∅\ntrain_subjects ∩ test_subjects = ∅\nval_subjects ∩ test_subjects = ∅\n```\n\nThis prevents slices\
+  \ from the same subject appearing across training, validation, and test sets.\n\n---\n\n## Installation\n\
+  \nCreate a virtual environment:\n\n```bash\npython -m venv denseunetsc_env\nsource denseunetsc_env/bin/activate\n\
+  ```\n\nFor Windows:\n\n```bash\npython -m venv denseunetsc_env\ndenseunetsc_env\\Scripts\\activate\n\
+  ```\n\nInstall dependencies:\n\n```bash\npip install -r requirements.txt\n```\n\n---\n\n## Train DenseUNet-SC\
+  \ on Figshare\n\nFor joint segmentation and three-class classification:\n\n```bash\npython train_denseunetsc.py\
+  \ --dataset figshare --data_root data/figshare --task joint --epochs 50 --batch_size 8\n```\n\n---\n\
+  \n## Train DenseUNet-SC on BraTS\n\nFor segmentation-only training:\n\n```bash\npython train_denseunetsc.py\
+  \ --dataset brats --data_root data/brats2021 --task segmentation --modality flair --epochs 50 --batch_size\
+  \ 8\n```\n\nIf `--dataset brats` is selected, the code automatically uses segmentation-only training\
+  \ because BraTS does not provide the three tumor-type classification labels required for this study.\n\
+  \n---\n\n## Classification Baselines\n\nRun all classification baselines on Figshare:\n\n```bash\npython\
+  \ train_classification_baselines.py --data_root data/figshare --model all --epochs 50 --batch_size 8\n\
+  ```\n\nRun a specific baseline:\n\n```bash\npython train_classification_baselines.py --data_root data/figshare\
+  \ --model resnet50 --epochs 50 --batch_size 8\npython train_classification_baselines.py --data_root\
+  \ data/figshare --model densenet121 --epochs 50 --batch_size 8\npython train_classification_baselines.py\
+  \ --data_root data/figshare --model efficientnet_b0 --epochs 50 --batch_size 8\n```\n\n---\n\n## Segmentation\
+  \ Baselines\n\nRun all segmentation baselines:\n\n```bash\npython train_segmentation_baselines.py --dataset\
+  \ brats --data_root data/brats2021 --model all --epochs 50 --batch_size 8\n```\n\nRun a specific segmentation\
+  \ baseline:\n\n```bash\npython train_segmentation_baselines.py --dataset brats --data_root data/brats2021\
+  \ --model unet --epochs 50 --batch_size 8\npython train_segmentation_baselines.py --dataset brats --data_root\
+  \ data/brats2021 --model attention_unet --epochs 50 --batch_size 8\npython train_segmentation_baselines.py\
+  \ --dataset brats --data_root data/brats2021 --model denseunet --epochs 50 --batch_size 8\n```\n\n---\n\
+  \n## Ablation Experiments\n\nRun all ablation variants:\n\n```bash\npython run_ablation.py --data_root\
+  \ data/figshare --variant all --epochs 50 --batch_size 8\n```\n\nRun individual ablations:\n\n```bash\n\
+  python run_ablation.py --data_root data/figshare --variant full_joint --epochs 50 --batch_size 8\npython\
+  \ run_ablation.py --data_root data/figshare --variant no_dense_encoder --epochs 50 --batch_size 8\n\
+  python run_ablation.py --data_root data/figshare --variant segmentation_only --epochs 50 --batch_size\
+  \ 8\npython run_ablation.py --data_root data/figshare --variant classification_only --epochs 50 --batch_size\
+  \ 8\npython run_ablation.py --data_root data/figshare --variant equal_loss --epochs 50 --batch_size\
+  \ 8\n```\n\n---\n\n## Evaluation Protocol\n\n### Segmentation\n\nSegmentation is evaluated using:\n\n\
+  * Dice score\n* Intersection over Union\n* Inference time per slice\n\nSegmentation metrics are computed\
+  \ on binary tumor/background masks.\n\n### Classification\n\nClassification is evaluated at the subject\
+  \ level.\n\nFor each subject, slice-level softmax probabilities are averaged, and the final class is\
+  \ selected using the highest averaged probability.\n\nClassification metrics include:\n\n* Accuracy\n\
+  * Precision\n* Recall\n* F1-score\n* Specificity\n* Confusion matrix\n* Per-class sensitivity and specificity\n\
+  \nThe confusion matrix is computed using fixed class labels:\n\n```python\nlabels = [0, 1, 2]\n```\n\
+  \n---\n\n## Outputs\n\nAfter training and evaluation, outputs are saved in the `outputs/` directory.\n\
+  The exact output files may vary depending on the experiment.\n\n---\n\n## Reproducibility Notes\n\n\
+  * Random seed is set to 42 by default.\n* Subject-level splitting is used to reduce slice-level data\
+  \ leakage.\n* Train, validation, and test subject identifiers should be saved in the `splits/` folder\
+  \ after running the experiments.\n* The reported paper values should be updated using the outputs generated\
+  \ from this codebase.\n* Dataset files are not included in this repository. Users must download the\
+  \ datasets from the official sources.\n\n---\n\n## Important Methodological Clarification\n\nDenseUNet-SC\
+  \ is a shared-encoder parallel multi-task framework.\n\nThe segmentation branch and classification branch\
+  \ are trained jointly, but the predicted segmentation mask is not used as a direct input to the classifier.\
+  \ The task interaction occurs through the shared densely connected encoder and the combined loss function:\n\
+  \n```text\nL_total = 0.6 × L_segmentation + 0.4 × L_classification\n```\n\nFor BraTS segmentation-only\
+  \ experiments, only the segmentation loss is used.\n\n---\n\n## Citation\n\nIf you use this code, please\
+  \ cite the associated manuscript:\n\n```text\n[Moinul Hossain], \"DenseUNet-SC: A Densely Connected\
+  \ Deep Learning Method for Joint Brain Tumor Segmentation and Classification,\" Healthcare Analytics.\n\
+  ```\n\n---\n\n## Contact\n\nFor questions regarding the code or manuscript, please contact the corresponding\
+  \ author.\n\n```\n```\n"

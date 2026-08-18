@@ -1,0 +1,94 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: SwissDataScienceCenter/cbct_cdpa
+url: https://github.com/SwissDataScienceCenter/cbct_cdpa
+platform: github
+description: CBCT diffusion model repository
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 2
+updated_at: '2026-08-13T12:01:17Z'
+image_source: null
+heuristic_total_score: 18
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# CBCT Diffusion\n\nDiffusion-based Cone-Beam CT (CBCT) reconstruction with sinogram-guided\
+  \ DDIM sampling. This library provides training and evaluation code for both **UNet** and **diffusion**\
+  \ models applied to sparse-view CBCT reconstruction across multiple anatomical datasets.\n\n## Method\
+  \ overview\n\n1. A 2D UNet denoiser is trained on individual axial slices to map noisy inputs to clean\
+  \ reconstructions.\n2. During inference the denoiser is applied slice-by-slice across a 3D volume using\
+  \ a DDIM reverse-diffusion schedule.\n3. At every DDIM timestep a **sinogram-consistency guidance**\
+  \ step enforces agreement with the measured projections via gradient-descent (GD) on the ASTRA forward\
+  \ model.\n4. Multiple diffusion samples are averaged and optionally fine-tuned with a final GD pass.\n\
+  \n## Installation\n\n```bash\n# 1. Clone this repository\ngit clone https://github.com/<your-org>/cbct-diffusion.git\n\
+  cd cbct-diffusion\n\n# 2. Install the package\npip install -e .\n\n# 3. Install astra-torch (CUDA-accelerated\
+  \ CT reconstruction)\npip install git+https://github.com/<your-org>/astra-torch.git\n```\n\n> **Note:**\
+  \ `astra-torch` requires a CUDA-capable GPU and the ASTRA Toolbox backend.\n\n## Project structure\n\
+  \n```\ncbct-diffusion/\n├── cbct_diffusion/\n│   ├── models/             # LatentUnet2D, TomographicCBCTDiffusion,\
+  \ GuidanceConfig\n│   ├── data/               # CBCTDataset, SliceCBCTDataset, Walnut512\n│   ├── schedulers/\
+  \         # GuidedDDIMScheduler, DDIMPipeline\n│   ├── utils/              # PSNR/SSIM metrics, clamp\
+  \ presets, external_slices\n│   ├── training/           # PyTorchExperiment, train_unet, train_diffusion\n\
+  │   └── inference/          # reconstruct_unet, reconstruct_diffusion\n├── scripts/                #\
+  \ Shell scripts for batch reconstruction\n├── checkpoints/            # Place trained model checkpoints\
+  \ here\n├── pyproject.toml\n├── requirements.txt\n└── README.md\n```\n\n## Data preparation\n\nThe library\
+  \ supports two dataset formats:\n\n| Format | Resolution | Datasets | Description |\n|--------|-----------|----------|-------------|\n\
+  | **HuggingFace** | 256³ | Walnut, Dental, Spine | Pre-processed volumes with `transforms.json`, `gt_volume.nii.gz`,\
+  \ `proj.nii.gz` |\n| **Raw TIFF** | 501³ | Walnut | Raw projection images + per-slice TIFF reconstructions\
+  \ |\n\nSet the environment variable `DATA_DIR` to point to your dataset root:\n\n```bash\n# HuggingFace\
+  \ format (256³)\nexport DATA_DIR=/path/to/huggingface/walnut   # or dental, spine\n\n# Raw Walnut format\
+  \ (501³)\nexport DATA_DIR=/path/to/walnut               # contains Train/ and Test/ subdirs\n```\n\n\
+  Set `CKPT_DIR` to the directory containing trained model checkpoints:\n\n```bash\nexport CKPT_DIR=/path/to/checkpoints\n\
+  ```\n\n## Training\n\n### UNet (L2 reconstruction loss)\n\n```bash\n# Walnut 256³\npython -m cbct_diffusion.training.train_unet\
+  \ \\\n    --data_path $DATA_DIR --image_size 256 \\\n    --exp_name Unet_Walnut_CBCT_256 --epochs 60\
+  \ --batch_size 4 --wandb\n\n# Dental 256³\npython -m cbct_diffusion.training.train_unet \\\n    --data_path\
+  \ $DATA_DIR --image_size 256 \\\n    --exp_name Unet_Dental_CBCT_256 --epochs 60 --batch_size 4\n\n\
+  # Spine 256³\npython -m cbct_diffusion.training.train_unet \\\n    --data_path $DATA_DIR --image_size\
+  \ 256 \\\n    --exp_name Unet_Spine_CBCT_256 --epochs 60 --batch_size 4\n\n# Walnut 501³ (full resolution,\
+  \ with slice-index embedding)\npython -m cbct_diffusion.training.train_unet \\\n    --data_path $DATA_DIR\
+  \ --image_size 501 --use_slice_idx \\\n    --exp_name Unet_Walnut_CBCT_501 --epochs 60 --batch_size\
+  \ 1\n```\n\n### Diffusion (DDPM noise prediction)\n\n```bash\n# Walnut 256³ – unconditional\npython\
+  \ -m cbct_diffusion.training.train_diffusion \\\n    --data_path $DATA_DIR --image_size 256 \\\n   \
+  \ --exp_name Diffusion_Walnut_CBCT_256_ft20 --epochs 60 --batch_size 8\n\n# Walnut 256³ – conditional\
+  \ (FDK prior as 2nd channel)\npython -m cbct_diffusion.training.train_diffusion \\\n    --data_path\
+  \ $DATA_DIR --image_size 256 --conditioning \\\n    --exp_name Diffusion_Walnut_CBCT_256_ft20_cond --epochs\
+  \ 60 --batch_size 8\n\n# Walnut 501³ – unconditional\npython -m cbct_diffusion.training.train_diffusion\
+  \ \\\n    --data_path $DATA_DIR --image_size 501 \\\n    --exp_name Diffusion_Walnut_CBCT_501 --epochs\
+  \ 60 --batch_size 4\n\n# Walnut 501³ – conditional\npython -m cbct_diffusion.training.train_diffusion\
+  \ \\\n    --data_path $DATA_DIR --image_size 501 --conditioning \\\n    --exp_name Diffusion_Walnut_CBCT_501_cond\
+  \ --epochs 60 --batch_size 4\n\n# Dental 256³ – unconditional\npython -m cbct_diffusion.training.train_diffusion\
+  \ \\\n    --data_path $DATA_DIR --image_size 256 \\\n    --exp_name Diffusion_Dental_CBCT_256_ft20 --epochs\
+  \ 60 --batch_size 8\n\n# Dental 256³ – conditional\npython -m cbct_diffusion.training.train_diffusion\
+  \ \\\n    --data_path $DATA_DIR --image_size 256 --conditioning \\\n    --exp_name Diffusion_Dental_CBCT_256_ft20_cond\
+  \ --epochs 60 --batch_size 8\n\n# Spine 256³ – unconditional\npython -m cbct_diffusion.training.train_diffusion\
+  \ \\\n    --data_path $DATA_DIR --image_size 256 \\\n    --exp_name Diffusion_Spine_CBCT_256_ft20 --epochs\
+  \ 60 --batch_size 8\n\n# Spine 256³ – conditional\npython -m cbct_diffusion.training.train_diffusion\
+  \ \\\n    --data_path $DATA_DIR --image_size 256 --conditioning \\\n    --exp_name Diffusion_Spine_CBCT_256_ft20_cond\
+  \ --epochs 60 --batch_size 8\n```\n\n## Inference / reconstruction\n\n### Single-volume evaluation\n\
+  \n```bash\n# UNet reconstruction (Walnut 256³, CBCT ID 1, 20 views)\npython -m cbct_diffusion.inference.reconstruct_unet\
+  \ \\\n    --data_path $DATA_DIR --cbct_id 1 --nviews 20 \\\n    --unet_checkpoint $CKPT_DIR/Unet_Walnut_CBCT_256.pt\n\
+  \n# Diffusion reconstruction – conditional\npython -m cbct_diffusion.inference.reconstruct_diffusion\
+  \ \\\n    --data_path $DATA_DIR --cbct_id 1 --nviews 20 \\\n    --diffusion_checkpoint $CKPT_DIR/Diffusion_Walnut_CBCT_256_ft20_cond.pt\
+  \ \\\n    --conditioning --guidance_lr 5e-4 --guidance_max_epochs 5\n\n# Diffusion reconstruction –\
+  \ unconditional\npython -m cbct_diffusion.inference.reconstruct_diffusion \\\n    --data_path $DATA_DIR\
+  \ --cbct_id 1 --nviews 20 \\\n    --diffusion_checkpoint $CKPT_DIR/Diffusion_Walnut_CBCT_256_ft20.pt\
+  \ \\\n    --guidance_lr 2e-3 --guidance_max_epochs 20\n```\n\n### Batch reconstruction scripts\n\nSet\
+  \ `DATA_DIR` and `CKPT_DIR`, then run:\n\n```bash\n# Walnut 256³ (IDs 0–4)\nbash scripts/reconstruct_walnut_256.sh\n\
+  \n# Walnut 501³ (IDs 0–4, multiple view counts)\nbash scripts/reconstruct_walnut_501.sh --type cond-diffusion\n\
+  \n# Dental 256³ (IDs 0–19)\nbash scripts/reconstruct_dental.sh\n\n# Spine 256³ (IDs 0–19)\nbash scripts/reconstruct_spine.sh\n\
+  ```\n\n## Metrics\n\nThe library evaluates reconstructions using:\n\n- **PSNR** – computed after clamping\
+  \ to dataset-specific ranges and normalising to [0, 1].\n- **3D SSIM** – averaged across depth, height,\
+  \ and width planes. Parallelised via `joblib` for large volumes.\n\nDataset-specific clamp ranges:\n\
+  \n| Dataset | Min | Max |\n|---------|-----|-----|\n| Walnut  | 0.0 | 0.084 |\n| Dental  | 0.0 | 0.09009\
+  \ |\n| Spine   | 0.0 | 0.051744 |\n\n## Key components\n\n| Module | Description |\n|--------|-------------|\n\
+  | `LatentUnet2D` | Wraps HuggingFace `UNet2DModel` with pixel-shuffle compression and auto-padding to\
+  \ power-of-2 sizes |\n| `TomographicCBCTDiffusion` | Applies 2D UNet slice-wise on 3D volumes with sinogram\
+  \ GD guidance |\n| `GuidedDDIMScheduler` | DDIM scheduler that injects a guidance function between the\
+  \ x₀ prediction and the direction-pointing step |\n| `DDIMPipeline` | Full DDIM reverse-diffusion loop\
+  \ with optional FDK conditioning channel |\n| `GuidanceConfig` | Dataclass bundling all GD guidance\
+  \ hyper-parameters |\n\n## License\n\nApache License 2.0. See [LICENSE](LICENSE) for details.\n"

@@ -1,0 +1,243 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ChengzeYe/TCCT
+url: https://github.com/ChengzeYe/TCCT
+platform: github
+description: 'Code for the MICCAI 2026 submission "TCCT: Trajectory-Conditioned CBCT Reconstruction for
+  Sinusoidal Non-Circular Orbits with a Fourier Neural Operator"'
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-23T15:04:39Z'
+image_source: null
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: '# TCCT: Trajectory-Conditioned CBCT Reconstruction
+
+
+  This repository contains the reference implementation for the MICCAI 2026 submission:
+
+
+  **TCCT: Trajectory-Conditioned CBCT Reconstruction for Sinusoidal Non-Circular Orbits with a Fourier
+  Neural Operator**
+
+
+  ## Status
+
+
+  This code release is associated with a paper that is currently under review and has not yet been formally
+  published.
+
+
+  - The repository name and module names follow the terminology used in the submitted manuscript.
+
+  - Please treat the manuscript title and method naming as submission-stage metadata until publication.
+
+
+  ## Overview
+
+
+  TCCT is a trajectory-conditioned reconstruction framework for cone-beam CT with sinusoidal non-circular
+  source trajectories.
+
+
+  The implementation follows the main paper components:
+
+
+  - `TCCT`: the full differentiable reconstruction pipeline
+
+  - `TC-SNO`: the trajectory-conditioned spectral neural operator that predicts redundancy weights
+
+  - `SV-FBP`-style operator chain: projection-domain weighting followed by differentiable reconstruction
+  operators
+
+
+  ## Repository Structure
+
+
+  ```text
+
+  MultiOrbitReconstruction/
+
+  |-- config/
+
+  |   `-- train_tcct.yaml
+
+  |-- tcct/
+
+  |   |-- __init__.py
+
+  |   |-- arbitrary_trajectory.py
+
+  |   |-- data.py
+
+  |   |-- geometry.py
+
+  |   |-- losses.py
+
+  |   |-- model.py
+
+  |   |-- radon.py
+
+  |   |-- redundancy.py
+
+  |   |-- sinusoidal_orbit.py
+
+  |   `-- tc_sno.py
+
+  |-- data/
+
+  |-- checkpoints/
+
+  |-- .gitignore
+
+  |-- environment.yml
+
+  |-- requirements.txt
+
+  `-- train_tcct.py
+
+  ```
+
+
+  ## Environment
+
+
+  The recommended setup is the provided `environment.yml`, which was distilled from the working `DL_Reconstruction`
+  Conda environment used for this project.
+
+
+  ```bash
+
+  conda env create -f environment.yml
+
+  conda activate tcct
+
+  ```
+
+
+  If you prefer `pip`, a matching `requirements.txt` is also provided:
+
+
+  ```bash
+
+  pip install -r requirements.txt
+
+  ```
+
+
+  Note:
+
+
+  - The current project depends on CUDA-enabled PyTorch and `pyronn`.
+
+  - Depending on your local GPU driver, CUDA toolkit, and PyTorch wheel availability, the CUDA-related
+  package versions may need minor local adjustment.
+
+
+  ## Data Format
+
+
+  The current training loader expects each sample to be stored as either:
+
+
+  - an HDF5 file containing the dataset key `volume_0`
+
+  - or a `.npy` volume file
+
+
+  The local example files in `data/` follow the HDF5 format above.
+
+
+  ## Training
+
+
+  The main entrypoint is:
+
+
+  ```bash
+
+  python train_tcct.py
+
+  ```
+
+
+  Useful overrides:
+
+
+  ```bash
+
+  python train_tcct.py fast_dev_run=true
+
+  python train_tcct.py use_wandb=true
+
+  python train_tcct.py data_path_train=/path/to/data data_path_validation=/path/to/data
+
+  ```
+
+
+  ## Configuration
+
+
+  Default training settings are defined in:
+
+
+  - `config/train_tcct.yaml`
+
+
+  By default:
+
+
+  - `wandb` logging is disabled
+
+  - `data/` and `checkpoints/` are ignored by Git
+
+  - the trainer uses `accelerator: auto`
+
+
+  ## Notes
+
+
+  - This repository has been cleaned from legacy experiment-specific files and unused imports to make
+  public release easier.
+
+  - The current code is organized around the paper terminology rather than the original internal experiment
+  filenames.
+
+  - The sample data directory is ignored by Git and should not be treated as part of the public source
+  release unless you explicitly want to publish example volumes.
+
+
+  ## Citation
+
+
+  The manuscript is currently under review. Once the paper is publicly available, please replace this
+  section with the final citation or arXiv entry.
+
+
+  Suggested temporary placeholder:
+
+
+  ```text
+
+  Chengze Ye, Linda-Sophie Schneider, Siyuan Mei, Yipeng Sun, Daiqi Liu,
+
+  Joshua Scheuplein, Fei Wu, Siming Bayer, Paula Andrea Perez-Toro,
+
+  Andreas Maier.
+
+  TCCT: Trajectory-Conditioned CBCT Reconstruction for Sinusoidal
+
+  Non-Circular Orbits with a Fourier Neural Operator.
+
+  MICCAI 2026 submission, under review.
+
+  ```
+
+  '

@@ -1,0 +1,65 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: anmcgrath/TrajectoryLogReader
+url: https://github.com/anmcgrath/TrajectoryLogReader
+platform: github
+description: Reads Varian TrueBeam trajectory log files (*.bin)
+license: MIT
+language: C#
+keywords:
+- dynalog
+- log
+- radiotherapy
+- trajectory
+stars: 3
+updated_at: '2026-06-01T11:07:14Z'
+image_source: null
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 5 support term(s).
+readme_excerpt: "# TrajectoryLogReader\n\nA .NET library for parsing, analyzing, and compressing Varian\
+  \ TrueBeam trajectory log files (*.bin).\nSupports standard Version 5.0 logs.\n\n## Installation\n\n\
+  ```bash\ndotnet add package TrajectoryLogReader\n```\n\n## Basic Usage\n\n### Reading Logs\n\n```csharp\n\
+  using TrajectoryLogReader;\nusing TrajectoryLogReader.IO;\n\n// Read standard binary log\nvar log =\
+  \ LogReader.ReadBinary(\"path/to/file.bin\");\n```\n\n## Data Model\n\nThe `TrajectoryLog` object provides\
+  \ two primary views of the data: **Axes** (columnar) and **Snapshots** (row-based).\n\n### 1. Columnar\
+  \ Access (Axes)\n\nBest for statistical analysis or plotting full time-series.\n\n```csharp\n// Access\
+  \ raw arrays (IEnumerable<float>)\nvar gantryAngles = log.Axes.Gantry.ActualValues;\nvar cumulativeMu\
+  \ = log.Axes.MU.ActualValues;\nvar gantryErrors = log.Axes.Gantry.ErrorValues;\n\n// Derived rates\n\
+  var gantrySpeed = log.Axes.GantrySpeed.ActualValues; // deg/s\nvar doseRate = log.Axes.DoseRate.ActualValues;\
+  \   \n```\n\n### 2. Temporal Access (Snapshots)\n\nBest for sequential processing or state reconstruction.\n\
+  \n```csharp\nforeach (var snapshot in log.Snapshots)\n{\n    var time = snapshot.Milliseconds;\n   \
+  \ var gantry = snapshot.Gantry.Actual;\n    \n    // Access MLC leaf positions with 0-based index [bankIndex,\
+  \ leafIndex]\n    var leafA1 = snapshot.Mlc.Leaves[0][0].Actual; \n}\n```\n\nThese can also be access\
+  \ for each sub-beam, e.g\n\n```csharp\nlog.SubBeams.First().Axes.Gantry.ExpectedValues;\nlog.SubBeams.First().Snapshots.First().GantryRtn.Actual;\n\
+  ```\n\n## Analysis Features\n\n### Interpolation\n\nLinear interpolation of machine state at any given\
+  \ time (ms).\n\n```csharp\nint timeMs = 150;\n// Axis position\ndouble gantryAtT = log.InterpolateAxisData(Axis.GantryRtn,\
+  \ timeMs, RecordType.ActualPosition);\n// Specific MLC leaf\ndouble leafPos = log.InterpolateMLCPosition(timeMs,\
+  \ bank: 0, leafIndex: 10, RecordType.ActualPosition);\n```\n\n### Fluence Reconstruction\n\nGenerates\
+  \ a 2D fluence map using Sutherland-Hodgman polygon clipping for accurate aperture area calculation.\n\
+  \n```csharp\nvar options = new FluenceOptions\n{\n    Rows = 512,\n    Cols = 512,\n    Width = 400,\
+  \ //mm\n    Height = 400, // mm\n};\n\nvar fluenceGrid = log.CreateFluence(options, RecordType.ActualPosition);\n\
+  var fluenceGridBeam = log.SubBeams.First().CreateFluence(options, RecordType.ActualPosition);\n```\n\
+  \n<img width=\"400\" height=\"400\" alt=\"image\" src=\"https://github.com/user-attachments/assets/738b82fc-f0a6-43d3-bbd5-4a9b6b266bb6\"\
+  \ />\n\n### Gamma Analysis\n\nImplements 2D Gamma Index (Low et al., 1998). Uses interpolation of the\
+  \ eval grid, which is configurable. The search\nradius is also configurable.\n\n```csharp\nvar gammaParams\
+  \ = new GammaParameters2D(dtaTolMm: 1, doseTolPercent: 1, global: true);\nvar result = GammaCalculator2D.Calculate(gammaParams,\
+  \ reference, evaluated);\n\nConsole.WriteLine($\"Passing Rate: {result.FracPass * 100:F1}%\");\n```\n\
+  \n### Output\n\nOutput a log-file to TSV or CSV\n\n```csharp\nlog.SaveToCsv(\"/out/log.csv\", includeHeaders:\
+  \ true, AxisScale.IEC61217);\n```\n\n<img width=\"50%\" alt=\"image\" src=\"https://github.com/user-attachments/assets/9f72a8e7-bc61-4f14-87a8-289dc80334cb\"\
+  \ />\n\n\n### Writing Compressed Logs\n\nThe CompressedLogWriter will write the files to a compressed\
+  \ (***lossy***) format. Here we only store changes between\neach axis position as scaled 8/16 bit values.\n\
+  \nWhile there is some loss in precision, the maximum loss for each axis is:\n\n| Axis              \
+  \    | Stream Type | Scale | Notes               |\n|-----------------------|-------------|-------|---------------------|\n\
+  | MLC (All)             | Small       | 1000  | 0.001 cm res        |\n| Jaws (X1, X2, Y1, Y2) | Small\
+  \       | 1000  | 0.001 cm res        |\n| Couch Pitch / Roll    | Small       | 100   | 0.01 deg res\
+  \        |\n| Couch Vrt / Lng / Lat | Large       | 100   | 0.01 cm res         |\n| Gantry Rtn    \
+  \        | Large       | 100   | 0.01 deg res, Wraps |\n| Collimator Rtn        | Large       | 100\
+  \   | 0.01 deg res, Wraps |\n| Couch Rtn             | Large       | 100   | 0.01 deg res, Wraps |\n\
+  | MU                    | Large       | 1000  | 0.001 unit res      |\n| ControlPoint          | Large\
+  \       | 1000  | 0.001 unit res      |\n\nLog file sizes are reduced by >90%, depending on the file.\n\
+  \n```csharp\n// Writes to .cbin\nCompressedLogWriter.Write(log, \"path/to/output.cbin\");\n```\n"

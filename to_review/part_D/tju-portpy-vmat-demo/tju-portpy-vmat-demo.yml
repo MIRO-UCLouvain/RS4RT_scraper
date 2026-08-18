@@ -1,0 +1,65 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: tju-thomas-lab/tju-portpy-vmat-demo
+url: https://github.com/tju-thomas-lab/tju-portpy-vmat-demo
+platform: github
+description: ''
+license: null
+language: TypeScript
+keywords: []
+stars: 0
+updated_at: '2026-06-16T15:20:07Z'
+image_source: https://raw.githubusercontent.com/tju-thomas-lab/tju-portpy-vmat-demo/HEAD/image/ui-dark.png
+heuristic_total_score: 18
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# TJU PortPy VMAT Demo\n\nA research demo that wraps the PortPy VMAT global optimal example\
+  \ in a FastAPI backend and a modern, Eclipse-inspired web UI. It lets you:\n\nProject page: https://tju-thomas-lab.github.io/tju-portpy-vmat-demo/\n\
+  \nRepository: https://github.com/tju-thomas-lab/tju-portpy-vmat-demo\n\n- Download PortPy benchmark\
+  \ patients (via Hugging Face) on demand\n- Run the VMAT global optimal example programmatically (MOSEK/ECOS_BB)\n\
+  - View DVHs, key dose metrics, and axial dose/contour slices\n- Adjust objective weights/targets and\
+  \ compare runs side by side\n- Stream solver logs/progress (MOSEK/ECOS) and check solver health/license\n\
+  \n> ⚠️ Research only. No clinical use. PortPy is licensed for non-commercial academic/research purposes.\n\
+  \n## Screenshots\n\nWeb UI (dark theme):\n\n![Web UI](image/ui-dark.png)\n\nBackend + download flow:\n\
+  \n![Backend](image/backend.png)\n\n## Project structure\n\n- `services/api/app/` — FastAPI backend\n\
+  \  - `main.py` — API endpoints (`/cases`, `/ensure_patient/{id}`, `/optimize`, `/runs/{id}`, `/cases/{id}/ct_slice/{slice}`,\
+  \ `/health/solver`)\n  - `download_patient.py` — Fetch a single patient folder from Hugging Face if\
+  \ missing\n  - `portpy_runner/vmat_global_optimal_runner.py` — Notebook-faithful VMAT runner\n  - `storage.py`\
+  \ — File-based run artifacts\n- `web/` — Next.js 14 UI\n  - Draggable panels, DVH, metrics, axial dose\
+  \ viewer with contour overlays\n  - React Query for API calls\n- `IMPLEMENTATION_PLAN.md` — Work plan\
+  \ and checklist\n\n## Quick start\n\nPrereqs: Python 3.9+, Node 18+, MOSEK (optional but recommended\
+  \ for speed), git, curl.\n\n### Backend\n```bash\npython3 -m venv portpy-vmat-env\nsource portpy-vmat-env/bin/activate\n\
+  pip install -r PortPy-master/requirements.txt\npip install fastapi uvicorn python-dotenv pillow scipy\
+  \ \"numpy<2\"\n\n# (optional) set HF token for faster downloads and MOSEK license path\necho \"HF_TOKEN=your_token\"\
+  \ >> .env\necho \"MOSEKLM_LICENSE_FILE=/absolute/path/to/.mosek/mosek.lic\" >> .env\n\nuvicorn services.api.app.main:app\
+  \ --reload --port 8000\n```\n\n### Frontend\n```bash\ncd web\nnpm install\necho \"NEXT_PUBLIC_API_BASE=http://localhost:8000\"\
+  \ > .env.local\nnpm run dev\n```\nOpen http://localhost:3000.\n\n### Downloading patients\n- Click “Download\
+  \ / refresh” in the UI for the selected case, or call:\n  ```bash\n  curl -X POST http://localhost:8000/ensure_patient/Lung_Patient_6\n\
+  \  ```\n- Backend logs will show progress; data is saved under `PortPy-master/data/<patient>`.\n\n###\
+  \ Running optimization\n- In the UI, adjust objectives and click “Re-optimize.” The backend runs the\
+  \ VMAT global optimal example and returns DVH/metrics/dose for visualization and comparison.\n- Watch\
+  \ the solver console/progress charts for gap/objective/runtime; the elapsed timer stops when the run\
+  \ finishes.\n- Use the dose threshold slider in the CT viewer to focus the isodose wash.\n\n### MOSEK\
+  \ health check\n- Backend endpoint: `GET /health/solver` reports import/license status (fails open to\
+  \ ECOS_BB otherwise).\n\n## Current status (from implementation plan)\n- [x] Runner: Notebook-faithful\
+  \ VMAT runner (defaults, overrides, DVH/metrics, MIP deliverability).\n- [x] Objective schema/adapter:\
+  \ Defaults from PortPy configs; overrides applied. (Tighten validation/error surfacing.)\n- [x] Storage:\
+  \ File-based run artifacts (JSON + npz).\n- [x] Backend: FastAPI endpoints (`/cases`, `/ensure_patient`,\
+  \ `/optimize`, `/runs`, `/cases/{id}/ct_slice/{slice}` with contour overlays). (Improve logging/error\
+  \ handling.)\n- [x] UI: Next.js dark UI with draggable panels, objectives controls, DVH, metrics, axial\
+  \ dose viewer (contours), run comparison, download/refresh. (Polish DVH axes, Eclipse-like objectives\
+  \ controls, richer job status.)\n- [ ] Validation: Add automated smoke/tests.\n- [ ] UX: Better download\
+  \ progress, status/error messaging, MOSEK speed guidance.\n\n## Notes on data and licensing\n- Patient\
+  \ data are **not** in the repo. They are pulled from [PortPy-Project/PortPy_Dataset](https://huggingface.co/datasets/PortPy-Project/PortPy_Dataset)\
+  \ via the downloader.\n- PortPy is licensed for non-commercial academic/research use under Apache 2.0\
+  \ with Commons Clause (see [PortPy LICENSE](https://github.com/PortPy-Project/PortPy/blob/master/LICENSE.txt)).\n\
+  - MOSEK requires a valid license for performant solves.\n\n## Credits\n- **PortPy**: VMAT algorithms,\
+  \ data, and reference notebooks — https://github.com/PortPy-Project/PortPy\n- **ECHO-VMAT**: Architectural\
+  \ inspiration for VMAT abstractions — https://github.com/PortPy-Project/ECHO-VMAT\n\n## Repository housekeeping\n\
+  \n`.gitignore` excludes envs, node_modules, build artifacts, and all patient data/metadata. Keep secrets\
+  \ (e.g., `HF_TOKEN`) in an untracked `.env`.\n"

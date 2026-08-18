@@ -1,0 +1,47 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: lenghanquan/ct-radiomics-robustness-nsclc
+url: https://github.com/lenghanquan/ct-radiomics-robustness-nsclc
+platform: github
+description: Public-data CT radiomics robustness + nested Cox pipeline (TCIA NSCLC-Radiomics)
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-07T09:05:47Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# CT Radiomics Robustness Experiments (Direction A)\n\n**Public repository:** https://github.com/lenghanquan/ct-radiomics-robustness-nsclc\n\
+  \nPipeline accompanying the JMI manuscript draft:\n\n1. Prepare NIfTI cases (`image.nii.gz` + `mask.nii.gz`)\n\
+  2. Extract original + perturbed PyRadiomics features (mixed / by-op / multi-intensity grid)\n3. Compute\
+  \ ICC → robust feature labeling\n4. Nested patient-level Cox models (all-feature vs robust-feature;\
+  \ training-fold ICC only)\n\nImaging data are **not** hosted here; download NSCLC-Radiomics from TCIA\
+  \ (see `DATA_DOWNLOAD.md`).\n\n## Quick start (synthetic smoke test, no TCIA yet)\n\n```powershell\n\
+  cd e:\\new\\experiments\npython -m pip install -r requirements.txt\npython src/run_pipeline.py --mode\
+  \ demo\n```\n\nOutputs go to `outputs/`:\n\n- `features_original.csv`\n- `features_perturbed.csv`\n\
+  - `icc_by_feature.csv`\n- `robust_features.txt`\n- `model_metrics.csv`\n\n## Real data (NSCLC-Radiomics\
+  \ / TCIA)\n\nLocal extracted DICOM is expected at `E:\\new\\NSCLC.zip` (422 `LUNG1-*` folders) plus\n\
+  `E:\\new\\NSCLC Radiomics Lung1.csv`. See also `DATA_DOWNLOAD.md`.\n\n### 1) Convert DICOM → NIfTI (pilot\
+  \ then full)\n\n```powershell\nconda activate radiomics310\ncd /d e:\\new\\experiments\n\n# Pilot: first\
+  \ 10 cases\npython src/convert_dicom_to_nifti.py --limit 10\n\n# Full cohort\npython src/convert_dicom_to_nifti.py\
+  \ --limit 0\n```\n\nLog: `outputs/convert_log.csv`\n\n### 2) Build labels.csv\n\n```powershell\n# Default:\
+  \ median split on Survival.time\npython src/make_labels.py --endpoint survival_median\n\n# Optional\
+  \ alternatives:\n# python src/make_labels.py --endpoint nodal\n# python src/make_labels.py --endpoint\
+  \ stage_advanced\n```\n\n### 3) Feature extraction / ICC / modeling\n\n```powershell\npython src/extract_features.py\
+  \ --config config.yaml\npython src/compute_icc.py --config config.yaml\npython src/train_models.py --config\
+  \ config.yaml\n```\n\n## Expected folder layout\n\n```text\ndata/nsclc_radiomics/\n  nifti/\n    CASE001/\n\
+  \      image.nii.gz\n      mask.nii.gz\n    CASE002/\n      ...\n  labels.csv   # columns: case_id,label,...\n\
+  ```\n\n## Config\n\nEdit `config.yaml` for resampling, bin width, perturbation strength, ICC threshold,\
+  \ etc.\n\n## Notes\n\n- First pass disables wavelet/LoG for speed; enable in `config.yaml` for the paper\
+  \ run.\n- Demo labels are synthetic — AUC on demo data is only for pipeline validation, not science.\n\
+  - GPU is not required.\n- **PyRadiomics on this Windows Python build failed** (missing Windows SDK headers).\
+  \ The code auto-falls back to a numpy/skimage extractor for smoke tests. For the real JMI paper, install\
+  \ IBSI-oriented PyRadiomics via:\n  ```text\n  conda create -n radiomics python=3.10\n  conda activate\
+  \ radiomics\n  conda install -c conda-forge pyradiomics simpleitk pandas scikit-learn pyyaml tqdm scikit-image\n\
+  \  ```\n  Then re-run the pipeline in that environment.\n"

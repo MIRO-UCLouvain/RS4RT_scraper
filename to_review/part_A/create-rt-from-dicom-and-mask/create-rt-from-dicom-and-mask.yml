@@ -1,0 +1,34 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: brianmanderson/Create_RT_From_Dicom_and_Mask
+url: https://github.com/brianmanderson/Create_RT_From_Dicom_and_Mask
+platform: github
+description: This is for the creation of a Dicom_RT structure using a template RT structure, the dicom
+  images, and a mask
+license: null
+language: Python
+keywords: []
+stars: 3
+updated_at: '2026-07-10T19:42:28Z'
+image_source: null
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 4 support term(s).
+readme_excerpt: "# Create_RT_From_Dicom_and_Mask\n\nConverts a numpy segmentation mask (e.g. deep-learning\
+  \ predictions) plus the matching DICOM image series into a DICOM RT Structure Set (RTSTRUCT), so the\
+  \ contours can be loaded into radiotherapy planning software. Ships as a single Python module with a\
+  \ bundled `template_RS.dcm` that is copied and rewritten with the new contours.\n\n**Status: old utility,\
+  \ not maintained since 2020.**\n\n## How it works\n\n`Make_RT_Data` walks the image directory with `pydicom`,\
+  \ sorts the slices by z-position, extracts per-slice contours from each mask class with `scikit-image`,\
+  \ and writes them into a copy of the bundled template RT structure (`template_RS.dcm` / `key_list.txt`),\
+  \ referencing the input series' UIDs.\n\n## Requirements\n\nPython with `pydicom`, `numpy`, and `scikit-image`.\
+  \ No packaging; copy the repo folder and import the module directly.\n\n## Usage\n\n```python\nfrom\
+  \ Create_RT_From_Dicom_and_mask import main\n\nimage_path = 'C:/users/brianmanderson/Patient_1/CT1/'\
+  \   # folder of DICOM images\nContour_Names = ['Liver']\nannotations = numpy_array_predictions\n# annotations\
+  \ shape: [# images, rows, cols, # classes + 1]\n# annotations[..., 0] is the background class\nout_path\
+  \ = 'C:/users/brianmanderson/Patient_1/Output/'\n\nmain(image_path=image_path, annotations=annotations,\n\
+  \     Contour_Names=Contour_Names, out_path=out_path)\n```\n\nIf you find this code useful, please provide\
+  \ a reference to my GitHub page for others: https://www.github.com/brianmanderson — thank you!\n"

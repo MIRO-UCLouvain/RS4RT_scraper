@@ -1,0 +1,157 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: brianmanderson/Dicom_RT_and_Images_to_Mask
+url: https://github.com/brianmanderson/Dicom_RT_and_Images_to_Mask
+platform: github
+description: Tools to help with the conversion of DICOM images, RT Structures, and dose to useful Python
+  objects. Essentially DICOM to NumPy and SimpleITK Images
+license: GPL-3.0
+language: Python
+keywords:
+- binary-masks
+- deep-learning
+- deeplearning
+- dicom
+- dicom-images
+- dicomrt
+- mask
+- medical-image-processing
+- medical-imaging
+- nifti-images
+- numpy
+- python
+- roi
+- roi-segmentation
+- rt-struct
+- rt-structs
+- rt-utils
+- rtstruct
+- ucsd-catalog
+stars: 108
+updated_at: '2026-08-05T06:44:42Z'
+image_source: null
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 8 support term(s).
+readme_excerpt: "# DicomRTTool\n\n[![PyPI version](https://badge.fury.io/py/DicomRTTool.svg)](https://pypi.org/project/DicomRTTool/)\n\
+  [![Tests](https://github.com/brianmanderson/Dicom_RT_and_Images_to_Mask/actions/workflows/test.yml/badge.svg)](https://github.com/brianmanderson/Dicom_RT_and_Images_to_Mask/actions/workflows/test.yml)\n\
+  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21631862.svg)](https://doi.org/10.5281/zenodo.21631862)\n\
+  \n> **Published!** See the [Technical Note](https://www.sciencedirect.com/science/article/abs/pii/S1879850021000485)\
+  \ and please cite it if you find this work useful.\n> DOI: <https://doi.org/10.1016/j.prro.2021.02.003>\n\
+  \nConvert DICOM images and RT structures into NIfTI files, NumPy arrays, and SimpleITK image handles\
+  \ — and convert prediction masks back into RT structures.\n\n## Intended use\n\nDicomRTTool is a **reference\
+  \ implementation for research and for building\nclinical workflows — not a validated clinical device.**\
+  \ It has no regulatory\nclearance of any kind, and nothing in this repository removes an adopting\n\
+  site's responsibility to commission it locally.\n\n**What it is for:** converting DICOM image series\
+  \ and RT structure sets into\narrays, NIfTI, and SimpleITK handles for research and model development;\n\
+  surveying and indexing DICOM corpora; resampling; anonymized export; and\nwriting segmentation output\
+  \ back into an RT structure set.\n\n**What it is not for:** use as the sole check on any structure set\
+  \ that will\nbe treated from. Two paths in this library produce or modify DICOM that can be\nimported\
+  \ into a treatment planning system:\n\n- `prediction_array_to_RT()` writes a model's segmentation into\
+  \ a new RT\n  structure set. Contours produced this way are a **starting point requiring\n  review and\
+  \ editing by a qualified person** before any clinical use. A\n  rasterization or coordinate error is\
+  \ not always visually obvious.\n- `rewrite_RT()` renames ROIs in an existing structure set and **saves\
+  \ the\n  file in place**. A wrong association silently relabels a structure, and the\n  in-place write\
+  \ leaves no original to compare against. Keep an independent\n  copy of any structure set before rewriting\
+  \ it.\n\nIf output from this library will inform a clinical decision, commission it\nfirst: see [`docs/COMMISSIONING.md`](docs/COMMISSIONING.md)\
+  \ and run the\nvalidation package described there.\n\n## Versioned use\n\n**Clinical or clinically-adjacent\
+  \ use is supported only from tagged\nreleases — never from `main`.** `main` receives development work\
+  \ that has not\nbeen through a release check, and its behaviour can change without notice.\n\nPin an\
+  \ exact version, and record the version you commissioned:\n\n```bash\npip install DicomRTTool==6.2.0\n\
+  ```\n\nRe-commission after any version change that touches conversion, geometry, or\nthe RT write paths;\
+  \ the [CHANGELOG](CHANGELOG.md) flags those.\n\n## Installation\n\n```bash\npip install DicomRTTool\n\
+  ```\n\nFor the interactive image viewer (requires matplotlib):\n\n```bash\npip install \"DicomRTTool[viewer]\"\
+  \n```\n\n**Supported Python versions:** 3.10, 3.11, 3.12, 3.13.\n\n## Getting started: a typical workflow\n\
+  \nA first pass through a new DICOM corpus usually moves from **discover →\nsurvey → select → export**:\n\
+  \n1. **Discover** — walk the folder tree and list the ROIs that are present.\n2. **Survey** — write\
+  \ a metadata manifest of everything found (spacing + ROI volumes).\n3. **Select** — choose the ROIs\
+  \ you want and map their name aliases.\n4. **Export** — write NIfTI files, resampled to your target\
+  \ voxel spacing.\n\nEverything else in this README (loading a single series into NumPy, writing\npredictions\
+  \ back to RT structures, anonymization, performance tuning, …) builds\non these four steps and is covered\
+  \ afterwards.\n\n### Step 1 — Discover: walk the folders\n\n`walk_through_folders` recursively scans\
+  \ a directory tree, groups files by\n`SeriesInstanceUID`, and links each RT structure and dose to its\
+  \ image series.\nThe images and RT files do **not** need to live in the same folder.\n\n```python\n\
+  from DicomRTTool.ReaderWriter import DicomReaderWriter\n\nreader = DicomReaderWriter()\nreader.walk_through_folders(\"\
+  /path/to/dicom\")\n\n# What ROIs exist across everything that was found?\nall_rois = reader.return_rois(print_rois=True)\n\
+  ```\n\n### Step 2 — Survey: write a metadata manifest\n\nBefore committing to an export, get a one-row-per-series\
+  \ overview with\n`create_manifest`. With no ROIs selected yet it records **every ROI it found**,\nso\
+  \ you can see what is available and how large each structure is:\n\n```python\nreader.create_manifest(\"\
+  /path/to/manifest.csv\")\n```\n\nEach row has `patient_hash` / `study_hash` / `series_hash`, the image\
+  \ spacing\n(`spacing_x/y/z`), and one `<roi> cc` column per ROI giving its mask volume in\ncubic centimetres\
+  \ (blank when that ROI is absent from the series). Add\n`anonymize=True, salt=\"MyProjectSalt\"` to\
+  \ put the deterministic hashes in those\ncolumns; otherwise they hold the original `PatientID` / `StudyInstanceUID`\
+  \ /\n`SeriesInstanceUID`. An `anonymization_key.json` reverse-lookup file is written\n**next to the\
+  \ manifest** so you can review the table and its key together. Re-runs\n**update the file in place**\
+  \ (see [Incremental manifests](#incremental-manifests)),\nso you can keep growing one manifest as you\
+  \ walk more data.\n\n### Step 3 — Select: choose ROIs and map aliases\n\nReal-world ROI names are inconsistent\
+  \ (`Lung_L`, `Lung-Left`, `left lung`).\n`ROIAssociationClass` maps any number of aliases onto one canonical\
+  \ name, and\n`set_contour_names_and_associations` picks the ROIs you actually want:\n\n```python\nfrom\
+  \ DicomRTTool.ReaderWriter import ROIAssociationClass\n\nreader.set_contour_names_and_associations(\n\
+  \    contour_names=[\"lung_l\", \"lung_r\", \"cord\"],\n    associations=[\n        ROIAssociationClass(\"\
+  lung_l\", [\"lung-left\", \"left lung\"]),\n        ROIAssociationClass(\"lung_r\", [\"lung-right\"\
+  , \"right lung\"]),\n        ROIAssociationClass(\"cord\", [\"spinal cord\", \"spinalcord\"]),\n   \
+  \ ],\n)\n\n# Which series contain the selected ROIs?\nprint(reader.indexes_with_contours)\n```\n\nROI\
+  \ names are matched case-insensitively. Build the reader with\n`require_all_contours=False` to also\
+  \ include series that carry only *some* of\nthe selected ROIs.\n\n### Step 4 — Export: NIfTI with voxel\
+  \ resampling\n\n`write_to_folder` writes every selected series to a tidy per-case tree — one file\n\
+  per ROI — plus a `manifest.csv`. Pass `output_spacing` (mm) to resample on the\nway out: **linear**\
+  \ interpolation for the image and dose, **nearest-neighbour**\nfor masks (labels are never blended).\
+  \ The dose is resampled onto the resampled\nimage grid, so the image, masks, and dose all come out the\
+  \ same size and\ngeometry.\n\n```python\n# Build with get_dose_output=True if you also want the dose\
+  \ loaded/resampled.\nreader.write_to_folder(\n    \"/path/to/out\",\n    output_spacing=(1.0, 1.0, 3.0),\
+  \     # omit to keep native spacing\n    anonymize=True, salt=\"MyProjectSalt\",\n)\n```\n\n```text\n\
+  out/\n  <patient>/<study>/<series>/   # hashes when anonymized, else sanitised IDs\n    image.nii.gz\n\
+  \    masks/\n      lung_l.nii.gz\n      lung_r.nii.gz\n      cord.nii.gz\n    doses/               \
+  \       # only when get_dose_output=True and dose exists\n      plan.nii.gz\n    metadata.json     \
+  \          # per-series DICOM features (grouped, schema v2)\n  manifest.csv                  # identifiers,\
+  \ spacing, per-ROI volume (cc)\n  anonymization_key.json        # only when anonymize=True (reverse\
+  \ lookup)\n```\n\nThis nested `patient/study/series` layout mirrors the companion C# DICOM→NIfTI\ntool.\
+  \ The `manifest.csv` has the same shape as the one from\n[Step 2](#step-2--survey-write-a-metadata-manifest).\
+  \ The `metadata.json` groups\nthe image / structure / dose / plan features per series (see\n[Grouped\
+  \ metadata](#grouped-metadata-schema-v2); pass\n`metadata_style=\"flat\"` for the historical requested-tags-only\
+  \ dict).\n\nThe method name implies the breadth: **skip ROI selection** entirely (no\n`Contour_Names`,\
+  \ no `rois=`) and `write_to_folder` exports *every image series*\nas **image + dose only** — handy when\
+  \ you just want the images. You can also set\n`anonymize` (and `salt`) **once at construction** to make\
+  \ it the default for\nevery export, and still override it per call:\n\n```python\nreader = DicomReaderWriter(anonymize=True,\
+  \ salt=\"MyProjectSalt\")   # default on\nreader.walk_through_folders(\"/path/to/dicom\")\nreader.write_to_folder(\"\
+  /path/to/anon\")                  # uses the default\nreader.write_to_folder(\"/path/to/clear\", anonymize=False)\
+  \  # override off\n```\n\n---\n\nThat's the core loop, and [`Examples/01_DICOM_to_NIfTI_Dataset.ipynb`](Examples/01_DICOM_to_NIfTI_Dataset.ipynb)\n\
+  runs it end to end on a public TCIA cohort — CT, structures, **and** dose —\nthrough to a verified,\
+  \ anonymized NIfTI dataset. See [`Examples/`](Examples/).\n\nThe sections below are reference material\
+  \ for everything else.\n\n## Load a single series into NumPy / SimpleITK\n\nFor in-memory analysis (e.g.\
+  \ feeding a model) instead of exporting files, load\none series directly:\n\n```python\nreader.set_index(reader.indexes_with_contours[0])\n\
+  reader.get_images_and_mask()\n\nimage_numpy  = reader.ArrayDicom         # NumPy image array\nmask_numpy\
+  \   = reader.mask               # NumPy mask array\nimage_handle = reader.dicom_handle       # SimpleITK\
+  \ Image\nmask_handle  = reader.annotation_handle  # SimpleITK Image\n```\n\n## Anonymized export\n\n\
+  `anonymize=True` (on `write_to_folder` or `create_manifest`) replaces identifiers\nwith deterministic\
+  \ SHA-256 hashes (patient MRN → patient hash, study hash,\nseries hash). For `write_to_folder` the case\
+  \ folder is named by the series hash\nand an `anonymization_key.json` reverse-lookup file is written\
+  \ alongside the\nmanifest. The hashing matches the companion C# tool byte-for-byte, so both\ntools produce\
+  \ identical hashes for the same salt:\n\n```python\nreader.write_to_folder(\"/path/to/out\", anonymize=True,\
+  \ salt=\"MyProjectSalt\")\n\n# Stand-alone helpers are exported too:\nfrom DicomRTTool import hash_patient,\
+  \ hash_study, hash_series, AnonymizationKey\nhash_patient(\"1234567\")          # -> 'P...'  (prefix\
+  \ + 5 bytes of SHA-256)\n```\n\n## Metadata manifest details\n\n`create_manifest` ([Step 2](#step-2--survey-write-a-metadata-manifest))\
+  \ defaults\nto **every ROI discovered during the walk**. To restrict it to specific ROIs,\neither set\
+  \ `Contour_Names` on the reader (as in\n[Step 3](#step-3--select-choose-rois-and-map-aliases)) or pass\
+  \ them explicitly:\n\n```python\nreader.create_manifest(\"/path/to/manifest.csv\", rois=[\"tumor\",\
+  \ \"cord\"])\n```\n\n### Image rows and dose rows\n\nThe manifest holds two kinds of row, told apart\
+  \ by the `modality` column:\n\n| Row | `modality` | Value columns |\n|-----|-----------|---------------|\n\
+  | Image series | `CT`, `MR`, … | one `<roi> cc` per ROI — the mask volume |\n| Dose series | `RTDOSE`\
+  \ | one `<plan> cGy` per plan — that plan's **Dmax** |\n\nA dose row is keyed by the **dose series'\
+  \ own** `patient_hash` / `study_hash` /\n`series_hash`, so it shares the patient and study of the images\
+  \ it belongs to\nbut carries its own series identifier. Its `spacing_x/y/z` is the dose grid's\nown\
+  \ spacing, which is usually finer than the image's. Each row only ever fills\nits own kind of column,\
+  \ so the other kind is blank.\n\nThe plan name is taken from the referenced RT Plan's `RTPlanName`,\
+  \ falling back\nto its `RTPlanLabel`. Many public collections ship dose *without* the plan, in\nwhich\
+  \ case the dose's own series description is used instead.\n\n`Dmax` is read off the **native** dose\
+  \ grid, before any `output_spacing`\nresampling — interpolating a dose onto a coarser grid blunts its\
+  \ peak, and the\nmanifest should report the real maximum. `DoseUnits` of `GY` and `CGY` are both\nconverted\
+  \ to cGy; anything without an absolute equivalent (e.g. `RELATIVE`)\nleaves the cell blank and logs\
+  \ a warning.\n\n`create_manifest` reports **every** dose the walk found. `write_to_folder`'s\nmanifest\
+  \ describes what it actually wrote, so it includes dose rows only when\nthe reader was built with `get_dose_output=True`.\n\
+  \n### Incremental manifests\n\nIf the target CSV (and its `anonymization_key.json`) already exist,\n\
+  `create_manifest` **reads them and updates in place*"

@@ -1,0 +1,87 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ParvPanwar/CBCT_Segmentation
+url: https://github.com/ParvPanwar/CBCT_Segmentation
+platform: github
+description: ''
+license: null
+language: HTML
+keywords: []
+stars: 0
+updated_at: '2026-05-13T21:46:36Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# CBCT Tooth Segmentation\n\nThis project is a compact ToothFairy2 CBCT segmentation\
+  \ pipeline. It trains and runs a small PyTorch 3D U-Net, exports NIfTI masks, converts detected labels\
+  \ into GLB meshes, and visualizes the scan/masks/meshes in a browser viewer.\n\n## Dataset\n\nThe code\
+  \ expects the nnU-Net-style ToothFairy2 layout used in this workspace:\n\n```text\n../Dataset112_ToothFairy2/\n\
+  ├── imagesTr/\n│   ├── ToothFairy2P_001_0000.mha\n│   └── ...\n├── labelsTr/\n│   ├── ToothFairy2P_001.mha\n\
+  │   └── ...\n└── dataset-metadata.json\n```\n\nPatient split files live in `data/train.txt`, `data/val.txt`,\
+  \ and `data/test.txt`. To regenerate them, run:\n\n```bash\npython3 preprocessing/prepare_splits.py\
+  \ --data_root ../Dataset112_ToothFairy2\n```\n\nThe split script scans `imagesTr/*_0000.mha` and keeps\
+  \ only patients that also have a matching `labelsTr/*.mha`.\n\n## How It Works\n\n1. `preprocessing/preprocess.py`\
+  \ reads `.mha` or a DICOM folder, resamples to `0.4 mm` isotropic spacing, clips intensities to `[-1000,\
+  \ 3000]`, normalizes to `[0, 1]`, and writes `scan_preprocessed.nii.gz`.\n2. `training/dataset.py` loads\
+  \ `imagesTr` and `labelsTr`, remaps raw ToothFairy2 labels to contiguous class IDs, crops `64x64x64`\
+  \ patches, and applies simple augmentation.\n3. `training/model.py` defines a small 3D U-Net with `44`\
+  \ output classes.\n4. `training/train.py` trains with cross entropy plus Dice loss and saves checkpoints\
+  \ in `checkpoints/`.\n5. `inference/inference.py` runs sliding-window inference, maps contiguous predictions\
+  \ back to ToothFairy2 label values, removes small components, writes masks, and generates meshes with\
+  \ marching cubes.\n6. `dental-cbct-viewer.html` displays the scan, masks, GLB meshes, metadata, FDI\
+  \ labels, jaw separation, and restoration/pathology status labels where that data exists.\n\nPipeline:\n\
+  \n```text\nToothFairy2 .mha -> preprocess -> 3D U-Net -> cleaned label mask -> NIfTI masks + GLB meshes\
+  \ + JSON metadata -> viewer\n```\n\n## Supported File Formats\n\nFor model testing/inference:\n\n- `.mha`\
+  \ CBCT volume files are the tested/default input format.\n- DICOM folders are supported by `preprocessing/preprocess.py`.\n\
+  - Other SimpleITK-readable medical image formats may work, but they are not the primary tested path.\n\
+  \nFor ToothFairy2-style training:\n\n- Images: `imagesTr/<patient_id>_0000.mha`\n- Labels: `labelsTr/<patient_id>.mha`\n\
+  \nFor viewer upload:\n\n- Scan volume: `.nii`, `.nii.gz`\n- Masks: `.nii`, `.nii.gz`\n- 3D mesh: `.glb`,\
+  \ `.gltf`\n- Metadata/statistics: `.json`\n\n## Setup\n\nInstall Python dependencies from the project\
+  \ root:\n\n```bash\npip install -r requirements.txt\n```\n\nOn Apple Silicon, inference may use MPS.\
+  \ Some unsupported PyTorch MPS ops fall back to CPU; this is expected and may be slower.\n\nOptional\
+  \ Docker build:\n\n```bash\ndocker build -t cbct_segmentation .\n```\n\n## Training\n\nCheck `config.yaml`\
+  \ before training. The current config points at:\n\n```text\ndata_root: /kaggle/input/datasets/parvpanwar/toothfairy2\n\
+  ```\n\nFor local training on this machine, change `data_root` to the local dataset path, for example:\n\
+  \n```text\ndata_root: ../Dataset112_ToothFairy2\n```\n\nThen run:\n\n```bash\npython3 training/train.py\n\
+  ```\n\nTraining uses `data/train.txt` and `data/val.txt`, runs for the configured number of epochs,\
+  \ and saves checkpoints into `checkpoints/`.\n\n## Running Inference\n\nThe easiest way to test a patient\
+  \ is:\n\n```bash\n./test_patient.sh ToothFairy2P_028\n```\n\nInference outputs are stored under:\n\n\
+  ```text\ndemo_output/<patient_id>/\n```\n\nThat script reads:\n\n```text\n../Dataset112_ToothFairy2/imagesTr/ToothFairy2P_028_0000.mha\n\
+  ```\n\nand writes:\n\n```text\ndemo_output/ToothFairy2P_028/\n├── scan_preprocessed.nii.gz\n├── mask_full.nii.gz\n\
+  ├── mask_upper.nii.gz\n├── mask_lower.nii.gz\n├── segmentation_meshes.glb\n├── mesh_metadata.json\n\
+  └── tooth_stats.json\n```\n\nYou can also call the inference module directly:\n\n```bash\npython3 -m\
+  \ inference.run_demo \\\n  --input ../Dataset112_ToothFairy2/imagesTr/ToothFairy2P_028_0000.mha \\\n\
+  \  --checkpoint checkpoints/best_model.pth \\\n  --output_dir demo_output/ToothFairy2P_028\n```\n\n\
+  If `--input` is omitted, `run_demo.py` creates a random synthetic volume. That is only useful as a code\
+  \ smoke test, not a meaningful dental segmentation result.\n\n## Output Files\n\nEach patient run creates\
+  \ its own folder. For example, running `./test_patient.sh ToothFairy2P_028` stores results in:\n\n```text\n\
+  /Users/parv/Desktop/cbct/cbct_segmentation 2/demo_output/ToothFairy2P_028/\n```\n\nUse this folder when\
+  \ loading files into the viewer.\n\n`mesh_metadata.json` is keyed by segmentation label. Example:\n\n\
+  ```json\n{\n  \"9\": {\n    \"fdi_id\": \"9\",\n    \"name\": \"Crown\",\n    \"category\": \"Restoration\"\
+  ,\n    \"vertices\": 24968,\n    \"voxel_count\": 14901\n  }\n}\n```\n\n`tooth_stats.json` records each\
+  \ label's voxel count and whether it is present.\n\nImportant label categories:\n\n- `1-7`: anatomical\
+  \ structures such as jawbone, canals, sinuses, and pharynx\n- `8-10`: restorations such as bridge, crown,\
+  \ and implant\n- `11-18`, `21-28`, `31-38`, `41-48`: FDI teeth\n- `40`: special/non-applicable label\n\
+  \n## Visualization\n\nFor the current full viewer, serve the project root and open the root HTML file:\n\
+  \n```bash\npython3 -m http.server 8765\n```\n\nThen open:\n\n```text\nhttp://localhost:8765/dental-cbct-viewer.html\n\
+  ```\n\nUsing `http://localhost` is recommended for consistent local file loading and browser module\
+  \ behavior; opening the file directly with `file://` can behave differently across browsers.\n\nThe\
+  \ viewer can load:\n\n- `scan_preprocessed.nii.gz`\n- `mask_full.nii.gz`\n- `mask_upper.nii.gz`\n- `mask_lower.nii.gz`\n\
+  - `segmentation_meshes.glb`\n- `mesh_metadata.json`\n- `tooth_stats.json`\n\nIt displays FDI IDs when\
+  \ FDI teeth are present, restoration/pathology/healthy/missing labels, jaw separation controls, a legend,\
+  \ and a selectable table of labels.\n\n## Current Model Behavior\n\nThe code supports the full ToothFairy2\
+  \ label map and FDI tooth IDs, but the available checkpoint should be judged by its actual predictions.\
+  \ In tests run on `ToothFairy2P_001` and `ToothFairy2P_028`, the generated meshes were:\n\n- `1` Lower\
+  \ Jawbone - Anatomical\n- `7` Pharynx - Anatomical\n- `9` Crown - Restoration\n\nThe viewer can show\
+  \ individual FDI teeth if the model predicts labels such as `11`, `12`, `21`, etc., but those labels\
+  \ were not produced in the checked demo outputs. Restoration/pathology labels also depend on data in\
+  \ `mesh_metadata.json` or `tooth_stats.json`; ToothFairy2 does not provide rich caries/pathology descriptions\
+  \ by default.\n\n## Notes\n\n- Sliding-window inference can be slow on CPU.\n- GLB mesh size depends\
+  \ on the predicted structures; recent demo outputs were around `16 MB`.\n- The project includes older\
+  \ documentation files from earlier viewer iterations. Treat this README and the current `dental-cbct-viewer.html`\
+  \ as the up-to-date workflow.\n"

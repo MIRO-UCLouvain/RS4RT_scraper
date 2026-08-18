@@ -1,0 +1,117 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: MBasala/debisimpp
+url: https://github.com/MBasala/debisimpp
+platform: github
+description: A Python-based 3D CT Simulation library for single and dual energy X-ray image generation.  This
+  library is designed to aid in the development and testing of single / dual energy CT based object detectors
+  for airport baggage screening and other CT imaging applications.
+license: GPL-3.0
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-17T17:35:10Z'
+image_source: https://raw.githubusercontent.com/MBasala/debisimpp/HEAD/figures/debisim_pipeline_3.png
+heuristic_total_score: 21
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "### DEBISim2.0 - A Simulation Pipeline for Dual Energy CT-based Baggage Inspection Systems\n\
+  \nDEBISim (Dual Energy Baggage Image Simulator) is a Python-based 3D CT Simulation library for Single\
+  \ and Dual energy X-ray image data generation. This library is designed to aid in the development, testing\
+  \ and evaluation of Single and Dual Energy CT based target detection systems for airport baggage screening\
+  \ and other CT imaging applications requiring anomaly detection. \n\nThe software package presents a\
+  \ simulation pipeline for developing algorithms for baggage inspection scanners and in other similar\
+  \ security screening applications. CT-based target detection systems in general require generating testing\
+  \ and training data by packing and scanning a large number of real bags with real threat materials.\
+  \ Since DEBISim incorporates a complete simulation of physical phenomena involving X-ray transmission,\
+  \ attenuation and detection and also provides a user-configurable scanner geometry, it is an alternative\
+  \ to physically scanning CT baggages for data generation. DEBISim also knows about the wide range of\
+  \ materials (and threat materials) that are encountered in a scanned bag and includes support for simulating\
+  \ them while packing virtual bags.\n\nThe DEBISim package includes the following features:\n\n - Fast\
+  \ and automated generation of randomized baggage CT datasets for target material detection.\n - User-specified\
+  \ baggage data generation using baggage/phantom templates.\n - Generation of single and dual-energy\
+  \ CT X-ray projection data and output images.\n - Support for spiral cone-beam CT scanner geometries\
+  \ typically used in security screening as well as for creating user-specified CT scanner models.\n -\
+  \ GUI support for both randomized and user-interactive data generation for baggage inspection (lim.\
+  \ access).\n - User-interactive graphical support for generating simulated test cases of 3D baggage\
+  \ CT volumes  (lim. access).\n\nThis repository consists of the latest version of our software (DEBISim2.0).\
+  \ The original DEBISim simulator is a Python2-based package which can be downloaded from this [link](https://engineering.purdue.edu/RVL/debisim/html/attachments/DebiSim-1.2.0.tar.gz).\
+  \ The complete description of DEBISim, its modules and its usage can be obtained from its official [webpage](https://engineering.purdue.edu/RVL/debisim/html/mainpage.html#setup-and-installation).\n\
+  \n![](figures/debisim_pipeline_3.png)\n\nDEBISim2.0 is a limited access, open-source version of our\
+  \ simulator which is Python3-based and has the following additional features:\n\n- simulation of 2D\
+  \ baggage cross-sections of bags as well as 3D volumetric renderings.\n- controlled generation of metal\
+  \ objects / clutter in baggage scans for studying metal artifact reduction.\n- controlled generation\
+  \ of target materials within simulated bags for X-ray based material detection.\n- simulation of second-order\
+  \ artifacts including ring, motion and scatter artifacts.\n- plotting and analysis of the material-based\
+  \ statistics of the scanned bag during simulation.\n\nTo know more about the mechanism behind the simulator,\
+  \ read our supporting research article: '[DEBISim: A simulation pipeline for dual energy CT-based baggage\
+  \ inspection systems](https://content.iospress.com/articles/journal-of-x-ray-science-and-technology/xst200808)'.\n\
+  \n#### Requirements\n\n- Python3  (>=3.12, <3.13)\n- CUDA Toolkit (>=v12.0)\n- For GPU Support: PyTorch\
+  \ , pyGpufit \n- The ASTRA toolbox\n- The FreeCT_wFBP reconstruction library\n\n#### Setup and Installation\n\
+  \n##### Download\nThe code package can be cloned from the git repository using:\n\n```bash\ngit clone\
+  \ https://github.com/avm-debatr/debisim2.git\n```\n\nBefore running the simulation scripts, the following\
+  \ steps must be taken for installation:\n\n##### Anaconda Environment Setup\n\nThe conda environment\
+  \ for the code can be created using the `environment.yaml` file provided with the scripts.\n\n```bash\n\
+  cd debisim2\nconda env create --name debienv --file=environment.yaml\nconda activate debienv\n```\n\
+  The following packages need to be downloaded additionally as per the simulation requirements:\n\n#####\
+  \ ASTRA Toolbox\n\n- This toolbox is essential for the Forward Model block to work. For use with DEBISim,\
+  \ ASTRA (mostly written in C) needs to be installed from source with Python bindings. Check the ASTRA\
+  \ homepage for [Linux installation](https://www.astra-toolbox.com/docs/install.html#linux-from-source)\
+  \ for instructions on how to install the package in your own machine.\n- Make sure that the machine\
+  \ has CUDA (5.5 or higher) installed on it before installing ASTRA.\n\n##### Gpufit\nPyGpufit is required\
+  \ to speed up the operation of the dual energy decomposition block in the simulation pipeline. This\
+  \ package must be installed and set up as follows:\n\n- Download the Gpufit package from GitHub:\n```bash\n\
+  git clone https://github.com/gpufit/Gpufit.git Gpufit\n```\n- Add the files `compton_pe.cuh`, `kn_pe.cuh`,\
+  \ `models.cuh` from `deps/gpufit/` directory in our repo to `<path to gpufit>/Gpufit/models/`  \n- Replace\
+  \ the file `<path to gpufit>/Gpufit/constants.cuh` with the one in `deps/gpufit/`.\n- Replace the file\
+  \ `<path to gpufit>/Gpufit/python/pygpufit/gpufit.py` with the one in `deps/gpufit/`.\n- Complete the\
+  \ Gpufit installation:\n\n```bash\ncd Gpufit\nmkdir build\ncd build\ncmake -DCMAKE_BUILD_TYPE=RELEASE\
+  \ ../\nmake\n```\n\n- Finish by installing the Python bindings for Gpufit:\n\n```bash\ncd pyGpufit/dist\n\
+  pip install pyGpufit-1.2.0-py2.py3-none-any.whl\n```\n\n##### FreeCT\n\n- Installing this library allows\
+  \ performing fast FBP reconstructions from Spiral CBCT projection data. The library can be installed\
+  \ from the FreeCT_wFBP [repository](https://engineering.purdue.edu/RVL/debisim/html/attachments/packages/freect.tar.gz).\
+  \ \n- For reference on installing the library, the user can refer to the compiled package and corresponding\
+  \ [documentation](https://engineering.purdue.edu/RVL/debisim/html/attachments/packages/Documentation.pdf).\n\
+  - To run the example scripts using FreeCT would require the addition of a few filters to the FreeCT\
+  \ library. Copy these filters from the `deps/freect/` directory to the location /usr/local/FreeCT/FreeCT_WFBP/resources/filters/\
+  \ or whichever path has been assigned to the library. Run `sudo make install` again to build the library.\n\
+  \n##### Pre-saved models\n\nThe pre-saved custom shapes and phantom shape lists can be downloaded from\
+  \ this [link](https://engineering.purdue.edu/RVL/debisim/html/attachments/github/examples.tar.gz) into\
+  \ the `examples/` directory to run the `simulate_ct_phantoms.sh` script for phantom simulation.\n\n\
+  Simulation examples for different scanner configurations described in `configs/` directory can be downloaded\
+  \ from this [link](https://engineering.purdue.edu/RVL/debisim/html/attachments/github/results.tar.gz)\
+  \ into the `results/` directory.\n\n#### Usage\n\n##### Baggage Simulation \nBaggage datasets can be\
+  \ simulated using DEBISim by running the following command:\n\n```bash\npython run_dataset_generator.py\
+  \ --config=configs/config_default_parallelbeam_2d.py --sim_dir=results/example_default_parallelbeam_2d/\
+  \ --num_bags=10\n```\n\nThe parameters for running the simulation are specifed in a configuration file\
+  \ `config.py` which provides the details for the scanner setup, the scanner geometry. the X-ray source\
+  \ and the baggage configuration. Examples of config files are provided in the `configs/` directory and\
+  \ can be refered to by the user to create their own configurations for baggage simulation.\n\n#####\
+  \ CT Phantom Simulation\n\nCT Phantoms can be simulated with DEBISim using phantom shape lists provided\
+  \ in `examples/` directory. This is done using:\n\n```bash\n./simulate_ct_phantoms.sh -p acr -o results/simulation_acr/\
+  \ -s sensation_32\n```\n\nThe argument `-p` specifies the phantom (`acr` - ACR Medical Scanning Phantom,\
+  \ `battelle_a` - Battelle A Security Phantom, `battelle_b` - Battelle B Security Phantom) while the\
+  \ argument `-s` specifies the scanner used for simulation (`sensation_32 | definition_as | force | default`).\n\
+  \n![](figures/acr_phantom_4.png)\n\n![](figures/battelle.png)\n\n##### Artifact Simulation\n\nA new\
+  \ feature in DEBISim2.0 is the generation of second order artifacts. To test the simulation of these\
+  \ artifacts the following script can be run:\n\n```bash\n./test_simulator_for_artifact_generation.sh\
+  \ -t ring -i results/example_for_artifact_simulation/ -o results/test_ring_artifacts/ -s sensation_32\
+  \ -z 59 \n```\n\nThe argument `-t` specifies the type of artifact (`ring` - Ring artifacts, `motion`\
+  \ - Motion artifacts, `scatter` - Scattering artifacts) while the argument `-z` specifies the slice\
+  \ to be processed. The argument `-i` is used to specify the source simulation directory for motion and\
+  \ scatter artifacts.\n\n\n\n###### Ring Artifacts\n\n![](figures/ring_2.png)\n\n###### Scattering Artifacts\n\
+  \n![](figures/scatter_img.png)\n\nThe current version of DEBISim 2.0 does not contain the GUI support\
+  \ as in the original DEBISim - to access these, please contact the authors.\n\n#### Simulation Examples\n\
+  \n##### 3D Baggage Image Examples from a Simulated Dataset \n![](figures/custom_shapes_ds_3.png)\n\n\
+  ##### A closer Look at the objects spawned within a simulated bag \n![](figures/sim_example_3.png)\n\
+  \n#### License\nPublic Domain, Copyright © 2023, Robot Vision Lab, Purdue University.\n\n#### Citation\n\
+  \nAll publications using DEBISim or its datasets must cite the following paper:\n\n```bibtex\n@article{manerikar2021debisim,\n\
+  \  title={DEBISim: A simulation pipeline for dual energy CT-based baggage inspection systems}, \n  author={Manerikar,\
+  \ Ankit and Li, Fangda and Kak, Avinash C}, \n  journal={Journal of X-Ray Science and Technology}, \n\
+  \  volume={29},\n  pages={259--285},\n  year={2021}\n}\n```\n\n\n#### Contact\n\nThe authors can be\
+  \ contacted at [amanerik@purdue.edu](amanerik@purdue.edu) (Ankit Manerikar) and [li1208@purdue.edu](li1208@purdue.edu)\
+  \ (Fangda Li). \n"

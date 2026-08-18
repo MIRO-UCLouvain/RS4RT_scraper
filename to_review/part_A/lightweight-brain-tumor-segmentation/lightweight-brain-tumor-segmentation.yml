@@ -1,0 +1,111 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Imoleoluwanimi/lightweight-brain-tumor-segmentation
+url: https://github.com/Imoleoluwanimi/lightweight-brain-tumor-segmentation
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-08-17T01:47:22Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# Brain Tumor Segmentation Using 3D U-Net\n\n### Lightweight Architecture on Normal CPUs\n\
+  \nA lightweight 3D brain tumor segmentation application based on the **BraTS-Africa 2024** dataset and\
+  \ the 3D U-Net workflow provided in the Medical Artificial Intelligence (MAI) Lab's *Lightweight Brain\
+  \ Tumor Segmentation on Low-Resource Systems* tutorial.\n\nThis repository contains my implementation\
+  \ of the assigned tutorial workflow, including preprocessing, model inference, evaluation/visualization,\
+  \ and deployment as an interactive Streamlit application.\n\n> **Important:** This project follows and\
+  \ implements the provided MAI Lab tutorial. The underlying tutorial, model architecture, and training\
+  \ workflow are not presented as my original research contribution. My work focused on completing the\
+  \ workflow, adapting the deployment stage into an interactive application, troubleshooting the implementation,\
+  \ and deploying it for practical use.\n\n## Live Application\n\n**Streamlit App:**\n[https://lightweight-brain-tumor-segmentation-dqe2lqbhqpkfmdwgkpsekr.streamlit.app/](https://lightweight-brain-tumor-segmentation-hpeqgpkepytefzdrphp58g.streamlit.app/)\n\
+  \nThe deployed application allows users to upload the four required MRI modalities and generate a predicted\
+  \ brain tumor segmentation.\n\n## Repository\n\n**GitHub:**\nhttps://github.com/Imoleoluwanimi/lightweight-brain-tumor-segmentation\n\
+  \n---\n\n## Project Overview\n\nBrain tumor segmentation involves identifying and classifying tumor\
+  \ regions within multimodal MRI scans.\n\nThe assigned tutorial demonstrates an end-to-end workflow\
+  \ for developing a lightweight deep learning model for automated brain tumor segmentation using the\
+  \ **BraTS-Africa 2024 dataset**, with an emphasis on making the workflow accessible on systems with\
+  \ limited computational resources.\n\nThe workflow covered in this project follows four main stages:\n\
+  \n1. Data collection, preparation and preprocessing\n2. Building the 3D U-Net model\n3. Training and\
+  \ evaluation\n4. Deployment and practical usage\n\nThe deployment stage was adapted into a Streamlit\
+  \ application that can accept NIfTI MRI files and return a predicted segmentation.\n\n---\n\n## MRI\
+  \ Modalities\n\nThe application expects four MRI modalities:\n\n* **T1n** — T1-native\n* **T1c** — T1-contrast\
+  \ enhanced\n* **T2f** — T2-FLAIR\n* **T2w** — T2-weighted\n\nA segmentation mask (`seg`) can also be\
+  \ uploaded optionally when comparison with a ground-truth mask is desired.\n\nThe four MRI modalities\
+  \ are combined as the model's input channels.\n\n### Model Input\n\n```text\n(None, 64, 64, 64, 4)\n\
+  ```\n\n### Model Output\n\n```text\n(None, 64, 64, 64, 4)\n```\n\nThe trained model used in the application\
+  \ contains approximately **5.65 million parameters**.\n\n---\n\n## Preprocessing\n\nThe deployment application\
+  \ performs preprocessing before inference.\n\nFor each MRI modality:\n\n1. The uploaded NIfTI file is\
+  \ loaded using NiBabel.\n2. The image volume is normalized using `MinMaxScaler`.\n3. The four modalities\
+  \ are checked to ensure that their dimensions match.\n4. The modalities are stacked in the expected\
+  \ order:\n\n```text\nT1n → T1c → T2f → T2w\n```\n\n5. A fixed 3D region is extracted from the volume.\n\
+  6. The cropped volume is downsampled by a factor of 2.\n7. The resulting input is checked against the\
+  \ expected model input shape:\n\n```text\n64 × 64 × 64 × 4\n```\n\nThis validation prevents an incorrectly\
+  \ shaped volume from being passed to the model.\n\n---\n\n## Patch Size Adaptation\n\nThe original tutorial\
+  \ workflow uses **96 × 96 × 96** 3D patches for model input during the training and prediction workflow.\n\
+  \nFor this implementation, the deployed model uses a smaller **64 × 64 × 64** spatial input with four\
+  \ MRI modalities:\n\n```text\nOriginal tutorial workflow:\n96 × 96 × 96\n\nThis deployed implementation:\n\
+  64 × 64 × 64 × 4\n```\n\nThe change to a smaller input volume was used for the deployed lightweight\
+  \ application and is consistent with the model available in this implementation, which expects:\n\n\
+  ```text\n(None, 64, 64, 64, 4)\n```\n\nThe four MRI modalities are treated as the four input channels:\n\
+  \n```text\nT1n → channel 1\nT1c → channel 2\nT2f → channel 3\nT2w → channel 4\n```\n\nThis distinction\
+  \ is important because the deployment implementation is not simply a direct copy of the tutorial's original\
+  \ inference code. The deployment workflow was adapted around the trained model's expected input shape\
+  \ while retaining the overall preprocessing → inference → visualization → NIfTI download workflow described\
+  \ in the tutorial.\n\nThe smaller input volume also makes the inference workflow more suitable for the\
+  \ project's focus on running segmentation on ordinary CPU-based systems.\n\n\n## Segmentation Inference\n\
+  \nOnce preprocessing is complete, the input volume receives a batch dimension:\n\n```text\n(64, 64,\
+  \ 64, 4)\n        ↓\n(1, 64, 64, 64, 4)\n```\n\nThe trained 3D U-Net then generates a four-channel prediction.\n\
+  \nThis distinction is important because the deployment implementation is not simply a direct copy of\
+  \ the tutorial's original inference code. The deployment workflow was adapted around the trained model's\
+  \ expected input shape while retaining the overall preprocessing → inference → visualization → NIfTI\
+  \ download workflow described in the tutorial.\n\nThe deployment therefore uses the 64 × 64 × 64 input\
+  \ expected by the trained model while maintaining the project's focus on lightweight segmentation on\
+  \ ordinary CPU-based systems.\n---\n\n## Streamlit Application\n\nThe deployed application provides\
+  \ a simple interface for running inference.\n\n### Workflow\n\n1. Upload the four MRI modalities in\
+  \ NIfTI format.\n2. Optionally upload the segmentation mask.\n3. Click **Process and Predict**.\n4.\
+  \ The application preprocesses the MRI volumes.\n5. The trained 3D U-Net generates the segmentation.\n\
+  6. The prediction is visualized alongside the MRI image.\n7. The predicted segmentation can be downloaded\
+  \ as a NIfTI file.\n\n### Supported files\n\n```text\n.nii\n.nii.gz\n```\n\nThe application does **not**\
+  \ require users to upload the dataset itself. Only the MRI volumes required for inference need to be\
+  \ uploaded.\n\n---\n\n## Visualization\n\nThe application displays selected slices of the processed\
+  \ T1c volume alongside the predicted segmentation.\n\nWhen a ground-truth segmentation mask is provided,\
+  \ the application can also display the ground truth for comparison.\n\n---\n\n## Deployment\n\nThe application\
+  \ was deployed using:\n\n* GitHub\n* Streamlit Community Cloud\n* Python\n* TensorFlow\n* Streamlit\n\
+  \nThe trained model is included in the repository as:\n\n```text\ndefault_model.keras\n```\n\nThis allows\
+  \ the deployed application to load the trained model directly without requiring the training dataset\
+  \ to be included in the repository.\n\n---\n\n## Repository Structure\n\n```text\nlightweight-brain-tumor-segmentation/\n\
+  │\n├── app.py\n│   └── Streamlit application for preprocessing,\n│       inference, visualization and\
+  \ downloading predictions\n│\n├── deploy.py\n│   └── Local deployment/inference workflow\n│\n├── bt_processing.ipynb\n\
+  │   └── Data processing and preprocessing workflow\n│\n├── bt_segmentation.ipynb\n│   └── Model development,\
+  \ training and evaluation workflow\n│\n├── default_model.keras\n│   └── Trained 3D U-Net model used\
+  \ for inference\n│\n├── requirements.txt\n│   └── Python dependencies\n│\n├── runtime.txt\n│   └── Python\
+  \ runtime specification for deployment\n│\n└── .gitignore\n    └── Files and directories excluded from\
+  \ version control\n```\n\nThe original BraTS-Africa dataset is **not included** in this repository because\
+  \ of its size. The repository instead contains the code and trained model required for the deployed\
+  \ inference application.\n\n---\n\n\n## Model and Tutorial Attribution\n\nThis implementation is based\
+  \ on the tutorial:\n\n**Lightweight Brain Tumor Segmentation on Low-Resource Systems: A Step-by-Step\
+  \ Guide with 3D U-Net**\n\nThe tutorial was collaboratively developed by research staff at the **Medical\
+  \ Artificial Intelligence (MAI) Lab, Lagos, Nigeria**, and participants of the **Sprint AI Training\
+  \ for African Medical Imaging Knowledge Translation (SPARK)**.\n\nThe tutorial provides an end-to-end\
+  \ workflow for brain tumor segmentation using the BraTS-Africa 2024 dataset and focuses on making the\
+  \ workflow accessible on systems with limited computational resources.\n\nTutorial DOI:\n\nhttps://doi.org/10.17504/protocols.io.dm6gpdwmdgzp/v5\n\
+  \nThis repository should therefore be understood as an implementation and deployment of the assigned\
+  \ tutorial workflow rather than a claim of original authorship of the underlying methodology.\n\n---\n\
+  \n## Limitations\n\n* The application performs inference using the trained model provided through the\
+  \ tutorial workflow.\n* The deployed application is intended for demonstration and educational purposes.\n\
+  * The model should not be interpreted as a clinically validated diagnostic system.\n* The complete BraTS-Africa\
+  \ dataset is not included in this repository.\n* Prediction quality depends on the uploaded MRI data\
+  \ being compatible with the preprocessing assumptions and modality format expected by the model.\n\n\
+  ---\n\n## Acknowledgements\n\nI acknowledge the **Medical Artificial Intelligence (MAI) Lab, Lagos,\
+  \ Nigeria**, and the contributors to the SPARK training program for the original tutorial, dataset workflow,\
+  \ and learning materials that formed the basis of this implementation.\n\n---\n\n## Disclaimer\n\nThis\
+  \ project is for educational and demonstration purposes only. It is **not intended for clinical diagnosis\
+  \ or medical decision-making**.\n"

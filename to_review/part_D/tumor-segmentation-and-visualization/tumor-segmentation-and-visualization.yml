@@ -1,0 +1,159 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Marwane-Kadouci/tumor-segmentation-and-visualization
+url: https://github.com/Marwane-Kadouci/tumor-segmentation-and-visualization
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-24T19:16:45Z'
+image_source: https://raw.githubusercontent.com/Marwane-Kadouci/tumor-segmentation-and-visualization/HEAD/figures/segmentation.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: '# Étude longitudinale de l''évolution d''une tumeur (ITK / VTK)
+
+
+  À partir de deux IRM cérébrales du même patient prises à deux dates
+
+  (`case6_gre1.nrrd` et `case6_gre2.nrrd`), on recale les volumes, on segmente la
+
+  tumeur dans chacun, puis on mesure et visualise son évolution.
+
+
+  ## Auteurs
+
+
+  - Steeve Ke
+
+  - Ivan Huard
+
+  - Marwane Kadouci
+
+
+  ## Exécution
+
+
+  Les dépendances (`itk`, `vtk`, `numpy`, `scipy`) sont déclarées en tête de
+
+  `main.py` ; [uv](https://docs.astral.sh/uv/) les installe automatiquement :
+
+
+  ```
+
+  uv run main.py
+
+  ```
+
+
+  Le script tourne sans interaction et ouvre à la fin une fenêtre VTK manipulable à
+
+  la souris. Le point de départ de la segmentation est codé en dur
+
+  (`SEED_XYZ = (90, 71, 54)`), comme le permet le sujet.
+
+
+  ## Choix techniques
+
+
+  **Recalage** (`registration.py`). Recalage rigide `VersorRigid3DTransform` : la
+
+  tête est un objet rigide, inutile de déformer le volume. Métrique : information
+
+  mutuelle de Mattes (50 bins), initialisation par centre de masse, optimiseur par
+
+  descente de gradient à pas régulier.
+
+
+  **Segmentation** (`segmentation.py`). Croissance de région à seuil fixe
+
+  (`ConnectedThreshold`) depuis la seed : on agrège les voxels connectés
+
+  d''intensité ≥ 580, puis on nettoie (plus grande composante connexe, fermeture,
+
+  remplissage des trous). La même seed sert pour les deux scans, `scan2` étant
+
+  recalé dans l''espace de `scan1`.
+
+
+  ![Segmentation sur les trois plans](figures/segmentation.png)
+
+
+  Le seuil 580 vient d''un effet de seuil net : en dessous de ~550 la tumeur est
+
+  connectée au reste des tissus brillants et la région envahit tout le crâne ; au
+
+  delà on a un plateau stable autour de 7-8 cm³. On se place au milieu de ce plateau.
+
+
+  ![Effet du seuil bas](figures/seuil.png)
+
+
+  **Analyse** (`analysis.py`). Volume de chaque tumeur, variation (mm³ et %),
+
+  coefficient de Dice, et décomposition voxel par voxel en stable / croissance /
+
+  régression.
+
+
+  **Visualisation** (`visualization.py`). Trois vues VTK : tumeur du scan 1 (bleu),
+
+  du scan 2 (rouge), et superposition colorée (jaune = stable, rouge = croissance,
+
+  bleu = régression). Surfaces extraites par marching cubes et lissées.
+
+
+  ![Rendu 3D](figures/rendu.png)
+
+
+  ## Résultats
+
+
+  | | Volume |
+
+  |---|---|
+
+  | Scan 1 | 7,9 cm³ |
+
+  | Scan 2 | 7,6 cm³ |
+
+  | Variation | −3,6 % |
+
+
+  7,1 cm³ stables, 0,9 cm³ de régression, 0,6 cm³ de croissance, Dice ≈ 0,91. Le
+
+  noyau de la tumeur est stable, avec un peu plus de régression que de croissance sur
+
+  les bords. La variation reste faible et peut en partie venir d''imprécisions de
+
+  recalage ou de seuillage : on parle d''une tumeur globalement stable, légèrement en
+
+  régression.
+
+
+  ## Difficultés
+
+
+  D''abord, localiser la tumeur pour initialiser la segmentation. Sans outil de
+
+  visualisation impossible de savoir où elle se trouve dans le volume : on a ouvert
+
+  le scan dans ITK-SNAP, parcouru les coupes pour repérer la lésion et relevé ses
+
+  coordonnées (`90, 71, 54`), qu''on code ensuite en dur comme point de départ.
+
+
+  Ensuite, le passage des images d''ITK vers VTK : les deux bibliothèques n''ordonnent
+
+  pas les axes pareil (ITK expose les tableaux en `(z, y, x)`), il a fallu faire
+
+  attention à l''orientation et au spacing pour que les surfaces s''affichent au bon
+
+  endroit.
+
+  '

@@ -1,0 +1,107 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: slozares/SERTOR_kV
+url: https://github.com/slozares/SERTOR_kV
+platform: github
+description: Open-source clinical decision support tool for kilovoltage radiotherapy of non-melanoma skin
+  cancer
+license: NOASSERTION
+language: HTML
+keywords: []
+stars: 0
+updated_at: '2026-06-17T12:01:49Z'
+image_source: null
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 9 support term(s).
+readme_excerpt: "# SERTOR_kV\n\n**Skin Evaluation tool for RadioTherapy Optimisation and Research — kilovoltage\
+  \ edition**\n\nAn open-source clinical decision support tool for kilovoltage (kV) radiotherapy of non-melanoma\
+  \ skin cancer.\n\n[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)\n\
+  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20731891.svg)](https://doi.org/10.5281/zenodo.20731891)\n\
+  [![Status](https://img.shields.io/badge/status-stable-green.svg)]()\n[![JACMP](https://img.shields.io/badge/manuscript-submitted-orange.svg)](https://aapm.onlinelibrary.wiley.com/journal/15269914)\n\
+  \n---\n\n## \U0001F4D6 Overview\n\nSERTOR_kV is a self-executable HTML5/JavaScript clinical decision\
+  \ support tool that integrates four capabilities into a single, point-of-care interface for kilovoltage\
+  \ radiotherapy planning in non-melanoma skin cancer (NMSC):\n\n1. **Real-time radiobiological engine**\
+  \ — BED, EQD2, TCP and skin late NTCP via the linear-quadratic model with Fowler time-correction.\n\
+  2. **Evidence-weighted recommender** — ranks 36 indexed clinical fractionation schedules (48 references,\
+  \ 1985–2024) by local control rate, cohort size, recency, α/β consistency, anatomical site and toxicity.\n\
+  3. **Automated GEC-ESTRO/ESMO compliance checks** — colour-coded badges flag constraint violations and\
+  \ periocular/cartilage caveats.\n4. **Optional dermatoscopic AI analysis** — multimodal LLM (Anthropic\
+  \ Claude / OpenAI GPT-4o) with few-shot learning over the local case library.\n\nThe application runs\
+  \ in any modern browser without installation, transpilation or build steps. All patient data are persisted\
+  \ exclusively in the browser's `localStorage`; no information leaves the user's device in routine use.\n\
+  \n---\n\n## \U0001F680 Quick start\n\n### Run locally (no installation)\n\n1. Download or clone this\
+  \ repository.\n2. Open `src/es/kv_rt_planner_v5.html` (Spanish edition) or `src/en/kv_rt_planner_v5_EN.html`\
+  \ (English edition) in any modern browser. Double-click works on Windows, macOS and Linux.\n3. The application\
+  \ opens immediately. No internet connection is required for core functionality.\n\n### Optional AI image-analysis\
+  \ module\n\nThe AI module requires a local Python proxy and an API key (Anthropic Claude or OpenAI GPT-4o).\n\
+  \n1. Install **Python 3.7+** (any platform).\n2. On Windows: double-click `scripts/INICIAR_SERTOR_kV.bat`.\
+  \ The launcher starts the server on port 8001 and opens the browser automatically.\n3. On macOS/Linux:\
+  \ open a terminal in the project root and run:\n   ```bash\n   python src/server.py\n   ```\n4. Open\
+  \ the application in the browser and enter your API key in the Admin tab (the key stays on the local\
+  \ machine).\n\n---\n\n## ✅ Validation\n\nThe radiobiological engine has been validated against five\
+  \ reference cohorts:\n\n| Reference | Schedule | Reported BED₁₀ | SERTOR_kV BED₁₀ | Δ |\n|---|---|---|---|---|\n\
+  | Cognetta 2012 | 54 Gy / 3 Gy × 18 fx | 70.2 Gy | 70.2 Gy | 0.0 % |\n| Abbatucci 1989 | 24 Gy / 8 Gy\
+  \ × 3 fx | 43.2 Gy | 43.2 Gy | 0.0 % |\n| Locke 2001 | 44 Gy / 4 Gy × 11 fx | 61.6 Gy | 61.6 Gy | 0.0\
+  \ % |\n| Chan 2007 | 18 Gy / 18 Gy × 1 fx | 50.4 Gy | 50.4 Gy | 0.0 % |\n| Mendenhall 2007 | 60 Gy /\
+  \ 3 Gy × 20 fx | 78.0 Gy | 78.0 Gy | 0.0 % |\n\nTest data containing 20 fictitious patients is provided\
+  \ in `examples/` for reproducing the user-facing workflow.\n\n---\n\n## \U0001F4DA Technical specifications\n\
+  \n| Specification | Value |\n|---|---|\n| Front-end | HTML5 + JavaScript ES2020 + CSS3 (no build step)\
+  \ |\n| Server (optional) | Python 3 standard library, ~200 lines |\n| Visualisation | Chart.js (loaded\
+  \ inline via CDN) |\n| Total source size | ~1.21 MB |\n| Lines of code | ~12,000 (JavaScript + Python)\
+  \ |\n| Runtime dependencies | Chart.js only |\n| Languages | Spanish + English (parallel implementations)\
+  \ |\n| Persistence | Browser localStorage (client-side) |\n| Mean cold-start time | 0.9 s |\n| Mean\
+  \ full-calculation time | 1.4 s |\n\nFor the architecture diagram and a deeper technical description,\
+  \ see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).\n\n---\n\n## \U0001F4C2 Repository layout\n\n\
+  ```\nSERTOR_kV/\n├── README.md              ← you are here\n├── LICENSE                ← MIT License\n\
+  ├── CITATION.cff           ← Academic citation metadata\n├── CHANGELOG.md           ← Version history\n\
+  ├── .zenodo.json           ← Zenodo deposit metadata\n├── src/\n│   ├── es/                ← Spanish\
+  \ edition (kv_rt_planner_v5.html)\n│   ├── en/                ← English edition (kv_rt_planner_v5_EN.html)\n\
+  │   └── server.py          ← Local proxy server (optional AI module)\n├── docs/\n│   ├── ARCHITECTURE.md\
+  \    ← Technical architecture\n│   ├── INSTALL.md         ← Installation guide\n│   ├── USER_GUIDE.md\
+  \      ← Clinical workflow guide\n│   └── flow_diagram.png   ← System flow diagram\n├── examples/\n\
+  │   ├── 20_test_patients.csv  ← Test data for verification\n│   └── README.md          ← How to use\
+  \ the test data\n├── scripts/\n│   └── INICIAR_SERTOR_kV.bat  ← Windows launcher\n└── publication/\n\
+  \    └── ...                 ← Manuscript and figures (post-acceptance)\n```\n\n---\n\n## \U0001F4DD\
+  \ Citation\n\nIf you use SERTOR_kV in research, please cite both the software and the accompanying manuscript:\n\
+  \n### Software (Zenodo)\n\n```bibtex\n@software{lozares2026sertorkv_software,\n  author       = {Lozares-Cordero,\
+  \ Sergio},\n  title        = {SERTOR\\_kV: an open-source clinical decision support tool\n         \
+  \          for kilovoltage radiotherapy of non-melanoma skin cancer},\n  year         = {2026},\n  publisher\
+  \    = {Zenodo},\n  version      = {v1.0.0},\n  doi          = {10.5281/zenodo.XXXXXXX},\n  url    \
+  \      = {https://doi.org/10.5281/zenodo.XXXXXXX}\n}\n```\n\n### Manuscript (JACMP)\n\n```bibtex\n@article{lozares2026sertorkv_jacmp,\n\
+  \  author       = {Lozares-Cordero, Sergio},\n  title        = {SERTOR\\_kV: an open-source clinical\
+  \ decision support tool\n                   for kilovoltage radiotherapy of non-melanoma skin cancer},\n\
+  \  journal      = {Journal of Applied Clinical Medical Physics},\n  year         = {2026},\n  note \
+  \        = {Submitted}\n}\n```\n\nA machine-readable citation is also available in [`CITATION.cff`](CITATION.cff).\n\
+  \n---\n\n## \U0001F6E1️ Disclaimer\n\nSERTOR_kV is a clinical decision support tool. **It does not replace\
+  \ clinical judgement, the treatment planning system of the institution, or independent dosimetric quality\
+  \ assurance.** Final responsibility for treatment decisions rests entirely with the treating clinician.\
+  \ The optional AI module is presented strictly as a hypothesis-generation aid and never as a diagnostic\
+  \ instrument.\n\n---\n\n## \U0001F512 Privacy\n\n- Patient data are stored exclusively in the browser's\
+  \ `localStorage` on the user's device.\n- No data are transmitted to external servers during routine\
+  \ use.\n- When the optional AI module is enabled, dermatoscopic images are forwarded to the chosen LLM\
+  \ provider only after the user explicitly authorises the call; the API key remains on the local machine.\n\
+  - The architecture is compliant by design with the EU General Data Protection Regulation (Regulation\
+  \ 2016/679) and Spain's Organic Law 3/2018 on Personal Data Protection.\n\n---\n\n## \U0001F464 Author\n\
+  \n**Sergio Lozares-Cordero, PhD**\nDepartment of Medical Physics, Hospital Universitario Miguel Servet,\
+  \ Zaragoza, Spain\nDepartment of Radiology and Public Health, University of Zaragoza, Spain\n\n\U0001F4E7\
+  \ slozares@salud.aragon.es\n\U0001F194 ORCID: [0000-0002-1530-5662](https://orcid.org/0000-0002-1530-5662)\n\
+  \n---\n\n## \U0001F4C4 License\n\nThis project is licensed under the MIT License — see [`LICENSE`](LICENSE)\
+  \ for details.\n\nThe software is registered in the Spanish General Registry of Intellectual Property\
+  \ (RGPI).\n\n---\n\n## \U0001F91D Contributing\n\nThis repository accompanies a peer-reviewed publication\
+  \ and is maintained in stable form. Issues and pull requests are welcome for:\n\n- Bug reports with\
+  \ reproducible test cases\n- Suggestions for additional indexed publications\n- Translations into additional\
+  \ languages\n- Validation against independent cohorts\n\nPlease open an issue before submitting major\
+  \ changes.\n\n---\n\n## \U0001F4CB Acknowledgements\n\nThe author thanks the Department of Physics and\
+  \ Radiation Safety and Department of Radiation Oncology of the Hospital Universitario Miguel Servet\
+  \ in Zaragoza (Spain) for clinical input during prototyping.\n\n---\n\n## \U0001F1EA\U0001F1F8 Resumen\
+  \ en español\n\nSERTOR_kV es una herramienta de soporte a la decisión clínica de código abierto para\
+  \ radioterapia kilovoltaje en cáncer cutáneo no melanoma. Integra cálculo radiobiológico en tiempo real,\
+  \ recomendador ponderado sobre 45 referencias indexadas, comprobación automática de cumplimiento GEC-ESTRO/ESMO\
+  \ y análisis dermatoscópico opcional con IA multimodal.\n\nSe ejecuta en cualquier navegador moderno\
+  \ sin instalación. Los datos del paciente nunca salen del dispositivo del usuario. El código fuente\
+  \ y el ejecutable coinciden (HTML5 + JavaScript ES2020 autoejecutable).\n\nPara empezar: abre `src/es/kv_rt_planner_v5.html`\
+  \ con doble clic en tu navegador.\n\nContacto: slozares@salud.aragon.es\n"

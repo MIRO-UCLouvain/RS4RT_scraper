@@ -1,0 +1,96 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: awillette89/PACS-lab-simulator
+url: https://github.com/awillette89/PACS-lab-simulator
+platform: github
+description: 'End-to-end PACS workflow simulator (Orthanc + Python): MWL generation, DIMSE query, synthetic
+  CT acquisition, and C-STORE to PACS with viewer verification.'
+license: null
+language: Python
+keywords:
+- dicom
+- pacs
+stars: 0
+updated_at: '2026-02-07T18:01:05Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "# PACS Lab Simulator\n\nA minimal, Windows-friendly PACS sandbox that simulates a radiology\
+  \ workflow:\n\n**HL7 generation → Modality Worklist (.wl) → “Acquisition” → C-STORE to PACS → Web viewer\
+  \ → FHIR export / C-MOVE retrieval**\n\nBuilt for radiologic technologists transitioning into data/PACS\
+  \ analytics. Uses **Orthanc** (Docker) + **Python** (pydicom, pynetdicom).\n\n---\n\n## Features\n\n\
+  - **Orthanc PACS** in Docker (DICOM 4242, REST 8042), DICOMweb enabled  \n- **Worklists plugin** (DIMSE-only)\
+  \ serving **`.wl`** files from a host folder  \n- **Modality Worklist C-FIND** client (AET `PYMOD1`)\
+  \  \n- **Acquisition generator** → valid **CT Image Storage** from MWL data  \n- **C-STORE** sender\
+  \ to PACS  \n- **C-MOVE** study retrieval (Orthanc → local SCP)  \n- **Admin helpers** (echo/register/list,\
+  \ push-store, list worklists, UID verify)  \n- **HL7 message generation** (basic ORM/ADT-like for order\
+  \ simulation)  \n- **FHIR export** — converts stored study data to FHIR resources after C-STORE  \n\
+  - **No PHI** (synthetic demographics; runtime artifacts gitignored)\n\n---\n\n## Quick Demo\n\n```powershell\n\
+  # 0) Requirements: Docker Desktop + Python 3.10+ (tested on 3.13)\npython -m venv .venv\n. .\\.venv\\\
+  Scripts\\Activate.ps1\npip install -r requirements.txt\n\n# 1) Start Orthanc (creates local volume +\
+  \ worklists bind)\ndocker compose up -d\n\n# 2) End-to-end demo (creates WL → queries MWL → acquires\
+  \ → sends)\npython src/demo.py\n\n# 3) Open PACS UI (login: orthanc / orthanc)\n# http://localhost:8042/\n\
+  ```\n\nYou’ll see a study for **PID `P12345`** with **Accession `ACC1001`**, modality **CT**, description\
+  \ **CT CHEST W CONTRAST**.\n\n---\n\n## Architecture\n\n```\n+------------------+          (.wl files)\
+  \          +------------------+\n| HL7 generator    | --writes order--> ./worklists -->  |   Orthanc\
+  \ PACS   |\n| (generate_hl7.py)|                                |  + Worklists     |\n+------------------+\
+  \                                |  + DICOMweb      |\n           ^                                \
+  \        +---------+--------+\n           |                                                     ^\n\
+  \           | MWL C-FIND (DIMSE 4242)                             | C-STORE / C-MOVE\n+----------+-----------+\
+  \                                         |\n|   Modality Sim      | --creates CT .dcm --> ./data/samples\
+  \ --> |\n| (find_mwl + acquire)|                                         |\n+---------------------+------------------------------------------+\n\
+  \                                                     |\n                                          \
+  \           v\n                                               +------------+\n                     \
+  \                          | FHIR Export|\n                                               | (JSON resources)|\n\
+  \                                               +------------+\n```\n\n---\n\n## Repository Layout\n\
+  \n```\ndocker-compose.yml\nrequirements.txt\nsrc/\n  admin/\n    create_wl_file.py           # generate\
+  \ minimal .wl for Worklists plugin\n    echo_modality.py            # C-ECHO test from Orthanc\n   \
+  \ generate_hl7.py             # generate basic HL7-like order messages\n    list_worklists.py      \
+  \     # local viewer for .wl files (for demos)\n    push_store.py               # PACS -> SCP push (C-STORE)\n\
+  \    register_modality.py        # register a DICOM destination in Orthanc\n    show_modality_config.py\
+  \     # show a modality's config\n    verify_uid.py               # verify study UID in Orthanc\n  dimse/\n\
+  \    acquire_from_mwl.py         # synthesize CT image from MWL data\n    find_mwl.py              \
+  \   # MWL C-FIND (modality side)\n    find_mwl_verbose.py         # verbose variant\n    find_studies.py\
+  \             # query studies in Orthanc\n    move_study.py               # initiate C-MOVE retrieval\n\
+  \    recv_scp.py                 # simple C-STORE SCP -> ./data/inbox\n    send_study.py           \
+  \    # C-STORE to Orthanc\n    demo.py                     # one-command demo runner\n    export_to_fhir.py\
+  \           # export stored DICOM study to FHIR resources\ndata/\n  samples/                      #\
+  \ generated demo DICOM(s) + FHIR JSON output\n  inbox/                        # runtime receiving folder\
+  \ (gitignored)\nworklists/                      # MWL .wl files served by Orthanc\n```\n\n---\n\n##\
+  \ Docker Compose (Orthanc)\n\n- **Ports:** 8042 (REST/UI), 4242 (DICOM)\n- **Worklists:** host `./worklists`\
+  \ mounted to `/var/lib/orthanc/worklists`\n- **AET whitelist:** accepts DIMSE from **`PYMOD1`** (host\
+  \ `*`, port `11112`)\n\n> Orthanc Explorer UI does **not** list MWL. The Worklists plugin is **DIMSE-only**.\n\
+  \n---\n\n## Scripts — What they do\n\n### Worklists\n- `src/admin/create_wl_file.py`  \n  Creates `worklists/ACC1001.wl`\
+  \ with:\n  - Patient: `P12345`, `DOE^JANE`, DOB `19800101`, Sex `F`  \n  - Requested Proc ID: `RP1001`,\
+  \ Accession: `ACC1001`  \n  - SPS: `ScheduledStationAETitle=PYMOD1`, `Modality=CT`, start date/time\
+  \ (now+10m)\n\n- `src/dimse/find_mwl.py` / `find_mwl_verbose.py`  \n  Associates as `PYMOD1` and performs\
+  \ **C-FIND** on MWL.  \n  Filter: `ScheduledStationAETitle=PYMOD1`. Prints matches (ACC/PID/SPS time).\n\
+  \n- `src/admin/list_worklists.py`  \n  Local reader for `.wl` files (handy for screenshots/demos).\n\
+  \n### Acquisition & Send\n- `src/dimse/acquire_from_mwl.py`  \n  Reads first `.wl`, populates demographics/proc\
+  \ fields, builds valid **CT Image Storage** (64×64 synthetic pixels).  \n  Saves to `data/samples/CT_<PID>_<ACC>.dcm`.\n\
+  \n- `src/dimse/send_study.py`  \n  Sends a DICOM file to Orthanc via **C-STORE**.\n\n### Admin / Troubleshooting\
+  \ / Export\n- `src/dimse/recv_scp.py` — simple **C-STORE SCP** writing to `data/inbox/`  \n- `src/admin/push_store.py`\
+  \ — Orthanc-initiated push to your SCP  \n- `src/admin/register_modality.py`, `echo_modality.py`, `show_modality_config.py`,\
+  \ `list_modalities.py`, `verify_uid.py`\n- `src/dimse/export_to_fhir.py` — exports stored study to FHIR\
+  \ JSON resources\n\n---\n\n## Install (Python)\n\n```powershell\npython -m venv .venv\n. .\\.venv\\\
+  Scripts\\Activate.ps1\npip install -r requirements.txt\n```\n\n`requirements.txt`\n```\npydicom\nnumpy\n\
+  pynetdicom\nrequests\n```\n\n---\n\n## Troubleshooting\n\n**Orthanc exits with** `A TCP port number\
+  \ must be in range ... found: 0`  \n→ Fix `ORTHANC__DICOM_MODALITIES` JSON to use a real port, e.g.\
+  \ `11112`.\n\n**MWL C-FIND “authorization rejected”**  \n→ Add AET to Orthanc env and restart:  \n`ORTHANC__DICOM_MODALITIES:\
+  \ '{\"PYMOD1\":[\"PYMOD1\",\"*\",11112]}'`\n\n**MWL returns 0 matches**  \n→ Ensure a `.wl` exists in\
+  \ `./worklists` and includes an SPS item with `ScheduledStationAETitle=PYMOD1`.  \nRecreate: `python\
+  \ src/admin/create_wl_file.py`  \nRe-run: `python src/dimse/find_mwl_verbose.py` (expect `Status: 0xff00`\
+  \ then `Matches: 1`).\n\n**Docker → Windows networking**  \n- From container to host, use `host.docker.internal`.\
+  \  \n- Open firewall if you run a local SCP on 11112:  \n  `netsh advfirewall firewall add rule name=\"\
+  DICOM-11112\" dir=in action=allow protocol=TCP localport=11112`\n\n---\n\n## Security / PHI\n\n- All\
+  \ sample data is synthetic.  \n- Runtime paths (`data/inbox/`, generated `.dcm`) are gitignored.  \n\
+  - Default creds are **orthanc/orthanc** on `http://localhost:8042` (local only).\n\n---\n\n## What this\
+  \ demonstrates \n\n- Containerized **PACS** with **DICOMweb** + **Worklists**  \n- DIMSE clients/servers:\
+  \ **C-FIND (MWL)**, **C-STORE**, echo/register admin  \n- Programmatic **DICOM** generation and reconciliation\
+  \ from MWL  \n- Practical PACS ops: AET authorization, presentation contexts, Docker config\n- FHIR\
+  \ interoperability: Export of stored DICOM studies to modern healthcare standards\n\n---\n\n## License\n\
+  \nMIT\n"

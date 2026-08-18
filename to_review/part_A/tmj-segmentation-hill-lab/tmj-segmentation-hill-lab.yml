@@ -1,0 +1,144 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Razeen08/tmj-segmentation-hill-lab
+url: https://github.com/Razeen08/tmj-segmentation-hill-lab
+platform: github
+description: This project implements an automated segmentation pipeline for mandible and skull structures
+  in TMJ CBCT images using nnU-Net v2. The pipeline includes data preprocessing, model training, inference
+  on test and clinical datasets, and comprehensive 3D visualization.
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-02-18T14:37:42Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# TMJ CBCT Segmentation using nnU-Net v2\r\n\r\nAutomated 3D segmentation of temporomandibular\
+  \ joint (TMJ) structures in cone-beam computed tomography (CBCT) scans using nnU-Net deep learning framework.\r\
+  \n\r\n## Overview\r\n\r\nThis project implements an automated segmentation pipeline for mandible and\
+  \ skull structures in TMJ CBCT images using nnU-Net v2. The pipeline includes data preprocessing, model\
+  \ training, inference on test and clinical datasets, and comprehensive 3D visualization.\r\n\r\n**Key\
+  \ Features:**\r\n- Automated segmentation of 2 anatomical structures (mandible and skull)\r\n- 3D full\
+  \ resolution nnU-Net training pipeline\r\n- Preprocessing pipeline for MAT to NIfTI conversion with\
+  \ proper coordinate alignment\r\n- Clinical deployment workflow with multi-GPU support\r\n- Multi-view\
+  \ 3D visualization with interactive viewers and publication-quality static renders\r\n- Coordinate system\
+  \ handling for different scanner orientations\r\n\r\n## Project Structure\r\n\r\n```\r\nCodes/\r\n├──\
+  \ 1_data_preprocessing_nnunet.ipynb        # MAT to NIfTI conversion & train/test split\r\n├── 2_training_nnunet_streamlined.ipynb\
+  \      # Model training notebook\r\n├── 3_testing_nnunet_streamlined.ipynb       # Inference on test\
+  \ dataset\r\n├── 4_clinical_inference.ipynb               # Inference on new clinical cases\r\n├── 5_clinical_viz_h100.ipynb\
+  \                # H100 clinical case visualization\r\n├── 3d_viz_tmj_nnunet.ipynb                 \
+  \ # Test set 3D visualization\r\n├── run_training.sh                          # SLURM script for training\r\
+  \n├── run_testing.sh                           # SLURM script for testing\r\n├── run_3dviz.sh      \
+  \                       # SLURM script for 3D visualization\r\n├── run_H100.sh                     \
+  \         # SLURM script for H100 inference\r\n├── run_L40S.sh                              # SLURM\
+  \ script for L40S inference\r\n├── run_A40.sh                               # SLURM script for A40 inference\r\
+  \n├── run_A100.sh                              # SLURM script for A100 inference\r\n├── run_clinical_viz_h100.sh\
+  \                 # SLURM script for H100 visualization\r\n├── timing_analysis.sh                  \
+  \     # Performance benchmarking script\r\n└── README.md                                # This file\r\
+  \n```\r\n\r\n## Dataset\r\n\r\n- **Source**: TMJ CBCT scans from clinical data\r\n- **Size**: 72 cases\
+  \ → 60 training, 12 testing (5 excluded due to misalignment)\r\n- **Voxel Spacing**: 0.4mm isotropic\r\
+  \n- **Labels**: \r\n  - 0: Background\r\n  - 1: Mandible (cyan in visualizations)\r\n  - 2: Skull (orange\
+  \ in visualizations)\r\n- **File Format**: Original MAT files converted to NIfTI format\r\n\r\n**Data\
+  \ Access**:\r\nThe original dataset consists of TMJ CBCT scans stored as MAT files with two components\
+  \ per case:\r\n- `dicomVol.mat` - CT scan volume\r\n- `LabelVolume.mat` - Manual segmentation labels\r\
+  \n\r\n**Note**: The original data is not included in this repository due to size and privacy constraints.\
+  \ To reproduce this project, you will need access to TMJ CBCT data in MAT format or adapt the preprocessing\
+  \ notebook for your data format (DICOM, NIfTI, etc.).\r\n\r\n## Requirements\r\n\r\n### System Requirements\r\
+  \n- Python 3.9+\r\n- CUDA 11.8+ and cuDNN 8.6+ (for GPU acceleration)\r\n- NVIDIA GPU with CUDA support\
+  \ (recommended: RTX 3090 or better for training)\r\n- 16GB+ RAM\r\n- Ubuntu/Linux environment (for HPC\
+  \ training)\r\n- Jupyter Notebook or JupyterLab\r\n\r\n### Additional Software Installations\r\n\r\n\
+  **CUDA and cuDNN** (required for GPU support):\r\n```bash\r\n# On HPC, load modules:\r\nmodule load\
+  \ cuda/11.8\r\nmodule load cudnn/8.6\r\n\r\n# For local installation, download from NVIDIA:\r\n# https://developer.nvidia.com/cuda-downloads\r\
+  \n# https://developer.nvidia.com/cudnn\r\n```\r\n\r\n**Jupyter Notebook**:\r\n```bash\r\npip install\
+  \ jupyter notebook jupyterlab\r\n```\r\n\r\n**nnU-Net Framework**:\r\n```bash\r\npip install nnunetv2\r\
+  \n```\r\n\r\n### Python Dependencies\r\n\r\nInstall all required packages:\r\n\r\n```bash\r\npip install\
+  \ jupyter notebook jupyterlab\r\npip install nnunetv2\r\npip install torch torchvision torchaudio --index-url\
+  \ https://download.pytorch.org/whl/cu118\r\npip install nibabel scipy numpy pandas\r\npip install vedo\
+  \ matplotlib\r\npip install SimpleITK tqdm\r\npip install scikit-image scikit-learn\r\n```\r\n\r\n**Package\
+  \ descriptions**:\r\n- `jupyter`, `notebook`, `jupyterlab` - Interactive notebook environment\r\n- `nnunetv2`\
+  \ - Deep learning segmentation framework\r\n- `torch`, `torchvision`, `torchaudio` - PyTorch deep learning\
+  \ library (CUDA 11.8)\r\n- `nibabel` - NIfTI file I/O\r\n- `scipy` - MAT file loading and scientific\
+  \ computing\r\n- `numpy`, `pandas` - Data processing and analysis\r\n- `vedo` - 3D visualization and\
+  \ rendering\r\n- `matplotlib` - 2D plotting and visualization\r\n- `SimpleITK` - Medical image processing\r\
+  \n- `tqdm` - Progress bars for loops\r\n- `scikit-image`, `scikit-learn` - Image processing and machine\
+  \ learning utilities\r\n\r\n### HPC Configuration (Optional)\r\nFor training on HPC clusters:\r\n- SLURM\
+  \ job scheduler\r\n- Environment modules: cuda, cudnn, python\r\n- Sufficient storage for preprocessed\
+  \ data (~10GB)\r\n- Access to GPU partition\r\n\r\n## Installation\r\n\r\n1. Clone the repository:\r\
+  \n```bash\r\ngit clone https://github.com/your-username/tmj-segmentation-nnunet.git\r\ncd tmj-segmentation-nnunet\r\
+  \n```\r\n\r\n2. Create a virtual environment:\r\n```bash\r\npython -m venv venv\r\nsource venv/bin/activate\
+  \  # On Windows: venv\\Scripts\\activate\r\n```\r\n\r\n3. Install dependencies:\r\n```bash\r\n# Install\
+  \ Jupyter\r\npip install jupyter notebook jupyterlab\r\n\r\n# Install nnU-Net\r\npip install nnunetv2\r\
+  \n\r\n# Install PyTorch with CUDA support\r\npip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118\r\
+  \n\r\n# Install other dependencies\r\npip install nibabel scipy numpy pandas vedo matplotlib SimpleITK\
+  \ tqdm scikit-image scikit-learn\r\n```\r\n\r\n4. Set up nnU-Net environment variables:\r\n```bash\r\
+  \nexport nnUNet_raw=\"path/to/nnUNet_raw\"\r\nexport nnUNet_preprocessed=\"path/to/nnUNet_preprocessed\"\
+  \r\nexport nnUNet_results=\"path/to/nnUNet_results\"\r\n```\r\n\r\n## Complete Workflow - Step by Step\r\
+  \n\r\nFollow these steps in order to reproduce the entire project from data preprocessing to visualization.\r\
+  \n\r\n**IMPORTANT**: Before running any notebooks or scripts, you must update all file paths to match\
+  \ your system:\r\n- Update `DATA_PATH` in notebook 1 to point to your MAT files\r\n- Update `NNUNET_BASE`\
+  \ and nnU-Net environment variables to your desired locations\r\n- Update paths in all SLURM scripts\
+  \ (`run_*.sh`) to match your HPC environment\r\n- Update output directories in visualization notebooks\
+  \ (steps 4 and 6)\r\n\r\n### Step 1: Data Preprocessing (Local/HPC)\r\n\r\n**Run on**: Local PC or HPC\
+  \ login node  \r\n**Notebook**: `1_data_preprocessing_nnunet.ipynb`\r\n\r\n**Actions**:\r\n1. Open the\
+  \ notebook in Jupyter/VS Code\r\n2. Update paths in the configuration cell:\r\n   - `DATA_PATH`: Location\
+  \ of your TMJ MAT files\r\n   - `NNUNET_BASE`: Destination for nnU-Net data structure\r\n3. Run all\
+  \ cells to:\r\n   - Convert MAT files to NIfTI format\r\n   - Apply coordinate alignment transformation\
+  \ (transpose for labels)\r\n   - Create train/test split (60/12 cases)\r\n   - Generate `dataset.json`\
+  \ for nnU-Net\r\n   - Create nnU-Net directory structure\r\n\r\n**Outputs**:\r\n- `nnUNet_raw/Dataset001_TMJ/imagesTr/`:\
+  \ Training images\r\n- `nnUNet_raw/Dataset001_TMJ/labelsTr/`: Training labels\r\n- `nnUNet_raw/Dataset001_TMJ/imagesTs/`:\
+  \ Testing images\r\n- `nnUNet_raw/Dataset001_TMJ/labelsTs/`: Testing labels\r\n- `dataset.json`: Dataset\
+  \ configuration\r\n- `conversion_log.csv`: Conversion report\r\n- `train_test_split.csv`: Split information\r\
+  \n\r\n**Critical**: Label files require transpose transformation `(1, 0, 2)` to align with image coordinate\
+  \ system.\r\n\r\n---\r\n\r\n### Step 2: Model Training (HPC Required)\r\n\r\n**Run on**: HPC cluster\
+  \ with GPU  \r\n**Notebook**: `2_training_nnunet_streamlined.ipynb`  \r\n**SLURM Script**: `run_training.sh`\r\
+  \n\r\n```bash\r\n# Edit run_training.sh to set your paths\r\nsbatch run_training.sh\r\n```\r\n\r\n**Actions**:\r\
+  \n- nnU-Net preprocessing (plan and preprocess)\r\n- Train 3D full resolution model (3d_fullres)\r\n\
+  - Train fold 0 for 1000 epochs with default nnU-Net parameters\r\n\r\n**Outputs**:\r\n- `nnUNet_preprocessed/Dataset001_TMJ/`:\
+  \ Preprocessed data\r\n- `nnUNet_results/Dataset001_TMJ/`: Model checkpoints for fold 0\r\n- Training\
+  \ logs and validation metrics\r\n\r\n**Note on Training Other Folds**:\r\nThe current implementation\
+  \ trains fold 0 only. To train additional folds (1-4) for cross-validation:\r\n1. Modify the fold parameter\
+  \ in `2_training_nnunet_streamlined.ipynb` (change `fold=0` to `fold=1`, `fold=2`, etc.)\r\n2. Run training\
+  \ for each fold separately\r\n3. For inference, you can either:\r\n   - Use a single fold (fold 0 as\
+  \ currently implemented)\r\n   - Ensemble predictions from multiple folds by loading all trained fold\
+  \ weights\r\n\r\nnnU-Net supports 5-fold cross-validation by default. Training all folds improves robustness\
+  \ but requires 5× the training time.\r\n\r\n---\r\n\r\n### Step 3: Inference on Test Set (HPC Required)\r\
+  \n\r\n**Run on**: HPC cluster with GPU  \r\n**Notebook**: `3_testing_nnunet_streamlined.ipynb`  \r\n\
+  **SLURM Script**: `run_testing.sh`\r\n\r\n**Using SLURM Script**:\r\n```bash\r\nsbatch run_testing.sh\r\
+  \n```\r\n\r\n**Actions**:\r\n- Load trained model weights from fold 0\r\n- Perform inference on 12 test\
+  \ cases\r\n- Save predictions in NIfTI format\r\n- Calculate Dice scores (if ground truth available)\r\
+  \n\r\n**Outputs**:\r\n- Predicted segmentations for test cases\r\n- Evaluation metrics (Dice scores,\
+  \ Hausdorff distance)\r\n- Inference logs\r\n\r\n---\r\n\r\n### Step 4: Test Set 3D Visualization (HPC)\r\
+  \n\r\n**Run on**: HPC cluster (offscreen rendering)  \r\n**Notebook**: `3d_viz_tmj_nnunet.ipynb`  \r\
+  \n**SLURM Script**: `run_3dviz.sh`\r\n\r\n**Using SLURM Script**:\r\n```bash\r\nsbatch run_3dviz.sh\r\
+  \n```\r\n\r\n**Actions**:\r\n- Load test case predictions\r\n- Generate 3D renders with vedo library\r\
+  \n- Create interactive viewer scripts\r\n- Generate multi-angle static views (800×800 pixels)\r\n- Coordinate\
+  \ system: Z-up, camera on -X axis\r\n\r\n**Outputs**:\r\n- PNG images of 3D segmentations\r\n- Python\
+  \ scripts for interactive viewing\r\n- Combined, anatomical split, and corner view renders\r\n\r\n---\r\
+  \n\r\n### Step 5: Clinical Case Inference (HPC)\r\n\r\n**Run on**: HPC cluster with GPU  \r\n**Notebook**:\
+  \ `4_clinical_inference.ipynb`  \r\n**SLURM Scripts**: `run_H100.sh`, `run_L40S.sh`, `run_A40.sh`, `run_A100.sh`\r\
+  \n\r\n**For Different GPU Types**:\r\n```bash\r\nsbatch run_H100.sh\r\nsbatch run_L40S.sh\r\nsbatch\
+  \ run_A40.sh\r\nsbatch run_A100.sh\r\n```\r\n\r\n**Actions**:\r\n- Process new clinical cases from MAT\
+  \ files\r\n- Convert to NIfTI with `convert_mat_to_nifti` function\r\n- Apply same preprocessing as\
+  \ training data\r\n- Run inference using trained model\r\n- Save segmentation predictions\r\n\r\n**Important**:\
+  \ Always use MAT files with consistent preprocessing to maintain segmentation quality.\r\n\r\n**Outputs**:\r\
+  \n- Predicted segmentations for clinical cases\r\n- Temporary NIfTI files for visualization\r\n- Inference\
+  \ logs\r\n\r\n---\r\n\r\n### Step 6: Clinical Case Visualization (HPC)\r\n\r\n**Run on**: HPC cluster\
+  \  \r\n**Notebook**: `5_clinical_viz_h100.ipynb`  \r\n**SLURM Script**: `run_clinical_viz_h100.sh`\r\
+  \n\r\n**Using SLURM Script**:\r\n```bash\r\nsbatch run_clinical_viz_h100.sh\r\n```\r\n\r\n**Actions**:\r\
+  \n- Load H100 clinical case predictions\r\n- Handle X-up coordinate system (different from test data)\r\
+  \n- Generate combined, anatomical split, and corner view renders\r\n- Create 2D slice visualization\
+  \ along z-axis\r\n- Output high-quality PNG images (800×800 pixels)\r\n\r\n**Outputs**:\r\n- Publication-quality\
+  \ visualization images\r\n- Interactive viewer scripts\r\n- 2D slice montages\r\n\r\n---\r\n\r\n###\
+  \ Step 7: Performance Benchmarking (Optional)\r\n\r\n**Run on**: HPC cluster  \r\n**Script**: `timing_analysis.sh`\r\
+  \n\r\n```bash\r\nbash timing_analysis.sh\r\n```\r\n\r\n**Actions**:\r\n- Analyze training time\r\n-\
+  \ Measure inference speed on different GPUs\r\n- Compare preprocessing times\r\n- Generate performance\
+  \ report\r\n\r\n**Outputs**:\r\n- Timing statistics\r\n- Performance comparison tables\r\n- Resource\
+  \ utilization metrics\r\n\r\n---\r\n\r\n## SLURM Script Configuration\r\n\r\nAll `run_*.sh` scripts\
+  \ follow this structure:\r\n\r\n```bash\r\n#!/bin/bash\r\n#SBATCH --job-name=tmj_job_name\r\n#SBATCH\
+  \ --output=logs/output_%j.log\r\n#SBAT"

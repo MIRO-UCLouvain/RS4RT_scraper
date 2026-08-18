@@ -1,0 +1,64 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: nurnabi-boop/brain-tumor-segmentation-lgg
+url: https://github.com/nurnabi-boop/brain-tumor-segmentation-lgg
+platform: github
+description: U-Net, U-Net++ and DeepLabV3+ for low-grade glioma segmentation on FLAIR MRI, with a leakage-free
+  patient-level split.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-11T16:14:52Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# Brain Tumor Segmentation (LGG MRI)\n\nU-Net family applied to the [LGG MRI Segmentation\
+  \ dataset](https://www.kaggle.com/datasets/mateuszbuda/lgg-mri-segmentation)\nby Mateusz Buda — 3,929\
+  \ brain MRI slices (FLAIR + manual mask) from 110 low-grade\nglioma patients in TCIA. Compares U-Net\
+  \ / U-Net++ / DeepLabV3+ on a strict\n**patient-level** split.\n\n## Why patient-level splitting matters\n\
+  Slices from one patient are highly correlated. Random slice-level splitting\ninflates Dice by 5–10 points\
+  \ because train and test see neighboring slices of\nthe same lesion. Every split here is keyed on the\
+  \ patient folder ID; an\nassertion in `dataset.py` refuses to return a leaky split.\n\n## Quickstart\n\
+  \n```bash\npip install -r requirements.txt\n\n# 1. Download data (≈800 MB)\nkaggle datasets download\
+  \ -d mateuszbuda/lgg-mri-segmentation -p data --unzip\n\n# 2. Sanity-check the split (no patient appears\
+  \ in two splits)\npython -m src.dataset --root data/lgg-mri-segmentation/kaggle_3m\n\n# 3. Train baseline\n\
+  python -m src.train \\\n    --root data/lgg-mri-segmentation/kaggle_3m \\\n    --model unet_resnet34\
+  \ \\\n    --epochs 40 --batch-size 16\n\n# 4. Evaluate on the held-out test set\npython -m src.evaluate\
+  \ \\\n    --root data/lgg-mri-segmentation/kaggle_3m \\\n    --checkpoint models/unet_resnet34_best.pt\
+  \ \\\n    --split test\n\n# 5. Launch demo\npython app.py --checkpoint models/unet_resnet34_best.pt\n\
+  ```\n\n## Methodology\n| Step | Choice |\n| --- | --- |\n| Pairing | FLAIR slice ↔ binary mask via `_mask.tif`\
+  \ suffix |\n| Training set | tumor-only slices (empty masks dropped, configurable) |\n| Eval set | all\
+  \ slices, including empty (Dice=1 on empty if no FP) |\n| Split | 70 / 15 / 15 by patient ID, seeded\
+  \ |\n| Loss | `0.5 * BCE + 0.5 * Dice` |\n| Augmentation | flip, ±20° rotate, scale, elastic, grid distortion,\
+  \ brightness, gaussian noise |\n| Optimizer | AdamW, lr=1e-4, cosine schedule |\n| Mixed precision |\
+  \ `torch.cuda.amp` |\n| Post-processing | drop CCs <50 px (tunable on val) |\n\n### Models\n- `unet_resnet34`\
+  \ — U-Net + ResNet34 (ImageNet) ← baseline\n- `unetpp_effb0` — U-Net++ + EfficientNet-B0\n- `deeplabv3p_resnet34`\
+  \ — DeepLabV3+ + ResNet34\n\nAll built via `segmentation-models-pytorch` so the only thing varying between\n\
+  runs is the architecture.\n\n### Metrics (per patient, then averaged)\n- Dice coefficient (primary)\n\
+  - IoU\n- 95th-percentile Hausdorff distance (via MONAI)\n- Sensitivity / Specificity\n\n## Project layout\n\
+  ```\nbrain-segmentation/\n├── data/                       # Kaggle dataset extracted here\n├── src/\n\
+  │   ├── dataset.py              # patient-level split + Dataset\n│   ├── augmentations.py        # albumentations\
+  \ pipelines\n│   ├── models.py               # SMP factory\n│   ├── losses.py               # Dice +\
+  \ BCE\n│   ├── train.py                # training loop, W&B\n│   ├── evaluate.py             # per-patient\
+  \ Dice/Hausdorff/etc.\n│   └── postprocess.py          # connected-component cleanup\n├── notebooks/\n\
+  │   ├── eda.ipynb               # split sanity-check + 10 random samples\n│   └── failure_analysis.ipynb\
+  \  # worst-Dice patients\n├── models/                     # checkpoints\n├── results/              \
+  \      # CSV + JSON metrics\n├── app.py                      # Gradio demo\n└── requirements.txt\n```\n\
+  \n## Validation order (recommended)\n1. `python -m src.dataset --root <path>` → confirms no patient\
+  \ leakage.\n2. Run `notebooks/eda.ipynb` → visual check of 10 random image+mask pairs.\n3. Train U-Net\
+  \ + ResNet34 for ~5 epochs → confirm training Dice climbs.\n4. Train the full encoder zoo for 40 epochs.\n\
+  5. Evaluate on test, then explore failures in `failure_analysis.ipynb`.\n\n## Research extensions (not\
+  \ implemented here, listed for follow-up)\n- **3D vs 2D**: stack contiguous slices into volumes and\
+  \ use a 3D U-Net\n  (`monai.networks.nets.UNet`). Trade-off: better through-plane context but\n  far\
+  \ fewer training samples and ~10× memory.\n- **Semi-supervised segmentation**: most clinical datasets\
+  \ have far more\n  unlabeled scans than labeled ones. Mean Teacher / FixMatch on the 110\n  labeled\
+  \ patients plus unlabeled TCIA volumes is a natural extension.\n- **Uncertainty estimation**: enable\
+  \ dropout at inference (Monte Carlo dropout)\n  and report per-pixel predictive variance. The variance\
+  \ map flags ambiguous\n  tumor borders for clinician review — useful for decision support, not\n  autonomous\
+  \ use.\n\n## Disclaimer\nResearch code. Not validated for clinical use. The Gradio demo is a sanity\n\
+  tool, not a medical device.\n"

@@ -1,0 +1,309 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hkbit03/ANN-SNN-Framework-using-Visual-Attention-for-Precise-and-Efficient-Brain-Tumor-Segmentation
+url: https://github.com/hkbit03/ANN-SNN-Framework-using-Visual-Attention-for-Precise-and-Efficient-Brain-Tumor-Segmentation
+platform: github
+description: Three-stage ANN-to-SNN conversion framework for energy-efficient brain tumor segmentation,
+  integrating visual attention (CSA/TCSA) into a spiking U-Net with LIF neuron dynamics. Achieves Dice
+  scores of 0.8155 (U-Net SNN) and 0.8232 (Attention U-Net SNN) on MRI brain tumor data.
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-15T07:04:18Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: '# ANN-SNN Framework using Visual Attention for Precise and Efficient Brain Tumor Segmentation
+
+
+  > **IEEE Conference Paper** | Amrita Vishwa Vidyapeetham, Kochi, India
+
+
+  A three-stage ANN-to-SNN conversion pipeline for brain tumor segmentation from MRI images using visual
+  attention mechanisms. This framework achieves Dice scores of **0.8155** (U-Net SNN) and **0.8232** (Attention
+  U-Net SNN), surpassing prior state-of-the-art SNN segmentation methods.
+
+
+  ---
+
+
+  ## Overview
+
+
+  Accurate and early diagnosis of brain tumors through medical imaging is critical for improving patient
+  survival rates and enabling optimal treatment planning. This work proposes a hybrid framework that combines
+  the segmentation accuracy of ANNs with the theoretically energy-efficient, event-driven computation
+  of SNNs.
+
+
+  ### Three-Stage Pipeline
+
+
+  | Stage | Description |
+
+  |-------|-------------|
+
+  | **Stage 1 — ANN Training** | Attention-enhanced U-Net ANN trained to accurately delineate tumor regions
+  from MRI scans |
+
+  | **Stage 2 — ANN-to-SNN Conversion** | Trained ANN converted to SNN via weight transfer and threshold
+  balancing, enabling event-driven spike-based computation |
+
+  | **Stage 3 — SNN Fine-tuning** | SNN fine-tuned using surrogate gradient backpropagation with Leaky
+  Integrate-and-Fire (LIF) neurons for improved temporal integration and stability |
+
+
+  ---
+
+
+  ## Results
+
+
+  ### Dice Scores (Table II)
+
+
+  | Model | ANN | Converted SNN | Fine-tuned SNN |
+
+  |-------|-----|---------------|----------------|
+
+  | U-Net | 0.8124 | 0.6875 | **0.8155** |
+
+  | Attention U-Net | 0.8191 | 0.5614 | **0.8232** |
+
+  | CSA U-Net | 0.8087 | 0.0245 | 0.0862 |
+
+  | TCSA U-Net | 0.8223 | 0.0169 | 0.0312 |
+
+
+  ### Comparison with Prior SNN Segmentation Methods
+
+
+  | Method | Dataset | Model | Best Dice |
+
+  |--------|---------|-------|-----------|
+
+  | Yue et al. (2023) | Hippocampus/ADNI | U-Net SNN (IF Neurons) | 0.7809 |
+
+  | Ahmed et al. (2025) | Brain Tumor MRI | U-Net SNN | 0.7790 |
+
+  | Ahmed et al. (2025) | Brain Tumor MRI | Attention SNN | 0.5030 |
+
+  | **Proposed** | Brain Tumor MRI (3,064) | U-Net SNN (LIF) | **0.8155** |
+
+  | **Proposed** | Brain Tumor MRI (3,064) | Attention U-Net SNN | **0.8232** |
+
+
+  ---
+
+
+  ## Repository Structure
+
+
+  ```
+
+  ANN_SNN_research/
+
+  ├── train_ann.ipynb                     # Stage 1: ANN training with visual attention
+
+  ├── train_ann_snn_fixed.ipynb           # Stage 2: ANN-to-SNN conversion
+
+  ├── ANN_SNN_framework_Visual_Attention.ipynb  # Stage 3: SNN fine-tuning (full pipeline)
+
+  ├── requirements.txt                    # Python dependencies
+
+  └── .gitignore
+
+  ```
+
+
+  ---
+
+
+  ## Architectures
+
+
+  Four U-Net variants were implemented and evaluated across all three stages:
+
+
+  - **U-Net** — Standard encoder-decoder with skip connections
+
+  - **Attention U-Net** — U-Net augmented with attention gates to focus on tumor regions
+
+  - **CSA U-Net** — Channel and Spatial Attention U-Net
+
+  - **TCSA U-Net** — Temporal Channel and Spatial Attention U-Net
+
+
+  ---
+
+
+  ## Dataset
+
+
+  The [Brain Tumor MRI Dataset](https://www.kaggle.com/) consists of **3,064 MRI brain images** with corresponding
+  manually annotated binary tumor masks in `.png` format.
+
+
+  | Modality | No. of Images | Image Format | Labels |
+
+  |----------|---------------|--------------|--------|
+
+  | MRI | 3,064 | PNG | Binary tumor masks (manually annotated) |
+
+
+  Place the dataset inside the `dataset/` folder before running the notebooks.
+
+
+  ---
+
+
+  ## Installation
+
+
+  ### Prerequisites
+
+  - Python 3.8+
+
+  - NVIDIA CUDA-enabled GPU (recommended)
+
+  - CUDA 12.1
+
+
+  ### Setup
+
+
+  ```bash
+
+  # Clone the repository
+
+  git clone https://github.com/harikresearch-tech/ANN_SNN_research.git
+
+  cd ANN_SNN_research
+
+
+  # Install dependencies
+
+  pip install -r requirements.txt
+
+  ```
+
+
+  ### Key Dependencies
+
+
+  | Package | Version | Purpose |
+
+  |---------|---------|---------|
+
+  | `torch` | 2.1.2+cu121 | Deep learning framework |
+
+  | `torchvision` | 0.16.2+cu121 | Image transforms |
+
+  | `snntorch` | 0.9.4 | Spiking neural network training |
+
+  | `spikingjelly` | 0.0.0.0.14 | SNN simulation |
+
+  | `albumentations` | 1.4.3 | Data augmentation |
+
+  | `opencv-python` | 4.8.1.78 | Image processing |
+
+  | `scikit-learn` | 1.3.2 | Evaluation metrics |
+
+
+  ---
+
+
+  ## Usage
+
+
+  Run the notebooks in the following order:
+
+
+  **1. Train the ANN models**
+
+  ```
+
+  train_ann.ipynb
+
+  ```
+
+
+  **2. Convert ANN to SNN**
+
+  ```
+
+  train_ann_snn_fixed.ipynb
+
+  ```
+
+
+  **3. Full pipeline (ANN → SNN → Fine-tuning)**
+
+  ```
+
+  ANN_SNN_framework_Visual_Attention.ipynb
+
+  ```
+
+
+  ---
+
+
+  ## Hyperparameters
+
+
+  | Parameter | Value |
+
+  |-----------|-------|
+
+  | Input image size | 256 × 256 |
+
+  | Batch size | 4 |
+
+  | Learning rate | 1e-3 |
+
+  | Weight decay | 1e-4 |
+
+  | Optimizer | AdamW |
+
+  | Loss function | BCE–Dice loss (BCE: 0.3, Dice: 0.7) |
+
+  | Early stopping patience | 20 epochs |
+
+  | Data augmentation | Horizontal flip, vertical flip, rotation (−15° to +15°) |
+
+
+  ---
+
+
+  ## Authors
+
+
+  - **Abrar H** — Department of Computer Science & IT, Amrita Vishwa Vidyapeetham, Kochi
+
+  - **Hari Krishnan** — Department of Computer Science & IT, Amrita Vishwa Vidyapeetham, Kochi
+
+  - **M. Soumya Krishnan** — Department of Computer Science & IT, Amrita Vishwa Vidyapeetham, Kochi
+
+
+  ---
+
+
+
+
+  ---
+
+
+  ## License
+
+
+  This project is intended for academic and research use. Please contact the authors for any other usage.
+
+  '

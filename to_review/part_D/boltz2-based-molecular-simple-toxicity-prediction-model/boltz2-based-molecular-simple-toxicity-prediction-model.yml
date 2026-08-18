@@ -1,0 +1,55 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: alice02-dotcom/Boltz2-based-Molecular-Simple-Toxicity-Prediction-Model
+url: https://github.com/alice02-dotcom/Boltz2-based-Molecular-Simple-Toxicity-Prediction-Model
+platform: github
+description: ''
+license: null
+language: null
+keywords: []
+stars: 0
+updated_at: '2025-12-17T14:47:18Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 2 AI/ML term(s) in repository name.
+readme_excerpt: "## Project Name\nBoltz2-based Molecular Simple Toxicity Prediction Model\n\n\n## Introduction\n\
+  The Toxicity Prediction Model is a specialized solution designed to maximize efficiency and interpretability\
+  \ in drug discovery by leveraging the powerful molecular representation capabilities of Boltz-2. Moving\
+  \ beyond the mere measurement of binding affinity, this project aims to precisely predict potential\
+  \ toxicity and abnormal chemical reactions that a drug candidate might trigger within the human body\
+  \ at the in silico stage.\n\nWhen drug candidates are administered to humans, toxicity resulting from\
+  \ unintended biochemical reactions is a leading cause of clinical failure. By applying Transfer Learning\
+  \ to Boltz-2's state-of-the-art geometric deep learning architecture, our model provides the capability\
+  \ to screen the toxicological profiles of compounds well before embarking on expensive physics-based\
+  \ experiments.\n\nIntegrating this toxicity prediction model into the drug development pipeline offers\
+  \ several transformative advantages:\n\n> Early Screening: Optimize candidate pools by preemptively\
+  \ excluding compounds with a high probability of inducing toxicity during the in silico phase.\n\n>\
+  \ Cost and Time Reduction: Significantly reduce the immense costs and time required for drug development\
+  \ by minimizing trial and error during clinical and animal testing stages.\n\n> Design Guidance: Provide\
+  \ integrated insights for safer and more effective molecular design by combining toxicity prediction\
+  \ with traditional drug-protein binding affinity models.\n\n## Installation\nboltz-main_addTox/boltz-main/toxicity_requirements.txt\n\
+  \nKey: \n    Python==3.10+\n    PyTorch==2.4.1+cu121\n    PyTorch Lightning==2.5.0\n    Boltz==2.2.0\n\
+  \    RDKit==2024.03.5\n\n## Model Structure\n> BaseModel : Boltz-2 (v2.2.0)\n    Feature Dimension :\
+  \ 384\n> Prediction Head : 3-Layer Multi_Layer Perceptron (MLP)\n    Architecture : 384 -> 256 -> 128\
+  \ -> 1\n    Activation Funtion : ReLU\n    Regularization : Dropout (0.3)\n> Weight Management Strategy\n\
+  \    Freezing : Key parameters of Boltz2 is \"requires_grad=False\" to preserving early knowledge\n\
+  \    Selective Fine-tuning : The last layer of the encoder, 'input_embedder', is set to learnable \"\
+  requires_grad=True\" state to proceed with toxicity data specific optimization\n\n## Hyperparameter\n\
+  > Optimization, Loss\n    Intial Learning Rate : 1e-4\n    Optimizer : AdamW (Weight Decay : 1e-2)\n\
+  \    Loss Function : Mean Squared Error (MSE)\n    Label Transformation : -log10 scale\n    Learning\
+  \ Rate Scheduler: ReduceLROnPlateau (Patience: 10, Factor: 0.5)\n> Training Controls\n    Batch Size:\
+  \ 8\n    Precision: 16-mixed (Mixed Precision Training)\n    Early Stopping: 20 Epoch\n    Gradient\
+  \ Clipping: 1.0\n> Data Constraints\n    Max Atoms : 256\n    Max Tokens : 512\n    Distance Range :\
+  \ 2.0Å ~ 22.0Å\n\n## Dataset\nInvitrodb (Tox21+Toxcast)\n\nTraining Data: train_ready.yaml\nValidation\
+  \ Data: val_ready.yaml\nTest Data: test_ready.yaml\n\n## Data Preparation\n> YAML : Acts as a dataset\
+  \ manifest containing molecular IDs and ground-truth toxicity labels.\n> SDF : Contains 3D coordinates\
+  \ and atomic bonding information for each molecule.\n> NPZ : Stores pre-processed tensors and MSA information\
+  \ to accelerate training speed and efficiency.\n\n## Train Loss Result\n> version 7 : learning rate\
+  \ 1e-4, Best score 9.841\n> version 8 : fine-tuning; learning rate 5e-5, Best score 9.778\n> version\
+  \ 9 : fine-tuning; learning rate 1e-5, batch size *4, last layer of encoder training, Best score 9.916"

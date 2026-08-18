@@ -1,0 +1,128 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: lavsendahal/janus
+url: https://github.com/lavsendahal/janus
+platform: github
+description: 'JANUS: gated fusion architecture that modulates deep CT embeddings with organ-derived macro-radiomics
+  signals.'
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-17T15:03:11Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Janus: CT Disease Classification\n\nJanus is a deep learning framework for multi-label\
+  \ disease classification from 3D abdominal CT scans. It combines visual deep learning (DINOv3 Vision\
+  \ Transformer) with anatomical priors and scalar radiomics features to classify 30 diseases with interpretability.\n\
+  \n## Key Features\n\n- **Neuro-Symbolic Fusion**: Combines visual features with domain-knowledge scalar\
+  \ features\n- **Anatomical Attention**: Disease-specific organ-masked attention pooling\n- **Multiple\
+  \ Architectures**: From simple baselines to advanced gated fusion\n- **Distributed Training**: Multi-GPU\
+  \ support via PyTorch DDP\n- **Flexible Configuration**: Hydra-based configuration with experiment overrides\n\
+  \n## Supported Diseases (30)\n\nhepatomegaly, splenomegaly, cardiomegaly, prostatomegaly, hepatic_steatosis,\
+  \ osteopenia, gallstones, abdominal_aortic_aneurysm, aortic_valve_calcification, coronary_calcification,\
+  \ atherosclerosis, thrombosis, bowel_obstruction, appendicitis, hiatal_hernia, submucosal_edema, free_air,\
+  \ biliary_ductal_dilation, surgically_absent_gallbladder, pancreatic_atrophy, hydronephrosis, renal_cyst,\
+  \ renal_hypodensities, pleural_effusion, atelectasis, ascites, anasarca, metastatic_disease, lymphadenopathy,\
+  \ fracture\n\n## Model Architectures\n\n### 1. JanusGAP (Baseline)\nPure neural baseline without anatomical\
+  \ priors.\n- DINOv3 backbone → Global Average Pooling → Classification heads\n- Config: `experiment=dinov3_baseline_gap`\n\
+  \n### 2. JanusMaskedAttn (Anatomical Attention)\nDisease-specific organ-masked attention pooling.\n\
+  - Attention strategies: single, union, comparative, roi, global\n- Learnable temperature (tau) and mask\
+  \ bias parameters\n- Config: `experiment=dinov3_masked_attn`\n\n### 3. JanusScalarFusion (Visual + Scalar\
+  \ Concatenation)\nFuses visual and scalar features via concatenation.\n- Visual projector (768→256d)\
+  \ + Scalar projector (N→256d)\n- Fusion MLP for final classification\n- Config: `experiment=dinov3_scalar_fusion`\n\
+  \n### 4. JanusGatedFusion (Advanced Gating)\nScalar features gate visual features (element-wise multiplication).\n\
+  - Visual pooling: `masked_attn` or `gap`\n- Optional dual-head mode with learnable mixture weights\n\
+  - Can warm-start from pretrained logistic regression weights\n- Config: `experiment=dinov3_gated_fusion`\n\
+  \n## Installation\n\n```bash\n# Clone repository\ncd /path/to/ipredict/neuro_symbolic/janus\n\n# Install\
+  \ dependencies\npip install torch torchvision transformers hydra-core omegaconf\npip install pandas\
+  \ numpy scikit-learn tqdm wandb\n\n# Set environment variables\nexport SCRATCH=/scratch/your_username\n\
+  export IPREDICT_ROOT=/path/to/ipredict\nexport NETID=your_netid\nexport PYTHONPATH=$IPREDICT_ROOT/neuro_symbolic:$PYTHONPATH\n\
+  ```\n\n## Data Requirements\n\n### Directory Structure\n```\n$SCRATCH/\n├── output/ct_triage/.../macroradiomics/merlin/\n\
+  │   └── v1_new_features/\n│       ├── disease_config_final.py   # Per-disease feature/attention configs\n\
+  │       ├── feature_stats.json        # Mean/std for z-score normalization\n│       └── model_weights.json\
+  \        # Pretrained LR weights (optional)\n│\n/cachedata/$NETID/merlin/packs/\n├── case_001.pt   \
+  \                    # Preprocessed CT + masks\n├── case_002.pt\n└── ...\n\n$IPREDICT_ROOT/neuro_symbolic/\n\
+  ├── splits/\n│   ├── train_ids.txt                 # One case_id per line\n│   ├── val_ids.txt\n│  \
+  \ └── test_ids.txt\n└── janus/\n    └── zero_shot_findings_disease_cls.csv  # Labels\n```\n\n### Pack\
+  \ File Format (.pt)\n```python\n{\n    \"image\": torch.Tensor([1, D, H, W]),     # CT volume (160×224×224)\n\
+  \    \"masks\": torch.Tensor([20, D, H, W]),    # Organ segmentation masks\n    \"meta\": {\n      \
+  \  \"case_id\": \"case_001\",\n        \"spacing_final_mm\": [1.5, 1.5, 3.0]\n    }\n}\n```\n\n### Labels\
+  \ CSV Format\n```csv\ncase_id,hepatomegaly,splenomegaly,...,fracture\ncase_001,1,0,-1,...,0\ncase_002,0,1,0,...,1\n\
+  ```\n- `0` = negative, `1` = positive, `-1` = uncertain/missing\n\n### Features Parquet\nScalar radiomics\
+  \ features indexed by `case_id`:\n- Base features: liver_volume_ml, spleen_mean_hu, etc.\n- Derived\
+  \ features: liver_spleen_hu_diff, cardiothoracic_ratio, etc.\n\n## Configuration\n\n### Environment\
+  \ Variables\nThe config uses OmegaConf's `${oc.env:VAR}` syntax:\n```yaml\npaths:\n  lr_run_dir: ${oc.env:SCRATCH}/output/.../v1_new_features\n\
+  \  pack_root: /cachedata/${oc.env:NETID}/merlin/packs\n```\n\n### Key Configuration Options\n\n####\
+  \ Model Settings (`configs/experiment/*.yaml`)\n```yaml\nmodel:\n  name: JanusGatedFusion\n  variant:\
+  \ B                          # S (small), B (base), L (large)\n  visual_pooling: masked_attn       \
+  \  # masked_attn | gap\n  use_residual: false                 # Dual-head mode\n  load_lr_weights: true\
+  \               # Warm-start scalar heads\n  freeze_backbone: false\n  use_gradient_checkpointing: true\
+  \    # Saves ~50% GPU memory\n```\n\n#### Training Settings (`configs/config.yaml`)\n```yaml\ntraining:\n\
+  \  max_epochs: 20\n  learning_rate: 3e-4\n  optimizer: adamw\n  scheduler: cosine\n  warmup_epochs:\
+  \ 5\n  gradient_clip: 1.0\n  use_amp: true                       # Mixed precision\n\n  # Grouped learning\
+  \ rates\n  use_group_lrs: true\n  head_lr_scale: 3.0                  # Heads: 3× base LR\n  alpha_lr_scale:\
+  \ 0.3                 # Alpha params: 0.3× base LR\n\n  # Loss\n  loss_fn: bce_uncertain\n  use_class_weights:\
+  \ true\n  pos_weight_clip: 10.0\n\n  # Distributed\n  use_ddp: false\n\n  # Checkpointing\n  save_best_only:\
+  \ true\n  monitor_metric: val/macro_auc\n```\n\n#### Augmentation Settings\n```yaml\ndataset:\n  use_augmentation:\
+  \ true\n  aug_preset: anatomy_safe_v2         # Recommended (no flips)\n  aug_params:\n    anatomy_safe_v2:\n\
+  \      p_affine: 0.35\n      rot_deg: 10.0\n      translate_xy: 5.0\n      scale_min: 0.95\n      scale_max:\
+  \ 1.05\n      p_gamma: 0.30\n      p_noise: 0.30\n```\n\n## Training\n\n### Basic Training\n```bash\n\
+  python train.py experiment=dinov3_gated_fusion\n```\n\n### With Custom Paths\n```bash\npython train.py\
+  \ experiment=dinov3_gated_fusion \\\n  paths.disease_config=/path/to/disease_config_final.py \\\n  paths.pack_root=/path/to/packs\
+  \ \\\n  paths.labels_csv=/path/to/labels.csv\n```\n\n### Distributed Training (Multi-GPU)\n```bash\n\
+  torchrun --nproc_per_node=8 train.py \\\n  experiment=dinov3_gated_fusion \\\n  training.use_ddp=true\n\
+  ```\n\n### With WandB Logging\n```bash\npython train.py experiment=dinov3_gated_fusion \\\n  logging.use_wandb=true\
+  \ \\\n  logging.wandb_project=janus_runs\n```\n\n### Model Variants\n```bash\n# Baseline (no anatomical\
+  \ priors)\npython train.py experiment=dinov3_baseline_gap\n\n# Masked Attention\npython train.py experiment=dinov3_masked_attn\n\
+  \n# Scalar Fusion\npython train.py experiment=dinov3_scalar_fusion\n\n# Gated Fusion (default)\npython\
+  \ train.py experiment=dinov3_gated_fusion\n```\n\n### Advanced Options\n```bash\n# Backbone size\npython\
+  \ train.py experiment=dinov3_gated_fusion model.variant=L\n\n# Visual pooling strategy\npython train.py\
+  \ experiment=dinov3_gated_fusion model.visual_pooling=gap\n\n# Learning rate tuning\npython train.py\
+  \ experiment=dinov3_gated_fusion \\\n  training.learning_rate=1e-4 \\\n  training.warmup_epochs=3\n\n\
+  # Debug: Test LR weight loading\npython train.py experiment=dinov3_gated_fusion \\\n  model.debug_scalar_only=true\n\
+  ```\n\n## Inference\n\n### Basic Inference\n```bash\npython inference.py \\\n  experiment=dinov3_gated_fusion\
+  \ \\\n  paths.checkpoint=/path/to/checkpoints/model_best.pt\n```\n\n### Distributed Inference\n```bash\n\
+  torchrun --nproc_per_node=4 inference.py \\\n  experiment=dinov3_gated_fusion \\\n  paths.checkpoint=/path/to/checkpoint.pt\
+  \ \\\n  training.use_ddp=true\n```\n\n### Different Splits\n```bash\n# Validation set\npython inference.py\
+  \ ... paths.test_ids=/path/to/val_ids.txt\n\n# Custom split\npython inference.py ... paths.test_ids=/path/to/custom_ids.txt\n\
+  ```\n\n### Output\nInference saves to the checkpoint's parent directory:\n- `test_predictions.csv`:\
+  \ Per-case disease probabilities\n- `test_metrics.json`: AUC, AUPRC per disease\n\n## SLURM Scripts\n\
+  \n### Training\n```bash\nsbatch scripts/slurm_train.sub\n```\n\n### Inference\n```bash\nsbatch scripts/slurm_inference.sub\n\
+  ```\n\n## Project Structure\n\n```\njanus/\n├── train.py                    # Main training script\n\
+  ├── inference.py                # Inference script\n├── losses.py                   # BCE with uncertain\
+  \ label handling\n│\n├── configs/\n│   ├── config.yaml             # Default configuration\n│   ├──\
+  \ disease_config.py       # Dynamic disease config loader\n│   └── experiment/\n│       ├── dinov3_baseline_gap.yaml\n\
+  │       ├── dinov3_masked_attn.yaml\n│       ├── dinov3_scalar_fusion.yaml\n│       └── dinov3_gated_fusion.yaml\n\
+  │\n├── models/\n│   └── janus_model.py          # All model architectures\n│\n├── datamodules/\n│  \
+  \ ├── dataset.py              # JanusDataset\n│   ├── feature_bank.py         # Scalar feature loading/normalization\n\
+  │   └── augmentation.py         # Data augmentation\n│\n└── scripts/\n    ├── slurm_train.sub      \
+  \   # SLURM training script\n    ├── slurm_inference.sub     # SLURM inference script\n    └── compute_feature_stats.py\n\
+  ```\n\n## Key Technical Details\n\n### Visual Processing\n1. CT volume (160×224×224) → 2.5D tri-slices\
+  \ (axial+coronal+sagittal)\n2. DINOv3 extracts 768d features per patch token\n3. Pooling: GAP or disease-specific\
+  \ masked attention\n\n### Attention Strategies\n| Strategy | Description | Example Disease |\n|----------|-------------|-----------------|\n\
+  | single | Focus on one organ | hepatomegaly (liver) |\n| union | Multiple organs combined | ascites\
+  \ (liver+spleen+kidneys) |\n| comparative | Separate pooling, concatenated | hepatic_steatosis (liver\
+  \ vs spleen) |\n| roi | Precise bounding box | appendicitis (appendix ROI) |\n| global | Full CT scan\
+  \ | free_air |\n\n### Scalar Features\n- Z-score normalized using precomputed statistics\n- Disease-specific\
+  \ feature selection from `disease_config_final.py`\n- Supports base features + derived features (ratios,\
+  \ differences)\n\n### Learnable Parameters\n- **Temperature (tau)**: Controls attention sharpness [0.2,\
+  \ 2.0]\n- **Mask bias**: Inside/outside attention priors\n- **Alpha**: Mixture weight for dual-head\
+  \ mode\n\n## Troubleshooting\n\n### Missing Keys Warning\n```\nMissing keys: 90 (ok if you changed model\
+  \ options like visual_pooling)\n```\nThis occurs when checkpoint and model configs differ (e.g., `use_residual`\
+  \ mismatch). Ensure configs match.\n\n### Environment Variable Errors\n```\nInterpolationKeyError: oc.env:SCRATCH\n\
+  ```\nExport required environment variables before running:\n```bash\nexport SCRATCH=/scratch/your_path\n\
+  export IPREDICT_ROOT=/path/to/ipredict\nexport NETID=your_netid\n```\n\n### GPU Memory Issues\nEnable\
+  \ gradient checkpointing:\n```bash\npython train.py model.use_gradient_checkpointing=true\n```\n\n###\
+  \ Empty Validation Batches (DDP)\nEnsure validation dataset size is divisible by (batch_size × num_gpus)\
+  \ or the code handles remainders.\n\n## Citation\n\nIf you use this code, please cite:\n```\n@article{dahal2026janus,\n\
+  \  title={JANUS: Anatomy-Conditioned Gating for Robust CT Triage Under Distribution Shift},\n  author={Dahal,\
+  \ Lavsen and Bhandari, Yubraj and Rubin, Geoffrey and Lo, Joseph Y},\n  journal={arXiv preprint arXiv:2605.13813},\n\
+  \  year={2026}\n}\n```\n\n## License\n\nThis project is licensed under the Apache License 2.0 - see\
+  \ the [LICENSE](LICENSE) file for details.\n\n"

@@ -1,0 +1,43 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: fadyanis037-max/3D-Tumor-Segmentation-Pipeline-with-MONAI
+url: https://github.com/fadyanis037-max/3D-Tumor-Segmentation-Pipeline-with-MONAI
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-11T12:26:03Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Simple Agentic Tumor Demo\n\n**Demo-only / not for clinical use.** This project runs\
+  \ a pretrained MONAI BraTS segmentation model on one local MRI case, extracts tumor facts, combines\
+  \ them with a synthetic patient-history fixture, and drafts an evidence-grounded report via LangGraph.\n\
+  \n## What it does\n\n1. **Segmentation** — MONAI Model Zoo `brats_mri_segmentation` (pretrained, no\
+  \ training)\n2. **Facts** — volume, dimensions, and binary whole-tumor mask + PNG overlay\n3. **Agents**\
+  \ — segmentation facts + synthetic history → constrained draft report\n4. **Verification** — fixture\
+  \ test checks outputs and evidence grounding\n\n## Quick start\n\n```bash\n# 1. Create virtual environment\
+  \ and install deps\npython -m venv .venv\n.venv\\Scripts\\activate\npip install -r requirements.txt\n\
+  \n# 2. Generate a synthetic 4-channel demo case (or place real BraTS NIfTIs in data/cases/DEMO_001/)\n\
+  python scripts/generate_synthetic_case.py\n\n# 3. Download pretrained MONAI bundle (~large download)\n\
+  python scripts/download_bundle.py\n\n# 4. Run end-to-end demo\npython src/demo.py\n\n# 5. Verify outputs\n\
+  python tests/test_demo_fixture.py\n```\n\n## Outputs\n\nAfter a successful run, see `output/DEMO_001/`:\n\
+  \n| File | Description |\n|------|-------------|\n| `wt_mask.nii.gz` | Binary whole-tumor mask |\n|\
+  \ `segmentation_facts.json` | Agent 1 input (deterministic stats) |\n| `overlay.png` | Mid-slice MRI\
+  \ + contour |\n| `draft_report.json` / `.txt` | Agent 3 draft (demo-only) |\n| `inference_meta.json`\
+  \ | Device, ROI size, elapsed time, VRAM |\n\n## Configuration\n\nEdit `configs/demo.yaml` to change\
+  \ ROI size (try `[64, 64, 64]` on 6GB GPUs), device, or paths.\n\n## Using real BraTS data\n\nPlace\
+  \ these files in `data/cases/DEMO_001/`:\n\n- `T1.nii.gz`, `T1ce.nii.gz`, `T2.nii.gz`, `FLAIR.nii.gz`\n\
+  \nOr a single `multimodal.nii.gz` with shape `(X, Y, Z, 4)`.\n\n## Architecture\n\n```\nMRI case → MONAI\
+  \ pretrained inference → mask + stats + overlay\n                                              ↓\n \
+  \                   synthetic history → LangGraph → draft report\n```\n\n## Deferred upgrades\n\n- OHIF\
+  \ + Orthanc + DICOM SEG viewer\n- Vector RAG + mock FHIR\n- Vision VLM on key slices\n- Human-in-the-loop\
+  \ approval UI\n\n## Disclaimer\n\nSynthetic demo data and reports. Not FDA-cleared. Not for diagnosis\
+  \ or treatment decisions.\n"

@@ -1,0 +1,61 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: personalWorkProjects/liver-tumor-ct-segmentation-platform
+url: https://github.com/personalWorkProjects/liver-tumor-ct-segmentation-platform
+platform: github
+description: Open-source lightweight attention U-Net platform for liver tumor CT segmentation workflows.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-19T01:15:23Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "# Liver Tumor CT Segmentation Platform\n\nAn open-source reference implementation for\
+  \ liver and liver-tumor CT segmentation workflows. The project turns a lightweight attention U-Net experiment\
+  \ into a deployable medical-imaging engineering template: preprocessing, 2.5D input assembly, ECA-U-Net\
+  \ model code, post-processing, metrics, service boundaries, tests, CI, and Docker packaging.\n\n> This\
+  \ repository is for research and engineering demonstration only. It is not a medical device and must\
+  \ not be used for diagnosis without clinical validation, regulatory review, and physician oversight.\n\
+  \n## Why This Project Exists\n\nLiver tumor segmentation in CT scans is time-consuming when done manually\
+  \ and difficult for models because tumors are often small, boundaries are fuzzy, and foreground pixels\
+  \ are heavily imbalanced. This project focuses on the practical path from algorithm prototype to hospital\
+  \ workflow:\n\n- DICOM/NIfTI-friendly preprocessing design\n- HU windowing and 2.5D slice stacking\n\
+  - Lightweight ECA-U-Net model implementation\n- Dice, IoU, precision, recall, and volume metrics\n-\
+  \ Connected-component post-processing\n- API and CLI entry points\n- Reproducible tests and CI\n\n##\
+  \ Repository Layout\n\n```text\n.\n├── configs/                  # Example model and pipeline configuration\n\
+  ├── docs/                     # Architecture and model-card documentation\n├── examples/           \
+  \      # Demo scripts for synthetic cases\n├── src/liver_tumor_seg/      # Python package\n│   ├── models/\
+  \               # U-Net, SE, and ECA attention modules\n│   ├── api.py                # FastAPI app\
+  \ skeleton\n│   ├── cli.py                # CLI demo commands\n│   ├── config.py             # Typed\
+  \ configuration helpers\n│   ├── inference.py          # Torch inference helpers\n│   ├── metrics.py\
+  \            # Segmentation metrics\n│   ├── postprocessing.py     # Component filtering and mask cleanup\n\
+  │   └── preprocessing.py      # CT preprocessing utilities\n└── tests/                    # Unit tests\
+  \ for non-GPU core logic\n```\n\n## Quick Start\n\nCreate a virtual environment and install the lightweight\
+  \ development dependencies:\n\n```bash\npython -m venv .venv\nsource .venv/bin/activate\npip install\
+  \ -e \".[dev]\"\n```\n\nOn Windows PowerShell:\n\n```powershell\npython -m venv .venv\n.\\.venv\\Scripts\\\
+  Activate.ps1\npip install -e \".[dev]\"\n```\n\nGenerate a synthetic CT-like case, run the heuristic\
+  \ demo inference, and compute metrics:\n\n```bash\nliverseg preprocess-demo --output outputs/synthetic_case.npz\n\
+  liverseg infer-demo --input outputs/synthetic_case.npz --output outputs/demo_prediction.npz\nliverseg\
+  \ metrics --pred outputs/demo_prediction.npz --target outputs/synthetic_case.npz --label 2\n```\n\n\
+  Run tests:\n\n```bash\npytest\n```\n\n## Model Notes\n\nThe model implementation supports:\n\n- `unet`:\
+  \ baseline 2D U-Net\n- `se_unet`: U-Net with squeeze-and-excitation channel attention\n- `eca_unet`:\
+  \ U-Net with efficient channel attention\n\nThe recommended deployment-oriented setup is 2.5D ECA-U-Net:\
+  \ stack the previous, current, and next CT slices as input channels. This captures limited volumetric\
+  \ context while keeping memory and inference cost closer to 2D segmentation than full 3D U-Net.\n\n\
+  Install optional ML dependencies before training or loading PyTorch weights:\n\n```bash\npip install\
+  \ -e \".[ml]\"\n```\n\n## Hospital Workflow Boundary\n\nThe intended production workflow is:\n\n```text\n\
+  PACS/RIS -> DICOM gateway -> preprocessing -> model inference\n  -> post-processing -> editable mask\
+  \ overlay -> physician review\n  -> DICOM SEG / JSON / NIfTI export -> audit and archive\n```\n\nThe\
+  \ AI result should always be treated as a draft segmentation. A physician must review and confirm the\
+  \ final contour before it is used for reporting, research statistics, treatment planning, or follow-up\
+  \ assessment.\n\n## API\n\nInstall API dependencies:\n\n```bash\npip install -e \".[api]\"\n```\n\n\
+  Start the service:\n\n```bash\nuvicorn liver_tumor_seg.api:app --host 0.0.0.0 --port 8000\n```\n\nThe\
+  \ current API exposes health and demo metadata endpoints. Production integrations should wire the task\
+  \ queue, storage, model registry, and DICOM gateway described in `docs/architecture.md`.\n\n## License\n\
+  \nMIT License. See `LICENSE`.\n\n"

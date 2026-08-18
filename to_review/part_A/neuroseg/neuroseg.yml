@@ -1,0 +1,66 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hollyakt/neuroseg
+url: https://github.com/hollyakt/neuroseg
+platform: github
+description: Brain tumor segmentation pipeline using 3D U-Net on BraTS 2021 MRI dataset with Streamlit
+  demo
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-23T12:57:38Z'
+image_source: https://raw.githubusercontent.com/hollyakt/neuroseg/HEAD/figures/atlas_segmentation.png
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# NeuroSeg: Brain Tumor Segmentation with U-Net\n\n![Python](https://img.shields.io/badge/Python-3.9+-blue)\
+  \ ![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-orange) ![MONAI](https://img.shields.io/badge/MONAI-1.3+-green)\
+  \ ![License](https://img.shields.io/badge/License-MIT-yellow)\n\n> End-to-end brain tumor segmentation\
+  \ pipeline using a 3D U-Net trained on the BraTS multimodal MRI dataset. Segments tumor subregions:\
+  \ **whole tumor**, **tumor core**, and **enhancing tumor**.\n\n---\n\n## Problem Statement\n\nGliomas\
+  \ are the most common primary malignant brain tumors. Accurate segmentation of tumor subregions from\
+  \ multimodal MRI is critical for surgical planning, radiation therapy targeting, and treatment monitoring.\
+  \ Manual delineation is time-consuming and subject to inter-rater variability — automated deep learning\
+  \ segmentation offers reproducible, fast analysis.\n\nThis pipeline trains a 3D U-Net on the [BraTS\
+  \ 2021 dataset](https://www.synapse.org/#!Synapse:syn25829067/wiki/610863), which provides four MRI\
+  \ modalities (T1, T1ce, T2, FLAIR) and expert-annotated tumor masks.\n\n---\n\n## Results\n\nReference\
+  \ performance targets on BraTS (from published 3D U-Net work, not reproduced in this repo without the\
+  \ credentialed dataset):\n\n| Metric | Whole Tumor | Tumor Core | Enhancing Tumor |\n|--------|-------------|------------|-----------------|\n\
+  | Dice Score | ~0.89 | ~0.85 | ~0.78 |\n| Hausdorff 95 (mm) | ~4.2 | ~6.8 | ~8.1 |\n\nThe [open-data\
+  \ demo](#quick-demo-no-credentialed-data-required) below produces real, reproducible visualizations\
+  \ on the nilearn MNI152 template + Harvard-Oxford atlas — runnable on any machine.\n\n---\n\n## Architecture\n\
+  \n```\nInput: [B, 4, 128, 128, 128]  ← 4 MRI modalities\n         │\n    Encoder (ResNet blocks)\n \
+  \        │ skip connections\n    Bottleneck\n         │ skip connections\n    Decoder (upsampling)\n\
+  \         │\nOutput: [B, 3, 128, 128, 128] ← 3 tumor subregion masks\n```\n\n- **Backbone**: 3D U-Net\
+  \ with residual blocks (MONAI implementation)\n- **Loss**: Compound Dice + Cross-Entropy\n- **Optimizer**:\
+  \ AdamW with cosine annealing\n- **Augmentation**: Random flips, rotations, intensity scaling, Gaussian\
+  \ noise\n\n---\n\n## Installation\n\n```bash\ngit clone https://github.com/hollyakt/neuroseg.git\ncd\
+  \ neuroseg\npip install -r requirements.txt\n```\n\n---\n\n## Quick demo (no credentialed data required)\n\
+  \nThe full training path uses BraTS 2021, which requires Synapse credentialing\nand a multi-GB download.\
+  \ To make the visualization and analysis pipeline\nrunnable end-to-end on any machine, the repo ships\
+  \ a `src/demo.py` that\nswaps in fully open data:\n\n- **MNI152 T1 template** — bundled with [nilearn](https://nilearn.github.io/)\n\
+  - **Harvard-Oxford cortical atlas** — fetched on first run by nilearn\n\nThe demo produces a multi-class\
+  \ brain-region segmentation visualization\nthat mirrors the shape of the tumor-segmentation output (T1\
+  \ reference +\noverlaid region masks across three orthogonal slices).\n\n```bash\npython src/demo.py\
+  \ --output-dir results\n# → results/atlas_segmentation.png\n```\n\n![open-data demo output](figures/atlas_segmentation.png)\n\
+  \n---\n\n## Full pipeline (BraTS)\n\n### Data setup\n\n1. Register and download [BraTS 2021](https://www.synapse.org/#!Synapse:syn25829067)\n\
+  2. Place data in `data/BraTS2021/`\n3. Run preprocessing:\n```bash\npython src/preprocess.py --data_dir\
+  \ data/BraTS2021 --output_dir data/processed\n```\n\n### Training\n```bash\npython src/train.py \\\n\
+  \  --data_dir data/processed \\\n  --epochs 100 \\\n  --batch_size 2 \\\n  --lr 1e-4 \\\n  --output_dir\
+  \ checkpoints/\n```\n\n### Inference\n```bash\npython src/predict.py \\\n  --checkpoint checkpoints/best_model.pth\
+  \ \\\n  --input data/sample/BraTS2021_sample \\\n  --output results/\n```\n\n### Streamlit web demo\n\
+  ```bash\nstreamlit run app/demo.py\n```\nUpload an MRI slice (NIfTI or PNG) and visualize segmentation\
+  \ in real time.\n\n---\n\n## Project Structure\n\n```\nneuroseg/\n├── src/\n│   ├── model.py       \
+  \   # 3D U-Net architecture\n│   ├── dataset.py        # BraTS dataset loader\n│   ├── train.py    \
+  \      # Training loop\n│   ├── predict.py        # Inference script\n│   ├── preprocess.py     # Data\
+  \ preprocessing\n│   └── metrics.py        # Dice, Hausdorff metrics\n├── app/\n│   └── demo.py    \
+  \       # Streamlit web demo\n├── notebooks/\n│   └── 01_exploration_and_results.ipynb\n├── figures/\
+  \              # Result visualizations\n├── requirements.txt\n└── README.md\n```\n\n---\n\n## Clinical\
+  \ Relevance\n\nThis work mirrors segmentation pipelines used in clinical neuroradiology and surgical\
+  \ planning systems. The BraTS benchmark is the gold standard for brain tumor segmentation research,\
+  \ used in studies published in Nature Medicine, Radiology, and MICCAI proceedings.\n\n---\n\n## License\n\
+  \nMIT License. See [LICENSE](LICENSE).\n"

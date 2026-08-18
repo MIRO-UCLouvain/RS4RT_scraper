@@ -1,0 +1,138 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: MIC-DKFZ/LesionLocator
+url: https://github.com/MIC-DKFZ/LesionLocator
+platform: github
+description: ' LesionLocator is a framework for zero-shot lesion segmentation and longitudinal tumor tracking
+  in 3D full-body imaging.'
+license: GPL-3.0
+language: Python
+keywords:
+- 3d
+- lesion
+- segmentation
+- tracking
+- tumor
+stars: 109
+updated_at: '2026-07-23T05:01:16Z'
+image_source: https://raw.githubusercontent.com/MIC-DKFZ/LesionLocator/HEAD/documentation/assets/LesionLocatorLogo.png
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# [CVPR2025] LesionLocator: Zero-Shot Universal Tumor Segmentation and Tracking in 3D\
+  \ Whole-Body Imaging\n\n<img src=\"documentation/assets/LesionLocatorLogo.png\" />\n\nThis repository\
+  \ contains the official implementation of our CVPR 2025 paper:\n\n### \U0001F3AF **LesionLocator: Zero-Shot\
+  \ Universal Tumor Segmentation and Tracking in 3D Whole-Body Imaging**\n\n\nThe paper introduces a novel\
+  \ framework for **zero-shot lesion segmentation** and **longitudinal tumor tracking** in 3D full-body\
+  \ imaging. By combining a large-scale lesion dataset, promptable segmentation, and deep-learning-based\
+  \ image registration, our framework achieves state-of-the-art results for both tasks.\n\n> **Authors**:\
+  \ Maximilian Rokuss, Yannick Kirchhoff, Seval Akbal, Balint Kovacs, Saikat Roy, Constantin Ulrich, Tassilo\
+  \ Wald, Lukas T. Rotkopf, Heinz-Peter Schlemmer and Klaus Maier-Hein  \n> **Paper**: [![CVPR](https://img.shields.io/badge/%20CVPR%202025%20-open%20access-blue.svg)](https://openaccess.thecvf.com/content/CVPR2025/html/Rokuss_LesionLocator_Zero-Shot_Universal_Tumor_Segmentation_and_Tracking_in_3D_Whole-Body_CVPR_2025_paper.html)\n\
+  \n## News/Updates:\n- \U0001F5E3️ **3/26**: Oral presentation at the [BVM Conference](https://link.springer.com/book/10.1007/978-3-658-51100-5)\n\
+  - \U0001F396️ **9/25**: Featured in the winning solution of the **[MICCAI autoPET IV Challenge](https://autopet-iv.grand-challenge.org/leaderboard/)**\
+  \ on *Promptable Longitudinal Lesion Tracking*\n- \U0001F3A4 **6/25**: LesionLocator was featured in\
+  \ the [**Voxel51 Visual AI in Healthcare Event**](https://voxel51.com/events/visual-ai-in-healthcare-june-27-2025)\
+  \ — Watch the talk [here](https://youtu.be/Bh8tqpHFQF0)\n- \U0001F4BB **4/25**: LesionLocator **code\
+  \ released**! \U0001F973 The checkpoint can be found [here](https://zenodo.org/records/15174217)\n-\
+  \ \U0001F5C3️ **3/25**: Lesion **Dataset** with Synthetic Follow-Ups Released \U0001F449 [here](https://doi.dkfz.de/10.6097/DKFZ/IR/E230/20250324_1.zip)\n\
+  - \U0001F4C4 **2/25**: CVPR Acceptance \U0001F389\n\n---\n\n## \U0001F6E0️ Installation\n\n### 1. Clone\
+  \ the repository\n\n```bash\ngit clone https://github.com/MIC-DKFZ/LesionLocator\ncd LesionLocator\n\
+  ```\n\n### 2. Create a conda environment (recommended)\n\n```bash\nconda create -n lesionlocator python=3.12\
+  \ -y\nconda activate lesionlocator\n```\n\n### 3. Install the package\n\n```bash\npip install -e .\n\
+  ```\n\nIf you want to use the napari viewer for visual inspection:\n\n```bash\npip install \"napari[all]\"\
+  \n```\n\n---\n\n## \U0001F680 Features & Usage\n\nLesionLocator has **two main modes**:\n\n### 1️⃣ Zero-Shot\
+  \ Lesion Segmentation (Single Timepoint)\n\nPerform universal lesion segmentation using **point** or\
+  \ **3D bounding box** prompts. No lesion type–specific fine-tuning required.\n\n#### Usage\n\n```bash\n\
+  LesionLocator_segment\n    -i /path/to/image(s)\n    -p /path/to/prompt(s) \n    -t box \n    -o /path/to/output/folder\n\
+  \    -m /path/to/LesionLocatorCheckpoint \n```\n\n#### Arguments\n\n| Argument | Description |\n|----------|-------------|\n\
+  | `-i` | **Input image(s)**: Path to an image file (`.nii.gz`) or a folder containing multiple images.\
+  \ |\n| `-p` | **Prompt(s)**: Can be either `.json` files containing 3D point or box coordinates, or\
+  \ `.nii.gz` instance segmentation maps. Prompts must have the same filename as their corresponding input\
+  \ image. Binary masks will be automatically converted to instance maps.  More info [here](/documentation/prompting.md).\
+  \ |\n| `-t` | **Prompt type**: Choose between `point` or `box`. Determines how the model interprets\
+  \ the prompts. Default is `box`. |\n| `-o` | **Output folder**: Path where the predicted segmentation\
+  \ masks will be saved. Created automatically if it doesn't exist. |\n| `-m` | **Model folder**: Path\
+  \ to the downloaded `LesionLocatorCheckpoint` directory containing trained model weights. |\n| `-f`\
+  \ | **Model folds**: Specify one or more folds. Defaults to all 5 folds for ensemble prediction. |\n\
+  | `--disable_tta` | Disables test-time augmentation (TTA) using mirroring. Speeds up inference at the\
+  \ cost of accuracy. |\n| `--continue_prediction`, `--c` | Continues a previously interrupted run by\
+  \ skipping existing output files. |\n| `--visualize` | Opens results in a `napari` viewer for inspection.\
+  \ Requires `napari[all]` installed. |\n\n\n\U0001F9E0 If you provide a 3D (instance) segmentation mask\
+  \ as a prompt, LesionLocator will internally extract the bounding boxes or points automatically, depeding\
+  \ on the specified prompt type `-t`. Details on how to handle promting and the .json format can be found\
+  \ [here](/documentation/prompting.md). You can also run `LesionLocator_segment -h` for help. \n\n**Examples:**\n\
+  \n```bash\nLesionLocator_segment -i image.nii.gz -p label.nii.gz -t box -o /output/folder -m /path/to/LesionLocatorCheckpoint\
+  \ \n```\n```bash\nLesionLocator_segment -i image.nii.gz -p points.json -t point -o /output/folder -m\
+  \ /path/to/LesionLocatorCheckpoint \n```\n```bash\nLesionLocator_segment -i /image/folder -p /prompts/folder\
+  \ -t box -o /output/folder -m /path/to/LesionLocatorCheckpoint \n```\n\n---\n\n### 2️⃣ Lesion Segmentation\
+  \ & Tracking Across Timepoints (Longitudinal)\n\nIncludes the lesion segmentation above but also tracks\
+  \ lesions across multiple timepoints using previous labels or prompts.\n\n#### Usage\n\n```bash\nLesionLocator_track\n\
+  \    -bl /path/to/baseline.nii.gz\n    -fu /path/to/followup1.nii.gz /path/to/followup2.nii.gz\n   \
+  \ -p /path/to/baseline_prompt_or_mask(s)\n    -t prev_mask\n    -o /path/to/output\n    -m /path/to/LesionLocatorCheckpoint\n\
+  ```\n\n#### Arguments\n\n| Argument | Description |\n|----------|-------------|\n| `-bl` | **Baseline\
+  \ scan**: Path to the `.nii.gz` image used as the baseline. Must match format expected by the model\
+  \ (or dataset config). |\n| `-fu` | **Follow-up scan(s)**: One or more `.nii.gz` files representing\
+  \ follow-up timepoints. Provide multiple paths separated by space for autoregressive tracking. |\n|\
+  \ `-p` | **Prompt**: Path to the baseline prompt. Can be one `.nii.gz` instance segmentation mask or\
+  \ list of several semantic segmentation masks. Can also be a `.json` file with a point/box prompt. Used\
+  \ to initialize tracking. More info [here](/documentation/prompting.md). |\n| `-o` | **Output folder**:\
+  \ Where tracked lesion segmentations will be saved. Created automatically if it doesn't exist. |\n|\
+  \ `-t` | **Prompt type**: Options: `point`, `box`, or `prev_mask`. Use `point`/`box` to trigger segmentation\
+  \ of baseline lesions before tracking. Use `prev_mask` to track from an existing baseline label mask\
+  \ directly. Default is `prev_mask`. |\n| `-m` | **Model folder**: Path to the `LesionLocatorCheckpoint`\
+  \ directory containing tracking model weights. |\n| `-f` | **Model folds**: Specify one or more folds.\
+  \ Defaults to all 5 folds for ensemble prediction. |\n| `-device` | **Device selection**: Options are\
+  \ `cuda`, `cpu`, or `mps` (Apple Silicon). Controls where the inference runs. Default is `cuda`. |\n\
+  \nYou can also run `LesionLocator_track -h` for help.\n\n**Examples**\n\nThis will do both the segmentation\
+  \ of the baseline scan using box prompts generated from `baseline_label.nii.gz` and then track each\
+  \ lesion:\n```bash\nLesionLocator_track -bl baseline.nii.gz -fu followup.nii.gz -p baseline_label.nii.gz\
+  \ -t box -o output/folder -m /path/to/LesionLocatorCheckpoint\n```\n\nSimilarly works with `.json` prompts:\n\
+  ```bash\nLesionLocator_track -bl baseline.nii.gz -fu followup.nii.gz -p points.json -t point -o output/folder\
+  \ -m /path/to/LesionLocatorCheckpoint\n```\n\nThis will trigger *just the tracking* (`-t prev_mask`)\
+  \ of all provided semantic masks autoregressively for all follow-ups:\n```bash\nLesionLocator_track\
+  \ -bl baseline.nii.gz -fu followup1.nii.gz followup2.nii.gz -p mask1.nii.gz mask2.nii.gz mask3.nii.gz\
+  \ -t prev_mask -o output/folder -m /path/to/LesionLocatorCheckpoint\n```\n\n To run inference with LesionLocator,\
+  \ you need to download the pretrained model checkpoint: \n\n#### [\U0001F517 Download LesionLocator\
+  \ Checkpoint](https://zenodo.org/records/15174217)\n\nOnce downloaded, extract the contents and use\
+  \ the `-m` argument in the CLI tools to point to the directory named `LesionLocatorCheckpoint`. Let\
+  \ us know if you run into issues downloading or loading checkpoints!\n\n---\n\n\n## \U0001F5C3️ Lesion\
+  \ Dataset with Synthetic Follow-Ups\n\nWe have released the **Lesion Dataset with Synthetic Follow-Ups**\
+  \ [here](https://doi.dkfz.de/10.6097/DKFZ/IR/E230/20250324_1.zip) (ca. 700 GB), which includes simulated\
+  \ follow-up scans with consistent instance labels. Due to image size, quality, or licensing constraints,\
+  \ not all images were used to synthesize a second timepoint and were excluded from this dataset. We\
+  \ reccomend downloading e.g. with `wget` since our servers can sometimes be a bit unstable.\n\n```bash\n\
+  wget -c --no-check-certificate -O LesionLocator_SynteticLongitudinalDataset.zip https://doi.dkfz.de/10.6097/DKFZ/IR/E230/20250324_1.zip\n\
+  ```\n\n#### **⚠ Important Notes**  \n- **Instance-based labels (not semantic):** Lesions in a single\
+  \ patient scan are labeled consecutively, and the same lesion retains the same label across both timepoints.\n\
+  - **Synthetic deformations & segmentation masks:** Some images contain **unrealistic deformations**\
+  \ or **challenging segmentation masks**, which may serve as useful test cases for **improving automated\
+  \ analysis methods**.  \n- **Recommended use:** This dataset is **ideal for pretraining** or for use\
+  \ **alongside real longitudinal data** to enhance model robustness and generalization.\n- **Longitudinal\
+  \ tracking tip:** When using this dataset for **longitudinal tracking**, we highly recommend **cropping\
+  \ one image during data augmentation** to **increase (translational) misalignment** and better simulate\
+  \ real-world conditions. \n\n#### **Included Datasets**  \nThis dataset incorporates lesion data from\
+  \ various publicly available sources:  \n\n- **[COVID-19 CT Lung](https://zenodo.org/records/3757476)**\
+  \  \n- **[KiTS](https://kits-challenge.org/kits23/)**  \n- **[LIDC](https://www.cancerimagingarchive.net/collection/lidc-idri/)**\
+  \  \n- **[LNDb](https://lndb.grand-challenge.org/)**  \n- **[MSD Colon](http://medicaldecathlon.com/)**\
+  \  \n- **[MSD Hepatic Vessels](http://medicaldecathlon.com/)**  \n- **[MSD Liver](http://medicaldecathlon.com/)**\
+  \  \n- **[MSD Lung](http://medicaldecathlon.com/)**  \n- **[MSD Pancreas](http://medicaldecathlon.com/)**\
+  \  \n- **[NIH Lymph](https://www.cancerimagingarchive.net/collection/ct-lymph-nodes/)**  \n- **[NSCLC\
+  \ Radiogenomics](https://www.cancerimagingarchive.net/collection/nsclc-radiogenomics/)**  \n\n#### \U0001F4DC\
+  \ This dataset is released under the **CC BY-NC-SA 4.0** license. \n\n---\n\n## More Related Code Releases\n\
+  \nIf you are interested check out [**nnInteractive**](https://github.com/MIC-DKFZ/nnInteractive) or\
+  \ [**LongiSeg**](https://github.com/MIC-DKFZ/LongiSeg) which we both just released:\n\n- [**nnInteractive**](https://github.com/MIC-DKFZ/nnInteractive)\
+  \ is our recent model for 3D interactive segmentation across all modalities, all target structures using\
+  \ various types of prompts! Check out the [python backend](https://github.com/MIC-DKFZ/nnInteractive)\
+  \ or the [napari plugin](https://github.com/MIC-DKFZ/napari-nninteractive). &nbsp; &nbsp; [![arXiv](https://img.shields.io/badge/arXiv-2503.08373-b31b1b.svg)](https://arxiv.org/abs/2503.08373)\n\
+  \n- [**LongiSeg**](https://github.com/MIC-DKFZ/LongiSeg) is an extension of the popular [nnU-Net framework](https://github.com/MIC-DKFZ/nnUNet),\
+  \ designed specifically for **longitudinal medical image segmentation**. By incorporating temporal information\
+  \ across multiple timepoints, LongiSeg enhances segmentation accuracy and consistency, making it a robust\
+  \ tool for analyzing medical imaging over time. LongiSeg includes several methods for temporal feature\
+  \ merging, including the newly introduced [Difference Weighting Block](https://github.com/MIC-DKFZ/Longitudinal-Difference-Weighting).\
+  \ &nbsp; &nbsp;   [![arXiv](https://img.shields.io/badge/arXiv-2404.03010-B31B1B.svg)](https://arxiv.org/abs/2409.13416)\n\
+  \n---\n\n## \U0001F4DA Citation\n\nIf you find our work useful, please consider citing:\n\n```bibtex\n\
+  @InProceedings{Rokuss_2025_CVPR,\n    author    = {Rokuss, Maximilian and Kirchhoff, Yannick and Akbal,\
+  \ Seval and Kovacs, Balint and Roy, Saikat and Ulrich, Constantin and Wald, "

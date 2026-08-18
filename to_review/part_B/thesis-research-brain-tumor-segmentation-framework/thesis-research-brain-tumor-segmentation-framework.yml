@@ -1,0 +1,137 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: soyDiegomaf/Thesis-Research-Brain-Tumor-Segmentation-Framework
+url: https://github.com/soyDiegomaf/Thesis-Research-Brain-Tumor-Segmentation-Framework
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-01T18:40:33Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# Information-Fusion Multimodal MRI Brain Tumor Segmentation\n\nThis repository contains\
+  \ a single-notebook deep learning pipeline for multimodal MRI brain tumor segmentation using BraTS-style\
+  \ NIfTI data. The notebook trains and evaluates multiple fusion architectures, performs full-volume\
+  \ sliding-window inference, tests missing-modality robustness, reports calibration/uncertainty metrics,\
+  \ and exports publication-ready tables, figures, checkpoints, and a final results archive.\n\n> **Research-use\
+  \ note:** This project is for research, thesis, and model evaluation purposes only. It is not a clinical\
+  \ diagnostic tool.\n\n## Datasets Used \n\n### Primary Dataset\nhttps://www.kaggle.com/datasets/awsaf49/brats20-dataset-training-validation\n\
+  \n### External Datasets\nhttps://www.kaggle.com/datasets/syedsajid/brats2021\n\nhttps://www.kaggle.com/datasets/dschettler8845/brats-2021-task1\n\
+  \nhttps://www.kaggle.com/datasets/vietanh21/brats-2021-task-1-dataset\n\n---\n\n## 1. Project files\n\
+  \nExpected repository layout:\n\n```text\nproject/\n├── diego_information_fusion_complete.ipynb\n├──\
+  \ requirements.txt\n├── README.md\n└── output/                         # created automatically or configured\
+  \ in the notebook\n```\n\nLarge datasets, checkpoints, output figures, and `.nii/.nii.gz` files should\
+  \ not be committed to Git.\n\n---\n\n## 2. What the notebook does\n\nThe notebook is organized as a\
+  \ full experimental pipeline:\n\n1. Sets up the Python environment and imports dependencies.\n2. Defines\
+  \ experiment configuration in the `CFG` class.\n3. Discovers BraTS-style MRI cases.\n4. Loads and normalizes\
+  \ MRI volumes.\n5. Converts BraTS labels into segmentation regions:\n   - `ET`: enhancing tumor\n  \
+  \ - `TC`: tumor core\n   - `WT`: whole tumor\n6. Creates a fixed train/validation/test split shared\
+  \ by every model and random seed.\n7. Trains multiple architectures:\n   - `early_fusion_unet`\n   -\
+  \ `gated_fusion_unet`\n   - `hemis_fusion_unet`\n   - `attention_fusion_unet`\n   - `segresnet`\n  \
+  \ - `swinunetr`\n8. Evaluates with full-volume MONAI sliding-window inference.\n9. Computes segmentation,\
+  \ calibration, uncertainty, and robustness metrics.\n10. Runs missing-modality evaluations such as `drop_t1ce`,\
+  \ `only_flair`, and `t1ce+flair`.\n11. Creates reliability diagrams, uncertainty-error plots, cross-metric\
+  \ summaries, and qualitative panels.\n12. Saves CSV tables, PDF figures, model checkpoints, and a final\
+  \ ZIP archive.\n\n---\n\n## 3. System requirements\n\n### Recommended\n\n- Python 3.10 or 3.11\n- NVIDIA\
+  \ GPU with CUDA support\n- 12 GB+ GPU VRAM for smaller/debug experiments\n- 24 GB+ GPU VRAM recommended\
+  \ for full publication runs, especially with `swinunetr`\n- 32 GB+ system RAM recommended\n- Windows,\
+  \ Linux, or macOS\n\n### CPU-only note\n\nThe code can be installed on CPU-only systems, but full 3D\
+  \ MRI training and full-volume inference will be very slow. Use debug mode first on CPU.\n\n---\n\n\
+  ## 4. Dataset requirements\n\nThe notebook expects BraTS-style case folders. Each case folder must contain\
+  \ the four MRI modalities and one segmentation mask.\n\nRequired modalities:\n\n```text\nt1\nt1ce\n\
+  t2\nflair\nseg\n```\n\nA valid case folder usually looks like this:\n\n```text\nBraTS20_Training_001/\n\
+  ├── BraTS20_Training_001_t1.nii.gz\n├── BraTS20_Training_001_t1ce.nii.gz\n├── BraTS20_Training_001_t2.nii.gz\n\
+  ├── BraTS20_Training_001_flair.nii.gz\n└── BraTS20_Training_001_seg.nii.gz\n```\n\nThe notebook supports\
+  \ `.nii` and `.nii.gz` files.\n\n### Primary dataset\n\nUse a BraTS 2020-style training dataset as the\
+  \ primary dataset.\n\n### Optional external dataset\n\nUse a BraTS 2021/FeTS-style dataset for external\
+  \ validation if available. External validation is optional; the primary experiment can run without it.\n\
+  \n---\n\n## 5. Installation\n\n### Step 1: Clone or copy the project\n\n```bash\ngit clone <your-repository-url>\n\
+  cd <your-repository-folder>\n```\n\nOr manually copy the notebook, `requirements.txt`, and this `README.md`\
+  \ into one folder.\n\n---\n\n### Step 2: Create a virtual environment\n\n#### Windows PowerShell\n\n\
+  ```powershell\npython -m venv .venv\n.\\.venv\\Scripts\\Activate.ps1\npython -m pip install --upgrade\
+  \ pip setuptools wheel\n```\n\n#### macOS/Linux\n\n```bash\npython3 -m venv .venv\nsource .venv/bin/activate\n\
+  python -m pip install --upgrade pip setuptools wheel\n```\n\n---\n\n### Step 3: Install PyTorch\n\n\
+  For GPU systems, install the PyTorch build that matches the user's operating system and CUDA version.\n\
+  \nA common CUDA example is:\n\n```bash\npip install torch --index-url https://download.pytorch.org/whl/cu121\n\
+  ```\n\nFor CPU-only systems:\n\n```bash\npip install torch\n```\n\nAfter installation, verify PyTorch:\n\
+  \n```bash\npython - << \"PY\"\nimport torch\nprint(\"PyTorch:\", torch.__version__)\nprint(\"CUDA available:\"\
+  , torch.cuda.is_available())\nif torch.cuda.is_available():\n    print(\"GPU:\", torch.cuda.get_device_name(0))\n\
+  PY\n```\n\nIf CUDA is not available but the machine has an NVIDIA GPU, reinstall PyTorch using the correct\
+  \ CUDA command for that machine.\n\n---\n\n### Step 4: Install the rest of the requirements\n\n```bash\n\
+  pip install -r requirements.txt\n```\n\n---\n\n### Step 5: Add the virtual environment to Jupyter\n\n\
+  ```bash\npython -m ipykernel install --user --name dmaf-mri --display-name \"DMAF MRI Segmentation\"\
+  \n```\n\n---\n\n## 6. Configure the notebook for another system\n\nOpen:\n\n```text\ndiego_information_fusion_complete.ipynb\n\
+  ```\n\nGo to the `Configuration` cell containing the `CFG` class.\n\nThe original notebook contains\
+  \ absolute Windows paths. These must be changed on any other computer.\n\n### Example Windows configuration\n\
+  \n```python\nprimary_roots: Tuple[str, ...] = (\n    r\"D:\\datasets\\BraTS2020\\BraTS2020_TrainingData\\\
+  MICCAI_BraTS2020_TrainingData\",\n)\n\nexternal_roots: Tuple[str, ...] = (\n    r\"D:\\datasets\\BraTS2021\\\
+  MICCAI_FeTS2021_TrainingData\",\n)\n\nout_dir: str = r\"D:\\dmaf_outputs\\diego_information_fusion_outputs\"\
+  \n```\n\n### Example macOS/Linux configuration\n\n```python\nprimary_roots: Tuple[str, ...] = (\n  \
+  \  \"/home/user/datasets/BraTS2020/BraTS2020_TrainingData/MICCAI_BraTS2020_TrainingData\",\n)\n\nexternal_roots:\
+  \ Tuple[str, ...] = (\n    \"/home/user/datasets/BraTS2021/MICCAI_FeTS2021_TrainingData\",\n)\n\nout_dir:\
+  \ str = \"./output/diego_information_fusion_outputs\"\n```\n\n### If no external dataset is available\n\
+  \nUse an empty tuple:\n\n```python\nexternal_roots: Tuple[str, ...] = ()\n```\n\n### Recommended portable\
+  \ ZIP path fix\n\nNear the final notebook cell, replace the hard-coded ZIP path:\n\n```python\nzip_path\
+  \ = Path(r'C:\\unitec_2026_seminarios\\Diego_Tesis\\output\\diego_information_fusion_corrected_results.zip')\n\
+  ```\n\nwith this portable version:\n\n```python\nzip_path = OUT.parent / \"diego_information_fusion_corrected_results.zip\"\
+  \n```\n\n### Optional clinical CSV path\n\nThe function `find_clinical_csvs()` contains a Windows input\
+  \ path. It is optional and only used if clinical/survival CSV files are available. If using clinical\
+  \ CSVs, update that path to the folder containing the CSV files. If not using clinical CSVs, leave it\
+  \ alone; the notebook will still report quality-control triage outputs rather than clinical-risk predictions.\n\
+  \n---\n\n## 7. Run the project\n\n### Recommended first run: debug mode\n\nBefore running the full experiment,\
+  \ test the environment and dataset discovery.\n\nIn the `CFG` class, set:\n\n```python\nrun_mode: str\
+  \ = \"debug\"\n```\n\nDebug mode automatically changes the experiment to:\n\n```python\nseeds = (42,)\n\
+  max_epochs = 2\npatience = 2\ntrain_swinunetr = False\neval_max_cases = 4\nexternal_max_cases = 4\n\
+  ```\n\nThen in JupyterLab:\n\n```bash\njupyter lab\n```\n\nOpen the notebook, select the `DMAF MRI Segmentation`\
+  \ kernel, and run all cells.\n\n---\n\n### Full publication run\n\nAfter debug mode works, set:\n\n\
+  ```python\nrun_mode: str = \"publication\"\n```\n\nThe default full configuration uses:\n\n```python\n\
+  seeds = (42, 1337, 2026)\nmax_epochs = 60\npatience = 12\ntrain_swinunetr = True\nmc_samples = 8\neval_max_cases\
+  \ = None\nexternal_max_cases = None\n```\n\nRun all notebook cells from top to bottom.\n\n---\n\n###\
+  \ Optional command-line execution\n\nThe notebook can also be executed from the terminal:\n\n```bash\n\
+  jupyter nbconvert \\\n  --to notebook \\\n  --execute diego_information_fusion_complete.ipynb \\\n \
+  \ --ExecutePreprocessor.timeout=-1 \\\n  --output executed_diego_information_fusion_complete.ipynb\n\
+  ```\n\nOn Windows PowerShell, use one line:\n\n```powershell\njupyter nbconvert --to notebook --execute\
+  \ diego_information_fusion_complete.ipynb --ExecutePreprocessor.timeout=-1 --output executed_diego_information_fusion_complete.ipynb\n\
+  ```\n\n---\n\n## 8. Output files\n\nThe notebook creates the output directory from `cfg.out_dir`.\n\n\
+  Default output subfolders:\n\n```text\noutput/diego_information_fusion_outputs/\n├── checkpoints/\n\
+  ├── figures/\n├── logs/\n├── predictions/\n└── tables/\n```\n\nImportant output tables include:\n\n\
+  ```text\ntables/discovered_primary_cases.csv\ntables/discovered_external_cases.csv\ntables/fixed_split_counts.csv\n\
+  tables/fixed_case_assignments.csv\ntables/modality_mask_unit_test.csv\ntables/planned_models.csv\ntables/trained_models.csv\n\
+  tables/primary_full_volume_case_metrics.csv\ntables/primary_full_volume_reliability_bins.csv\ntables/primary_architecture_summary_bootstrap_ci.csv\n\
+  tables/primary_seed_summary_bootstrap_ci.csv\ntables/valid_paired_wilcoxon_architecture_comparisons.csv\n\
+  tables/missing_modality_full_volume_case_metrics.csv\ntables/missing_modality_architecture_summary.csv\n\
+  tables/missing_modality_degradation_from_full.csv\ntables/uncertainty_error_case_level_analysis.csv\n\
+  tables/selective_prediction_uncertainty_coverage.csv\ntables/case_review_triage_features_quality_control_only.csv\n\
+  tables/case_review_triage_summary_quality_control_only.csv\ntables/cross_metric_spearman_correlation.csv\n\
+  tables/normalized_reliability_profile.csv\ntables/information_fusion_readiness_checklist.csv\ntables/output_manifest.csv\n\
+  ```\n\nImportant figures include:\n\n```text\nfigures/architecture_full_volume_dice_ci.pdf\nfigures/paired_wilcoxon_dice_pvalue_heatmap.pdf\n\
+  figures/missing_modality_full_volume_heatmap.pdf\nfigures/missing_modality_average_degradation.pdf\n\
+  figures/reliability_diagram_mc_ET.pdf\nfigures/reliability_diagram_mc_TC.pdf\nfigures/reliability_diagram_mc_WT.pdf\n\
+  figures/uncertainty_vs_segmentation_error_scatter.pdf\nfigures/cross_metric_reliability_correlation_matrix.pdf\n\
+  figures/normalized_reliability_profile_radar.pdf\n```\n\nModel checkpoints are saved as:\n\n```text\n\
+  checkpoints/<architecture>_seed<seed>.pt\n```\n\nExample:\n\n```text\ncheckpoints/attention_fusion_unet_seed42.pt\n\
+  ```\n\nThe final ZIP archive contains the corrected outputs and is created in the final cell.\n\n---\n\
+  \n## 9. Reproducibility details\n\nThe notebook is designed for valid paired comparison across architectures.\n\
+  \nKey reproducibility choices:\n\n- Fixed train/validation/test split with `split_seed = 42`\n- Same\
+  \ test cases for all architectures and seeds\n- Random seeds: `42`, `1337`, and `2026`\n- Architecture-level\
+  \ aggregation across seeds\n- Paired Wilcoxon tests using identical case IDs\n- Full-volume evaluation\
+  \ instead of centered tumor-patch evaluation\n- Correct missing-modality masks for both dropped-modality\
+  \ and single-modality settings\n\n---\n\n## 10. Missing-modality evaluation\n\nThe notebook evaluates\
+  \ these patterns:\n\n```text\nnone\ndrop_t1\ndrop_t1ce\ndrop_t2\ndrop_flair\nonly_t1\nonly_t1ce\nonly_t2\n\
+  only_flair\nt1ce+flair\nt1+t2\n```\n\nThe mask order is:\n\n```text\nt1, t1ce, t2, flair\n```\n\nA unit-test\
+  \ table is saved to:\n\n```text\ntables/modality_mask_unit_test.csv\n```\n\nThis verifies that single-modality\
+  \ settings such as `only_flair` and `only_t1ce` keep only the intended modality.\n\n---\n\n## 11. Main\
+  \ metrics\n\nThe notebook reports:\n\n### Segmentation metrics\n\n- Dice score\n- HD95\n- Boundary F1\n\
+  \n### Calibration and uncertainty metrics\n\n- Expected Calibration Error\n- Brier score\n- MC Dropout\
+  \ uncertainty\n- Uncertainty-error AUROC\n- Uncertainty-error Spearman correlation\n- Reliability diagrams\n\
+  \n### Robustness metrics\n\n- Full-modality performance\n- Missing-modality performance\n- Dice degradation\
+  \ from full-modality input\n\n### Review/triage outputs\n\nThe notebook can create quality-control review\
+  \ scores based on uncertainty and segmentation difficulty. These are not clinical risk predictions unless\
+  \ real clinical outcome labe"

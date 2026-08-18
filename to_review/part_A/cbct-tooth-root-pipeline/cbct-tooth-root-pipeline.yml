@@ -1,0 +1,107 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: werehappy/CBCT-Tooth_Root_Pipeline
+url: https://github.com/werehappy/CBCT-Tooth_Root_Pipeline
+platform: github
+description: ''
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-31T02:25:17Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "> **Research use only — not a medical device.** This software is for research and\n>\
+  \ engineering experimentation. It is not validated for clinical or diagnostic use.\n> The tooth-root\
+  \ cutoff is a heuristic (or a model trained on heuristic/annotated\n> labels) and should be verified\
+  \ by a qualified person before any real-world use.\n>\n> **No patient data or trained weights are included**\
+  \ in this repository (see\n> `.gitignore`). You supply your own CBCT scans and models locally.\n\n##\
+  \ Credits\n\nBuilt on [nnU-Net v2](https://github.com/MIC-DKFZ/nnUNet) for segmentation and\n[DentalSegmentator](https://github.com/gaudot/SlicerDentalSegmentator)\
+  \ for the\nteeth/bone model. Please cite those projects if you use this work.\n\n---\n\n# CBCT Dominant-Arch\
+  \ & Tooth-Root Pipeline\n\nSegment a CBCT volume, keep only the **dominant arch** (upper *or* lower,\n\
+  whichever has more bone), and write two masks: the arch bone, and the tooth\n**roots** (each tooth cut\
+  \ at the alveolar bone boundary, crowns removed).\n\nWith DentalSegmentator, a lower-dominant scan gives:\n\
+  \n```\n<patient>_Mandible.nii.gz       # the dominant arch bone\n<patient>_teeth.nii.gz          # full\
+  \ teeth (crown + root)\n<patient>_travecular.nii.gz     # teeth roots only (crowns cut off)\n```\n\n\
+  An upper-dominant scan names the bone file `<patient>_Maxilla & Upper bone.nii.gz`\ninstead; `teeth`\
+  \ and `travecular` keep the same names. The non-dominant arch is\ndiscarded. The bone filename comes\
+  \ from `arches.*.name`; `teeth`/`travecular`\nnames come from `output.teeth_name` / `output.root_name`.\n\
+  \nHow it works, configurably:\n- **Dominant arch** — `arches.{upper,lower}` map labels to each arch;\
+  \ the one with\n  the larger `dominance.metric` (`bone` / `teeth` / `total`) wins.\n- **Root extraction**\
+  \ — the root is the part of each tooth the alveolar bone\n  *wraps around*, decided slice by slice (per-slice\
+  \ hole-fill + a small closing).\n  The crown/neck float above the bone, so they're excluded, and the\
+  \ root top lands\n  at the bone surface (seamless, never above it). `bone_close_mm` bridges thin\n \
+  \ gaps; `smooth_iter` cleans the edge.\n\n> Root extraction is a geometric heuristic, not a learned\
+  \ model. It assumes teeth\n> erupt roughly along the S-I axis (true for standard CBCT). Eyeball a few\
+  \ cases.\n\n## Pipeline\n\n```\n.nii/.nii.gz -> DentalSegmentator/nnU-Net -> pick dominant arch -> cut\
+  \ teeth at\n                bone + teeth labels           (discard other)      crest -> roots\n```\n\
+  \n## Install\n\n```bash\npython -m venv .venv && source .venv/bin/activate\npip install -r requirements.txt\n\
+  ```\n\n`nnunetv2` pulls in PyTorch. If you need a specific CUDA build, install torch first from\nhttps://pytorch.org,\
+  \ then `pip install -r requirements.txt`.\n\n## Run the app (UI)\n\n```bash\nstreamlit run app.py\n\
+  ```\n\nOpens a local web UI (default http://localhost:8501). You can:\n- **Add multiple patients** —\
+  \ point at a folder of `.nii`/`.nii.gz` files, or upload\n  several at once. They collect into a patient\
+  \ queue.\n- Set the model preset, `model_dir`, device, folds, dominance metric, and root\n  options\
+  \ in the sidebar.\n- **Run the batch** with a per-patient progress bar; failures don't stop the run.\n\
+  - Review each patient's three output files (with download buttons) and a\n  colour-coded slice overlay\
+  \ (bone / teeth / root) for QC.\n\nFor testing without a GPU, tick **Skip inference — use existing labelmaps**\
+  \ and\npoint it at a folder of labelmaps (matched to patients by id in the filename).\n\n\n## Run as\
+  \ an app (double-click)\n\nNo command line needed:\n\n- **Windows:** double-click **`run_app.bat`**.\
+  \ It launches the app and opens your\n  browser. If your packages live in a named conda env, open `run_app.bat`\
+  \ and set\n  `CONDA_ENV=your_env_name` at the top.\n- **macOS:** double-click **`run_app.command`**\
+  \ (first time: `chmod +x run_app.command`).\n- **Linux:** run **`./run_app.sh`**.\n\nAll of these just\
+  \ run `python launch.py`, which starts the server on a free port,\nwaits until it's ready, and opens\
+  \ the browser. Close the console window to stop.\n\n### Optional: build a .exe icon\n\nRun **`build_exe.bat`**\
+  \ *inside the environment where you installed the\nrequirements*. It uses PyInstaller to produce `dist\\\
+  CBCT_App.exe` — a thin\nlauncher you can copy into the project folder and double-click. It does **not**\n\
+  bundle PyTorch/nnU-Net (those are large and stay in your environment); the .exe\nstarts Streamlit using\
+  \ that environment's Python, so run it from a context where\n`python` resolves to that environment.\n\
+  \n## Get the model — DentalSegmentator (recommended, has ready weights)\n\nDentalSegmentator ships pretrained\
+  \ nnU-Net v2 weights (unlike ToothFairy2, which\nyou'd have to train yourself). 5 classes: upper skull,\
+  \ mandible, upper teeth,\nlower teeth, mandibular canal. This project runs its inference **in-process**\
+  \ via\nthe nnU-Net Python predictor API — no Slicer, no PATH setup.\n\n1. Download the weights (either\
+  \ source — same model):\n   - Zenodo (for code use): https://doi.org/10.5281/zenodo.10829675\n   - or\
+  \ `Dataset111_453CT_v100.zip` from\n     https://github.com/gaudot/SlicerDentalSegmentator/releases\n\
+  2. Extract so the trained-model folder exists:\n   `...\\Dataset111_453CT\\nnUNetTrainer__nnUNetPlans__3d_fullres\\\
+  `\n   (it must contain `plans.json`, `dataset.json` and `fold_*` with\n   `checkpoint_final.pth`)\n\
+  3. Set `nnunet.model_dir` in `config.dentalsegmentator.yaml` to that folder, then:\n   ```cmd\n   python\
+  \ run.py -i data/0102871823.nii.gz -o out/ -c config.dentalsegmentator.yaml\n   ```\n\nCheck which `fold_*`\
+  \ dirs exist in that folder and set `nnunet.folds` accordingly\n(`all`, `0 1 2 3 4`, or `0`). Requires\
+  \ `torch` (install a CUDA-matched build from\nhttps://pytorch.org for GPU; CPU works but is slow).\n\
+  \n## Get the model — ToothFairy2 (per-tooth FDI, train-it-yourself)\n\nDownload the ToothFairy2 nnU-Net\
+  \ weights (challenge config + instructions live in the\nnnU-Net repo under `documentation/competitions/Toothfairy2`).\
+  \ Place them so that\n`nnUNet_results/Dataset112_*/...` exists, then either:\n\n- set `nnunet.results_dir`\
+  \ in `config.yaml`, or\n- `export nnUNet_results=/path/to/nnUNet_results`\n\nSet `nnunet.dataset_id`\
+  \ to match your downloaded dataset (e.g. `112`).\n\n> **Label IDs must match your checkpoint.** The\
+  \ defaults in `config.yaml` follow the\n> official ToothFairy2 scheme (jawbone = 1,2; permanent teeth\
+  \ = FDI 11–48). If your\n> checkpoint's `dataset.json` differs, edit `labels.bone_labels` / `labels.teeth_labels`.\n\
+  \n## Run\n\n```bash\n# single volume (filename stem -> patient id, e.g. 123.nii.gz -> \"123\")\npython\
+  \ run.py -i data/123.nii.gz -o out/\n\n# whole folder\npython run.py -i data/ -o out/\n\n# reuse an\
+  \ existing labelmap, skip nnU-Net (no GPU/weights needed)\npython run.py -i data/123.nii.gz -o out/\
+  \ --labelmap labels/123_seg.nii.gz\n\n# force a patient id\npython run.py -i scan.nii.gz -o out/ --patient-id\
+  \ 123\n```\n\n\n## Verify without weights\n\n```bash\npython tests/test_synthetic.py\n```\n\nBuilds\
+  \ a synthetic lower-dominant scan with crowns above the crest, runs the full\npipeline, and checks that\
+  \ only the mandible arch is output, the upper arch is\ndiscarded, crowns are removed, and roots below\
+  \ the crest are kept.\n\n## Train a root model (optional, replaces the heuristic)\n\nIf you have root\
+  \ ground-truth labels, you can train an nnU-Net that learns the\ncrown/root cutoff directly instead\
+  \ of using the geometric heuristic. Design A\nkeeps DentalSegmentator for teeth+bone and trains a small\
+  \ model that takes\n`CBCT + tooth + bone` channels and outputs the root. Build the dataset with\n`training/prepare_dataset.py`,\
+  \ then follow `training/TRAINING.md` for the nnU-Net\ncommands. Once trained it drops into the pipeline\
+  \ in place of `extract_root`.\n\n## Layout\n\n```\napp.py                       Streamlit UI (multi-patient\
+  \ batch + previews)\nrun.py                       CLI entry point\nconfig.dentalsegmentator.yaml  DentalSegmentator\
+  \ (ready weights) config\nconfig.yaml                  ToothFairy2 config\ncbct_pipeline/\n  io_utils.py\
+  \                load/save NIfTI, preserve affine\n  labels.py                  label maps, label ->\
+  \ mask extraction\n  segmentation.py            nnU-Net inference (python predictor + CLI backends)\n\
+  \  roots.py                   alveolar-crest estimation + tooth-root cut\n  preview.py             \
+  \    slice-overlay QC PNGs\n  pipeline.py                dominant-arch selection + orchestration\ntests/test_synthetic.py\
+  \      no-GPU smoke test\n```\n\n(`trabecular.py` is retained for reference but no longer used by the\
+  \ pipeline;\nthe cortical/trabecular split was superseded by root extraction.)\n\n## Notes / next steps\n\
+  \n- Upper and lower teeth are solid masks (DentalSegmentator does not number teeth).\n  For per-tooth\
+  \ FDI labels use the ToothFairy2 route.\n- Verify label numbers from your checkpoint match the `arches.*`\
+  \ label IDs.\n- The dominant-arch rule discards a whole arch; on a balanced full-FOV scan the\n  two\
+  \ arches may be close, so check `dominance.metric` suits your data.\n"

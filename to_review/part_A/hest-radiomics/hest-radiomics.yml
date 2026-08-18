@@ -1,0 +1,58 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: gyoenge/hest-radiomics
+url: https://github.com/gyoenge/hest-radiomics
+platform: github
+description: Radiomics-based feature extraction pipeline for the HEST dataset using PyRadiomics and CellViT,
+  supporting intensity, texture, cell-shape, and cell-composition descriptors.
+license: null
+language: Python
+keywords:
+- data-processing
+- feature-extraction
+- hest1k
+- pipeline
+- pyradiomics
+stars: 2
+updated_at: '2026-06-20T11:51:40Z'
+image_source: https://raw.githubusercontent.com/gyoenge/hest-radiomics/HEAD/docs/_static/hestradiomics.png
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# HEST-Radiomics (hestradiomics)\n\n[![docs](https://img.shields.io/badge/docs-readthedocs-brightgreen)](https://hest-radiomics.readthedocs.io/en/latest/)\n\
+  [![python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)\n\
+  [![pytorch](https://img.shields.io/badge/PyTorch-2.1+-ee4c2c.svg)](https://pytorch.org/)\n[![dataset](https://img.shields.io/badge/dataset-HEST-orange.svg)](https://github.com/mahmoodlab/HEST)\n\
+  [![license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)\n\nRadiomics feature extraction\
+  \ pipeline for HEST spatial transcriptomics datasets using WSI patches, CellViT nucleus segmentation,\
+  \ and PyRadiomics-based handcrafted features.\n\n![Overview](docs/_static/hestradiomics.png)\n\n---\n\
+  \n## Features\n\n- Handcrafted radiomics feature extraction\n  - Patch-level intensity and texture descriptors\
+  \ (PyRadiomics)\n  - Cell-aware extraction using CellViT nucleus segmentation\n  - Cell-shape morphology\
+  \ features (shape2D aggregated statistics)\n  - Cell-composition and graph-based spatial interaction\
+  \ features\n- Integrated download and preprocessing workflow for the HEST dataset\n- Parallelized extraction\
+  \ with multiprocessing support\n- Output in Parquet and H5AD (AnnData-compatible) formats\n\n---\n\n\
+  ## Installation\n\n### 1. Create conda environment\n\n```bash\nconda create -n hestradiomics python=3.10\n\
+  conda activate hestradiomics\n```\n\n### 2. Install PyTorch\n\nInstall `torch` and `torchvision` matching\
+  \ your CUDA version:\n\n```bash\n# Example for CUDA 12.1\npip install torch torchvision torchaudio --index-url\
+  \ https://download.pytorch.org/whl/cu121\npip install \"numpy>=1.24,<2.0.0\"\n```\n\n### 3. Install\
+  \ hestradiomics\n\n```bash\ngit clone https://github.com/gyoenge/hest-radiomics.git\ncd hest-radiomics/\n\
+  pip install -e .\n```\n\n### 4. Install PyRadiomics\n\nPyRadiomics requires a separate install step\
+  \ due to its build system:\n\n```bash\npip install SimpleITK\npip install --no-build-isolation pyradiomics==3.0.1\n\
+  ```\n\n### 5. Install CellViT dependencies\n\n```bash\nconda install -c conda-forge openslide\npip install\
+  \ openslide-python openslide-bin\npip install cellvit\n```\n\n### 6. Set HuggingFace token\n\nA HuggingFace\
+  \ token is required to download the HEST dataset:\n\n```bash\nexport HF_TOKEN=hf_...\n```\n\nOr add\
+  \ `HF_TOKEN=hf_...` to a `.env` file in the project root.\n\n---\n\n## Quick Start\n\n```bash\nexport\
+  \ LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH\npython -m hestradiomics.run\n```\n\nCommon overrides\
+  \ via CLI arguments:\n\n```bash\npython -m hestradiomics.run \\\n  --oncotrees IDC \\\n  --sample_ids\
+  \ NCBI783 NCBI785 \\\n  --device cuda:0 \\\n  --extract_num_workers 8 \\\n  --vis_ratio 0.05\n```\n\n\
+  | Argument | Description |\n|---|---|\n| `--oncotrees` | Cancer type codes, e.g. `IDC LUAD` |\n| `--sample_ids`\
+  \ | Specific sample IDs (default: all) |\n| `--device` | Torch device for segmentation |\n| `--segment_num_workers`\
+  \ | DataLoader workers for segmentation |\n| `--extract_num_workers` | Process-pool workers for extraction\
+  \ |\n| `--vis_ratio` | Fraction of patches to visualize (0.0–1.0) |\n\nOutputs are saved under `data/hestradiomics/<ONCOTREE>/`.\n\
+  \n---\n\n## Configuration\n\nEdit `src/hestradiomics/config.py` to change default settings (cancer types,\
+  \ sample IDs, model paths, mask sources, etc.). CLI arguments override config values for the current\
+  \ run without modifying the file.\n\nSee the [Configuration docs](https://hest-radiomics.readthedocs.io/en/latest/gettingstart/configuration.html)\
+  \ for the full option reference.\n\n---\n\n## Documentation\n\nFull documentation is available at [hest-radiomics.readthedocs.io](https://hest-radiomics.readthedocs.io/en/latest/).\n"

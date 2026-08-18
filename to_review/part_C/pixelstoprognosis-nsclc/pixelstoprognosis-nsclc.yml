@@ -1,0 +1,99 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: shruti26mali/PixelsToPrognosis-NSCLC
+url: https://github.com/shruti26mali/PixelsToPrognosis-NSCLC
+platform: github
+description: Evaluate the impact of harmonization and multi-region CT image feature integration on survival
+  prediction in non-small cell lung cancer (NSCLC) patients, using handcrafted radiomics, pretrained foundation
+  model (FM) features, and clinical data from a multicenter dataset.
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 1
+updated_at: '2025-11-11T11:37:15Z'
+image_source: https://raw.githubusercontent.com/shruti26mali/PixelsToPrognosis-NSCLC/HEAD/workflow_schematic_v2.png
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# CHAIMELEON - Lung cancer use case\n\n## Overview\n\nThis project implements a comprehensive\
+  \ medical image analysis pipeline for non-small cell lung cancer (NSCLC) patients, focusing on multi-region\
+  \ feature extraction and survival prediction. The pipeline incorporates tumor segmentation, mediastinal\
+  \ node analysis, coronary artery analysis, and survival prediction techniques.\n\n[Read the full paper\
+  \ on arXiv](https://arxiv.org/abs/2505.17893)\n\n### Key Findings\n- Successfully integrated features\
+  \ from multiple regions of interest (ROIs) including whole lung, tumor, mediastinal nodes, and coronary\
+  \ arteries\n- Achieved improved survival prediction through harmonization techniques (ComBat, RKN)\n\
+  - Best performing model: Foundation Model features with clinical data (C-index = 0.7616)\n- Consensus\
+  \ model achieved 0.92 t-AUC with 97.6% sensitivity\n\n\n#### Workflow Schematic\n\n![Workflow Schematic](workflow_schematic_v2.png)\n\
+  *Workflow schematic showing the pipeline stages: (A) Multi-region segmentation using nnUNet and TotalSegmentator,\
+  \ (B) Feature extraction from different ROIs, (C) Feature harmonization and selection, and (D) Survival\
+  \ prediction models integration.*\n\n## Project Structure\n\n```\n├── codes/                       \
+  \       # Analysis notebooks\n│   ├── 1_nnUNetv2_predict.ipynb       # Segmentation predictions\n│ \
+  \  ├── 2_extract_*_HRFs.ipynb         # Feature extraction\n│   ├── 2_get_CAC_scores.ipynb         #\
+  \ Coronary calcium scoring\n│   └── 3_OS_prediction_*.ipynb        # Survival prediction models\n├──\
+  \ models/                             # Trained models\n├── nnunet_input_images/               # Input\
+  \ CT images\n├── preds_*/                           # Segmentation results\n└── raw_images/        \
+  \                # Original CT scans\n```\n\n## Prerequisites\n\n- Python 3.10\n- CUDA-compatible GPU\n\
+  - Required Python packages:\n  - nnUNetv2\n  - TotalSegmentator\n  - PyTorch\n  - nibabel\n\n## Installation\n\
+  \n1. Create a new conda environment:\n```bash\nconda create -n nnunet python=3.10\nconda activate nnunet\n\
+  ```\n\n2. Install PyTorch:\n```bash\npip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu126\n\
+  ```\n\n3. Install nnUNetv2:\n```bash\npip install nnunetv2\n```\n\n4. Install TotalSegmentator:\n```bash\n\
+  pip install totalsegmentator\n```\nFor detailed installation instructions and troubleshooting, visit\
+  \ the [TotalSegmentator GitHub repository](https://github.com/wasserth/TotalSegmentator?tab=readme-ov-file#installation).\n\
+  \n5. Set up environment variables:\n```bash\nset nnUNet_raw=\\path\\to\\project\\nnUNet_raw\nset nnUNet_preprocessed=\\\
+  path\\to\\project\\nnUNet_preprocessed\nset nnUNet_results=\\path\\to\\project\\nnUNet_results\n```\n\
+  \n## Usage\n\n### 1. Image Preprocessing and Segmentation\n\n[`1_nnUNetv2_predict.ipynb`](codes/1_nnUNetv2_predict.ipynb)\n\
+  - Preprocesses CT images into nnUNet-compatible format\n- Performs automatic lung tumor segmentation\
+  \ using nnUNet (Dataset800_LUNGTUMOR)\n- Segments mediastinal nodes using nnUNet (Dataset017_LNQ2023)\n\
+  - Extracts coronary arteries using TotalSegmentator\n- Generates segmentation masks for all regions\
+  \ of interest\n\n### 2. Feature Extraction\n\nExtract handcrafted radiomics features (HRFs) and calculate\
+  \ CAC scores:\n\n[`2_extract_coronary_arteries_HRFs.ipynb`](codes/2_extract_coronary_arteries_HRFs.ipynb)\n\
+  - Extracts texture and shape features from coronary arteries\n- Implements PyRadiomics feature extraction\
+  \ pipeline\n\n[`2_extract_mediastinal_nodes_HRFs.ipynb`](codes/2_extract_mediastinal_nodes_HRFs.ipynb)\n\
+  - Extracts radiomics features from segmented lymph nodes\n- Implements PyRadiomics feature extraction\
+  \ pipeline\n\n[`2_extract_tumor_HRFs.ipynb`](codes/2_extract_tumor_HRFs.ipynb)\n- Extracts radiomics\
+  \ features from segmented NSCLC \n- Implements PyRadiomics feature extraction pipeline\n\n[`2_get_CAC_scores.ipynb`](codes/2_get_CAC_scores.ipynb)\n\
+  - Calculates Agatston calcium scores\n- Quantifies coronary calcification\n\n\n### 3. Survival Analysis\n\
+  \nEach survival analysis notebook loads pre-extracted radiomic or quantitative features for a specific\
+  \ region of interest (ROI), scales them using the corresponding scalar saved during model training,\
+  \ and then applies the pre-trained CoxPH model to compute patient-level risk scores. These risk scores\
+  \ can be used to estimate overall survival probabilities and generate Kaplan–Meier curves.\n\n[`3_OS_prediction_tumor_texture.ipynb`](codes/3_OS_prediction_tumor_texture.ipynb)\n\
+  - Loads NSCLC tumor texture features.\n- Normalizes using `models/tumor_texture/scalar.pkl`.\n- Generates\
+  \ risk scores from the CoxPH model for survival estimation.\n\n[`3_OS_prediction_tumor_volume.ipynb`](codes/3_OS_prediction_tumor_volume.ipynb)\n\
+  - Uses NSCLC tumor volume features.\n- Applies scaling via `models/tumor_volume/scalar.pkl`.\n- Computes\
+  \ survival risk scores and evaluates model performance.\n\n[`3_OS_prediction_MN_texture.ipynb`](codes/3_OS_prediction_MN_texture.ipynb)\n\
+  - Uses mediastinal node texture features.\n- Scales features using `models/mediastinal_nodes_texture/scalar.pkl`.\n\
+  - Derives patient-level risk scores and survival curves.\n\n[`3_OS_prediction_MN_volume.ipynb`](codes/3_OS_prediction_MN_volume.ipynb)\n\
+  - Uses mediastinal node volumetric features.\n- Applies feature scaling with `models/mediastinal_nodes_volume/scalar.pkl`.\n\
+  - Computes CoxPH-based survival predictions and risk grouping.\n\n[`3_OS_prediction_CA_texture.ipynb`](codes/3_OS_prediction_CA_texture.ipynb)\n\
+  - Loads coronary artery texture features.\n- Applies the stored `StandardScaler` from `models/coronary_arteries_texture/scalar.pkl`\
+  \ for normalization.\n- Uses the pre-trained CoxPH model to calculate individual patient risk scores.\n\
+  \n[`3_OS_prediction_CAC_scoring.ipynb`](codes/3_OS_prediction_CAC_scoring.ipynb)\n- Loads coronary artery\
+  \ calcium (CAC) scores.\n- Normalizes the data using the scalar from `models/CAC_scoring/scalar.pkl`.\n\
+  - Computes survival risk scores using the trained CoxPH model.\n\n[TODO: Whole lung region survival\
+  \ model notebook and trained model to be added]\n\n\n\n\n## Downloading Required Models\n\nAll required\
+  \ models are available at: [Surfdrive Model Repository](https://surfdrive.surf.nl/s/nSfx2xNR3GTNEGN)\n\
+  \nThe repository contains two main folders:\n\n### 1. Pre-trained CoxPH Survival Models (`models/`)\n\
+  Cox Proportional Hazards (CoxPH) survival prediction models for different regions of interest (ROIs):\n\
+  - `coronary_arteries_texture/`: CoxPH models for coronary artery texture features\n- `CAC_scoring/`:\
+  \ CoxPH models using coronary artery calcium scores\n- `mediastinal_nodes_texture/`: CoxPH models using\
+  \ lymph node texture features\n- `mediastinal_nodes_volume/`: CoxPH models using lymph node volumetric\
+  \ features\n- `tumor_texture/`: CoxPH models using tumor texture features\n- `tumor_volume/`: CoxPH\
+  \ models using tumor volumetric features\n\nThese models are used in the corresponding `3_OS_prediction_*.ipynb`\
+  \ notebooks to predict overall survival based on different imaging biomarkers.\n\n### 2. nnUNet Segmentation\
+  \ Models (`nnUNet_results/`)\nThe project uses two specific nnUNet models for segmentation:\n\n1. **Mediastinal\
+  \ Node Segmentation (Dataset017_LNQ2023)**\n   - Used for lymph node quantification\n   - Extract to:\
+  \ `nnUNet_results/Dataset017_LNQ2023/`\n   - Used in mediastinal nodes prediction with:\n     ```bash\n\
+  \     nnUNetv2_predict -i INPUT_DIR -o OUTPUT_DIR -d 017 -c 3d_fullres -chk checkpoint_best.pth\n  \
+  \   ```\n\n2. **NSCLC Tumor Segmentation (Dataset800_LUNGTUMOR)**\n   - Used for lung tumor segmentation\n\
+  \   - Extract to: `nnUNet_results/Dataset800_LUNGTUMOR/`\n   - Used in tumor prediction with:\n    \
+  \ ```bash\n     nnUNetv2_predict -i INPUT_DIR -o OUTPUT_DIR -d 800 -c 3d_fullres\n     ```\n\n### Installation\
+  \ Steps:\n1. Download all models from the Surfdrive link above\n2. Extract the `models` folder to the\
+  \ root of your project directory\n3. Extract the `nnUNet_results` folder to the root of your project\
+  \ directory\n4. Verify the folder structure matches the project structure shown above\n\n## License\n\
+  \nFor TotalSegmentator usage, a license key is required. Set it using:\n```bash\ntotalseg_set_license\
+  \ -l your_license_key\n```\n\n## Notes\n\n- Ensure sufficient GPU memory for running the segmentation\
+  \ models\n- Input images should be in NIFTI format (.nii.gz)\n- All paths in notebooks should be adjusted\
+  \ according to your local setup\n"

@@ -1,0 +1,79 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: shengyusideyouxi/vmat-planner
+url: https://github.com/shengyusideyouxi/vmat-planner
+platform: github
+description: 'End-to-end VMAT treatment plan prediction: anatomy → deliverable beam parameters using transformer
+  encoder-decoder with differentiable dose engine'
+license: null
+language: null
+keywords: []
+stars: 0
+updated_at: '2026-03-03T20:12:03Z'
+image_source: null
+heuristic_total_score: 45
+heuristic_reasons:
+- Matched 5 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 3 particle-therapy term(s).
+- Matched 10 support term(s).
+readme_excerpt: "# VMAT Planner\n\nEnd-to-end VMAT treatment plan prediction: **patient anatomy → deliverable\
+  \ beam parameters** (MLC positions, gantry angles, dose rates, monitor units) using a transformer encoder-decoder\
+  \ with a differentiable dose engine.\n\n## Vision\n\nCurrent state-of-the-art in deep learning for radiation\
+  \ therapy predicts **dose distributions** from anatomy, but dose alone doesn't treat patients — it must\
+  \ be converted into a deliverable plan through inverse optimization. This project skips that intermediate\
+  \ step entirely, predicting deliverable beam parameters directly from patient anatomy.\n\n### The Analogy:\
+  \ Tesla FSD v11 → v12\n\n| | Tesla FSD v11 (modular) | Tesla FSD v12 (end-to-end) |\n|---|---|---|\n\
+  | Pipeline | Cameras → perception → **hand-coded rules** → driving | Cameras → neural net → driving\
+  \ directly |\n| Limitation | 300K lines of C++ rules are a lossy bottleneck | Removed the bottleneck\
+  \ |\n\n| | Dose Prediction (current) | Plan Prediction (this project) |\n|---|---|---|\n| Pipeline |\
+  \ CT + contours → U-Net → **dose** → TPS optimization → plan | CT + contours → transformer → plan directly\
+  \ |\n| Limitation | Dose is a lossy intermediate; multiple beam configs produce similar dose | Removes\
+  \ the bottleneck |\n\n## Architecture\n\n```\n                    ┌─────────────────────────────┐\n\
+  \                    │     Input: CT + Contours     │\n                    │    (3D spatial, 9 channels)\
+  \   │\n                    └──────────────┬──────────────┘\n                                   │\n \
+  \                   ┌──────────────▼──────────────┐\n                    │    3D CNN Encoder       \
+  \      │\n                    │  (pretrained from vmat-       │\n                    │   diffusion U-Net\
+  \ encoder)    │\n                    └──────────────┬──────────────┘\n                             \
+  \      │\n                    ┌──────────────▼──────────────┐\n                    │  Transformer Decoder\
+  \          │\n                    │  Auto-regressive generation   │\n                    │  of control\
+  \ point parameters  │\n                    └──────────────┬──────────────┘\n                       \
+  \            │\n                    ┌──────────────▼──────────────┐\n                    │  Output:\
+  \ Beam Parameters      │\n                    │  MLC positions, gantry angles, │\n                 \
+  \   │  dose rates, monitor units     │\n                    └──────────────┬──────────────┘\n      \
+  \                             │\n                    ┌──────────────▼──────────────┐\n             \
+  \       │  Differentiable Dose Engine   │\n                    │  (PyDoseRT — in training loop) │\n\
+  \                    │  Dose-level loss backpropagates│\n                    │  to beam parameter predictions\
+  \ │\n                    └─────────────────────────────┘\n```\n\n### Why Transformer Encoder-Decoder?\n\
+  \n- **Spatial → sequential**: U-Net is image-to-image; beam parameters are an ordered sequence. Transformers\
+  \ handle this naturally.\n- **Variable length**: Different plans have different numbers of control points.\
+  \ Transformers handle variable-length output.\n- **Long-range dependencies**: What the MLC does at gantry\
+  \ 180° depends on what it did at 0°. Self-attention captures this.\n- **Physical constraints**: Can\
+  \ be enforced through output masking (analogous to constrained decoding in language models).\n\n###\
+  \ Training Strategy\n\n1. **Supervised warm-start**: Train on extracted beam parameters from ~200+ clinical\
+  \ RT Plan DICOM files\n2. **Physics-guided fine-tuning**: Pass predicted beam parameters through differentiable\
+  \ dose engine (PyDoseRT), compute clinical loss (DVH, D95, QUANTEC), backpropagate through the dose\
+  \ engine to refine beam predictions\n3. **Optional RL refinement**: Use clinical metrics as reward signal\
+  \ for further optimization\n\n## Relationship to vmat-diffusion\n\nThis project builds on [vmat-diffusion](https://github.com/wrockey/vmat-diffusion),\
+  \ which predicts dose distributions from anatomy using a 3D U-Net. That project provides:\n\n- **Pretrained\
+  \ 3D CNN encoder** — weights transfer directly as the encoder for this model\n- **Data pipeline** —\
+  \ NPZ preprocessing (extended with beam parameters, see vmat-diffusion#60)\n- **Evaluation framework**\
+  \ — DVH, gamma analysis, QUANTEC compliance metrics\n- **Baseline dose predictions** — Stage 1 output\
+  \ can condition the transformer decoder\n\n## Disease Site\n\n**Prostate VMAT** with simultaneous integrated\
+  \ boost (70 Gy / 56 Gy in 28 fractions). Same protocol as vmat-diffusion.\n\n## Dataset\n\n- ~70 cases\
+  \ currently, expecting 200-250 near-term\n- Beam parameters extracted from RT Plan DICOM files (MLC\
+  \ positions, gantry angles, dose rates, MU per control point)\n- Same patient cohort as vmat-diffusion\n\
+  \n## Key Dependencies\n\n| Tool | Purpose |\n|------|---------|\n| [PyDoseRT](https://arxiv.org/html/2512.18863v1)\
+  \ | Differentiable PyTorch dose engine — MLC positions in, dose out, fully backpropagable |\n| [PortPy](https://github.com/PortPy-Project/PortPy)\
+  \ | Open-source Python TPS with beamlet dose influence matrices, fluence optimization |\n| PyTorch |\
+  \ Model training |\n| pydicom | RT Plan DICOM parsing for beam parameter extraction |\n\n## Key References\n\
+  \n- [Physics-Guided Radiotherapy Treatment Planning with Deep Learning (2025)](https://arxiv.org/html/2506.19880)\
+  \ — Two-stage pipeline predicting MLC apertures + MU with differentiable dose engine\n- [PyDoseRT —\
+  \ Differentiable dose engine (2025)](https://arxiv.org/html/2512.18863v1) — PyTorch, MLC positions in,\
+  \ dose out\n- [Deep RL for VMAT MLC optimization (Physica Medica 2024 review)](https://www.physicamedica.com/article/S1120-1797(24)00243-6/fulltext)\n\
+  - [cGAN for deliverable adaptive plans (2023)](https://pmc.ncbi.nlm.nih.gov/articles/PMC9889647/)\n\
+  - [PortPy — Open-source treatment planning (AAPM 2023)](https://github.com/PortPy-Project/PortPy)\n\n\
+  ## Project Status\n\n**Pre-development.** Currently in data exploration and literature review phase.\
+  \ The vmat-diffusion dose prediction project (Phase 2) is the active priority.\n\n## License\n\nTBD\n"

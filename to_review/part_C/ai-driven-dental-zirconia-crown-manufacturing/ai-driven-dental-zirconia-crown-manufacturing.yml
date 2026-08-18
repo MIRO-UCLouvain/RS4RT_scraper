@@ -1,0 +1,147 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Runtime-Slayers/AI-Driven-Dental-Zirconia-Crown-Manufacturing
+url: https://github.com/Runtime-Slayers/AI-Driven-Dental-Zirconia-Crown-Manufacturing
+platform: github
+description: 'End-to-end AI pipeline for personalized dental zirconia crown fabrication: CBCT segmentation
+  → FEM stress prediction via Graph Transformers → Bayesian decision optimization → robotic CNC milling
+  → RL-optimized 3D printing'
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-18T05:29:12Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "<p align=\"center\">\n  <h1 align=\"center\">\U0001F9B7 AI-Driven Dental Zirconia Crown\
+  \ Manufacturing</h1>\n  <p align=\"center\">\n    <strong>End-to-end AI pipeline for personalised dental\
+  \ zirconia crown fabrication</strong><br/>\n    <em>From CBCT scan to patient-ready 3D-printed crown\
+  \ — fully automated</em>\n  </p>\n  <p align=\"center\">\n    <a href=\"#overview\">Overview</a> •\n\
+  \    <a href=\"#workflow\">Workflow</a> •\n    <a href=\"#stage-architectures\">Stage Architectures</a>\
+  \ •\n    <a href=\"#prerequisites\">Prerequisites</a> •\n    <a href=\"#installation\">Installation</a>\
+  \ •\n    <a href=\"#usage\">Usage</a> •\n    <a href=\"#project-structure\">Project Structure</a> •\n\
+  \    <a href=\"#contributing\">Contributing</a> •\n    <a href=\"#license\">License</a>\n  </p>\n  <p\
+  \ align=\"center\">\n    <img src=\"https://img.shields.io/badge/Python-3.9+-3776AB?logo=python&logoColor=white\"\
+  \ alt=\"Python\" />\n    <img src=\"https://img.shields.io/badge/MATLAB-R2024b-0076A8?logo=mathworks&logoColor=white\"\
+  \ alt=\"MATLAB\" />\n    <img src=\"https://img.shields.io/badge/PyTorch-2.0+-EE4C2C?logo=pytorch&logoColor=white\"\
+  \ alt=\"PyTorch\" />\n    <img src=\"https://img.shields.io/badge/License-MIT-green.svg\" alt=\"License:\
+  \ MIT\" />\n    <img src=\"https://img.shields.io/badge/G--Code-RepRap-orange\" alt=\"G-Code\" />\n\
+  \  </p>\n</p>\n\n---\n\n## Overview\n\nThis repository implements a **five-stage, multi-language AI\
+  \ pipeline** for manufacturing patient-specific dental zirconia crowns. The system ingests raw CBCT\
+  \ (Cone-Beam Computed Tomography) scans and autonomously produces optimised G-code for both CNC robotic\
+  \ milling and 3D printing of functionally graded zirconia implants.\n\n### Key Innovations\n- **3D Attention\
+  \ U-Net** with Monte Carlo Dropout for boundary uncertainty quantification\n- **Twin-Reservoir Bidirectional\
+  \ Graph Transformer** for real-time FEM stress prediction\n- **Bayesian Decision Network** with Variable\
+  \ Elimination for optimal yttria stabiliser selection\n- **Singularity-free robotic milling** via MATLAB\
+  \ Robotics System Toolbox inverse kinematics\n- **RL-optimised toolpath generation** for thermally aware\
+  \ 3D printing\n\n### Languages & Technologies\n\n| Language | Usage |\n|----------|-------|\n| **Python**\
+  \ (`.py`) | Deep learning (PyTorch), data preprocessing, decision networks, RL agents, G-code generation\
+  \ |\n| **MATLAB** (`.m`) | Robotics kinematics (Robotics System Toolbox), Weibull reliability analysis,\
+  \ spatial nesting optimisation |\n| **G-Code** (`.gcode`) | CNC milling paths, 3D printing instructions\
+  \ (RepRap flavour) |\n| **JSON** | Configuration, kernel metadata, optimisation results |\n| **CSV**\
+  \ | FEM mesh data, patient stress fields, force telemetry |\n| **HDF5/MAT** | Cross-platform data exchange\
+  \ between Python ↔ MATLAB |\n\n---\n\n## Workflow\n\nThe complete end-to-end pipeline flows through\
+  \ five sequential stages:\n\n```mermaid\nflowchart TB\n    subgraph INPUT[\"\U0001F4E5 Input\"]\n  \
+  \      A[(\"CBCT Scan\\n(DICOM)\")]\n        B[(\"Patient Telemetry\\n(Bite Force, pH)\")]\n    end\n\
+  \n    subgraph S1[\"Stage 1 — Segmentation\"]\n        direction LR\n        C[\"Preprocessing\\n& Normalisation\"\
+  ]\n        D[\"3D Attention U-Net\\nwith MC Dropout\"]\n        E[\"Uncertainty Map\\n& Boundary Extraction\"\
+  ]\n        C --> D --> E\n    end\n\n    subgraph S2[\"Stage 2 — Transformer\"]\n        direction LR\n\
+  \        F[\"FEM Dataset\\nGeneration\"]\n        G[\"Twin-Reservoir\\nBi-Transformer\"]\n        H[\"\
+  Von Mises Stress\\nPrediction\"]\n        F --> G --> H\n    end\n\n    subgraph S3[\"Stage 3 — Decision\
+  \ Network\"]\n        direction LR\n        I[\"Patient-Specific\\nDistributions\"]\n        J[\"Bayesian\
+  \ Decision\\nNetwork (VE)\"]\n        K[\"Optimal Yttria\\nConcentration Y*\"]\n        I --> J -->\
+  \ K\n    end\n\n    subgraph S4[\"Stage 4 — Robotics\"]\n        direction LR\n        L[\"Spatial Nesting\\\
+  n(fmincon)\"]\n        M[\"6-DOF IK Solver\\n(KUKA LBR Med)\"]\n        N[\"Singularity-Free\\nMilling\
+  \ G-Code\"]\n        L --> M --> N\n    end\n\n    subgraph S5[\"Stage 5 — 3D Printing\"]\n        direction\
+  \ LR\n        O[\"Kinematic\\nSimulation\"]\n        P[\"RL Toolpath\\nOptimiser (PPO)\"]\n        Q[\"\
+  Patient-Specific\\nG-Code Models\"]\n        O --> P --> Q\n    end\n\n    A --> S1\n    B --> S3\n\
+  \    S1 -->|\"Segmented Mesh\"| S2\n    S2 -->|\"Stress Fields\"| S3\n    S3 -->|\"Material Params\"\
+  | S4\n    S4 -->|\"Milling Path\"| S5\n    S5 --> R[(\"\U0001F9B7 Patient-Ready\\nZirconia Crown\")]\n\
+  \n    style INPUT fill:#1a1a2e,color:#fff,stroke:#e94560\n    style S1 fill:#16213e,color:#fff,stroke:#0f3460\n\
+  \    style S2 fill:#1a1a2e,color:#fff,stroke:#e94560\n    style S3 fill:#16213e,color:#fff,stroke:#0f3460\n\
+  \    style S4 fill:#1a1a2e,color:#fff,stroke:#e94560\n    style S5 fill:#16213e,color:#fff,stroke:#0f3460\n\
+  \    style R fill:#e94560,color:#fff,stroke:#0f3460\n```\n\n---\n\n## Stage Architectures\n\n### Stage\
+  \ 1 — 3D Attention U-Net Segmentation\n\n```mermaid\nflowchart TB\n    subgraph Preprocessing\n    \
+  \    P1[\"DICOM/NIfTI\\nIngestion\"] --> P2[\"HU Windowing\\n& Normalisation\"]\n        P2 --> P3[\"\
+  3D Patch\\nExtraction\"]\n    end\n\n    subgraph Encoder[\"Encoder Path\"]\n        E1[\"Conv3D Block\\\
+  n64 filters\"] --> E2[\"MaxPool3D\\n↓2×\"]\n        E2 --> E3[\"Conv3D Block\\n128 filters\"] --> E4[\"\
+  MaxPool3D\\n↓2×\"]\n        E4 --> E5[\"Conv3D Block\\n256 filters\"] --> E6[\"MaxPool3D\\n↓2×\"]\n\
+  \        E6 --> E7[\"Conv3D Block\\n512 filters\\n— Bottleneck —\"]\n    end\n\n    subgraph Decoder[\"\
+  Decoder Path\"]\n        D1[\"ConvTranspose3D\\n↑2×\"] --> AG1{\"Attention\\nGate\"}\n        AG1 -->\
+  \ D2[\"Conv3D Block\\n256 filters\"]\n        D2 --> D3[\"ConvTranspose3D\\n↑2×\"] --> AG2{\"Attention\\\
+  nGate\"}\n        AG2 --> D4[\"Conv3D Block\\n128 filters\"]\n        D4 --> D5[\"ConvTranspose3D\\\
+  n↑2×\"] --> AG3{\"Attention\\nGate\"}\n        AG3 --> D6[\"Conv3D Block\\n64 filters\"]\n    end\n\n\
+  \    subgraph Output\n        O1[\"1×1×1 Conv3D\"] --> O2[\"Sigmoid\\nActivation\"]\n        O2 -->\
+  \ O3[\"Segmentation\\nMask\"]\n    end\n\n    subgraph Uncertainty[\"MC Dropout Inference\"]\n     \
+  \   MC1[\"T=50 Forward\\nPasses\"] --> MC2[\"Mean\\nPrediction\"]\n        MC1 --> MC3[\"Variance Map\\\
+  nEpistemic Uncertainty\"]\n    end\n\n    subgraph Loss[\"Focal + Dice Loss\"]\n        L1[\"Focal Loss\\\
+  nalpha=0.8 gamma=2.0\"]\n        L2[\"Dice Loss\\nsmooth=1e-6\"]\n    end\n\n    P3 --> E1\n    E5 -.->|\"\
+  Skip Connection\"| AG1\n    E3 -.->|\"Skip Connection\"| AG2\n    E1 -.->|\"Skip Connection\"| AG3\n\
+  \    E7 --> D1\n    D6 --> O1\n    O3 --> MC1\n\n    style Encoder fill:#0d1b2a,color:#fff,stroke:#1b263b\n\
+  \    style Decoder fill:#1b263b,color:#fff,stroke:#415a77\n    style Uncertainty fill:#e63946,color:#fff,stroke:#1d3557\n\
+  \    style Output fill:#457b9d,color:#fff,stroke:#1d3557\n```\n\n### Stage 2 — Twin-Reservoir Bidirectional\
+  \ Graph Transformer\n\n```mermaid\nflowchart TB\n    subgraph Input[\"Dual Input Streams\"]\n      \
+  \  I1[\"Node Coordinates\\nB N 3\"]\n        I2[\"Force Vectors\\nB N 3\"]\n    end\n\n    subgraph\
+  \ TwinRes[\"Twin Reservoir Encoder\"]\n        R1[\"W_geo Fixed Random\\ntanh coord × W\"]\n       \
+  \ R2[\"W_load Fixed Random\\ntanh force × W\"]\n        R1 --> AE1[\"Trainable AE\\nCompress → D_dim\"\
+  ]\n        R2 --> AE2[\"Trainable AE\\nCompress → D_dim\"]\n        AE1 --> FUSE[\"Additive\\nFusion\
+  \ z_geo + z_load\"]\n        AE2 --> FUSE\n    end\n\n    subgraph GraphDown[\"GraphSAGE Downsampler\"\
+  ]\n        GD1[\"Linear Projections\"]\n        GD2[\"Adaptive Max Pool\\n→ 150 Super-Nodes\"]\n   \
+  \     GD1 --> GD2\n    end\n\n    subgraph PosEmb[\"Fourier Positional Embedding\"]\n        FP1[\"\
+  Random Fourier\\nProjection B∈R 3 D/2\"]\n        FP2[\"sin/cos\\nConcatenation\"]\n        FP1 -->\
+  \ FP2\n    end\n\n    subgraph Transformer[\"Bidirectional Transformer\"]\n        T1[\"Multi-Head\\\
+  nSelf-Attention\\nh=4\"]\n        T2[\"Feed-Forward\\nNetwork\"]\n        T3[\"Layer Norm\\n+ Residual\"\
+  ]\n        T1 --> T2 --> T3\n        T3 -->|\"×3 Layers\"| T1\n    end\n\n    subgraph Head[\"Regression\
+  \ Head\"]\n        H1[\"Linear D 32\\n+ ReLU\"]\n        H2[\"Linear 32 1\"]\n        H3[\"Interpolate\\\
+  n↑ N nodes\"]\n        H1 --> H2 --> H3\n    end\n\n    subgraph PhysLoss[\"Physics-Informed Loss\"\
+  ]\n        PL1[\"MSE Loss\"]\n        PL2[\"Equilibrium Constraint\\nnabla sigma + b = 0\"]\n    end\n\
+  \n    I1 --> R1\n    I2 --> R2\n    FUSE --> GraphDown\n    I1 --> PosEmb\n    GraphDown --> ADD[\"\
+  Add\"]\n    PosEmb --> ADD\n    ADD --> Transformer\n    T3 --> Head\n    H3 --> PL1\n    H3 --> PL2\n\
+  \n    style TwinRes fill:#2d6a4f,color:#fff,stroke:#1b4332\n    style GraphDown fill:#40916c,color:#fff,stroke:#2d6a4f\n\
+  \    style Transformer fill:#52b788,color:#000,stroke:#2d6a4f\n    style PhysLoss fill:#d62828,color:#fff,stroke:#6a040f\n\
+  ```\n\n### Stage 3 — Bayesian Decision Network\n\n```mermaid\nflowchart TB\n    subgraph PatientData[\"\
+  Patient Telemetry\"]\n        PD1[\"Bite Force Profile\\n→ LogNormal Fit\"]\n        PD2[\"Saliva pH\
+  \ Profile\\n→ Gaussian Fit\"]\n    end\n\n    subgraph BN[\"Bayesian Network Structure\"]\n        Y[\"\
+  Decision Node\\nY in 2.0 to 5.0 mol pct\\n31 grid points\"]\n        F[\"Chance Node\\nF LogNorm\\n10\
+  \ bins\"]\n        pH[\"Chance Node\\npH Normal mu sigma\\n8 bins\"]\n        V[\"Deterministic Node\\\
+  nv = Paris Law\\nA K^n crack velocity\"]\n        D[\"Chance Node\\ndelta = LTD Drift\\nNormal rate\
+  \ 10yr sigma\"]\n        U[\"Utility Node\\nU = w_L L − w_C C\\n− risk_premium\"]\n    end\n\n    subgraph\
+  \ VE[\"Variable Elimination\"]\n        VE1[\"Sum over\\nP F P pH P delta Y\"]\n        VE2[\"EU Y =\\\
+  nSum P_joint U v delta Y F\"]\n        VE3[\"Y* = argmax EU Y\"]\n    end\n\n    subgraph Refine[\"\
+  Continuous Refinement\"]\n        CR1[\"scipy.optimize\\nminimize_scalar\"]\n        CR2[\"Y* refined\
+  \ ±0.2 mol pct\"]\n    end\n\n    PD1 --> F\n    PD2 --> pH\n    Y --> V\n    F --> V\n    pH --> V\n\
+  \    Y --> D\n    V --> U\n    D --> U\n    F --> U\n    U --> VE1 --> VE2 --> VE3\n    VE3 --> CR1\
+  \ --> CR2\n\n    style BN fill:#3c096c,color:#fff,stroke:#240046\n    style VE fill:#5a189a,color:#fff,stroke:#3c096c\n\
+  \    style Refine fill:#7b2cbf,color:#fff,stroke:#5a189a\n```\n\n### Stage 4 — Robotic Milling (MATLAB)\n\
+  \n```mermaid\nflowchart TB\n    subgraph Import[\"Data Import\"]\n        IM1[\"HDF5 Patient Data\\\
+  nnodes elements stresses\"]\n        IM2[\"JSON Metadata\\narchetype Y* force\"]\n    end\n\n    subgraph\
+  \ Nesting[\"Spatial Nesting Optimisation\"]\n        N1[\"Decision Variables\\nt_z vertical theta rotation\"\
+  ]\n        N2[\"Objective:\\nmin Sum sigma/K_IC z\"]\n        N3[\"Constraints:\\n0 le z_node le 15mm\"\
+  ]\n        N4[\"fmincon SQP\\n→ Optimal Placement\"]\n        N1 --> N2 --> N4\n        N3 --> N4\n\
+  \    end\n\n    subgraph Robot[\"6-DOF Robot Model\"]\n        R1[\"DH Parameters\\nKUKA LBR Med\"]\n\
+  \        R2[\"rigidBodyTree\\nConstruction\"]\n        R3[\"Spiral Toolpath\\nGeneration\"]\n      \
+  \  R1 --> R2 --> R3\n    end\n\n    subgraph IK[\"Inverse Kinematics\"]\n        IK1[\"inverseKinematics\\\
+  nSolver\"]\n        IK2[\"Joint Trajectories\\nq1 to q6\"]\n        IK3[\"Manipulability Index\\nsqrt\
+  \ det J JT\"]\n        IK4[\"Singularity Check\\nmu gt 1e-4\"]\n        IK1 --> IK2\n        IK1 -->\
+  \ IK3 --> IK4\n    end\n\n    subgraph Out[\"Outputs\"]\n        O1[\"G-Code\\n6-axis positions\"]\n\
+  \        O2[\"Material Gradient\\nPlots\"]\n        O3[\"Joint Trajectory\\nPlots\"]\n        O4[\"\
+  Manipulability\\nPlots\"]\n    end\n\n    IM1 --> Nesting\n    IM2 --> Nesting\n    N4 --> Robot\n \
+  \   R3 --> IK\n    IK2 --> O1\n    IK2 --> O3\n    IK3 --> O4\n    N4 --> O2\n\n    style Nesting fill:#003049,color:#fff,stroke:#001219\n\
+  \    style Robot fill:#005f73,color:#fff,stroke:#003049\n    style IK fill:#0a9396,color:#fff,stroke:#005f73\n\
+  \    style Out fill:#94d2bd,color:#000,stroke:#0a9396\n```\n\n### Stage 5 — RL-Optimised 3D Printing\n\
+  \n```mermaid\nflowchart TB\n    subgraph GCode[\"G-Code Generation\"]\n        G1[\"Load Patient Mesh\\\
+  nHDF5 from Stage 4\"]\n        G2[\"Adaptive Layer\\nSlicing\"]\n        G3[\"RepRap Header\\ntemps\
+  \ homing\"]\n        G1 --> G2 --> G3\n    end\n\n    subgraph RL[\"RL Toolpath Optimiser\"]\n     \
+  \   RL1[\"State: Grid Position\\n+ Print History\"]\n        RL2[\"Action: Move to\\nAdjacent Node\"\
+  ]\n        RL3[\"Reward Function L_VF theta:\\n+10 extrusion\\n-0.5 dist non-extrusion\\n-50 thermal\
+  \ violation\"]\n        RL4[\"PPO/DQN Agent\\nTraining\"]\n        RL1 --> RL4\n        RL2 --> RL4\n\
+  \        RL3 --> RL4\n    end\n\n    subgraph KinSim[\"Kinematic Simulation\"]\n        K1[\"Trapezoidal\
+  \ Velocity\\nProfile Modelling\"]\n        K2[\"Acceleration and\\nJerk Limits\"]\n        K3[\"True\
+  \ Print Time\\nvs Theoretical\"]\n        K4[\"Over-extrusion\\nDiagnostics\"]\n        K1 --> K2 -->\
+  \ K3\n        "

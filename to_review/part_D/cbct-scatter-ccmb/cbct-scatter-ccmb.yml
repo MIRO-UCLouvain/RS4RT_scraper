@@ -1,0 +1,66 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: zhaoyutong43210/CBCT_Scatter_CCMB
+url: https://github.com/zhaoyutong43210/CBCT_Scatter_CCMB
+platform: github
+description: Cone Beam CT Scatter removal project in CancerCare Manitoba
+license: null
+language: MATLAB
+keywords: []
+stars: 10
+updated_at: '2026-08-13T20:07:46Z'
+image_source: null
+heuristic_total_score: 29
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# Cone Beam CT (CBCT) Real-time Scatter removal project in CancerCare Manitoba\n\n##\
+  \ project overview\nUse a deeplearning network (modified U-net) to perform the Cone Beam CT scatter\
+  \ removal in image-guided radiation therapy.\n\nProject Progress\n\n - [x]  [Varian planning CT & CBCT\
+  \ measurements (paitent data)](example_data/README.md)\n - [x]  [generate paitent phantom from planning\
+  \ CT (and CBCT)](gen_egsphant/README.md)\n - [x]  [generate X-ray source (IAEA_phsp phase space database)](IAEA_phsp/README.md)\n\
+  \ - [x]  [EGS_CBCT simulation based on measurement geometry](CBCT_simu/README.md) ( ~900 projections\
+  \ each patient)\n - [x]  [Anti-scatter Grid post process on the simulation results](ASG/README.md)\n\
+  \ - [ ]  [Test scatter removal performance with TIGRE reconstruction toolkit](scatter_remove/README.md)\n\
+  \ - [ ]  Generate Training/Validation/Test data set\n - [ ]  [Train & evaluate the U-net work](U-net/README.md)\n\
+  \ - [ ]  Test on mulitiple paitents dataset\n - [ ]  Publication\n\n\n### Codes and Software used in\
+  \ this project: \n* [EGS_CBCT](https://nrc-cnrc.github.io/EGSnrc/doc/pirs898/egs_cbct.html) in the [EGSnrc\
+  \ code system](https://nrc-cnrc.github.io/EGSnrc/)\n\n* MATLAB (2020a or later), \n\n    - **TIGRE [Paper](https://iopscience.iop.org/article/10.1088/2057-1976/2/5/055010)\
+  \ [Github](https://github.com/CERN/TIGRE)**\n\n* Python (3.6 or later), \n    - **[Tensorflow](https://www.tensorflow.org/)**\n\
+  \nsome useful toolkit: \n\n* [MicroDicom Viewer](https://www.microdicom.com/downloads.html), a free\
+  \ software to view the clinical data\n* [emeditor](https://www.emeditor.com/text-editor-features/history/emeditor-free/),\
+  \ the free version can view the GB scale text file\n* [msi afterburner](https://www.msi.com/Landing/afterburner/graphics-cards),\
+  \ a graphics card software that can overclock the GPU and accelerate the network training. \n\n\n\n\
+  ### Background knowledge / technique you need to know: \n- Monte Carlo Simulation in Medical Physics\n\
+  - image-guided radiation therapy\n- Deeplearning networks (Machine learning)\n- Computed tomography\
+  \ and backprojection reconstruction method\n- The scatter and attenuation mechanisms of the X-ray in\
+  \ medium (Rayleigh Scattering, Compton Scattering, Beer-Lamberts law, etc.)\n\n### Nice to know\n- parallel\
+  \ computing\n- binary data structure\n- C++ and fortune coding\n\n\n## Clinical data\n\nThe data is\
+  \ collected from Varian TrueBeam OBI for Half Fan thorax 125kv scanning in CancerCare Manitoba. Due\
+  \ to privacy, we can not upload the data to this project.\nThe data is guaranteed access to qualified\
+  \ persons only.\n\nThe clinical data contains the planning CT images (reconstruction), CBCT images (reconstruction),\
+  \ and the CBCT projections (Raw data). \nThe planning CT and the CBCT is reconstructed by the Varian\
+  \ Reconstructor which is a commerical software.\nIn this project, we use the TIGRE in MATLAB as our\
+  \ reconstruction method.\nThe image quanlity of the Varian Reconstructor is a little better, but TIGRE\
+  \ is also giving a fairly good result. \n\n## Monte-Carlo Simulation\n\nWe use the EGSnrc to do the\
+  \ Monte-Carlo simulation to get the scatter distribution on certain measured projection (clinical data).\
+  \ \nFor each projection, we perform a EGS_CBCT simulation to evaluate the scatter distribution.\nVariance\
+  \ Reduction technique has been adpoted to increase the calculation efficiency.\n\nOnce we know the how\
+  \ the scattered photons is contaminating the measured signal, we can substract the scattered signal\
+  \ and produce a cleaned projection. \nSend these cleaned data to the reconstructor will provide us cleaned\
+  \ patient images. \nAnd the simulation time would be around 2.7 hours each projection. \n\n## Reconstruction\
+  \ with TIGRE\n\nThe open-source code, TIGRE, is used in this project to perform the reconstructions\
+  \ from CBCT projections. \n\n## Deeplearning \n#### dataset:\n* Input: Varian OBI measured raw projections\n\
+  * Ground truth: scatter level pattern with Anti-Scatter grid\n\nFirst stage : single patient\n\nSecond\
+  \ stage : multiple patients with ground truth\n\nThird stage: test with a unseen patient\n\n\n#### Architecture(s):\n\
+  *  [x] U-net 4 layer (modified)\n*  [x] U-net 6 layer (modified)\n*  [ ] U-net++ \n\n\n### Anti-Scatter\
+  \ Grids\n* The anti-scatter grids is corrected by using the scatter-kernal-superposition (SKS) method.\
+  \ Please see the reference [1].\n\n## Results\n\n\n\n# Conference\n  [Improvement on Cone Beam Computed\
+  \ Tomography in radiation treatment using a deep learning network](https://pheedloop.com/compasm2021/site/sessions/?id=SESQ6LQBCRTSB0ZM7).\n\
+  The COMP Annual Scientific Meeting 2021\n\n# Reference\n\n1. [Improved scatter correction using adaptive\
+  \ scatter kernel superposition](https://pubmed.ncbi.nlm.nih.gov/21030750/)\n\n2. [Developing a tri-hybrid\
+  \ algorithm to predict patient x-ray scatter into planar imaging detectors for therapeutic photon beams](https://mspace.lib.umanitoba.ca/handle/1993/35125)\n"

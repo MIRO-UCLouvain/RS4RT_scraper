@@ -1,0 +1,72 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: GaziFayaz/Toxicity-Prediction-Leveraging-Deep-Learning
+url: https://github.com/GaziFayaz/Toxicity-Prediction-Leveraging-Deep-Learning
+platform: github
+description: 'Toxicity Prediction Deep Learning Model Modified - Code work for CSE407 Research Paper '
+license: Apache-2.0
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2024-01-01T19:13:13Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 2 AI/ML term(s) in repository name.
+readme_excerpt: "## Accurate  Clinical Toxicity Prediction using Multi-task Deep Neural Nets and Contrastive\
+  \ Molecular Explanations\n\nProvided here is the code to: \n- create multi-task DNN and single-task\
+  \ DNN models to predict <i> in vivo </i> (RTECS), <i> in vitro </i> (Tox21), and clinical (ClinTox)\
+  \ toxicity given molecular input (Morgan fingerprints, FP, and SMILES Embeddings, SE)\n- compute a novel\
+  \ molecular representation - SMILES Embeddings\n- extract contrastive molecular explanations for toxicity\
+  \ predictions \n\n## Prerequisites \n\nThe scripts were run in an anaconda environment with the list\
+  \ of packages and versions provided in the \"anaconda_environment_packages.csv\" file. \n\nFollow the\
+  \ installation instructions in: https://github.com/Trusted-AI/AIX360, to download packages needed for\
+  \ Contrastive Explanations Method\n\nJupyter notebooks is needed to run the deep predictive models provided.\n\
+  \n##  Data \n\n<b> Raw Data </b>: Tox21 (<i> in vitro </i>), and ClinTox (clinical) datasets from MoleculeNet\
+  \ are in the \"data/datasets/raw_data\" folder \n- ClinTox source: https://github.com/deepchem/deepchem/tree/master/examples/clintox/datasets\n\
+  - Tox21 source: MoleculeNet https://github.com/deepchem/deepchem/blob/7463d93d0f85a3ba58cd155209540d8e649d875e/deepchem/molnet/load_function/tox21_datasets.py\
+  \ uses https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/tox21.csv.gz\n\n<b> Split Data </b>:\
+  \ Train / valid / test sets for 122, 123, 124 seeds is given in the \"data/datasets/split_data\" folder\
+  \ for Tox21 and ClinTox\n- Data was split using the seeds and random splitting method from MoleculeNet.\
+  \ The process to obtain the splits are provided in the \"data/datasets/obtaining_splits\" folder\n\n\
+  <b> RTECS </b>(<i> in vivo </i>) data is commerical by Biovia (available for a fee or by way of subscription),\
+  \ and cannot be provided. However, the code using this dataset is given. \n\n##  Modeling \n\n#### SMILES\
+  \ Embedding (SE) Featurization\n\nCode to create SE featurization is provided in \"SE_featurization\"\
+  \ folder. More details are given at \"SE_featurization/scripts/README.md\".\n\nDictionary of mapping\
+  \ SMILES in Tox21, ClinTox, and RTECS dataset to a SMILES Embedding is given in \"data/smiles_embedding/toxicity_smiles.zip\"\
+  . Unzip file before use.\n\n### Deep Predictive Models\n\nFor deep predictive models, Jupyter notebooks\
+  \ provide the process to: \n - load data\n - featurize the input (FP, SE)\n - create train/valid/test\
+  \ sets for DNNs\n - build the MTDNN model\n - train the model \n - evaluate performance on test set\
+  \ using different performance metrics\n\n### <i> Deep Learning </i>\n\n##### Multi-task DNN (MTDNN)\n\
+  \nWithin the \"deep_predictive_models/deep_learning\" folder are Jupyter Notebooks to create pytorch\
+  \ multi-task DNN models  of different combinations of datasets (Tox21, ClinTox, RTECS), using inputs\
+  \ of:\n- FP (\"deep_predictive_models/deep_learning/FP/MTDNN\") = MTDNN-FP\n- SE (\"deep_predictive_models/deep_learning/SE/MTDNN\"\
+  ) = MTDNN-SE\n\n##### Single-task DNN (STDNN)\n\nWithin the \"deep_predictive_models/deep_learning\"\
+  \ folder are Jupyter Notebooks to create pytorch single-task DNN models for Tox21, ClinTox and RTECS,\
+  \ using inputs of:\n- FP (\"deep_predictive_models/deep_learning/FP/STDNN\") = STDNN-FP\n- SE (\"deep_predictive_models/deep_learning/SE/STDNN\"\
+  ) = STDNN-SE\n\n### <i> Transfer Learning </i>\n\nUnder \"deep_predictive_models/transfer_learning\"\
+  \ folder are Jupyter Notebooks to create and test transfer learning models using different combinations\
+  \ of Tox21 (<i> in vitro </i>) and RTECS (<i> in vivo </i>) as base models, transferred to predict clinical\
+  \ toxicity (ClinTox). \n\n### Contrastive Explanations Method (CEM)\n\n#### Obtaining explanations\n\
+  \n\"cem/cem_explanations\" folder supplies python scripts to obtain pertinent positives (PP) and pertinent\
+  \ negatives (PN) as explanations of single-task DNN predictions on Tox21, ClinTox and RTECS.\n\nThe\
+  \ scripts returns dataframes with information on the input molecules, predictions, true labels, and\
+  \ PP and PNs. Each row is added to the dataframe according to weight - with higher weighted explanations\
+  \ added first. \n\nThe top ten PP and PNs were obtained by calculating the most frequent (by count)\
+  \ PP and PNs for correctly predicted (true label = predicted label) molecules. Any conflicts rising\
+  \ from same counts within the top ten ranks, were resolved by averaging the weight rank order the PP/PN\
+  \ was added to the dataframe. \n\n#### Base trained STDNN model\n\nJupyter notebooks in the \"cem/trained_model\"\
+  \ folder train and test the keras STDNN models that are explained by the CEM, for predictions on <i>\
+  \ in vitro </i> (Tox21), <i> in vivo </i> (RTECS), and clinical (ClinTox) toxicity. \n\n### Genetic\
+  \ Algorithm (GA) Features \n\nUnder the \"genetic_algorithm\" folder are scripts to obtain a set of\
+  \ near optimal input (as Morgan fingerprint bits) to single-task toxicity prediction models on Tox21,\
+  \ ClinTox and RTECS. \n\nEach run of the GA, even given the same parameters, will not return the same\
+  \ results since the GA is a probabilistic stochastic search. Our obtained results (bits chosen to be\
+  \ near optimal) for Tox21, ClinTox and RTECS are given in the \"genetic_algorithm/results\" folder.\
+  \ \n\nThe bits obtained were matched to the bits of the PP and PNs, to examine if the top ten PP and\
+  \ PNs are within the optimal set of input features specified by the GA.\n"

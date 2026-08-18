@@ -1,0 +1,71 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: JianfengZhao/Matched_control_radiomics
+url: https://github.com/JianfengZhao/Matched_control_radiomics
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-07T19:32:34Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Mask-propagated matched-control radiomics — data-processing and method code\n\nReference\
+  \ implementation of the method described in the manuscript *\"Baseline CT Texture Differs Between\n\
+  Future Osteoradionecrosis Sites and Dose- and Anatomically Matched Spared Mandibular Bone.\"*\n\nThis\
+  \ release covers the **two core parts** of the study:\n\n1. **Data processing & matched-control construction**\
+  \ — building objective, dose- and location-matched\n   control bone ROIs for each ORN lesion by anatomical-frame\
+  \ mask propagation (steps 1–3).\n2. **Harmonized radiomic feature extraction** — standardized 3D IBSI\
+  \ features on a common true-HU scale\n   (step 4, plus the two feature modules).\n\nThe downstream statistical\
+  \ evaluation (classification, cross-validation, significance testing, figures)\nis **not** included\
+  \ here; this package is the data-processing and method pipeline only.\n\nYou supply your own data, paths,\
+  \ and (de-identified) case identifiers via `config.py` and the two ID CSVs.\n\n---\n\n## 1. Requirements\n\
+  \n- Python 3.11\n- `numpy`, `scipy`, `pandas`, `nibabel`, `SimpleITK`\n\n```bash\npip install numpy\
+  \ scipy pandas nibabel SimpleITK\n```\n\n## 2. Expected data layout\n\nThe code assumes no particular\
+  \ file names: the relative path of each input file is set in `config.py`\n(section 2). The defaults\
+  \ are simply:\n\n**Cases** (`ORN_NII_DIR/<case_id>/`):\n```\nct.nii.gz          # CASE_CT_FILE     \
+  \   -- planning CT\nmandible.nii.gz    # CASE_MANDIBLE_FILE  -- mandible mask\nlesion.nii.gz      #\
+  \ CASE_LESION_FILE    -- lesion label registered onto the planning CT\ndose.nii.gz        # CASE_DOSE_FILE\
+  \      -- planning dose on the CT/mask grid\n```\n\n**Raw planning-CT DICOM** (`ORN_DICOM_DIR/<case_id>/`)\
+  \ — only for cases not present in the same-source\ncontrol processing; used to recover true-HU CT (CT\
+  \ series selected by `DICOM_SERIES_PREFIX`).\n\n**Control pool** (`CONTROL_ROOT/<dataset>/<control_id>/`),\
+  \ isotropic grid, true HU:\n```\nct.nii.gz          # CTRL_CT_FILE\nmandible.nii.gz    # CTRL_MANDIBLE_FILE\n\
+  dose.nii.gz        # CTRL_DOSE_FILE\n```\n\nEdit these names in `config.py` to match whatever your own\
+  \ files are called.\n\n## 3. Configure\n\n1. Edit the paths and dataset names at the top of **`config.py`**.\n\
+  \   - `SAME_SOURCE_DATASET` is the control dataset imaged/processed on the same platform as the cases;\n\
+  \     only this one is used to build matched controls (avoids scanner/processing batch effects).\n2.\
+  \ Copy the two ID templates and fill them with your own **de-identified** identifiers:\n   ```bash\n\
+  \   cp case_ids_example.csv        case_ids.csv          # the ORN cases to analyze\n   cp orn_cohort_ids_example.csv\
+  \  orn_cohort_ids.csv    # ALL ORN-cohort ids to exclude from controls\n   ```\n   `orn_cohort_ids.csv`\
+  \ is a superset of `case_ids.csv` and guarantees no case can serve as its own control.\n\n## 4. Run\
+  \ (in order)\n\n```bash\npython step1_build_control_pool.py     # -> output/control_pool_mandible.npz,\
+  \ control_pool_meta.csv\npython step2_case_orn_regions.py       # -> output/case_orn_regions.csv\npython\
+  \ step3_match_and_propagate.py    # -> output/matches_propagated.csv, propagated_rois.npz\npython step4_extract_radiomics.py\
+  \      # -> output/radiomics_features.csv\n```\n\n| Step | What it does | Key output |\n|------|--------------|-----------|\n\
+  | 1 | Cache every control mandible's bone-voxel positions (normalized anatomical frame) + dose | `control_pool_mandible.npz`\
+  \ |\n| 2 | Define each lesion's positive ROI; record its normalized location + mean dose | `case_orn_regions.csv`\
+  \ |\n| 3 | Candidate search → affine mask propagation → objective acceptance → keep best-K controls\
+  \ | `matches_propagated.csv`, `propagated_rois.npz` |\n| 4 | Harmonized 3D IBSI radiomics for every\
+  \ ORN and control ROI on a common true-HU scale | `radiomics_features.csv` |\n\n**`radiomics_features.csv`**\
+  \ is the final feature table: one row per ROI, `label = 1` (ORN) or `0` (control),\nwith one column\
+  \ per radiomic feature. This is the input a downstream group-comparison analysis would use.\n\n## 5.\
+  \ Method parameters\n\nAll matching/extraction thresholds (location tolerance, dose windows, in-mandible\
+  \ fraction, volume bounds,\nnumber of controls kept, discretization) are defined and documented in `config.py`\
+  \ and at the top of the\nfeature modules. The defaults reproduce the values reported in the paper.\n\
+  \n## 6. Files\n\n```\nconfig.py                       configuration: paths, dataset names, ID files,\
+  \ method parameters\nstep1_build_control_pool.py     build the control-pool cache\nstep2_case_orn_regions.py\
+  \       define per-case positive ROIs\nstep3_match_and_propagate.py    mask-propagated matched-control\
+  \ construction (core method)\nstep4_extract_radiomics.py      harmonized 3D radiomic feature extraction\n\
+  harmonized_radiomics.py         cross-dataset-safe feature pipeline (clip / resample / per-ROI z-score\
+  \ / discretize)\nregion_radiomics.py             self-contained masked IBSI shape + texture kernels\
+  \ (GLCM/GLRLM/GLSZM/GLDM/NGTDM)\ncase_ids_example.csv            template: ORN cases to analyze\norn_cohort_ids_example.csv\
+  \      template: all ORN-cohort ids to exclude from controls\n```\n\n## 7. Data availability\n\nThe\
+  \ patient imaging data are not publicly available owing to institutional privacy policy. This code is\n\
+  released so that the method can be reproduced on other compatible datasets.\n"

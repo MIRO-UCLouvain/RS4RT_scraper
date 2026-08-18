@@ -1,0 +1,54 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: MGHPhysicsResearch/hedos
+url: https://github.com/MGHPhysicsResearch/hedos
+platform: github
+description: Blood DVH python version
+license: MIT
+language: Python
+keywords: []
+stars: 20
+updated_at: '2026-07-10T19:57:38Z'
+image_source: https://raw.githubusercontent.com/MGHPhysicsResearch/hedos/HEAD/figures/logo.png
+heuristic_total_score: 18
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 6 support term(s).
+readme_excerpt: "<img src=\"figures/logo.png\">\nHEDOS : Hematological Dose\n\n## Installation\n\nCheckout\
+  \ the python source code\n```bash\n$ git clone https://github.com/mghro/hedos.git\n\n```\nInstall dependent\
+  \ packages\n\n```bash\n$ pip3 install -r requirements.txt\n```\n\n## Background\nBlood flow is stochastically\
+  \ modeled and superimposed with a - potentially time varying - dose rate to calculate the \nblood dose\
+  \ distribution.\n\nThis code is a revised version of HEDOS. The old code can be found in the branch\
+  \ named \"hedos_old\". The main differences \nare:\n - The new code is orders of magnitude faster thanks\
+  \ to vectorization. \n - We have corrected a mathematical inaccuracy in the way transition probabilities\
+  \ between compartments were computed.\n#\nFor blood dose calculations, the configuration parameters\
+  \ (patient, treatment and simulation parameters) are set up in \n`BloodDose`. It then calls one of two\
+  \ possible workflows: \n- `BloodDoseFromFields` calculates the blood dose given the patient's dose distribution\
+  \ and the segmentations of \nthe organs which are contributing to the overall blood dose. For the example\
+  \ here we have used a mesh reference \nphantom (ICRP Publication 145) and create an artificial sample\
+  \ dose. For patient-specific blood dose calculations, \nthis should be replaced with patient data.\n\
+  - `BloodDoseFromDVHs` does the same thing, but uses DVHs of each of the organs contributing to the overall\
+  \ blood \ndose.\n\n#\nThe calculation of blood dose follows these steps in succession:\n- `FlowModel`:\
+  \ Set up a graph that reflects the connectivity and magnitude of blood flow between blood compartments.\
+  \ \nConvert this into a matrix of transition probabilities.  \n- `TemporalDistribution`: Simulate the\
+  \ blood flow over time. Blood particles flow through the model by a stochastic \njumping process based\
+  \ on survival analysis.\n- `CompartmentDose`: Accumulate dose in the blood particles over time, based\
+  \ on a time-dependent dose rate.\n\nTheir relationship looks like following image:\n\n<img src=\"figures/hedos_overview.png\"\
+  >\n\n### Example\nBelow example output of the fractional blood dose distribution for an imaginary thorax\
+  \ patient who received lung RT with \na fraction dose of 2 Gy. Top panel: Treatment given in 4 beams\
+  \ of 20s each, temporally separated by 10s to allow for \ngantry motion. Bottom panel: Treatment given\
+  \ in a single beam of 10s. It is clear that changing the dose rate quite \ndramatically affects the\
+  \ blood dose distribution (but not the mean blood dose). Non-zero contributions to the blood dose \n\
+  from various anatomical structures are also indicated.\n\n<img src=\"figures/normal_dose_rate.png\"\
+  >\n<img src=\"figures/high_dose_rate.png\">\n\n\n\n\n## Team\n- Chris Beekman\n- Jungwook Shin\n- Stella\
+  \ Xing\n- Lucas McCullum\n- Clemens Grassberger\n- Harald Paganetti\n\n## Acknowledgements\nThis work\
+  \ was supported by:\n- R21 CA248118 : A Computational Method to Calculate the Radiation Dose to Circulating\
+  \ Lymphocytes\n- R01 CA248901 : Developing whole-body computational phantoms for blood dosimetry to\
+  \ model the impact of radiation on the immune system\n\n## Publications\n\n- Beekman C, et al. A stochastic\
+  \ model of blood flow to calculate blood dose during radiotherapy. Phys Med Biol. 2023;68(22):10.1088/1361-6560/ad02d6.\
+  \ \n- Shin J, Xing S, McCullum L, et al. HEDOS-a computational tool to assess radiation dose to circulating\
+  \ blood cells during external beam radiotherapy based on whole-body blood flow simulations. Phys Med\
+  \ Biol. 2021;66(16):10.1088/1361-6560/ac16ea. Published 2021 Aug 3. doi:10.1088/1361-6560/ac16ea\n"

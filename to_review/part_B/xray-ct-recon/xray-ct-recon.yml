@@ -1,0 +1,138 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Ash-119/xray-ct-recon
+url: https://github.com/Ash-119/xray-ct-recon
+platform: github
+description: CT/CBCT reconstruction toolkit (FBP, FDK, OSEM) with multi-angle projection and reconstruction
+  quality benchmarking
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 3
+updated_at: '2026-07-27T05:54:30Z'
+image_source: https://raw.githubusercontent.com/Ash-119/xray-ct-recon/HEAD/results/figures/02_fbp_step_by_step.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# xray-ct-recon\n\n> *A from-scratch implementation of analytical and iterative X-ray\
+  \ CT\n> reconstruction — 2-D fan-beam FBP, 3-D cone-beam FDK, and OSEM —\n> validated on synthetic phantoms\
+  \ and demonstrated on a real human CT\n> series. Includes a Streamlit interactive demo and DICOM export.*\n\
+  \n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)\n[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)\n\
+  [![Tests: 106 passing](https://img.shields.io/badge/tests-106%20passing-brightgreen.svg)](#tests)\n\n\
+  ---\n\n## Overview\n\nThis repository implements the **inverse** half of X-ray CT — taking a\nsinogram\
+  \ of line integrals and recovering the underlying linear\nattenuation map. Three reconstruction families\
+  \ are covered end to end:\n\n- **Filtered Back-Projection (FBP)** — 2-D fan-beam, hand-rolled ramp\n\
+  \  filter (Ram-Lak / Hann / Hamming / Shepp-Logan / cosine), fan-to-\n  parallel rebinning, weighted\
+  \ back projection.\n- **Feldkamp-Davis-Kress (FDK)** — 3-D circular cone-beam, with\n  cosine-pre-weight,\
+  \ in-fan ramp filter, and the (SAD/s)² distance-\n  weighted back projection. The classical cone-beam\
+  \ artefact is\n  characterised quantitatively on a Digimouse atlas at clinical\n  cone-angle.\n- **OSEM**\
+  \ — transmission iterative reconstruction in line-integral\n  space (Recipe A of `reference_for_xray_ct.md`\
+  \ §3): OS-SART updates\n  with optional Poisson-count weighting and isotropic TV regularisation.\n \
+  \ Both 2-D and 3-D variants are provided. The 3-D variant carries a\n  grazing-ray clamp to prevent\
+  \ divergence on clinical cone-beam\n  geometries.\n\nThe forward physics (Beer-Lambert line integration,\
+  \ polychromatic\nspectra, Poisson quantum noise, NIST attenuation tables) is delegated\nto the sibling\
+  \ project `xray-projection-sim` and re-exposed through\n`src/sinogram.py` so the same primitives drive\
+  \ every test sinogram in\nthis repo.\n\nPhantoms covered:\n\n- Shepp-Logan 2-D / 3-D\n- Derenzo resolution\
+  \ test\n- Stepped cylinder (Beer-Lambert validation)\n- USC Digimouse murine atlas (full 3-D, 0.1 mm\
+  \ voxel)\n- Visible Human Project adult thorax (series `779e7a2a`, 285-slice\n  full-body CT, segmented\
+  \ to the lung-band slab for cone-beam recon\n  and to the whole cleaned envelope for digitally reconstructed\n\
+  \  radiographs)\n\nWhat this repo deliberately does **not** cover:\n\n- Helical / spiral CT — circular\
+  \ cone-beam only.\n- Photon-counting / spectral CT.\n- Iterative metal-artefact reduction, beam-hardening\
+  \ correction in the\n  reconstruction loop. Beam hardening is *modelled in the forward\n  pass*; corrections\
+  \ are future work.\n- Full PACS / DIMSE integration. The DICOM export is a minimum-viable\n  CT Image\
+  \ Storage IOD readable by 3D Slicer, RadiAnt, Horos, OHIF.\n\n---\n\n## Reconstruction methods\n\n###\
+  \ Filtered Back-Projection (FBP, 2-D fan-beam)\n\nFan-beam sinograms are rebinned to a parallel-beam\
+  \ grid\n(γ-sign convention checked by `test_fbp_2d.py::test_direction`), each\nparallel projection is\
+  \ convolved with a ramp filter at the\n**iso-plane equivalent pitch** (`pitch_det × SAD/SDD`, a subtle\
+  \ but\ncatastrophic-if-wrong factor), and the result is back-projected onto\nthe image grid with a (SAD\
+  \ / source-to-voxel) weight.\n\nStep-by-step visualisation (sinogram → cosine-weight → filtered →\n\
+  recon) and a filter comparison are in\n[`notebooks/02_fbp_2d_demo.ipynb`](notebooks/02_fbp_2d_demo.ipynb):\n\
+  \n![FBP step-by-step](results/figures/02_fbp_step_by_step.png)\n\n### Feldkamp-Davis-Kress (FDK, 3-D\
+  \ cone-beam)\n\nEach detector row is treated as a slightly tilted fan-beam scan. Three\nsteps: (1) cosine\
+  \ pre-weight `w(u,v) = SDD/√(SDD² + u² + v²)`,\n(2) ramp filter along the fan direction only, (3) inverse-square\
+  \ back\nprojection. The mid-plane FDK recon matches a 2-D FBP of the same\nslice to within ≈1 % relative\
+  \ RMS — an end-to-end regression that\ncaught a 33 % filter-pitch bug during development.\n\nGeometry\
+  \ can be hand-picked or auto-configured by\n`src.scan_config.suggest_cone_beam_geometry`, which sizes\
+  \ detector,\npitch, and view count from the volume's projected silhouette,\nNyquist (`n_views ≥ ⌈π/2\
+  \ × n_cols⌉`), and a chosen scanner class\n(`preclinical` ≈ desktop CBCT, `clinical` ≈ human helical\
+  \ CT).\n\nThe classical cone-beam attenuation off-mid-plane is quantified on\nthe full Digimouse atlas:\n\
+  \n![Digimouse FDK tri-planar](results/figures/03_digimouse_fdk_triplanar.png)\n![Digimouse FDK axial\
+  \ profile](results/figures/03_digimouse_cone_profile.png)\n\n### Ordered Subset Expectation Maximisation\
+  \ (OSEM, iterative)\n\nTransmission OSEM operates in the *line-integral* domain\n`p = -ln(I/I0)`, *not*\
+  \ the emission ML-EM domain — this matters\nbecause emission ML-EM's product / count-of-LOR form does\
+  \ not extend\ndirectly to transmission CT. The implementation here follows the\n**Recipe A** of `reference_for_xray_ct.md`\
+  \ §3: after fan-to-parallel\nrebinning, apply OS-SART updates per subset of parallel views,\n\n`μ ←\
+  \ μ + relaxation · (Aᵀₛ Wₛ rₛ) / (Aᵀₛ Wₛ 1 + ε)`\n\nwith `rₛ = pₛ − Aₛ μ`, `Aᵀ` the parallel back-projector\
+  \ (no ramp),\nand `Wₛ = diag(exp(−pₛ))` ≈ N/N₀ photon-count weights when\n`weighted=True`. Optional\
+  \ isotropic TV with proximal soft thresholding\nbetween iterations.\n\nThe 3-D variant inherits the\
+  \ same scheme over cone-beam geometry. A\ngrazing-ray fix (`ray_lengths.clamp_(min=0.1 cm)` in `osem_3d`)\n\
+  prevents divergence on clinical-FOV CBCT, where edge detector rays\nbarely intersect the volume and\
+  \ the un-clamped row normalisation\ndivides by ~10⁻⁵ cm path lengths — see\n[`tests/test_osem.py::test_osem_3d_grazing_ray_no_divergence`](tests/test_osem.py)\n\
+  for the regression.\n\nOSEM and FBP at matched dose on Shepp-Logan:\n\n![OSEM vs FBP, low dose](results/figures/04_fbp_vs_osem_noisy.png)\n\
+  ![OSEM iteration sweep](results/figures/04_osem_iterations.png)\n![OSEM TV sweep](results/figures/04_osem_tv_compare.png)\n\
+  \n---\n\n## Phantoms\n\n| Phantom | Modality | Source | Used in |\n|---|---|---|---|\n| Shepp-Logan\
+  \ 2-D / 3-D | analytic ellipses | Shepp & Logan 1974 | every notebook |\n| Derenzo | resolution rods\
+  \ | hand-coded | nb 04, app |\n| Stepped cylinder | Beer-Lambert | hand-coded | nb 01 |\n| Digimouse\
+  \ | mouse atlas | USC Biomedical Imaging Group, Dogdas et al. 2007 | nb 03, 05, app |\n| VHP thorax\
+  \ (`779e7a2a`) | adult human CT, 945 mm | NLM Visible Human Project (M, normal pre-mortem), NCI Imaging\
+  \ Data Commons DICOM version | nb 06, app |\n\nThe VHP series is loaded from `data/vhp/779e7a2a/` (217\
+  \ MB of DICOM,\nnot committed). `src/vhp_loader.py` parses the 39-series ZIP, picks the\nlargest PixelSpacing\
+  \ group (285 axial slices, 0.898 mm in-plane, 3 mm\nnominal axial pitch resampled), converts HU to µ\
+  \ at the requested\nenergy, and runs a 3-D connected-component clean-up to remove the CT\ntable and\
+  \ head holder while preserving the patient envelope. The\nauto-segmented thorax slab covers approximately\
+  \ the lung-apex to\ndiaphragm range (~85 axial slices).\n\n---\n\n## Reconstruction quality benchmark\n\
+  \n[`notebooks/05_recon_quality.ipynb`](notebooks/05_recon_quality.ipynb)\nsweeps three phantoms × three\
+  \ dose levels × two reconstruction methods,\nrecording PSNR / SSIM / CNR / runtime. The full table is\
+  \ at\n[`results/figures/05_quality_table.csv`](results/figures/05_quality_table.csv);\nkey numbers below:\n\
+  \n| Phantom | Dose | Method | PSNR (dB) | SSIM | Recon time (s) |\n|---|---|---|---:|---:|---:|\n| Shepp-Logan\
+  \ | noise-free | FBP  | **22.83** | 0.558 | 0.06 |\n| Shepp-Logan | noise-free | OSEM | 22.08 | **0.857**\
+  \ | 0.55 |\n| Shepp-Logan | N₀=10⁵ | FBP | 22.81 | 0.537 | 0.01 |\n| Shepp-Logan | N₀=10⁵ | OSEM | **25.60**\
+  \ | **0.950** | 0.45 |\n| Shepp-Logan | N₀=10³ | FBP | 20.80 | 0.196 | 0.01 |\n| Shepp-Logan | N₀=10³\
+  \ | OSEM | **25.27** | **0.871** | 0.46 |\n| Derenzo | noise-free | FBP  | **19.98** | 0.578 | 0.02\
+  \ |\n| Derenzo | noise-free | OSEM | 19.16 | **0.624** | 0.49 |\n| Derenzo | N₀=10³ | FBP  | 18.33 |\
+  \ 0.385 | 0.01 |\n| Derenzo | N₀=10³ | OSEM | **18.87** | **0.642** | 0.45 |\n| Digimouse | N₀=10⁵ |\
+  \ FBP  | **27.16** | 0.689 | 0.01 |\n| Digimouse | N₀=10⁵ | OSEM | 26.01 | **0.888** | 0.32 |\n| Digimouse\
+  \ | N₀=10³ | FBP  | 22.19 | 0.249 | 0.01 |\n| Digimouse | N₀=10³ | OSEM | **24.90** | **0.735** | 0.32\
+  \ |\n\nHonest readings:\n\n- **At noise-free or clinically standard dose, FBP is competitive with\n\
+  \  OSEM in PSNR** — there is no noise to suppress, so the data-fidelity\n  term has nothing to do. OSEM\
+  \ still wins on SSIM because of its\n  non-negativity prior + edge-aware ringing absence.\n- **At low\
+  \ dose (N₀ = 10³ photons / pixel) OSEM clearly wins both**\n  metrics on the smooth phantoms (Shepp-Logan,\
+  \ Digimouse). The\n  data-weighting term downweights low-count rays and the resulting\n  estimate is\
+  \ markedly cleaner than the streak-amplified FBP image.\n- **Derenzo (high-contrast bone rods) is the\
+  \ hardest case for OSEM**:\n  the weighted-LSQR update biases against the bone peaks (max µ ≈ 1)\n \
+  \ so the absolute PSNR gain over FBP is small (~0.5 dB), but the SSIM\n  gain is large (+0.26) — visually\
+  \ the OSEM image is clearly cleaner.\n\nPer-method low-dose comparison:\n\n![Low-dose FBP vs OSEM](results/figures/05_low_dose_fbp_vs_osem.png)\n\
+  \nThree-way phantom × dose Digimouse sweep:\n\n![Digimouse three-way](results/figures/05_digimouse_three_way.png)\n\
+  \n---\n\n## Visible Human Project demonstration\n\n[`notebooks/06_vhp_demo.ipynb`](notebooks/06_vhp_demo.ipynb)\
+  \ puts the\ntoolchain to work on a real human CT series. Two complementary uses of\nthe same Beer-Lambert\
+  \ + multi-angle-geometry stack:\n\n**Thorax cone-beam reconstruction** at clinical CBCT geometry\n(SAD\
+  \ = 600 mm, SDD = 1000 mm, 360 views, 2-D fan-beam slice-by-slice\nfor low-dose comparison and 3-D cone-beam\
+  \ for the slab). 4×3 figure\nshows ground-truth slab / FDK clean (PSNR 25.6 dB) / FDK at\nN₀ = 10⁴ (PSNR\
+  \ 21.4 dB) / OSEM 12 iter at N₀ = 10⁴ (PSNR 28.8 dB,\nSSIM 0.81) along the rows and axial / coronal\
+  \ / sagittal slices along\nthe columns:\n\n![VHP thorax reconstruction](results/figures/06_vhp_thorax_recon.png)\n\
+  \n**Full-body DRRs.** A DRR is the forward half of CT — one source\nposition, one detector exposure,\
+  \ one 2-D image that looks like a\nclinical X-ray film. Unlike CT reconstruction, DRR has no orbit and\n\
+  no axial-truncation constraint, so the *entire* 945-mm VHP cleaned\nvolume (clavicle to upper thigh)\
+  \ maps to a single image. Polychromatic\n80 kVp DRR is rendered via bilinear water-bone basis decomposition\n\
+  (see `src/drr.py`):\n\n![VHP AP + Lateral DRR](results/figures/06_vhp_full_body_drr.png)\n\nEight-angle\
+  \ DRR montage covering half an orbit — the angular content a\nreal CBCT scan would collect:\n\n![VHP\
+  \ eight-angle DRR](results/figures/06_vhp_drr_multi_angle.png)\n\n---\n\n## Interactive demo (Streamlit)\n\
+  \n`app.py` exposes the full forward + inverse stack as a Streamlit GUI:\npick one of five 2-D phantoms\
+  \ (Shepp-Logan, Derenzo, uniform disk,\nDigimouse mid-slice, VHP thorax mid-slice), pick a spectrum\
+  \ (mono /\npoly), a view count, and a photon dose, then choose FBP or OSEM with\nfilter / iteration\
+  \ / TV parameters and hit *Run reconstruction*.\n\n```bash\npip install -r requirements.txt\nstreamlit\
+  \ run app.py\n# or on Windows, double-click run_ct_app.bat\n```\n\nFeatures:\n\n- Live angle-explorer\
+  \ slider with a rotating-source visualisation\n  (red star = source, green bar = detector, orange rays\
+  \ = sample\n  ray paths through the phantom) plus the corresponding 1-D detector\n  readout extracted\
+  \ from the cached sinogram. No extra forward\n  projection — sub-200 ms median tick.\n- Single-click\
+  \ results bundle: download a 9-file zip containing\n  `phantom.npy`, `sinogram.npy`, `reconstruction.npy`,\
+  \ `residual.npy`,\n  `phantom.dcm`, `reconstruction.dcm`, `reconstruction_display.png`,\n  `metadata.json`,\
+  \ `README.txt`. The two DCMs are valid CT Image\n  Storage IOD files (HU-rescaled, shared StudyInstanceUID,\
+  \ separate\n  series) and open directly in 3D Slicer / RadiAnt / Horos / OHIF.\n- In-sidebar shutdown\
+  \ button (sends SIGTERM to the Streamlit process)\n  so the user can stop the server cleanly without\
+  \ going back to the\n  terminal.\n\nThe first VHP / Digimouse selection takes ~30-60 seconds because\
+  \ the\n2-D mid-slice is parsed from DICOM / ANALYZE and cached to\n`results/intermed"

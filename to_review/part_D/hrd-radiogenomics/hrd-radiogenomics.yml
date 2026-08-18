@@ -1,0 +1,95 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: patrisiyarum/hrd-radiogenomics
+url: https://github.com/patrisiyarum/hrd-radiogenomics
+platform: github
+description: Predict HRD status from CT scans via 3D CNN transfer learning on TCGA-OV × TCIA paired data.
+  Companion to drug-cell-viz.
+license: MIT
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-04-28T05:06:44Z'
+image_source: null
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# hrd-radiogenomics\n\n**Predict HRD status directly from preoperative CT scans of ovarian\
+  \ cancer\npatients, using transfer learning from Med3D / MONAI pretrained 3D CNN\nbackbones on TCGA-OV\
+  \ × TCIA paired image-genomic data.**\n\nNo published radiogenomics work rigorously connects CT features\
+  \ to HRD\nstatus using modern 3D deep learning. HRD tumors probably look different\non CT — accumulated\
+  \ genetic damage, altered necrosis patterns, texture\nshifts — and a trained model could spot those\
+  \ patterns well enough to\npre-screen patients before the biopsy + sequencing step. If the model\ngeneralizes\
+  \ to external cohorts, it's a genuine clinical contribution.\n\n## Why this matters\n\n- **Biopsy comes\
+  \ after the scan.** A CT-based HRD predictor would let\n  oncologists reason about PARP-inhibitor strategy\
+  \ during the initial\n  imaging review, weeks before molecular results return.\n- **Most HRD testing\
+  \ is genomic.** Myriad myChoice, FoundationOne CDx, and\n  germline panels all require sequencing. None\
+  \ use imaging, even though\n  every ovarian cancer patient already has a preoperative CT.\n- **External\
+  \ validation is the field's credibility crisis.** DeepHRD hit\n  AUC 0.81 on TCGA and collapsed to 0.57\
+  \ on PAOLA-1 (Wagener-Ryczek 2025).\n  We plan to do this right by leading with external validation\
+  \ on Hartwig\n  + a held-out TCIA cohort, not as an afterthought.\n\n## Five-step pipeline\n\n### 1.\
+  \ Data assembly\nPull ovarian cancer patients from TCGA-OV with HRD labels from Knijnenburg\n2018 (PanCanAtlas),\
+  \ cross-reference with TCIA for corresponding CT scans.\nExpect ~100–200 matched pairs across TCIA +\
+  \ Hartwig.\n\n### 2. Preprocessing\nCrop to tumor ROI (from a radiologist-annotated segmentation mask,\
+  \ or\nheuristic soft-tissue thresholding when no mask is available), resample to\n96³ voxels, normalize\
+  \ HU to the [-200, 250] soft-tissue window, handle\ninter-scanner variability via MONAI's spacing +\
+  \ intensity normalization\ntransforms.\n\n### 3. Model selection\nTransfer learning from Med3D or MONAI's\
+  \ pretrained 3D DenseNet121 /\nResNet-50 / UNETR encoder. Freeze the backbone, attach a two-class head,\n\
+  fine-tune the last 2–3 blocks + head on TCGA-OV.\n\n### 4. Training and validation\n5-fold cross-validation\
+  \ on TCGA-OV with stratified splits by (HRD label,\nscanner manufacturer). Metrics: AUROC, AUPRC, balanced\
+  \ accuracy, per-scanner\nsubgroup AUROC. Expected range 0.65–0.80 depending on signal.\n\n### 5. External\
+  \ validation + interpretability\nEvaluate on Hartwig and a held-out TCIA cohort. If AUROC drops, iterate\
+  \ on\nstain-normalisation-equivalent augmentation, domain adaptation, or\nensemble methods. Publish\
+  \ saliency heatmaps (Grad-CAM3D) + attention-based\nfeature importance so the \"why\" is transparent.\n\
+  \n## Baseline + target\n\n| Model | TCGA-OV AUROC | External AUROC | Published |\n|---|---|---|---|\n\
+  | ResNet18 2D-slice (DeepHRD-style) | 0.70 | 0.57 | Wagener-Ryczek 2025 |\n| Med3D ResNet-50 transfer\
+  \ | 0.75 | ? | This project |\n| MONAI DenseNet121 transfer | 0.77 | ? | This project |\n| Ensemble\
+  \ + domain adaptation | 0.80 | ≥ 0.70 target | This project |\n\n**Green-lit metric**: external AUROC\
+  \ ≥ 0.70 on Hartwig or held-out TCIA.\n\n## Data\n\n| Source | What | How to get it |\n|---|---|---|\n\
+  | [TCGA-OV clinical + HRD labels](https://portal.gdc.cancer.gov/) | N≈585 ovarian cancer patients with\
+  \ Knijnenburg HRD scores | Public via GDC + supplementary tables |\n| [TCIA](https://www.cancerimagingarchive.net/)\
+  \ | Preoperative CT scans for ~300 TCGA-OV patients | Public; API + DICOM downloads |\n| [Hartwig](https://www.hartwigmedicalfoundation.nl/)\
+  \ | ~5,500 metastatic WGS, some with imaging | Institutional DAR, 3-6 months |\n| [PAOLA-1](https://doi.org/10.1016/j.ejca.2025.XXXXX)\
+  \ | 800 OV patients with imaging + outcomes | Request-based via Bergonié |\n\nPublic path (TCGA-OV +\
+  \ TCIA + held-out split) is enough for an initial\npublication. Hartwig + PAOLA-1 unlock the strongest\
+  \ external validation.\n\n## Layout\n\n```\nsrc/radiogenomics/\n├── data/\n│   ├── tcga_ov.py      \
+  \    # TCGA GDC → HRD labels + patient manifest\n│   ├── tcia.py             # TCIA DICOM download +\
+  \ PATIENT_ID join\n│   └── hartwig.py          # Access-restricted, documented stub\n├── preprocess.py\
+  \           # Load → crop → resample → normalise (shared\n│                           # with drug-cell-viz's\
+  \ upload path)\n├── backbones/\n│   ├── med3d.py            # Med3D ResNet-50 transfer\n│   └── monai_densenet.py\
+  \   # MONAI DenseNet121 3D transfer\n├── train.py                # MONAI Trainer + WandB logging + 5-fold\
+  \ CV\n├── evaluate.py             # Internal + external evaluation\n├── interpret.py            # Grad-CAM3D,\
+  \ attention maps\n└── inference.py            # Exportable artifact loaded by drug-cell-viz\n\npipelines/\n\
+  ├── Snakefile               # Full 5-step pipeline\n├── rules/\n│   ├── download.smk\n│   ├── preprocess.smk\n\
+  │   ├── train.smk\n│   └── evaluate.smk\n└── scripts/\n    ├── fetch_tcia_series.py\n    └── build_manifest.py\n\
+  \nreports/\n├── tripod_ai_v0.md         # TRIPOD+AI checklist per release\n├── claim_v0.md         \
+  \    # CLAIM 2.0 (medical imaging) checklist\n└── probast_ai_v0.md        # Risk-of-bias assessment\n\
+  \nnotebooks/\n├── 01_explore_tcga_ov.ipynb\n├── 02_preprocess_quickstart.ipynb\n├── 03_med3d_finetune.ipynb\n\
+  └── 04_gradcam_interpretability.ipynb\n```\n\n## Quick start\n\n```bash\n# CUDA-capable host strongly\
+  \ recommended; CPU path works but is 50-100x slower.\nuv sync --extra dev\n\n# Fetch TCGA-OV HRD labels\
+  \ + TCIA patient manifest (public; ~20 min):\nuv run snakemake --snakefile pipelines/Snakefile \\\n\
+  \    --configfile pipelines/config.yaml --cores 4 manifest\n\n# Preprocess all 300 CT series to 96^3\
+  \ volumes (cached):\nuv run snakemake preprocess --cores 8\n\n# Train a Med3D transfer baseline + 5-fold\
+  \ CV (1 GPU, ~4 hours):\nuv run snakemake train --cores 1\n\n# External validation on a held-out TCIA\
+  \ cohort + Hartwig when available:\nuv run snakemake eval_external --cores 1\n```\n\n## Integration\
+  \ with drug-cell-viz\n\n`drug-cell-viz` ships a `POST /api/radiogenomics/upload` endpoint (see\n`apps/api/src/api/services/radiogenomics.py`)\
+  \ that runs the **same\npreprocessing pipeline** this repo uses. When this project produces a\ntrained\
+  \ checkpoint, drop it at the path `drug-cell-viz` reads and flip the\ninference path on with `services.radiogenomics.set_model_weights(...)`.\n\
+  Until then the drug-cell-viz UI shows the preprocessing output + a\n\"research prototype\" placeholder\
+  \ prediction.\n\n## Reporting standards\n\n- **TRIPOD+AI** (Collins et al., *BMJ* 2024, 27 items)\n\
+  - **CLAIM 2.0** (Mongan et al., *Radiol Artif Intell* 2020, imaging-specific)\n- **PROBAST+AI** (2025\
+  \ risk-of-bias update)\n\nEach release ships a filled checklist per framework under `reports/`.\n\n\
+  ## References\n\n- Chen S et al. *Med3D: transfer learning for 3D medical image analysis.*\n  arXiv\
+  \ 2019.\n- Cardoso MJ et al. *MONAI: An open-source framework for deep learning in\n  healthcare.* arXiv\
+  \ 2022.\n- Knijnenburg TA et al. *Genomic and molecular landscape of DNA damage\n  repair deficiency\
+  \ across The Cancer Genome Atlas.* Cell Rep 2018.\n- Wagener-Ryczek S et al. *External validation of\
+  \ a deep-learning HRD\n  classifier — AUC collapse on PAOLA-1.* Eur J Cancer 2025.\n- Bergstrom E et\
+  \ al. *DeepHRD.* JCO 2024.\n- Selvaraju RR et al. *Grad-CAM.* ICCV 2017 (3D extension: Chattopadhay\
+  \ 2018).\n- Wagener-Ryczek S et al. *External validation of deep-learning HRD in\n  PAOLA-1.* European\
+  \ Journal of Cancer 2025.\n\n## License\n\nMIT — see [LICENSE](LICENSE).\n\n## Status\n\nEarly. Scaffolding\
+  \ + preprocessing shared with drug-cell-viz ships today;\ntraining pipeline + Med3D transfer + external\
+  \ validation pending data\nacquisition. No clinical use.\n"

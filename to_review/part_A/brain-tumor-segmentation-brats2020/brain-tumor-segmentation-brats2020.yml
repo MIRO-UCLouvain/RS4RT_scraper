@@ -1,0 +1,326 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: alikawiduri/Brain-Tumor-Segmentation---BraTS2020
+url: https://github.com/alikawiduri/Brain-Tumor-Segmentation---BraTS2020
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-21T15:25:23Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+readme_excerpt: '# Brain Tumor Segmentation using U-Net Variants on BraTS2020
+
+
+  ## Overview
+
+
+  This project investigates deep learning-based brain tumor segmentation using the BraTS2020 dataset.
+  The study compares several U-Net architectures to evaluate the impact of attention mechanisms and multi-scale
+  feature extraction on segmentation performance.
+
+
+  The implemented models include:
+
+
+  * U-Net (Baseline)
+
+  * Attention U-Net
+
+  * Multi-Scale U-Net
+
+
+  The objective is to accurately segment tumor regions from multi-modal MRI scans and analyze the performance
+  improvements introduced by architectural enhancements.
+
+
+  ---
+
+
+  ## Dataset
+
+
+  **Dataset:** BraTS2020 (Brain Tumor Segmentation Challenge 2020)
+
+
+  Each sample contains four MRI modalities:
+
+
+  * T1
+
+  * T1Gd (T1 Contrast Enhanced)
+
+  * T2
+
+  * FLAIR
+
+
+  The segmentation masks are converted into a binary tumor mask:
+
+
+  * 0 = Background
+
+  * 1 = Tumor Region
+
+
+  ---
+
+
+  ## Project Structure
+
+
+  ```text
+
+  Brain-Tumor-Segmentation---BraTS2020
+
+  │
+
+  ├── premodelling.ipynb
+
+  ├── unet.ipynb
+
+  ├── mscale_unet.ipynb
+
+  │
+
+  ├── best_unet_brats.pth
+
+  ├── best_attention_unet_brats.pth
+
+  ├── best_mscaleunet_brats.pth
+
+  │
+
+  └── README.md
+
+  ```
+
+
+  ### File Description
+
+
+  | File                          | Description                                |
+
+  | ----------------------------- | ------------------------------------------ |
+
+  | premodelling.ipynb            | Data preprocessing and dataset preparation |
+
+  | unet.ipynb                    | Baseline U-Net implementation              |
+
+  | mscale_unet.ipynb             | Multi-Scale U-Net implementation           |
+
+  | best_unet_brats.pth           | Trained baseline U-Net weights             |
+
+  | best_attention_unet_brats.pth | Trained Attention U-Net weights            |
+
+  | best_mscaleunet_brats.pth     | Trained Multi-Scale U-Net weights          |
+
+
+  ---
+
+
+  ## Model Architectures
+
+
+  ### 1. U-Net
+
+
+  Baseline encoder-decoder architecture with skip connections.
+
+
+  Features:
+
+
+  * Encoder-decoder structure
+
+  * Skip connections
+
+  * Binary segmentation output
+
+
+  ### 2. Attention U-Net
+
+
+  Enhanced U-Net with attention gates that suppress irrelevant feature responses and emphasize tumor-related
+  regions.
+
+
+  Features:
+
+
+  * Attention Gates
+
+  * Improved feature selection
+
+  * Better localization capability
+
+
+  ### 3. Multi-Scale U-Net
+
+
+  Modified U-Net using parallel convolution kernels of different sizes.
+
+
+  Features:
+
+
+  * Multi-scale feature extraction
+
+  * 3×3, 5×5, and 7×7 convolutions
+
+  * Improved representation of tumors with varying sizes
+
+
+  ---
+
+
+  ## Training Configuration
+
+
+  | Parameter       | Value           |
+
+  | --------------- | --------------- |
+
+  | Optimizer       | Adam            |
+
+  | Learning Rate   | 1e-4            |
+
+  | Loss Function   | Dice + BCE Loss |
+
+  | Batch Size      | 32              |
+
+  | Epochs          | 20              |
+
+  | Mixed Precision | Enabled         |
+
+  | Framework       | PyTorch         |
+
+
+  ---
+
+
+  ## Evaluation Metrics
+
+
+  The following metrics are used:
+
+
+  * Dice Score
+
+  * IoU (Intersection over Union)
+
+  * Accuracy
+
+  * Precision
+
+  * Recall
+
+  * F1-Score
+
+
+  ---
+
+
+  ## Sample Results
+
+
+  ### Baseline U-Net
+
+
+  | Metric    | Score  |
+
+  | --------- | ------ |
+
+  | Accuracy  | 0.9990 |
+
+  | Precision | 0.9493 |
+
+  | Recall    | 0.9593 |
+
+  | F1-Score  | 0.9542 |
+
+  | IoU       | 0.9126 |
+
+  | Dice      | 0.9542 |
+
+
+  ### Attention U-Net
+
+
+  | Metric    | Score  |
+
+  | --------- | ------ |
+
+  | Accuracy  | 0.9990 |
+
+  | Precision | 0.9586 |
+
+  | Recall    | 0.9506 |
+
+  | F1-Score  | 0.9546 |
+
+  | IoU       | 0.9133 |
+
+  | Dice      | 0.9546 |
+
+
+  ### Multi-Scale U-Net
+
+
+  Training and evaluation are provided in the corresponding notebook.
+
+
+  ---
+
+
+  ## Visualization
+
+
+  The repository includes:
+
+
+  * MRI image visualization
+
+  * Ground truth masks
+
+  * Predicted masks
+
+  * Overlay comparison
+
+  * Dice score visualization
+
+  * Training and validation curves
+
+
+  ---
+
+
+  ## Requirements
+
+
+  ```bash
+
+  pip install torch torchvision
+
+  pip install numpy
+
+  pip install matplotlib
+
+  pip install h5py
+
+  pip install scikit-learn
+
+  pip install tqdm
+
+  ```
+
+
+  '

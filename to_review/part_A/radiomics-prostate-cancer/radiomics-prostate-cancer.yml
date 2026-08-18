@@ -1,0 +1,72 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: jesusalzate/Radiomics-Prostate-Cancer
+url: https://github.com/jesusalzate/Radiomics-Prostate-Cancer
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-05-05T06:39:52Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Prostate Radiomics ML\n\nThis repository contains the radiomics-only branch of the\
+  \ prostate cancer project. It keeps the feature extraction workflow for multiparametric prostate MRI,\
+  \ classical machine learning models, and deep tabular models trained only on extracted radiomics features.\n\
+  \nIt does not train neural networks on image slices, volumes, patches, CNN feature maps, image ViTs,\
+  \ or segmentation tensors.\n\n## Clinical Task\n\nThe main task is binary classification of clinically\
+  \ significant prostate cancer (`csPCa`), defined as `ISUP >= 2`, from radiomics features extracted from:\n\
+  \n- `T2W`\n- `ADC`\n- `DWI/HBV`\n\nThe expected modeling label is `label`:\n\n- `0`: not clinically\
+  \ significant\n- `1`: clinically significant\n\n## Repository Layout\n\n```text\n├── artifacts/\n│ \
+  \  ├── data.csv                         # Cohort table with paths, metadata, and labels\n│   └── radiomics/\
+  \                       # Radiomics feature CSVs\n├── data_analysis/                       # Cohort\
+  \ and image descriptive notebooks\n├── data_structuring/                    # Initial cohort table assembly\n\
+  ├── results/\n│   └── radiomics/                       # Radiomics model outputs\n├── train/\n│   ├──\
+  \ common/                          # Shared data and runtime utilities\n│   └── radiomics/\n│      \
+  \ ├── 1_extract_radiomics/         # PyRadiomics extraction code and parameters\n│       ├── 2_modeling/\
+  \                  # Classical ML, comparisons, and DL runners\n│       └── deep_models/           \
+  \      # Modular deep tabular model definitions\n├── requirements.txt                     # Base extraction\
+  \ and classical ML pipeline\n└── requirements-deep-radiomics.txt      # Optional TensorFlow deep tabular\
+  \ models\n```\n\n## Installation\n\nBase pipeline:\n\n```bash\npython -m venv .venv\nsource .venv/bin/activate\n\
+  pip install -r requirements.txt\n```\n\nDeep tabular radiomics models:\n\n```bash\npip install -r requirements-deep-radiomics.txt\n\
+  ```\n\n## Main Workflow\n\n### 1. Extract Radiomics Features\n\n```bash\npython train/radiomics/1_extract_radiomics/extract_radiomics.py\n\
+  ```\n\nThis writes one CSV per modality and spatial region under `artifacts/radiomics/`.\n\n### 2. Concatenate\
+  \ Modalities\n\n```bash\npython train/radiomics/2_modeling/0_build_concatenated_feature_table.py \\\n\
+  \  --radiomics_root artifacts/radiomics \\\n  --mode gland \\\n  --keep_shape_from t2 \\\n  --output\
+  \ artifacts/radiomics/concatenated_data/features_all_gland.csv\n```\n\n### 3. Train Classical ML Models\n\
+  \n```bash\npython train/radiomics/2_modeling/1_train_and_evaluate.py \\\n  --csv features_all_gland.csv\
+  \ \\\n  --data_pre artifacts/radiomics \\\n  --results_base results/radiomics \\\n  --feature_strategy\
+  \ most_discriminant \\\n  --n_splits 5 \\\n  --n_repeats 10\n```\n\n### 4. Train Deep Tabular Models\n\
+  \nThe deep models receive only the radiomics feature matrix. Feature selection, imputation, and scaling\
+  \ are fitted only on the training split to avoid leakage.\n\nAvailable architectures:\n\n- `transformer`\n\
+  - `capsnet`\n- `transformer_capsnet`\n\n```bash\npython train/radiomics/2_modeling/4_train_tabular_transformer.py\
+  \ \\\n  --csv features_all_gland.csv \\\n  --data_pre artifacts/radiomics \\\n  --output_dir results/radiomics/deep_tabular_models\
+  \ \\\n  --run_name gland_transformer \\\n  --architecture transformer \\\n  --feature_selection most_discriminant\
+  \ \\\n  --epochs 300 \\\n  --batch_size 16 \\\n  --patience 50\n```\n\nRun the full deep tabular suite:\n\
+  \n```bash\npython train/radiomics/2_modeling/4_run_deep_tabular_suite.py \\\n  --csv features_all_gland.csv\
+  \ \\\n  --data_pre artifacts/radiomics \\\n  --output_dir results/radiomics/deep_tabular_models \\\n\
+  \  --run_prefix final_5fold \\\n  --architectures transformer capsnet transformer_capsnet\n```\n\n##\
+  \ Deep Model Implementation\n\nDeep model code is modularized under `train/radiomics/deep_models/`:\n\
+  \n- `config.py`: shared `DeepTabularConfig`\n- `layers.py`: positional embedding, attention pooling,\
+  \ capsule routing, capsule length, Transformer blocks\n- `losses.py`: binary focal loss and CapsNet\
+  \ margin loss\n- `architectures.py`: model builders and architecture-specific target/prediction helpers\n\
+  \nThe `transformer` architecture extends the reference tabular Transformer with a residual dense encoder,\
+  \ `LayerNormalization`, semantic radiomics tokens when feature names are available, token dropout, and\
+  \ `AdamW`. By default it uses binary focal loss with `gamma=2.0` and `alpha=0.35`; use `--transformer_loss\
+  \ bce` to run a binary cross-entropy ablation with balanced class weights.\n\nThe `capsnet` architecture\
+  \ matches the reference CapsNet notebook and uses CapsNet margin loss with one-hot targets, capsule\
+  \ lengths as outputs, `routing_iterations=3`, `CategoricalAccuracy`, `AUC`, and balanced class weights\
+  \ during training.\n\nThe `transformer_capsnet` architecture remains the project hybrid benchmark and\
+  \ uses a binary probability output with focal loss.\n\n## Methodological Safeguards\n\n- Patient-level\
+  \ splitting by `patient_id`.\n- Feature selection is performed inside each training split or fold.\n\
+  - Imputation and scaling are fitted only on training data.\n- Classical ML models share the same fold\
+  \ plan for fair comparison.\n- Deep tabular models can reuse predefined folds and shared fold-wise feature\
+  \ plans.\n- Deep learning is restricted to tabular radiomics variables.\n\n## Additional Documentation\n\
+  \nThe detailed radiomics workflow is documented in [`train/radiomics/README.md`](train/radiomics/README.md).\n"

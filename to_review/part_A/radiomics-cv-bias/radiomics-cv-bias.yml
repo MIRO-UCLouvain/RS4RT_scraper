@@ -1,0 +1,93 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Zongyeeeee/radiomics-cv-bias
+url: https://github.com/Zongyeeeee/radiomics-cv-bias
+platform: github
+description: ''
+license: MIT
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-07-03T07:33:38Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: '# Reproducibility of ML evaluation in radiomics — code & data artifact
+
+
+  Reproducible artifact for the paper *"Reproducibility of machine-learning evaluation in radiomics: model
+  family, not dimensionality, governs the optimistic bias of flat cross-validation across 50 public datasets."*
+
+
+  It measures the **flat-versus-nested cross-validation optimistic bias** across 50 public radiomics datasets
+  (radMLBench) and five classifiers, using identical canonical folds and strictly leakage-free, unit-tested
+  pipelines. Headline: the bias is governed **far more by model family** (kernel/linear ≫ tree ensembles)
+  than by the feature-to-sample ratio, whose effect is negligible and equivalence-bounded (TOST).
+
+
+  ## Layout
+
+  - `experiments/` — all code: `cv_estimator.py` (the flat/nested estimator + leakage-free pipelines),
+  `run_study.py` (primary run driver), `run_grid_ablation.py` (grid-size ablation), `aggregate.py` / `stats.py`
+  / `make_figures.py` / `make_tables.py` (analysis), `metadata.py`, `test_no_leakage.py` (leakage + determinism
+  unit tests).
+
+  - `results/` — generated outputs (per-cell parquet sidecars in `results/_cells/`, `results-summary.md`,
+  `tables.md`); fully regenerable.
+
+  - `figures/` — generated figures.
+
+  - `requirements.txt` — pinned environment.
+
+
+  ## Reproduce (CPU only, no GPU)
+
+  ```bash
+
+  pip install -r requirements.txt
+
+  # unit tests (leakage + determinism)
+
+  python3 -m pytest experiments/test_no_leakage.py
+
+  # primary run (long; crash-safe & resumable via results/_cells sidecars)
+
+  python3 experiments/run_study.py --main-only
+
+  # grid-size ablation
+
+  python3 experiments/run_grid_ablation.py
+
+  # analysis → summary, stats, figures, tables
+
+  python3 experiments/aggregate.py && python3 experiments/stats.py && \
+
+  python3 experiments/make_figures.py && python3 experiments/make_tables.py && \
+
+  python3 experiments/grid_ablation_stats.py
+
+  ```
+
+
+  ## Data
+
+  [radMLBench](https://github.com/aydindemircioglu/radMLBench) (Demircioğlu, *Computers in Biology and
+  Medicine*, 2024): 50 public radiomics datasets, binary clinical outcomes, no login. `pip install radMLBench`.
+  Determinism is fixed by a single seed and the benchmark''s canonical `getCVSplits` folds.
+
+
+  ## License
+
+  Code released under the MIT License (see `LICENSE`).
+
+
+  ## Citation
+
+  *(Add on publication.)*
+
+  '

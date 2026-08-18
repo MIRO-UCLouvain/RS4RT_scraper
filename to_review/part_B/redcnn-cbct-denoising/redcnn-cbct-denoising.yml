@@ -1,0 +1,53 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: HYTF/redcnn-cbct-denoising
+url: https://github.com/HYTF/redcnn-cbct-denoising
+platform: github
+description: RED-CNN based CBCT image denoising
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-12-17T02:02:24Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# RED-CNN Denoising for CBCT Imaging\n\nThis repository implements and evaluates a **RED-CNN–based\
+  \ denoising pipeline** for CBCT image slices using paired **noisy vs. averaged reference data**.  \n\
+  The project covers **data preprocessing, training, evaluation, inference, and efficiency benchmarking**,\
+  \ and is designed for quantitative analysis and reporting.\n\n\n## Project Overview\n\n- **Task**: CBCT\
+  \ image denoising  \n- **Model**: RED-CNN (Residual Encoder–Decoder CNN)  \n- **Input**: Noisy CT slices\
+  \  \n- **Target (Ground Truth)**: Averaged CT slices from multiple repeated scans  \n- **Evaluation\
+  \ Metrics**:\n  - RMSE\n  - PSNR\n  - SSIM\n- **Efficiency Metrics**:\n  - Inference time per slice\n\
+  \  - Inference time per volume\n  - Throughput (slices/sec)\n- **Framework**: PyTorch  \n- **Hardware**:\
+  \ NVIDIA RTX 4060 Laptop GPU\n\n\n## Model Description (RED-CNN)\n\nRED-CNN is a **residual encoder–decoder\
+  \ convolutional neural network** designed for medical image denoising.  \nIt uses a symmetric encoder–decoder\
+  \ architecture with skip connections and residual learning to suppress noise while preserving structural\
+  \ details.\n\nThe model operates on **2D CBCT slices** and is trained using **mean squared error (MSE)**\
+  \ loss.\n\n\n## Dataset Description (confidential)\n\n- **Noisy data**: Original CBCT scans  \n- **Reference\
+  \ data**: Averaged CBCT images obtained by averaging multiple repeated scans  \n- **Cases**:\n  - Phantom\
+  \ datasets  \n  - Water datasets  \n- **Splits**:\n  - Train / Validation / Test (case-level split to\
+  \ avoid data leakage)\n\nAll data are converted to `.npy` format for efficient training and evaluation.\n\
+  \n\n## Training\n\nRun training from the project root:\n\n```bash\npython -m train_full_redcnn\n```\n\
+  Key settings (defined in train_repo_redcnn.py):\n- Patch size: 128×128\n- Batch size: 8\n- Optimizer:\
+  \ Adam\n- Learning rate: 1e-4\n- Loss: MSE\n- Epochs: configurable (default: 50)\n\nThe best-performing\
+  \ model is saved as checkpoints/BEST_redcnn.pt\n\n## Evaluation\n### Quantitative Metrics\n\nEvaluation\
+  \ is performed on the test set using:\n- RMSE\n- PSNR\n- SSIM\n\nBaseline is defined as the original\
+  \ noisy image without any denoising.\n\nExample result:\n\n- Baseline: RMSE = 0.005420, PSNR = 46.18\
+  \ dB, SSIM = 0.9695\n- RED-CNN: RMSE = 0.003315, PSNR = 50.13 dB, SSIM = 0.9900\n\n## Inference Efficiency\n\
+  \nInference efficiency is evaluated on full 512×512 slices:\n\npython -m src.tools.benchmark_inference\n\
+  \nExample output:\n- Time per slice: 112.25 ms\n- Throughput: 8.9 slices/sec\n- Time per 512-slice volume:\
+  \ 57.47 s\n\nThese results indicate stable inference performance suitable for offline or near–real-time\
+  \ denoising workflows.\n\n\n## Inference and Output Saving\nTo generate denoised test outputs in .npy\
+  \ format:\n```bash\npython -m src.tools.infer_test_save_npy\n```\nSaved outputs include:\n- Denoised\
+  \ prediction\n- Original noisy input\n- Averaged reference target\n\nOutputs can optionally be exported\
+  \ to DICOM format for visualization and downstream analysis.\n\n## Environment\n- Python ≥ 3.10\n- PyTorch\
+  \ (CUDA-enabled recommended)\n- NumPy, pandas, scikit-image, matplotlib\n- NVIDIA GPU recommended for\
+  \ training and inference\n\n## Acknowledgement\n\nThe RED-CNN architecture is based on prior work in\
+  \ CT image denoising literature (Chen et al., 2017).\nThis repository adapts the method for controlled\
+  \ experimental evaluation and reporting."

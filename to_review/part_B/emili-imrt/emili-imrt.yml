@@ -1,0 +1,139 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: marr109/EMILI-IMRT
+url: https://github.com/marr109/EMILI-IMRT
+platform: github
+description: ''
+license: BSD-2-Clause
+language: C++
+keywords: []
+stars: 0
+updated_at: '2026-06-30T02:48:52Z'
+image_source: null
+heuristic_total_score: 41
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 3 particle-therapy term(s).
+- Matched 11 support term(s).
+readme_excerpt: "# EMILI IMRT — Beam Angle & Fluence Map Optimization\n\n<p align=\"center\">\n  <pre>\n\
+  \   ______ __  __ _____ _      _____ \n  |  ____|  \\/  |_   _| |    |_   _|\n  | |__  | \\  / | | |\
+  \ | |      | |  \n  |  __| | |\\/| | | | | |      | |  \n  | |____| |  | |_| |_| |____ _| |_ \n  |______|_|\
+  \  |_|_____|______|_____|\n  </pre>\n</p>\n\n**EMILI** (*Easily Modifiable Iterated Local search Implementation*)\
+  \ is an extensible C++ metaheuristic framework for combinatorial optimization, extended here with an\
+  \ **IMRT treatment planning module** that solves the coupled **Beam Angle Optimization (BAO)** and **Fluence\
+  \ Map Optimization (FMO)** problem using OSQP and iterated local search.\n\n---\n\n## Table of Contents\n\
+  \n- [Architecture](#architecture)\n- [IMRT Problem Formulation](#imrt-problem-formulation)\n- [Quick\
+  \ Start](#quick-start)\n- [Command-Line Usage](#command-line-usage)\n- [Hyperparameter Tuning (irace)](#hyperparameter-tuning-irace)\n\
+  - [Clinical Report (ICRU-83)](#clinical-report-icru-83)\n- [Algorithm Competition](#algorithm-competition)\n\
+  - [Project Structure](#project-structure)\n- [Build Options](#build-options)\n- [Contributing](#contributing)\n\
+  - [License & Credits](#license--credits)\n\n---\n\n## Architecture\n\nThe codebase follows a **framework\
+  \ + extension** pattern. The core EMILI library provides abstract metaheuristic building blocks; the\
+  \ `imrt/` directory extends them for radiation therapy.\n\n```\n┌──────────────────────────────────────────────────┐\n\
+  │  FRAMEWORK CORE  (emilibase.h/.cpp)              │\n│  Problem · Solution · InitialSolution      \
+  \      │\n│  Neighborhood · Perturbation · Acceptance        │\n│  Termination · LocalSearch · TabuMemory\
+  \          │\n├──────────────────────────────────────────────────┤\n│  PARSER / BUILDER  (generalParser.h/.cpp)\
+  \        │\n│  CLI grammar → algorithm composition at runtime  │\n├──────────────────────────────────────────────────┤\n\
+  │  IMRT MODULE  (imrt/)                            │\n│  ImrtInstance · ImrtProblem · ImrtFmoSolver\
+  \      │\n│  BaoProblem · AngleSwapNeighborhood              │\n│  RandomAnglesPerturbation · GreedyAngles...\
+  \      │\n└──────────────────────────────────────────────────┘\n```\n\n### Metaheuristics available\
+  \ out of the box\n\n| Algorithm | Token | Internal LS | Special components |\n|---|---|---|---|\n| Iterated\
+  \ Local Search | `ils` | Best/First improvement | `prangswap`, `improve` |\n| Variable Neighborhood\
+  \ Search | `vns` | Best/First improvement | `bangshake`, `accng` |\n| Tabu Search | `tabu` | Best/First\
+  \ improvement | `TBao_fixed`, `TBao_adaptive` |\n| Iterated Greedy | `ils` + `pgreedy` | Best/First\
+  \ improvement | destruction-reconstruction |\n| Simulated Annealing | `ils nols` + `saacc` | Empty (Metropolis\
+  \ accept) | `saacc s e β i α` |\n\n*All algorithms are composed at runtime via CLI tokens — no recompilation\
+  \ needed.*\n\n---\n\n## IMRT Problem Formulation\n\n### Clinical context\n\nIntensity-Modulated Radiation\
+  \ Therapy delivers conformal dose to a Planning Target Volume (PTV) while sparing Organs at Risk (OARs).\
+  \ The problem has two coupled sub-problems:\n\n1. **BAO (Beam Angle Optimization)** — select *K* gantry\
+  \ angles from *N* candidates\n2. **FMO (Fluence Map Optimization)** — compute optimal beamlet intensities\
+  \ for the chosen angles\n\n### Quadratic penalty objective (FMO)\n\nThe FMO sub-problem is solved **exactly**\
+  \ via OSQP:\n\n```\nmin  w_under · Σ || u_b ||²  +  w_over · Σ || v_b ||²  +  w_ptv_over · Σ || w_b\
+  \ ||²\ns.t. D_ptv·x + u ≥ Dmin            (PTV underdose slack)\n     D_oar·x  − v ≤ Dmax          \
+  \ (OAR overdose slack)\n     D_ptv·x  − w ≤ 1.07·Dmin      (PTV hot-spot constraint)\n     u, v, w ≥\
+  \ 0\n     0 ≤ x_j ≤ max_intensity\n```\n\n| Weight | Controls | Clinical effect of increasing |\n|---|---|---|\n\
+  | `w_under` | PTV underdose penalty | ↑ forces V95% coverage |\n| `w_over` | OAR overdose penalty |\
+  \ ↑ protects healthy organs |\n| `w_ptv_over` | PTV hot-spot penalty | ↓ reduces D2 / improves homogeneity\
+  \ |\n\n### Sparse dose matrix\n\nDose deposition data is stored in the **CORT format** — one VOIList\
+  \ per organ plus per-angle Dij files (`Gantry{g}_Couch{c}_D.txt`) with global voxel indices. The FMO\
+  \ solver assembles a **compact QP** using only the *K* active angles' beamlets, keeping the problem\
+  \ size O(K) regardless of candidate pool size.\n\n---\n\n## Quick Start\n\n### Prerequisites\n\n- C++11\
+  \ compiler (gcc ≥ 4.7 or Clang)\n- CMake ≥ 2.8\n- [OSQP](https://osqp.org/) (`brew install osqp` on\
+  \ macOS)\n\n### Build\n\n```bash\nmkdir build && cd build\ncmake .. -DWITH_OSQP=ON\nmake -j$(nproc)\n\
+  ```\n\nThe binary is `build/emili`.\n\n---\n\n## Command-Line Usage\n\n```bash\n./build/emili <instance_dir>\
+  \ <problem> <algorithm_description> [options]\n```\n\n### BAO+FMO (K=4 angles, ILS with first improvement)\n\
+  \n```bash\n./build/emili instances/PROSTATE_36ang baoimrt 4 \\\n    ils first irandomk tmaxiter 1 nangswap\
+  \ \\\n    tmaxiter 3 prangswap 2 improve \\\n    rnds 42\n```\n\n### FMO-only (all angles, single-beamlet-shift\
+  \ neighborhood)\n\n```bash\n./build/emili instances/TINY_test imrt 36 \\\n    bi izero nshift 0.5 tmaxiter\
+  \ 100 \\\n    rnds 42\n```\n\n### Algorithm tokens quick reference\n\n| Category | Token | Meaning |\n\
+  |---|---|---|\n| Problem | `imrt <dir> [nactive K] [verbose]` | FMO on all angles |\n| Problem | `baoimrt\
+  \ <K> <dir> [verbose]` | BAO+FMO |\n| Init | `izero` / `iuniform X` / `irandom M` | FMO initial intensities\
+  \ |\n| Init | `ifirstk` / `irandomk` | BAO initial angle set |\n| Neighborhood | `nshift Δ` / `nswap`\
+  \ | FMO beamlet moves |\n| Neighborhood | `nangswap` | BAO angle swap |\n| Perturbation | `prangswap\
+  \ P` / `pgreedy D` | BAO perturbations |\n| Acceptance | `improve` / `saacc s e β i α` | Accept criterion\
+  \ |\n| Termination | `tmaxiter N` / `tfeasible` | Stop condition |\n\n---\n\n## Hyperparameter Tuning\
+  \ (irace)\n\nThe `irace_*/` directories contain [irace](https://iridia.ulb.ac.be/irace/) scenarios for\
+  \ automatic algorithm configuration.\n\n### Available scenarios\n\n| Scenario | Instances | Algorithms\
+  \ | Parameters | Budget |\n|---|---|---|---|---|\n| `irace_tiny` | 1 tiny | ILS | 6 + 3 weights | ~2\
+  \ min |\n| `irace_prostate` | 2 sampled | ILS | 4 + 3 weights | ~1.5 h |\n| `irace_prostate_all` | 2\
+  \ sampled | ILS vs rVNS | varies + 3 weights | ~1.5 h |\n| `irace_all` | 2 medium | ILS/Tabu/VNS/Greedy/SA\
+  \ | varies + 3 weights | ~2 h |\n\n### Tunable FMO weights (all scenarios)\n\nThe target-runner **dynamically\
+  \ creates a temporary instance** with the irace-sampled weight values via symlinks (no 75 MB copies):\n\
+  \n```bash\n# In parameters.irace:\nw_under     \"--w_under \"     r,log  (1.0, 1000.0)   # PTV underdose\n\
+  w_over      \"--w_over \"      r,log  (0.01, 10.0)    # OAR overdose\nw_ptv_over  \"--w_ptv_over \"\
+  \  r,log  (0.1, 50.0)     # PTV hot-spot\n```\n\n### Running a tuning session\n\n```bash\n# Quick functional\
+  \ test\nirace --scenario irace_tiny/scenario.irace\n\n# Full ILS calibration on prostate\nirace --scenario\
+  \ irace_prostate/scenario.irace\n\n# Algorithm competition\nirace --scenario irace_all/scenario.irace\n\
+  ```\n\n---\n\n## Clinical Report (ICRU-83)\n\nEvery BAO+FMO run outputs a clinical plan summary:\n\n\
+  ```\n================================================================\n  IMRT FMO RESULT   K=4 beams\n\
+  ================================================================\nSelected angles (deg) : [ 160, 220,\
+  \ 270, 290 ]\nFMO objective f*      : 231180.90\nPrescription dose Rx  : 68.00 Gy\n\n----------------------------------------------------------------\n\
+  \  Per-organ dose statistics  (Gy)\n----------------------------------------------------------------\n\
+  Structure    Voxels    Dmin   Dmean    Dmax     D95      D5      D2\n----------------------------------------------------------------\n\
+  PTV_68         6770   54.28   67.53   79.16   60.77   73.83   74.92\nBladder       11596    0.13   35.29\
+  \   70.02       -   63.10   64.21\nRectum         1764    0.04   38.55   67.51       -   62.20   64.70\n\
+  \n----------------------------------------------------------------\n  DVH constraints  (clinical goals)\n\
+  ----------------------------------------------------------------\nStructure  Metric          Goal  \
+  \      Achieved      Status\n----------------------------------------------------------------\nPTV_68\
+  \     D95 >= 0.95*Rx  64.60       60.77         VIOL\nPTV_68     D2  <= 1.07*Rx  72.76       74.92 \
+  \        VIOL\nBladder    Dmax <= limit   50.00       70.02         VIOL\n\n----------------------------------------------------------------\n\
+  \  Plan quality indices\n----------------------------------------------------------------\nConformity\
+  \ Index    CI (V_Rx / V_PTV)    = 1.001\nHomogeneity Index   HI (D2 - D98)/D_Rx   = 0.229\nPTV coverage\
+  \        V95% of Rx           = 71.85 %\n```\n\nA **DVH CSV** is also generated (`dvh.csv`) for plotting\
+  \ with `plot_bao_results.py`.\n\n### Plan quality metrics\n\n| Metric | Definition | Target |\n|---|---|---|\n\
+  | **V95%** | % PTV volume receiving ≥ 95% Rx | ≥ 95% |\n| **CI** | Conformity Index: V_Rx / V_PTV |\
+  \ → 1.0 |\n| **HI** | Homogeneity Index: (D2 − D98) / Rx | → 0 |\n| **D95** | Dose to 95% of PTV | ≥\
+  \ 0.95·Rx |\n| **D2** | Near-max dose (2% volume) | ≤ 1.07·Rx |\n\n---\n\n## Algorithm Competition\n\
+  \n`run_comparison.sh` benchmarks multiple algorithms with identical seeds:\n\n```bash\n./run_comparison.sh\n\
+  ```\n\nOutput per algorithm in `comparison_results/`:\n\n| Algorithm | Log file | Key components |\n\
+  |---|---|---|\n| ILS | `ILS.log` | ILS + random init + 2-swap perturbation |\n| Tabu | `Tabu.log` |\
+  \ Tabu with BAO angle-set memory |\n| VNS | `VNS.log` | rVNS with multi-scale shake |\n| SA | `SA.log`\
+  \ | ILS + Metropolis cooling |\n| Greedy | `Greedy.log` | ILS + destruction-reconstruction |\n\nVisualize\
+  \ convergence with:\n\n```bash\npython3 plot_bao_results.py results_36ang_k3.csv results_36ang_k4.csv\n\
+  ```\n\nGenerates 4 figures in `plots/`: convergence curves, comparative stats, angle frequency heatmaps,\
+  \ and pair correlation matrices.\n\n---\n\n## Project Structure\n\n```\nemili_imrt/\n├── main.cpp  \
+  \                 # Entry point\n├── emilibase.h/.cpp           # Core framework (Problem, Solution,\
+  \ LS, ILS, VNS, Tabu...)\n├── generalParser.h/.cpp       # CLI token parser + Builder pattern\n├── setup.h\
+  \                    # Compile-time flags\n├── CMakeLists.txt             # Build system\n│\n├── imrt/\
+  \                      # IMRT extension module\n│   ├── imrt_instance.h/.cpp   # Sparse dose matrix,\
+  \ CORT format loader\n│   ├── imrt.h/.cpp            # FMO: ImrtProblem, beamlet neighborhoods\n│  \
+  \ ├── imrt_fmo.h/.cpp        # OSQP-exact FMO solver\n│   ├── imrt_bao.h/.cpp        # BAO: angle neighborhoods,\
+  \ perturbations\n│   └── imrt_builder.h/.cpp    # CLI builder for IMRT tokens\n│\n├── grámaticas/  \
+  \              # XML grammar definitions per algorithm\n├── irace_*/                   # irace tuning\
+  \ scenarios\n├── plot_bao_results.py        # Convergence & DVH visualization\n├── run_comparison.sh\
+  \          # Multi-algorithm benchmark runner\n└── generate_doc.py            # Documentation generator\n\
+  ```\n\n---\n\n## Build Options\n\n| CMake flag | Default | Description |\n|---|---|---|\n| `WITH_OSQP`\
+  \ | OFF | Enable BAO+FMO (requires OSQP library) |\n| `DEBUG_FLAGS` | ON | Debug symbols (`-g`) |\n\
+  | `O3_FLAGS` | OFF | `-O3` optimization |\n| `IRACE_OPTIMISED_FLAGS` | OFF | irace-tuned GCC flags |\n\
+  | `OPT_OPTIMISED_FLAGS` | OFF | OpenTuner-tuned GCC flags |\n| `WITH_STATS` | ON | Solution statistics\
+  \ output |\n| `USE_NEW_MAIN` | ON | Component-based algorithm loading |\n| `PORTABLE` | OFF | Static\
+  \ linking |\n\n---\n\n## Contributing\n\nThis repository follows a **PR-based workflow** managed by\
+  \ Gentle AI. All changes go through:\n\n1. **Feature branch** off `develop`\n2. **Code changes** with\
+  \ conventional commits\n3. **Pull Request** with automated review\n4. **Merge to `develop`** after approval\n\
+  \n### Conventional commit prefixes\n\n- `feat:` — new feature\n- `fix:` — bug fix\n- `perf:` — performance\
+  \ improvement\n- `refactor:` — code restructuring\n- `docs:` — documentation\n- `ci:` — CI/irace configuration\n\
+  \n### Instance data\n\nClinical instance files (Dij matrices, VOILists) are **not tracked** in this\
+  \ repository due to size. Contact the maintainer for access to training instances.\n\n---\n\n## License\
+  \ & Credits\n\n- **EMILI framework**: Federico Pagnozzi (BSD 2-Clause) — `federico.pagnozzi@ulb.ac.be`"

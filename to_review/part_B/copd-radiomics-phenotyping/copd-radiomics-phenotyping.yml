@@ -1,0 +1,69 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Anzhxx/copd-radiomics-phenotyping
+url: https://github.com/Anzhxx/copd-radiomics-phenotyping
+platform: github
+description: ''
+license: null
+language: null
+keywords: []
+stars: 0
+updated_at: '2026-07-19T02:28:14Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# COPD CT Radiomics Phenotyping\r\n\r\nReproducible Python code for the updated exploratory\
+  \ analysis of CT radiomics-derived imaging phenotypes in COPD.\r\n\r\n## Scope\r\n\r\nThis repository\
+  \ reproduces the analysis **from pre-extracted radiomics and clinical tables onward**. It does not contain\
+  \ participant data, CT images, segmentation masks, or the private PyRadiomics extraction configuration,\
+  \ and therefore does not reproduce the image-to-feature stage.\r\n\r\nThe pipeline implements:\r\n\r\
+  \n1. radiomics–clinical record matching;\r\n2. mean imputation, Z-score standardization, variance filtering\
+  \ and correlation filtering;\r\n3. 10 two-dimensional representations × 5 clustering methods × K=2–6\
+  \ (250 candidates);\r\n4. a prespecified exploratory KernelPCA-RBF + spectral clustering solution with\
+  \ K=4;\r\n5. repeated 80% subsampling stability analysis;\r\n6. exploratory clinical comparisons, BH-FDR,\
+  \ adjusted linear models and MCID comparisons;\r\n7. descriptive centre-composition assessment;\r\n\
+  8. post-hoc random-forest cluster-label reproduction;\r\n9. split-sample internal consistency against\
+  \ full-cohort-derived labels;\r\n10. six correlation-based radiomics modules.\r\n\r\n## Interpretation\
+  \ boundaries\r\n\r\n- K=4 is the prespecified exploratory primary solution; it is not claimed to be\
+  \ the automatic optimum of all internal metrics.\r\n- Centre composition is descriptive and is not scanner\
+  \ harmonization or centre-robustness validation.\r\n- Random-forest results measure post-hoc cluster-label\
+  \ reproduction, not diagnostic or prognostic performance.\r\n- The split-sample analysis is internal\
+  \ consistency, not independent or external validation.\r\n- The clusters are hypothesis-generating and\
+  \ require external and longitudinal validation.\r\n\r\nSee [interpretation limits](docs/interpretation_limits.md)\
+  \ for details.\r\n\r\n## Installation\r\n\r\nTested with Python 3.11+.\r\n\r\n```bash\r\npython -m venv\
+  \ .venv\r\n# Windows: .venv\\Scripts\\activate\r\n# Linux/macOS: source .venv/bin/activate\r\npython\
+  \ -m pip install --upgrade pip\r\npip install -e .\r\n```\r\n\r\nFor development:\r\n\r\n```bash\r\n\
+  pip install -e \".[dev]\"\r\n```\r\n\r\n## Synthetic quick start\r\n\r\nThe synthetic files are entirely\
+  \ artificial and are not derived from participants.\r\n\r\n```bash\r\npython scripts/generate_synthetic_data.py\
+  \ --output-dir examples --n 160 --seed 42\r\npython scripts/run_analysis.py --config configs/example.yaml\r\
+  \n```\r\n\r\n`configs/example.yaml` uses 10 stability iterations and 100 trees to keep the smoke run\
+  \ practical. Use the manuscript settings (100 iterations and 500 trees) for a private real-data reproduction.\r\
+  \n\r\n## Private real-data run\r\n\r\n1. Copy `configs/private_run.template.yaml` outside this repository.\r\
+  \n2. Add local input paths and source-to-canonical column mappings.\r\n3. Set the output directory outside\
+  \ this repository.\r\n4. Keep `public_mode: false` only in the private configuration.\r\n5. Never commit\
+  \ the private configuration or output directory.\r\n\r\n```bash\r\npython scripts/run_analysis.py --config\
+  \ /path/to/private/copd_run.yaml\r\n```\r\n\r\nSee [input schema](docs/input_schema.md), [analysis specification](docs/analysis_specification.md),\
+  \ and [output dictionary](docs/output_dictionary.md).\r\n\r\n## Data and privacy\r\n\r\nReal study data\
+  \ are not included because they contain protected participant-level medical information and are governed\
+  \ by ethics approvals and data-use agreements. The repository provides a synthetic example solely for\
+  \ code execution. Data availability wording must follow the approved manuscript and institutional policy.\r\
+  \n\r\nBefore staging files, run:\r\n\r\n```bash\r\npython scripts/audit_release.py . --report release_audit.json\r\
+  \n```\r\n\r\nSee [privacy and release policy](docs/privacy_and_release.md).\r\n\r\n## Reproducing the\
+  \ manuscript results\r\n\r\nA private regression run should verify:\r\n\r\n- matched cohort: 755;\r\n\
+  - original radiomics features: 107;\r\n- retained features: 19;\r\n- candidate fits: 250;\r\n- primary\
+  \ K: 4;\r\n- cluster counts: 193, 201, 166 and 195 after label alignment;\r\n- stability, clinical,\
+  \ assignment, internal-consistency and module summaries against the archived private outputs.\r\n\r\n\
+  Cluster labels are permutation-invariant. Compare partitions using Hungarian alignment or adjusted Rand\
+  \ index rather than assuming that raw numeric labels are identical across environments.\r\n\r\n## Repository\
+  \ layout\r\n\r\n- `src/copd_radiomics/`: reusable analysis modules.\r\n- `scripts/`: command-line entry\
+  \ points and release audit.\r\n- `configs/`: synthetic example and private template.\r\n- `examples/`:\
+  \ fully synthetic data only.\r\n- `docs/`: method, schema, output and interpretation documentation.\r\
+  \n- `tests/`: unit and smoke tests.\r\n\r\n## License and citation\r\n\r\nThe code license and copyright\
+  \ holder must be confirmed by the authors and participating institutions before making the repository\
+  \ public. Update `CITATION.cff`, the repository URL, authors, manuscript citation and selected license\
+  \ before release.\r\n"

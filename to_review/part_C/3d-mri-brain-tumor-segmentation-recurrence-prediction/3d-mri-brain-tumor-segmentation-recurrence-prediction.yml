@@ -1,0 +1,66 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: barbex21/3D-MRI-Brain-Tumor-Segmentation-Recurrence-Prediction
+url: https://github.com/barbex21/3D-MRI-Brain-Tumor-Segmentation-Recurrence-Prediction
+platform: github
+description: Patch-based 3D U-Net training pipeline for glioblastoma MRI segmentation and recurrence prediction.
+  Built with PyTorch and MONAI to process multi-modal NIfTI volumes for clinical research.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-18T09:23:30Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# 3D MRI Brain Tumor Segmentation & Recurrence Prediction\n\n## \U0001F4CC Overview\n\
+  This repository contains a deep learning pipeline for 3D MRI brain tumor segmentation, developed as\
+  \ part of a health data science research initiative at **IIS La Fe (GIBI230 Research Group)** in Valencia,\
+  \ Spain.\n\nThe primary research objective is to **systematically evaluate different MRI modalities\
+  \ and their combinations** to determine the optimal configuration for training a robust 3D U-Net model.\
+  \ By identifying the most effective sequences for segmenting specific tumor sub-regions, the pipeline\
+  \ ultimately aims to support the localization and prediction of tumor recurrence sites.\n\n## \U0001F52C\
+  \ Research Methodology & Objectives\nRather than relying on a fixed, predefined input, this project\
+  \ explores the independent and combined predictive power of various MRI sequences:\n* **Modalities Investigated:**\
+  \ Native T1, T1ce (Contrast-Enhanced), T2, and FLAIR.\n* **Target Regions:** Enhancing Tumor (`et`),\
+  \ Necrotic Core (`necr`), and their combinations.\n* **Evaluation Strategy:** \n  1. **Single-Modality\
+  \ Baselines:** Training isolated models to map specific modalities to specific targets (e.g., assessing\
+  \ T1 for `et`, T1 for `necr`, T1ce for `et`, etc.).\n  2. **Comparative Analysis:** Evaluating which\
+  \ individual slices yield the highest clinical accuracy and mitigate false positives (especially in\
+  \ challenging postoperative scenarios).\n  3. **Multi-Modal Fusion:** Developing optimal combination\
+  \ strategies based on the best-performing individual sequences to maximize spatial and contextual feature\
+  \ extraction.\n \n## \U0001F4BE Dataset: RHUH-GBM\nThis project utilizes the publicly available **RHUH-GBM**\
+  \ (Rennes University Hospital Glioblastoma) dataset from The Cancer Imaging Archive (TCIA).\n\n* **Source:**\
+  \ [RHUH-GBM Collection on TCIA](https://www.cancerimagingarchive.net/collection/rhuh-gbm/)\n* **Data\
+  \ Preparation:** To run this pipeline, download the dataset and place it in the `data/input/dataset`\
+  \ directory. The `01_dataset_index.py` script is designed to automatically parse the patient folders,\
+  \ extract the required NIfTI volumes, and generate the necessary training/validation/test splits.\n\n\
+  ## \U0001F6E0️ Tech Stack & Architecture\n* **Frameworks:** PyTorch, PyTorch Lightning, MONAI\n* **Architecture:**\
+  \ 3D U-Net (tailored for volumetric medical data)\n* **Data Processing:** OpenCV, robust spatial augmentations\
+  \ (RandAffined, RandGaussianNoised)\n* **Optimization:** AMP (Automatic Mixed Precision), DiceCELoss\n\
+  \n## \U0001F4CA Clinical Insights & Preliminary Results\n\n### Phase 1: Native T1 Baseline Evaluation\
+  \ (Completed)\nThe initial baseline evaluated the predictive capacity of **native T1 modalities** strictly\
+  \ for segmenting the enhancing tumor (`et`) core.\n\n| Modality | Target | Val Dice | Test Dice | Precision\
+  \ | Recall | Notes |\n| :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n| T1 Only | `et` | 0.1328\
+  \ | 0.1260 | 0.0907 | 0.3682 | Baseline model |\n\n**Clinical Analysis:** The model was tasked with\
+  \ identifying the enhancing tumor core without access to contrast-enhanced (T1ce) scans. Phase-wise\
+  \ evaluation revealed significant struggles with postoperative scans (Postop Test Dice: 0.0104) and\
+  \ a high rate of false positives in empty cases, indicating that native T1 contrast alone is insufficient\
+  \ to differentiate between active tumor tissue and postoperative surgical cavities or edema.\n\n###\
+  \ Phase 2: Modality Expansion (Ongoing)\nSubsequent experiments are currently running to evaluate:\n\
+  * `T1` mapping to `necr`\n* `T1ce` mapping to `et` and `necr`\n* `T2` and `FLAIR` independent evaluations\n\
+  * Optimal multi-modal fusion strategies (e.g., T1ce + T2 + FLAIR) to resolve the high false-positive\
+  \ rates observed in the baseline.\n\n## \U0001F4C2 Production-Ready Repository Structure\n\n```text\n\
+  mri-tumor-segmentation-lafe/\n├── config/                 # YAML configuration files for modality/target\
+  \ sweeps\n├── data/                   # Data loaders (raw datasets ignored via .gitignore)\n├── src/\
+  \                    \n│   ├── dataset.py          # MONAI transforms and multi-modal pre-processing\n\
+  │   ├── model.py            # 3D U-Net architecture definition\n│   ├── train.py            # Training\
+  \ loop with AMP and GradScaler\n│   ├── evaluate.py         # Sliding window inference & metric calculation\n\
+  │   └── utils.py            # Helper functions\n├── notebooks/              # EDA and experimental visual\
+  \ overlays\n├── Dockerfile              # Containerization configuration\n├── requirements.txt     \
+  \   # Exact dependencies\n└── README.md\n"

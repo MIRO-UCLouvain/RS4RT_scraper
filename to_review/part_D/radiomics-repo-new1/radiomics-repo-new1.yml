@@ -1,0 +1,87 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: linfanluntan/Radiomics_repo_new1
+url: https://github.com/linfanluntan/Radiomics_repo_new1
+platform: github
+description: ''
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-08-13T14:50:05Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Why Radiomics Has Struggled to Enter Clinical Practice — companion code\n\nComputational\
+  \ materials for *Why Radiomics Has Struggled to Enter Clinical\nPractice: A First-Principles Analysis\
+  \ of Mechanism, Logic, and Philosophy*.\n\n---\n\n## What these notebooks are, and are not\n\n**One\
+  \ notebook makes an empirical measurement.** `NB4_bibliometrics` retrieves\npublication counts from\
+  \ the NCBI PubMed E-utilities API. These are the only\nempirical numbers in the manuscript.\n\n**The\
+  \ other four are controlled simulations.** They demonstrate structural\nmechanisms argued for analytically.\
+  \ They are *not* estimates of how published\nradiomics models perform, and no clinical inference should\
+  \ be drawn from them.\nWhere a simulation is calibrated to published summary values, it inherits those\n\
+  values and does not independently measure them.\n\nThis distinction is stated in Methods §12.1 of the\
+  \ manuscript and is repeated\nhere because it governs how every number below should be read.\n\n---\n\
+  \n## Contents\n\n| Notebook | Manuscript | Produces |\n|---|---|---|\n| `NB1_pipeline_instability` |\
+  \ §2, §12.2 | Figures 2–4, Table 1 |\n| `NB2_statistical_fragility` | §4, §12.3 | Figures 9–10, Table\
+  \ 3 |\n| `NB3_decision_gap` | §3, §12.4 | Figures 6–8, Table 2 |\n| `NB4_bibliometrics` | §9, §12.6\
+  \ | Figure 16, Table 6 |\n| `NB5_semantic_gap` | §5, §12.5 | Figures 12–13, Table 4 |\n\nRun `notebooks/00_environment.py`\
+  \ first and paste its output into\n`requirements.txt` and Methods §12.7.\n\n---\n\n## Seeds and estimators\n\
+  \n| Notebook | RNG | Estimator / method |\n|---|---|---|\n| NB1 | `default_rng(42)`, N=32 test–retest\
+  \ pairs | ICC(2,1), Shrout & Fleiss two-way mixed absolute agreement, implemented in NumPy |\n| NB2\
+  \ | `42`; per-repeat `random_state=rep` | `LogisticRegressionCV(cv=5, max_iter=500)`; selection `SelectKBest(f_classif,\
+  \ k)`; `StratifiedKFold(5, shuffle=True)` |\n| NB3 | `default_rng(42)`; model seeds 1/2/3; matched arm\
+  \ 11; sweep `i+1000` | Decision curve analysis (Vickers & Elkin 2006); `IsotonicRegression` recalibration\
+  \ |\n| NB4 | none — deterministic API retrieval | E-utilities `esearch` |\n| NB5 | `default_rng(0)`;\
+  \ per-replicate `seed=rep` | IBSI-aligned feature extraction in NumPy/SciPy |\n\nICC form matters: conventions\
+  \ differ between packages and the choice changes the\nreported value, so NB1 implements the Shrout &\
+  \ Fleiss form directly rather than\nrelying on a library default. `pingouin` is used only as a cross-check.\n\
+  \n---\n\n## PubMed queries (NB4)\n\nEach query is issued once per year with `AND {year}[DP]` appended,\
+  \ iterated over\n2012–2024. Counts are read from `esearchresult.count`.\n\n```\ntotal     radiomics[Title/Abstract]\
+  \ OR radiomics[MeSH]\noncology  radiomics[Title/Abstract] AND cancer[Title/Abstract]\ndeep      radiomics[Title/Abstract]\
+  \ AND (deep learning[Title/Abstract])\n```\n\nTwo caveats. The oncology and deep-learning subsets are\
+  \ keyword-restricted, not\nMeSH-indexed, so they approximate rather than delimit the underlying literature\
+  \ —\n\"cancer\" in title/abstract misses papers using *tumour*, *carcinoma*, or\n*neoplasm*. And counts\
+  \ drift for recent years as records are indexed, so the\nretrieval date is part of the result.\n\n**Open\
+  \ item:** verify that `radiomics` is a MeSH descriptor. If it is not, that\nclause matches nothing and\
+  \ the total is Title/Abstract-only. This does not change\nthe reported counts but does change what the\
+  \ query means.\n\n---\n\n## Network dependencies and silent fallbacks\n\n**Read this before treating\
+  \ any re-run as a reproduction.**\n\nNB1 attempts a TCIA download and NB2 attempts a LIDC feature-table\
+  \ download.\nBoth fall back to synthetic data **without raising**, so a re-run behind a\nfirewall can\
+  \ produce different numbers while appearing to succeed.\n\nThe archived results in `results/` were produced\
+  \ by the synthetic path in both\ncases. Check which path executed before comparing your output to the\
+  \ manuscript.\n\n| Notebook | Endpoint | On failure |\n|---|---|---|\n| NB1 | TCIA NBIA API | synthetic,\
+  \ silent |\n| NB2 | raw.githubusercontent.com | synthetic, silent |\n| NB4 | eutils.ncbi.nlm.nih.gov\
+  \ | no fallback — required |\n| NB3, NB5 | none | — |\n\n---\n\n## Correction in NB3 (v2)\n\nThe originally\
+  \ circulated NB3 contained two defects. Both are fixed here; the\nmanuscript text has been revised to\
+  \ match.\n\n**1. Target AUCs were never achieved.** `noise_scale_map` was hard-coded and\ndescribed\
+  \ as empirically tuned, but the base signal `logit_true = (y - 0.5) * 4`\nis a deterministic function\
+  \ of the label, and a noise scale of 0.8 cannot mask\nfour logits of separation.\n\n| Requested | Produced\
+  \ | Now |\n|---|---|---|\n| 0.85 | **1.000** | 0.849 (`noise_scale` 2.859) |\n| 0.72 | **0.848** | 0.731\
+  \ (`noise_scale` 4.211) |\n| 0.55 | 0.570 | 0.541 (`noise_scale` 10.297) |\n\nScales are now solved\
+  \ by root-finding (`scipy.optimize.brentq`) so achieved AUC\nmatches target. This is why earlier figure\
+  \ legends and manuscript text disagreed:\nthe text reported what was requested, the figures showed what\
+  \ was produced.\n\n**2. The miscalibration could not have worked.** It was applied as\n`logit_pred *\
+  \ (1 + calibration_error)` — a monotone transform. Monotone maps\npreserve ranking, therefore preserve\
+  \ AUC exactly (verified: 0.8500 before,\n0.8500 after). The experiment was structurally incapable of\
+  \ demonstrating a\ndissociation between discrimination and decision value.\n\n**Arm 2** now isolates\
+  \ calibration properly: two models share an identical\nranking, so AUC is identical by construction,\
+  \ and differ only in probability\nscale.\n\n| Threshold | NB calibrated | NB miscalibrated | Δ |\n|---|---|---|---|\n\
+  | 0.10 | 0.295 | 0.280 | −0.015 |\n| 0.20 | 0.248 | 0.190 | −0.059 |\n| 0.30 | 0.202 | 0.078 | −0.125\
+  \ |\n| 0.40 | 0.159 | −0.064 | −0.223 |\n| 0.50 | 0.122 | −0.218 | −0.340 |\n\nIdentical AUC (0.8500\
+  \ both), materially different clinical value; the\nmiscalibrated model is worse than treating nobody\
+  \ at thresholds ≥ 0.40. Output:\n`results/table2b_matched_discrimination.csv`.\n\n**Known limitation,\
+  \ unfixed:** Model B's isotonic recalibration is fitted on the\nsame data it is evaluated on, so B is\
+  \ calibrated by construction rather than by\nestimation. Arm 2 does not depend on this.\n\n---\n\n##\
+  \ Deliberate leakage in NB2\n\nNB2 performs feature selection on the full training set *before* cross-validation.\n\
+  This is the configuration under study, not an oversight. The internal estimate is\ndeliberately contaminated;\
+  \ the external estimate, computed on data untouched by\nselection, is the uncontaminated comparison\
+  \ within the same experiment. See\nMethods §12.3.\n\n---\n\n## Citation\n\n```bibtex\n@article{he2026radiomics,\n\
+  \  author  = {He, Renjie},\n  title   = {Why Radiomics Has Struggled to Enter Clinical Practice:\n \
+  \            A First-Principles Analysis of Mechanism, Logic, and Philosophy},\n  year    = {2026},\n\
+  \  note    = {Manuscript under review}\n}\n```\n\nReleased under the MIT License.\n"

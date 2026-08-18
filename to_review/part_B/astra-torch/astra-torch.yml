@@ -1,0 +1,76 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: lfbarba/astra-torch
+url: https://github.com/lfbarba/astra-torch
+platform: github
+description: Torch package to manage astra tomographic projections and reconstructions in CBCT and parallel
+  geometry.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-05T07:39:31Z'
+image_source: null
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# ASTRA-Torch\n\nGPU-accelerated tomographic reconstruction library with PyTorch integration.\n\
+  \nASTRA-Torch provides PyTorch-compatible implementations of tomographic reconstruction algorithms using\
+  \ the ASTRA toolbox, with support for both cone-beam CT (CBCT) and laminography.\n\n## Features\n\n\
+  - **CBCT Reconstruction**: FDK and gradient descent algorithms for cone-beam CT\n- **Laminography Reconstruction**:\
+  \ FBP, SIRT, and gradient descent algorithms for parallel-beam laminography\n- **2D Parallel Beam**:\
+  \ FBP, SIRT, and gradient descent algorithms for 2D parallel beam tomography\n- **PyTorch Integration**:\
+  \ Differentiable operators with autograd support\n- **GPU Acceleration**: CUDA-accelerated reconstruction\
+  \ via ASTRA toolbox\n- **Flexible Data Loading**: Built-in support for Walnut dataset format\n- **Optimization-Based\
+  \ Methods**: Gradient descent reconstruction with customizable loss functions\n\n## Installation\n\n\
+  ### Prerequisites\n\n- Python 3.8+\n- CUDA-compatible GPU (recommended)\n- ASTRA Toolbox compiled with\
+  \ CUDA support\n\n### Install from PyPI (when available)\n\n```bash\npip install astra-torch\n```\n\n\
+  ### Install from source\n\n```bash\ngit clone https://github.com/chip-project/astra-torch.git\ncd astra-torch\n\
+  pip install -e .\n```\n\n### Development installation\n\n```bash\ngit clone https://github.com/chip-project/astra-torch.git\n\
+  cd astra-torch\npip install -e \".[dev,notebooks]\"\n```\n\n## Quick Start\n\n### CBCT Reconstruction\n\
+  \n```python\nimport astra_torch\nimport torch\n\n# Load Walnut dataset\nprojs, vecs, meta = astra_torch.load_walnut_projections(\n\
+  \    '/path/to/walnut/data', \n    walnut_id=1,\n    orbit_id=2\n)\n\n# FDK reconstruction\nvolume_fdk\
+  \ = astra_torch.fdk_reconstruction_masked(\n    projs, vecs, \n    voxel_per_mm=10\n)\n\n# Gradient\
+  \ descent reconstruction (sparse views)\nmask = torch.arange(0, len(vecs), 4)  # Every 4th view\nvolume_gd\
+  \ = astra_torch.gd_reconstruction_masked(\n    projs, vecs,\n    mask=mask,\n    max_epochs=30,\n  \
+  \  lr=1e-3\n)\n```\n\n### Laminography Reconstruction\n\n```python\nfrom astra_torch import build_lamino_projector,\
+  \ lamino_fbp_reconstruction_masked\n\n# Build laminography projector  \nprojector = build_lamino_projector(\n\
+  \    vol_shape=(256, 512, 512),\n    det_shape=(501, 501), \n    angles_deg=np.linspace(0, 360, 360),\n\
+  \    lamino_angle_deg=61.0\n)\n\n# Forward projection\nprojections = projector(volume_tensor)\n\n# FBP\
+  \ reconstruction\nreconstructed = lamino_fbp_reconstruction_masked(\n    projections,\n    angles_deg=np.linspace(0,\
+  \ 360, 360),\n    lamino_angle_deg=61.0\n)\n```\n\n### 2D Parallel Beam Reconstruction\n\n```python\n\
+  from astra_torch import parallel2d_fbp_reconstruction_masked, build_parallel2d_projector\nimport numpy\
+  \ as np\n\n# Generate projections\nangles_deg = np.linspace(0, 180, 180, endpoint=False)\nprojector\
+  \ = build_parallel2d_projector(\n    vol_shape=(256, 256),\n    det_cols=384,\n    angles_deg=angles_deg\n\
+  )\n\n# Forward projection\nprojections = projector(volume_2d)  # volume_2d shape: (1, 1, H, W)\n\n#\
+  \ FBP reconstruction\nreconstructed = parallel2d_fbp_reconstruction_masked(\n    projs_vc=projections[0],\
+  \  # Shape: (V, C)\n    angles_deg=angles_deg,\n    vol_shape=(256, 256),\n    filter_type='hann'\n\
+  )\n\n# SIRT reconstruction (more robust to noise)\nfrom astra_torch import parallel2d_sirt_reconstruction_masked\n\
+  reconstructed_sirt = parallel2d_sirt_reconstruction_masked(\n    projs_vc=projections[0],\n    angles_deg=angles_deg,\n\
+  \    vol_shape=(256, 256),\n    num_iterations=100,\n    min_constraint=0.0  # Non-negativity\n)\n```\n\
+  \n## Documentation\n\n### CBCT Functions\n\n- `load_walnut_projections()`: Load Walnut dataset projections\n\
+  - `fdk_reconstruction_masked()`: FDK reconstruction with view masking\n- `gd_reconstruction_masked()`:\
+  \ Gradient descent reconstruction  \n- `build_conebeam_projector()`: Create differentiable cone-beam\
+  \ projector\n\n### Laminography Functions\n\n- `lamino_fbp_reconstruction_masked()`: FBP reconstruction\
+  \ for laminography\n- `lamino_sirt_reconstruction_masked()`: SIRT reconstruction for laminography\n\
+  - `lamino_gd_reconstruction_masked()`: Gradient descent laminography reconstruction\n- `build_lamino_projector()`:\
+  \ Create differentiable laminography projector\n\n### 2D Parallel Beam Functions\n\n- `parallel2d_fbp_reconstruction_masked()`:\
+  \ FBP reconstruction for 2D parallel beam\n- `parallel2d_sirt_reconstruction_masked()`: SIRT reconstruction\
+  \ for 2D parallel beam\n- `parallel2d_gd_reconstruction_masked()`: Gradient descent reconstruction for\
+  \ 2D parallel beam\n- `build_parallel2d_projector()`: Create differentiable 2D parallel beam projector\n\
+  \n## Requirements\n\n- `torch>=1.9.0` (with `__cuda_array_interface__` support for CUDA tensors)\n-\
+  \ `numpy>=1.21.0`\n- `astra-toolbox>=2.0.0` (compiled with CUDA support)\n- `tqdm>=4.60.0`\n- `h5py>=3.0.0`\n\
+  - `scipy>=1.7.0`\n\n**Note:** PyTorch 1.7+ CUDA tensors work directly with ASTRA via `__cuda_array_interface__`,\
+  \ \nenabling GPU-only operations without CPU memory overhead.\n\n## Contributing\n\n1. Fork the repository\n\
+  2. Create a feature branch: `git checkout -b feature-name`\n3. Make your changes and add tests\n4. Run\
+  \ tests: `pytest`\n5. Format code: `black astra_torch/`\n6. Submit a pull request\n\n## License\n\n\
+  This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.\n\n##\
+  \ Citation\n\nIf you use ASTRA-Torch in your research, please cite:\n\n```bibtex\n@software{astra_torch,\n\
+  \  title={ASTRA-Torch: GPU-accelerated tomographic reconstruction with PyTorch},\n  author={CHIP Project},\n\
+  \  year={2024},\n  url={https://github.com/chip-project/astra-torch}\n}\n```\n\n## Acknowledgments\n\
+  \n- Built on top of the excellent [ASTRA Toolbox](https://www.astra-toolbox.com/)\n- Inspired by the\
+  \ PyTorch ecosystem for differentiable programming\n"

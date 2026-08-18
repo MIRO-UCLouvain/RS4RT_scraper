@@ -1,0 +1,47 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Benkly/Molecule-Toxicity-Prediction
+url: https://github.com/Benkly/Molecule-Toxicity-Prediction
+platform: github
+description: A medicinal chemistry related machine learning project to predict the toxicity of molecular
+  structures against seven nuclear receptor protein targets.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 1
+updated_at: '2026-08-02T18:22:44Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Random Forest Classifier to Predict Molecular Toxicity\n\n> **Status: Prototype** —\
+  \ This model is a proof-of-concept and is not suitable for real-world toxicity screening in its current\
+  \ form. Significant improvements are possible (see below).\n\n## Overview\n\nThis project trains a Random\
+  \ Forest classifier on the [Tox21](https://tripod.nih.gov/tox21/challenge/data.jsp) dataset to predict\
+  \ whether a molecule is toxic to nuclear receptor targets, using Extended Connectivity Fingerprints\
+  \ (ECFP) as molecular descriptors.\n\nIt was built as part of the [TECS CDT](https://www.bristol.ac.uk/study/postgraduate/research/technology-enhanced-chemical-synthesis/)\
+  \ programme with limited machine learning domain knowledge, with the aim of applying machine learning\
+  \ to solve a medicinal chemistry problem. \n\n>Refer to the `RandomForest.ipynb` notebook for further\
+  \ details and code.\n\n## Known Limitations\n\n- **High false-negative rate (~37-46%)** — the model\
+  \ frequently classifies toxic molecules as non-toxic, which is the most dangerous failure mode for a\
+  \ safety-screening tool.\n- **Modest F2 score (~0.54-0.58)** — well below state-of-the-art results on\
+  \ Tox21 (ROC-AUC > 0.80 per-task with graph neural networks or multi-task learning).\n- **Narrow applicability\
+  \ domain** — the model only addresses nuclear receptor toxicity and fails on toxins acting via other\
+  \ mechanisms.\n- **Naive class-imbalance handling** — random oversampling by duplication risks overfitting\
+  \ on the minority class.\n- **No systematic hyperparameter optimisation** — only two manually chosen\
+  \ configurations are explored.\n- **Unused validation set** — the DeepChem-provided validation split\
+  \ is never leveraged for model selection or early stopping.\n\n## Potential Improvements\n\n1. **Multi-task\
+  \ learning** — predict all 12 Tox21 endpoints jointly, which allows the model to share information across\
+  \ related targets.\n2. **Better resampling** — replace naive oversampling with SMOTE or class-weight\
+  \ balancing built into scikit-learn's `RandomForestClassifier`.\n3. **Hyperparameter search** — use\
+  \ grid search, random search, or Bayesian optimisation with cross-validation to tune `n_estimators`,\
+  \ `max_depth`, `min_samples_split`, etc.\n4. **Alternative models** — graph neural networks (e.g., via\
+  \ DeepChem's `GCNModel`) or gradient-boosted trees (XGBoost/LightGBM) typically outperform vanilla Random\
+  \ Forests on this task.\n5. **Proper validation protocol** — use the provided validation set for model\
+  \ selection and report final metrics only on the held-out test set.\n6. **Applicability domain estimation**\
+  \ — flag predictions that fall outside the chemical space of the training data.\n"

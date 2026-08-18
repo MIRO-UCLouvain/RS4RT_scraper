@@ -1,0 +1,137 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: miloshdevic/3D-Unet_CNN
+url: https://github.com/miloshdevic/3D-Unet_CNN
+platform: github
+description: 3D Unet CNN for brachytherapy catheter digitization
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2024-02-14T02:51:50Z'
+image_source: https://raw.githubusercontent.com/miloshdevic/3D-Unet_CNN/HEAD/Aspose.Words.6061bcb9-b54b-44ad-9b71-99f16ef3c3c5.001.jpeg
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+- Matched 2 AI/ML term(s) in repository name.
+readme_excerpt: "22/01/2022 \n\n# Deep Learning-Based Brachytherapy Catheter Reconstruction for Breast\
+  \ Cancer Patients \n\nby Milosh Dević \n\n**Table of content:** \n\n1) [Introduction ](#_page1_x69.00_y72.00)\n\
+  2) [Initial researching ](#_page3_x69.00_y210.00)\n2.1) [DICOM files ](#_page3_x69.00_y243.00)\n2.2)\
+  \ [Related papers and articles ](#_page3_x69.00_y493.00)\n3) [Preprocessing the data ](#_page4_x69.00_y211.00)\n\
+  4) [Training ](#_page5_x69.00_y362.00)\n   4.1) [Choosing the right model ](#_page5_x69.00_y399.00)\n\
+  \   4.2) [Handling memory problems ](#_page6_x69.00_y354.00)\n5) [Results ](#_page7_x69.00_y72.00)\n\
+  6) [Conclusion ](#_page10_x69.00_y72.00)\n\n\n1) **Introduction** \n\nThe project, as the name suggests,\
+  \ consisted of developing a deep learning algorithm in order to automatically reconstruct catheters\
+  \ in 3D for breast cancer patients undergoing brachytherapy treatment. Before going into the core of\
+  \ the project, what is brachytherapy? \n\nBrachytherapy (or Curietherapy) is a form of radiotherapy\
+  \ where a sealed radiation source is placed inside or next to the area requiring treatment within the\
+  \ patient. There are different types of brachytherapy (as seen in Fig. 1). The one that corresponds\
+  \ to the project is interstitial breast brachytherapy. \n\n![](Aspose.Words.6061bcb9-b54b-44ad-9b71-99f16ef3c3c5.001.jpeg)\n\
+  \n[Fig. 1: Different types of brachytherapy] \n\nFig. 2 illustrates the workflow of brachytherapy, on\
+  \ which you can see different steps of the treatment. Catheter reconstruction is the step that concerns\
+  \ this project. \n\n![](Aspose.Words.6061bcb9-b54b-44ad-9b71-99f16ef3c3c5.002.png)![]\n\n[Fig. 2: Brachytherapy\
+  \ workflow] \n\n(RO: Radio Oncologist, RTT: Radiotherapy Therapist, Phys: Medical Physicist) The plastic\
+  \ catheters, which have the shape of needles (Fig. 3), are inserted into the patient’s breast inside\
+  \ and around the treatment site (tumour bed after surgery) using an assembled comfort catheters system.\
+  \ The “6F” flexi-catheter (has a larger diameter) passes through the breast and is clipped with two\
+  \ buttons on each side to hold it in place. Then, a smaller diameter (4F) catheter is inserted into\
+  \ the flexi-catheter and a CT marker is inserted inside each “4F” catheter before scanning the area.\
+  \ The CT marker is made of Fluor, so it appears as white on the CT images. This enables the medical\
+  \ physicist to recognize the catheters and reconstruct them. \n\nCT marker  4F catheter  6F catheter\
+  \ ![]\n\n![](Aspose.Words.6061bcb9-b54b-44ad-9b71-99f16ef3c3c5.007.jpeg) buttons \n\n[Fig. 3: Assembled\
+  \ Comfort Catheters System] \n\n![](Aspose.Words.6061bcb9-b54b-44ad-9b71-99f16ef3c3c5.008.jpeg)![](Aspose.Words.6061bcb9-b54b-44ad-9b71-99f16ef3c3c5.009.jpeg)\n\
+  \n[Fig. 4: Outlining CT markers (catheters) for Breast (Comfort Catheter System) 3D \n\nPresentation]\
+  \ \n\nThe whole process usually takes several hours and reconstructing the catheters can take between\
+  \ 30 and 60 minutes. Reconstructing catheters is currently done  manually, which is labour intensive\
+  \ and prone to errors. There is the potential to reduce the time considerably and to improve the precision\
+  \ at the same time by automating the process which is the goal of this project. It could improve brachytherapy\
+  \ treatments and be beneficial for the brachytherapy team in the crucial process of reconstructing and\
+  \ labeling correctly the catheters. This could influence the way the dose of radiation is delivered\
+  \ to the patient, especially if it is near some organs at risk. \n\n2) **Initial researching** \n2.1)\
+  \ **DICOM files** \n\nFirstly,  I  needed  to  understand  how  Digital  Imaging  and  Communication\
+  \  in  Medicine (DICOM) files are structured. It is a standard, internationally accepted format to view,\
+  \ store, retrieve and share medical images. DICOM files contain images from a medical scan such as MRI,\
+  \ CT or ultrasound and they usually include a header with identification data for the patient to link\
+  \ the image to the specific individual.  \n\nI started by looking into the structure of the DICOM files\
+  \ [1][2]. These files contain tags with a specific identification number (usually in hexadecimal format).\
+  \ By accessing it you can obtain the information it contains. The tags of DICOM files follow a hierarchy\
+  \ system [3]. There is a number of tags at the top. Once accessing one of them, there is another number\
+  \ of tags and by entering them we can find another number of tags and so on. Therefore, one cannot directly\
+  \ access to a tag of the third level. There are private tags and public tags [4]. To access private\
+  \ tags, you need the exact hexadecimal key to access to the private tag. Accessing tags can be easily\
+  \ done by using Python [5]. \n\n2.2) **Related papers and articles** \n\nI spent a lot of time collecting\
+  \ and reading different works that have been done with deep learning in the field of brachytherapy and\
+  \ broader. The different literatures have helped me understand better what I had to do and get hold\
+  \ of the possible challenges I might face. \n\nHere is the list of the articles I have read: \n\n- Investigating\
+  \ the use of image thresholding in brachytherapy catheter reconstruction (2016) \n  - Diana Binny, Scott\
+  \ B. Crowe \n- Deep-learning assisted automatic digitization of interstitial needles in 3D CT image\
+  \ based high dose-rate brachytherapy of gynecological cancer (2019) – Hyunuk Jung, Xun Jia \n- Automatic\
+  \ multi-needle localization in ultrasound images using large margin mask RCNN for ultrasound-guided\
+  \ prostate brachytherapy (2020) – Yuper Zhang, Xiaofeng Yang \n- Deep learning-based digitization of\
+  \ prostate brachytherapy needles in ultrasound images (2020) – Christoffer Andersén, Jakob H. Lagerlöf\
+  \ \n- Approaching automated applicator digitization from a new angle, Luca Weishaupt, Hisham Kamal Sayed,\
+  \ Ximeng Mao, C. Rochard Choo, Bradly J. Stish, Shirin A. Enger, Christopher L. Deufel – Estro 2021\
+  \ \n3) **Preprocessing the data** \n\nTo preprocess the data, I coded a script based of Luca Weishaupt’s\
+  \ code which was used for a similar project (needle reconstruction for prostate cancer brachytherapy).\
+  \ The program takes the CT images and creates a mask for each CT slice by using the coordinates of the\
+  \ catheters that can be found in the RT Plan file (via the tags of this DICOM file). It creates a numpy\
+  \ array for the mask where each cell has a value of 0 or 1 depending on whether there is a catheter\
+  \ there or not and then save the images and masks separately. The code would change depending of the\
+  \ model I would want to train later on. It could affect how I save the images (2D, 3D), the size of\
+  \ the images, whether I need to crop them or not and where, etc. Since I later went with the  3D  U-net\
+  \  model,  I  saved  the  images  in  3D,  sampled  down  to  128x128x128px  and normalized the images.\
+  \ Here is what it looked like (in red is the label/mask over the CT slice and then they are saved separately\
+  \ as numpy arrays): \n\n![](Aspose.Words.6061bcb9-b54b-44ad-9b71-99f16ef3c3c5.010.jpeg)![](Aspose.Words.6061bcb9-b54b-44ad-9b71-99f16ef3c3c5.011.jpeg)\n\
+  \n[Fig. 5: Examples of masks traced by the preprocessing code] \n\n![](Aspose.Words.6061bcb9-b54b-44ad-9b71-99f16ef3c3c5.012.png)![](Aspose.Words.6061bcb9-b54b-44ad-9b71-99f16ef3c3c5.013.png)![]\n\
+  \n[Fig. 6: Figure from *“Approaching automated applicator digitization from a new angle, Luca Weishaupt,\
+  \ Hisham Kamal Sayed, Ximeng Mao, C. Rochard Choo, Bradly J. Stish, Shirin A. Enger, Christopher L.\
+  \ Deufel – Estro 2021”*] \n\nI had to rework to the code several times to change and redo the preprocessing\
+  \ because I was trying different models and had to change the way to do it. \n\n4) **Training** \n4.1)\
+  \ **Choosing the right model** \n\nThe idea of this project is to try to train a 3D U-net model. However,\
+  \ I have done some research about Mask RCNNs [6][7][8][9] as well as 2D U-nets (some of the articles\
+  \ mentioned earlier). After having consulted and discussed about it with Dr. Enger, Luca Weishaupt and\
+  \ Dr. Deufel, we concluded that 3D would be the best solutions but that it would be challenging in terms\
+  \ of memory handling. At first, I was to try to do it with semantic segmentation (loss function: binary\
+  \ cross-entropy) instead of instance segmentation (categorical cross-entropy). To build the model, I\
+  \ was using *TensorFlow* with the *Keras* library although I did take a look and considered switching\
+  \ to *PyTorch* [11] because it seemed to be better.  \n\nThe U-Net is split into two parts [12]. There\
+  \ is the encoder path, or backbone, and there is the decoder path. The encoder is used to capture features\
+  \ of the images at different scales with the use of a stack of convolutional and max pooling layers.\
+  \ I started off with a more complex architecture, which is usually better with higher resolution images.\
+  \ The decoder is symmetrical to the encoder in terms of counterpart. It uses transposing convolution\
+  \ for the symmetric expanding. Since we downscale the image at the beginning which allows the network\
+  \ to learn the features, before the next epoch (iteration) the image needs to be expanded back to its\
+  \ original size, also called up-sampling. \n\nSince 3D U-Nets require a lot of memory, I had to implement\
+  \ a data generator which would load only the data when it is used instead of loading the whole training\
+  \ set. To improve the training, I chose to add image augmentations such as rotating it, creating noise,\
+  \ flipping horizontally and/or vertically. I used the *Volumentations 3D* library for this [12][13].\
+  \ At the end of each epoch, a validation test is done, which helps to monitor how well the model is\
+  \ improving (or not). \n\n![](Aspose.Words.6061bcb9-b54b-44ad-9b71-99f16ef3c3c5.015.jpeg)\n\n[Fig. 7:\
+  \ Illustration of how a 3D Unet CNN works, taken from a publication on “towardsdatascience.com”] \n\n\
+  4.2) **Handling memory problems** \n\nAs I mentioned before, this specific model requires a lot of memory,\
+  \ so much that it cannot be trained on your own computer unless it is well equipped (with a GPU preferably)\
+  \ [22]. I thought that I might be able to train it on Compute Canada since they have much bigger resources\
+  \ that would suit for this kind of job. I spent a lot of time going through the Compute Canada documents\
+  \ and discussing with them and my colleagues about how best to use their resources [14][15][16][17][18][19].\
+  \ When I would train it on a batch size of 2, everything would go well but it wasn’t  accurate  enough.\
+  \  I  had  132  anonymized  patient  data  sets  (sampled  down  to 128x128x128px) that I could use\
+  \ for the training so I tried training my model with a batch size of 8 but I would get out of memory\
+  \ (OOM) errors. Even with a batch size of 4, the same error message would appear.  \n\nThis meant that\
+  \ the data I was providing was too large even if it was downsampled and downsampling them even more\
+  \ wouldn’t be, in my opinion, effective. So, I had to find a way to make it run with the same resolution.\
+  \ I modified the architecture of the model into a less complex one which would require less memory,\
+  \ I used a method from TensorFlow which should allow to regulate in some way the growth of the memory\
+  \ [20], I tried with different loss functions  such  as  weighted  binary  cross-entropy,  changing\
+  \  the  performance  metrics  that include “accuracy, precision, recall and F1-score”  [21], I increased\
+  \ the filter size to reduce memory usage. None of this was enough to improve the memory usage. My next\
+  \ step was to crop the CT images to keep only the region where the catheters are, instead of the whole\
+  \ body. To do this, I would have to change the preprocessing code where it would either keep the left\
+  \ side or right side (depending on which breast was treated). By doing this, I could have an image of\
+  \ a smaller size but with the same resolution potentially making it possible to train. However, I did\
+  \ not have the time to do it. \n\n5) **Results** \n\nI  completed  the  training  of  my  model  several\
+  \  times  with  different  values  for  my hyperparameters except for the batch size which was 2. In\
+  \ most cases I ended up with a model that would overfit. The accuracy would be 99.96% but when doing\
+  \ the validation at the end of each epoch"

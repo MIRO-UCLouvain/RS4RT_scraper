@@ -1,0 +1,69 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: JulesDimanche/Comment_Toxicity_Prediction
+url: https://github.com/JulesDimanche/Comment_Toxicity_Prediction
+platform: github
+description: This project focuses on predicting the toxicity level of user comments using Natural Language
+  Processing (NLP) and Deep Learning. The model is trained on a dataset containing various types of toxic
+  comments and classifies them into multiple categories.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2025-11-01T14:52:09Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Comment Toxicity Prediction\n\n## \U0001F4CC Overview\nThis project focuses on predicting\
+  \ the toxicity level of user comments using Natural Language Processing (NLP) and Deep Learning. The\
+  \ model is trained on a dataset containing various types of toxic comments and classifies them into\
+  \ multiple categories.\n\n## \U0001F527 Technologies Used\n- Python \U0001F40D\n- TensorFlow/Keras \U0001F525\
+  \n- Pandas \U0001F3DB️\n- Scikit-Learn \U0001F4CA\n- Flask \U0001F30D\n- LSTM & Bidirectional LSTM\n\
+  \n## \U0001F680 Features\n- Text preprocessing using **TextVectorization**\n- Deep Learning model with\
+  \ **LSTM** and **Bidirectional LSTM** layers\n- Multi-label classification for six toxicity categories\n\
+  - Model trained and evaluated using TensorFlow\n- **Flask API** for real-time predictions\n\n## \U0001F4C2\
+  \ Dataset\nThe model is trained on the **Jigsaw Toxic Comment Classification Challenge** dataset, which\
+  \ includes the following toxicity labels:\n- Toxic\n- Severe Toxic\n- Obscene\n- Threat\n- Insult\n\
+  - Identity Hate\n\n## \U0001F6E0 Installation\nTo set up the environment and run the project, install\
+  \ the required dependencies:\n```bash\npip install matplotlib tensorflow pandas scikit-learn\n```\n\n\
+  ## \U0001F4DC Model Training\n```python\nimport pandas as pd\nimport tensorflow as tf\nfrom tensorflow.keras.layers\
+  \ import TextVectorization, LSTM, Bidirectional, Dense, Embedding\nfrom tensorflow.keras.models import\
+  \ Sequential\n\n# Load dataset\ndf = pd.read_csv('train.csv')\nx = df['comment_text']\ny = df[df.columns[2:]].values\n\
+  \n# Text Vectorization\nMAX_FEATURES = 200000\nvectorize = TextVectorization(max_tokens=MAX_FEATURES,\
+  \ output_sequence_length=2000, output_mode='int')\nvectorize.adapt(x.values)\nvectorize_text = vectorize(x.values)\n\
+  \n# Create dataset\ndataset = tf.data.Dataset.from_tensor_slices((vectorize_text, y)).shuffle(160000).batch(16).prefetch(8)\n\
+  train = dataset.take(int(len(dataset) * 0.7))\nval = dataset.skip(int(len(dataset) * 0.7)).take(int(len(dataset)\
+  \ * 0.2))\ntest = dataset.skip(int(len(dataset) * 0.9)).take(int(len(dataset) * 0.1))\n\n# Model Definition\n\
+  model = Sequential([\n    Embedding(MAX_FEATURES + 1, 32),\n    Bidirectional(LSTM(32, activation='tanh')),\n\
+  \    Dense(128, activation='relu'),\n    Dense(256, activation='relu'),\n    Dense(128, activation='relu'),\n\
+  \    Dense(6, activation='sigmoid')\n])\n\n# Compile Model\nmodel.compile(loss='BinaryCrossentropy',\
+  \ optimizer='Adam')\n\n# Train Model\nhistory = model.fit(train, epochs=8, validation_data=val)\n\n\
+  # Save Model\nmodel.save('Toxicity.h5')\n```\n\n## Flask API Deployment \U0001F30D\nThe model is now\
+  \ deployed using Flask, allowing real-time text predictions via an API.\n```python\nimport tensorflow\
+  \ as tf\nimport numpy as np\nimport pandas as pd\nfrom tensorflow.keras.layers import TextVectorization\n\
+  from flask import Flask, request, jsonify\n\n# Load trained model\nmodel = tf.keras.models.load_model('Toxicity.h5')\n\
+  \n# Load dataset to get label names\ndf = pd.read_csv('train.csv')  \ntoxicity_labels = df.columns[2:]\
+  \  # Assuming first two columns are not labels\n\n# Define Text Vectorization (same as used in training)\n\
+  MAX_FEATURES = 200000\nvectorize = TextVectorization(max_tokens=MAX_FEATURES, output_sequence_length=2000,\
+  \ output_mode='int')\nvectorize.adapt(df['comment_text'].values)  # Adapt vectorizer to training data\n\
+  \n# Initialize Flask app\napp = Flask(__name__)\n\n@app.route('/predict', methods=['POST'])\ndef predict():\n\
+  \    data = request.json\n    input_text = data.get('text', '')\n\n    if not input_text:\n        return\
+  \ jsonify({'error': 'No text provided'}), 400\n\n    # Vectorize input\n    input_vector = vectorize([input_text])\n\
+  \    res = model.predict(input_vector)[0]\n\n    # Format output (convert predictions to True/False)\n\
+  \    results = {label: bool(pred > 0.5) for label, pred in zip(toxicity_labels, res)}\n\n    return\
+  \ jsonify({'input_text': input_text, 'toxicity_labels': results})\n\nif __name__ == '__main__':\n  \
+  \  app.run(debug=True)\n```\n\n## \U0001F680 Running the Flask API\nRun the following command to start\
+  \ the server:\n```bash\npython app.py\n```\nYou can send a request to the API using Postman \n### Example\
+  \ Output:\n```json\n{\n  \"input_text\": \"You are so dumb!\",\n  \"toxicity_labels\": {\n    \"toxic\"\
+  : true,\n    \"severe_toxic\": false,\n    \"obscene\": false,\n    \"threat\": false,\n    \"insult\"\
+  : true,\n    \"identity_hate\": false\n  }\n}\n```\n\n## \U0001F3AF Future Improvements\n- Improve accuracy\
+  \ by experimenting with **transformers (BERT, DistilBERT)**\n- Fine-tune hyperparameters for better\
+  \ performance\n- Deploy the model using **FastAPI, Docker or Cloud platforms**\n\n## \U0001F4CC Contributing\n\
+  Feel free to fork this repository, suggest improvements, and contribute! \U0001F680\n\n## \U0001F4DD\
+  \ License\nThis project is open-source and available under the MIT License.\n\n"

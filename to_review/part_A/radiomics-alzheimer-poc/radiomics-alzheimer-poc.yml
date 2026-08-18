@@ -1,0 +1,53 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: furkanuysal/radiomics-alzheimer-poc
+url: https://github.com/furkanuysal/radiomics-alzheimer-poc
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-01-22T21:03:03Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Radiomics-Based MRI Cognitive Analysis (Alzheimer PoC)\n\nThis project is an **educational\
+  \ / research-oriented proof-of-concept** demonstrating how\nradiomics features extracted from structural\
+  \ brain MRI can be used to:\n\n- Perform **binary cognitive status classification** (Healthy vs Alzheimer)\n\
+  - **Estimate MMSE score** directly from MRI data\n- Provide an **end-to-end pipeline** from MRI upload\
+  \ → analysis → interpretable output\n\n> ⚠️ **Disclaimer**  \n> This project is **not a clinical diagnostic\
+  \ tool** and must not be used for medical decision-making.\n\n---\n\n## What This Project Does\n\n-\
+  \ Extracts **radiomics features** from the **right hippocampus ROI**\n- Uses **pre-trained machine learning\
+  \ models** to:\n  - Predict cognitive status (Healthy / Alzheimer)\n  - Estimate MMSE score (with error\
+  \ margin)\n- Provides:\n  - **FastAPI backend**\n  - **React + TypeScript frontend**\n  - **Dockerized\
+  \ setup** for reproducible execution on other machines\n\n---\n\n## Technology Stack\n\n### Backend\
+  \ & ML\n- **Python:** 3.10\n- **PyRadiomics**\n- **SimpleITK**\n- **NumPy / Pandas**\n- **Scikit-learn**\n\
+  - **Joblib**\n- **FastAPI**\n- **Uvicorn**\n\n### Frontend\n- **React**\n- **TypeScript**\n- **Vite**\n\
+  - **Nginx**\n\n### Deployment\n- **Docker**\n- **Docker Compose**\n\n---\n\n## Data & Model Artifacts\
+  \ (Important)\n\nThis repository does **not** include:\n\n- Raw MRI data (`data/`)\n- Extracted feature\
+  \ matrices\n- Trained model files (`outputs/`)\n\nDue to data size and licensing constraints, these\
+  \ artifacts must be\ngenerated locally.\n\n### Required steps before running inference:\n\n1. Obtain\
+  \ the MRI dataset (e.g. OASIS-style structure)\n2. Place data under the `data/` directory\n3. Run feature\
+  \ extraction scripts\n4. Train models to generate files under `outputs/`\n\nOnly after these steps,\
+  \ the backend inference API will function correctly.\n\n---\n\n## Supported MRI Formats\n\n- `.img`\n\
+  - `.hdr`\n\nBoth files must be provided together.\n\n---\n\n## Docker Compose Ports\n\n- **Frontend:**\
+  \ http://localhost:5173\n- **Backend API:** http://localhost:8000\n\n---\n\n## Run with Docker\n\n```bash\n\
+  docker compose up --build\n```\n\n---\n\n## API Endpoint\n\n```\nPOST /analyze-mri\n```\n\nMultipart\
+  \ form-data:\n- `img_file`\n- `hdr_file`\n\n---\n\n## Example Response\n\n```json\n{\n  \"status\":\
+  \ \"ok\",\n  \"results\": {\n    \"diagnosis\": {\n      \"prediction\": \"HEALTHY\"\n    },\n    \"\
+  mmse\": {\n      \"predicted\": 26.33,\n      \"cognitive_level\": \"MILD IMPAIRMENT\",\n      \"error_note\"\
+  : \"This value may vary by ± 2.9 points.\"\n    }\n  },\n  \"disclaimer\": \"This is not a clinical\
+  \ diagnosis.\"\n}\n```\n\n---\n\n## MMSE Interpretation\n\n| Score | Level |\n|------|------|\n| ≥ 28\
+  \ | Normal |\n| 24–27 | Mild Impairment |\n| 18–23 | Moderate Alzheimer |\n| < 18 | Severe Alzheimer\
+  \ |\n\n---\n\n## Local Setup (Optional)\n\n```bash\npy -3.10 -m venv .venv\n.venv\\Scripts\\activate\n\
+  pip install --upgrade pip setuptools wheel\npip install \"numpy<2.0\"\npip install -r requirements.txt\n\
+  ```\nInstallation Note (Important)\n\nOn some systems, PyRadiomics may require disabling build isolation\
+  \ during installation:\n```bash\npip install pyradiomics --no-build-isolation\n```\nThis is a known\
+  \ issue related to PyRadiomics build-time dependencies and Python packaging behavior.\n\n---\n\n## License\n\
+  \nEducational / Research use only.\n"

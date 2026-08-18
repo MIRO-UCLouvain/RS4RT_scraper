@@ -1,0 +1,83 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Fsoft-AIC/DuFal
+url: https://github.com/Fsoft-AIC/DuFal
+platform: github
+description: '[TMLR] DuFal: Dual-Frequency-Aware Learning for High-Fidelity Extremely Sparse-view CBCT
+  Reconstruction'
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-04-16T17:48:40Z'
+image_source: https://raw.githubusercontent.com/Fsoft-AIC/DuFal/HEAD/images/Xray2CT-TMLR-v2.png
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "<div align=\"center\">\n\n<h1>DuFal: Dual-Frequency-Aware Learning for High-Fidelity\
+  \ Extremely Sparse-View CBCT Reconstruction</h1>\n\n<a href=\"https://scholar.google.com/citations?user=T1fuA0kAAAAJ&hl=en&oi=sra\"\
+  ><strong><u>Cuong Tran</u></strong><sup>1*</sup></a> &nbsp;&nbsp;&nbsp;\n<a href=\"https://phamtrongthang123.github.io/\"\
+  ><strong><u>Trong-Thang Pham</u></strong><sup>2*</sup></a> &nbsp;&nbsp;&nbsp;\n<a href=\"https://nngocson2002.github.io/\"\
+  ><strong><u>Ngoc-Son Nguyen</u></strong><sup>1</sup></a> &nbsp;&nbsp;&nbsp;\n<a href=\"https://duyhominhnguyen.github.io/\"\
+  ><strong><u>Duy Minh Ho Nguyen</u></strong><sup>3</sup></a> &nbsp;&nbsp;&nbsp;\n<a href=\"https://scholar.google.com/citations?user=8ck0k_UAAAAJ&hl=en\"\
+  ><strong><u>Ngan Le</u></strong><sup>2†</sup></a>\n\n<sup>1</sup> FPT Software AI Center, Vietnam &nbsp;&nbsp;\
+  \ <sup>2</sup> AICV Lab, EECS Department, University of Arkansas &nbsp;&nbsp; <sup>3</sup> IMPRS-IS,\
+  \ University of Stuttgart, and DFKI, Germany\n\n<sup>*</sup> Equal contribution &nbsp;&nbsp; <sup>†</sup>\
+  \ Corresponding author\n\n[![Paper](https://img.shields.io/badge/Paper-OpenReview-b31b1b.svg)](https://openreview.net/forum?id=2wAZjAtK16)\
+  \ [![ArXiv](https://img.shields.io/badge/ArXiv-2601.15416-red)](https://arxiv.org/abs/2601.15416)\n\n\
+  </div>\n\n---\n\n## Overview\nSparse-view **Cone-Beam Computed Tomography (CBCT)** reconstruction remains\
+  \ challenging due to severe undersampling of high-frequency anatomical details. Conventional CNN-based\
+  \ methods are often biased toward low-frequency information, leading to the loss of fine structures.\n\
+  \nWe propose **DuFal (Dual-Frequency-Aware Learning)**, a novel dual-path framework that jointly exploits\
+  \ spatial- and frequency-domain representations. At its core is a **High-Local Factorized Fourier Neural\
+  \ Operator**, which consists of:\n- a **global high-frequency enhanced branch** for capturing long-range\
+  \ spectral patterns, and  \n- a **local high-frequency enhanced branch** that processes spatial patches\
+  \ to preserve locality.\n\nTo improve efficiency, DuFal introduces **spectral–channel factorization**\
+  \ to reduce model complexity, along with a **cross-attention frequency fusion** module for effective\
+  \ integration of spatial and spectral features. The fused representations are decoded into projection\
+  \ features and reconstructed into 3D volumes via an **intensity field decoding** pipeline.\n\nExperiments\
+  \ on **LUNA16** and **ToothFairy** demonstrate that DuFal consistently outperforms state-of-the-art\
+  \ methods, particularly under extremely sparse-view conditions, with superior preservation of high-frequency\
+  \ anatomical structures.\n\n\n<p align=\"center\">\n    <img src=\"images/Xray2CT-TMLR-v2.png\" width=\"\
+  90%\"> <br>\n  *Overview of DuFal architecture*\n</p>\n\n## \U0001F3C6 **Key Contributions**\n- Dual-path\
+  \ encoding with spatial and frequency branches for high-frequency detail preservation.\n- HiLocFFNO\
+  \ blocks combine global and local frequency modeling in a modular Frequency Encoder.\n- Spectral-Channel\
+  \ Factorization (SCF) reduces FNO parameters while retaining quality.\n- Cross-Attention Frequency Fusion\
+  \ (CAFF) merges spatial and spectral features in the frequency domain.\n- Evaluated on LUNA16 and ToothFairy\
+  \ in extremely sparse-view settings.\n\n---\n## Table of Contents\n- [\U0001F4E3 News](#-news)\n- [\U0001F6E0\
+  ️ Requirements and Installation](#-requirements-and-installation)\n- [\U0001F4C4 Configuration](#-configuration)\n\
+  - [\U0001F9E9 Creating splits for training and testing](#-creating-splits-for-training-and-testing)\n\
+  - [\U0001F9EA Usage](#-usage)\n- [\U0001F64F Acknowledgments](#-acknowledgments)\n- [\U0001F4D6 Citation](#-citation)\n\
+  - [⚠️ Usage and License Notices](#-usage-and-license-notices)\n\n---\n## \U0001F4E3 News\n- **[Dec 2025]**:\
+  \ DuFal paper has been accepted with minor revisions at TMLR!\n\n---\n## \U0001F6E0️ Requirements and\
+  \ Installation\n```bash\npip install torch==1.13 pytorch3d SimpleITK easydict\n```\n\n---\n## \U0001F4C4\
+  \ Configuration\nEdit `configs/config.yaml` to set your dataset path (after preprocessing):\n\n```yaml\n\
+  dataset:\n  root_dir: /path/to/your/data\n```\n\n---\n---\n## \U0001F9E9 Creating splits for training\
+  \ and testing\nDataset preparation and split definitions are documented in `data/README.md`. Use the\
+  \ official splits for LUNA16 and ToothFairy (see `data/LUNA16/` and `data/ToothFairy/`).\n\n---\n##\
+  \ \U0001F9EA Usage\n### Training (single GPU)\n```bash\nCUDA_VISIBLE_DEVICES=0 python code/train.py\
+  \ \\\n  --batch_size 1 \\\n  --epoch 600 \\\n  --dst_name ToothFairy \\\n  --num_views 10 \\\n  --random_view\
+  \ \\\n  --cfg_path ./configs/config.yaml \\\n  --num_workers 8 \\\n  --eval_interval 50 \\\n  --save_interval\
+  \ 50 \\\n  --setting spatial-test \\\n  -trunc LL-LH LL-LH LL-LH LL-LH \\\n  -sobel 0 0 0 0 \\\n  -patch\
+  \ 1 1 1 1 \\\n  -psize 16 16 16 16 \\\n  -fac none none dep-sep dep-sep \\\n  -attn 0 0 0 1 \\\n  -prop\
+  \ 0 0 0 0 \\\n  -swin 0 \\\n  -wsize 0 0 0 0 \\\n  -grid linear \\\n  -fuse 8 \\\n  -fno \\\n  -skip\
+  \ add \\\n  --use_wandb\n```\n\n\nKey options:\n- `--dst_name`: dataset name (`LUNA16` or `ToothFairy`).\n\
+  - `--num_views`: number of projection views.\n- `--cfg_path`: path to the config file.\n- `--setting`:\
+  \ run name used for logging and outputs.\n- `-trunc/-sobel/-patch/-psize/-fac/-attn/-prop/-swin/-wsize/-grid/-fuse/-fno/-skip`:\
+  \ architecture and frequency-encoding settings (kept consistent with the paper config).\n\n### Testing\n\
+  ```bash\nCUDA_VISIBLE_DEVICES=1 python code/evaluate.py --epoch xxx --dst_name {LUNA16 or ToothFairy}\
+  \ --split test --num_views 10 --out_res_scale 1.0 --setting xxx\n```\n\n\n---\n## \U0001F64F Acknowledgments\n\
+  This project builds upon the [DIF-Gaussian](https://github.com/xmed-lab/DIF-Gaussian) codebase.\n\n\
+  ---\n## \U0001F4D6 Citation\nIf you find this work useful, please cite our paper:\n\n```bibtex\n@article{van2026dufal,\n\
+  \  title={DuFal: Dual-Frequency-Aware Learning for High-Fidelity Extremely Sparse-view {CBCT} Reconstruction},\n\
+  \  author={Cuong Tran Van and Trong-Thang Pham and Ngoc-Son Nguyen and Duy Minh Ho Nguyen and Ngan Le},\n\
+  \  journal={Transactions on Machine Learning Research},\n  issn={2835-8856},\n  year={2026},\n  url={https://openreview.net/forum?id=2wAZjAtK16},\n\
+  \  note={J2C Certification}\n}\n```\n\n---\n## ⚠️ Usage and License Notices\nThe model is not intended\
+  \ for clinical use as a medical device, diagnostic tool, or any technology for disease diagnosis, treatment,\
+  \ or prevention. It is not a substitute for professional medical advice, diagnosis, or treatment. Users\
+  \ are responsible for evaluating and validating the model to ensure it meets their needs before any\
+  \ clinical application.\n"

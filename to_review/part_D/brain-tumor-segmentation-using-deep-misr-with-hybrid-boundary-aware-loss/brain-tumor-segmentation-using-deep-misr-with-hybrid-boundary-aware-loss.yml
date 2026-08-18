@@ -1,0 +1,65 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Satish12-art/Brain-Tumor-Segmentation-using-Deep-MiSR-with-Hybrid-Boundary-Aware-Loss
+url: https://github.com/Satish12-art/Brain-Tumor-Segmentation-using-Deep-MiSR-with-Hybrid-Boundary-Aware-Loss
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-08T11:42:39Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+readme_excerpt: "# Brain Tumor Segmentation using Deep-MiSR with Hybrid Boundary-Aware Loss\n\n![Python](https://img.shields.io/badge/Python-3.10%2B-blue)\n\
+  ![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-ee4c2c)\n![License](https://img.shields.io/badge/License-MIT-green)\n\
+  \nDeep-MiSR (Deep Medical Image Segmentation and Refinement) is a specialized, state-of-the-art neural\
+  \ network pipeline engineered for brain tumor segmentation in MRI scans. This repository contains the\
+  \ code and methodology for the **v4 iteration**, which specifically addresses the difficult task of\
+  \ segmenting tumors with diffuse, irregular boundaries (like Gliomas).\n\nBy leveraging a custom **Hybrid\
+  \ Boundary-Aware Loss** and a **Multi-Scale Gated Attention Decoder**, Deep-MiSR v4 achieves a Mean\
+  \ Dice Score of **0.9378** on the Figshare Brain Tumor dataset, with a massive +9.7% performance leap\
+  \ specifically on Glioma segmentation compared to our previous v3 baseline.\n\n## \U0001F680 Key Results\n\
+  | Class | Baseline (v3) Dice | Deep-MiSR (v4) Dice | Improvement |\n|---|---|---|---|\n| Meningioma\
+  \ | 0.9358 | **0.9714** | +3.56% |\n| Glioma | 0.7899 | **0.8873** | **+9.74%** |\n| Pituitary | 0.8932\
+  \ | **0.9547** | +6.15% |\n| **Mean (Macro)** | **0.8730** | **0.9378** | **+6.48%** |\n\n## \U0001F9E0\
+  \ Architectural Innovations\n\n### 1. Robust Feature Extraction (Encoder)\n* **Backbone:** EfficientNetV2-S\
+  \ (pretrained on ImageNet-21k, fine-tuned on 1k).\n* **Hierarchical Features:** Extracts spatial features\
+  \ at five distinct contextual scales, capturing fine granular textures and global anatomical structures.\n\
+  \n### 2. High-Resolution Multi-Scale Gated Decoder\nReplaced standard bilinear upsampling with a heavily\
+  \ upgraded decoder tailored for sharp spatial boundaries:\n* **Learnable Spatial Upsampling:** `ConvTranspose2d`\
+  \ layers to explicitly learn optimal spatial upsampling weights.\n* **Parallel Multi-Scale Features:**\
+  \ 1x1, 3x3, and 5x5 convolutions analyze tissue textures across varying receptive fields simultaneously.\n\
+  * **Channel Context Gating:** An attention gate actively suppresses irrelevant feature channels and\
+  \ amplifies channels correlated with diffuse tumor presence.\n* **Memory-Optimized Refinement:** A single-convolution\
+  \ refinement block that reduces peak GPU memory by ~15%, allowing the model to fit on standard 15GB\
+  \ T4 GPUs.\n\n### 3. Hybrid Boundary-Aware Loss Formulation\nA custom loss function designed to penalize\
+  \ Glioma mistakes heavily and trace tumor boundaries accurately:\n* **Class-Weighted Cross-Entropy:**\
+  \ Heavily penalizes ignoring difficult classes (Glioma weight: 2.0).\n* **Focal Tversky Loss:** Penalizes\
+  \ False Negatives (missing a tumor) aggressively ($\\alpha = 0.7$, $\\beta = 0.3$).\n* **Soft Dice Loss:**\
+  \ Directly optimizes the regional overlap metric.\n* **Boundary-Aware Sobel Loss (Weight: 0.05):** Applies\
+  \ Sobel edge-detection spatial filters to both predicted and ground truth masks to explicitly teach\
+  \ the model boundary tracing.\n\n## ⚙️ Advanced Training Methodology\n* **Progressive Spatial Resolution\
+  \ Training:** Phase A at `256x256` to rapidly establish global context, followed by Phase B at `384x384`\
+  \ to refine precise boundary details.\n* **Temporal Weight Stabilization (EMA):** Exponential Moving\
+  \ Average (EMA) shadow model with a decay rate of 0.995 to smooth out gradient noise.\n* **Domain-Specific\
+  \ Data Augmentation (Albumentations):** CLAHE for MRI contrast normalization, ElasticTransform/GridDistortion\
+  \ for anatomical variance, and CoarseDropout for artifact simulation.\n\n## \U0001F52E Robust Inference\
+  \ and Morphological Refinement\nTo achieve the final **0.9378** Mean Dice score, standard inference\
+  \ is augmented with two post-processing stages:\n1. **Test-Time Augmentation (TTA):** Averaging softmax\
+  \ probability maps across 6 geometric views (rotations/flips) to drastically reduce prediction variance.\n\
+  2. **Morphological Post-Processing:** A 3x3 binary closing operation to fill microscopic holes, combined\
+  \ with component filtering to erase isolated false-positive clusters (fewer than 50 pixels).\n\n## \U0001F6E0\
+  ️ Usage\nThis repository contains a unified notebook generator (`build_deepmisr_v4.py`) that outputs\
+  \ a complete, ready-to-run Jupyter Notebook optimized for Google Colab or Kaggle.\n\n1. Install dependencies:\n\
+  \   ```bash\n   pip install torch torchvision timm albumentations numpy scipy\n   ```\n2. Build the\
+  \ training notebook:\n   ```bash\n   python build_deepmisr_v4.py\n   ```\n3. Upload the generated `DeepMiSR_v4_Full_Pipeline.ipynb`\
+  \ to your GPU environment and run all cells.\n\n## \U0001F4C4 Documentation\nFor an in-depth breakdown\
+  \ of the architecture, loss formulation, and mathematical rationale, please refer to the [DeepMiSR v4\
+  \ Methodology Report](DeepMiSR_v4_Methodology.md).\n"

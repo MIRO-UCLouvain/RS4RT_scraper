@@ -1,0 +1,110 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: elmehdiessaidi/essai-rt
+url: https://github.com/elmehdiessaidi/essai-rt
+platform: github
+description: Automated radiotherapy plan QC from DICOM
+license: MIT
+language: HTML
+keywords: []
+stars: 0
+updated_at: '2026-07-10T22:17:34Z'
+image_source: https://raw.githubusercontent.com/elmehdiessaidi/essai-rt/HEAD/assets/logo.svg
+heuristic_total_score: 49
+heuristic_reasons:
+- Matched 6 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 17 support term(s).
+readme_excerpt: "<p align=\"center\">\n  <img src=\"assets/logo.svg\" width=\"470\" alt=\"EssaiRT\">\n\
+  </p>\n\n# EssaiRT\n\n*Automated radiotherapy plan QC from DICOM* &nbsp;·&nbsp; repository: `essai-rt`\n\
+  \nA small tool that runs **automated quality-control checks on a\nradiotherapy treatment plan** straight\
+  \ from its DICOM RT objects, evaluates\norgan-at-risk constraints against a configurable protocol, and\
+  \ produces a\none-file HTML report. It works with DICOM from any vendor's planning system.\n\n<p align=\"\
+  center\">\n  <img src=\"assets/screenshots/04-ct-viewer-dvh.png\" width=\"820\" alt=\"EssaiRT interactive\
+  \ CT viewer and DVH\">\n</p>\n\n> *Essai* — French for \"test / assay\" — fits a QC tool, and nods quietly\
+  \ to\n> the author's name, Essaidi; *RT* for radiotherapy.\n\n> ⚠️ **Not for clinical use.** EssaiRT\
+  \ is a demonstration / research tool, not a certified medical device.\n\nIt is written in pure Python\
+  \ on top of `pydicom`, with a **Dose-Volume\nHistogram (DVH) engine implemented from first principles**\
+  \ (no external DVH\nlibrary) so the underlying geometry is explicit and easy to audit.\n\n## Screenshots\n\
+  \nThe interactive HTML report — plan checks, an in-browser planning-CT viewer that\nscrolls every slice\
+  \ and toggles contours like a TPS, the DVH, and a clinical\nmetrics table — plus a browser upload interface.\n\
+  \n<p align=\"center\">\n  <img src=\"assets/screenshots/03-constraint-checks.png\" width=\"820\" alt=\"\
+  Per-structure constraint checks\"><br>\n  <em>Per-structure dose-constraint checks (with a deliberately\
+  \ failing rectum limit)</em>\n</p>\n\n<p align=\"center\">\n  <img src=\"assets/screenshots/05-dvh-summary.png\"\
+  \ width=\"820\" alt=\"DVH summary table\"><br>\n  <em>DVH summary with standard clinical metrics (D98,\
+  \ D95, D2, HI) and PDF / text export</em>\n</p>\n\n<p align=\"center\">\n  <img src=\"assets/screenshots/01-web-upload.png\"\
+  \ width=\"640\" alt=\"Browser upload interface\"><br>\n  <em>Optional local web interface — drop a DICOM\
+  \ export or a .zip and get the report</em>\n</p>\n\n---\n\n## Why this exists\n\nBefore a plan is approved,\
+  \ a medical physicist runs a series of routine checks:\nis the prescription present and self-consistent,\
+  \ are the right machine and\nenergies used, is the monitor-unit count plausible, and what dose do the\n\
+  structures receive. Doing this by hand is repetitive and a natural candidate\nfor automation.\n\nThis\
+  \ project automates that first pass on **DICOM** — the format every TPS can\nexport. It works on **any\
+  \ plan with no configuration**: it reads whatever\nstructures are present and reports their DVH metrics\
+  \ automatically, so it does\nnot need to know anatomy or structure names in advance.\n\nThe same check\
+  \ logic maps directly onto a treatment-planning-system (TPS)\nscripting API: the rules here are the\
+  \ engine; running them inside the\nclinical system is a thin adapter on top.\n\n## What it does\n\n\
+  **Runs on any plan, zero config.** Point it at a folder of DICOM files and it\nwill:\n\n1. Detect the\
+  \ RTPLAN / RTSTRUCT / RTDOSE objects automatically.\n2. Run plan-metadata checks (below).\n3. Compute\
+  \ a **DVH for every structure** that overlaps the dose grid and build\n   a summary table (Volume, Dmin,\
+  \ Dmax, Dmean, D98, D95, D2, HI) plus a DVH plot\n   — without needing any structure names.\n4. If a\
+  \ **planning CT series** is present, show an **interactive viewer** that\n   scrolls through every slice,\
+  \ lets you toggle each structure's contour on or\n   off and overlay the dose colour-wash (like a lightweight\
+  \ TPS), and verify\n   that the CT, structures and dose share the same **Frame of Reference** (a\n \
+  \  real consistency check). Works on real exported CT series.\n5. Report the **standard clinical DVH\
+  \ metrics** for every structure — Dmin,\n   Dmax, Dmean, D98, D95, D2 and the homogeneity index HI =\
+  \ (D2 − D98) / D50.\n\n## Validation\n\nThe DVH engine is **validated against analytically known ground\
+  \ truth** rather\nthan just trusted. `validation/validate_dvh.py` builds simple phantoms whose\ntrue\
+  \ volume and dose statistics can be written down exactly (a sphere of known\nradius, a box of known\
+  \ side, a linear dose gradient, a uniform dose) and checks\nthe engine reproduces them within a stated\
+  \ tolerance:\n\n```bash\npython3 validation/validate_dvh.py validation/validation_report.html\n```\n\
+  \nCurrent result: **9/9 cases pass** — e.g. the known sphere volume is recovered\nto within ~1% (the\
+  \ residual is the expected axial-slice discretisation error),\nand all dose statistics (Dmean, Dmax,\
+  \ Dmin, D50, Vx) are exact. This is the kind\nof evidence a department needs before relying on any in-house\
+  \ tool.\n\n**Plan metadata checks (`plan_checks.py`)**\n- Plan label and approval status present\n-\
+  \ Prescription dose recorded and dose-per-fraction plausible\n- Beam count, treatment machine consistency,\
+  \ beam energies\n- Total monitor units recorded and MU/Gy within a sane range\n\n**Optional pass/fail\
+  \ constraints (`constraints.py`, YAML protocol)**\nIf — and only if — you pass `--protocol`, it also\
+  \ evaluates dose/volume limits:\n- `D` — dose to X % of the volume (e.g. PTV D95 ≥ 74 Gy)\n- `Dmax`\
+  \ / `Dmean`\n- `V` — volume receiving ≥ X Gy (e.g. Rectum V70Gy ≤ 20 %)\n\nStructures are matched to\
+  \ ROI names with exact (case-insensitive) match first,\nthen substring, so `Vessie` picks the bladder,\
+  \ not `PTV&Vessie`.\n\n## Quickstart\n\n**Prefer an upload button?** Start the local web app — no commands,\
+  \ no copying\nfiles into the project, nothing uploaded to the internet:\n\n```bash\npython3 -m rt_plan_checker\
+  \ serve\n# then open http://127.0.0.1:8000 and drag your export (or a .zip) onto the page\n```\n\nThe\
+  \ web layer uses only the Python standard library, so there is nothing extra\nto install. For a CT series,\
+  \ the easiest route is to zip the export folder and\ndrop the `.zip`.\n\n**Command line:**\n\n> Use\
+  \ `python3` / `pip3` (as shown). On systems where `python` still points to\n> Python 2, plain `python`\
+  \ will fail.\n\n```bash\npip3 install -r requirements.txt\n\n# Works on ANY plan with no configuration\
+  \ - just point at a DICOM folder:\npython3 -m rt_plan_checker check /path/to/plan_folder --out report.html\n\
+  \n# Optional: also check pass/fail dose constraints from a protocol\npython3 -m rt_plan_checker check\
+  \ /path/to/plan_folder \\\n    --protocol protocols/pelvis_example.yaml --out report.html\n\n# De-identify\
+  \ a folder before ever sharing it\npython3 -m rt_plan_checker anonymize <folder> --out <folder_anon>\n\
+  ```\n\nTo try it immediately on the bundled synthetic phantom (safe, no patient data):\n\n```bash\n\
+  python3 scripts/make_sample_data.py sample_data\npython3 -m rt_plan_checker check sample_data --out\
+  \ report.html\n```\n\n### Controlling what appears in the DVH\n\nReal plans can have dozens of structures.\
+  \ You can choose what to display:\n\n```bash\n# List every structure name in the plan, then exit\npython3\
+  \ -m rt_plan_checker check <folder> --list\n\n# Show only specific structures (substring match, comma-separated)\n\
+  python3 -m rt_plan_checker check <folder> --show \"PTV,Bladder,Rectum\" --out report.html\n\n# Hide\
+  \ structures smaller than a volume (cc)\npython3 -m rt_plan_checker check <folder> --min-volume 2 --out\
+  \ report.html\n\n# Limit how many DVH curves are plotted (largest by volume)\npython3 -m rt_plan_checker\
+  \ check <folder> --top 8 --out report.html\n```\n\nExample console output on the bundled phantom:\n\n\
+  ```\nEssaiRT - Pelvis_VMAT\n----------------------------------------\n  OK [Plan metadata] Prescription\
+  \ dose recorded: 76.00 Gy\n  OK [Plan metadata] Dose per fraction plausible: 2.00 Gy x 38 fx\n  OK [PTV]\
+  \    D95 >= 74 Gy: D95 = 78.00 Gy\n  OK [Bladder] V65Gy <= 50%: V65Gy = 41.3 %\n  XX [Rectum]  V70Gy\
+  \ <= 20%: V70Gy = 25.8 %      <- violation caught\n  OK [FemoralHead_L] Dmax <= 50 Gy: Dmax = 42.90\
+  \ Gy\n\nSummary: 13 pass, 1 fail, 0 warn, 8 info\n```\n\nThe HTML report (`sample_data/example_report.html`)\
+  \ colour-codes every check\nand embeds the interactive CT viewer and DVH plot as a single self-contained\
+  \ file.\n\n## How the DVH engine works\n\n1. Build the dose-grid coordinate axes from `ImagePositionPatient`,\n\
+  \   `PixelSpacing` and `GridFrameOffsetVector`.\n2. Group each structure's contours by slice.\n3. For\
+  \ every dose slice with a matching contour, test which in-plane voxels lie\n   inside the contour polygon(s)\
+  \ (`matplotlib.path`) and collect their dose.\n4. Build the cumulative DVH and derive `Dmax`, `Dmean`,\
+  \ `Dx%`, `Vx Gy`.\n\nValidated on a synthetic phantom with known geometry (see `tests/`).\n\n## Data\
+  \ protection\n\nReal DICOM headers contain patient identifiers. **No clinical data is included\nor should\
+  \ ever be committed here.** The bundled sample is a synthetic phantom.\nA built-in `anonymize` command\
+  \ blanks the common PHI tags and strips private\ntags so data can be handled safely.\n\n## Limitations\
+  \ / roadmap\n\n- Assumes an axial dose grid (`ImageOrientationPatient ≈ [1,0,0,0,1,0]`),\n  which covers\
+  \ most clinical RTDOSE objects.\n- Multiple contours on one slice are unioned; true XOR hole handling\
+  \ is a\n  planned improvement.\n- Roadmap: gamma-index check for patient-specific QA, plan-vs-plan comparison,\n\
+  \  and a TPS-scripting adapter to run the same rules inside the planning system.\n\n## Tests\n\n```bash\n\
+  python3 -m pytest tests/ -q\n```\n\n## License\n\nMIT — see `LICENSE`.\n"

@@ -1,0 +1,53 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: educelab/calculators
+url: https://github.com/educelab/calculators
+platform: github
+description: A web-based tool to estimate scanning resolution and geometric parameters of CBCT scans
+license: AGPL-3.0
+language: HTML
+keywords: []
+stars: 0
+updated_at: '2026-02-18T17:51:50Z'
+image_source: null
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# EduceLab CT Pixel Calculator\n\nA standalone web tool for estimating Cone Beam CT (CBCT)\
+  \ geometry, voxel size, and sampling strategies. Designed to help researchers optimize scan settings\
+  \ based on object size and specific machine constraints.\n\n## Features\n\n### 1. Geometry Optimization\n\
+  * **System Presets:** Pre-configured constraints for EduceLab systems: **Waygate V|tome|x M300** and\
+  \ **Bruker Skyscan 1273**.\n* **Auto-Optimize Mode:** Automatically calculates the optimal Source-Object\
+  \ Distance (SOD) and Source-Detector Distance (SDD) to maximize resolution while keeping the object\
+  \ within the detector's field of view.\n* **Manual Mode:** Allows fine-tuning of distances. When switching\
+  \ from Auto to Manual, the calculator pre-fills the inputs with the optimal values as a starting point.\n\
+  * **Double-Wide (Offset) Support:** Calculates geometry for offset scans (virtual detector extension)\
+  \ if the system supports it.\n\n### 2. Real-Time Visualization\n* Interactive 2D canvas visualization\
+  \ showing the X-ray source, object position, detector active area, and safety margins.\n* Visual feedback\
+  \ for object collisions or field-of-view violations.\n\n### 3. Sampling Strategy Assistant\nCalculates\
+  \ the required number of projections based on the **Crowther Criterion** (Nyquist sampling) to prevent\
+  \ aliasing artifacts. It provides four tiers of recommendations:\n* **Nyquist Limit (1x):** The theoretical\
+  \ limit for perfect reconstruction.\n* **High Quality (2x):** Recommended for standard, high-detail\
+  \ scans (undersampled by factor of 2).\n* **Fast Scan (3x):** For high-throughput or quick preview scans.\n\
+  * **Custom Step:** Allows users to input a specific rotational step size (e.g., 0.25°) to see the resulting\
+  \ Effective Resolution.\n\n### 4. Custom Configuration\n* **Manual Intrinsics:** Modify pixel pitch,\
+  \ detector width, and travel limits directly in the UI.\n* **JSON Import:** Load custom machine configurations\
+  \ via a JSON file.\n\n## Quick Start\n\n1.  Download `index.html`.\n2.  Open the file in any modern\
+  \ web browser (Chrome, Firefox, Edge, Safari).\n3.  Select your **CT System** from the dropdown.\n4.\
+  \  Enter your **Object Diameter** (mm).\n5.  View the **Projected Pixel Size** and **Sampling Recommendations**\
+  \ immediately.\n\n## Custom System Configuration\n\nYou can load your own CT system parameters by clicking\
+  \ **\"Load Config JSON\"**. The file should follow this structure:\n\n```json\n{\n  \"name\": \"My Custom\
+  \ CT\",\n  \"pixelPitch\": 0.2,\n  \"widthPx\": 2048,\n  \"minSOD\": 10,\n  \"maxSOD\": 900,\n  \"minSDD\"\
+  : 1000,\n  \"maxSDD\": 1000,\n  \"maxObjectDiameter\": 400,\n  \"allowDoubleWide\": true,\n  \"overlapPx\"\
+  : 150\n}\n```\n\n| Field | Description |\n| :--- | :--- |\n| `pixelPitch` | Detector pixel size in mm.\
+  \ |\n| `widthPx` | Physical width of the detector in pixels. |\n| `minSOD` / `maxSOD` | Mechanical travel\
+  \ limits for the stage. |\n| `minSDD` / `maxSDD` | Mechanical travel limits for the detector. |\n| `allowDoubleWide`\
+  \ | `true` if the system supports offset scans. |\n| `overlapPx` | Number of pixels of overlap required\
+  \ for offset scans. |\n\n## Sampling Logic\n\nThe calculator estimates the **Effective Resolution**\
+  \ based on the rotational step size.\n* **Formula:** Arc Length ≈ Radius × Step(rad).\n* If the Arc\
+  \ Length is larger than the projected pixel size, the effective resolution is limited by the sampling\
+  \ rate rather than the magnification.\n"

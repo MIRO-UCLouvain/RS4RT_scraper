@@ -1,0 +1,324 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: fanch032903/Proyecto-ACV-Radiomics
+url: https://github.com/fanch032903/Proyecto-ACV-Radiomics
+platform: github
+description: 'Predicción de severidad lesional post-ACV con biomarcadores radiómicos '
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-05-29T14:47:57Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: '# Proyecto ACV — Predicción de severidad lesional con biomarcadores radiómicos
+
+
+  Análisis de datos sobre **ATLAS v2.0** (Liew et al., 2022) para identificar lesiones de gran volumen
+  (> 70 mL) como **proxy clínico** de riesgo de reingreso hospitalario a 30 días post-ACV. Pipeline end-to-end
+  de extracción radiómica + clasificación con modelos clásicos + interpretabilidad SHAP.
+
+
+  **Curso:** BE3006 · UVG · Ciclo 1, 2026
+
+  **Equipo:** Oscar Ramírez · Paulina Martínez · Fátima Camposeco
+
+
+  ---
+
+
+  ## Resultados principales
+
+
+  | Experimento | Mejor modelo | AUC (test, n = 191) | F1 | Sens / Espec | Feature dominante |
+
+  |---|---|---|---|---|---|
+
+  | Baseline (33 features) | XGBoost | 0.999 | 0.985 | 0.971 / 1.000 | firstorder_Energy |
+
+  | Sin proxies de tamaño (30 features) | LogReg L1 | 0.994 | 0.886 | 0.941 / 0.943 | **shape_SurfaceVolumeRatio**
+  |
+
+
+  La caída de AUC al excluir features de tamaño (SurfaceArea, Energy, MaximumDiameter3D) es de solo 0.5
+  puntos, y la importancia se desplaza hacia features de forma compleja (SurfaceVolumeRatio, Sphericity).
+  Esto demuestra que el pipeline captura señal radiómica más allá del volumen bruto de la lesión.
+
+
+  ---
+
+
+  ## Estructura del repositorio
+
+
+  ```
+
+  Proyecto-ACV/
+
+  ├── 02_radiomics_ml_pipeline.ipynb   # Notebook principal (29 celdas, 12 secciones)
+
+  ├── radiomics_lite.py                # Sustituto de PyRadiomics (Python 3.14)
+
+  ├── decrypt_atlas.py                 # Desencriptación AES-256-CBC streaming
+
+  ├── run_dual_experiments.py          # Comparación baseline vs sin proxies de tamaño
+
+  ├── visualize_cases.py               # Genera PNGs de casos para la presentación
+
+  ├── requirements.txt
+
+  ├── outputs/
+
+  │   ├── tables/                      # Manifest, features (parquet), métricas, SHAP
+
+  │   └── figures/                     # PNGs: distribución, ROC, matriz confusión, SHAP, casos
+
+  └── ATLAS_2/                         # Dataset desencriptado (NO se sube al repo)
+
+  ```
+
+
+  ---
+
+
+  ## Cómo reproducir el análisis
+
+
+  ### 1. Instalar dependencias
+
+
+  ```powershell
+
+  pip install -r requirements.txt
+
+  ```
+
+
+  ### 2. Desencriptar el dataset
+
+
+  ATLAS v2.0 se distribuye como un archivo `.enc` (AES-256-CBC). Solicita tu clave en https://atlas.grand-challenge.org
+  y luego:
+
+
+  ```powershell
+
+  python decrypt_atlas.py --password=''tu_clave_aqui''
+
+  ```
+
+
+  El script usa streaming de 4 MB y SHA-256 (modo `evp-sha256` de OpenSSL).
+
+
+  ### 3. Correr el notebook
+
+
+  ```powershell
+
+  python -m notebook 02_radiomics_ml_pipeline.ipynb
+
+  ```
+
+
+  O bien `jupyter notebook 02_radiomics_ml_pipeline.ipynb` si tienes Jupyter en el PATH.
+
+
+  Ejecutar todas las celdas. La extracción radiómica (sección 5) toma 25-40 minutos para los 954 sujetos,
+  con **checkpoint cada 50 sujetos** en `outputs/tables/radiomics_features_partial.parquet` — si interrumpes
+  y vuelves a correr, reanuda desde donde se quedó.
+
+
+  ### 4. Análisis de leakage (opcional pero recomendado)
+
+
+  ```powershell
+
+  python run_dual_experiments.py
+
+  ```
+
+
+  Entrena el mismo pipeline dos veces (con y sin features de tamaño) para validar que el AUC no es artefacto
+  del leakage trivial entre volumen y target. Los CSVs con sufijo `_baseline` y `_no_size_proxy` quedan
+  en `outputs/tables/` listos para análisis o reporte.
+
+
+  ---
+
+
+  ## Partes del repo
+
+
+  ### `02_radiomics_ml_pipeline.ipynb`
+
+
+  Pipeline principal en 12 secciones:
+
+
+  1. **Setup**: imports y rutas.
+
+  2. **Configuración**: constantes del experimento (umbral 70 mL, splits, semilla).
+
+  3. **Discovery**: empareja T1 + máscara para 955 sujetos.
+
+  4. **Volumen y target**: calcula volumen en mL desde NIfTI y binariza con el umbral.
+
+  5. **Extracción radiómica**: ~36 features por sujeto vía `radiomics_lite`, con checkpoint.
+
+  6. **Dataset modelable**: merge features + target, descarta leakage trivial (volume_ml, VoxelVolume).
+
+  7. **EDA**: histograma, boxplots por clase, heatmap de correlación.
+
+  8. **Modelos**: LogReg L2, LogReg L1, Random Forest, XGBoost en un Pipeline con StandardScaler.
+
+  9. **CV 5-fold estratificada**: AUC, F1, recall, Brier por modelo.
+
+  10. **Test holdout 20 %**: métricas finales + matriz de confusión.
+
+  11. **SHAP**: interpretabilidad sobre el mejor modelo.
+
+  12. **Conclusiones**.
+
+
+  ### `radiomics_lite.py`
+
+
+  Reemplazo propio de PyRadiomics (que no tiene wheels para Python 3.14). Cubre cuatro familias de features
+  con solo numpy, scipy y scikit-image:
+
+
+  - **Shape** (8): volumen, superficie por marching-cubes, esfericidad, compacidad, elongación, extensión
+  por eje.
+
+  - **First-order** (18): media, mediana, energía, entropía, asimetría, curtosis, percentiles.
+
+  - **GLCM 2D promediada** (6): contraste, correlación, homogeneidad, energía, disimilitud.
+
+  - **Textura local** (3): gradiente medio, desviación local 3×3×3 mediante el truco `Var(X) = E[X²] −
+  E[X]²` con `uniform_filter`.
+
+
+  Tres optimizaciones clave logran bajar de ~8 s a 1.5 s por sujeto:
+
+
+  1. Recorte por **bounding box** antes de operar sobre el volumen.
+
+  2. **`uniform_filter`** en lugar de `generic_filter(np.std)` (~30× más rápido).
+
+  3. **GLCM solo sobre cortes** con ≥ 25 vóxeles de lesión, cropados a 2D bbox.
+
+
+  ### `run_dual_experiments.py`
+
+
+  Entrena el pipeline dos veces con feature sets distintos:
+
+
+  - **baseline**: todas las features radiómicas (descartando solo el target literal).
+
+  - **no_size_proxy**: drop adicional de `shape_SurfaceArea_mm2`, `firstorder_Energy`, `shape_MaximumDiameter3D_mm`
+  para forzar al modelo a clasificar sin proxies obvios del volumen.
+
+
+  Salidas por experimento en `outputs/tables/`:
+
+
+  - `cv_results_<exp>.csv`
+
+  - `test_results_<exp>.csv`
+
+  - `confusion_matrix_<exp>.csv`
+
+  - `shap_top_features_<exp>.csv` (con fallback a `feature_importances_` si SHAP falla)
+
+  - `feature_set_<exp>.txt` (lista exacta de columnas usadas)
+
+
+  ### `visualize_cases.py`
+
+
+  Genera PNGs de tres casos representativos (lesión pequeña, mediana, grande según percentiles 10/50/90)
+  con tres vistas (axial, coronal, sagital).
+
+
+  ### `decrypt_atlas.py`
+
+
+  Desencriptación AES-256-CBC en streaming de 4 MB (no carga los 9.7 GB en RAM). Usa el modo `evp-sha256`
+  que coincide con OpenSSL del INDI. Acepta contraseña vía `--password=`, variable de entorno `ATLAS_PWD`
+  o `input()` interactivo.
+
+
+  ---
+
+
+  ## Decisiones técnicas relevantes
+
+
+  - **Target proxy**: ATLAS v2.0 no incluye la variable "reingreso a 30 días". Usamos `volumen > 70 mL`
+  como proxy validado en la literatura clínica de stroke.
+
+  - **Sin PyRadiomics**: no hay wheels para Python 3.14; construimos `radiomics_lite.py` con numpy/scipy/skimage
+  puros.
+
+  - **Data leakage**: se descartan `volume_ml`, `shape_VoxelVolume_mL` y `shape_VoxelVolume_mm3` del set
+  X porque son el target literal. El experimento "no_size_proxy" adicionalmente quita SurfaceArea, Energy
+  y MaximumDiameter3D para validar robustez.
+
+  - **Desbalance de clases**: 82 % no severas vs 18 % severas. Compensado con `class_weight=''balanced''`
+  (lineales) y `scale_pos_weight=4.5` (XGBoost).
+
+  - **Imputación de NaN**: 191 celdas con NaN (sobre 954 × 36 = ~34 mil celdas) imputadas con la mediana
+  de cada columna antes de modelar.
+
+
+  ---
+
+
+  ## Cohorte y métricas
+
+
+  - **n total**: 954 sujetos (uno descartado por máscara corrupta).
+
+  - **Distribución target**: 782 (no severa) / 172 (severa, > 70 mL).
+
+  - **Split**: 80 % train (763) / 20 % test (191), estratificado por clase con `random_state = 42`.
+
+  - **CV**: 5-fold estratificada sobre el training set.
+
+
+  ---
+
+
+  ## Limitaciones declaradas
+
+
+  1. **Sin etiqueta directa de reingreso 30d en ATLAS**: modelamos severidad como proxy.
+
+  2. **Sesgo geográfico de cohorte** (EE.UU./Europa/Asia, sin Latinoamérica). No transferible a Guatemala
+  sin recalibración local.
+
+  3. **Solo T1w**: sin DWI/ADC perdemos información de penumbra isquémica. ISLES 2022 sería cohorte complementaria.
+
+  4. **Segmentación manual** consistente en ATLAS; en producción habría que usar segmentación automática
+  (U-Net) con su propio error.
+
+
+  ---
+
+
+  ## Licencia y créditos
+
+
+  - Dataset: **ATLAS v2.0** (Liew et al., *Scientific Data* 2022). Uso académico bajo licencia del INDI.
+
+  - Código del proyecto: uso académico, BE3006 UVG 2026.
+
+  '

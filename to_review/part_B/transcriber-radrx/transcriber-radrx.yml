@@ -1,0 +1,148 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: sjswerdloff/transcriber-radrx
+url: https://github.com/sjswerdloff/transcriber-radrx
+platform: github
+description: A proposed framework for validating transcription, in particular for the radiation therapy
+  domain
+license: NOASSERTION
+language: Python
+keywords:
+- asr
+- clinical-validation
+- ensemble
+- locally-hosted
+- radiation-oncology
+- radiation-therapy
+- speech-recognition
+- speech-to-text
+- validation-framework
+stars: 0
+updated_at: '2026-04-21T07:59:38Z'
+image_source: null
+heuristic_total_score: 32
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 4 particle-therapy term(s).
+- Matched 4 support term(s).
+readme_excerpt: "# transcriber-radrx\n\n[![CI](https://github.com/sjswerdloff/transcriber-radrx/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sjswerdloff/transcriber-radrx/actions/workflows/ci.yml)\n\
+  \n**A validation framework and complementary-ensemble approach for clinical\nautomatic speech recognition\
+  \ (ASR) in radiation oncology dictation.**\n\nThis project provides two things:\n\n1. A **validation\
+  \ framework** for rigorously evaluating whether any ASR\n   backend is safe for clinical dictation —\
+  \ with metrics that go beyond\n   word error rate to catch the safety-critical failures that aggregate\n\
+  \   statistics hide.\n2. A **2-backend ensemble** (Voxtral Mini 3B + Whisper large-v3) that\n   exploits\
+  \ complementary failure profiles between an audio-LLM and a\n   classical ASR to achieve **98.5% automatic\
+  \ resolution** with **zero\n   unrecoverable safety failures** across 72 radiation oncology fixtures,\n\
+  \   leaving only **1.52% of words** for human review.\n\nWe don't have all the answers. We have a framework\
+  \ for asking the questions,\na growing collection of reproducible experiments, and a concrete result\n\
+  that turns two individually unsafe ASR backends into an ensemble that is\ndemonstrably safer than either\
+  \ alone.\n\n---\n\n## What this project is\n\n- A **modular pipeline** for generating synthetic clinical\
+  \ speech, injecting\n  realistic acoustic and noise conditions, running it through multiple ASR\n  backends,\
+  \ and scoring the results with metrics that go beyond word error\n  rate (WER) to include clinical-vocabulary\
+  \ preservation and safety-critical\n  token audit.\n- A **multi-backend bake-off harness** that currently\
+  \ supports six ASR\n  backends (Whisper, MedASR, Cohere Transcribe, Granite-Speech 2B and 8B,\n  Voxtral\
+  \ Mini 3B) and is trivially extensible to any new backend that\n  implements a small Protocol interface.\n\
+  - A **safety-gate metric** with five clinically-derived failure classes\n  (decimal drop, dose value\
+  \ missing, silent unit substitution, dose unit\n  corruption, slashed form loss), each tagged with a\
+  \ correctability rating\n  (UNRECOVERABLE, CONTEXT_RULE, PHONETIC_MAP, ADJACENCY_RULE) and severity\n\
+  \  weight calibrated by a radiation oncology physicist. Produces a formal\n  deployment gate: PASS /\
+  \ CONDITIONAL / FAIL — both for raw ASR output\n  and for predicted post-correction output.\n- A **2-backend\
+  \ ensemble** that aligns Voxtral and Whisper word-by-word,\n  applies 10 prioritized token-class decision\
+  \ rules at disagreement points,\n  and produces a single output with per-word provenance. Introduces\
+  \ **UWR**\n  (Unresolved Word Rate) — the fraction of words the ensemble cannot\n  confidently resolve\
+  \ and must defer to a downstream reviewer.\n- A **72-fixture corpus** across three domains: 24 dense\
+  \ clinical RT\n  fixtures, 28 particle therapy fixtures (proton + carbon ion, including\n  pediatric\
+  \ CSI with junctioned PBS), and 20 anatomy-coverage fixtures\n  (breast, prostate, cervix, rectum, anus,\
+  \ vulva, vagina, endometrium,\n  testes, penis, head & neck, lung).\n- A **Word .docx renderer** with\
+  \ Track Changes that produces two documents\n  from the same ensemble output: an *audit* document (every\
+  \ ensemble\n  decision visible as a tracked change for regulatory traceability) and a\n  *review* document\
+  \ (automated fixes baked in, only UWR items shown as\n  highlighted words with margin comments listing\
+  \ both ASR options).\n- A **reproducible noise-injection stage** using the MUSAN corpus with a\n  prefer-long-first\
+  \ splice strategy so that every transcription is covered\n  by continuous ambient noise at a known signal-to-noise\
+  \ ratio.\n- A **growing set of cycle reports** that document what we tested, what we\n  found, what\
+  \ flipped when we expanded the test scope, and what we decided\n  not to claim yet. The reports are\
+  \ the receipts.\n\n## What this project is not\n\n- It is **not a clinical product.** Nothing in this\
+  \ repository is certified,\n  validated, or approved for clinical use. Any deployment would require\n\
+  \  independent validation against the specific clinical environment, voice\n  distribution, and vocabulary\
+  \ in use.\n- It is **not a leaderboard.** We are less interested in \"which ASR wins\"\n  than in \"\
+  how do you know you can trust the winner.\" The ranking is a\n  by-product of the process working.\n\
+  - It is **not a finished framework.** The cycle reports document work in\n  progress. Every cycle surfaces\
+  \ things the previous cycles got wrong or\n  under-sampled. The `ROADMAP.md` file is a living document\
+  \ of the open\n  work.\n\n## Why this matters\n\nClinical dictation is one of the few contexts where\
+  \ an ASR error can\ndirectly harm a patient. A silent decimal-point drop (`50.4 Gy` transcribed\nas\
+  \ `504 gy`) propagates a ten-times-lethal dose. A misread drug name\nsubstitutes one treatment for another.\
+  \ A misheard anatomy word changes\nthe target of a radiation field. These are not hypothetical — cycle\
+  \ 110\nof this project found a real instance of the decimal-drop failure in one\nof the models tested,\
+  \ hidden underneath a headline word-error-rate of\n9.25 % on the single voice where it happened.\n\n\
+  Word error rate alone will not catch these failures. The aggregate metric\noptimises over the median\
+  \ token; the dangerous ones are in the tails.\nA validation framework for clinical ASR has to look at\
+  \ the individual\nsafety-critical tokens, not just the average.\n\nThe framing is: *we don't have to\
+  \ have the answer, we just need a way of\nthinking about the problem that produces receipts clinicians\
+  \ can check.*\n\n## Findings so far\n\nCurrent as of **cycle 113** (April 2026). See `tests/validation/reports/`\n\
+  for the full writeups, especially `cycle113_voice_panel_findings.md` and\n`bakeoff_proton_findings_2026-04-09.md`.\n\
+  \n### Individual backends: every one fails on safety\n\n1. **No ASR backend is safe on raw output for\
+  \ clinical dictation.** Every\n   backend produces at least one class of clinically significant failure.\n\
+  \   The differences are in failure *mode*, not in whether they fail.\n2. **Voxtral Mini 3B (Mistral)**\
+  \ wins raw WER across all three corpora\n   (0.095 on particle therapy, 0.097 on anatomy, 0.123 on dense\
+  \ RT).\n   But its LLM decoder **silently substitutes `GyE` → `Gy`** on\n   proton/particle therapy\
+  \ prescriptions — losing the ~10% RBE correction\n   that distinguishes physical dose from biologically\
+  \ equivalent dose.\n   This is clinically dangerous because `Gy` on a proton prescription\n   *looks\
+  \ correct* and would pass cursory review.\n3. **Whisper large-v3 (OpenAI)** has higher WER but its failures\
+  \ are\n   **visibly broken** (`GiE`, `Jai E`, `JEE` — obviously wrong\n   renderings that a reviewer\
+  \ would catch). It preserves the spelled-out\n   form `gray equivalent` 100% of the time. Its failures\
+  \ are recoverable\n   via phonetic mapping.\n4. **MedASR** has the worst safety profile: 13 unrecoverable\
+  \ CRITICAL\n   failures on the particle corpus (7 decimal drops, 5 missing dose\n   values, 1 substitution).\
+  \ The decimal drops are information loss at\n   the signal level — no corrector can recover them. MedASR\
+  \ is\n   fundamentally unsuitable for clinical RT deployment.\n5. **Voxtral hallucinated \"Grothendieck\
+  \ beam therapy\"** (a mathematician's\n   name) where the gold text says \"Proton beam therapy.\" This\
+  \ is the\n   audio-LLM hallucination risk made concrete — the LLM decoder reached\n   for a training-data\
+  \ token that acoustically matched the input on the\n   UK voice. Whisper correctly transcribed \"Proton\"\
+  \ at the same position.\n\n### The ensemble: complementary failure profiles are the key\n\n6. **A 2-backend\
+  \ ensemble (Voxtral + Whisper)** exploits the complementary\n   failure profiles: Voxtral's silent substitutions\
+  \ are caught by\n   Whisper's visible corruptions at the same position, and Whisper's\n   vocabulary\
+  \ misses are filled by Voxtral's lower WER.\n\n   | Corpus | Voxtral WER | Whisper WER | **Ensemble\
+  \ WER** | **UWR** |\n   |---|---:|---:|---:|---:|\n   | RT-only (24 dense) | 0.123 | 0.144 | **0.117**\
+  \ | 1.14% |\n   | Particle therapy (28) | 0.114 | 0.143 | 0.135 | 2.18% |\n   | Anatomy (20 sites) |\
+  \ 0.125 | 0.128 | **0.091** | 1.09% |\n   | **Combined (72 fixtures)** | 0.120 | 0.139 | **0.117** |\
+  \ **1.52%** |\n\n   The ensemble beats Voxtral on WER for the RT and anatomy corpora (the\n   vocabulary-match\
+  \ rule picks Whisper's correct words over Voxtral's\n   hallucinations). On particle therapy the ensemble\
+  \ trades 2pp WER for\n   clinical safety. **Combined: 98.5% of words resolved automatically,\n   1.52%\
+  \ deferred to a downstream reviewer.**\n\n7. **UWR (Unresolved Word Rate)** is the fraction of words\
+  \ the ensemble\n   cannot confidently resolve from its two input channels. Unlike WER\n   (which counts\
+  \ all errors including silent ones the system doesn't know\n   about), UWR counts only the cases the\
+  \ system *explicitly flags*.\n   A system with 12% WER and unknown silent failures requires review of\n\
+  \   every word. A system with 1.52% UWR requires review of 45 highlighted\n   words across 2,951 total\
+  \ — a **5–10× reduction** in what a Radiation\n   Oncologist or Medical Physicist needs to deal with,\
+  \ and closer to\n   **50× reduction in cognitive load** because the ensemble converts an\n   untrustworthy\
+  \ document into a trustworthy document with a small number\n   of marked exceptions.\n\n### TTS variance\
+  \ finding\n\n8. **Piper TTS is non-deterministic** — two successive synthesis calls with\n   the same\
+  \ input text produce acoustically different WAV files (different\n   sha256 hashes, different file sizes).\
+  \ The ASR backends are deterministic\n   on fixed input audio (verified by running Whisper and MedASR\
+  \ twice on\n   the same WAV file — identical output both passes). Cross-run variance\n   in bake-off\
+  \ results is entirely upstream in TTS, not in the ASR. This\n   variance is a **cheap proxy for real\
+  \ speaker variance** (Stuart\n   Swerdloff's framing) — different clinicians saying the same prescription\n\
+  \   produce acoustically different audio in the same way piper does.\n\n### Safety-gate metric\n\n9.\
+  \ **The safety-gate metric** classifies every per-sample failure into one\n   of five classes with a\
+  \ correctability tag:\n\n   | Failure class | Severity | Correctability |\n   |---|---|---|\n   | Decimal\
+  \ drop (50.4 → 50) | CRITICAL | UNRECOVERABLE |\n   | Dose value missing | CRITICAL | UNRECOVERABLE\
+  \ |\n   | Silent unit substitution (GyE → Gy) | HIGH | Context rule |\n   | Dose unit corruption (GiE,\
+  \ Jai E) | HIGH | Phonetic map |\n   | Slashed form loss (3D/3D → 3D 3D) | MEDIUM | Adjacency rule |\n\
+  \n   The metric produces two gate decisions: a **raw gate** (all failures)\n   and a **post-correction\
+  \ gate** (only UNRECOVERABLE failures remain).\n   The ensemble achieves post_correction_gate = PASS\
+  \ with zero\n   unrecoverable CRITICAL failures across the combined corpus.\n\n### How the ensemble\
+  \ decision engine works\n\nThe ensemble combines Voxtral Mini 3B and Whisper large-v3 through a\nfour-stage\
+  \ pipeline:\n\n1. **Phrase corrections** (`phrase_corrector.py`) — 13 regex-based\n   multi-word fixes\
+  \ run on each backend's raw output before alignment.\n   Targets systematic ASR failures: dose unit\
+  \ garbling after numbers\n   (`50 ji` → `50 Gy`), compound-word splits (`chemo radiation` →\n   `chemoradiation`),\
+  \ multi-word substitutions (`bracket therapy` →\n   `brachytherapy`).\n2. **Word-level alignment** (`aligner.py`)\
+  \ — the corrected outputs are\n   normalised and aligned using `difflib.SequenceMatcher`. Each position\n\
+  \   becomes an `AlignedSpan`: MATCH, SUBSTITUTION, INSERTION_A (Voxtral\n   only), or INSERTION_B (Whisper\
+  \ only).\n3. **Decision rules** (`decision_rules.py`) — the 10 rules below are\n   evaluated in priority\
+  \ order on each non-MATCH span. First match wins.\n4. **UWR flagging and output** — spans where `needs_review=True`\n\
+  \   propagate to the clinician review document as highlighted words with\n   Word margin comments.\n\
+  \n**The 10 rules (evaluated in order; first match wins):**\n\n| # | Name | Condition | Winner | Review?\
+  \ |\n|---|------|-----------|--------|---------|\n| 1 | MATCH | Both backends agree | Either | No |\n\
+  | 2 | DOSE_UNIT_GYE | Both Gy-variants; at least one is `GyE` | `GyE` | No |\n| 3 | DOSE_UNIT_CONTEXT\
+  \ | Both Gy-variants, neither `GyE`; "

@@ -1,0 +1,40 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: shsargordi/DICOM-to-NIFTI-
+url: https://github.com/shsargordi/DICOM-to-NIFTI-
+platform: github
+description: For converting HNC DICOM images including CT, CBCTs, MRI, segmentations, dose plan for each
+  head and neck cancer patient.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-01-16T17:58:26Z'
+image_source: null
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 5 support term(s).
+readme_excerpt: "## What this repository do\n\nThis repository provides utilities to preprocess radiotherapy\
+  \ head-and-neck DICOM data and convert it to NIfTI for downstream experiments. Supported modalities\
+  \ include:\n- Planning **CT**\n- Treatment-time **CBCT**\n- Treatment-time **MRI**\n- **RTSTRUCT** (structure/segmentation\
+  \ contours)\n- **RTDOSE** (dose grid)\n\nAll conversions rely on **plastimatch** (either containerized\
+  \ via `udocker` or local execution depending on the script).\n\n\n## Preprocessing steps (end-to-end)\n\
+  \n1. **Set input/output paths**\n   - In each script, set:\n     - **Source:** `dicom_folder = '/path/to/DataDicom/'`\
+  \  (root folder that contains one subfolder per patient)\n     - **Destination:** `output_folder = '/path/to/Processed/'`\
+  \ (output root where one subfolder per patient will be created)\n\n2. **Convert CT series (if present)**\n\
+  \   - Run either:\n     - `dcm_extraction_plastimatch-CT-CBCT.py` (CT + CBCT), or\n     - `dcm_extraction_plastimatch-CT-CBCT-RTSTRUCT.py`\
+  \ (CT + CBCT + RTSTRUCT)\n   - The scripts convert any patient subfolder whose name starts with `CT`\
+  \ into `CT*.nii.gz`.\n\n3. **Convert CBCT series (if present)**\n   - Using the same CT/CBCT scripts\
+  \ above, the scripts convert any patient subfolder whose name starts with `CBCT` into `CBCT*.nii.gz`\
+  \ (or `cbct.<date>.nii.gz`, depending on the script naming).\n\n4. **Convert RTSTRUCT**\n   - Run either:\n\
+  \     - `dcm_extraction_plastimatch-CT-CBCT-RTSTRUCT.py` (RTSTRUCT conversion included), or\n     -\
+  \ `dcm_extraction_plastimatch-RTSTRUCT.py` (RTSTRUCT only)\n   - RTSTRUCT files are matched to a **reference\
+  \ CT** (preferably same `StudyDate` when available, otherwise the first CT found), then exported as\
+  \ NIfTI masks with prefix `RTStruct...`.\n\n5. **Convert RTDOSE**\n   - Run: `dcm_extraction_plastimatch-dosi.py`\n\
+  \   - This script searches for `RTDOSE` DICOM files (e.g., `RTDOS*`), selects the most relevant one\
+  \ (by highest max dose), and exports it as a dose NIfTI (`*.nii.gz`) under the patient output folder.\n\
+  \n6. **Convert MRI**\n   - Run: `dcm_extraction_plastimatch-MRI.py`\n   - This script recursively finds\
+  \ folders whose name starts with `MR` and converts them to NIfTI using `--modality MR`.\n"

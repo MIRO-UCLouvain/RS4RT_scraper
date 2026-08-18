@@ -1,0 +1,121 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: PortPy-Project/ECHO-VMAT
+url: https://github.com/PortPy-Project/ECHO-VMAT
+platform: github
+description: Automated VMAT Planning [PMB'21, PMB'23]
+license: Apache-2.0
+language: Python
+keywords:
+- imrt
+- optimization
+- radiotherapy-treatment-planning
+- vmat
+stars: 24
+updated_at: '2026-01-24T12:57:00Z'
+image_source: https://raw.githubusercontent.com/PortPy-Project/ECHO-VMAT/HEAD/images/ECHO-VMAT.png
+heuristic_total_score: 43
+heuristic_reasons:
+- Matched 5 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 particle-therapy term(s).
+- Matched 10 support term(s).
+readme_excerpt: "<h1 align=\"center\">\n  <img src=\"./images/ECHO-VMAT.png\" width=70% height=\"40%\"\
+  >\n</h1>\n\n<h1 align=\"center\"> Automated Volumetric Modulated Arc Therapy (VMAT) using Expedited\
+  \ Constrained Hierarchical Optimization (ECHO) </h1>\n\n<h2 align=\"center\">\n  <a href=\"https://iopscience.iop.org/article/10.1088/1361-6560/ace09e/meta\"\
+  >PMB’2023 </a> | \n    <a href=\"https://iopscience.iop.org/article/10.1088/1361-6560/abee58\">PMB’2021\
+  \ </a> |\n  <a href=\"https://www.iccr2024.org/papers/525886.pdf\">ICCR’2024</a> |\n  <a href=\"https://www.youtube.com/watch?v=895M6j5KjPs&t=1025s\"\
+  > Edelman Competition YouTube Video</a>\n\n</h2>\n\n\n# What is Volumetric Modulated Arc Therapy (VMAT)?\
+  \ \nVMAT is a widely used form of radiotherapy that delivers radiation continuously as the gantry rotates\
+  \ around the patient. Unlike Intensity-Modulated Radiation Therapy (IMRT), which uses a limited number\
+  \ of fixed beams (typically 7-9), VMAT dynamically adjusts both the radiation intensity and the beam\
+  \ shape during the rotation ([Short IMRT YouTube Video](https://www.youtube.com/watch?v=eZS6DVGBx0k),\
+  \ [Short VMAT YouTube Video](https://www.youtube.com/watch?v=AE1SxvnFT3s)). VMAT allows for shorter\
+  \ treatment times, making VMAT a popular choice in clinical settings. However, planning VMAT treatments\
+  \ is more complex due to the large and **non-convex** optimization problems involved. \n\n# What is\
+  \ Expedited Constrained Hierarchical Optimization (ECHO)?\nIn radiotherapy, machine settings must be\
+  \ customized for each cancer patient, requiring extensive iterative manual tuning of parameters. This\
+  \ process is: 1) **time-consuming**, 2) **labor-intensive**, and 3) the plan quality is **heavily dependent**\
+  \ on the skill and experience of the planner. Our team has developed and clinically deployed an in-house\
+  \ automated treatment planning system called ECHO (Expedited Constrained Hierarchical Optimization).\
+  \ ECHO (for both IMRT and VMAT) is seamlessly integrated into the FDA-approved commercial treatment\
+  \ planning system and is used in MSK daily clinical routine, with more than **10,000 patients treated**\
+  \ to date (as of May 2024). ECHO was nominated as a finalist for the prestigious **INFORMS Franz Edelman\
+  \ award** in 2021 ([YouTube](https://www.youtube.com/watch?v=895M6j5KjPs&t=1025s) | [Slides](https://masoudzp.github.io/assets/Edelman-ECHO-Slides.pdf)\
+  \ | [Paper](https://pubsonline.informs.org/doi/abs/10.1287/inte.2021.1095) | [Podcast](https://resoundinglyhuman.com/episodes/2021-franz-edelman-competition-memorial-sloan-kettering/)).\n\
+  \n# 1- Two Big Challenges for Automated VMAT Planning \n\n## 1.1- The Non-Convexity Challenge and our\
+  \ Sequential Convex Programming Solution\n\nSince VMAT continuously delivers radiation as the gantry\
+  \ rotates around the patient, it requires the direct optimization of machine parameters (e.g., gantry\
+  \ and leaf motions). This is in contrast to the IMRT technique, where an effective convex optimization\
+  \ approach exists (i.e., a two-phase heuristic where Phase 1 optimizes the beamlet intensities and Phase\
+  \ 2 optimizes leaf motions). While there is a simple linear relationship between beamlet intensities\
+  \ and the radiation dose delivered to the patient ($\U0001D434\U0001D465=$\U0001D451), the relationship\
+  \ between machine parameters and delivered dose is complex and **non-convex**, making optimization problems\
+  \ computationally interactable. \n\nWith some assumptions, one can formulate the VMAT problem as a **Mixed\
+  \ Integer Programming (MIP)** problem and solve it to global optimality (see [VMAT Global Jupyter Notebook](https://github.com/PortPy-Project/PortPy/blob/master/examples/vmat_global_optimal.ipynb)).\
+  \ Although this approach can provide a benchmark for developing more efficient algorithms, it is computationally\
+  \ extensive and might take days to solve for each patient, making it impractical. \n\nIn our papers\
+  \ ([PMB’2021](https://iopscience.iop.org/article/10.1088/1361-6560/abee58), [PMB’2023](https://iopscience.iop.org/article/10.1088/1361-6560/ace09e/meta)),\
+  \ we proposed an algorithm to solve the non-convex VMAT problem by breaking it down into a sequence\
+  \ of convex problems, hence the name **sequential convex programming** (see [ECHO_VMAT_Jupyter_Notebook](https://github.com/PortPy-Project/ECHO-VMAT/blob/main/examples/echo_vmat_portpy.ipynb)).\
+  \ The key idea is to derive a convex approximation at each iteration by limiting the leaf motions, defining\
+  \ the search space, and merging neighboring beamlets within this search space to create the approximation\
+  \ (see the figure below).\n\n\n<p align=\"center\">\n<img src=\"./images/VMAT-SCP-main-idea_rev2.png\"\
+  \ width=\"80%\" height=\"50%\">\n<p>\n  \n(**Top-left figure**) The grey and white areas represent closed\
+  \ and open beamlets, respectively. The regions framed by red dashed lines indicate the search space\
+  \ within which the leaves can move (the search space consists of two beamlets in this example). (**Top-right\
+  \ figure**) The white beamlets outside the search space will remain open in the next iteration with\
+  \ the same intensity. These can be merged into a single beamlet called an interior beamlet (green area),\
+  \ whose intensity (η) will be optimized as a decision variable. For each pair of neighboring beamlets\
+  \ within the search space (i.e., inside the red frame), we assume they contribute equally (this is our\
+  \ approximation). These pairs can be merged into a boundary beamlet (blue area), whose intensity will\
+  \ be optimized as a decision variable while ensuring it is less than η. If the optimal intensity of\
+  \ a boundary beamlet becomes zero, we will close that beamlet in the next iteration. If it becomes η,\
+  \ we will open it, and if the intensity is in between, we will partially open it. The algorithm also\
+  \ iteratively changes the search space (see our paper for more details). \n\n\n## 1.2- The Multi Criteria\
+  \ Challenge and our Hierarchical Optimization Solution\nOne of the challenges in radiotherapy is the\
+  \ inherent conflict between tumor irradiation and the sparing of nearby healthy tissue. This results\
+  \ in optimization problems with multiple objectives (also known as multi-objective or multiple-criteria\
+  \ optimization). This means, in the following general form of a radiotherapy optimization problem, the\
+  \ objective function $\U0001D453$ consists of multiple objectives: $f = (f_1,f_2,…,f_n)$\n\n$Minimize\
+  \ \\text{ } f(A\\mathbf{x},\\mathbf{x})$\n\nSubject to $g(A\\mathbf{x},\\mathbf{x})\\leq 0,\\mathbf{x}\\\
+  geq 0$\n\nMulti-objective optimization is a well-studied subfield within operations research and mathematical\
+  \ optimization communities, and many techniques exist in the literature to address these problems. One\
+  \ such technique is the weighted-sum method, which assigns weights to the objective functions and optimizes\
+  \ their weighted sum: (i.e., $\\sum _{i=1,..,n}w_i\\times f_i$). This technique has been implemented\
+  \ by most commercial radiotherapy planning systems and is widely adopted in clinical practice. However,\
+  \ this approach requires manual and iterative fine-tuning of the weights, making radiotherapy planning\
+  \ a time-consuming and labor-intensive process with the quality of the plan heavily dependent on the\
+  \ experience of the planners.\n\n•  **Step 1:** Focus on delivering the radiation dose as close as possible\
+  \ to the prescription dose in the tumor voxels while ensuring all critical clinical criteria are met\
+  \ by expressing them as **hard constraints**.\n\n•  **Step 2:** Minimize radiation to the nearby healthy\
+  \ tissues while preserving the results of the first step. \n\nFor more details see [ECHO_VMAT_Jupyter_Notebook](https://github.com/PortPy-Project/ECHO-VMAT/blob/main/examples/echo_vmat_portpy.ipynb)\
+  \ and our papers ([PMB’2021](https://iopscience.iop.org/article/10.1088/1361-6560/abee58), [PMB’2023](https://iopscience.iop.org/article/10.1088/1361-6560/ace09e/meta)).\
+  \ \n\n**Important Note**: Multi criteria and non-convexity are two separate challenges in radiotherapy\
+  \ planning. As demonstrated in our [VMAT_Deep_Learning_Jupyter_Notebook](https://github.com/PortPy-Project/PortPy/blob/master/examples/vmat_scp_dose_prediction.ipynb),\
+  \ deep learning can be used to address the multi-criteria challenge by learning the mapping between\
+  \ patient geometry and dose distribution. This approach allows for predicting the 3D dose distribution\
+  \ for a new patient. However, deep learning does not address the non-convexity challenge and the sequential\
+  \ convex programming can be used to convert the predicted dose into a deliverable treatment plan.\n\n\
+  \n# Results\nTo evaluate the performance of the algorithm, we compared its results to the **global optimal**\
+  \ solution obtained by solving the computationally intensive **Mixed Integer Programming (MIP)** problem\
+  \ on a small prostate case.\n\n<p align=\"center\">\n<img src=\"./images/VMAT-SCP-Global_rev1.png\"\
+  \ width=\"80%\" height=\"50%\">\n<p>\n\n**Figure Explanation**: The above figure illustrates that our\
+  \ algorithm can identify optimal solutions that are close to the global optimal solution.\n\nWe have\
+  \ also retrospectively compared the automated VMAT plans with the manually generated VMAT plans used\
+  \ for patient treatment for 60 patients across three different disease sites (paraspinal, oligometastatic,\
+  \ lung). Below are the results for 20 lung patients.\n\n\n<p align=\"center\">\n<img src=\"./images/VMAT-SCP-Lung_rev1.png\"\
+  \ width=\"80%\" height=\"50%\">\n<p>\n\n**Figure Explanation**: The above figure demonstrates that the\
+  \ automatically generated VMAT plans are superior to or comparable with the manually generated plans\
+  \ in terms of tumor coverage and healthy tissue sparing.\n\n## Reference \n\n```\n\n@article{dursun2023automated,\n\
+  \  title={Automated VMAT treatment planning using sequential convex programming: algorithm development\
+  \ and clinical implementation},\n  author={Dursun, P{\\i}nar and Hong, Linda and Jhanwar, Gourav and\
+  \ Huang, Qijie and Zhou, Ying and Yang, Jie and Pham, Hai and Cervino, Laura and Moran, Jean M and Deasy,\
+  \ Joseph O and others},\n  journal={Physics in Medicine \\& Biology},\n  volume={68},\n  number={15},\n\
+  \  pages={155006},\n  year={2023},\n  publisher={IOP Publishing}\n}\n\n@article{dursun2021solving,\n\
+  \  title={Solving the volumetric modulated arc therapy (VMAT) problem using a sequential convex programming\
+  \ method},\n  author={Dursun, P{\\i}nar and Zarepisheh, Masoud and Jhanwar, Gourav and Deasy, Joseph\
+  \ O},\n  journal={Physics in Medicine \\& Biology},\n  volume={66},\n  number={8},\n  pages={085004},\n\
+  \  year={2021},\n  publisher={IOP Publishing}\n}\n\n```\n"

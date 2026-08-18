@@ -1,0 +1,49 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Anirudh2465/Brain-tumor-segmentation-using-SNN
+url: https://github.com/Anirudh2465/Brain-tumor-segmentation-using-SNN
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-08-16T05:23:40Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# Spiking U-Seg-Net\n\nReproduction of **\"Reliable Brain Tumor Segmentation Based on\
+  \ Spiking Neural Networks with Efficient Training\"** (Ghiardelli, Tang, Sun — Maastricht University,\
+  \ 2026, arXiv:2601.16652v1).\n\n## Task\n\n3D brain tumor segmentation (ET / TC / WT) from multi-modal\
+  \ MRI using:\n- **Spiking U-Seg-Net** — U-Net-style encoder-decoder with PLIF spiking neurons\n- **FPTT**\
+  \ (Forward Propagation Through Time) — no BPTT, O(1) memory in sequence length\n- **Multi-view ensemble**\
+  \ (sagittal + coronal + axial), voxel-wise probability averaging\n- **BraTS 2023 dataset** — 1,251 labeled\
+  \ training cases (4 MRI modalities each)\n\n## Repository Structure\n\n```\nspiking-useg-net/\n├── configs/\
+  \                  # YAML hyperparameter configs\n├── data/\n│   ├── raw/                  # extracted\
+  \ BraTS NIfTI files (gitignored)\n│   ├── processed/            # cropped + normalized .npy volumes\n\
+  │   └── splits/               # 5-fold subject-id lists (json)\n├── src/spiking_useg/\n│   ├── data/\
+  \                 # preprocess, slicing, dataset, augmentation\n│   ├── models/               # PLIF\
+  \ neurons, surrogate gradient, U-Net\n│   ├── training/             # FPTT optimizer, loss, train loop\n\
+  │   ├── inference/            # per-view prediction, multi-view ensemble\n│   ├── eval/            \
+  \     # Dice, NLL metrics, table report generation\n│   ├── efficiency/           # spike-rate-aware\
+  \ FLOPs counter\n│   └── utils/                # seed, logging, visualization\n├── scripts/        \
+  \          # CLI entry points\n├── tests/                    # pytest unit tests\n├── notebooks/   \
+  \             # Jupyter sanity checks\n└── experiments/              # checkpoints + metrics (gitignored)\n\
+  ```\n\n## Quick Start\n\n### 1. Install dependencies\n\n```bash\npip install -r requirements.txt\npip\
+  \ install -e .\n```\n\n### 2. Preprocess data (extracts ZIP, crops, normalizes, slices, creates splits)\n\
+  \n```bash\n# Process all 1,251 subjects (takes a while — ~30 GB output)\npython scripts/run_preprocess.py\
+  \ --data_dir data --subset 0\n\n# Quick smoke test on 5 subjects only\npython scripts/run_preprocess.py\
+  \ --data_dir data --subset 5\n```\n\n### 3. Train a single view / fold\n\n```bash\npython scripts/train_single_view.py\
+  \ \\\n    --config configs/brats23.yaml \\\n    --view axial --fold 0 \\\n    --max_subjects 5 --epochs\
+  \ 3   # smoke test\n```\n\n### 4. Full training (all 3 views × 5 folds)\n\n```bash\npython scripts/train_all_folds.py\
+  \ --config configs/brats23.yaml\n```\n\n### 5. Ensemble evaluation\n\n```bash\npython scripts/run_ensemble_eval.py\
+  \ --config configs/brats23.yaml --fold 0\n```\n\n### 6. Run tests\n\n```bash\npytest tests/ -v\n```\n\
+  \n## Deviations from Paper\n\nSee [DEVIATIONS.md](DEVIATIONS.md) for all documented assumptions and\
+  \ deviations.\n\n## Citation\n\n```\nGhiardelli et al. (2026). \"Reliable Brain Tumor Segmentation Based\
+  \ on\nSpiking Neural Networks with Efficient Training.\" arXiv:2601.16652v1.\n\nBaid et al. (2021).\
+  \ \"The RSNA-ASNR-MICCAI BraTS 2021 Benchmark on Brain Tumor\nSegmentation and Radiogenomic Classification.\"\
+  \ arXiv:2107.02314.\n```\n"

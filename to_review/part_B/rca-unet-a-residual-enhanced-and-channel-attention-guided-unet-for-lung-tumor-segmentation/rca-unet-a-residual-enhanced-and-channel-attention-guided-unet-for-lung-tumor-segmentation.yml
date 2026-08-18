@@ -1,0 +1,92 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: wangyongsmile/RCA-UNet-A-Residual-Enhanced-and-Channel-Attention-Guided-UNet-for-Lung-Tumor-Segmentation
+url: https://github.com/wangyongsmile/RCA-UNet-A-Residual-Enhanced-and-Channel-Attention-Guided-UNet-for-Lung-Tumor-Segmentation
+platform: github
+description: RCA-Unet for Lung Tumor Segmentation
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-07T07:11:48Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# RCA-UNet: Residual-Enhanced and Channel-Attention-Guided U-Net for Lung Tumor Segmentation\n\
+  \n## Description\n\nThis repository contains the PyTorch implementation used in the article **“RCA-UNet:\
+  \ A Residual-Enhanced and Channel-Attention Guided U-Net for Lung Tumor Segmentation.”**\n\nRCA-UNet\
+  \ is a two-dimensional encoder-decoder segmentation network. Standard convolutional blocks in the encoder\
+  \ and decoder are replaced with residual modules, and channel-attention modules are inserted into the\
+  \ skip pathways to recalibrate encoder features before fusion.\n\nThe repository contains:\n\n- RCA-UNet\
+  \ implementations for the LUNA16 and MSD experiments;\n- implementations of the comparison models;\n\
+  - component ablation experiments;\n- data-augmentation, dropout, loss-weight, and learning-rate-scheduler\
+  \ ablations;\n- preprocessing scripts;\n- training code; and\n- evaluation metrics.\n\n## Repository\n\
+  \nhttps://github.com/wangyongsmile/RCA-UNet-A-Residual-Enhanced-and-Channel-Attention-Guided-UNet-for-Lung-Tumor-Segmentation\n\
+  \n## Dataset information\n\nThe datasets are **not redistributed in this repository**.\n\n### LUNA16\n\
+  \n- Dataset: LUng Nodule Analysis 2016 (LUNA16)\n- Source: official LUNA16 challenge\n- Underlying image\
+  \ collection: LIDC-IDRI, The Cancer Imaging Archive\n- Modality: chest computed tomography\n- Official\
+  \ LUNA16 download page: https://luna16.grand-challenge.org/Download/\n- LUNA16 Zenodo records:\n  -\
+  \ https://doi.org/10.5281/zenodo.2595812\n  - https://doi.org/10.5281/zenodo.2596478\n- LIDC-IDRI dataset\
+  \ DOI: https://doi.org/10.7937/K9/TCIA.2015.LO9QL9SX\n- LIDC-IDRI license: Creative Commons Attribution\
+  \ 3.0 Unported\n\nRequired LIDC-IDRI acknowledgement:\n\n> The authors acknowledge the National Cancer\
+  \ Institute and the Foundation for the National Institutes of Health, and their critical role in the\
+  \ creation of the free publicly available LIDC/IDRI Database used in this study.\n\n### MSD Task06_Lung\n\
+  \n- Dataset: Medical Segmentation Decathlon\n- Task: Task06_Lung\n- Modality: computed tomography\n\
+  - Target: lung tumor\n- Official dataset page: http://medicaldecathlon.com/\n- Official AWS download\
+  \ page: https://medicaldecathlon.com/dataaws/\n- License: Creative Commons Attribution-ShareAlike 4.0\
+  \ International\n- Dataset paper: Antonelli et al., *Nature Communications* (2022), “The Medical Segmentation\
+  \ Decathlon.”\n\nThe expected original MSD structure is:\n\n```text\nTask06_Lung/\n├── imagesTr/\n│\
+  \   ├── lung_001.nii.gz\n│   └── ...\n├── labelsTr/\n│   ├── lung_001.nii.gz\n│   └── ...\n└── dataset.json\n\
+  ```\n\n## Code information\n\nThe current public repository contains two experiment branches:\n\n```text\n\
+  code/\n├── LUNA/\n│   ├── comparison_and_module_ablation/\n│   └── parameter_ablation/\n└── MSD/\n \
+  \   ├── comparison_and_module_ablation/\n    ├── parameter_ablation/\n    └── processed.py\n```\n\n\
+  ## Requirements\n\n- Python 3.10 or later\n- PyTorch\n- NumPy\n- SciPy\n- pandas\n- scikit-learn\n-\
+  \ scikit-image\n- nibabel\n- SimpleITK\n- matplotlib\n- tqdm\n- albumentations\n- OpenCV-Python\n- Pillow\n\
+  - torchvision\n\nInstall the dependencies with:\n\n```bash\npython -m venv .venv\nsource .venv/bin/activate\
+  \  # Linux/macOS\n# .venv\\Scripts\\activate  # Windows\npython -m pip install --upgrade pip\npip install\
+  \ -r requirements.txt\n```\n\nFor strict reproducibility, replace the minimum-version requirements with\
+  \ the exact versions exported from the environment used to generate the manuscript results:\n\n```bash\n\
+  pip freeze > requirements-lock.txt\n```\n\n## Methodology\n\n### MSD preprocessing\n\n1. Download `Task06_Lung`.\n\
+  2. Open `code/MSD/processed.py`.\n3. Set:\n   - `DATA_PATH` to the directory containing `imagesTr` and\
+  \ `labelsTr`;\n   - `SAVE_DIR` to the desired preprocessed-data directory.\n4. Run:\n\n```bash\npython\
+  \ code/MSD/processed.py\n```\n\nThe script:\n\n- matches image and annotation files;\n- uses random\
+  \ seed 42;\n- performs a patient-level 8:2 training-validation split;\n- extracts two-dimensional axial\
+  \ slices;\n- resizes slices to 256 × 256 pixels;\n- applies CT windowing and normalization;\n- saves\
+  \ image and label arrays as `.npy` files.\n\n**Important consistency check:** the current script removes\
+  \ slices with fewer than 50 tumor pixels from both training and validation subsets and currently uses\
+  \ linear interpolation for label masks. The manuscript and code must be made identical before resubmission.\n\
+  \n### MSD model training\n\nFrom the MSD comparison directory, train RCA-UNet with:\n\n```bash\npython\
+  \ main.py \\\n  --model rca_unet \\\n  --data-dir /path/to/LungPreprocessed_63 \\\n  --batch-size 8\
+  \ \\\n  --epochs 120 \\\n  --lr 8e-5 \\\n  --weight-decay 2e-5 \\\n  --results-dir results\n```\n\n\
+  Available comparison and component-ablation model names are:\n\n```text\nrca_unet\natt_unet\ndrs_cnn2\n\
+  incremental_mrrn\nr2_unet\nbasic_unet\nsegnet\nno_residual_rca_unet\nno_channel_attention_rca_unet\n\
+  ```\n\nExample:\n\n```bash\npython main.py --model basic_unet --data-dir /path/to/LungPreprocessed_63\n\
+  python main.py --model no_residual_rca_unet --data-dir /path/to/LungPreprocessed_63\npython main.py\
+  \ --model no_channel_attention_rca_unet --data-dir /path/to/LungPreprocessed_63\n```\n\n### LUNA16 preprocessing\
+  \ and training\n\n1. Download the LUNA16 CT subsets and annotations.\n2. Edit `BASE_PATH` in the LUNA\
+  \ comparison experiment `config.py`.\n3. Confirm that the expected CT and annotation paths match the\
+  \ loader implementation.\n4. From the LUNA comparison directory, run:\n\n```bash\npython main.py\n```\n\
+  \nThe released configuration sets:\n\n```text\nrandom seed: 42\nbatch size: 8\nepochs: 200\nlearning\
+  \ rate: 2e-4\nweight decay: 1e-4\n```\n\nThe current LUNA `main.py` sequentially trains the comparison\
+  \ models and RCA-UNet variants.\n\n## Ablation experiments\n\nThe repository contains scripts for:\n\
+  \n- residual-module ablation;\n- channel-attention ablation;\n- no, moderate, and strong data augmentation;\n\
+  - no, moderate, and high dropout;\n- loss-weight comparisons; and\n- learning-rate-scheduler comparisons.\n\
+  \nRun each script from its corresponding `parameter_ablation` directory. Store outputs in clearly named\
+  \ subdirectories and retain the exact configuration used for every manuscript figure.\n\n## Evaluation\n\
+  \nThe released code calculates:\n\n- Dice coefficient;\n- intersection over union;\n- sensitivity;\n\
+  - specificity;\n- precision;\n- 95th-percentile Hausdorff distance; and\n- average surface distance.\n\
+  \nThe threshold for binary segmentation is 0.5.\n\n**Distance-unit note:** the current implementation\
+  \ calculates HD95 and ASD in pixel units unless image spacing is explicitly supplied. Do not report\
+  \ these values as millimetres without spacing-aware calculations.\n\n\n## Citation\n\nPlease cite the\
+  \ associated article after publication. The MSD and LIDC-IDRI datasets must also be cited according\
+  \ to their data-use policies.\n\n## License\n\nThe source code is released under the MIT License. The\
+  \ third-party datasets retain their original licenses and are not covered by the code license.\n\n##\
+  \ Contribution guidelines\n\nIssues and pull requests are welcome. Contributions should:\n\n- use English\
+  \ comments and documentation;\n- follow PEP 8 where practical;\n- avoid committing patient data, derived\
+  \ dataset files, model checkpoints containing restricted data, local absolute paths, or cache files;\n\
+  - include a description of the change and a reproducible test command.\n"

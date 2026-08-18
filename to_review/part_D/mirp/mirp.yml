@@ -1,0 +1,138 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: oncoray/mirp
+url: https://github.com/oncoray/mirp
+platform: github
+description: Medical Image Radiomics Processor
+license: EUPL-1.2
+language: Python
+keywords:
+- image-processing
+- radiomics
+stars: 88
+updated_at: '2026-07-15T03:10:23Z'
+image_source: https://raw.githubusercontent.com/oncoray/mirp/master/icon/mirp.svg
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 5 support term(s).
+readme_excerpt: "<img src=\"https://raw.githubusercontent.com/oncoray/mirp/master/icon/mirp.svg\" align=\"\
+  right\" width=\"120\"/>\r\n\r\n![GitHub License](https://img.shields.io/github/license/oncoray/mirp)\r\
+  \n![PyPI - Python Version](https://img.shields.io/pypi/pyversions/mirp)\r\n[![PyPI - Version](https://img.shields.io/pypi/v/mirp)](https://pypi.org/project/mirp/)\r\
+  \n![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/oncoray/mirp/auto-test-dependencies_timed.yml)\r\
+  \n[![JOSS](https://joss.theoj.org/papers/165c85b1ecad891550a21b12c8b2e577/status.svg)](https://joss.theoj.org/papers/165c85b1ecad891550a21b12c8b2e577)\r\
+  \n\r\n# Medical Image Radiomics Processor\r\n\r\nMIRP is a python package for quantitative analysis\
+  \ of medical images. It focuses on processing images for integration\r\nwith radiomics workflows. These\
+  \ workflows either use quantitative features computed using MIRP, or directly use MIRP\r\nto process\
+  \ images as input for neural networks and other deep learning models.\r\n\r\nMIRP offers the following\
+  \ main functionality:\r\n\r\n- [Extract and collect metadata](https://oncoray.github.io/mirp/image_metadata.html)\
+  \ from medical images.\r\n- [Find and collect labels or names](https://oncoray.github.io/mirp/mask_labels.html)\
+  \ of regions of interest from image \r\n  segmentations.\r\n- [Compute quantitative features](https://oncoray.github.io/mirp/quantitative_image_analysis.html)\
+  \ from regions of interest in medical images.\r\n- [Process images for deep learning](https://oncoray.github.io/mirp/deep_learning.html).\r\
+  \n\r\n## Tutorials\r\n\r\nWe currently offer the following tutorials:\r\n\r\n- [Computing quantitative\
+  \ features from MR images](https://oncoray.github.io/mirp/tutorial_compute_radiomics_features_mr.html)\r\
+  \n- [Applying filters to images](https://oncoray.github.io/mirp/tutorial_apply_image_filter.html)\r\n\
+  \r\n## Documentation\r\n\r\nDocumentation can be found here: https://oncoray.github.io/mirp/\r\n\r\n\
+  ## Supported Python and OS\r\n\r\nMIRP currently supports the following Python versions and operating\
+  \ systems: \r\n\r\n| Python | Linux     | Win       | OSX       |\r\n|--------|-----------|-----------|-----------|\r\
+  \n| 3.10   | < v2.6.0  | < v2.6.0  | < v2.6.0  |\r\n| 3.11   | Supported | Supported | Supported |\r\
+  \n| 3.12   | Supported | Supported | Supported |\r\n| 3.13   | Supported | Supported | Supported |\r\
+  \n| 3.14   | Supported | Supported | Supported |\r\n\r\n## Supported imaging and mask types\r\n\r\n\
+  MIRP currently supports the following image and mask types:\r\n\r\n| Data format | Data type | Supported\
+  \ modality                              |\r\n|-------------|-----------|-------------------------------------------------|\r\
+  \n| DICOM       | image     | CT, MR (incl. ADC, DCE), PT, RTDOSE, CR, DX, MG |\r\n| DICOM       | mask\
+  \      | RTSTRUCT, SEG                                   |\r\n| NIfTI       | any       | any      \
+  \                                       |\r\n| NRRD        | any       | any                       \
+  \                      |\r\n| numpy       | any       | any                                        \
+  \     |\r\n| MIRP-native | any       | any                                             | \r\n\r\nNIfTI,\
+  \ NRRD, and numpy files support any kind of (single-channel) image. MIRP cannot process RGB or 4D images.\
+  \ \r\nMIRP-native images and masks can be produced by functions such as `extract_images`, and then used\
+  \ as input. \r\n\r\n## Installing MIRP\r\nMIRP is available from PyPI and can be installed using `pip`,\
+  \ or other installer tools:\r\n\r\n```commandline\r\npip install mirp\r\n```\r\n\r\n## Examples - Computing\
+  \ radiomics features\r\n\r\nMIRP can be used to compute quantitative features from regions of interest\
+  \ in images in an IBSI-compliant manner \r\nusing a standardized workflow This requires both images\
+  \ and masks. MIRP can process DICOM, NIfTI, NRRD and numpy \r\nimages. Masks are DICOM radiotherapy\
+  \ structure sets (RTSTRUCT), DICOM segmentation (SEG) or volumetric data with \r\ninteger labels (e.g.\
+  \ 1, 2, etc.).\r\n\r\nBelow is a minimal working example for extracting features from a single image\
+  \ file and its mask.\r\n\r\n```python\r\nfrom mirp import extract_features\r\n\r\nfeature_data = extract_features(\r\
+  \n    image=\"path to image\",\r\n    mask=\"path to mask\",\r\n    base_discretisation_method=\"fixed_bin_number\"\
+  ,\r\n    base_discretisation_n_bins=32\r\n)\r\n```\r\nInstead of providing the path to the image (`\"\
+  path_to_image\"`), a numpy image can be provided, and the same goes for \r\n`\"path to mask\"`. The\
+  \ disadvantage of doing so is that voxel spacing cannot be determined. \r\n\r\nMIRP also supports processing\
+  \ images and masks for multiple samples (e.g., patients). The syntax is much the same, \r\nbut depending\
+  \ on the file type and directory structure, additional arguments need to be specified. For example,\
+  \ \r\nassume that files are organised in subfolders for each sample, i.e. `main_folder / sample_name\
+  \ / subfolder`. The \r\nminimal working example is then:\r\n\r\n```python\r\nfrom mirp import extract_features\r\
+  \n\r\nfeature_data = extract_features(\r\n    image=\"path to main image directory\",\r\n    mask=\"\
+  path to main mask directory\",\r\n    image_sub_folder=\"image subdirectory structure relative to main\
+  \ image directory\",\r\n    mask_sub_folder=\"mask subdirectory structure relative to main mask directory\"\
+  ,\r\n    base_discretisation_method=\"fixed_bin_number\",\r\n    base_discretisation_n_bins=32\r\n)\r\
+  \n```\r\nThe above example will compute features sequentially. MIRP supports parallel processing using\
+  \ the `ray` package. \r\nFeature computation can be parallelized by specifying the `num_cpus` argument,\
+  \ e.g. `num_cpus=2` for two CPU threads.\r\n\r\n## Examples - Image preprocessing for deep learning\r\
+  \nDeep learning-based radiomics is an alternative to using predefined quantitative features. MIRP supports\
+  \ \r\npreprocessing of images and masks using the same standardized workflow that is used for computing\
+  \ features.\r\n\r\nBelow is a minimal working example for preprocessing deep learning images. Note that\
+  \ MIRP uses the numpy notation \r\nfor indexing, i.e. indices are ordered [*z*, *y*, *x*].\r\n\r\n```python\r\
+  \nfrom mirp import deep_learning_preprocessing\r\n\r\nprocessed_images = deep_learning_preprocessing(\r\
+  \n    image=\"path to image\",\r\n    mask=\"path to mask\",\r\n    crop_size=[50, 224, 224]\r\n)\r\n\
+  ```\r\n\r\n## Examples - Summarising image metadata\r\n\r\nMIRP can also summarise image metadata. This\
+  \ is particularly relevant for DICOM files that have considerable \r\nmetadata. Other files, e.g. NIfTI,\
+  \ only have metadata related to position and spacing of the image.\r\n\r\nBelow is a minimal working\
+  \ example for extracting metadata from a single image file.\r\n```python\r\nfrom mirp import extract_image_parameters\r\
+  \n\r\nimage_parameters = extract_image_parameters(\r\n    image=\"path to image\"\r\n)\r\n```\r\n\r\n\
+  MIRP also supports extracting metadata from multiple files. For example, assume that files are organised\
+  \ in \r\nsubfolders for each sample, i.e. `main_folder / sample_name / subfolder`. The minimal working\
+  \ example is then:\r\n```python\r\nfrom mirp import extract_image_parameters\r\n\r\nimage_parameters\
+  \ = extract_image_parameters(\r\n    image=\"path to main image directory\",\r\n    image_sub_folder=\"\
+  image subdirectory structure relative to main image directory\"\r\n)\r\n```\r\n\r\n## Examples - Finding\
+  \ labels\r\n\r\nMIRP can identify which labels are present in masks. For a single mask file, labels\
+  \ can be retrieved as follows:\r\n```python\r\nfrom mirp import extract_mask_labels\r\n\r\nmask_labels\
+  \ = extract_mask_labels(\r\n    mask=\"path to mask\"\r\n)\r\n```\r\n\r\nMIRP supports extracting labels\
+  \ from multiple masks. For example, assume that files are organised in subfolders for \r\neach sample,\
+  \ i.e. `main_folder / sample_name / subfolder`. The minimal working example is then:\r\n```python\r\n\
+  from mirp import extract_mask_labels\r\nmask_labels = extract_mask_labels(\r\n    mask=\"path to main\
+  \ mask directory\",\r\n    mask_sub_folder=\"mask subdirectory structure relative to main mask directory\"\
+  \r\n)\r\n```\r\n\r\n## Examples - Using MIRP native images and mask\r\n\r\nMIRP supports exporting images\
+  \ and masks in its native, internal format. This is specified using the \r\n`image_export_format=\"\
+  native\"` argument, e.g. in `extract_images(.., image_export_format=\"native\")` or \r\n`extract_features_and_images(...,\
+  \ image_export_format=\"native\"`). The resulting images and masks can be used again\r\nas input, e.g.\
+  \ `extract_features(image=native_images, masks=native_masks, ...)`, with `native_images` and \r\n`native_masks`\
+  \ being the images and masks in the native format, respectively.\r\n  \r\nThis allows for external processing\
+  \ of the contents of images and masks, such as performing gamma corrections. The \r\nimage and mask\
+  \ contents are retrieved using the `get_voxel_grid` method, and set using the `set_voxel_grid` method.\r\
+  \n`set_voxel_grid` expects a `numpy.ndarray` of the same shape and type (`float` for images, `bool`\
+  \ for masks) as the \r\noriginal.\r\n\r\n```python\r\nfrom mirp import extract_images, extract_features\r\
+  \n\r\nresults = extract_images(\r\n    image=\"path to image\",\r\n    mask=\"path to mask\",\r\n  \
+  \  image_export_format=\"native\"\r\n)\r\n\r\nimage = results[0][0][0]\r\nmask = results[0][1][0]\r\n\
+  \r\n# Obtain the numpy.ndarray.\r\nvoxel_grid = image.get_voxel_grid()\r\n\r\n# Divide intensities by\
+  \ 2.\r\nimage.set_voxel_grid(voxel_grid=voxel_grid / 2.0)\r\n\r\nfeatures = extract_features(\r\n  \
+  \  image=image,\r\n    mask=mask,\r\n    base_discretisation_method=\"fixed_bin_number\",\r\n    base_discretisation_n_bins=32\r\
+  \n)[0]\r\n```\r\n\r\n# Compatibility\r\n\r\nMIRP is compliant with the Image Biomarker Standardisation\
+  \ Initiative's reference standards for image processing and\r\nfeature  computation and for image filters.\
+  \ Compliance is checked automatically as part\r\nof the software tests.\r\n\r\nThe reference standards\
+  \ do not cover all possible image pre-processing steps, features or image filters. There are three\r\
+  \npre-processing steps in MIRP that are used by default and that currently lack reference standards,\
+  \ and thus may be\r\nimplemented differently in other software packages, or be absent entirely. These\
+  \ are:\r\n\r\n1. **Anti-aliasing**: Downsampling, i.e. resampling from a high-resolution scan to a lower-resolution\
+  \ image leads\r\nto aliasing artifacts because the interpolation algorithms will primary use local information\
+  \ from the voxels directly\r\nadjacent to each interpolation point. To counteract this, MIRP by default\
+  \ uses a Gaussian\r\nanti-aliasing filter prior to resampling. This filters smooths local information,\
+  \ prevent anti-aliasing artifacts. To\r\nturn anti-aliasing off set `anti_aliasing = False`.\r\n\r\n\
+  2. **Use of tissue masks for intensity normalisation**: Intensity normalisation is a pre-processing\
+  \ step commonly\r\nused for harmonising clinical MRI sequences. These methods use information from intensities\
+  \ in a scan. Generally,\r\ninformation from voxels outside the studied patient (air voxels) are not\
+  \ relevant. By default, MIRP tries to exclude\r\nsuch voxels by generating a tissue mask based on the\
+  \ intensity distribution, and use only information from voxels\r\nrelated containing patient tissue\
+  \ for normalisation. To turn tissue masks off, set `tissue_mask_type = \"none\"`.\r\n\r\n3. **Conversion\
+  \ of PET values to SUV**: If PET scans are provided in the DICOM format, by default MIRP will use\r\n\
+  information contained in the DICOM headers to compute body-weight corrected standardised uptake values.\
+  \ To use raw PET\r\ninformation, set `pet_suv_conversion = \"none\"`. Other types of standardised uptake\
+  \ value can be computed using other\r\noptions.\r\n\r\n# Citation info\r\nMIRP has been published in\
+  \ *Journal of Open Source Software*:\r\n```Zwanenburg A, Löck S. MIRP: A Python package for standardised\
+  \ radiomics. J Open Source Softw. 2024;9: 6413. doi:10.21105/joss.06413```\r\n\r\n# Contributing\r\n\
+  If you have ideas for improving MIRP, please read the short [contribution guide](./CONTRIBUTING.md).\r\
+  \n\r\n# Developers and contributors\r\n\r\nMIRP is developed by:\r\n* Alex Zwanenburg\r\n\r\nWe would\
+  \ like thank the following contributors:\r\n* Stefan Leger\r\n* Sebastian Starke\r\n"

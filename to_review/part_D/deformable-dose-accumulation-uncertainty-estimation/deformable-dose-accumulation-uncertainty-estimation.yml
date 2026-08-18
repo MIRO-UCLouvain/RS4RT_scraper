@@ -1,0 +1,91 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: zhangyebb/deformable-dose-accumulation-uncertainty-estimation
+url: https://github.com/zhangyebb/deformable-dose-accumulation-uncertainty-estimation
+platform: github
+description: ''
+license: null
+language: MATLAB
+keywords: []
+stars: 0
+updated_at: '2025-06-03T08:19:12Z'
+image_source: null
+heuristic_total_score: 32
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 particle-therapy term(s).
+- Matched 4 support term(s).
+readme_excerpt: "# Deformable dose accumulation uncertainty estimation\n\nThis MATLAB code is the basis\
+  \ for the publication:<br>\n**An approach for estimating dosimetric uncertainties in deformable dose\
+  \ accumulation in pencil beam scanning proton therapy for lung cancer**<br>\n**Citation:** _Florian\
+  \ Amstutz et al 2021 Phys. Med. Biol. 66 105007_\n\nThe code estimates the dosimetric uncertainties\
+  \ for dose accumulation to be expected when applying an ensemble of DIR algorithms. For this purpose,\
+  \ the approach makes use of a geometric DIR uncertainty map combined with the dose gradient and a direction\
+  \ factor (giving the directional dependence of the geometric uncertainty and the dose gradient). The\
+  \ geometric DIR uncertainty map is calculated for the first fraction by applying multiple DIR and taking\
+  \ the max-min magnitude of the resulting vectors at each voxel. One reference DIR is chosen and by correlating\
+  \ the magnitude of this vector to the max-min a linear model is built. In later fractions, only the\
+  \ reference DIR has to be applied and the geometric DIR uncertainty map is modelled and used for the\
+  \ estimation of the dose uncertainties. \n\nThis code is for research purposes only. You can use and\
+  \ edit the code, please cite _Florian Amstutz et al 2021 Phys. Med. Biol. 66 105007_.\n\n# Specific\
+  \ introduction to use the code\n\n## Input\n- Deformable image registrations between reference CT and\
+  \ repeated CT in MHA-format\n    - Multiple registrations for first repeated CT\n    - One registration\
+  \ for each of the later repeated CTs\n- Structures under investigation in MHA-format (at least external\
+  \ surface structure named BODY.mha)\n- Fraction doses for which deformable dose accumulation uncertainty\
+  \ wants to be determined in MHA-format\n\nConversion from DICOM to MHA can be easily done with plastimatch\
+  \ (http://plastimatch.org/)\n\n## Input file folder structure\n\nOne should create the following folder\
+  \ and file structure for a patient **x**:\n- **DIRs**\n    - yourpath/Data/Patient_x/DIRs/DIR_name/DIR_name_0_1.mha\
+  \ <br>\n     _(e.g. yourpath/Data/Patient_x/Plastimatch_Bspline/Plastimatch_Bspline_0_1.mha, the 0_1\
+  \ stands for the registration of the repeated CT1 to the reference CT0)_\n- **Dose files**\n    - yourpath/Data/Patient_x/Dose/Dose0.mha\
+  \ <br>\n     (Dose1.mha, etc...)\n- **Structures**\n    - yourpath/Data/Patient_x/CTs/MHAs/0/structures/\
+  \ <br>\n     (In this folder the structures under investigation in MHA-format, the surface structure\
+  \ should **always be present and named BODY.mha!**)\n\n## How to run the code?\nIf the file structure\
+  \ is as described above, it should in general be possible to run the code by only changing some of the\
+  \ input parameters in the first part of the **DDA_Uncertainty_main.m** file. <br>\n\nIn the part **Input\
+  \ Parameters General** change the following lines according to your calculations: <br>\n- `input_parameter.data_base_path\
+  \ = '/yourpath/to/the/folder/';` Change to define where your data is stored and your results should\
+  \ be written <br>\n- `input_parameter.Patients = {'1'};` Define the patient number you want to investigate\
+  \ <br>\n- `input_parameter.CTnumbers = {'1'};` Define the repeated CTs you want to investigate, multiple\
+  \ CTs possible ({'1','2','3'}) <br>\n- `input_parameter.Structures = {'BODY','PTV','Parotid_L','Parotid_R','OpticNerve_L','OpticNerve_R','Chiasm'};`\
+  \ Define the structures you want to investigate (keep in mind, as mentioned above, in any case the BODY\
+  \ structure should be included in the structure folder of the reference CT) <br>\n- `input_parameter.methods\
+  \ = {'Elastix','Plastimatch_Bspline','Plastimatch_Demon','Velocity'};` Define the DIRs you used and\
+  \ put exactly the name as it is defined in the Data folder explained above <br>\n- `input_parameter.method_letters\
+  \ = {'abcd'};` Define a letter series standing for the used methods (e.g. a=Elastix, b=Plastimatch_Bspline\
+  \ etc.). This is important if you want to try different ensembles of DIRs. <br>\n\nIn the part **Input\
+  \ Parameters 2/3 - Modelles Uncertainty Maps**: <br>\n- `input_parameter.predictor_type = 'Plastimatch_Bspline';`\
+  \ Define your reference DIR method for modelling the geometric DIR uncertainty in the first fraction\
+  \ <br>\n- `input_parameter.prediction_CTnumbers = {'1'};` Define the repeated CT number on which you\
+  \ want to build the model <br>\n- `input_parameter.create_CTnumbers = {'2','3'};` Define on which repeated\
+  \ CT numbers you want to apply the model <br>\n\nIn the part **Input Parameters 3/3 - Dose Uncertainty\
+  \ Method**: <br>\n- `selected_DIR = 'Plastimatch_Bspline';` Define which DIR you used for the modell\
+  \ (reference DIR)\n\n## Possible Errors\n\nMatrices not matching:\n- Error messages with either matrix\
+  \ dimensions not matching or body index out of array.<br> \nSolution: DVFs, CTs, dose, structure files\
+  \ should all have same dimension/resolution\n\n## Plastimatch Commands\nConvert Dicom Dose to MHA<br>\n\
+  plastimatch convert <br>\n--input-dose-img path/to/dicom (CT and dose in same folder) `backslash` <br>\n\
+  --output-dose-img path/to/mha_dose `backslash`<br>\n\nConvert MHD to MHA<br>\nplastimatch xf-convert\
+  \ `backslash`<br>\n--input path/to/mhd_DVF `backslash`<br>\n--output path/to/mha_DVF<br>\n\nResampling\
+  \ with Plastimatch<br>\nplastimatch resample `backslash`<br>\n--input path/to/different/size/mha `backslash`<br>\n\
+  --fixed path/to/an/mha_CT/with/correct/dimensions`backslash` <br>\n--output path/to/resampled/mha <br>\n\
+  \n## Output\n\nThe outputs of the are the following:\n- Correlation Data <br>\nThe data used to build\
+  \ the linear model under: <br>\nyourpath/Results/Patient_x/Methods_abcd/Correlation_Data/ (e.g. yourpath/Results/Patient_x/Methods_abcd/Correlation_Data/Plastimatch_Bspline_r_CT1.txt\
+  \ and Max-Min_CT1.txt)\n\n- Correlation factor <br>\nA file storing the value from the linear regresstion\
+  \ under: <br>\nyourpath/Results/Correlation_Factors/Methods_abcd/ (e.g. yourpath/Results/Correlation_Factors/Methods_abcd/Correlation_Factor_Patient_x_1_Plastimatch_Bspline_Max-Min.txt,\
+  \ where the 1 stands for modelling with repeated CT1)\n\n- Geometric DIR uncertainty maps <br>\n   \
+  \ - Geometric DIR uncertainty voxel-wise max-min of the vector magnitudes for the first fraction (or\
+  \ if you want to build model for any other fraction, also for those fractions) under: <br>\n     yourpath/Results/Patient_x/DIR_Uncertainty_Map/Max-Min/\
+  \ (e.g. yourpath/Results/Patient_x/DIR_Uncertainty_Map/Max-Min/Uncertainty_Measure_Max-Min_CT1.mha)\n\
+  \    - Modelled geometric uncertainty under: <br>\n     yourpath/Results/Patient_x/DIR_Uncertainty_Map/Created_Uncertainty_Map_DIR_name/Methods_abcd/\
+  \ (e.g.yourpath/Results/Patient_x/    DIR_Uncertainty_Map/Created_Uncertainty_Map_Plastimatch_Bspline/Methods_abcd/Uncertainty_Measure_Created_Uncertainty_Map_Plastimatch_Bspline_r_CT2.mha)\
+  \ <br>\n\n- Dose Uncertainty map\n    - Dose uncertainty<br>\n     The estimated dosimetric uncertainty\
+  \ can be found under: <br>\n     yourpath/Results/Patient_x/Dose_Uncertainty_Method/Dose_Uncertainty/Methods_abcd/\
+  \ (e.g. yourpath/Results/Patient_x/Dose_Uncertainty_Method/Dose_Uncertainty/Methods_abcd/GMU_Plastimatch_Bspline_Created_Uncertainty_Map_Plastimatch_Bspline_BODY_CT_2.mha)\n\
+  \    - Dose gradients<br>\n     The dose gradients are stored under:<br>\n     yourpath/Results/Patient_x/Dose_Uncertainty_Method/Dose_Gradients/\
+  \ (e.g. yourpath/Results/Patient_x/Dose_Uncertainty_Method/Dose_Gradients/Gradients_mag_sobel_BODY_CT2.mha)\n\
+  \    - Direction factor<br>\n     Additionally also the direction factor is spared, giving the directional\
+  \ dependence between the geometric DIR uncertainty and the dose gradient, under:<br>\n     yourpath/Results/Patient_x/Dose_Uncertainty_Method/Direction_Factor/Methods_abcd/\
+  \ (e.g. yourpath/Results/Patient_x/Dose_Uncertainty_Method/Direction_Factor/Methods_abcd/Direction_Factor_Created_Uncertainty_Map_Plastimatch_Bspline_Plastimatch_Bspline_BODY_CT2.mha)\n\
+  \n\n"

@@ -1,0 +1,931 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: gurojaschadha/Evaluating-the-Role-of-Attention-Based-Message-Passing-in-Explainable-Molecular-Toxicity-Prediction
+url: https://github.com/gurojaschadha/Evaluating-the-Role-of-Attention-Based-Message-Passing-in-Explainable-Molecular-Toxicity-Prediction
+platform: github
+description: Official implementation of Explainable Molecular Toxicity Prediction using Graph Neural Networks,
+  GNNExplainer, PGExplainer, and attention-based message passing on the Tox21 benchmark.
+license: MIT
+language: Python
+keywords:
+- bioinformatics
+- deep-learning
+- drug-discovery
+- explainable-ai
+- gnn
+- gnnexplainer
+- graph-attention-networks
+- graph-neural-networks
+- machine-learning
+- pytorch-geometric
+- tox21
+stars: 0
+updated_at: '2026-08-11T18:07:56Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: '````markdown
+
+  # Evaluating the Role of Attention-Based Message Passing in Explainable Molecular Toxicity Prediction
+
+
+  Official implementation accompanying the manuscript:
+
+
+  > **Evaluating the Role of Attention-Based Message Passing in Explainable Molecular Toxicity Prediction**
+
+
+  This repository contains the source code, experimental configurations, molecular data splits, evaluation
+  utilities, explainability tools, visualization scripts, and experimental results used in the study of
+  attention-based message passing for explainable molecular toxicity prediction.
+
+
+  The study evaluates a Graph Attention Network (GAT) against a Graph Convolutional Network (GCN) and
+  a descriptor-based Random Forest baseline using the Tox21 benchmark dataset.
+
+
+  ---
+
+
+  ## Overview
+
+
+  Molecular toxicity prediction is an important task in computational toxicology and computer-aided drug
+  discovery. Conventional machine-learning approaches commonly rely on predefined molecular descriptors
+  or fingerprints, whereas graph neural networks (GNNs) learn molecular representations directly from
+  molecular graph structures.
+
+
+  This work investigates whether **attention-based message passing** can improve molecular toxicity prediction
+  while providing more informative and chemically meaningful explanations.
+
+
+  The proposed framework is evaluated using the **Tox21 benchmark dataset** under chemically meaningful
+  scaffold-based data partitions.
+
+
+  The repository provides implementations and supporting utilities for:
+
+
+  - Graph Convolutional Networks (GCN)
+
+  - Graph Attention Networks (GAT)
+
+  - Residual Graph Attention Networks (ResGAT)
+
+  - ECFP4/Morgan fingerprint-based Random Forest baseline
+
+  - Bemis--Murcko scaffold-based molecular splitting
+
+  - Multi-task toxicity prediction
+
+  - Multi-seed experimental evaluation
+
+  - ROC-AUC and PR-AUC evaluation
+
+  - Threshold-dependent classification analysis
+
+  - GNNExplainer-based molecular explanations
+
+  - Explainability visualization
+
+  - Oversmoothing analysis using Dirichlet Energy
+
+  - Endpoint-level result aggregation
+
+  - Publication-ready LaTeX table generation
+
+
+  ---
+
+
+  ## Dataset
+
+
+  The experiments use the **Tox21 benchmark dataset**, containing molecular activity measurements across
+  twelve toxicity-related endpoints.
+
+
+  ### Dataset statistics
+
+
+  | Property | Value |
+
+  |---|---:|
+
+  | Number of molecules | 7,823 |
+
+  | Number of endpoints | 12 |
+
+  | Nuclear Receptor (NR) endpoints | 7 |
+
+  | Stress Response (SR) endpoints | 5 |
+
+  | Prediction task | Multi-task binary classification |
+
+  | Missing labels | Present |
+
+  | Data split | Bemis--Murcko scaffold split |
+
+  | Training proportion | 80% |
+
+  | Validation proportion | 10% |
+
+  | Testing proportion | 10% |
+
+
+  The twelve prediction endpoints are:
+
+
+  ```text
+
+  NR-AR
+
+  NR-AR-LBD
+
+  NR-AhR
+
+  NR-Aromatase
+
+  NR-ER
+
+  NR-ER-LBD
+
+  NR-PPAR-gamma
+
+  SR-ARE
+
+  SR-ATAD5
+
+  SR-HSE
+
+  SR-MMP
+
+  SR-p53
+
+  ````
+
+
+  Tox21 is treated as a **multi-task/multilabel collection of binary toxicity endpoints**, rather than
+  as a conventional multiclass classification problem.
+
+
+  Missing assay labels are masked during optimization and excluded from the corresponding endpoint-specific
+  metric calculations.
+
+
+  ---
+
+
+  ## Data Splitting
+
+
+  To reduce chemical similarity leakage between training and testing data, the experiments use a **Bemis--Murcko
+  scaffold-based split**.
+
+
+  The default partition is:
+
+
+  ```text
+
+  Training:    80%
+
+  Validation:  10%
+
+  Testing:     10%
+
+  ```
+
+
+  The scaffold split is generated using the dataset utilities in:
+
+
+  ```text
+
+  utils/dataset.py
+
+  ```
+
+
+  The resulting molecular indices are stored in:
+
+
+  ```text
+
+  splits/tox21_scaffold_split.pkl
+
+  ```
+
+
+  The repository also contains:
+
+
+  ```text
+
+  splits/tox21_split.pkl
+
+  ```
+
+
+  for the previously generated dataset partition.
+
+
+  The same scaffold-based molecular partition is used for the GCN, GAT, and Random Forest experiments
+  to maintain a consistent test set across the evaluated approaches.
+
+
+  ---
+
+
+  ## Molecular Representation
+
+
+  Molecules are represented as molecular graphs.
+
+
+  Each molecular graph consists of:
+
+
+  * Nodes representing atoms
+
+  * Edges representing chemical bonds
+
+  * Atom-level features
+
+  * Bond-level structural information
+
+
+  The graph representation is used by the GCN and GAT models for end-to-end molecular representation learning.
+
+
+  The repository also includes utilities for incorporating bond features:
+
+
+  ```text
+
+  utils/add_bond_features.py
+
+  ```
+
+
+  ---
+
+
+  # Models
+
+
+  ## Graph Convolutional Network
+
+
+  The Graph Convolutional Network provides the primary isotropic message-passing baseline.
+
+
+  The GCN performs neighbourhood aggregation using graph-structure-dependent normalization.
+
+
+  Implementation:
+
+
+  ```text
+
+  models/gcn.py
+
+  ```
+
+
+  ---
+
+
+  ## Graph Attention Network
+
+
+  The proposed Graph Attention Network uses feature-dependent attention coefficients to weight neighbouring
+  molecular atoms during message passing.
+
+
+  Implementation:
+
+
+  ```text
+
+  models/gat.py
+
+  ```
+
+
+  The attention mechanism allows the model to assign different importance to neighbouring atoms instead
+  of applying uniform or purely topology-dependent aggregation.
+
+
+  ---
+
+
+  ## Residual Graph Attention Network
+
+
+  A residual GAT implementation is also included for the extended architectural experiments.
+
+
+  Implementation:
+
+
+  ```text
+
+  models/resgat.py
+
+  ```
+
+
+  Residual connections are used to investigate deeper graph representations and their relationship with
+  representation smoothing.
+
+
+  ---
+
+
+  # Random Forest Baseline
+
+
+  A descriptor-based Random Forest classifier is included as an additional non-GNN baseline.
+
+
+  Implementation:
+
+
+  ```text
+
+  random_forest_baseline.py
+
+  ```
+
+
+  The baseline uses:
+
+
+  * Morgan fingerprints
+
+  * ECFP4 configuration
+
+  * 1024-bit fingerprint representation
+
+  * Random Forest classification
+
+  * The same scaffold-based molecular partition
+
+
+  The ECFP4 representation corresponds to a Morgan fingerprint with radius 2.
+
+
+  This baseline provides a conventional molecular machine-learning reference against which the graph-based
+  approaches can be evaluated.
+
+
+  ---
+
+
+  # Experimental Protocol
+
+
+  The GCN and GAT experiments are repeated using four independent random seeds:
+
+
+  ```text
+
+  42
+
+  123
+
+  2024
+
+  3407
+
+  ```
+
+
+  The results are aggregated across the independent runs.
+
+
+  Reported statistics include:
+
+
+  * Mean
+
+  * Standard deviation
+
+  * 95% confidence interval
+
+
+  The experimental configuration is controlled through:
+
+
+  ```text
+
+  config.py
+
+  ```
+
+
+  The use of fixed random seeds and a stored scaffold split is intended to make the reported experiments
+  reproducible.
+
+
+  ---
+
+
+  # Evaluation Metrics
+
+
+  The predictive performance is evaluated using both ranking-based and threshold-dependent metrics.
+
+
+  ## Ranking Metrics
+
+
+  ### ROC-AUC
+
+
+  Receiver Operating Characteristic Area Under the Curve measures the ability of the model to rank positive
+  and negative compounds across classification thresholds.
+
+
+  ### PR-AUC
+
+
+  Precision--Recall Area Under the Curve is treated as an important metric because the Tox21 endpoints
+  exhibit substantial class imbalance.
+
+
+  PR-AUC provides a more informative view of minority-class prediction when positive toxicity labels are
+  relatively rare.
+
+
+  ---
+
+
+  ## Threshold-Dependent Metrics
+
+
+  The following metrics are also reported:
+
+
+  * Accuracy
+
+  * Precision
+
+  * Recall
+
+  * F1-score
+
+
+  For the graph neural network models, classification thresholds are selected using the validation set
+  by maximizing **Youden''s J statistic**.
+
+
+  The selected threshold is then applied to the held-out test set.
+
+
+  The Random Forest baseline uses its configured/default decision threshold as described in the experimental
+  implementation.
+
+
+  ---
+
+
+  # Evaluation and Result Processing
+
+
+  The primary evaluation functionality is implemented in:
+
+
+  ```text
+
+  evaluate.py
+
+  ```
+
+
+  Additional scripts are provided for aggregating experiment-level outputs and generating endpoint-level
+  summaries.
+
+
+  ### Aggregate experimental results
+
+
+  ```bash
+
+  python aggregate_results.py
+
+  ```
+
+
+  ### Generate endpoint-level results
+
+
+  ```bash
+
+  python generate_endpoint_table.py
+
+  ```
+
+
+  ### Generate LaTeX tables
+
+
+  ```bash
+
+  python generate_latex_tables.py
+
+  ```
+
+
+  These utilities are used to convert individual experiment outputs into aggregated results suitable for
+  analysis and manuscript preparation.
+
+
+  ---
+
+
+  # Explainability
+
+
+  The repository includes an explainability pipeline based primarily on **GNNExplainer**.
+
+
+  The explainability utilities are implemented in:
+
+
+  ```text
+
+  utils/explain.py
+
+  ```
+
+
+  The explainability analysis is designed to identify molecular substructures and graph components that
+  contribute to model predictions.
+
+
+  The pipeline supports:
+
+
+  * Edge importance estimation
+
+  * Molecular subgraph identification
+
+  * Explanation generation
+
+  * RDKit-based molecular visualization
+
+  * Comparison of explanation outputs
+
+
+  Visualization utilities are provided through:
+
+
+  ```text
+
+  generate_rdkit_visualizations.py
+
+  compare_xai_methods.py
+
+  ```
+
+
+  The resulting molecular explanations are used to investigate whether the proposed attention-based architecture
+  produces chemically meaningful localization of predictive molecular regions.
+
+
+  ---
+
+
+  # Oversmoothing Analysis
+
+
+  The repository includes quantitative analysis of representation smoothing across graph layers.
+
+
+  In particular, **Dirichlet Energy** is used to investigate the degree of representation smoothness and
+  potential oversmoothing in graph neural networks.
+
+
+  The analysis is intended to evaluate whether attention-based message passing reduces representation
+  homogenization across molecular graph layers.
+
+
+  The results are interpreted conservatively: reduced smoothing or improved preservation of local information
+  does not by itself establish that oversmoothing is completely eliminated.
+
+
+  ---
+
+
+  # Repository Structure
+
+
+  ```text
+
+  .
+
+  ├── data/
+
+  │
+
+  ├── figures/
+
+  │
+
+  ├── logs/
+
+  │
+
+  ├── models/
+
+  │   ├── gcn.py
+
+  │   ├── gat.py
+
+  │   └── resgat.py
+
+  │
+
+  ├── outputs/
+
+  │
+
+  ├── results/
+
+  │
+
+  ├── scripts/
+
+  │
+
+  ├── splits/
+
+  │   ├── tox21_scaffold_split.pkl
+
+  │   └── tox21_split.pkl
+
+  │
+
+  ├── utils/
+
+  │   ├── dataset.py
+
+  │   ├── metrics.py
+
+  │   ├── explain.py
+
+  │   ├── visualization.py
+
+  │   ├── losses.py
+
+  │   ├── seed.py
+
+  │   └── add_bond_features.py
+
+  │
+
+  ├── aggregate_results.py
+
+  ├── config.py
+
+  ├── evaluate.py
+
+  ├── generate_endpoint_table.py
+
+  ├── generate_latex_tables.py
+
+  ├── generate_rdkit_visualizations.py
+
+  ├── random_forest_baseline.py
+
+  ├── compare_xai_methods.py
+
+  │
+
+  ├── run_all_tasks.sh
+
+  ├── run_all_tasks_gcn.sh
+
+  │
+
+  ├── environment.yml
+
+  ├── requirements.txt
+
+  ├── .gitignore
+
+  ├── LICENSE
+
+  └── README.md
+
+  ```
+
+
+  ---
+
+
+  # Directory Description
+
+
+  ## `models/`
+
+
+  Contains the graph neural network architecture implementations.
+
+
+  ```text
+
+  models/
+
+  ├── gcn.py
+
+  ├── gat.py
+
+  └── resgat.py
+
+  ```
+
+
+  ---
+
+
+  ## `utils/`
+
+
+  Contains reusable utilities for:
+
+
+  * Dataset loading
+
+  * Scaffold splitting
+
+  * Metric calculation
+
+  * Random seed control
+
+  * Loss functions
+
+  * Explainability
+
+  * Visualization
+
+  * Molecular graph preprocessing
+
+
+  ---
+
+
+  ## `scripts/`
+
+
+  Contains supporting scripts used for experiment processing, result generation, and analysis.
+
+
+  ---
+
+
+  ## `splits/`
+
+
+  Contains the molecular dataset partitions used for the experiments.
+
+
+  ```text
+
+  splits/
+
+  ├── tox21_scaffold_split.pkl
+
+  └── tox21_split.pkl
+
+  ```
+
+
+  The scaffold split is retained to allow the same molecular partition to be reused across different models.
+
+
+  ---
+
+
+  ## `outputs/`
+
+
+  Contains experiment-level outputs such as:
+
+
+  * Prediction files
+
+  * Endpoint-specific metrics
+
+  * Seed-specific metrics
+
+  * JSON result files
+
+
+  ---
+
+
+  ## `results/`
+
+
+  Contains aggregated and processed experimental results used for analysis and manuscript preparation.
+
+
+  ---
+
+
+  ## `figures/`
+
+
+  Contains generated visualizations used in the experimental analysis and manuscript.
+
+
+  ---
+
+
+  ## `logs/`
+
+
+  Contains experiment and training logs.
+
+
+  ---
+
+
+  # Installation
+
+
+  ## 1. Clone the repository
+
+
+  Clone the repository from GitHub and enter the project directory:
+
+
+  ```bash
+
+  git clone <REPOSITORY-URL>
+
+
+  cd Evaluating-the-Role-of-Attention-Based-Message-Passing-in-Explainable-Molecular-Toxicity-Prediction
+
+  ```
+
+
+  ---
+
+
+  ## 2. Create the Conda environment
+
+
+  The recommended environment is Python 3.10.
+
+
+  ```bash
+
+  conda env create -f environment.yml
+
+  ```
+
+
+  Activate the environment:
+
+
+  ```bash
+
+  conda activate tox21
+
+  ```
+
+
+  ---
+
+
+  ## 3. Alternative installation using pip
+
+
+  If the Conda environment file is not used, dependencies can be installed using:
+
+
+  ```bash
+
+  pip install -r requirements.txt
+
+  ```
+
+
+  ---
+
+
+  # Running the Experiments
+
+
+  ## GAT ex'

@@ -1,0 +1,118 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: divya123amar/A-Robust-3D-Deep-Learning-Framework-for-Automated-Brain-Tumor-Segmentation-from-Multi-Modal-MRI
+url: https://github.com/divya123amar/A-Robust-3D-Deep-Learning-Framework-for-Automated-Brain-Tumor-Segmentation-from-Multi-Modal-MRI
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-08-18T10:55:10Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Lightweight 3D U-Net for Multi-Modal MRI-Based Brain Tumor Segmentation\n\n\n## \U0001F4CC\
+  \ Overview\n\nThis repository contains the implementation associated with the conference paper:\n\n\
+  > **A Robust 3D Deep Learning Framework for Automated Brain Tumor Segmentation from Multi-Modal MRI**\n\
+  \nThe project presents a lightweight **3D U-Net framework** for automated brain tumor segmentation using\
+  \ multi-modal MRI from the **BraTS2020** dataset.\n\nFour complementary MRI modalities—**FLAIR, T1,\
+  \ T1ce, and T2**—are jointly processed as a four-channel volumetric input. The proposed architecture\
+  \ is designed specifically for experimentation under constrained computational resources.\n\nThe study\
+  \ uses approximately **1.4 million trainable parameters** and evaluates multi-class brain tumor segmentation\
+  \ using Dice, IoU, precision, recall, F1-score, and voxel-wise accuracy.\n\n---\n\n## \U0001F9E0 Research\
+  \ Objective\n\nAutomated brain tumor segmentation from MRI is challenging because tumor regions exhibit\
+  \ substantial variation in morphology, intensity, spatial distribution, and boundary characteristics.\n\
+  \nThis work investigates whether a relatively lightweight 3D U-Net can learn meaningful volumetric tumor\
+  \ representations when training is performed under limited computational resources.\n\nThe study specifically\
+  \ focuses on:\n\n* Multi-modal MRI analysis\n* 3D volumetric segmentation\n* Lightweight deep-learning\
+  \ architecture\n* Computationally constrained training\n* Multi-class tumor segmentation\n* Class-wise\
+  \ performance evaluation\n\n---\n\n## \U0001F52C Key Contributions\n\nThe main contributions of this\
+  \ work are:\n\n1. A reproducible preprocessing pipeline for multi-modal BraTS2020 MRI volumes.\n2. A\
+  \ lightweight 3D U-Net architecture containing approximately **1.4 million trainable parameters**.\n\
+  3. Four-channel volumetric processing using FLAIR, T1, T1ce, and T2 MRI modalities.\n4. A combined **Cross-Entropy\
+  \ + Dice loss** for multi-class segmentation.\n5. Quantitative evaluation using Dice, IoU, precision,\
+  \ recall, F1-score, and accuracy.\n6. Class-wise analysis of background, necrotic/core, edema, and enhancing\
+  \ tumor regions.\n\n---\n\n## \U0001F4CA Dataset\n\nThe experiments use the **BraTS2020 training dataset**.\n\
+  \nEach patient contains four co-registered MRI modalities:\n\n```text\nFLAIR\nT1\nT1ce\nT2\n```\n\n\
+  The original volumetric data are transformed into:\n\n```text\n128 × 128 × 128 × 4\n```\n\nThe segmentation\
+  \ masks contain four classes:\n\n```text\n0 → Background\n1 → Necrotic / Core\n2 → Edema\n3 → Enhancing\
+  \ Tumor\n```\n\nThe reported experiment uses a **50-patient subset**, divided into:\n\n```text\nTraining\
+  \   : 40 patients\nValidation : 10 patients\n```\n\nThe dataset is subject to the applicable BraTS access\
+  \ and usage conditions. Users should obtain the dataset through an authorized source.\n\n---\n\n## ⚙️\
+  \ Preprocessing\n\nThe preprocessing pipeline consists of:\n\n```text\nRaw NIfTI MRI Volumes\n     \
+  \   ↓\nFLAIR / T1 / T1ce / T2\n        ↓\nIntensity Normalization\n        ↓\nResampling\n128 × 128\
+  \ × 128\n        ↓\nFour-Channel Stacking\n        ↓\nMask Label Verification\n        ↓\nTraining /\
+  \ Validation\n```\n\nMRI volumes are normalized and resampled to a fixed volumetric resolution. Segmentation\
+  \ masks are resampled using nearest-neighbor interpolation to preserve discrete class labels.\n\n---\n\
+  \n## \U0001F3D7️ Model Architecture\n\nThe proposed model follows a lightweight 3D U-Net encoder–decoder\
+  \ structure:\n\n```text\n                 Input\n                   │\n             4 × 128³\n     \
+  \              │\n              Encoder 1\n                   │\n              Encoder 2\n         \
+  \          │\n              Encoder 3\n                   │\n              Bottleneck\n            \
+  \       │\n              Decoder 3\n                   │\n              Decoder 2\n                \
+  \   │\n              Decoder 1\n                   │\n            1 × 1 × 1 Conv\n                 \
+  \  │\n                   ▼\n          4-Class Segmentation\n```\n\nThe network uses 3D convolutional\
+  \ operations and skip connections to preserve spatial information throughout volumetric segmentation.\n\
+  \n**Trainable parameters:** `1,402,612`\n\n---\n\n## \U0001F9EA Training Configuration\n\n| Parameter\
+  \            | Value                 |\n| -------------------- | --------------------- |\n| Input volume\
+  \         | `128 × 128 × 128 × 4` |\n| Number of classes    | 4                     |\n| Training patients\
+  \    | 40                    |\n| Validation patients  | 10                    |\n| Batch size     \
+  \      | 1                     |\n| Optimizer            | Adam                  |\n| Learning rate\
+  \        | `1 × 10⁻⁴`            |\n| Loss function        | Cross-Entropy + Dice  |\n| Epochs     \
+  \          | 3                     |\n| Random seed          | 42                    |\n| Compute device\
+  \       | CPU                   |\n| Trainable parameters | 1,402,612             |\n\nThese settings\
+  \ correspond to the constrained experimental configuration reported in the paper.\n\n---\n\n## \U0001F4C8\
+  \ Experimental Results\n\nThe model achieved the following validation performance:\n\n| Metric    |\
+  \      Score |\n| --------- | ---------: |\n| Accuracy  | **0.9933** |\n| Precision | **0.4707** |\n\
+  | Recall    | **0.6360** |\n| F1-score  | **0.5063** |\n| Dice      | **0.5063** |\n| IoU       | **0.4174**\
+  \ |\n\nThe reported results are based on three training epochs using the 50-patient experimental subset.\n\
+  \n### Class-wise Dice\n\n| Class           |  Dice (Mean ± Std.) |\n| --------------- | ------------------:\
+  \ |\n| Background      | **0.9945 ± 0.0042** |\n| Necrotic / Core | **0.2068 ± 0.1085** |\n| Edema \
+  \          | **0.5321 ± 0.1935** |\n| Enhancing Tumor | **0.2918 ± 0.1029** |\n\nThe substantial difference\
+  \ between background accuracy and tumor-region Dice reflects the strong class imbalance inherent in\
+  \ volumetric brain tumor segmentation.\n\n---\n\n## \U0001F4C9 Validation Dice Progression\n\nThe validation\
+  \ Dice increased during the three training epochs:\n\n```text\nEpoch 1 → 0.328\nEpoch 2 → 0.384\nEpoch\
+  \ 3 → 0.506\n```\n\nThe continuing improvement suggests that the model had not reached convergence when\
+  \ training was stopped because of the available computational budget.\n\n---\n\n## \U0001F4C1 Repository\
+  \ Structure\n\n```text\n3D-UNet-BraTS2020-Brain-Tumor-Segmentation/\n│\n├── README.md\n├── 3D_UNet_BraTS2020.ipynb\n\
+  ├── requirements.txt\n├── LICENSE\n│\n├── results/\n│   ├── figures/\n│   ├── metrics/\n│   └── predictions/\n\
+  │\n├── paper/\n│   └── paper.pdf\n│\n└── src/\n    ├── preprocessing.py\n    ├── model.py\n    ├── train.py\n\
+  \    └── evaluate.py\n```\n\nFor the initial GitHub release, the notebook can remain as the primary\
+  \ executable implementation. The code can subsequently be modularized into the `src/` directory.\n\n\
+  ---\n\n## \U0001F4BB Installation\n\nInstall the required Python packages:\n\n```bash\npip install torch\
+  \ torchvision torchaudio\npip install numpy scipy nibabel matplotlib tqdm scikit-learn\npip install\
+  \ monai SimpleITK opencv-python torchmetrics scikit-image\n```\n\nA `requirements.txt` file is included\
+  \ in the repository.\n\n---\n\n## ▶️ Running the Project\n\nOpen the notebook:\n\n```text\n3D_UNet_BraTS2020.ipynb\n\
+  ```\n\nThe complete workflow follows:\n\n```text\nBraTS2020 Dataset\n       ↓\nData Loading\n      \
+  \ ↓\nMRI Preprocessing\n       ↓\n3D Volume Construction\n       ↓\n3D U-Net Training\n       ↓\nValidation\n\
+  \       ↓\nSegmentation Prediction\n       ↓\nQuantitative Evaluation\n       ↓\nVisualization\n```\n\
+  \nThe notebook is suitable for execution in **Google Colab or a local Jupyter environment**, subject\
+  \ to available computational resources.\n\n---\n\n## \U0001F510 Security Notice\n\n**Never upload API\
+  \ keys, passwords, access tokens, or other credentials to GitHub.**\n\nThe original working notebook\
+  \ contained a hard-coded Kaggle API credential. The GitHub version should use environment variables\
+  \ or another secure authentication mechanism instead.\n\nIf a credential has previously been exposed,\
+  \ it should be **revoked and regenerated** before publishing the repository.\n\n---\n\n## ⚠️ Limitations\n\
+  \nThe reported experiment should be interpreted in light of its computational constraints.\n\nThe main\
+  \ limitations are:\n\n* Only 50 patients were used for the reported experiment.\n* Training was performed\
+  \ on 40 patients.\n* Validation was performed on 10 patients.\n* Training was limited to three epochs.\n\
+  * Experiments were conducted using CPU hardware.\n* Minority tumor classes achieved substantially lower\
+  \ Dice scores than the background class.\n* Full Hausdorff-distance evaluation was not completed.\n\
+  * The study does not claim state-of-the-art performance.\n\nThe paper explicitly frames the reported\
+  \ results as a resource-constrained proof-of-concept rather than an unconstrained benchmark of 3D U-Net\
+  \ performance.\n\n---\n\n## \U0001F680 Future Work\n\nFuture development will focus on:\n\n* Training\
+  \ using the complete BraTS2020 cohort\n* GPU-accelerated training\n* Extended training schedules\n*\
+  \ Attention-gated 3D U-Net\n* Multi-scale feature aggregation\n* Data augmentation\n* Class-imbalance-aware\
+  \ loss functions\n* Hausdorff-distance evaluation\n* More extensive statistical validation\n* Comparison\
+  \ with established segmentation architectures\n\nThese directions follow the limitations identified\
+  \ in the submitted paper.\n\n---\n\n## \U0001F4C4 Associated Paper\n\n\n\n**Title:**\n\n> **A Robust\
+  \ 3D Deep Learning Framework for Automated Brain Tumor Segmentation from Multi-Modal MRI**\n\n**Conference:**\n\
+  \n\n\n**Authors:**\n\n* Divyashree A\n\n\nThe submitted manuscript identifies the work as a 3D deep-learning\
+  \ framework for automated segmentation using FLAIR, T1, T1ce, and T2 modalities on BraTS2020.\n\n##\
+  \ ⚕️ Disclaimer\n\nThis repository is intended exclusively for **research and academic purposes**.\n\
+  \nThe presented model is **not a clinically validated diagnostic system** and should not be used for\
+  \ clinical diagnosis, treatment decisions, or other medical decision-making.\n"

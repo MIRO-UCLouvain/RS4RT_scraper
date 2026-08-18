@@ -1,0 +1,105 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: JoyWinner/Lightweight-Brain-Tumor-Segmentation-on-Low-Resource-Systems
+url: https://github.com/JoyWinner/Lightweight-Brain-Tumor-Segmentation-on-Low-Resource-Systems
+platform: github
+description: 3D U-Net brain tumor segmentation using BraTS-Africa MRI data
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-08-17T10:23:13Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# Lightweight Brain Tumor Segmentation on Low-Resource Systems\n\n## Project Overview\n\
+  \nThis project implements a lightweight 3D U-Net-based approach for brain tumor (glioma) segmentation\
+  \ from multimodal MRI scans.\n\nThe project follows the **Lightweight Brain Tumor Segmentation on Low-Resource\
+  \ Systems** tutorial and covers the workflow from data preprocessing and dataset preparation through\
+  \ model development, training, evaluation, and deployment.\n\nA major focus of the project is examining\
+  \ the feasibility of performing 3D brain tumor segmentation in a resource-constrained computing environment.\n\
+  \n---\n\n## Objectives\n\nThe main objectives of this project are to:\n\n* Preprocess multimodal brain\
+  \ MRI data for glioma segmentation.\n* Organize the dataset into training, validation, and testing subsets.\n\
+  * Implement a 3D U-Net architecture for volumetric brain tumor segmentation.\n* Train and monitor the\
+  \ segmentation model.\n* Evaluate the model using segmentation metrics.\n* Develop an inference pipeline\
+  \ for new NIfTI MRI scans.\n* Deploy the segmentation application using Streamlit.\n\n---\n\n## Dataset\n\
+  \nThe project uses the **BraTS-Africa** dataset for glioma segmentation.\n\nThe MRI data consist of\
+  \ four modalities:\n\n* **T1n** — native T1-weighted MRI\n* **T1c** — contrast-enhanced T1-weighted\
+  \ MRI\n* **T2f** — T2-FLAIR MRI\n* **T2w** — T2-weighted MRI\n\nThe dataset was processed and organized\
+  \ into separate training, validation, and test subsets.\n\nThe original dataset is not included in this\
+  \ repository because of its size. The processed dataset used during development was maintained locally.\n\
+  \n---\n\n## Data Preprocessing\n\nThe preprocessing workflow prepared the MRI data for input into the\
+  \ 3D segmentation model.\n\nThe processed dataset was organized locally as:\n\n```text\nglioma split\
+  \ data/\n├── train/\n│   ├── images/\n│   └── masks/\n├── val/\n│   ├── images/\n│   └── masks/\n└──\
+  \ test/\n    ├── images/\n    └── masks/\n```\n\nThe model uses 3D image patches with dimensions:\n\n\
+  ```text\n96 × 96 × 96\n```\n\nThe preprocessing and dataset preparation workflow is documented in:\n\
+  \n```text\nbt_processing.ipynb\n```\n\n---\n\n## Model Architecture\n\nA **3D U-Net** architecture was\
+  \ used for volumetric brain tumor segmentation.\n\nThe model was configured with:\n\n| Parameter   \
+  \          | Configuration |\n| --------------------- | ------------- |\n| Model                 | 3D\
+  \ U-Net      |\n| Input dimensions      | 96 × 96 × 96  |\n| Input channels        | 4             |\n\
+  | Number of classes     | 4             |\n| Batch size            | 2             |\n| Optimizer  \
+  \           | Nadam         |\n| Initial learning rate | 0.001         |\n\nThe four input channels\
+  \ correspond to the four MRI modalities: **T1n, T1c, T2f, and T2w**.\n\nThe segmentation/model development\
+  \ workflow is contained in:\n\n```text\nbt_segmentation.ipynb\n```\n\n---\n\n## Training\n\nTraining\
+  \ was configured for **100 epochs** using the 3D U-Net architecture with 96 × 96 × 96 patches and a\
+  \ batch size of 2.\n\nDue to the computational limitations of the CPU-based environment, the training\
+  \ process was highly computationally intensive.\n\n**Epoch 1 was successfully completed with all 33\
+  \ training steps.** The epoch required approximately **17,625 seconds (4.90 hours)** to complete.\n\n\
+  The training process was not continued to all 100 epochs because of the computational time required\
+  \ in the CPU-based environment.\n\n### Epoch 1 Results\n\nThe following metrics were recorded at the\
+  \ end of Epoch 1:\n\n| Metric     | Training | Validation |\n| ---------- | -------: | ---------: |\n\
+  | Accuracy   |   0.8297 |     0.8623 |\n| Dice Score |   0.2274 |     0.2313 |\n| IoU Score  |   0.1775\
+  \ |     0.2004 |\n| Loss       |   0.1924 |     0.1888 |\n\n### Computational Resource Usage\n\nThe\
+  \ resource monitoring callback recorded the following during Epoch 1:\n\n* **Epoch time:** 17,624.97\
+  \ seconds (~4.90 hours)\n* **CPU usage:** 98.90%\n* **Memory usage increase:** 1,810.04 MB\n* **Learning\
+  \ rate:** 0.001\n\nThese results represent **Epoch 1 only** and are not presented as the final performance\
+  \ of a 100-epoch training run.\n\nThe resource measurements demonstrate the computational demands of\
+  \ 3D brain tumor segmentation when performed on a CPU-based environment.\n\n---\n\n## Model Evaluation\n\
+  \nThe model development workflow included evaluation using segmentation metrics such as:\n\n* Accuracy\n\
+  * Dice Score\n* Intersection over Union (IoU)\n* Loss\n\nThe training and validation metrics recorded\
+  \ during the completed first epoch are documented above.\n\nBecause the 100-epoch training configuration\
+  \ was not completed in the local CPU environment, the Epoch 1 results should be interpreted as **initial\
+  \ training and validation performance rather than final model performance**.\n\n---\n\n## Deployment\n\
+  \nThe project includes an inference and deployment workflow for applying the trained segmentation model\
+  \ to new NIfTI MRI scans.\n\nThe deployment workflow consists of:\n\n```text\ndeploy.py\n```\n\nand\
+  \ a Streamlit-based web application:\n\n```text\napp.py\n```\n\nThe intended application workflow is:\n\
+  \n```text\nMultimodal MRI scans\n        ↓\nNIfTI preprocessing\n        ↓\n3D U-Net model\n       \
+  \ ↓\nSegmentation prediction\n        ↓\nGlioma segmentation output\n```\n\nThe Streamlit application\
+  \ is designed to accept the four MRI modalities:\n\n* T1n\n* T1c\n* T2f\n* T2w\n\nand generate a segmentation\
+  \ prediction.\n\n---\n\n## Streamlit Application\n\nThe application was deployed using Streamlit.\n\n\
+  ### Live Application\n\n**Streamlit App:**\nhttps://lightweight-brain-tumor-segmentation-on-low-resource-systems-h.streamlit.app/\n\
+  \nThe application provides an interface for uploading multimodal NIfTI MRI scans and running the segmentation\
+  \ workflow.\n\nThe application is designed for CPU-based execution and may therefore require more processing\
+  \ time than a GPU-accelerated implementation.\n\n---\n\n## Model Hosting\n\nThe trained model file is\
+  \ hosted separately because of its relatively large size.\n\nThe model is stored on Google Drive and\
+  \ retrieved by the Streamlit application using `gdown`.\n\nThis approach avoids storing the large trained\
+  \ model directly in the GitHub repository.\n\n---\n\n## Repository Structure\n\n```text\nLightweight-Brain-Tumor-Segmentation-on-Low-Resource-Systems/\n\
+  │\n├── README.md\n├── app.py\n├── deploy.py\n├── bt_processing.ipynb\n├── bt_segmentation.ipynb\n└──\
+  \ requirements.txt\n```\n\n### File Descriptions\n\n#### `bt_processing.ipynb`\n\nContains the data\
+  \ preprocessing and dataset preparation workflow.\n\n#### `bt_segmentation.ipynb`\n\nContains the segmentation/model\
+  \ development and training workflow.\n\n#### `deploy.py`\n\nContains the inference and segmentation\
+  \ deployment workflow for NIfTI MRI scans.\n\n#### `app.py`\n\nContains the Streamlit application used\
+  \ to provide an interactive interface for the glioma segmentation workflow.\n\n#### `requirements.txt`\n\
+  \nContains the Python dependencies required by the Streamlit application.\n\n---\n\n## Technologies\
+  \ Used\n\nThe project uses the following technologies and libraries:\n\n* **Python**\n* **TensorFlow**\n\
+  * **Keras**\n* **NumPy**\n* **NiBabel**\n* **Scikit-learn**\n* **SciPy**\n* **Matplotlib**\n* **Streamlit**\n\
+  * **gdown**\n* **Jupyter Notebook**\n* **GitHub**\n\n---\n\n## Running the Application Locally\n\nAfter\
+  \ installing the dependencies listed in `requirements.txt`, the Streamlit application can be launched\
+  \ using:\n\n```bash\nstreamlit run app.py\n```\n\nThe application will provide a local URL through which\
+  \ the interface can be accessed.\n\n---\n\n## Project Links\n\n### GitHub Repository\n\nhttps://github.com/JoyWinner/Lightweight-Brain-Tumor-Segmentation-on-Low-Resource-Systems\n\
+  \n### Live Streamlit Application\n\nhttps://lightweight-brain-tumor-segmentation-on-low-resource-systems-h.streamlit.app/\n\
+  \n---\n\n## Project Status\n\n**Completed components:**\n\n* Dataset preprocessing\n* Dataset organization\
+  \ into training, validation, and testing subsets\n* 3D U-Net implementation\n* Training pipeline\n*\
+  \ Completion and profiling of Epoch 1\n* Training and validation metric monitoring\n* Inference/deployment\
+  \ script\n* Streamlit application\n* GitHub repository\n* Streamlit deployment\n\n**Training limitation:**\n\
+  \nThe model was configured for 100 epochs, but only the first epoch was completed locally because of\
+  \ the computational requirements of 3D segmentation on the available CPU-based environment.\n\nThe first\
+  \ epoch required approximately 4.90 hours, with CPU utilization reaching 98.90%.\n\n---\n\n## Acknowledgement\n\
+  \nThis project was completed following the **Lightweight Brain Tumor Segmentation on Low-Resource Systems**\
+  \ tutorial and applying the workflow to the BraTS-Africa glioma segmentation dataset.\n\nThe project\
+  \ demonstrates the implementation of a 3D brain tumor segmentation workflow and its deployment as an\
+  \ interactive web application in a resource-constrained environment.\n"

@@ -1,0 +1,138 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: inata169/GPR-comparing
+url: https://github.com/inata169/GPR-comparing
+platform: github
+description: Fast and reproducible 2D/3D gamma analysis for DICOM RTDOSE with robust geometry, CLI/GUI
+  support, and OpenSpec validation. DICOM RTDOSE 同士の2D/3Dガンマ評価ツールです。3%/3mm/10%を既定に、座標ずれの三軸シフト最適化、異グリッド対応、ROI/レポート/高速化に対応します。
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-13T07:14:14Z'
+image_source: null
+heuristic_total_score: 40
+heuristic_reasons:
+- Matched 5 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 13 support term(s).
+readme_excerpt: "# GPR-comparing\n\n[![CI](https://github.com/inata169/GPR-comparing/actions/workflows/ci.yml/badge.svg)](https://github.com/inata169/GPR-comparing/actions/workflows/ci.yml)\n\
+  \nGPR-comparing is a research and education tool for comparing two DICOM RT Dose distributions with\
+  \ two-dimensional or three-dimensional gamma analysis. The Python package is currently named `rtgamma`.\n\
+  \n> **Safety notice — not for clinical use.** This software must not be used for patient-specific QA,\
+  \ clinical commissioning, diagnosis, treatment decisions, treatment planning, or any other clinical\
+  \ decision. It is not a certified medical device and does not replace a commercial QA system, treatment\
+  \ planning system, phantom, or measurement device. It has no vendor approval, certification, or endorsement.\
+  \ Every user must perform an independent, purpose-specific verification before relying on any result.\
+  \ Do not place patient DICOM or protected health information in this repository or a public report.\n\
+  \nThe canonical public documentation is English. The former Japanese README is preserved in [README.ja.md](README.ja.md).\n\
+  \n## 1. Overview\n\nThe command-line pipeline loads a reference RTDOSE and an evaluation RTDOSE, interprets\
+  \ their DICOM geometry, calculates gamma on reference-grid points, and can write summary reports, images,\
+  \ arrays, and a SQLite record. A Windows PowerShell/WinForms GUI exposes the main analysis options and\
+  \ launches the Fast 3D Viewer.\n\nPyMedPhys 0.41.0 is the reference gamma engine and the omitted-value\
+  \ default in the CLI and batch runner. The GUI defaults to the parallel Numba engine for practical full-volume\
+  \ GPR runtimes; PyMedPhys remains explicitly selectable for controlled reference calculations. See the\
+  \ [PyMedPhys standardization change](docs/openspec/changes/pymedphys-standard-engine/proposal.md).\n\
+  \n## 2. Intended use and limitations\n\nGPR-comparing is intended for reproducible software research,\
+  \ education, method development, and non-patient phantom studies. A gamma pass rate is conditional on\
+  \ the input order, grids, coordinate handling, normalization, dose and distance criteria, cutoff, interpolation,\
+  \ and optional shift search. It is not a universal clinical acceptance result.\n\nThe labels `TG218_IMRT`,\
+  \ `TG218_Stereotactic`, and other preset names in [config/presets.json](config/presets.json) are compatibility\
+  \ labels for parameter sets. They do not establish clinical suitability, commissioning, certification,\
+  \ or compliance with any protocol.\n\nThe PDF report presents the observed numeric GPR without assigning\
+  \ a clinical PASS/FAIL decision. Interpret it only under a prospectively defined research protocol.\n\
+  \n## 3. Features\n\nImplemented features include:\n\n- 2D axial, sagittal, and coronal gamma outputs,\
+  \ and full 3D gamma analysis;\n- global and local dose-difference terms;\n- reference-dose cutoff and\
+  \ selectable normalization;\n- Numba voxel and trilinear sub-voxel search;\n- explicit CLI, batch, and\
+  \ GUI selection of the PyMedPhys or Numba gamma engine;\n- optional coarse-to-fine shift optimization;\n\
+  - RTDOSE loading with IPP, IOP, Pixel Spacing, GFOV, and Dose Grid Scaling;\n- RTSTRUCT contour masks,\
+  \ per-ROI gamma statistics, and per-ROI DVH statistics;\n- CSV, JSON, Markdown, PDF, PNG, NPZ, SQLite,\
+  \ and search-log outputs;\n- RTDOSE header comparison;\n- a Windows GUI and a PySide6/PyQtGraph Fast\
+  \ 3D Viewer;\n- an offline Windows bundle builder and a synthetic, non-patient installation smoke test.\n\
+  \nThe PyMedPhys default, GUI selection, versioned runtime provenance, controlled local PyMedPhys-versus-Numba\
+  \ characterization, geometry safety gates, and analytical regression tests are implemented. The current\
+  \ standardization scope fixes PyMedPhys at 0.41.0; changing that version requires a separately reviewed\
+  \ validation cycle. Cross-engine numerical equality is not a release criterion because Numba remains\
+  \ a legacy/experimental comparator. The project owner approved the v0.9.3 source release on 2026-08-11.\
+  \ A 3DVH comparison is not required for PyMedPhys standardization.\n\n## 4. Supported environment\n\n\
+  The CI workflow tests the CLI package on Windows and Ubuntu with Python 3.10, 3.11, and 3.12. The current\
+  \ Windows offline bundle is specifically constrained to 64-bit CPython 3.12.10 on 64-bit Windows 10/11.\
+  \ The WinForms GUI is Windows-specific. The Fast Viewer additionally requires PySide6 Essentials and\
+  \ PyQtGraph.\n\nPython 3.9 has been mentioned in older project material but is not part of the current\
+  \ CI matrix. The PyMedPhys standardization target is CPython 3.12; other CI versions do not define the\
+  \ standardization acceptance environment.\n\n## 5. Installation\n\nFor source use, create an isolated\
+  \ environment and install the tracked requirements:\n\n```powershell\npy -3.12 -m venv .venv\n.\\.venv\\\
+  Scripts\\python.exe -m pip install -r REQUIREMENTS.txt\n```\n\nFor the Fast Viewer:\n\n```powershell\n\
+  .\\.venv\\Scripts\\python.exe -m pip install -r requirements-fast-viewer.txt\n```\n\nFor tests and document\
+  \ validation:\n\n```powershell\n.\\.venv\\Scripts\\python.exe -m pip install -r requirements-dev.txt\n\
+  ```\n\nThese commands install the standard PyMedPhys 0.41.0 engine and the explicit legacy/research\
+  \ Numba engine. Use CPython 3.12 for the standardization work.\n\nFor an offline Windows computer, follow\
+  \ [Windows offline installation](docs/OFFLINE_INSTALL.md). The current bundle pins PyMedPhys 0.41.0\
+  \ and explicitly smoke-tests PyMedPhys and Numba. Any future engine-version update requires new dependency\
+  \ resolution, integrity and licensing manifests, software tests, controlled verification, and a rebuilt\
+  \ bundle before it enters the supported baseline.\n\n## 6. CLI quick start\n\nThe positional meaning\
+  \ of the inputs is important: `--ref` is the reference distribution whose points are evaluated; `--eval`\
+  \ is the distribution interpolated and searched around each reference point.\n\n```powershell\npython\
+  \ -m rtgamma.main `\n  --ref C:\\data\\reference_rtdose.dcm `\n  --eval C:\\data\\evaluation_rtdose.dcm\
+  \ `\n  --mode 3d `\n  --dd 3 --dta 3 --cutoff 10 `\n  --gamma-type global --norm global_max `\n  --engine\
+  \ pymedphys `\n  --opt-shift off --interp-fraction 10 `\n  --report output\\research_example\\run3d\n\
+  ```\n\nThe `3% / 3 mm`, global gamma, 10% cutoff settings above are a reproducible research example\
+  \ for comparing a PHITS-derived RT Dose produced by [dicomxphits](https://github.com/inata169/dicomxphits)\
+  \ against a selected comparison RT Dose. They are not a universal clinical threshold, a vendor recommendation,\
+  \ a certification criterion, or proof of GPR-comparing's validity. Define criteria prospectively from\
+  \ the study aim, data, validation plan, and institutional procedure.\n\nRun `python -m rtgamma.main\
+  \ --help` for the authoritative option list. Notable current defaults are the PyMedPhys engine, 3D mode,\
+  \ 3% DD, 2 mm DTA, 10% cutoff, global gamma, `global_max` normalization, shift optimization on, linear\
+  \ resampling, and interpolation fraction 10. An omitted engine emits a migration notice. Use `--engine\
+  \ numba` to reproduce a legacy Numba result. An unavailable requested/default PyMedPhys engine fails\
+  \ without falling back.\n\nDifferent non-empty `FrameOfReferenceUID` values fail closed by default.\
+  \ If header comparison confirms that anonymization alone changed the UID and both RTDOSE files still\
+  \ use the same absolute DICOM patient coordinates, the operator may explicitly add `--allow-frame-of-reference-mismatch`.\
+  \ The GUI exposes the same choice as `Allow different FoR UID` and asks for confirmation before each\
+  \ analysis or Viewer launch. The override does not align, register, or shift the inputs; it only permits\
+  \ the existing world-coordinate resampling. Reports preserve both UIDs, `same_for_uid=false`, the enabled\
+  \ override in provenance, and a prominent warning. Do not use the override for unrelated studies or\
+  \ coordinate frames.\n\n## 7. GUI usage\n\nOn Windows, start source mode with `run_gui_python.bat` or\
+  \ run `scripts/run_gui.ps1`. The GUI accepts reference and evaluation RTDOSE files, an output directory,\
+  \ optional RTSTRUCT/ROI values, DD, DTA, cutoff, normalization, a preset, gamma engine, 2D plane/index,\
+  \ thread count, shift optimization, local gamma, sub-voxel interpolation, an explicit verified-anonymization\
+  \ Frame of Reference override, PDF/NPZ/SQLite/log options, and the requested action.\n\nThe actions\
+  \ are Header Compare, 3D Gamma, 2D Gamma, and 3D Viewer. The GUI builds arguments for the same `rtgamma.main`\
+  \ CLI and always passes the selected engine. `Numba (fast full-volume GPR)` is selected initially with\
+  \ interpolation fraction 4; `PyMedPhys (reference / slow 3D)` remains available and displays a warning\
+  \ before full 3D execution. The value is persisted locally as `Gamma/engine` in the Git-ignored `config/gui_config.ini`.\
+  \ When that file is absent, the GUI reads the tracked `config/gui_config.example.ini`, whose workstation\
+  \ paths are blank. Do not distribute locally saved DICOM paths. An older GUI configuration without the\
+  \ engine key migrates to Numba and shows a warning. Every GUI 3D Gamma run writes `gamma3d.npz`, `diff3d.npz`,\
+  \ and `run3d.json` to the selected output folder for validated Viewer reuse. Gamma and Pass/Fail require\
+  \ that cache; Ref/Eval Dose, Dose Diff, and Dose Ratio remain available from the DICOM inputs.\n\nThe\
+  \ tracked EXE launcher and PyInstaller builder include the same engine contract, but an already-built\
+  \ executable or offline ZIP is not modified in place. Rebuild and reverify those artifacts before expecting\
+  \ the PyMedPhys runtime to be bundled.\n\nGUI labels and tooltips identify engine roles only; they are\
+  \ not clinical authorization.\n\n## 8. 2D and 3D gamma analysis\n\nIn 3D mode, gamma is calculated for\
+  \ the full reference volume. The final Numba path searches the original evaluation array using one-dimensional\
+  \ coordinate axes adjusted for the projected IPP origin difference.\n\nIn 2D mode with shift optimization\
+  \ off, only the selected reference slice is built in world coordinates. The evaluation dose is sampled\
+  \ onto that thin reference slice, and gamma is calculated on the resulting singleton-axis 3D array.\
+  \ The global normalization value is taken from the full reference volume. With shift optimization on,\
+  \ the current implementation runs the full-volume search first and then reports/saves the requested\
+  \ slice; it is not the same computational path as the no-shift 2D fast path.\n\n`--plane-index auto`\
+  \ selects the middle slice along the requested array axis. An explicit index is an array index, not\
+  \ a patient-coordinate value.\n\n## 9. Global and local gamma\n\n`--gamma-type global` uses a single\
+  \ dose normalization denominator. With `global_max` or `max_ref`, the current code uses the maximum\
+  \ finite reference dose; those two names are therefore equivalent in the current implementation.\n\n\
+  `--gamma-type local` uses the dose at each reference voxel as the dose-difference denominator. It is\
+  \ normally stricter in lower-dose regions. Reference values effectively equal to zero are not evaluated\
+  \ in the local Numba path.\n\nThe PyMedPhys adapter explicitly forwards `local_gamma`, `interp_fraction`,\
+  \ and the resolved global normalization. Local results are not assumed numerically equivalent to Numba.\
+  \ The approved release policy does not require a numerical or mask-agreement threshold between engines;\
+  \ observed differences must still be recorded and reviewed without case-specific tuning.\n\nA local\
+  \ migration characterization used two anonymized Monaco phantom RTDOSE distributions (3 x 3 cm and 5\
+  \ x 5 cm fields) and controlled evaluation variants derived from each source: a uniform +2% dose scale\
+  \ and a +1 mm shift in the positive DICOM column direction. The fixed 2D protocol used axial slices\
+  \ 74, 75, and 76, 3% / 2 mm, a 10% reference cutoff, `global_max`, interpolation fraction 10, linear\
+  \ resampling, and shift optimization off. Across 24 engine comparisons, the finite evaluated masks agreed\
+  \ in every run. Global gamma had no pass/fail disagreements across 41,970 common points. Local gamma\
+  \ had 165 disagreements across 41,970 common points (0.393%), all in the +1 mm shift variants; the uniform"

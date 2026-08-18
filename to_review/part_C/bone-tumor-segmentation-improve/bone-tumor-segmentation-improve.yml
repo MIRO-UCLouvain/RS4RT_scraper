@@ -1,0 +1,108 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: masterth21/Bone-Tumor-Segmentation-improve
+url: https://github.com/masterth21/Bone-Tumor-Segmentation-improve
+platform: github
+description: Automated Bone Tumor Segmentation on BTXRD dataset using UNet3+ integrated with NaLaFormer
+  Attention for precise boundary extraction.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-30T00:13:16Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+readme_excerpt: "# \U0001F9B4 NaLaFormer-TransUNet: Vision Linear Attention for Bone Tumor Segmentation\n\
+  \n[![Paper - NaLaFormer](https://img.shields.io/badge/Paper-NaLaFormer_(arXiv_2025/2026)-red.svg?style=for-the-badge&logo=arxiv)](https://arxiv.org/abs/2506.21137)\n\
+  [![Dataset - BTXRD](https://img.shields.io/badge/Dataset-BTXRD_(Nature_2024)-blue.svg?style=for-the-badge&logo=nature)](https://www.nature.com/articles/s41597-024-04311-y)\n\
+  [![Base Code - UNet 3+](https://img.shields.io/badge/Base-UNet_3+_Repo-black.svg?style=for-the-badge&logo=github)](https://github.com/hamidriasat/UNet-3-Plus)\n\
+  [![TensorFlow](https://img.shields.io/badge/TensorFlow-2.21-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)](https://www.tensorflow.org/)\n\
+  [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)\n\nOfficial\
+  \ implementation of **NaLaFormer-TransUNet** — integrating **Norm×Direction: Q Norm-Aware Vision Linear\
+  \ Attention** into a Hybrid CNN-Transformer architecture for high-precision **Bone Tumor Segmentation\
+  \ & Classification (Benign vs. Malignant)** on the **BTXRD Dataset**.\n\n---\n\n## \U0001F4D1 Table\
+  \ of Contents\n\n- [✨ Key Innovations](#-key-innovations)\n- [\U0001F9EE Mathematical Formulation](#-mathematical-formulation)\n\
+  - [\U0001F3D7️ Architecture Overview](#%EF%B8%8F-architecture-overview)\n- [\U0001F4CA Dataset & Segmentation\
+  \ Classes](#-dataset--segmentation-classes)\n- [\U0001F680 Quick Start](#-quick-start)\n  - [1. Environment\
+  \ Setup](#1-environment-setup)\n  - [2. Dataset Preparation](#2-dataset-preparation)\n  - [3. Training](#3-training)\n\
+  - [\U0001F4C1 Repository Structure](#-repository-structure)\n- [⚙️ Configuration Reference](#%EF%B8%8F-configuration-reference)\n\
+  - [\U0001F4DA References & Citation](#-references--citation)\n- [\U0001F4DC License](#-license)\n\n\
+  ---\n\n## ✨ Key Innovations\n\nStandard Vision Transformers (ViT) and Softmax Attention suffer from\
+  \ **$\\mathcal{O}(N^2)$ quadratic complexity**, making high-resolution medical image segmentation computationally\
+  \ prohibitive. While standard Linear Attentions achieve $\\mathcal{O}(N)$ complexity, they remove Query\
+  \ normalization, destroying query-norm-entropy correlation (\"spikiness\").\n\n**NaLaFormer** ([arXiv:2506.21137](https://arxiv.org/abs/2506.21137))\
+  \ solves this with three core contributions:\n\n1. **Q Norm-Aware Linear Attention**: Restores missing\
+  \ query-norm dependency in linear space without Softmax.\n2. **Cosine Direction Feature Mapping ($\\\
+  phi_c$)**: Enforces strict non-negativity by decomposing vectors into magnitude and cosine direction\
+  \ encodings.\n3. **Gated Activation Branch ($\\text{ACT}[G]$)**: Dynamically gates features via $f(x)\
+  \ = \\lambda \\cdot (\\tau + \\tanh(x))$.\n4. **Sub-quadratic Efficiency**: Reduces bottleneck attention\
+  \ complexity from $\\mathcal{O}(N^2 \\cdot d)$ to **$\\mathcal{O}(N \\cdot d^2)$**.\n\n---\n\n## \U0001F9EE\
+  \ Mathematical Formulation\n\n### 1. Feature Maps ($\\phi_q, \\phi_k, \\phi_c$)\nThe input Query ($Q$)\
+  \ and Key ($K$) vectors are transformed into non-negative feature maps via norm-direction decomposition:\n\
+  \n$$\\phi_q(q) = |d(q)^{\\|q\\|}| \\odot \\big[\\cos(\\text{dir}(q));\\, \\sin(\\text{dir}(q))\\big]$$\n\
+  \n$$\\phi_k(k) = |k^\\lambda| \\odot \\big[\\cos(\\text{dir}(k));\\, \\sin(\\text{dir}(k))\\big]$$\n\
+  \nwhere $\\text{dir}(x) = \\frac{x}{\\|x\\| + \\epsilon}$ and $\\lambda$ is a learnable scaling parameter.\n\
+  \n### 2. Linear Attention Computation\nRather than computing the $N \\times N$ matrix $Q K^T$, associativity\
+  \ is exploited:\n\n$$S = (K')^T V \\in \\mathbb{R}^{2d \\times d}$$\n\n$$\\text{Attn}(Q, K, V) = \\\
+  frac{Q' \\cdot S}{Q' \\cdot \\sum K'}$$\n\n### 3. Gated Output Projection\n$$\\text{Output} = \\text{LayerNorm}\\\
+  Big(\\text{Attn} \\odot \\text{ACT}[G]\\Big) W_O$$\n\n---\n\n## \U0001F3D7️ Architecture Overview\n\n\
+  ```\n                          NaLaFormer-TransUNet Pipeline\n                          \n   Input Image\
+  \ (384×384×3)\n             │\n   ┌─────────┴─────────┐\n   │ ResNet50V2 Encoder│  ───► Skip s1 (192×192×64)\
+  \   ────────┐\n   │    (Backbone)     │  ───► Skip s2 (96×96×256)    ──────┐ │\n   └─────────┬─────────┘\
+  \  ───► Skip s3 (48×48×512)    ────┐ │ │\n             │            ───► Skip s4 (24×24×1024)   ──┐\
+  \ │ │ │\n      CNN Out (12×12×2048)                              │ │ │ │\n             │           \
+  \                               │ │ │ │\n  ┌──────────▼──────────┐                               │ │\
+  \ │ │\n  │ NaLaFormer Bottleneck│                               │ │ │ │\n  │  (Linear Attention) │ ◄──\
+  \ N × NaLaFormer Blocks     │ │ │ │\n  └──────────┬──────────┘                               │ │ │ │\n\
+  \             │                                          │ │ │ │\n   ┌─────────▼─────────┐         \
+  \                       │ │ │ │\n   │  U-Net Decoder    │ ◄──────────────────────────────┴─┴─┴─┘\n \
+  \  │ + Skip Connection │\n   └─────────┬─────────┘\n             │\n   Output Mask (384×384×3)  [Background\
+  \ / Benign / Malignant]\n```\n\n---\n\n## \U0001F4CA Dataset & Segmentation Classes\n\nThe pipeline\
+  \ is configured for the **[BTXRD Dataset](https://www.nature.com/articles/s41597-024-04311-y)** (Scientific\
+  \ Data / Nature) with **3-Class Fine-Grained Segmentation**:\n\n| Class ID | Pixel Value (Visual Mask)\
+  \ | Class Category | Original BTXRD Labels Included |\n| :---: | :---: | :--- | :--- |\n| **0** | `0`\
+  \ (Black) | **Background** | Non-tumor tissue / Background |\n| **1** | `128` (Gray) | **Benign Tumor\
+  \ (BT)** | `osteochondroma`, `multiple osteochondromas`, `simple bone cyst`, `giant cell tumor`, `synovial\
+  \ osteochondroma`, `osteofibroma`, `other bt` |\n| **2** | `255` (White) | **Malignant Tumor (MT)**\
+  \ | `osteosarcoma`, `other mt` |\n\n*Note: Mask generation uses **polygon contours** exclusively to\
+  \ guarantee boundary precision.*\n\n---\n\n## \U0001F680 Quick Start\n\n### 1. Environment Setup\n\n\
+  Clone the repository and install required dependencies:\n\n```bash\ngit clone https://github.com/YOUR_USERNAME/nalaformer-transunet.git\n\
+  cd nalaformer-transunet\n\n# Install dependencies\npip install tensorflow hydra-core\n```\n\n### 2.\
+  \ Dataset Preparation\n\nConvert LabelMe JSON annotations to polygon multi-class masks and split into\
+  \ Train/Val sets (80/20):\n\n```bash\npython prepare_data.py\n```\n\n*Output dataset structure:*\n```\n\
+  D:/TumorBone/data/BTXRD/split/\n├── train/\n│   ├── images/  (1,493 images)\n│   └── mask/    (1,493\
+  \ masks)\n└── val/\n    ├── images/  (374 images)\n    └── mask/    (374 masks)\n```\n\n### 3. Training\n\
+  \nLaunch model training with automatic mixed precision (AMP) and learning rate scheduling:\n\n```bash\n\
+  python train.py\n```\n\n---\n\n## \U0001F4C1 Repository Structure\n\n```\n.\n├── configs/\n│   └── config.yaml\
+  \               # Centralized Hydra configuration file\n├── models/\n│   ├── nalaformer_attention.py\
+  \   # NaLaFormer Q Norm-Aware Attention core implementation\n│   ├── model.py                  # Model\
+  \ factory & NaLaFormer-TransUNet builder\n│   ├── backbones.py              # VGG & ResNet backbone\
+  \ extractors\n│   ├── unet3plus.py              # UNet 3+ implementation\n│   └── unet3plus_deep_supervision.py\n\
+  ├── data_generators/\n│   ├── data_generator.py         # Multi-backend generator dispatcher\n│   └──\
+  \ tf_data_generator.py      # TF sequence data generator with Data Augmentation\n├── data_preparation/\n\
+  │   └── verify_data.py            # Dataset integrity verification script\n├── losses/\n│   ├── unet_loss.py\
+  \              # Class-weighted Dice Loss\n│   └── loss.py                  # Focal, SSIM, and IoU loss\
+  \ functions\n├── prepare_data.py               # LabelMe JSON -> 3-Class Polygon Mask converter & Splitter\n\
+  ├── train.py                      # Main training pipeline script\n└── README.md                   \
+  \  # Project documentation\n```\n\n---\n\n## ⚙️ Configuration Reference\n\nKey hyperparameter controls\
+  \ in [`configs/config.yaml`](file:///d:/TumorBone/code/Unet3+/unet-/configs/config.yaml):\n\n```yaml\n\
+  MODEL:\n  TYPE: \"nalaformer_transunet\"\n  NALAFORMER:\n    D_MODEL: 256       # Hidden dimension size\n\
+  \    DEPTH: 4           # Stacked NaLaFormer block count\n    NUM_HEADS: 8       # Multi-head attention\
+  \ count\n    FF_EXPANSION: 4    # Feed-forward expansion factor (4x)\n    DROPOUT_RATE: 0.1  # Dropout\
+  \ rate\n\nINPUT:\n  HEIGHT: 320\n  WIDTH: 320\n  CHANNELS: 3\n\nOUTPUT:\n  CLASSES: 3          # [0:\
+  \ Background, 1: Benign, 2: Malignant]\n\nHYPER_PARAMETERS:\n  EPOCHS: 100\n  BATCH_SIZE: 16\n  LEARNING_RATE:\
+  \ 5e-5\n\nOPTIMIZATION:\n  AMP: True            # Automatic Mixed Precision\n  XLA: True           \
+  \ # Accelerated Linear Algebra JIT\n```\n\n---\n\n## \U0001F4DA References & Citation\n\n1. **NaLaFormer\
+  \ (Attention Mechanism)**:\n   > *Norm×Direction: Restoring the Missing Query Norm in Vision Linear\
+  \ Attention*  \n   > Paper: [arXiv:2506.21137](https://arxiv.org/abs/2506.21137)\n\n2. **BTXRD Dataset**:\n\
+  \   > *Bone Tumor X-Ray Dataset for Medical Image Segmentation and Classification*  \n   > Scientific\
+  \ Data (Nature, 2024). DOI: [10.1038/s41597-024-04311-y](https://www.nature.com/articles/s41597-024-04311-y)\n\
+  \n3. **UNet 3+ Baseline**:\n   > *UNet 3+: A Full-Scale Connected UNet for Medical Image Segmentation*\
+  \  \n   > Codebase reference: [hamidriasat/UNet-3-Plus](https://github.com/hamidriasat/UNet-3-Plus)\n\
+  \n---\n\n## \U0001F4DC License\n\nDistributed under the MIT License. See `LICENSE` for more information.\n"

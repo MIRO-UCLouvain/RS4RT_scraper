@@ -1,0 +1,65 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: farazali7/glioblastoma-radiogenomics
+url: https://github.com/farazali7/glioblastoma-radiogenomics
+platform: github
+description: A machine learning model for detecting presence of MGMT promoter methylation genetic sequence
+  from brain MRI scans
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2023-04-28T21:19:46Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "[mri-planes]: ./assets/mriplanes.jpg \"MRI Planes\"\n[mri-seqs]: ./assets/mriseqs.png\
+  \ \"MRI Sequences\"\n[imbalance]: ./assets/imbalance.png \"Data imbalances\"\n[model]: ./assets/modelstruct.png\
+  \ \"Model Architecture\"\n\n# Glioblastoma Radiogenomic Classification\nA machine learning model for\
+  \ detecting presence of MGMT promoter methylation genetic sequence from brain MRI scans.\n\n## Problem\
+  \ Definition\nChemotherapy drugs tend to damage tumour cell DNA. O[6]-methylguanine-DNA methyltransferase\
+  \ (MGMT) is a protein found in cells, such as tumour cells that repairs the cell's DNA. The more MGMT\
+  \ protein that the tumour cells produce, the less effective the chemotherapy drug is expected to be,\
+  \ as the protein will repair the damage to the tumour. Thus, determination of MGMT promoter methylation\
+  \ status in newly diagnosed GBM can influence treatment decision making. Current methods for genetic\
+  \ analysis of cancer are invasive, such as requiring surgery to extract sample tissue. By leveraging\
+  \ MR images, there is potential to non-invasively assess the pertinent genetics to make informed medical\
+  \ treatment decisions. \n\n## MRI Data Background\nMagnetic resonance imaging (MRI) is one of the most\
+  \ commonly used tests in neurology and neurosurgery. MRI provides significant detail of the brain, spinal\
+  \ cord and vascular anatomy, and has the advantage of being able to visualize anatomy in all three planes:\
+  \ axial, sagittal, and coronal.\n\n![mri-planes]\n\nThe most common type of MRI sequences are the following:\n\
+  - Note: TR = Repetition Time: time between successive pulse sequences applied to the same slice. TE\
+  \ = Time to Echo: time between the delivery of the RF pulse and the receipt of the echo signal.\n1.\
+  \ T1-weighted\n    - Produced by using short time TE and TR times\n2. T2-weighted\n    - Produced by\
+  \ using longer TE and TR times\n3. Fluid Attenuated Inversion Recovery (FLAIR)\n    - Similar to T2\
+  \ except TE and TR are very long. Abnormalities remain bright but normal CSF fluid is attenuated and\
+  \ made dark.\n4. T1-weighted Gadolinium (Gad) Post Constrast\n    - Gad is a non-toxic paramagnetic\
+  \ contrast enhancement agent that changes signal intensities by shortening T1, thus, it is very bright\
+  \ on T1-weighted images.\n\n![mri-seqs]\n\nIn order to start tackling this problem, the data available\n\
+  was first analyzed.\n\n## Exploratory Data Analysis\nThe data analysis began with looking at the distribution\n\
+  of targets within the dataset.\n\n![imbalance]\n\nThe training dataset contains about 585 studies, each\
+  \ with numerous (~20-400) scans in the four sequences mentioned above. As shown above, the instances\
+  \ of positive to negative indications are almost the same.\n\nThe test dataset contains about 87 studies,\
+  \ each with numerous (~20-400) scans in the four sequences mentioned above.\n\nThree studies have black\
+  \ images only and can be ignored from training (00109, 00123, 00709).\n\n## Preprocessing + Data Cleaning\
+  \ + Augmentation\nThese are some approaches that were taken to help clean\nthe dataset a bit further\
+  \ and make it more plausible\nto train given limited computation resources. For context, roughly 30\
+  \ slices (images), from the middle of the respective set of scans, were chosen from each study in each\
+  \ sequence and supplied together as input to a 3D CNN model.\n* Remove studies from training set that\
+  \ had only black images\n* Normalize (scale) image data\n* Crop black border from images\n* Resize the\
+  \ image 120 x 120\n* Upsample streams that have less than 30 slices\n\nAdditional random image augmentation\
+  \ techniques were applied to expand the training dataset. \n* Left-Right Flips\n* Up-Down Flips\n* Contrast,\
+  \ Brightness, Saturation, and Hue Changes\n* Rotations\n* Cutouts\n\n## Model Structure & Performance\n\
+  The model was based primarily on a pre-trained\nEfficientNetB0 model. An input layer and a 3D convolution\
+  \ layer were prepended to it. A global average pooling layer and a final dense layer for predictions\
+  \ were appended.\n\n![model]\n\nThe model using L2 regularization loss to help with overfitting and\
+  \ Adam's optimizer. Since a large input was being given at each step (a packaged bundle of 30 slices\
+  \ in each of the 4 sequences), to avoid memory problems, gradient accumulation was used to iterate the\
+  \ model's trainable parameters (weights and biases).\n\nAfter about 5 epochs, the model achieves roughly\
+  \ a 0.704 AUC score but was not trained using the entire dataset yet due to limitations.\n\n## Future\
+  \ Work\n* Train model on full dataset entirely\n* Test other pre-trained models\n* Try a windowing and\
+  \ look-up-table preprocessing technique used by radiologists"

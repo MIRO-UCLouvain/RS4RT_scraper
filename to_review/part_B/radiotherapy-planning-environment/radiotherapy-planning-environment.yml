@@ -1,0 +1,115 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: VaishnaviAgrawal03/Radiotherapy-Planning-Environment
+url: https://github.com/VaishnaviAgrawal03/Radiotherapy-Planning-Environment
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-17T21:24:33Z'
+image_source: null
+heuristic_total_score: 35
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 9 support term(s).
+readme_excerpt: "---\ntitle: Radiotherapy Planning Environment\nemoji: \"☢️\"\ncolorFrom: blue\ncolorTo:\
+  \ green\nsdk: docker\napp_port: 7860\npinned: false\n---\n\n# RadiotherapyPlanningEnv — RL Environment\
+  \ for Cancer Treatment Planning\n\n> A Gymnasium-compatible reinforcement learning environment where\
+  \ an AI agent learns to plan cancer radiotherapy treatment — placing radiation beams to maximize tumor\
+  \ dose while protecting critical organs.\n\n## Clinical Motivation\n\n~14 million cancer patients per\
+  \ year require radiotherapy. A radiation oncologist must decide:\n- How many beams to use\n- At what\
+  \ angles\n- With what dose intensity\n\n...while ensuring the tumor receives enough radiation and nearby\
+  \ healthy organs stay below safe limits. This process takes human experts **2–4 hours per patient**.\
+  \ This environment simulates that decision-making process for RL agents.\n\n**This is NOT a clinical\
+  \ tool.** It is a physically-grounded benchmark environment for testing RL algorithms on a meaningful\
+  \ real-world problem.\n\n---\n\n## Live Demo\n\nTry the interactive Gradio demo on HuggingFace Spaces\
+  \ — watch a trained PPO agent plan treatment in real time, or play manually to compete against it:\n\
+  \n**[https://huggingface.co/spaces/VaishnaviAgrawal/Radiotherapy_Planning_Environment](https://huggingface.co/spaces/VaishnaviAgrawal/Radiotherapy_Planning_Environment)**\n\
+  \n---\n\n## Quick Start\n\n```bash\ngit clone https://github.com/VaishnaviAgrawal03/Radiotherapy-Planning-Environment.git\n\
+  cd Radiotherapy-Planning-Environment\npip install -e .\n```\n\n```python\nimport gymnasium as gym\n\
+  import radiotherapy_env\n\nenv = gym.make(\"RadiotherapyEnv-prostate-v1\", render_mode=\"rgb_array\"\
+  )\nobs, info = env.reset(seed=42)\n\nfor _ in range(50):\n    action = env.action_space.sample()\n \
+  \   obs, reward, terminated, truncated, info = env.step(action)\n    if terminated or truncated:\n \
+  \       break\n\nprint(f\"Final score: {info['score']:.3f}\")\nenv.close()\n```\n\n---\n\n## Tasks —\
+  \ 3 Difficulty Levels\n\n| Task | Gym ID | Difficulty | OARs | Max Steps | Clinical Context |\n|------|--------|-----------|------|-----------|-----------------|\n\
+  | **Prostate** | `RadiotherapyEnv-prostate-v1` | Easy | 2 (rectum, bladder) | 50 | Clear geometry, well-separated\
+  \ organs |\n| **Head & Neck** | `RadiotherapyEnv-headneck-v1` | Medium | 7 (spinal cord, brainstem,\
+  \ parotids, etc.) | 60 | Complex anatomy, many competing constraints |\n| **Pediatric Brain** | `RadiotherapyEnv-pediatricbrain-v1`\
+  \ | Hard | 5 (brainstem 2-3mm away) | 70 | Near-zero margin for error, catastrophic brainstem penalty\
+  \ |\n\n---\n\n## Baseline Results\n\n### PPO Agent (stable-baselines3, MultiInputPolicy)\n\n| Task |\
+  \ Mean Score | Std | Pass Rate | Training Steps |\n|------|-----------|-----|-----------|---------------|\n\
+  | Prostate | 0.697 | ±0.054 | **100%** | 200K |\n| Head & Neck | 0.750 | ±0.059 | **96.7%** | 350K |\n\
+  | Pediatric Brain | 0.717 | ±0.090 | **95.0%** | 1M |\n| **Aggregate** | **0.721** | — | **97.2%** |\
+  \ — |\n\n> Score ≥ 0.6 = clinically acceptable treatment plan.\n\n### LLM Agent (Llama 3.3 70B via inference.py)\n\
+  \n| Task | Mean Score | Episodes |\n|------|-----------|----------|\n| Prostate | 0.540 | 3 |\n| Head\
+  \ & Neck | 0.560 | 3 |\n| Pediatric Brain | 0.523 | 3 |\n| **Aggregate** | **0.541** | 9 |\n\n---\n\n\
+  ## Action Space — `Discrete(8)`\n\n| Action | Description |\n|--------|-------------|\n| 0 | Add beam\
+  \ at next default angle |\n| 1 | Rotate last beam +10° |\n| 2 | Rotate last beam −10° |\n| 3 | Increase\
+  \ last beam dose weight by 10% |\n| 4 | Decrease last beam dose weight by 10% |\n| 5 | Remove last beam\
+  \ |\n| 6 | Fine-tune all beams (small random perturbation) |\n| 7 | Lock plan (terminate episode) |\n\
+  \n---\n\n## Observation Space — `Dict`\n\n| Key | Shape | Description |\n|-----|-------|-------------|\n\
+  | `dvh_tumor` | `Box(50,)` | Cumulative Dose-Volume Histogram for tumor |\n| `dvh_oar` | `Box(3, 50)`\
+  \ | DVH for top 3 organs-at-risk |\n| `beams` | `Box(7, 3)` | Per-beam: `[angle/180, dose_weight, is_active]`\
+  \ |\n| `constraints` | `Box(4,)` | Normalized constraint violations `[tumor, oar1, oar2, oar3]` |\n\
+  | `step_frac` | `Box(1,)` | Episode progress fraction `[0, 1]` |\n\nAll observations normalized to `[0,\
+  \ 1]` for neural network training stability.\n\n---\n\n## Reward Function\n\nDense per-step reward in\
+  \ `[0.0, 1.0]`:\n\n```\nreward = tumor_coverage × 0.55\n       − oar_penalty    × 0.40   (priority-weighted:\
+  \ critical=1.5×, moderate=0.5×)\n       + plan_efficiency × 0.05\n```\n\n- **Tumor coverage (55%):**\
+  \ D95 metric + fraction of tumor receiving ≥ 95% prescription dose\n- **OAR penalty (40%):** Priority-weighted\
+  \ organ violations (critical organs penalized 1.5×)\n- **Plan efficiency (5%):** Optimal beam count\
+  \ around 5–7\n\nThe reward provides **meaningful partial progress signals** — distinct from the stricter\
+  \ `compute_score()` used for final grading (which uses binary pass/fail for critical OARs).\n\n---\n\
+  \n## Physics Model\n\nGaussian pencil-beam dose calculation:\n\n```\nbeam_dose = lateral_profile × depth_attenuation\
+  \ × dose_weight × BEAM_SCALE\n```\n\n- **Lateral profile:** Gaussian falloff from beam central axis\
+  \ (σ = 4.0)\n- **Depth attenuation:** Exponential decay through tissue (Beer-Lambert Law, μ = 0.012)\n\
+  - **Beam superposition:** Total dose = sum of all beam contributions\n- **Isocenter convergence:** All\
+  \ beams aimed at tumor center\n\nSimplified from clinical Monte Carlo (milliseconds vs. hours) but preserves\
+  \ the core trade-off: multiple beams overlap at the tumor for high dose while surrounding organs receive\
+  \ minimal radiation.\n\n---\n\n## Installation\n\n```bash\n# Core environment\npip install -e .\n\n\
+  # With PPO training support\npip install -e \".[training]\"\n\n# With LLM inference support\npip install\
+  \ -e \".[inference]\"\n\n# With Gradio demo\npip install -e \".[demo]\"\n```\n\n---\n\n## Running the\
+  \ LLM Inference Script\n\nConnects an LLM to the environment via an OpenAI-compatible API:\n\n```bash\n\
+  export API_BASE_URL=\"https://api.groq.com/openai/v1\"\nexport MODEL_NAME=\"llama-3.3-70b-versatile\"\
+  \nexport API_KEY=\"your_api_key\"\npython inference.py\n```\n\nRequired log output format:\n\n```\n\
+  [START] task=prostate env=RadiotherapyEnv-prostate-v1 model=llama-3.3-70b-versatile\n[STEP] step=1 action=add_beam\
+  \ reward=0.03 done=false error=null\n[STEP] step=2 action=add_beam reward=0.07 done=false error=null\n\
+  ...\n[END] success=true steps=50 score=0.635 rewards=0.03,0.07,...\n```\n\n---\n\n## Training a PPO\
+  \ Agent\n\n```bash\npip install -e \".[training]\"\npython baseline/train_ppo.py\n```\n\nTrains on all\
+  \ three tasks using 4 parallel vectorized environments. Saved checkpoints land in `baseline/models/`.\n\
+  \n---\n\n## Auto-Grader\n\n```python\nfrom radiotherapy_env.reward.grader import grade_all\n\ndef my_agent(obs,\
+  \ env):\n    return env.action_space.sample()\n\nresults = grade_all(my_agent, n_episodes=20, seed=42)\n\
+  print(f\"Aggregate: {results['aggregate_score']:.3f}\")\n```\n\nEach grader is deterministic with seed;\
+  \ pass threshold is 0.60.\n\n---\n\n## Running Tests\n\n```bash\npytest tests/ -v\n# 25 tests: Gymnasium\
+  \ compliance, physics, reward, task difficulty\n```\n\n---\n\n## Docker\n\n```bash\ndocker build -t\
+  \ radiotherapy-env:latest .\ndocker run -p 7860:7860 radiotherapy-env:latest\n```\n\n---\n\n## OpenEnv\
+  \ HTTP Server\n\nThe FastAPI server exposes the environment over HTTP (required by `openenv validate`):\n\
+  \n```bash\nuv run server\n# or\nuvicorn server.app:app --host 0.0.0.0 --port 8000\n```\n\n| Endpoint\
+  \ | Method | Purpose |\n|----------|--------|---------|\n| `/health` | GET | Returns `{\"status\": \"\
+  healthy\"}` |\n| `/metadata` | GET | Environment name, description, tasks |\n| `/schema` | GET | Pydantic\
+  \ JSON schemas for action/observation |\n| `/reset` | POST | Reset environment, returns initial observation\
+  \ |\n| `/step` | POST | Apply action, returns next observation |\n| `/state` | GET | Full internal environment\
+  \ state |\n\n---\n\n## Repository Structure\n\n```\nRadiotherapy-Planning-Environment/\n├── inference.py\
+  \               # LLM inference script\n├── openenv.yaml               # OpenEnv spec metadata\n├──\
+  \ Dockerfile                 # Container build (port 7860)\n├── radiotherapy_env/          # Main Python\
+  \ package\n│   ├── env.py                 # Core RadiotherapyEnv class\n│   ├── physics/           \
+  \    # Dose calculator, DVH, patient models\n│   ├── tasks/                 # 3 task definitions (prostate,\
+  \ head_neck, pediatric_brain)\n│   ├── reward/                # Reward function, scoring, auto-grader\n\
+  │   └── rendering/             # Dose heatmap + DVH visualization\n├── server/                    #\
+  \ OpenEnv HTTP server (FastAPI)\n├── baseline/                  # PPO training, evaluation, saved models,\
+  \ results\n├── app/                       # Gradio interactive demo\n└── tests/                    \
+  \ # 25-test pytest suite\n```\n\n---\n\n## Key Design Decisions\n\n| Decision | Rationale |\n|----------|-----------|\n\
+  | 64×64 grid | Balances fidelity with RL training speed |\n| Max 7 beams | Clinically realistic IMRT\
+  \ constraint |\n| Gaussian pencil-beam model | Fast (~ms) vs. Monte Carlo (minutes). Preserves core\
+  \ trade-offs |\n| Discrete(8) action space | Clinically meaningful, small enough for exploration |\n\
+  | Dense per-step rewards | Enables gradient-based RL learning (not sparse end-of-episode) |\n| Normalized\
+  \ observations [0,1] | Improves neural network training stability |\n| Three task tiers | Graduated\
+  \ difficulty for curriculum learning research |\n| Separate reward vs. score | Training needs smooth\
+  \ gradients; evaluation needs strict clinical criteria |\n| DVH as observation | Compact, rotation-invariant,\
+  \ clinically standard representation |\n| Beam angles [0, 180) | Avoids redundancy (opposite angles\
+  \ are equivalent) |\n\n---\n\n## Author\n\n**Vaishnavi Agrawal** — vagrawal_be22@thapar.edu\n"

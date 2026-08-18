@@ -1,0 +1,96 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Asedghasem/CalcSeg3D-UNTER
+url: https://github.com/Asedghasem/CalcSeg3D-UNTER
+platform: github
+description: 3D UNETR + volumetric Grad-CAM workflow for segmenting incidental carotid artery calcifications
+  in CBCT scans. Detects tiny, sparse lesions (0.04% of volume) with heatmap-guided post-processing, reaching
+  a Dice of 0.64. Official code for the paper in Informatics in Medicine Unlocked.
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-07-11T20:18:13Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# CalcSeg3D-UNTER\n# Deep Learning Workflow for 3D Calcification Segmentation in Cone\
+  \ Beam Computed Tomographic (CBCT) Images\n\nOfficial implementation of the paper **\"Deep Learning\
+  \ Workflow for 3D Calcification Segmentation in Cone Beam Computed Tomographic Images\"** (*Informatics\
+  \ in Medicine Unlocked*).\n\nThis repository provides a multi-stage workflow for detecting and segmenting\
+  \ **incidental carotid artery calcifications** in 3D CBCT scans. Calcifications of this kind are clinically\
+  \ important (they are strongly associated with cardiovascular disease) but are notoriously hard to segment:\
+  \ they are tiny, sparsely distributed, and visually similar to surrounding anatomy. In our dataset they\
+  \ occupy only about **0.04%** of the total image volume, yet the proposed workflow reaches a **Dice\
+  \ coefficient of 0.64** while remaining lightweight and fast at inference.\n\n---\n\n## Overview\n\n\
+  The pipeline combines three ideas:\n\n1. **3D UNETR segmentation.** A vision-transformer-based encoder–decoder\
+  \ (UNETR) captures long-range volumetric dependencies, which is critical for finding small, spatially\
+  \ dispersed calcifications that slice-wise methods miss. The architecture is adapted (fewer layers,\
+  \ tuned hyperparameters) to fit modest hardware.\n2. **Volumetric 3D Grad-CAM.** A custom full-volume\
+  \ Grad-CAM extends class activation maps from 2D to the whole 3D volume. Activations from the **third\
+  \ decoder block** were found to align more closely with the true lesion extent than the raw segmentation\
+  \ output.\n3. **Grad-CAM-guided post-processing.** The intermediate attention maps are used as a guidance\
+  \ signal in a Euclidean-distance-based region-expansion step that grows anomalous regions **only where\
+  \ the activation map and the model prediction agree**, improving sensitivity while controlling false\
+  \ positives.\n\n\n---\n\n## Key Results\n\n**Segmentation model comparison** (Dice coefficient):\n\n\
+  | Model      | Dice          |\n|------------|---------------|\n| 3D U-Net   | 0.33 ± 0.08   |\n| nnU-Net\
+  \    | 0.28 ± 0.08   |\n| VAE        | 0.49 ± 0.06   |\n| **UNETR**  | **0.64 ± 0.013** |\n\n**Ablation\
+  \ study** (contribution of each component):\n\n| Configuration            | Description            \
+  \                       | Dice |\n|--------------------------|-----------------------------------------------|------|\n\
+  | Baseline UNETR           | No data augmentation                          | 0.59 |\n| UNETR + Data\
+  \ Augmentation| Training with augmentation strategies         | 0.63 |\n| **Full Framework**       |\
+  \ Pipeline with heatmap-guided refinement       | **0.67** |\n\nThe Grad-CAM-guided post-processing\
+  \ improved the Dice coefficient by up to **7%** and recall by up to **14%**, and reduced HD95 (boundary\
+  \ error) in most cases. The largest gains appear in recall, reflecting better detection of small, previously\
+  \ under-segmented lesions.\n\nEvaluation metrics used: **Dice coefficient**, **Recall (sensitivity)**,\
+  \ **Precision**, and the **95th-percentile Hausdorff Distance (HD95)**.\n\n---\n\n## Dataset\n\nThe\
+  \ study introduces a novel 3D CBCT dataset of incidental cervical calcifications.\n\n- **Source:** CBCT\
+  \ scans acquired between January 2009 and August 2023, originally for implant surgery and treatment\
+  \ planning.\n- **Scanners:** I-CAT, OP300, and Carestream 9600.\n- **Size:** 104 scans collected; 12\
+  \ excluded for documentation errors or cone-beam artifacts → **92 scans** (60 normal, 32 abnormal).\n\
+  - **Format:** DICOM. Each volume has a matching segmentation mask of identical dimensions.\n- **Annotation:**\
+  \ Calcifications were manually segmented in 3D Slicer by an OMR resident and confirmed by a board-certified\
+  \ oral and maxillofacial radiologist.\n- **Split:** 17 training / 6 validation / 6 test volumes.\n\n\
+  > **Ethics & availability.** The study was approved by the Stony Brook University Institutional Review\
+  \ Board (IRB). Because the data is clinical and patient-derived, access may be restricted. Please see\
+  \ the [Data Availability](#data-availability) section below or contact the corresponding author regarding\
+  \ access.\n\n---\n\n## Method Details\n\n### Model — 3D UNETR\n- Transformer-based encoder with a convolutional\
+  \ decoder (U-Net-inspired).\n- Input volume: `96 × 96 × 96`, partitioned into non-overlapping `16 ×\
+  \ 16 × 16` patches.\n- Transformer configuration: **12 layers**, **12 attention heads**, hidden size\
+  \ **768**.\n- No dropout (to preserve already-sparse anomaly signal).\n\n### Loss Function\nA combination\
+  \ of **Dice loss** (robust to class imbalance) and **cross-entropy loss** (pixel-wise accuracy).\n\n\
+  ### Data Augmentation\nNoise addition, resolution changes, and rotations — chosen to preserve the essential\
+  \ structure of the original scans given only 32 abnormal samples.\n\n### 3D Grad-CAM\nActivation maps\
+  \ are computed per slice across the full volume for a target layer (the **third decoder block**), then\
+  \ aggregated into a coherent 3D attention map. See the paper (Algorithm 1) for the full computation.\n\
+  \n### Post-Processing (region expansion)\n1. Find pixels within a **Euclidean distance** of the initially\
+  \ predicted anomaly pixels.\n2. **Binarize** the Grad-CAM map with a threshold.\n3. Combine via logical\
+  \ **AND** (distance mask ∧ binarized heatmap), then **OR** with the initial prediction.\n4. Selectively\
+  \ expand small candidate regions under dataset-specific constraints (limits on regions per half-slice,\
+  \ cautious expansion of regions under 4 pixels).\n\n**Post-processing hyperparameters:** Euclidean distance\
+  \ threshold = 3, Grad-CAM binarization threshold = 0.7, region expansion = 4 voxels.\n\n### Training\
+  \ Configuration\n| Setting        | Value              |\n|----------------|--------------------|\n\
+  | Epochs         | 100                |\n| Batch size     | 4                  |\n| Optimizer      |\
+  \ Adam               |\n| Learning rate  | 1 × 10⁻⁴           |\n| GPU            | NVIDIA P100    \
+  \    |\n| Input size     | 96 × 96 × 96       |\n| Patch size     | 16 × 16 × 16       |\n\n---\n\n\
+  ## Limitations\n\n- Full-3D processing is memory- and compute-intensive, constraining model complexity.\n\
+  - The dataset is small and single-center, which may limit generalizability across scanners and populations.\n\
+  - Ground-truth annotations may carry inter-rater variability (not evaluated here).\n- Outputs should\
+  \ always be interpreted alongside the judgment of qualified medical professionals.\n\n---\n\n## Citation\n\
+  \nIf you use this code or dataset, please cite:\n\n```bibtex\n@article{darvishnoori_calcification_segmentation,\n\
+  \  title   = {Deep Learning Workflow for 3D Calcification Segmentation in Cone Beam Computed Tomographic\
+  \ Images},\n  author  = {Darvish Noori, Kimia and Bavarnegin, Hamed and Reeves, Kyle and Mirroshandel,\
+  \ Seyed Abolghasem and Mahdian, Mina},\n  journal = {Informatics in Medicine Unlocked},\n  year    =\
+  \ {2026}\n}\n```\n<!-- Update volume/pages/DOI/year once the paper is published. -->\n\n---\n\n## Authors\n\
+  \n- **Kimia Darvish Noori** — University of Guilan\n- **Hamed Bavarnegin** — University of Guilan\n\
+  - **Kyle Reeves, DDS** — Stony Brook University, School of Dental Medicine\n- **Seyed Abolghasem Mirroshandel**\
+  \ — University of Guilan *(corresponding author — mirroshandel@guilan.ac.ir)*\n- **Mina Mahdian, DDS,\
+  \ MDSc** — Stony Brook University, School of Dental Medicine *(senior author)*\n\n---\n\n## Data Availability\n\
+  \nThe dataset was collected under IRB approval at Stony Brook University and contains de-identified\
+  \ clinical CBCT scans. Access is subject to restrictions. \n\n\nWe thank the oral and maxillofacial\
+  \ radiology team at Stony Brook University for data curation and annotation.\n"

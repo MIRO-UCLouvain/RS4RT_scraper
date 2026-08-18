@@ -1,0 +1,45 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hust-linyi/LENAS
+url: https://github.com/hust-linyi/LENAS
+platform: github
+description: 'This is the official code of the paper "LENAS: Learning-based Neural Architecture Search
+  and Ensemble for 3D Radiotherapy Dose Prediction"'
+license: MIT
+language: Python
+keywords: []
+stars: 9
+updated_at: '2026-04-10T07:42:20Z'
+image_source: https://raw.githubusercontent.com/hust-linyi/LENAS/HEAD/figure/framework.png
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# LENAS: Learning-based Neural Architecture Search and Ensemble for 3D Radiotherapy Dose\
+  \ Prediction\nThis is the official code for our paper:\n\n> [LENAS: Learning-based Neural Architecture\
+  \ Search and Ensemble for 3D Radiotherapy Dose Prediction](https://arxiv.org/abs/2106.06733) <br>\n\
+  > Yi Lin*, Yanfei Liu*, Hao Chen, Xin Yang, Kai Ma, Yefeng Zheng, Kwang-Ting Cheng<br>\n\n## Highlights\n\
+  <!-- <p align=\"justify\"> -->\n- A learning-based ensemble framework, named LENAS, including the U-NAS\
+  \ framework which eﬃciently and automatically searches for optimal architectures, and a KDA-Net for\
+  \ the trade-off between the computational cost and accuracy.\n- First place in the [AIMIS](https://contest.taop.qq.com)\
+  \ challenge.\n\n<p align=\"center\">\n<img src=\"figure/framework.png\" width=\"650\">\n</p>\n<!-- <p\
+  \ align=\"center\"> -->\n<!-- <img src=\"figure/dvh.png\" width=\"200\"> -->\n<!-- </p> -->\n\n## Usage\n\
+  ### Requirement\n```\npip install -r requirements.txt\n```\n\n### Data preparation\n* [OpenKBP](https://www.aapm.org/GrandChallenge/OpenKBP)\n\
+  * [AIMIS](https://contest.taop.qq.com/channelDetail?id=108)\n\n### Training & Evaluation\n#### U-NAS\n\
+  1. Prepare the data and modify the data path in `config.yml`.\n```\ncd /path_to_your_RTDosePrediction/RTDosePrediction/DataPrepare\n\
+  python prepare_OpenKBP_C3D.py\n```\n2. Search the architecture.\n```\npython Main.py\n```\n\n#### KDA-Net\n\
+  1. Training script (Take U-Net as an example).\n```\ncd /path_to_your_RTDosePrediction/RTDosePrediction/Unet\n\
+  python train.py --batch_size 4 --list_GPU_ids 1 0 --max_iter 80000\n```\n2. Inference script.\n```\n\
+  cd /path_to_your_RTDosePrediction/RTDosePrediction/Unet\npython test.py --GPU_id 0\n```\n- The prediction\
+  \ results are stored in `/path_to_your_RTDosePrediction/RTDosePrediction/Output/unet/Prediction`.\n\n\
+  #### Details\n##### Utils\n- `DataPrepare`\n- `DataLoader`\n- `DataAugmentation`\n- `NetworkTrainer`\n\
+  - `Evaluate`\n\n##### Pre-Trained\n- `Teachers`: The pre-trained models used as teacher networks. `XXX.pkl`\
+  \ and `XXX_geno.pkl` are the weights and structures, respectively.\n\n##### Models\n- Single Model:\n\
+  \    - `Unet`\n    - `Unet_CBAM`\n    - `Vnet`\n    - `FCN`\n    - `DCNN`(2D)\n- Cascade Models:\n \
+  \   - `C3D`\n    - `C3D_spacing` (Resample the data in the data preparation stage)\n    - `ResC3D`\n\
+  \    - `ResC3D_CBAM`\n- NAS Manual Model:\n    - `Manual_1`-`Manual_6` (See Appendix)\n- NAS Single\
+  \ Model:\n    - `NAS_18`-`NAS_42` (See Appendix)\n- KD Models: \n    - `KD`\n    \nFor each MAS Single\
+  \ Model, the `best_genotype.pkl` file is obtained by manually modifying the `geno.py` file and running\
+  \ it.\n\n## Citation\nPlease cite the paper if you use the code.\n```bibtex\nTO BE ADDED\n```\n"

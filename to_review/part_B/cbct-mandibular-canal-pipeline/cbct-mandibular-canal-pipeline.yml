@@ -1,0 +1,137 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: keqingsocute/cbct-mandibular-canal-pipeline
+url: https://github.com/keqingsocute/cbct-mandibular-canal-pipeline
+platform: github
+description: Automated pipeline for Mandibular Canal segmentation and error analysis using DentalSegmentator
+  and nnU-Net
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-07-24T08:22:22Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# CBCT Mandibular Canal Segmentation Pipeline\n\n> Automated pipeline for Mandibular\
+  \ Canal segmentation and error analysis using DentalSegmentator (nnU-Net) on CBCT images.\n\n**NCU WASN\
+  \ Lab** · 2026\n\n---\n\n## Overview\n\nThis pipeline automates the comparison between:\n- **AI predictions**\
+  \ from [DentalSegmentator](https://github.com/gaudot/SlicerDentalSegmentator) (nnU-Net Dataset 112)\n\
+  - **Physician annotations** embedded directly in CBCT DICOM images as high-intensity landmark points\
+  \ (pixel ≥ 3094 HU)\n\nTwo comparison methods are computed:\n1. **Point vs Mask** — physician points\
+  \ vs full prediction mask\n2. **Point vs Skeleton** — physician points vs skeletonized centerline of\
+  \ prediction mask\n\nResults are output as CSV and JSON.\n\n---\n\n## Pipeline Structure\n\n```\ndental_pipeline/\n\
+  ├── config.py            # All paths and parameters\n├── step1_dcm2nifti.py   # DICOM → NIfTI conversion\
+  \ (uses no_label)\n├── step2_predict.py     # nnU-Net inference (per-patient temp folder)\n├── step3_extract.py\
+  \     # Extract doctor points, prediction points & skeleton\n├── step4_evaluate.py    # Compute error\
+  \ metrics (Mask & Skeleton)\n├── step5_save.py        # Save results (CSV + JSON)\n└── run_pipeline.py\
+  \      # Main entry point\n```\n\nData and model weights are stored **outside** this repository:\n\n\
+  ```\n/home/code-server/\n├── data/\n│   ├── local/<patient_id>/no_label/  # Clean CBCT for nnU-Net inference\n\
+  │   ├── local/<patient_id>/label/     # DICOM with physician annotations\n│   └── nas/<patient_id>/\
+  \             # Data synced from lab NAS (same structure)\n├── input_nifti/                      # Converted\
+  \ NIfTI inputs\n├── output/                           # nnU-Net prediction outputs\n├── results/   \
+  \                       # Error analysis results\n└── nnunet/\n    └── results/Dataset112_DentalSegmentator_v100/\
+  \   # Model weights\n```\n\n---\n\n## Requirements\n\n### Environment\n\nTested on:\n- WASN Lab P40\
+  \ Server (8× NVIDIA Tesla P40)\n- Docker image: `pytorch/pytorch:2.4.1-cuda12.4-cudnn9-devel`\n\n###\
+  \ Python Packages\n\n```bash\npip install -r requirements.txt\n```\n\nKey dependencies: `nnunetv2`,\
+  \ `SimpleITK`, `pydicom`, `scipy`, `scikit-image`, `TotalSegmentator`, `requests`\n\n---\n\n## Setup\n\
+  \n### 1. Set nnU-Net environment variables\n\nAdd to `~/.bashrc`:\n\n```bash\nexport nnUNet_raw=\"/home/code-server/nnunet/raw\"\
+  \nexport nnUNet_preprocessed=\"/home/code-server/nnunet/preprocessed\"\nexport nnUNet_results=\"/home/code-server/nnunet/results\"\
+  \nsource ~/.bashrc\n```\n\n### 2. Download DentalSegmentator model weights\n\n```bash\npip install zenodo-get\n\
+  mkdir -p /home/code-server/nnunet/dental_weights\nzenodo_get 10829675 -o /home/code-server/nnunet/dental_weights\n\
+  \npython3 -c \"import zipfile; zipfile.ZipFile('/home/code-server/nnunet/dental_weights/Dataset112_DentalSegmentator_v100.zip').extractall('/home/code-server/nnunet/results/')\"\
+  \n```\n\n### 3. Prepare data directories\n\n```bash\nmkdir -p /home/code-server/data/local\nmkdir -p\
+  \ /home/code-server/data/nas\nmkdir -p /home/code-server/input_nifti/local\nmkdir -p /home/code-server/input_nifti/nas\n\
+  mkdir -p /home/code-server/output/local\nmkdir -p /home/code-server/output/nas\nmkdir -p /home/code-server/results/local\n\
+  mkdir -p /home/code-server/results/nas\n```\n\nPlace patient DICOM files under:\n```\n/home/code-server/data/<source>/<patient_id>/no_label/\
+  \   # for inference\n/home/code-server/data/<source>/<patient_id>/label/      # for physician annotation\
+  \ extraction\n```\n\n---\n\n## Syncing Data from Lab NAS\n\nUse `download_from_nas.py` to download CBCT\
+  \ data directly from the Synology NAS to the P40 server. Already-downloaded files are skipped automatically.\n\
+  \n```bash\n# Download all patients\npython3 download_from_nas.py\n\n# Download a single patient\npython3\
+  \ download_from_nas.py 0012203205\n\n# Download multiple specific patients\npython3 download_from_nas.py\
+  \ 0012203205,0017026056\n```\n\n> The script uses the Synology File Station API and requires NAS credentials.\n\
+  \n---\n\n## Usage\n\n### Run a single patient\n\n```bash\ncd /home/code-server/dental_pipeline\npython3\
+  \ run_pipeline.py 0012203205 local\n```\n\n### Run multiple specific patients (comma-separated)\n\n\
+  ```bash\npython3 run_pipeline.py 0012203205,0017026056,0017268591 local\n```\n\n### Run all patients\
+  \ under a source\n\n```bash\npython3 run_pipeline.py all local\n```\n\n### Skip nnU-Net inference (if\
+  \ already predicted)\n\n```bash\npython3 run_pipeline.py all local --skip-predict\n```\n\n### Run individual\
+  \ steps\n\n```bash\npython3 step1_dcm2nifti.py <patient_id> <source>\npython3 step2_predict.py   <patient_id>\
+  \ <source>\npython3 step3_extract.py   <patient_id> <source>\npython3 step4_evaluate.py  <patient_id>\
+  \ <source>\npython3 step5_save.py      <patient_id> <source>\n```\n\n`<source>` is either `local` or\
+  \ `nas`.\n\n---\n\n## Output\n\nResults are saved to `/home/code-server/results/<source>/<patient_id>/`:\n\
+  \n| File | Contents |\n|------|----------|\n| `result.csv` | Metrics in CSV format (for Google Sheets)\
+  \ |\n| `result.json` | Metrics in JSON format (for programmatic use) |\n\n### Metrics\n\n| Column |\
+  \ Description |\n|--------|-------------|\n| `average_distance_mm` | Mean nearest-neighbour distance\
+  \ between physician points and full prediction mask |\n| `hausdorff_distance_mm` | Max nearest-neighbour\
+  \ distance (worst case) — full mask |\n| `average_distance_voxel` | Same as above in voxel units |\n\
+  | `hausdorff_distance_voxel` | Same as above in voxel units |\n| `skeleton_average_distance_mm` | Mean\
+  \ distance between physician points and skeletonized centerline |\n| `skeleton_hausdorff_distance_mm`\
+  \ | Max distance — skeleton |\n| `skeleton_average_distance_voxel` | Same as above in voxel units |\n\
+  | `skeleton_hausdorff_distance_voxel` | Same as above in voxel units |\n| `doctor_points_count` | Number\
+  \ of physician annotation points |\n| `prediction_points_count` | Number of predicted mask voxels |\n\
+  | `skeleton_points_count` | Number of skeleton centerline points |\n\n### Preliminary Result (Patient\
+  \ 0012203205)\n\n| Metric | mm | voxel |\n|--------|----|-------|\n| Average Distance (Mask) | 0.3294\
+  \ | 0.8235 |\n| Hausdorff Distance (Mask) | 6.6332 | 16.5831 |\n| Average Distance (Skeleton) | 0.549\
+  \ | 1.3726 |\n| Hausdorff Distance (Skeleton) | 7.9398 | 19.8494 |\n\n| Count | Value |\n|-------|-------|\n\
+  | Physician annotation points | 5,710 |\n| Model prediction points | 12,107 |\n| Skeleton points | 294\
+  \ |\n\n> **Note:** Inference is run on the `no_label` DICOM series (clean CBCT). Physician annotation\
+  \ points are extracted separately from the `label` DICOM series. Ensure both series are from the same\
+  \ scan session to avoid spatial misalignment.\n\n---\n\n## DentalSegmentator Label Map\n\n| Label |\
+  \ Structure |\n|-------|-----------|\n| 1 | Upper Skull |\n| 2 | Mandible |\n| 3 | Upper Teeth |\n|\
+  \ 4 | Lower Teeth |\n| **5** | **Mandibular Canal** |\n\n---\n\n## Citation\n\nIf you use DentalSegmentator,\
+  \ please cite:\n\n> Dot G, et al. *DentalSegmentator: robust open source deep learning-based CT and\
+  \ CBCT image segmentation.* Journal of Dentistry (2024). doi:10.1016/j.jdent.2024.105130\n\n> Isensee\
+  \ F, et al. *nnU-Net: a self-configuring method for deep learning-based biomedical image segmentation.*\
+  \ Nature Methods (2021).\n\n---\n\n---\n\n# CBCT 下顎管分割 Pipeline（中文說明）\n\n> 使用 DentalSegmentator（nnU-Net）對\
+  \ CBCT 影像進行下顎管自動分割，並與醫生標記進行誤差分析的自動化 Pipeline。\n\n**NCU WASN Lab** · 2026\n\n---\n\n## 概述\n\n本 Pipeline\
+  \ 自動化比較：\n- **AI 預測結果**：來自 [DentalSegmentator](https://github.com/gaudot/SlicerDentalSegmentator)（nnU-Net\
+  \ Dataset 112）\n- **醫生標記**：直接嵌入 CBCT DICOM 影像中的高亮度標記點（pixel ≥ 3094 HU）\n\n提供兩種比較方法：\n1. **Point vs Mask**：醫生白點\
+  \ vs 完整預測 mask\n2. **Point vs Skeleton**：醫生白點 vs 預測 mask 骨架化中心線\n\n輸出 CSV 和 JSON 格式的誤差指標。\n\n---\n\n\
+  ## Pipeline 結構\n\n```\ndental_pipeline/\n├── config.py            # 所有路徑和參數設定\n├── step1_dcm2nifti.py\
+  \   # DICOM → NIfTI 轉換（使用 no_label）\n├── step2_predict.py     # nnU-Net 推論（每個病患用獨立暫存資料夾）\n├── step3_extract.py\
+  \     # 提取醫生標記點、預測點、骨架化中心線\n├── step4_evaluate.py    # 計算誤差指標（Mask 和 Skeleton 兩種方法）\n├── step5_save.py\
+  \        # 儲存結果（CSV + JSON）\n└── run_pipeline.py      # 主程式入口\n```\n\n資料與模型權重儲存在**本 repo 之外**：\n\n```\n\
+  /home/code-server/\n├── data/\n│   ├── local/<patient_id>/no_label/  # 用於 nnU-Net 推論的乾淨 CBCT\n│   ├──\
+  \ local/<patient_id>/label/     # 含醫生標記的 DICOM 檔案\n│   └── nas/<patient_id>/             # 從實驗室 NAS\
+  \ 同步的資料（同樣結構）\n├── input_nifti/                      # 轉換後的 NIfTI 輸入\n├── output/                  \
+  \         # nnU-Net 推論輸出\n├── results/                          # 誤差分析結果\n└── nnunet/\n    └── results/Dataset112_DentalSegmentator_v100/\
+  \   # 模型權重\n```\n\n---\n\n## 安裝需求\n\n### 環境\n\n測試環境：\n- WASN Lab P40 伺服器（8× NVIDIA Tesla P40）\n- Docker\
+  \ image：`pytorch/pytorch:2.4.1-cuda12.4-cudnn9-devel`\n\n### Python 套件\n\n```bash\npip install -r requirements.txt\n\
+  ```\n\n主要套件：`nnunetv2`、`SimpleITK`、`pydicom`、`scipy`、`scikit-image`、`TotalSegmentator`、`requests`\n\n\
+  ---\n\n## 環境設定\n\n### 1. 設定 nnU-Net 環境變數\n\n加入 `~/.bashrc`：\n\n```bash\nexport nnUNet_raw=\"/home/code-server/nnunet/raw\"\
+  \nexport nnUNet_preprocessed=\"/home/code-server/nnunet/preprocessed\"\nexport nnUNet_results=\"/home/code-server/nnunet/results\"\
+  \nsource ~/.bashrc\n```\n\n### 2. 下載 DentalSegmentator 模型權重\n\n```bash\npip install zenodo-get\nmkdir\
+  \ -p /home/code-server/nnunet/dental_weights\nzenodo_get 10829675 -o /home/code-server/nnunet/dental_weights\n\
+  \npython3 -c \"import zipfile; zipfile.ZipFile('/home/code-server/nnunet/dental_weights/Dataset112_DentalSegmentator_v100.zip').extractall('/home/code-server/nnunet/results/')\"\
+  \n```\n\n### 3. 建立資料資料夾\n\n```bash\nmkdir -p /home/code-server/data/local\nmkdir -p /home/code-server/data/nas\n\
+  mkdir -p /home/code-server/input_nifti/local\nmkdir -p /home/code-server/input_nifti/nas\nmkdir -p /home/code-server/output/local\n\
+  mkdir -p /home/code-server/output/nas\nmkdir -p /home/code-server/results/local\nmkdir -p /home/code-server/results/nas\n\
+  ```\n\n將病患 DICOM 檔案放在：\n```\n/home/code-server/data/<source>/<patient_id>/no_label/   # 推論用\n/home/code-server/data/<source>/<patient_id>/label/\
+  \      # 提取醫生標記點用\n```\n\n---\n\n## 從實驗室 NAS 同步資料\n\n使用 `download_from_nas.py` 直接從 Synology NAS 下載 CBCT\
+  \ 資料到 P40 伺服器，已下載的檔案會自動跳過。\n\n```bash\n# 下載所有病患\npython3 download_from_nas.py\n\n# 下載單一病患\npython3 download_from_nas.py\
+  \ 0012203205\n\n# 下載多個指定病患\npython3 download_from_nas.py 0012203205,0017026056\n```\n\n> 此腳本使用 Synology\
+  \ File Station API，需要 NAS 帳號密碼。\n\n---\n\n## 使用方式\n\n### 執行單一病患\n\n```bash\ncd /home/code-server/dental_pipeline\n\
+  python3 run_pipeline.py 0012203205 local\n```\n\n### 執行多個指定病患（逗號分隔）\n\n```bash\npython3 run_pipeline.py\
+  \ 0012203205,0017026056,0017268591 local\n```\n\n### 執行某來源下的所有病患\n\n```bash\npython3 run_pipeline.py\
+  \ all local\n```\n\n### 跳過 nnU-Net 推論（已有推論結果時）\n\n```bash\npython3 run_pipeline.py all local --skip-predict\n\
+  ```\n\n### 單獨執行各步驟\n\n```bash\npython3 step1_dcm2nifti.py <patient_id> <source>\npython3 step2_predict.py\
+  \   <patient_id> <source>\npython3 step3_extract.py   <patient_id> <source>\npython3 step4_evaluate.py\
+  \  <patient_id> <source>\npython3 step5_save.py      <patient_id> <source>\n```\n\n`<source>` 填 `local`\
+  \ 或 `nas`。\n\n---\n\n## 輸出格式\n\n結果儲存在 `/home/code-server/results/<source>/<patient_id>/`：\n\n| 檔案 |\
+  \ 內容 |\n|------|------|\n| `result.csv` | CSV 格式（可上傳 Google 試算表） |\n| `result.json` | JSON 格式（供程式串接使用）\
+  \ |\n\n### 誤差指標說明\n\n| 欄位 | 說明 |\n|------|------|\n| `average_distance_mm` | 醫生白點與完整 mask 的平均最近距離 |\n\
+  | `hausdorff_distance_mm` | 最大最近距離（最差情況）— 完整 mask |\n| `average_distance_voxel` | 同上，voxel 單位 |\n| `hausdorff_distance_voxel`\
+  \ | 同上，voxel 單位 |\n| `skeleton_average_distance_mm` | 醫生白點與骨架化中心線的平均最近距離 |\n| `skeleton_hausdorff_distance_mm`\
+  \ | 最大最近距離 — 骨架 |\n| `skeleton_average_distance_voxel` | 同上，voxel 單位 |\n| `skeleton_hausdorff_distance_voxel`\
+  \ | 同上，voxel 單位 |\n| `doctor_points_count` | 醫生標記點數量 |\n| `prediction_points_count` | 模型預測 mask voxel\
+  \ 數量 |\n| `skeleton_points_count` | 骨架化中心線點數量 |\n\n### 初步結果（病患 0012203205）\n\n| 指標 | mm | voxel |\n\
+  |------|----|-------|\n| Average Distance（Mask） | 0.3294 | 0.8235 |\n| Hausdorff Distance（Mask） | 6.6332\
+  \ | 16.5831 |\n| Average Distance（Skeleton） | 0.549 | 1.3726 |\n| Hausdorff Distance（Skeleton） | 7.9398\
+  \ | 19.8494 |\n\n| 計數 | 數值 |\n|------|------|\n| 醫生標記點數量 | 5,710 |\n| 模型預測點數量 | 12,107 |\n| 骨架化點數量 |\
+  \ 294 |\n\n> **注意：** 推論使用 `no_label` 資料夾（乾淨的 CBCT 影像）。醫生標記點另外從 `label` 資料夾的 DICOM 中提取。請確認兩個資料夾的影像來自同一次掃描，否則可能產生空間位移導致誤差偏高。\n\
+  \n---\n\n## DentalSegmentator Label 對應\n\n| Label | 結構 |\n|-------|------|\n| "

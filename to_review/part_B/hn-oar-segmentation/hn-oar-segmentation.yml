@@ -1,0 +1,366 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Ritvik-Mod/hn-oar-segmentation
+url: https://github.com/Ritvik-Mod/hn-oar-segmentation
+platform: github
+description: Parotid auto-segmentation on 914 head & neck CTs + an 8-experiment ablation showing label
+  quality, not architecture, drives performance. 0.82 Dice.
+license: null
+language: Python
+keywords:
+- ablation-study
+- ct-scan
+- deep-learning
+- dicom
+- medical-imaging
+- nnunet
+- pytorch
+- radiotherapy
+- reproducible-research
+- segmentation
+stars: 0
+updated_at: '2026-08-04T03:19:30Z'
+image_source: null
+heuristic_total_score: 22
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+- Matched 8 support term(s).
+readme_excerpt: '# Parotid Auto-Segmentation on Head & Neck CT — and a Controlled Ablation That Corrected
+  Its Own Headline
+
+
+  **Automated organ-at-risk (OAR) segmentation for radiotherapy planning, on an 844-patient Indian head-and-neck
+  CT cohort — plus an 8-experiment ablation study showing that label quality, not model architecture,
+  is what actually drives performance.**
+
+
+  > **The contribution is the study, not the score.** "I got 0.82 Dice" is a result. "I interrogated my
+  own 0.82, found that ~62% of the apparent improvement was a measurement artifact, and identified what''s
+  really behind the rest" is research.
+
+
+  ---
+
+
+  ## How to read this repo
+
+
+  | If you have | Read |
+
+  |---|---|
+
+  | **60 seconds** | The TL;DR below, then *A retracted claim, kept on the record* |
+
+  | **10 minutes** | §5 (the L/R mirror bug — the best debugging story here) and §7 (the annotation gap
+  — the best finding) |
+
+  | **You evaluate methods** | §6 (the ablation design) and §9 (limitations) |
+
+  | **You care about data engineering** | §3 (reverse-engineering an undocumented vendor format) |
+
+  | **You want to run the model** | §11 (weights) — and read the `--disable_tta` warning first |
+
+
+  ---
+
+
+  ## TL;DR
+
+
+  | | |
+
+  |---|---|
+
+  | **Task** | Bilateral parotid gland segmentation from planning CT (radiotherapy decision-support) |
+
+  | **Data** | 914 unique patients → **844 confirmed H&N** · **126,879 annotated CT slices** · single
+  clinical institution |
+
+  | **Hard part #1** | 797 patients existed only in Elekta Monaco''s **undocumented proprietary `.WC`
+  contour format** — reverse-engineered from first principles, including the mm→pixel affine |
+
+  | **Hard part #2** | **51.6%** of parotid-bearing patients are contoured on **one side only** — a deliberate
+  clinical decision that silently corrupts both training *and* evaluation |
+
+  | **Best model** | nnU-Net v2 `3d_fullres`, no-mirror trainer, **single fold** — **Dice 0.8187**, HD95
+  **5.25 mm**, Surface-Dice@3mm **0.8965** |
+
+  | **Scored on** | **43 both-parotid QC-clean cases** from the locked 165-patient test split, held completely
+  unevaluated until the final run (+ **58 single-side** cases evaluated separately, §7) |
+
+  | **Honest gain** | **0.7434 → 0.8187 (+0.0753)** over the best from-scratch 2D baseline, *measured
+  on the same locked test set* |
+
+  | **Headline finding** | Label quality dominates architecture. Six 2D models span **0.028** Dice; ImageNet
+  pretraining buys **+0.006**; 5-fold ensembling is **not significant** (p=0.35) |
+
+  | **Debugging story** | nnU-Net''s default L/R mirror augmentation made the model confuse the two glands
+  — Dice 0.50, HD95 **65 mm**. Diagnosed with a controlled swap-test, fixed → 0.82 / 5.2 mm |
+
+
+  **Read the sample size before the score.** n=43 is small. §9 states the honest noise floor and which
+  of these deltas survive it.
+
+
+  ---
+
+
+  ## ⚠️ A retracted claim, kept on the record
+
+
+  An earlier version of this README (and of my own résumé) quoted **"0.62 → 0.82 Dice."** **That comparison
+  is retired and should never be cited again.**
+
+
+  The 0.62 was a *validation* number; the 0.82 a *test* number. When the four Phase-1 checkpoints were
+  re-scored on the **same locked test set** (experiment **P0**), the identical weights scored **+0.1325
+  higher on average**:
+
+
+  | Model | Validation (original) | Locked test set (P0) | Δ |
+
+  |---|---|---|---|
+
+  | U-Net | 0.6209 | 0.7390 | +0.1181 |
+
+  | Attention U-Net | 0.6346 | **0.7434** | +0.1088 |
+
+  | TransUNet | 0.6332 | 0.7313 | +0.0981 |
+
+  | Swin-UNet | 0.5106 | 0.7156 | **+0.2050** |
+
+  | **mean** | 0.5998 | 0.7323 | **+0.1325** |
+
+
+  **Why:** the validation set contained single-side (partially-annotated) patients; the locked test set
+  is both-parotid and QC-clean. A model that correctly predicts a gland the clinician deliberately chose
+  not to contour is scored as wrong. **The 0.62 was deflated by the annotation gap on the evaluation side**
+  — the same effect this study set out to measure, hiding inside its own baseline.
+
+
+  **The defensible statement is `0.7434 → 0.8187 (+0.0753)` on the same held-out test set.** This repo
+  is written around that number.
+
+
+  ---
+
+
+  ## 1. The clinical problem
+
+
+  The partner institution treats **~800–1,000 head & neck cancer patients per year** with radiotherapy.
+  Before treatment, an oncologist must manually contour every organ-at-risk on every CT slice — roughly
+  **30 minutes per patient across ~10 organs**, done entirely by hand, with **no auto-contouring software
+  in the department**.
+
+
+  The **parotid glands** are the primary target of this project:
+
+
+  - The tumour needs **≥60 Gy**; the parotids tolerate only **20–26 Gy**.
+
+  - Over-dosing them causes **xerostomia** — permanent dry mouth — leading to dental caries, mandibular
+  necrosis, oral ulceration, and impaired swallowing and speech. It is largely **avoidable** with accurate
+  contours.
+
+  - IMRT routes beams *around* the parotids, so contour accuracy is a **direct patient-safety requirement**,
+  not a convenience.
+
+
+  This is **decision-support** — it assists and accelerates contouring. It is not an autonomous system
+  and not a regulatory-cleared medical device.
+
+
+  ---
+
+
+  ## 2. Dataset
+
+
+  | Property | Value |
+
+  |---|---|
+
+  | Raw patient folders collected | 1,064 |
+
+  | Unique patients after merge/dedup | **914** (zero duplicates verified) |
+
+  | Confirmed H&N patients | **844** (70 non-H&N excluded) |
+
+  | Corrupt (mislabeled masks) excluded | 12 |
+
+  | Annotated CT slices | **126,879** |
+
+  | On-disk processed `.npz` | ~55 GB (consolidated to a 38 GB HDF5 for training) |
+
+  | Source | Single clinical institution (Elekta Monaco TPS, Siemens CT, 2 annotating radiation oncologists)
+  |
+
+  | Locked split (patient-wise, `seed=42`) | **train 583 / val 84 / test 165** |
+
+  | **Evaluated test subsets** | **43 both-parotid QC-clean** (primary) · **58 single-side** (§7) |
+
+  | In-plane resolution | 512×512, 0.977 × 0.977 mm (90.5% of scans; range 0.643–0.977) |
+
+  | Slice thickness | 1.0 mm (H&N) or 3.0 mm |
+
+  | HU conversion | `HU = raw_pixel − 8192` (RescaleIntercept from DICOM) |
+
+
+  **The dataset is NOT released.** It is retrospective clinical data and is not publicly shareable. No
+  patient-identifiable information exists in any processed file; all case identifiers in this repo are
+  anonymised (`PAR0228`-style). Everything published here — code, configs, split logic, metrics, figures
+  — is derived, not raw. See **Ethics & data use** at the end for the governance position, stated plainly.
+
+
+  **On demographic diversity:** virtually every published H&N OAR segmentation benchmark is trained and
+  validated on Western (US/European) cohorts. This is an Indian-population dataset, which is a genuinely
+  under-represented cohort in this literature.
+
+
+  ---
+
+
+  ## 3. Data engineering (the part that took the longest)
+
+
+  ### 3.1 Reverse-engineering Elekta Monaco `.WC`
+
+
+  797 of the 914 patients existed **only** in Elekta Monaco''s proprietary `.WC` contour format. There
+  is **no public documentation, no specification, no open-source parser, and no GitHub repo** for it anywhere.
+  It was decoded from scratch by binary/text inspection, cross-patient pattern matching, and iterative
+  hypothesis testing against DICOM ground truth.
+
+
+  What it turned out to be: ASCII plaintext, **one file per CT slice** (~153 per patient), with the Z
+  position encoded in the filename. From line 7 onward it is repeating blocks of `[n_points] / [organ_id]
+  / [x y x y …]` — physical millimetre polygon coordinates. Integer organ IDs map to names through a per-patient
+  `contournames` dictionary file. Spatial metadata (origin, spacing) has to be borrowed from any DICOM
+  in the patient folder.
+
+
+  The coordinate transform, derived by hand:
+
+
+  ```
+
+  Px = ( X - Ox) / Sx
+
+  Py = (-Y - Oy) / Sy
+
+  ```
+
+
+  The **Y negation** is the non-obvious part: the source system''s physical anterior–posterior axis is
+  inverted relative to the image array''s top-down axis. Get it wrong and every contour is vertically
+  mirrored — which looks plausible enough on a single slice to slip through. Polygons are then rasterised
+  with `cv2.fillPoly`.
+
+
+  ### 3.2 DICOM-RTSTRUCT pipeline
+
+
+  The remaining 117 patients arrived as standard DICOM RTSTRUCT, parsed with `pydicom` — coordinates are
+  already transformed by Monaco, so it is a matter of matching contour Z to slice `ImagePositionPatient[2]`
+  and rasterising. Includes fallbacks for slices with missing/implicit transfer syntax and missing pixel
+  data.
+
+
+  Both pipelines converge on **the same per-slice `.npz` schema**, so everything downstream is format-agnostic.
+
+
+  ### 3.3 Consolidation, QC, and the locked split
+
+
+  - **Label standardisation** across all 126,879 files (parallel, 8 cores): canonicalises name variants
+  (`RT_PAROTID / RIGHT_PAROTID / RT PAROTID → PAROTID_R`), drops TPS artifacts (`Foam_Core`, `Carbon_Fiber`,
+  …), merges colliding labels by logical OR. **115,831 files modified, 0 errors.**
+
+  - **Statistical anomaly detection** on mask pixel distributions found **12 patients** whose "parotid"
+  masks covered the entire head (20,000+ px/slice vs a normal 500–5,000). Excluded at load time; the underlying
+  database was not altered. In Phase 2 this was formalised as an automated QC rule: drop any gland >3×
+  the dataset median volume.
+
+  - **Patient-wise split locked with `seed=42` before any training** — all slices of a patient stay in
+  one split, so there is no leakage. The **test set was held completely unevaluated** until the final
+  nnU-Net phase.
+
+  - **Performance:** the naive sequential extraction managed ~340 patients in 9 hours before RAM saturation.
+  A `ProcessPoolExecutor` rewrite (8 cores, streaming to disk) did the remaining **724 patients in under
+  2 hours**.
+
+  - **I/O:** 126,879 loose `.npz` files were an I/O disaster on the HPC filesystem. Packing them into
+  a single 38 GB HDF5 gave **~10× faster loading**.
+
+
+  ### 3.4 Dataloader
+
+
+  - HU windowing **−150 to +250** applied at load time (not baked into stored files, so the window stays
+  a tunable).
+
+  - Min-max normalise to [0, 1] after windowing.
+
+  - Class imbalance handled with `WeightedRandomSampler`, **20× up-weighting on parotid-bearing slices**
+  (slice-level, on the HDF5 loader that was actually used for HPC training; the local `.npz` loader uses
+  14× patient-level — the HPC value is the one behind every reported number).
+
+  - **Augmentation: horizontal flip only** — and when it fires, the **R and L mask channels are swapped**.
+  Axial CT has valid left-right symmetry, but a naive flip silently mislabels which gland is which. Vertical
+  flips and 90° rotations are excluded: the spine is always at the bottom, and inverting that violates
+  the spatial prior.
+
+  - Loss: `0.5 × Dice + 0.5 × BCE`, **sigmoid not softmax** — left and right parotid are two independent
+  binary problems, not mutually exclusive classes.
+
+
+  ---
+
+
+  ## 4. Phase 1 — four architectures, hand-implemented, controlled comparison
+
+
+  Four architectures written **from scratch in PyTorch** (no MONAI, no segmentation frameworks), each
+  verified against its source paper, all trained under **identical conditions**: same loss, same optimiser
+  (Adam, lr 1e-4), same schedule, same locked split, same sampler, no pretrained weights. The only variable
+  is the architecture.
+
+
+  | Architecture | Params | Type | Note |
+
+  |---|---|---|---|
+
+  | U-Net (Ronneberger 2015) | ~31 M | CNN | baseline (ran without AMP; the other three used AMP) |
+
+  | Attention U-Net (Oktay 2018) | ~31.4 M | CNN + attention gates | gates on all 4 skips |
+
+  | TransUNet (Chen 2021) | ~102.5 M | Hybrid CNN–Transformer | ResNet-50 encoder (stage-3 = 6 blocks
+  in code) + 12-layer ViT + CUP decoder |
+
+  | Swin-UNet (Cao 2021) | ~27 M | Pure transformer | shifted-window attention, zero conv in backbone
+  |
+
+  | nnU-Net v2 | ~30 M | Self-configuring | Phase 2 (§5) |
+
+
+  **Results on the locked test set** (experiment P0 — 3D volumetric, same 43 cases as everything else):
+
+
+  | Model | 3D Dice | Tversky | HD95 (mm)† | Surface-Dice@3mm |
+
+  |---|---|---|---|---|
+
+  | **Attention U-Net** | **0.7434** | 0.7387 | 3.57 | 0.8827 |
+
+  | U-Net | 0.7390 | 0.7315 | 4.25 | 0.8702 |
+
+  | TransUNet | 0.7313 | 0.7307 | 5.60 | 0.8594 |
+
+  | Swin-UNet | 0.7156 | 0.7082 | 8.34 | 0.8794 |
+
+
+  † Phase-1 HD95 uses the isotropic 0.977 mm convention and is **not** comparable to the'

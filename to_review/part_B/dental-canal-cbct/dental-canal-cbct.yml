@@ -1,0 +1,67 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: monajemi-arman/dental-canal-cbct
+url: https://github.com/monajemi-arman/dental-canal-cbct
+platform: github
+description: Teeth canal detection using deep learning
+license: MIT
+language: Python
+keywords:
+- 3d
+- artificial-intelligence
+- cbct
+- cbct-images
+- deep-learning
+- neural-network
+- python
+- pytorch
+- pytorch-lightning
+- teeth-segmentation
+stars: 4
+updated_at: '2026-06-02T00:52:05Z'
+image_source: https://raw.githubusercontent.com/monajemi-arman/dental-canal-cbct/HEAD/demo/predict.png
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Dental Canal Cbct\n![WIP](https://img.shields.io/badge/Status-Work%20In%20Progress-orange?style=flat-square)\n\
+  \nTeeth canal detection from CBCT 3D images using deep learning\n\n## Table of Contents\n- [\U0001F3AF\
+  \ Purpose](#-purpose)\n- [✨ Features](#-features)\n- [\U0001F6E0️ Requirements](#%EF%B8%8F-requirements)\n\
+  - [\U0001F4C1 Dataset](#-dataset)\n- [\U0001F680 Usage](#-usage)\n  - [Dataset Conversion](#dataset-conversion)\n\
+  \  - [Configuration](#configuration)\n  - [Training](#training)\n  - [Prediction](#prediction)\n  -\
+  \ [Reconstruct 3D Volumes](#reconstruct-3d-volumes)\n- [\U0001F4CA Prediction Demo](#-prediction-demo)\n\
+  - [\U0001F44B Contributing](#-contributing)\n- [\U0001F4C4 License](#-license)\n- [\U0001F9D1‍\U0001F4BB\
+  \ Author](#%F0%9F%A7%A9-author)\n\n---\n\n## \U0001F3AF Purpose\nThis project aims to first take raw\
+  \ images in DICOM (.dcm) and masks in NIFTI (.nii) format made by 3D Slicer program and create a dataloader\
+  \ for them. Secondly it uses these images, masks, and given ROI JSONs to train a deep learning model\
+  \ for segmentation and object detection.\n\n## ✨ Features\n*   **Models** supported\n    *   UNet\n\
+  *   **Dataset types**\n    *   **BaseDataset**: Returns image, mask, bbox (bbox in format z, x, y, w,\
+  \ h, Z)\n    *   **RegionalDataset**: Converts your dataset to segmented ROI boxes for your model to\
+  \ learn segmenting inside the boxes.\n\n## \U0001F6E0️ Requirements\n1.  Clone this repository.\n  \
+  \  ```bash\n    git clone https://github.com/monajemi-arman/dental-canal-cbct\n    cd dental-canal-cbct/\n\
+  \    ```\n2.  Make sure you have CUDA toolkit and NVIDIA drivers installed.\n3.  Install the required\
+  \ python modules.\n    ```bash\n    pip install -r requirements.txt\n    ```\n\n## \U0001F4C1 Dataset\n\
+  Your dataset must be put in the `dataset` folder in the project directory and follow this structure:\n\
+  ```\ndataset/\n    -- first_image/\n        -- roi_1_first_image.json\n        -- roi_2_first_image.json\n\
+  \        -- ...\n        -- first_image_dcm/\n            -- first_image_001.dcm\n            -- first_image_002.dcm\n\
+  \            -- ...\n    -- second_image/\n        -- ...\n```\nThe dataset class in this project provides\
+  \ two types of loading data into the model:\n*   **BaseDataset**: Returns `[image, mask, bounding boxes\
+  \ list]` for every image.\n*   **RegionalDataset**: Crops image and mask based on the bounding box and\
+  \ returns the resulting `[image, mask]`.\n\n## \U0001F680 Usage\n\n### Dataset Conversion\nOnce your\
+  \ dataset is in the specified format, run the convert script to prepare numpy arrays of your images\
+  \ and masks along with a concise JSON of bounding boxes:\n```bash\npython convert.py\n```\n\n### Configuration\n\
+  All the configs related to training, dataset conversion and split, transforms, and paths are saved in\
+  \ `config.json`. You may change these parameters as you wish. Make sure to remove the `all/` directory,\
+  \ `all.json`, `train.json`, `val.json`, and `test.json`, then re-run `convert.py` with the new config.\n\
+  \n### Training\n```bash\npython train.py\n```\n\n### Prediction\n```bash\npython predict.py <path to\
+  \ checkpoint>\n```\n\n### Reconstruct 3D Volumes\n*   [WIP]\n```bash\npython reconstruct_volumes.py\
+  \ -i all/images -m all/masks -a all.json -o all_nii\n```\n\n## \U0001F4CA Prediction Demo\nWe're still\
+  \ gathering clinical data; this prediction is when only data of 9 patients were gathered.\n![](demo/predict.png)\n\
+  \n## \U0001F44B Contributing\nContributions are welcome! If you have suggestions for improvements or\
+  \ new features, please open an issue or submit a pull request.\n\n## \U0001F4C4 License\nThis project\
+  \ is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.\n*(Note: You might\
+  \ need to create a LICENSE file in your project root if it doesn't exist.)*\n\n## \U0001F9D1‍\U0001F4BB\
+  \ Author\n*   **Arman Monajemi** - [monajemi-arman](https://github.com/monajemi-arman)"

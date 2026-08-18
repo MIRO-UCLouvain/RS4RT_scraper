@@ -1,0 +1,101 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: MustafaKadhim/Coding-Agent-Guidelines-Radiotherapy
+url: https://github.com/MustafaKadhim/Coding-Agent-Guidelines-Radiotherapy
+platform: github
+description: 'This is my personal coding guidelines optimized for radiotherapy research and inspired by
+  Andrej Karpathy''s work on Claude skills. Hope you like it! '
+license: MIT
+language: null
+keywords:
+- classification
+- claude
+- claude-code-plugin
+- claude-code-skills
+- codex
+- codex-skill
+- deep-learning
+- dicom
+- medical-imaging
+- monai
+- pytorch-lightning
+- radiotherapy
+- radiotherapy-treatment-planning
+- segmentation
+stars: 11
+updated_at: '2026-08-02T03:13:50Z'
+image_source: https://raw.githubusercontent.com/MustafaKadhim/Coding-Agent-Guidelines-Radiotherapy/HEAD/Figures/Code_agents_overview.png
+heuristic_total_score: 21
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 7 support term(s).
+readme_excerpt: "![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)\n![Claude Code](https://img.shields.io/badge/Claude%20Code-compatible-6B46C1)\n\
+  ![Codex](https://img.shields.io/badge/Codex-compatible-10A37F)\n![Medical Imaging](https://img.shields.io/badge/Medical%20Imaging-DICOM%20%7C%20NIfTI-blue)\n\
+  ![Radiotherapy](https://img.shields.io/badge/Domain-Radiotherapy-red)\n![PyTorch](https://img.shields.io/badge/PyTorch-workflows-EE4C2C)\n\
+  \n\n<p align=\"center\">\n  <img src=\"Figures/Code_agents_overview.png\" alt=\"Coding Agent Guidelines\
+  \ for Radiotherapy Research\" width=\"100%\">\n</p>\n\n\n# Coding-Agents-Skills-for-Radiotherapy-Research\n\
+  These are my personal coding guidelines optimized for radiotherapy research and inspired by Andrej Karpathy's\
+  \ work on Claude Code skills. \nI provided reusable `AGENTS.md (for Codex)` and `CLAUDE.md (for Claude\
+  \ Code)` guidelines designed to help you code using radiothreapy expert agents. These guidelines will\
+  \ enable safer, smaller, and more scientifically reliable agents when working with research code involving\
+  \ DICOM, NIfTI, CT, CBCT, MRI, dose grids, segmentation masks, PyTorch, MONAI, and model evaluation.\n\
+  \n> If you find this is useful for your research, consider starring or forking\n> the repository so\
+  \ others in the medical physics and radiotherapy AI community\n> can find and improve it.\n\nHope you\
+  \ like it!\U0001F31F\n---\n---\n\n## Why I created this?\n\nCoding agents such as Claude Code, Codex,\
+  \ Cursor, Copilot-style tools, and other\nAI development assistants are becoming increasingly useful\
+  \ for research software.\n\nBut radiotherapy and medical imaging code has risks that generic coding\n\
+  instructions often miss:\n\n- patient-level data leakage\n- incorrect DICOM/NIfTI geometry handling\n\
+  - wrong interpolation for masks, labels, or dose grids\n- unsafe logging of patient identifiers\n- slice-level\
+  \ train/test splitting\n- preprocessing mismatch between training and inference\n- weak or misleading\
+  \ model evaluation\n- unverified claims about clinical validity\n\nThis repository provides domain-specific\
+  \ instructions to help coding agents work\nmore carefully in this context.\n\n---\n\n## What is included\n\
+  \n| File | Purpose |\n| --- | --- |\n| `AGENTS.md` | General coding-agent instructions, suitable for\
+  \ Codex and other agentic coding tools |\n| `CLAUDE.md` | Claude Code project instructions / memory\
+  \ file |\n| `LICENSE` | MIT license for reuse and adaptation |\n\n---\n\n## Quick start\n\nCopy one\
+  \ or both instruction files into the root of your own project.\n\n```text\nyour-project/\n├── AGENTS.md\n\
+  ├── CLAUDE.md\n└── README.md\n```\n\nThen open the project in your coding-agent environment, for example\
+  \ VSCode,\nClaude Code, Codex, Cursor, or similar tools.\n\n### For Codex-style agents\n\nUse:\n\n```text\n\
+  AGENTS.md\n```\n\n### For Claude Code\n\nUse:\n\n```text\nCLAUDE.md\n```\n---\n\n## Main principles\n\
+  \nThe guidelines emphasize:\n\n- think before coding\n- ask when scientific assumptions are ambiguous\n\
+  - make minimal, surgical changes\n- avoid unnecessary refactoring\n- verify changes with tests or smoke\
+  \ checks\n- protect patient privacy\n- avoid data leakage\n- respect medical image geometry and metadata\n\
+  - use appropriate interpolation for images, masks, labels, and dose\n- evaluate models with suitable\
+  \ metrics and confidence intervals\n- avoid unsupported clinical claims\n\n---\n\n## Medical imaging\
+  \ and radiotherapy focus\n\nThe instructions include specific guardrails for workflows involving:\n\n\
+  - CT, CBCT, MRI, PET, SPECT, X-ray, and surface imaging\n- DICOM and NIfTI I/O\n- image orientation,\
+  \ spacing, origin, direction cosines, and affine matrices\n- segmentation masks and label maps\n- dose\
+  \ distributions and dose-grid alignment\n- image registration and resampling\n- patient-level train/validation/test\
+  \ splitting\n- segmentation, synthesis, reconstruction, classification, and uncertainty tasks\n- PyTorch,\
+  \ PyTorch Lightning, MONAI, TorchIO, SimpleITK, nibabel, and pydicom\n\n---\n\n## Example use case\n\
+  \nYou can add these files to a repository containing a deep learning pipeline for\nradiotherapy image\
+  \ analysis.\n\nFor example, before asking a coding agent to modify preprocessing or training\ncode,\
+  \ the agent will already have instructions to consider:\n\n- whether train/validation/test splits are\
+  \ patient-level\n- whether DICOM metadata and NIfTI affines are preserved\n- whether masks are resampled\
+  \ with nearest-neighbour interpolation\n- whether dose grids are aligned correctly with the image grid\n\
+  - whether W&B or logs contain patient-identifying information\n- whether results are verified with an\
+  \ appropriate check\n\n---\n\n## Recommended workflow for coding agents\n\nFor non-trivial changes,\
+  \ the agent should follow this loop:\n\n```text\n1. Understand the goal\n2. Inspect the relevant files\n\
+  3. Define success criteria\n4. Make the smallest correct change\n5. Verify with relevant tests or smoke\
+  \ checks\n6. Summarize what changed, what was verified, and what remains uncertain\n```\n\nThis is especially\
+  \ important in research code, where small implementation\ndetails can strongly affect experimental validity.\n\
+  \n---\n\n## Not clinical software\n\nThese instructions are intended for research software development.\n\
+  \nThey are not:\n\n- clinical validation\n- regulatory documentation\n- a guarantee of clinical safety\n\
+  - a substitute for expert review\n- a replacement for institutional data protection procedures\n\nAlways\
+  \ validate research pipelines carefully before using results for scientific\nor clinical decision-making.\n\
+  \n---\n\n## Contributing\n\nContributions are very welcome, especially from:\n\n- medical physicists\n\
+  - radiation oncology researchers\n- medical imaging scientists\n- AI/ML researchers in healthcare\n\
+  - research software engineers\n- PhD students and postdocs working with clinical imaging data\n\nUseful\
+  \ contributions could include:\n\n- additional guardrails for radiotherapy workflows\n- better instructions\
+  \ for dose evaluation\n- improved privacy/data protection guidance\n- examples for specific coding agents\n\
+  - project-specific templates\n- suggestions for evaluation metrics\n- better wording or structure\n\n\
+  If you find this useful, please consider:\n\n1. Starring the repository\n2. Forking it for your own\
+  \ research group\n3. Opening an issue with suggestions\n4. Sharing it with colleagues working on medical\
+  \ imaging AI\n\n---\n\n## Acknowledgements\n\nThis repository was inspired by the growing use of coding\
+  \ agents in research\nsoftware development and by public discussions around agent instruction files,\n\
+  including examples from the broader AI coding community.\n\nThe goal is to adapt these ideas to radiotherapy,\
+  \ medical physics, and medical\nimaging research.\n\n---\n\n## License\n\nThis project is released under\
+  \ the MIT License.\n\nYou are free to use, modify, and adapt these instructions in your own research\n\
+  repositories.\n"

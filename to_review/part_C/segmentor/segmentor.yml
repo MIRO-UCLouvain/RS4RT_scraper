@@ -1,0 +1,85 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: engerlab/segmentor
+url: https://github.com/engerlab/segmentor
+platform: github
+description: 'Tumor nuclear size as a biomarker for post-radiotherapy progression and survival in gynecological
+  malignancies: development of a multivariable prediction model'
+license: MIT
+language: Python
+keywords: []
+stars: 2
+updated_at: '2026-07-30T19:46:07Z'
+image_source: https://github.com/yujing1997/segmentor/blob/f5e08be74d95ede1619f8fbe55ae298abf341f02/Method%20Figure1-1.png
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Tumor nuclear size as a biomarker for post-radiotherapy progression and survival in\
+  \ gynecological malignancies: development of a multivariable prediction model\n\n<div align=\"center\"\
+  >\n  <img src=\"https://github.com/yujing1997/segmentor/blob/f5e08be74d95ede1619f8fbe55ae298abf341f02/Method%20Figure1-1.png\"\
+  \ alt=\"Alt text\" width=\"45%\">\n</div>\n\n# Semantic Segmentation (TiaToolBox) \n\n# How to install\
+  \ gdc-client for data transfer from TCGA data \n\n- `conda create -n gdc-client-env python=3.8 -y`\n\
+  - `conda activate gdc-client-env`\n- `wget https://gdc.cancer.gov/system/files/public/file/gdc-client_2.3_Ubuntu_x64-py3.8-ubuntu-20.04.zip`\n\
+  - `unzip /home/yujing/gdc-client_2.3_Ubuntu_x64.zip`\n- `gdc-client --version`: now can see gdc-client\
+  \ as an executable \n- `mv gdc-client /home/yujing/miniconda3/envs/gdc-client-env/bin/`\n- `gdc-client\
+  \ --version`\n\n# To download TCGA data example \n- `conda activate gdc-client-env`\n- manifest file\
+  \ path: `/home/yujing/dockhome/Multimodality/Segment/tmp/manifest/gdc_manifest.2024-11-03.txt`\n- cd\
+  \ to where you'd like the \n- `gdc-client download -m/home/yujing/dockhome/Multimodality/Segment/tmp/manifest/gdc_manifest.2024-11-03.txt`\n\
+  - download the TCGA-CESC data\n    - cd /Data/Yujing/Segment/tmp/tcga_cesc_svs\n    - gdc-client download\
+  \ -m/Data/Yujing/Segment/tmp/tcga_cesc_manifest/gdc_manifest.2024-11-11.txt\n    - note that `/Data/Yujing/Segment/tmp/tcga_cesc_manifest/gdc_manifest.2024-11-11_v2.txt`\
+  \ is the same as `.//Data/Yujing/Segment/tmp/tcga_cesc_manifest/gdc_manifest.2024-11-11.txt` while excluding\
+  \ the cases already downloaded on `/Data/Yujing/Segment/tmp/tcga_cesc_manifest/run_partition/run_Cedar_HG_filemap.tsv`,\
+  \ just to continue downloading \n    - gdc-client download -m//Data/Yujing/Segment/tmp/tcga_cesc_manifest/gdc_manifest.2024-11-11_v2.txt\n\
+  \n# Semantic segmetation \n- on test slides `./dockhome/Multimodality/Segment/tmp/blca_svs/30e4624b-6f48-429b-b1d9-6a6bc5c82c5e/TCGA-2F-A9KO-01Z-00-DX1.195576CF-B739-4BD9-B15B-4A70AE287D3E.svs`\n\
+  - scripts: \n    - dockhome/Multimodality/Segment/tmp/scripts/semantic_segmentation.py\n    - dockhome/Multimodality/Segment/tmp/scripts/visualize_semantic_segmentation.py\n\
+  \        - ./visualize_semantic_segmentation.py visualizes the segmentation outpus \n        - WSI outputs\
+  \ 5 channels of probability maps for each class: label_dict = {\"Tumour\": 0, \"Stroma\": 1, \"Inflammatory\"\
+  : 2, \"Necrosis\": 3, \"Others\": 4}\n\n1. Must map pixel by pixel of semantic segmentation output to\
+  \ the Pan-Cancer-Nuclei-Seg .csv 4k by 4k files \n2. Merge semantic segmentation output to the Pan-Cancer-Nuclei-Seg\
+  \ .csv 4k by 4k files\n- Once a pixel class is obtained, within a QAed segmented nuclei (number of pixels),\
+  \ majority vote for classification of nuclei class\n    - PixelInAreas was already reported in the Pan-Cancer-Nuclei-Seg\
+  \ .csv files\n    - Output for each patch, PixelInAreas vector for each class\n    - Output for each\
+  \ WSI: concatenation of PixelInAreas vectors for each class ffrom each patch \n\n# nuclei_classify.py\
+  \ can classify invididual nuclei (segmentation) to semantic classes based on its overlap \n- Per patch\
+  \ analysis available. ~16 seconds per patch. \n- Now Testing for all patches in a folder. Optimize speed\n\
+  \    - Test folder path:\n- Need to match file names\n\n## Is it possible to directly mount, read, and\
+  \ write files from ssh Narval to this local machine?\n`sshfs your_username@narval.compute_canada.ca:/remote/path/to/folder\
+  \ /local/mount/point`\nsshfs yujingz@narval.compute_canada.ca:/home/yujingz/scratch/NUCLEI_SIZE_CODE/Pan-Cancer-Nuclei-Seg/ScientificData/svs-files/tcga_cesc\
+  \ /Data/Yujing/Segment/tmp/tcga_cesc\n\n## Partitioning the semantic segmentation task on multiple compute\
+  \ clusters \n- https://docs.google.com/spreadsheets/d/1RuG-e45JQRM5R15ijCUWbn3fyhfOJsIG9Im8_PFep5Q/edit?usp=sharing\n\
+  \    - shows this partitioning of the task\n    - Proton GPU (local), Narval_YZ, Narval_HG, Cedar_YZ,\
+  \ Cedar_HG, Beluga_YZ, Beluga_HG\n    - Estimate how long each one takes \n    - see the Narval README.md\
+  \ for more details \n\n## Ran parts of tcga_cesc on Proton, the rest on Narval \n    - /home/yujing/dockhome/Multimodality/Segment/tmp/scripts/bash_scripts/run_semantic_seg_for_loop.sh\n\
+  \        - ran for filemap: /Data/Yujing/Segment/tmp/tcga_cesc_manifest/run_partition/run_Proton_filemap.tsv\n\
+  \    - /home/yujing/dockhome/Multimodality/Segment/tmp/scripts/bash_scripts/run_semantic_seg_for_loop2.sh\n\
+  \        - ran for filemap: /Data/Yujing/Segment/tmp/tcga_cesc_manifest/run_partition/run_to_be_rerun.tsv\n\
+  \n# extract or classify nuclei from semantic segmentation of WSI \n-  /home/yujing/dockhome/Multimodality/Segment/tmp/scripts/bash_scripts/nuclei_classify_extract_job_arrays_narval.sh\n\
+  \    - ran on Narval for the segmented WSIs ran and stored on the rrg project folder there. \n    -\
+  \ It is a job array therefore submitted by sbatch ..script.sh. It creates x number of tasks where each\
+  \ corresponds to one row of the SAMPLE_SHEET or the filemap defined in the script \n    - Here on Proton,\
+  \ we can't create job arrays, so will need to modify them into for loops where each loop processes a\
+  \ row from the given SAMPLE_SHEET\n>>./tmp/scripts/bash_scripts/nuclei_classify_extract_for_loop.sh\n\
+  \        corresponds to /Data/Yujing/Segment/tmp/tcga_cesc_manifest/run_partition/run_Proton_filemap.tsv\n\
+  \        whose semantic segmentation was run from /home/yujing/dockhome/Multimodality/Segment/tmp/scripts/bash_scripts/run_semantic_seg_for_loop.sh\n\
+  \n>>./tmp/scripts/bash_scripts/nuclei_classify_extract_for_loop2.sh\n        corresponds to /Data/Yujing/Segment/tmp/tcga_cesc_manifest/run_partition/run_to_be_rerun.tsv\n\
+  \        whose semantic segmentation was run from /home/yujing/dockhome/Multimodality/Segment/tmp/scripts/bash_scripts/run_semantic_seg_for_loop2.sh\n\
+  ### Manuscript Methodology Figure visuals\nNote: the following scripts consist of the making of each\
+  \ component of the manuscript methodology figure to be reproducible. With the semantic_seg step, we\
+  \ first randomly generated 5 patches (experiemnts) of the semantic segmentation of 4k by 4k patches\
+  \ of a WSI that matches with the cesc_polygon csv file names. We visually selected representable ones\
+  \ including a variety type of tissue classes and coverage (did not select patches with lots of white\
+  \ space background for exapmle). Each bash script has the option to do the random patch selection visualization\
+  \ or with a defined X_START, Y_START, and PATCH_SIZE manually. Once the ones to show in the manuscript\
+  \ were picked, they were correspondingly generated for the nuclei_classify_overlay, and the nuclei binary\
+  \ segmentation. \n\n- semantic_seg: /home/yujing/dockhome/Multimodality/Segment/tmp/scripts/bash_scripts/Manuscript_Visualizations/semantic_seg_visual_progressbar.sh\n\
+  - semantic_seg + cesc_polygon nuclei binary seg nuclei_classify_overlay: /home/yujing/dockhome/Multimodality/Segment/tmp/scripts/bash_scripts/Manuscript_Visualizations/nuclei_overlay_visual.sh\n\
+  - nuclei binary segmentation mask: based on /home/yujing/dockhome/Multimodality/Segment/tmp/scripts/polygon_to_masks.py\n\
+  \n```bibtex\n@software{Zou_Tumor_nuclear_size_2024,\nauthor = {Zou, Yujing and Glickman, Harry and Pelmus,\
+  \ Manuela and Maleki, Farhad and Bahoric, Boris and Lecavalier-Barsoum, Magali and Enger, Shirin A.},\n\
+  doi = {XXX},\nmonth = dec,\ntitle = {{Tumor nuclear size as a biomarker for post-radiotherapy progression\
+  \ and survival in gynecological malignancies: development of a multivariable prediction model}},\nurl\
+  \ = {https://github.com/engerlab/segmentor}},\nversion = {1.0.0},\nyear = {2024}\n}\n\n"

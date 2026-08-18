@@ -1,0 +1,123 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ShreyanshShakya/Brain-Tumor-Segmentation-using-3D-U-Net-Architectures
+url: https://github.com/ShreyanshShakya/Brain-Tumor-Segmentation-using-3D-U-Net-Architectures
+platform: github
+description: ''
+license: CC0-1.0
+language: Jupyter Notebook
+keywords:
+- attention-mechanism
+- brain-tumor-segmentation
+- brats2020
+- computer-vision
+- deep-learning
+- efficientnet
+- machine-learning
+- medical-imaging
+- pytorch
+- unet
+stars: 0
+updated_at: '2026-06-07T10:24:39Z'
+image_source: https://raw.githubusercontent.com/ShreyanshShakya/Brain-Tumor-Segmentation-using-3D-U-Net-Architectures/HEAD/results/training_curves/dice_comparison.png
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Brain Tumor Segmentation using 3D U-Net Architectures\r\n\r\n## Overview\r\n\r\nThis\
+  \ project presents a comparative study of deep learning architectures for automated brain tumor segmentation\
+  \ using the BraTS 2020 dataset. The objective is to accurately identify and segment tumor regions from\
+  \ multi-modal MRI scans while evaluating the trade-offs between segmentation performance, computational\
+  \ efficiency, and architectural complexity.\r\n\r\nThree architectures were implemented and evaluated:\r\
+  \n\r\n* Baseline 3D U-Net\r\n* EfficientNet-Based 3D U-Net\r\n* EfficientNet + Attention 3D U-Net\r\n\
+  \r\nThe models were developed using PyTorch and trained on volumetric MRI data using mixed-precision\
+  \ training, tumor-aware patch sampling, and hybrid Dice-CrossEntropy optimization.\r\n\r\n---\r\n\r\n\
+  ## Dataset\r\n\r\n### BraTS 2020 Dataset\r\n\r\nThe Brain Tumor Segmentation (BraTS) 2020 dataset contains\
+  \ multi-modal MRI scans of glioma patients along with expert-annotated tumor segmentation masks.\r\n\
+  \r\n### MRI Modalities\r\n\r\n* T1\r\n* T1ce\r\n* T2\r\n* FLAIR\r\n\r\n### Original Segmentation Labels\r\
+  \n\r\n| Label | Description                         |\r\n| ----- | -----------------------------------\
+  \ |\r\n| 0     | Background                          |\r\n| 1     | Necrotic / Non-Enhancing Tumor Core\
+  \ |\r\n| 2     | Peritumoral Edema                   |\r\n| 4     | Enhancing Tumor                \
+  \     |\r\n\r\n### Remapped Training Classes\r\n\r\n| Class ID | Description     |\r\n| -------- | ---------------\
+  \ |\r\n| 0        | Background      |\r\n| 1        | Necrotic Core   |\r\n| 2        | Edema      \
+  \     |\r\n| 3        | Enhancing Tumor |\r\n\r\n---\r\n\r\n# Project Pipeline\r\n\r\n## 1. Data Loading\r\
+  \n\r\n* NIfTI (.nii.gz) volumes loaded using NiBabel\r\n* Multi-modal MRI scans stacked into a 4-channel\
+  \ tensor\r\n* Volumetric processing for 3D segmentation\r\n\r\n## 2. Preprocessing\r\n\r\n* Per-modality\
+  \ Z-score normalization\r\n* Non-zero voxel normalization\r\n* Label remapping\r\n* Tumor-aware patch\
+  \ sampling\r\n* Data quality filtering\r\n\r\n## 3. Training\r\n\r\n* Mixed Precision Training (AMP)\r\
+  \n* Adam Optimizer\r\n* Dice Loss + Cross Entropy Loss\r\n* Early Stopping\r\n* Model Checkpointing\r\
+  \n* Validation Monitoring\r\n\r\n---\r\n\r\n# Model Architectures\r\n\r\n## Baseline 3D U-Net\r\n\r\n\
+  A standard encoder-decoder architecture consisting of:\r\n\r\n* 3D Convolution Blocks\r\n* Batch Normalization\r\
+  \n* ReLU Activations\r\n* Skip Connections\r\n* Transposed Convolutions for Upsampling\r\n\r\n### Advantages\r\
+  \n\r\n* Strong segmentation baseline\r\n* Proven medical imaging architecture\r\n* Stable training behavior\r\
+  \n\r\n---\r\n\r\n## EfficientNet-Based 3D U-Net\r\n\r\nThe encoder was redesigned using EfficientNet-inspired\
+  \ MBConv blocks incorporating:\r\n\r\n* Depthwise Separable 3D Convolutions\r\n* Squeeze-and-Excitation\
+  \ (SE) Blocks\r\n* Residual Connections\r\n* Efficient Feature Extraction\r\n\r\n### Advantages\r\n\r\
+  \n* Reduced computational complexity\r\n* Faster convergence\r\n* Improved parameter efficiency\r\n\
+  * Better feature representation\r\n\r\n---\r\n\r\n## EfficientNet + Attention 3D U-Net\r\n\r\nThis architecture\
+  \ extends the EfficientNet encoder by integrating attention mechanisms into the decoder pathway.\r\n\
+  \r\n### Added Components\r\n\r\n* Attention Gates\r\n* Feature Refinement Modules\r\n* Enhanced Skip\
+  \ Connections\r\n\r\n### Goal\r\n\r\nImprove localization of tumor regions by emphasizing clinically\
+  \ relevant features while suppressing irrelevant background information.\r\n\r\n---\r\n\r\n# Experimental\
+  \ Results\r\n\r\n## Validation Performance\r\n\r\n| Model                          | Best Validation\
+  \ Dice | Best Validation IoU |\r\n| ------------------------------ | -------------------- | -------------------\
+  \ |\r\n| Baseline 3D U-Net              | 0.8057               | 0.7349              |\r\n| EfficientNet\
+  \ U-Net             | 0.8157               | 0.7427              |\r\n| EfficientNet + Attention U-Net\
+  \ | **0.8256**           | **0.7575**          |\r\n\r\n---\r\n\r\n# Training Curves\r\n\r\n### Dice\
+  \ Score Comparison\r\n\r\n![Dice Comparison](results/training_curves/dice_comparison.png)\r\n\r\n###\
+  \ IoU Comparison\r\n\r\n![IoU Comparison](results/training_curves/iou_comparison.png)\r\n\r\n### Loss\
+  \ Comparison\r\n\r\n![Loss Comparison](results/training_curves/loss_comparison.png)\r\n\r\n---\r\n\r\
+  \n# Model Performance Comparison\r\n\r\n![Model Comparison](results/model_comparison.png)\r\n\r\nThe\
+  \ comparison demonstrates a consistent improvement in segmentation performance as architectural enhancements\
+  \ are introduced.\r\n\r\n---\r\n\r\n# Qualitative Results\r\n\r\n### Patient 1 Results\r\n\r\n![Patient\
+  \ 1 Results](results/patient1_results.png)\r\n\r\n### Patient 2 Results\r\n\r\n![Patient 2 Results](results/patient2_results.png)\r\
+  \n\r\nThe figures present segmentation results for two representative patients from the validation set.\
+  \ For each patient, the visualization includes:\r\n\r\n* MRI Slice (FLAIR modality)\r\n* Ground Truth\
+  \ Annotation\r\n* Baseline 3D U-Net Prediction\r\n* EfficientNet U-Net Prediction\r\n* EfficientNet\
+  \ + Attention U-Net Prediction\r\n\r\n### Observations\r\n\r\n* The Baseline U-Net successfully localizes\
+  \ the primary tumor regions but occasionally produces noisy boundaries and small false positive regions.\r\
+  \n* The EfficientNet U-Net generates cleaner segmentation masks with improved localization and better\
+  \ separation of tumor structures from surrounding tissue.\r\n* The EfficientNet + Attention U-Net produces\
+  \ the most refined tumor boundaries and demonstrates the closest agreement with the ground-truth annotations\
+  \ across both patients.\r\n* Attention-guided feature refinement helps preserve fine tumor details while\
+  \ reducing background misclassifications.\r\n\r\nThe qualitative comparison supports the quantitative\
+  \ results, showing progressive improvements in segmentation quality from the Baseline model to the EfficientNet\
+  \ and Attention-enhanced architectures.\r\n\r\n---\r\n\r\n# Key Findings\r\n\r\n## EfficientNet Improved\
+  \ Feature Extraction\r\n\r\nReplacing the standard U-Net encoder with EfficientNet-inspired MBConv blocks\
+  \ improved both Dice and IoU scores while maintaining computational efficiency.\r\n\r\n### Performance\
+  \ Gain\r\n\r\n| Comparison               | Dice Improvement |\r\n| ------------------------ | ----------------\
+  \ |\r\n| Baseline → EfficientNet  | +1.24%           |\r\n| EfficientNet → Attention | +1.21%      \
+  \     |\r\n| Baseline → Attention     | +2.47%           |\r\n\r\n---\r\n\r\n## Attention Mechanisms\
+  \ Achieved the Best Results\r\n\r\nThe EfficientNet + Attention U-Net achieved the highest validation\
+  \ performance:\r\n\r\n* Dice Score: 0.8256\r\n* IoU Score: 0.7575\r\n\r\nAttention mechanisms improved\
+  \ feature refinement and tumor boundary delineation.\r\n\r\n---\r\n\r\n## EfficientNet Provided the\
+  \ Best Accuracy-to-Speed Trade-Off\r\n\r\nAlthough the Attention model achieved the highest segmentation\
+  \ accuracy, the EfficientNet U-Net delivered competitive performance with lower computational overhead\
+  \ and faster convergence.\r\n\r\nThis makes EfficientNet U-Net attractive for practical deployment scenarios.\r\
+  \n\r\n---\r\n\r\n## Tumor-Aware Sampling Improved Learning Efficiency\r\n\r\nFocusing training patches\
+  \ around tumor regions reduced background dominance and improved segmentation performance.\r\n\r\n---\r\
+  \n\r\n# Technologies Used\r\n\r\n## Deep Learning\r\n\r\n* PyTorch\r\n* Torch AMP (Mixed Precision Training)\r\
+  \n\r\n## Medical Imaging\r\n\r\n* NiBabel\r\n* NumPy\r\n\r\n## Data Processing\r\n\r\n* Pandas\r\n*\
+  \ Scikit-Learn\r\n\r\n## Visualization\r\n\r\n* Matplotlib\r\n\r\n---\r\n\r\n# Repository Structure\r\
+  \n\r\n```text\r\nBrain-Tumor-Segmentation-BraTS2020/\r\n│\r\n├── notebooks/\r\n│   ├── baseline_unet.ipynb\r\
+  \n│   ├── efficientnet_unet.ipynb\r\n│   └── attention_unet.ipynb\r\n│\r\n├── results/\r\n│   ├── training_curves/\r\
+  \n│   │   ├── dice_comparison.png\r\n│   │   ├── iou_comparison.png\r\n│   │   └── loss_comparison.png\r\
+  \n│   │\r\n│   ├── baseline_predictions.png\r\n│   ├── efficientnet_predictions.png\r\n│   ├── attention_predictions.png\r\
+  \n│   ├── model_comparison.png\r\n│   └── metrics/\r\n│       └── model_comparison.csv\r\n│\r\n├── src/\r\
+  \n│   ├── datasets/\r\n│   ├── models/\r\n│   ├── training/\r\n│   └── evaluation/\r\n│\r\n├── README.md\r\
+  \n├── requirements.txt\r\n└── LICENSE\r\n```\r\n\r\n---\r\n\r\n# Future Work\r\n\r\n* Whole Tumor (WT)\
+  \ Evaluation\r\n* Tumor Core (TC) Evaluation\r\n* Enhancing Tumor (ET) Evaluation\r\n* Learning Rate\
+  \ Scheduling\r\n* CBAM Attention Modules\r\n* Transformer-Based Segmentation Models\r\n* SwinUNETR Experiments\r\
+  \n* Full BraTS Benchmark Evaluation\r\n\r\n---\r\n\r\n# Author\r\n\r\n**Shreyansh Shakya**\r\n\r\nComputer\
+  \ Science Engineering Student\r\n\r\n### Research Interests\r\n\r\n* Medical AI\r\n* Deep Learning\r\
+  \n* Computer Vision\r\n* Healthcare Analytics\r\n* Agentic AI Systems\r\n\r\nGitHub: https://github.com/ShreyanshShakya\r\
+  \n\r\nLinkedIn: https://www.linkedin.com/in/shreyansh-shakya-3b019022a\r\n\r\n---\r\n\r\n## Citation\r\
+  \n\r\nIf you find this work useful, please consider starring the repository and citing the project.\r\
+  \n\r\n```bibtex\r\n@misc{shakya2025brainsegmentation,\r\n  author = {Shreyansh Shakya},\r\n  title =\
+  \ {Brain Tumor Segmentation using 3D U-Net Architectures},\r\n  year = {2025},\r\n  publisher = {GitHub},\r\
+  \n  url = {https://github.com/ShreyanshShakya}\r\n}\r\n```\r\n"

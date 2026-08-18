@@ -1,0 +1,84 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ziyuan-li/robotic-us-cbct-updating
+url: https://github.com/ziyuan-li/robotic-us-cbct-updating
+platform: github
+description: 'Official code for “Robotic Ultrasound Makes CBCT Alive”: USCorUNet-based ultrasound deformation
+  estimation and deformation-aware CBCT slice updating.'
+license: NOASSERTION
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-06-13T07:11:39Z'
+image_source: https://raw.githubusercontent.com/ziyuan-li/robotic-us-cbct-updating/HEAD/examples/ultrasound/case_02/I0.png
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Robotic Ultrasound Makes CBCT Alive\n\nOfficial inference code for **\"Robotic Ultrasound\
+  \ Makes CBCT Alive\"**.\n\nThis repository provides a lightweight release of the ultrasound deformation\
+  \ and\ndeformation-aware CBCT updating pipeline. The model weights are hosted\nseparately on Hugging\
+  \ Face at\n[ziyuan-li/uscorunet](https://huggingface.co/ziyuan-li/uscorunet).\n\nCode repository:\n\
+  [github.com/ziyuan-li/robotic-us-cbct-updating](https://github.com/ziyuan-li/robotic-us-cbct-updating).\n\
+  \n## Overview\n\nUSCorUNet estimates dense bidirectional deformation fields between adjacent\nultrasound\
+  \ frames. It combines a ResUNet-style context encoder-decoder with a\nshared-weight correlation encoder\
+  \ and local correlation volumes.\n\nThis release includes:\n\n- `uscorunet.py`: USCorUNet model definition.\n\
+  - `infer_us_flow.py`: bidirectional ultrasound deformation inference.\n- `infer_cbct_warp_from_us.py`:\
+  \ CBCT slice updating from ultrasound-estimated deformation.\n- `infer_utils.py`: image I/O, preprocessing,\
+  \ warping, and checkpoint loading helpers.\n- `download_checkpoints.py`: checkpoint downloader for the\
+  \ Hugging Face model repository.\n- `examples/`: small ultrasound and ultrasound+CBCT demo cases.\n\n\
+  ## Installation\n\nCreate a Python environment and install the runtime dependencies:\n\n```bash\npython\
+  \ -m venv .venv\nsource .venv/bin/activate\npip install -r requirements.txt\n```\n\nOn Windows PowerShell:\n\
+  \n```powershell\npython -m venv .venv\n.\\.venv\\Scripts\\Activate.ps1\npip install -r requirements.txt\n\
+  ```\n\nThe demos run on CPU, but CUDA is recommended for practical inference speed.\n\n## Checkpoints\n\
+  \nDownload the model checkpoints into `models/`:\n\n```bash\npython download_checkpoints.py\n```\n\n\
+  If the Hugging Face repository is private, set a read token first:\n\n```bash\nexport HF_TOKEN=hf_xxx\n\
+  python download_checkpoints.py\n```\n\nOn Windows PowerShell:\n\n```powershell\n$env:HF_TOKEN=\"hf_xxx\"\
+  \npython download_checkpoints.py\n```\n\nThe expected local files are:\n\n| Checkpoint | Local path\
+  \ | Recommended use |\n| --- | --- | --- |\n| USCorUNet-Base | `models/uscorunet_base.pth` | General\
+  \ ultrasound deformation examples |\n| USCorUNet-Probe-Adapted | `models/uscorunet_probe_adapted.pth`\
+  \ | Probe-induced motion and CBCT updating examples |\n| USCorUNet-External-Adapted | `models/uscorunet_external_adapted.pth`\
+  \ | External-induced motion examples |\n\nModel weights are distributed from Hugging Face under **CC\
+  \ BY-NC 4.0**.\n\n## Quick Start\n\n### 1. Ultrasound deformation inference\n\nRun USCorUNet on an adjacent\
+  \ ultrasound pair:\n\n```bash\npython infer_us_flow.py \\\n  --input-dir examples/ultrasound/case_02\
+  \ \\\n  --checkpoint models/uscorunet_base.pth\n```\n\nThe script writes:\n\n- `examples/ultrasound/case_02/I1_to_I0.png`:\
+  \ `I1` warped to the `I0` grid.\n- `examples/ultrasound/case_02/I0_to_I1.png`: `I0` warped to the `I1`\
+  \ grid.\n\nAdditional demo cases:\n\n```bash\npython infer_us_flow.py --input-dir examples/ultrasound/case_01\
+  \ --checkpoint models/uscorunet_base.pth\npython infer_us_flow.py --input-dir examples/ultrasound/case_03\
+  \ --checkpoint models/uscorunet_probe_adapted.pth\npython infer_us_flow.py --input-dir examples/ultrasound/case_04\
+  \ --checkpoint models/uscorunet_probe_adapted.pth\npython infer_us_flow.py --input-dir examples/ultrasound/case_05\
+  \ --checkpoint models/uscorunet_base.pth\n```\n\n### 2. Ultrasound-guided CBCT updating\n\nWarp a CBCT\
+  \ slice using the deformation estimated from the ultrasound pair:\n\n```bash\npython infer_cbct_warp_from_us.py\
+  \ \\\n  --case-dir examples/us_cbct/case_01 \\\n  --checkpoint models/uscorunet_probe_adapted.pth\n\
+  ```\n\nThe script writes:\n\n- `examples/us_cbct/case_01/CBCT_I1_pred.png`: predicted CBCT slice at\
+  \ the target time.\n\nYou can also run the second demo case:\n\n```bash\npython infer_cbct_warp_from_us.py\
+  \ \\\n  --case-dir examples/us_cbct/case_02 \\\n  --checkpoint models/uscorunet_probe_adapted.pth\n\
+  ```\n\n## Example Data Layout\n\n### Ultrasound Pair Example\n\n| I0 | I1 | I1 warped to I0 | I0 warped\
+  \ to I1 |\n| --- | --- | --- | --- |\n| <img src=\"examples/ultrasound/case_02/I0.png\" width=\"180\"\
+  > | <img src=\"examples/ultrasound/case_02/I1.png\" width=\"180\"> | <img src=\"examples/ultrasound/case_02/I1_to_I0.png\"\
+  \ width=\"180\"> | <img src=\"examples/ultrasound/case_02/I0_to_I1.png\" width=\"180\"> |\n\n### Ultrasound-Guided\
+  \ CBCT Example\n\n| US at t0 | US at t1 | CBCT at t0 | Predicted CBCT at t1 | CBCT at t1 for comparison\
+  \ |\n| --- | --- | --- | --- | --- |\n| <img src=\"examples/us_cbct/case_01/US_I0.png\" width=\"150\"\
+  > | <img src=\"examples/us_cbct/case_01/US_I1.png\" width=\"150\"> | <img src=\"examples/us_cbct/case_01/CBCT_I0.png\"\
+  \ width=\"150\"> | <img src=\"examples/us_cbct/case_01/CBCT_I1_pred.png\" width=\"150\"> | <img src=\"\
+  examples/us_cbct/case_01/CBCT_I1.png\" width=\"150\"> |\n\nUltrasound-only cases:\n\n```text\nexamples/ultrasound/case_XX/\n\
+  \  I0.png\n  I1.png\n```\n\nUltrasound+CBCT cases:\n\n```text\nexamples/us_cbct/case_XX/\n  US_I0.png\n\
+  \  US_I1.png\n  CBCT_I0.png\n  CBCT_I1.png\n```\n\n`CBCT_I1.png` is provided for visual comparison only;\
+  \ it is not used as input by\n`infer_cbct_warp_from_us.py`.\n\n## Command-Line Options\n\nBoth inference\
+  \ scripts accept `--device {auto,cpu,cuda}` and default to `auto`.\nCUDA automatic mixed precision is\
+  \ enabled by default on GPU and can be disabled\nwith `--no-amp`.\n\nTo keep inputs untouched, write\
+  \ outputs to a separate directory:\n\n```bash\npython infer_us_flow.py \\\n  --input-dir examples/ultrasound/case_02\
+  \ \\\n  --checkpoint models/uscorunet_base.pth \\\n  --output-dir outputs/ultrasound_case_02\n```\n\n\
+  ## Notes\n\n- The released scripts are intended for inference and reproducible demos.\n- Input images\
+  \ are converted to grayscale and normalized to `[0, 1]`.\n- Dense flows are predicted in pixel units\
+  \ and applied with `torch.grid_sample`.\n- This code and the accompanying model weights are intended\
+  \ for research use only\n  and are not approved for clinical use.\n\n## Citation\n\nIf you use this\
+  \ code or the USCorUNet checkpoints, please cite:\n\n```bibtex\n@article{li2026robotic,\n  title={Robotic\
+  \ Ultrasound Makes CBCT Alive},\n  author={Li, Feng and Li, Ziyuan and Jiang, Zhongliang and Navab,\
+  \ Nassir and Bi, Yuan},\n  journal={arXiv preprint arXiv:2603.10220},\n  year={2026}\n}\n```\n\n## License\n\
+  \nThe code is released for non-commercial academic research use; see\n[`LICENSE`](LICENSE). The USCorUNet\
+  \ checkpoints are hosted separately on Hugging\nFace under the **CC BY-NC 4.0** license. For commercial\
+  \ use, please contact the\nauthors.\n"

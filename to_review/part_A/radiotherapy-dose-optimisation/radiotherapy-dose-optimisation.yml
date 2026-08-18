@@ -1,0 +1,57 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: BhuvanashreeM/Radiotherapy-Dose-Optimisation
+url: https://github.com/BhuvanashreeM/Radiotherapy-Dose-Optimisation
+platform: github
+description: Code repository for optimizing radiotherapy treatment plans in oropharyngeal cancer using
+  deep learning techniques.
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2025-04-23T12:03:51Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Radiotherapy Dose Opitmisation\n\nThis repository contains code for training and testing\
+  \ deep learning approaches to radiotherapy treatment plan optimisation in oropharyngeal cancer.\n\n\
+  ## Obtaining the OpenKBP-Opt Dataset\nThe OpenKBP-Opt Dataset is the benchmark used to train the models\
+  \ and is available for download on the [official OpenKBP-Opt Github Repository]( https://github.com/ababier/open-kbp-opt/tree/master).\
+  \ Follow these steps to download and extract the dataset:\n\nThe OpenKBP-Opt dataset contains the following\
+  \ subdirectories:\n\n- `reference-plans`: All the reference patient data (e.g., reference dose, contours)\
+  \ are stored here\n- `paper-predictions`: The predictions that were generated during the OpenKBP Grand\
+  \ Challenge are stored here.\n\nAssign the path to the root folder containing the above two folders\
+  \ to `DATA_PATH` variable in the `src/configs.py` file\n\n## Repository Structure\n\nThis repository\
+  \ is organized as follows:\n\n- `data/`: This directory contains the code for pre-processing the data.\n\
+  \    - `data_generator.py`: Custom keras DataGenerator for loading 3D volumetric data and corresponding\
+  \ output labels for training a neural network.\n    - `data_utils.py`: Contains utility functions used\
+  \ in the DataGenerator class\n- `modesl/`: This directory contains the different model definitions\n\
+  - `src/`: This directory contains the scirpts for training and evaluating the models\n    - `config.py`:\
+  \  Used to setup path variables used throughout the project\n    - `tran_model.py`: Script for training\
+  \ a model\n    - `evaluate_model.py`: Script for evaluating a trained model\n\n## Requirements\n\n-\
+  \ Python 3.6 or above\n- TensorFlow 2.12.0\n- Keras 2.12.0\n- Spektral 1.3.0\n- Numpy 1.22.4\n\n## Usage\n\
+  \n### Training the Model\n\nTo train the model, run the `train_model.py` script. The script accepts\
+  \ several command-line arguments:\n\n- `--dim`: The dimensions of the input data. Defaults to `<128,128,128>`.\n\
+  - `--batch_size`: The batch size for training. Defaults to `1`.\n- `--n_channels_input`: The number\
+  \ of input channels. Defaults to `8`.\n- `--n_channels_output`: The number of output channels. Defaults\
+  \ to `1`.\n- `--shuffle`: Whether or not to shuffle the data. Defaults to `False`.\n- `--learning_rate`:\
+  \ The learning rate for the Adam optimizer. Defaults to `1e-4`.\n- `--model_name`: The name of the model\
+  \ to use. Must be either `de_convgraph_unet3d` or `unet3d`.\n\nExample:\n\n```bash\npython train_model.py\
+  \ --dim 128 128 128 --batch_size 1 --n_channels_input 8 --n_channels_output 1 --shuffle False --learning_rate\
+  \ 0.0001 --model_name de_convgraph_unet3d\n```\nThe script logs the training process and saves the model\
+  \ weights and training history after each fold of cross-validation.\n\n### Testing the Model\n\nTo test\
+  \ the model, run the `evaluate_model.py` script. The script accepts several command-line arguments:\n\
+  \n- `--dim`: The dimensions of the input data. Defaults to `<128,128,128>`.\n- `--batch_size`: The batch\
+  \ size for testing. Defaults to `1`.\n- `--n_channels_input`: The number of input channels. Defaults\
+  \ to `8`.\n- `--n_channels_output`: The number of output channels. Defaults to `1`.\n- `--shuffle`:\
+  \ Whether or not to shuffle the data. Defaults to `False`.\n- `--model_path`: The path to the trained\
+  \ model. Required.\n\nExample:\n\n```bash\npython evaluate_model.py --dim 128 128 128 --batch_size 1\
+  \ --n_channels_input 8 --n_channels_output 1 --shuffle False --model_path /path/to/model_checkpoint.h5\n\
+  ```\nThe script logs the testing process and outputs the model's performance on the test data.\n\n##\
+  \ Note\nMake sure to adjust the command-line arguments as per your data and hardware capabilities (e.g.,\
+  \ GPU memory for batch size)."

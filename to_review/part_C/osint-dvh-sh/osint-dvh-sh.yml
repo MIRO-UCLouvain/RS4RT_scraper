@@ -1,0 +1,88 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: nitrous-oxi-de/osint.dvh.sh
+url: https://github.com/nitrous-oxi-de/osint.dvh.sh
+platform: github
+description: '[ TypeScript / Fastify ] RESTful OSINT API'
+license: GPL-3.0
+language: TypeScript
+keywords: []
+stars: 0
+updated_at: '2026-01-14T10:48:15Z'
+image_source: https://repobeats.axiom.co/api/embed/a71a1d11f2b51d2c389794c83f5153c18da80f24.svg
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Nitrous OSINT API\n\nWelcome to **Nitrous OSINT API**. A Fastify-based REST API designed\
+  \ for comprehensive Open Source Intelligence (OSINT) reconnaissance. This API offers a modular framework\
+  \ for conducting basic reconnaissance across various categories such as usernames, domains, emails,\
+  \ phone numbers, and IP addresses.\n\n![GitHub License](https://img.shields.io/github/license/nitrous-oxi-de/osint.dvh.sh)\n\
+  \n## Table of Contents\n\n- [Usage](#usage)\n    - [Categories](#categories)\n    - [Module Indexing](#module-indexing)\n\
+  \    - [Individual Module Queries](#individual-module-queries)\n    - [Categorized Queries](#categorized-queries)\n\
+  \    - [Response Schema](#response-schema)\n- [Contributing](#contributing)\n- [Requirements](#requirements)\n\
+  - [Installation](#installation)\n- [Development](#development)\n    - [ModuleCategory Enum](#modulecategory-enum)\n\
+  \    - [ModuleType Enum](#moduletype-enum)\n    - [ModuleMeta Interface](#modulemeta-interface)\n  \
+  \  - [Module Superclass](#module-superclass)\n    - [In Practice](#in-practice)\n    - [QueryStandardization\
+  \ Interface](#querystandardization-interface)\n- [Acknowledgements](#acknowledgements)\n- [License](#license)\n\
+  \n## Usage\n\n### Categories\n\nThe API provides endpoints for different categories of reconnaissance:\n\
+  \n- [`/username`](https://osint.dvh.sh/username)\n- [`/domain`](https://osint.dvh.sh/domain)\n- [`/email`](https://osint.dvh.sh/email)\n\
+  - [`/phone`](https://osint.dvh.sh/phone)\n- [`/ip`](https://osint.dvh.sh/ip)\n\n### Module Indexing\n\
+  \nAll available modules can be indexed using the following endpoints:\n\n- Index All Modules - `https://osint.dvh.sh/`\n\
+  - Index by Category - `https://osint.dvh.sh/<category>/`\n\n### Individual Module Queries\n\nYou can\
+  \ query a specific module using:\n\n- `https://osint.dvh.sh/<category>/<module>?query=`\n\n### Categorized\
+  \ Queries\n\nTo query all modules within a specific category, use the following:\n\n- `https://osint.dvh.sh/<category>?query=`\n\
+  \n### Response Schema\n\nThe API returns responses in the following format:\n\n```json\n{ \"status\"\
+  \ : 200, \"data\" : {} }\n{ \"status\" : 404, \"data\" : null }\n{ \"status\" : 500, \"data\" : null\
+  \ }\n```\n\n## Contributing\n\nContributions are always welcome, especially in the form of new modules!\
+  \ For major changes, please open an issue to discuss your proposal first.\n\nSee the `contributing.md`\
+  \ file for guidelines on how to get started.\n\nPlease adhere to the project's `code of conduct`.\n\n\
+  ## Requirements\n\nTo run the project locally, you need the following:\n\n- Python v3.10\n- Node.js\
+  \ v20\n\n## Installation\n\nFollow these steps to set up the project locally:\n\n```bash\n# Install\
+  \ TypeScript globally\nnpm install typescript -G\n\n# Clone the repository\ngit clone https://github.com/nitrous-oxi-de/osint.dvh.sh.git\n\
+  \n# Navigate into the project directory\ncd osint.dvh.sh\n\n# Setup the environment variables\ncp .env.example\
+  \ .env\n\n# Install project dependencies\nnpm install\n\n# Start the application\nnpm run start\n```\n\
+  \n> **Note:** The email/google module requires [GHunt](https://github.com/mxrch/GHunt) to be installed\
+  \ and configured locally.\n\n## Development\n\n### ModuleCategory Enum\n\nLocated in `src/sdk/enum/eModuleCategory.ts`\
+  \ and aliased as `@enum/eModuleCategory`.\n\n```typescript\nexport enum ModuleCategory {\n    Username\
+  \ = 'username',\n    Phone    = 'phone',\n    Email    = 'email',\n    IP       = 'ip',\n    Domain\
+  \   = 'domain',\n}\n```\n\nEach module must be assigned a category that describes the required input.\n\
+  \n### ModuleType Enum\n\nLocated in `src/sdk/enum/eModuleType.ts` and aliased as `@enum/eModuleType`.\n\
+  \n```typescript\nexport enum ModuleType {\n    Enrichment = 'enrichment',\n    Existence  = 'existence',\n\
+  }\n```\n\nEach module must be assigned a type, which describes the nature of the data returned.\n\n\
+  ### ModuleMeta Interface\n\nLocated in `src/sdk/interface/iModuleMeta.ts` and aliased as `@interface/iModuleMeta`.\n\
+  \n```typescript\nexport interface ModuleMeta {\n    name        : string;\n    description : string;\n\
+  \n    category    : ModuleCategory;\n    type        : ModuleType;\n}\n```\n\nEach module must include\
+  \ metadata, which is used for indexing.\n\n### Module Superclass\n\nLocated in `src/module/module.ts`\
+  \ and aliased as `@module/module`.\n\n```typescript\nexport class Module {\n\n    public meta: ModuleMeta;\n\
+  \n    constructor(meta: ModuleMeta) {\n        this.meta = meta;\n    }\n\n    public async query(query:\
+  \ string): Promise<any> {\n        throw new Error(\"Method not implemented.\");\n    }\n}\n```\n\n\
+  Every module has a set metadata and must implement the `query` method, which returns a promise of the\
+  \ module's result.\n\n### In Practice\n\nExample module implementation found in `src/module/impl/username/cashapp.ts`.\n\
+  \n```typescript\n// Define module metadata\nconst META: ModuleMeta = {\n    name        : \"cashapp\"\
+  ,\n    description : \"Searches for CashApp profile info based on a given username.\",\n    category\
+  \    : ModuleCategory.Username,\n    type        : ModuleType.Enrichment,\n}\n\n// Create a new class\
+  \ extending the Module superclass\nexport class CashApp extends Module {\n\n    constructor() {\n  \
+  \      super(META);\n    }\n\n    public async query(query: string): Promise<any> {\n\n        const\
+  \ response = await axios.get(`https://cash.app/$${query}`);\n\n        const exists = response.data.includes('var\
+  \ profile =');\n\n        return {\n            status: exists ? 200 : 404,\n            data: exists\
+  \ ? JSON.parse(response.data.split('var profile = ')[1].split(';')[0]) : null,\n        };\n    }\n\
+  }\n\n// Export an instance of the module class\nmodule.exports = new CashApp();\n```\n\n### QueryStandardization\
+  \ Interface\n\nLocated in `src/sdk/interface/iQueryStandardization.ts` and aliased as `@interface/iQueryStandardization`.\n\
+  \n```typescript\nexport default interface IQueryStandardization {\n\n    readonly category    : ModuleCategory;\n\
+  \n    readonly minLength   : number;\n    readonly maxLength   : number;\n\n    readonly regex     ?\
+  \ : RegExp;\n}\n```\n\nProvides category-specific query standardization to catch common mistakes.\n\n\
+  #### Example\n\nLocated in `src/module/query/domain.query.ts`.\n\n```typescript\nexport default class\
+  \ DomainQuery implements IQueryStandardization {\n\n    readonly category: ModuleCategory = ModuleCategory.Domain;\n\
+  \    readonly minLength: number = 3;\n    readonly maxLength: number = 255;\n    readonly regex?: RegExp\
+  \ = /^([a-z0-9]+(-[a-z0-9]+)*\\.)+[a-z]{2,}$/;\n}\n\nmodule.exports = new DomainQuery();\n```\n\nThe\
+  \ router will automatically standardize the query before passing it to the module, returning a 400 if\
+  \ the query does not meet the requirements.\n\nRefer to the `doesQueryConform()` method in `src/route/osintRoute.ts`\
+  \ for more details.\n\n## Acknowledgements\n\n- [GHunt](https://github.com/mxrch/GHunt) - A key dependency\
+  \ for email/google module functionality.\n\n## License\n\nThis project is licensed under the GPL-3.0\
+  \ License - see the [LICENSE](https://choosealicense.com/licenses/gpl-3.0/) file for details.\n\n![Repobeats\
+  \ Analytics](https://repobeats.axiom.co/api/embed/a71a1d11f2b51d2c389794c83f5153c18da80f24.svg \"Repobeats\
+  \ analytics image\")\n\n---\n"

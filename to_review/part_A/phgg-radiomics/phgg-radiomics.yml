@@ -1,0 +1,94 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: m-tolba/phgg-radiomics
+url: https://github.com/m-tolba/phgg-radiomics
+platform: github
+description: Analysis code for the pHGG radiomics study
+license: NOASSERTION
+language: C++
+keywords: []
+stars: 0
+updated_at: '2026-06-28T03:46:03Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# MRI-based Radiomics for Prognosis of Non-Midline, Pediatric High-Grade Gliomas\n\n\
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)\n[![Python 3.10–3.11](https://img.shields.io/badge/python-3.10--3.11-blue.svg)](https://www.python.org/)\n\
+  \n<!-- After Zenodo archival, add a DOI badge:\n[![DOI](https://zenodo.org/badge/<github_id>.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)\
+  \ -->\n\nCompanion analysis code for the study **“MRI-based Radiomics for Prognosis of Non-Midline,\n\
+  Pediatric High-Grade Gliomas,”** *Journal of Neuro-Oncology* (2026). This repository contains\nthe code\
+  \ used to produce the paper's survival-analysis results. It contains **code only** —\nno patient data\
+  \ (see [Data availability](#data-availability)).\n\n## What this study does\n\nUsing treatment-naïve\
+  \ axial T1- and T2-weighted brain MRI from **77 children across five\npediatric institutions**, we extract\
+  \ 1800 IBSI radiomics features, select an optimal subset\nwith **minimum-redundancy maximum-relevance\
+  \ (mRMR)** inside k-fold cross-validation, and fit a\n**multivariable Cox proportional-hazards model**\
+  \ of overall survival. A per-patient **risk\nscore** stratifies patients into high-/low-risk groups\
+  \ (Kaplan–Meier, log-rank). The radiomics\nmodel reaches a concordance of **0.75** (vs. 0.61 for age\
+  \ + sex alone).\n\n> Intended for researchers and reviewers reproducing or building on the study.\n\n\
+  ## Repository structure\n\n```\n.\n├── pHGG_radiomics_analysis.ipynb   # the analysis pipeline — reproduces\
+  \ the paper end-to-end\n├── requirements.txt                # pinned Python dependencies\n├── CITATION.cff\
+  \                    # how to cite this software + the paper\n├── LICENSE                         #\
+  \ MIT (code only; see Data availability)\n└── pymrmre-1.0.7/                  # vendored mRMR feature-selection\
+  \ package (third-party, MIT)\n```\n\n## Requirements\n\n- **Python 3.10–3.11.** The paper reports Python\
+  \ 3.10.0; the pipeline was validated end-to-end\n  on Python 3.11.\n- Core libraries (full pins in [`requirements.txt`](requirements.txt)):\
+  \ `numpy`, `pandas`,\n  `scipy`, `scikit-learn`, **`scikit-survival`** (Cox model, concordance), **`lifelines`**\n\
+  \  (Cox summary, Kaplan–Meier, log-rank), `matplotlib`, `openpyxl`, `ipython`.\n- **`pymRMRe` 1.0.7**\
+  \ for feature selection — vendored in [`pymrmre-1.0.7/`](pymrmre-1.0.7/)\n  (third-party, MIT-licensed;\
+  \ included for reproducibility because it compiles a C++/Cython\n  extension and pins an exact version).\
+  \ A C++ compiler must be available at install time.\n- The 1800 radiomics features were extracted upstream\
+  \ with **PyRadiomics 2.2.0** via the\n  Quantitative Imaging Feature Pipeline; that step is external\
+  \ to this repository (the notebook\n  starts from the precomputed feature table) and is described in\
+  \ the paper's Methods.\n\n## Installation\n\n```bash\ngit clone https://github.com/m-tolba/phgg-radiomics.git\
+  \   # rename to taste\ncd phgg-radiomics\n\npython3.11 -m venv .venv && source .venv/bin/activate\n\
+  pip install --upgrade pip\npip install -r requirements.txt\npip install --no-build-isolation ./pymrmre-1.0.7\
+  \      # vendored mRMR package\n```\n\n## Usage / how to reproduce\n\n```bash\njupyter notebook pHGG_radiomics_analysis.ipynb\n\
+  ```\n\nRun it top to bottom. It expects the analysis-ready cohort file `pediatric_all_08-2023.xlsx`\n\
+  in the repository root (see [Data availability](#data-availability)). Each section maps\ndirectly to\
+  \ the paper:\n\n| Notebook section | Reproduces | Output |\n|---|---|---|\n| 2. Load the study cohort\
+  \ | Cohort (n = 77) | — |\n| 3. Cohort summary | **Table 1** (demographics) | printed |\n| 4. Feature\
+  \ selection + model evaluation | **Table 3** (concordance: clinical 0.61 / radiomics 0.75 / combined\
+  \ 0.78) | printed |\n| 5. Final multivariable Cox model | **Table 2** (hazard ratios, 95% CI, p) | printed\
+  \ |\n| 6. Risk score + Kaplan–Meier | **Fig. 1** (risk-stratified survival) | `results/KM_riskscore.png`\
+  \ |\n| 7. Ablation study | Leave-one-out feature importance | printed |\n| 8. AA vs. GBM comparison\
+  \ | Grade comparison | `results/KM_AAvsGBM.png` |\n\n**Selected radiomics features (paper Table 2):**\n\
+  `t1_log-sigma-5-mm-3D_firstorder_MeanAbsoluteDeviation`,\n`t1_wavelet-LLL_glrlm_HighGrayLevelRunEmphasis`,\n\
+  `t2_wavelet-HLH_glcm_Idmn`,\n`t2_wavelet-LHH_glrlm_LowGrayLevelRunEmphasis`,\n`t2_wavelet-HLH_glszm_LowGrayLevelZoneEmphasis`.\n\
+  \n## Data availability\n\nThe imaging and clinical datasets analyzed in this study are **not publicly\
+  \ available** because\nthey contain protected patient information and are governed by the institutional\
+  \ review board\napprovals and data-sharing agreements under which they were collected. De-identified\
+  \ data may\nbe made available **from the corresponding author upon reasonable request**, subject to\n\
+  institutional approval and a data-use agreement.\n\nTo run the pipeline with approved data, provide\
+  \ an Excel file `pediatric_all_08-2023.xlsx` with\none row per patient and columns:\n\n```\nid, sex,\
+  \ age, status, os, location, path, peds, institution, risk_score, <1800 radiomics features...>\n```\n\
+  \nwhere `status` is the event indicator (1 = deceased, 0 = alive/censored), `os` is overall\nsurvival\
+  \ in months, `path` is histological grade, the clinical features `sex` and `age` are\ncolumns 2–3, and\
+  \ the radiomics features begin at column 11. (See the notebook's Section 2.)\n\n## Reproducibility notes\n\
+  \n- **Random seed.** A fixed seed (`SEED = 42`) controls the cross-validation fold partition and\n \
+  \ mRMR feature ordering, so the notebook is deterministic across runs.\n- **Difference from the paper.**\
+  \ The original analysis was run *without* a fixed seed, so the\n  stochastic mRMR cross-validation in\
+  \ Section 4 may select a slightly different feature set and\n  report concordance values (Table 3) that\
+  \ differ from the paper. The **final reported model is\n  deterministic**: Section 5 pins the five features\
+  \ from the paper's Table 2 and reproduces its\n  hazard ratios and p-values almost exactly, and the\
+  \ risk-score Kaplan–Meier analysis (Fig. 1)\n  reproduces as well.\n- **Validation.** The notebook was\
+  \ executed end-to-end on Python 3.11 with the pinned\n  dependencies: every cell runs without error,\
+  \ Section 5 reproduces Table 2, and the Section 6\n  log-rank is significant (p = 0.02). The full notebook\
+  \ runs in a few minutes on a laptop; no\n  GPU is required.\n\n## How to cite\n\nPlease cite the paper:\n\
+  \n```bibtex\n@article{tolba2026phgg_radiomics,\n  title   = {MRI-based Radiomics for Prognosis of Non-Midline,\
+  \ Pediatric High-Grade Gliomas},\n  author  = {Tolba, Mariam and Zhang, Michael and Duh, Jonathan K.\
+  \ and Liverani, Linda and\n             Campion, Andrew and Chang, Julia and Supakul, Nucharin and Lober,\
+  \ Robert M. and\n             Cheshier, Samuel H. and Mattonen, Sarah and Jaju, Alok and Yeom, Kristen\
+  \ W. and\n             Prolo, Laura M.},\n  journal = {Journal of Neuro-Oncology},\n  year    = {2026},\n\
+  \  note    = {Volume/issue/pages/DOI to be added on publication}\n}\n```\n\nA machine-readable [`CITATION.cff`](CITATION.cff)\
+  \ is included. To make the code itself citable\nwith its own DOI, create a tagged GitHub **Release**\
+  \ and archive it via **Zenodo**, then add the\nresulting DOI here and in `CITATION.cff`.\n\n## License\n\
+  \n[MIT](LICENSE) — for the code only. It does not cover the patient data, which are restricted\n(see\
+  \ [Data availability](#data-availability)). `pymrmre-1.0.7/` is third-party software\nredistributed\
+  \ under its own MIT license (see `pymrmre-1.0.7/LICENSE`).\n\n## Contact\n\nCorresponding authors: **Kristen\
+  \ W. Yeom** and **Laura M. Prolo**, Department of Neurosurgery,\nStanford University School of Medicine.\
+  \ Code maintainer / first author: **Mariam Tolba**.\nData-access requests should be directed to the\
+  \ corresponding author.\n"

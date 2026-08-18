@@ -1,0 +1,139 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: FerdinandDong/CBCT_Sino_FOV
+url: https://github.com/FerdinandDong/CBCT_Sino_FOV
+platform: github
+description: ' 3DCT Projection Repair (Truncation + Poisson Denoising)'
+license: null
+language: Python
+keywords: []
+stars: 3
+updated_at: '2026-04-22T06:22:01Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# CBCT_Sino_FOV\n\n本项目旨在探索锥束 CT (CBCT) 投影截断 (sino truncation) 与视野扩展 (Field-of-View Extension,\
+  \ FOV) 的学习与重建方法，涵盖了 **Partial Convolution-UNet、扩散模型 (DDPM)** 以及 **基于水模 (WCE) 的传统外推 baseline**。\n\n---\n\
+  \n\n### 数据尺寸说明\n[CHECK] IDs = [0, 5, 6]\n\n===== ID 0 =====\n[NOISY] stats: {\"shape\": [360, 960, 1240],\
+  \ \"dtype\": \"float32\", \"min\": 0.0, \"max\": 212.92982482910156, \"mean\": 37.969940185546875, \"\
+  std\": 56.544044494628906, \"p01\": 0.0, \"p50\": 0.09538675099611282, \"p99\": 203.61912536621094,\
+  \ \"zeros\": 2687808, \"negatives\": 0, \"sampled\": 9523200}\n[NOISY] HU guess: non-HU (likely intensity\
+  \ or log scaled positive)\n[NOISY] if -log(intensity): {\"ok\": true, \"min\": -5.360962867736816, \"\
+  max\": 12.723508834838867, \"mean\": -1.1819137334823608, \"std\": 3.711803436279297, \"p01\": -5.33977746963501,\
+  \ \"p50\": -2.953751564025879, \"p99\": 5.985898971557617}\n[CLEAN] stats: {\"shape\": [360, 960, 1240],\
+  \ \"dtype\": \"float32\", \"min\": 0.0, \"max\": 262.3360900878906, \"mean\": 42.57258224487305, \"\
+  std\": 55.14096450805664, \"p01\": 0.3773731291294098, \"p50\": 4.479748725891113, \"p99\": 202.84100341796875,\
+  \ \"zeros\": 26887, \"negatives\": 0, \"sampled\": 9523200}\n[CLEAN] HU guess: non-HU (likely intensity\
+  \ or log scaled positive)\n[CLEAN] if -log(intensity): {\"ok\": true, \"min\": -5.569626331329346, \"\
+  max\": 9.931133270263672, \"mean\": -2.3480143547058105, \"std\": 1.9222686290740967, \"p01\": -5.3126091957092285,\
+  \ \"p50\": -1.514025092124939, \"p99\": 0.8053264617919922}\n\n### 示例结果可视化\n\n下面展示部分 `img/` 文件夹中的图像，用于帮助理解模型训练与重建效果：\n\
+  \n- **训练与评估曲线**  \n  - 学习率变化：  \n    ![Learning Rate](img/lr.png)  \n  - 从20轮预训练之后开始的150epoch训练 / 验证\
+  \ Loss 曲线（纵轴放大至 0–3）：  \n    ![Train vs Val Loss](img/train_val_loss.png)  \n\n- **二维投影与重建三联图**  \n\
+  \  - 单帧三联图（Noisy / Pred / GT + 误差）：  \n    ![Triptych Example](img/triptych_00180.png)  \n\n- **三维重建结果（Axial\
+  \ 切片）128/256/384 slice**  \n  - PConv - FDK 重建（截断投影 → FOV 扩展后）：  \n    ![FDK Axial Triptych z=128](img/axial_triptych_all_z0128.png)\
+  \  \n    ![FDK Axial Triptych z=256](img/axial_triptych_all_z0256.png)  \n    ![FDK Axial Triptych z=384](img/axial_triptych_all_z0384.png)\
+  \  \n\n  - Hsieh-WCE baseline 对比：  \n    ![WCE Hsieh Axial z=128](img/axial_triptych_wce_hsieh_all_z0128.png)\
+  \  \n    ![WCE Hsieh Axial z=256](img/axial_triptych_wce_hsieh_all_z0256.png)  \n    ![WCE Hsieh Axial\
+  \ z=384](img/axial_triptych_wce_hsieh_all_z0384.png)  \n\n这些结果展示了在截断投影输入条件下，**PConv-UNet 模型**与 **传统\
+  \ WCE 外推 baseline** 在 CBCT FOV 扩展任务中的对比效果。\n\n## 当前代码结构(2025-12-12)\n```\n├── CBCT_Sino_FOV\n│   ├──\
+  \ outputs\n│   │   ├── pconv_ds2_L2\n│   │   │   ├── recon3d\n│   │   │   ├── figs\n│   │   │   │  \
+  \ ├── triptych_id10_a090_tiles\n│   │   │   │   ├── tiles\n│   │   ├── pconv_ds2_L2L1_perc_edg\n│  \
+  \ │   │   ├── recon3d\n│   │   │   ├── figs\n│   │   ├── logplots\n│   │   │   ├── pconv_ds2_L2\n│ \
+  \  │   │   ├── pconv_fullpixel_150epochs_fullLoss\n│   │   │   ├── pconv_ds2_L2L1_perc_edg\n│   │  \
+  \ │   ├── pconv_ds2_L2L1_perc_edg_sty_lpips\n│   │   │   ├── pconv_ds2_L2L1_edg_sty_lpips\n│   │   │\
+  \   ├── pconv_ds2_L2L1_perc_edg_sty\n│   │   │   ├── pconv_ds_L2L1\n│   │   │   ├── pconv_ds2_L2L1_perc\n\
+  │   │   │   ├── pconv_ds2_L2L1_edg_lpips\n│   │   ├── pconv_ds2_L2L1_perc_edg_sty_lpips\n│   │   │ \
+  \  ├── recon3d\n│   │   │   ├── figs\n│   │   ├── pconv_ds2_L2L1_edg_sty_lpips\n│   │   │   ├── recon3d\n\
+  │   │   │   ├── figs\n│   │   ├── pconv_ds2_L2L1_perc_edg_sty\n│   │   │   ├── recon3d\n│   │   │  \
+  \ ├── figs\n│   │   │   │   ├── triptych_id10_a090_tiles\n│   │   │   │   ├── tiles\n│   │   ├── pconv_ds2_L2L1\n\
+  │   │   │   ├── recon3d\n│   │   │   ├── figs\n│   │   ├── i2sb_local_1step\n│   │   │   ├── recon3d\n\
+  │   │   │   ├── figs\n│   │   │   │   ├── id10_a090_tiles\n│   │   │   │   ├── tiles\n│   │   ├── pconv_fullpixel_150e_fullLoss\n\
+  │   │   │   ├── recon3d\n│   │   │   ├── figs\n│   │   ├── pconv_ds2_L2L1_perc\n│   │   │   ├── recon3d\n\
+  │   │   │   ├── figs\n│   │   ├── diffusion\n│   │   ├── pconv_ds2_L2L1_edg_lpips\n│   │   │   ├── recon3d\n\
+  │   │   │   ├── figs\n│   ├── .git\n│   ├── configs\n│   │   ├── eval.yaml\n│   │   ├── train_diffusion.yaml\n\
+  │   │   ├── train_i2sb_local.yaml\n│   │   ├── train_i2sb_dummy.yaml\n│   │   ├── sample_i2sb_local.yaml\n\
+  │   │   ├── train_unet_pconv.yaml\n│   │   ├── train_unet.yaml\n│   │   ├── sample_diffusion.yaml\n\
+  │   ├── ctprojfix\n│   │   ├── evals\n│   │   │   ├── metrics.py\n│   │   │   ├── __pycache__\n│   │\
+  \   │   ├── __init__.py\n│   │   ├── utils\n│   │   │   ├── __init__.py\n│   │   ├── trainers\n│   │\
+  \   │   ├── diffusion.py\n│   │   │   ├── i2sb_local.py\n│   │   │   ├── supervised.py\n│   │   │  \
+  \ ├── __pycache__\n│   │   │   ├── __init__.py\n│   │   ├── losses\n│   │   │   ├── __pycache__\n│ \
+  \  │   │   ├── criterion.py\n│   │   │   ├── __init__.py\n│   │   ├── models\n│   │   │   ├── pconv_unet.py\n\
+  │   │   │   ├── i2sb_unet.py\n│   │   │   ├── registry.py\n│   │   │   ├── __pycache__\n│   │   │  \
+  \ ├── diffusion\n│   │   │   │   ├── sampler.py\n│   │   │   │   ├── ddpm.py\n│   │   │   │   ├── __pycache__\n\
+  │   │   │   │   ├── __init__.py\n│   │   │   ├── unet.py\n│   │   │   ├── __init__.py\n│   │   │   ├──\
+  \ unet_res.py\n│   │   ├── __pycache__\n│   │   ├── recon\n│   │   │   ├── wce_hsieh.py\n│   │   │ \
+  \  ├── wce_baseline.py\n│   │   │   ├── __pycache__\n│   │   │   ├── fdk_astra.py\n│   │   │   ├── __init__.py\n\
+  │   │   ├── __init__.py\n│   │   ├── data\n│   │   │   ├── dataset.py\n│   │   │   ├── __pycache__\n\
+  │   │   │   ├── __init__.py\n\n│   ├── checkpoints\n│   │   ├── pconv_ds2_L2\n│   │   ├── unet\n│  \
+  \ │   ├── pconv_ds2_L2L1_perc_edg\n│   │   ├── pconv_ds2_L2L1_perc_edg_sty_lpips\n│   │   ├── pconv_unet_fullpixel_150epoch\n\
+  │   │   ├── pconv_ds2_L2L1_edg_sty_lpips\n│   │   ├── pconv_unet\n│   │   ├── pconv_ds2_L2L1_perc_edg_sty\n\
+  │   │   ├── pconv_ds2_L2L1\n│   │   ├── i2sb_local\n│   │   ├── pconv_ds2_L2L1_perc\n│   │   ├── diffusion\n\
+  │   │   ├── pconv_ds2_L2L1_edg_lpips\n│   ├── ctprojfix.egg-info\n│   ├── logs\n│   │   ├── logplots\n\
+  │   │   │   ├── i2sb_local\n│   ├── setup.py\n│   ├── splits\n│   ├── data\n│   ├── ct_proj_fix.egg-info\n\
+  │   ├── scripts\n│   │   ├── train.py\n│   │   ├── check_data_units.py\n│   │   ├── sample_i2sb_local.py\n\
+  │   │   ├── eval_recon3d_from_outputs.py\n│   │   ├── sample_diffusion.py\n│   │   ├── plot_train_log.py\n\
+  │   │   ├── split_dataset.py\n│   │   ├── __pycache__\n│   │   ├── evaluate.py\n│   │   ├── tree_show.py\n\
+  │   │   ├── make_compare_figs.py\n```\n## 当前代码结构（2025-09-25）\n\n```\n│ .gitignore\n│ pyproject.toml\n\
+  │ README.md\n│ requirements.txt\n│ setup.py\n│\n├─checkpoints/ # 权重保存（UNet/PConv-UNet/Diffusion）\n│\n\
+  ├─configs/ # 训练 / 采样 / 评估配置\n│\n├─ctprojfix/ # 核心库\n│ ├─data/ # 数据集定义 (ProjectionAnglesDataset / DummyDataset)\n\
+  │ ├─evals/ # 指标 (PSNR / SSIM)\n│ ├─losses/ # 损失函数 (L1/L2/SSIM/感知/区域L1等)\n│ ├─models/ # 模型 (UNet, PConv-UNet,\
+  \ Diffusion-DDPM)\n│ ├─recon/ # 重建与基线方法\n│ │ ├─fdk_astra.py # FDK 重建 (ASTRA)\n│ │ ├─wce_baseline.py\
+  \ # 高斯水模外推 baseline\n│ │ ├─wce_hsieh.py # Hsieh 已知截断宽度的水模外推 (2004论文)\n│ ├─trainers/ # 训练器 (监督/扩散)\n\
+  │ ├─utils/ # 工具\n│\n├─outputs/ # 实验输出\n│\n├─scripts/ # 训练/评估/日志可视化工具\n│ ├─train.py # 统一训练入口\n│ ├─evaluate.py\
+  \ # 统一评估（指标+三联图+体数据导出）\n│ ├─eval_recon3d_from_outputs.py # 3D 重建与 WCE/FDK baseline 对比\n│ ├─plot_train_log.py\
+  \ # 日志解析+绘图+过拟合检测 python scripts/plot_train_log.py --log logs/train_pconv.log                      \
+  \            --outdir outputs/logplots/pconv\n│ ├─sample_diffusion.py # 扩散模型采样\n│ ├─split_dataset.py\
+  \ # 数据划分工具\n│\n├─splits/ # 数据划分列表\n└─tests/ # 预留单元测试\n```\n\n## 当前代码结构（2025-09-12）\n\n```\nCBCT_Sino_FOV/\n\
+  ├─ checkpoints/                  # 权重保存\n│  ├─ diffusion/\n│  └─ pconv_unet/               # PConv-UNet\
+  \ 权重\n├─ configs/                      # 训练 / 采样 / 评估配置\n│  ├─ train_unet.yaml\n│  ├─ train_unet_pconv.yaml\
+  \     # PConv-UNet 训练配置（含组合损失与续训）\n│  ├─ train_diffusion.yaml\n│  └─ eval.yaml                  # 统一评估配置（PSNR/SSIM、保存三联图）\n\
+  ├─ ctprojfix/                    # 核心库\n│  ├─ data/                      # 数据集定义（Dummy / ProjectionAnglesDataset）\n\
+  │  │  └─ dataset.py\n│  ├─ evals/                     # 指标 (PSNR / SSIM)\n│  │  └─ metrics.py\n│  ├─\
+  \ losses/                    # 损失 (L1/L2/SSIM/感知/风格/LPIPS/区域L1)\n│  │  └─ criterion.py\n│  ├─ models/\n\
+  │  │  ├─ registry.py             # 模型注册器（build_model / @register）\n│  │  ├─ unet.py                \
+  \ # UNet baseline\n│  │  ├─ unet_res.py             # ResNet-UNet 扩展\n│  │  ├─ pconv_unet.py       \
+  \    # 新增：PConv-UNet（带单通道 mask 的 PartialConv）\n│  │  └─ diffusion/              # 扩散模型 (DDPM, Sampler)\n\
+  │  ├─ recon/                     # \n│  ├─ trainers/\n│  │  ├─ supervised.py           # 新增：支持续训/轮转删除/组合损失的监督训练器\n\
+  │  │  └─ diffusion.py\n│  └─ utils/\n├─ outputs/\n│  └─ sample/\n├─ scripts/\n│  ├─ train.py       \
+  \            # 统一训练入口（根据 model.name 选择 trainer）\n│  ├─ evaluate.py                # 新增：统一评估（保存三联图与 metrics.csv）\n\
+  │  └─ sample_diffusion.py\n├─ tests/                        # 预留\n├─ requirements.txt\n├─ setup.py\n\
+  ├─ pyproject.toml\n└─ README.md\n\n```\n\n\n\n## 当前代码结构（2025-09-07）\n\n```\nCBCT_Sino_FOV/\n├─ checkpoints/\
+  \ # 权重保存\n│ └─ diffusion/\n├─ configs/ # 训练 & 采样配置\n├─ ctprojfix/ # 核心库\n│ ├─ data/ # 数据集定义 (Dummy +\
+  \ ProjectionAnglesDataset)\n│ ├─ evals/ # 指标 (PSNR/SSIM)\n│ ├─ losses/ # 损失函数 (L1/L2/SSIM/频域可扩展)\n│\
+  \ ├─ models/\n│ │ ├─ unet.py # UNet baseline\n│ │ ├─ unet_res.py # ResNet-UNet 扩展版\n│ │ └─ diffusion/\
+  \ # 扩散模型 (DDPM, Sampler)\n│ ├─ recon/ # 预留: FBP/FDK 重建\n│ ├─ trainers/ # 训练循环 (SupervisedTrainer / DiffusionTrainer)\n\
+  │ └─ utils/ # 工具函数 (IO, logging, mask 构造等)\n├─ outputs/ # 输出目录\n│ └─ sample/ # 采样可视化结果\n├─ scripts/\
+  \ # 可执行脚本\n│ ├─ train.py # 统一训练入口\n│ ├─ evaluate.py # 统一评估入口\n│ └─ sample_diffusion.py # 扩散采样入口 (含 DC)\n\
+  ├─ tests/ # 单元测试 (预留)\n├─ requirements.txt\n├─ setup.py\n├─ pyproject.toml\n└─ README.md\n```\n\n\n\
+  ### Diffusion 模块流程画图 LaTex风格\n```mermaid\nflowchart LR\n  %% ========== Forward diffusion ==========\n\
+  \  subgraph Forward[\"Forward diffusion q(x_t | x_{t-1})\"]\n    X0[\"Clean image x0\"] -->|t=1| X1[\"\
+  x1 = sqrt(1-beta1)*x0 + sqrt(beta1)*eps\"]\n    X1 -->|t=2| X2[\"x2 = sqrt(1-beta2)*x1 + sqrt(beta2)*eps\"\
+  ]\n    X2 --> Xdot[\"...\"] -->|...| XT[\"xT ~ N(0, I)\"]\n  end\n\n  %% ========== Training: predict\
+  \ noise ==========\n  subgraph Train[\"Training: predict noise  eps_hat_theta(x_t, t | cond)\"]\n  \
+  \  TInput1[\"x_t\"] --> Net((\"UNet / ResUNet\"))\n    TInput2[\"t (timestep)\"] --> Net\n    TCond[\"\
+  cond = [noisy_center, mask, (angle)]\"] --> Net\n    Net --> EpsHat[\"eps_hat\"]\n    EpsHat --> Loss[\"\
+  L = || eps - eps_hat ||^2\"]\n  end\n\n  %% ========== Reverse generative process ==========\n  subgraph\
+  \ Reverse[\"Reverse diffusion p_theta(x_{t-1} | x_t)\"]\n    ZT[\"xT ~ N(0, I)\"] -->|t=T| Rt[\"x_{T-1}\
+  \ = mu_theta(x_t,t,cond) + sigma_t * z\"]\n    Rt -->|t=T-1| Rt1[\"x_{T-2} = mu_theta(x_{T-1},t-1,cond)\
+  \ + sigma_{t-1} * z\"]\n    Rt1 --> Rdot[\"...\"] --> R1[\"x1\"] --> R0[\"x0_hat (restored)\"]\n  end\n\
+  \n  %% ========== Data Consistency (optional per step) ==========\n  subgraph DC[\"Data consistency\
+  \ (optional, each step)\"]\n    DCmask[\"mask: 1=center valid, 0=truncated\"]\n    Obs[\"obs: noisy\
+  \ center\"]\n    Rule[\"hard DC:  x <- obs*mask + x*(1-mask)<br/>soft DC:  x <- alpha*obs*mask + (1-alpha)*x*mask\
+  \ + x*(1-mask)\"]\n  end\n\n  %% connections\n  XT --> Train\n  ZT --> Reverse\n  DCmask -.-> Reverse\n\
+  \  Obs -.-> Reverse\n  Rule -.-> Reverse\n\n  classDef gray fill:#f6f6f6,stroke:#aaa,stroke-width:1px,color:#333;\n\
+  \  classDef blue fill:#e8f3ff,stroke:#5b8ff9,stroke-width:1px,color:#0b5cad;\n  classDef green fill:#ebfff1,stroke:#34c759,stroke-width:1px,color:#0a6b2b;\n\
+  \  class Forward gray\n  class Train blue\n  class Reverse green\n  class DC gray\n\n\n```\n\n\n\n\n\
+  \n---\n\n\n## 当前代码结构（2025‑08‑28）\n\n> 下列模块今天已建立或已跑通（含 Dummy 空跑）：\n\n```\nCBCT_Sino_FOV/\n├─ configs/\n\
+  │  ├─ train_unet.yaml        # 训练配置（支持 Dummy / 真实数据）\n│  └─ eval.yaml              # 评估配置（PSNR/SSIM）\n\
+  ├─ scripts/\n│  ├─ train.py               # 统一训练入口（UTF-8 读取 cfg；模型注册触发）\n│  └─ evaluate.py         \
+  \   # 统一评估入口（支持加载权重，Dummy 回退）\n├─ ctprojfix/\n│  ├─ data/\n│  │  └─ dataset.py          # ProjectionAnglesDataset（遍历\
+  \ 360 角度）；DummyDataset\n│  ├─ models/\n│  │  ├─ registry.py         # 模型注册表（build_model/装饰器 register）\n\
+  │  │  └─ unet.py             # UNet baseline（in_ch=2/3，out_ch=1）\n│  ├─ trainers/\n│  │  └─ supervised.py\
+  \       # L1 损失，Adam；类型强制转换；可保存 ckpt（预留）\n│  └─ evals/\n│     └─ metrics.py          # PSNR & SSIM（简化版）\n\
+  ├─ pyproject.toml            # setuptools 可编辑安装（仅打包 ctprojfix）\n└─ README.md                 # 本文件（实验思路\
+  \ + 日志）\n```\n\n---\n\n## 目标结构（规划 & 可插拔）\n```\n```\n\n\n## 使用方法"

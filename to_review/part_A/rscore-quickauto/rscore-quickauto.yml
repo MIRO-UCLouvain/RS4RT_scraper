@@ -1,0 +1,106 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: sureResearch/Rscore-QuickAuto
+url: https://github.com/sureResearch/Rscore-QuickAuto
+platform: github
+description: An automated cine CMR segmentation and radiomics pipeline for Rscore calculation.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-16T04:47:04Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "# Rscore QuickAuto\n\nRscore QuickAuto is a research pipeline that converts a conventional\
+  \ short-axis\n(SAX) cine cardiac MRI DICOM series into a locked radiomics score (`Rscore_z`).\nIt performs\
+  \ DICOM cine reconstruction, CorSeg-CineSAX segmentation, end-diastolic\nphase selection, myocardial\
+  \ radiomics extraction, and calculation of the locked\n23-feature Rscore.\n\n> **Research use only.**\
+  \ This software is not a medical device and must not be\n> used for clinical diagnosis, treatment planning,\
+  \ or unsupervised clinical\n> decision-making.\n\n## What is included\n\n- One executable script: `rscore_quickauto.py`\n\
+  - Locked model: `Rscore-CMRRI-v1`\n- Primary program output: `Rscore_z`\n- Model-development target:\
+  \ `CMRRI_z`\n- Locked radiomics pipeline: `CineSAX-Rad-v1`\n- Single-case, batch, resume, and environment-check\
+  \ commands\n- Formula and pipeline self-checks\n- No patient images, patient-level results, or pretrained\
+  \ CorSeg weights\n\nThe final Rscore formula is embedded in the Python script. The coefficient CSV\n\
+  in `models/` is an audit copy and is checked against the code by automated tests.\n\n## Important upstream\
+  \ dependency\n\nThis repository does **not** redistribute the CorSeg pretrained weight file.\nDownload\
+  \ the MedNeXt-L checkpoint from the official CorSeg project:\n\n- Official repository: <https://github.com/RunhaoXu2003/CorSeg>\n\
+  - Official download link currently listed by CorSeg:\n  <https://pan.baidu.com/s/1BM9viKgzGoECovzjxbMgtg?pwd=4396>\n\
+  \nPlace the required checkpoint at:\n\n```text\nRscore-QuickAuto/\n└── weights/\n    └── ModelWeight-CorSeg-CineSAX_MedNextL.pth\n\
+  ```\n\nIf the downloaded checkpoint has a different filename, either rename the\nappropriate MedNeXt-L\
+  \ checkpoint or pass its location with `--weight`.\n\nThe CorSeg README states that the upstream project\
+  \ is MIT-licensed, but no\nstandalone upstream `LICENSE` file was visible when this release was prepared.\n\
+  See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) before redistribution.\n\n## Installation\n\nPython\
+  \ 3.9 or later is required. Python 3.10 is recommended.\n\n### Windows example\n\n```powershell\npy\
+  \ -3.10 -m venv .venv\n.venv\\Scripts\\activate\npython -m pip install --upgrade pip\n```\n\nInstall\
+  \ PyTorch using the command appropriate for the computer's CPU or CUDA\nconfiguration from <https://pytorch.org/get-started/locally/>.\
+  \ Then install the\nremaining dependencies:\n\n```powershell\npip install -r requirements.txt\npython\
+  \ rscore_quickauto.py check\n```\n\nDo not silently replace PyRadiomics 3.1.0 with a different version.\
+  \ Radiomics\nimplementations and feature definitions can change across releases.\n\n## Input data organization\n\
+  \nNo example patient data are included. Use only appropriately de-identified\nresearch data.\n\n###\
+  \ One case\n\nEach case folder must contain exactly one complete conventional, single-frame,\nshort-axis\
+  \ cine DICOM series. DICOM files may be nested inside subfolders, but\nthe case folder must not contain\
+  \ scout, long-axis, LGE, mapping, duplicated, or\nother DICOM series.\n\n```text\ninput/\n└── HCM0001/\
+  \                 # de-identified research ID\n    ├── image0001.dcm\n    ├── image0002.dcm\n    └──\
+  \ ...\n```\n\nThe program intentionally stops rather than guessing when it detects:\n\n- more than one\
+  \ DICOM series;\n- inconsistent matrix size, pixel spacing, or orientation;\n- different phase counts\
+  \ across slices;\n- irregular slice spacing;\n- ambiguous temporal ordering;\n- enhanced multi-frame\
+  \ DICOM.\n\n### Batch input\n\nFor batch processing, every immediate child folder of `input/` is treated\
+  \ as\none research case:\n\n```text\ninput/\n├── HCM0001/\n│   └── *.dcm\n├── HCM0002/\n│   └── *.dcm\n\
+  └── HCM0003/\n    └── *.dcm\n```\n\nFolder names are written into output tables and logs. They must\
+  \ be\nde-identified research IDs, not names, medical-record numbers, or dates of birth.\n\n## Usage\n\
+  \n### Check the environment\n\n```powershell\npython rscore_quickauto.py check\n```\n\n### Run one case\n\
+  \n```powershell\npython rscore_quickauto.py run --input \"input/HCM0001\"\n```\n\nSpecify a de-identified\
+  \ identifier and output folder explicitly if needed:\n\n```powershell\npython rscore_quickauto.py run\
+  \ `\n  --input \"input/HCM0001\" `\n  --patient-id \"HCM0001\" `\n  --output \"output/HCM0001\" `\n\
+  \  --device cpu\n```\n\nThe default device is `auto`. Available values are `auto`, `cpu`, and `cuda`.\n\
+  \nThe program first attempts the safer `torch.load(..., weights_only=True)` mode.\nIf the official checkpoint\
+  \ cannot be loaded in this mode, verify that it came\nfrom the official CorSeg source before using:\n\
+  \n```powershell\npython rscore_quickauto.py run `\n  --input \"input/HCM0001\" `\n  --allow-unsafe-checkpoint\n\
+  ```\n\nNever use that option with an untrusted `.pth` file.\n\n### Run a batch\n\n```powershell\npython\
+  \ rscore_quickauto.py batch `\n  --input-root \"input\" `\n  --output-root \"output\" `\n  --device\
+  \ cpu\n```\n\nCompleted cases are skipped by default. Use `--rerun-success` only for a\ndocumented reason.\n\
+  \n### Recalculate only Rscore_z\n\nIf radiomics extraction completed but the scoring step did not, run:\n\
+  \n```powershell\npython rscore_quickauto.py resume --output \"output/HCM0001\"\n```\n\nThis reads the\
+  \ existing `radiomics_features.csv` and does not rerun CorSeg.\n\n## Main outputs\n\n```text\noutput/HCM0001/\n\
+  ├── phase_cavity_summary.csv\n├── ED_native_image.nii.gz\n├── ED_native_LVmyocardium_mask.nii.gz\n├──\
+  \ ED_radiomics_image_1x1x8_0to255.nii.gz\n├── ED_radiomics_LVmyocardium_mask_1x1x8.nii.gz\n├── radiomics_features.csv\n\
+  ├── radiomics_features.xlsx\n├── radiomics_qc.json\n├── Rscore_result.csv\n├── Rscore_result.xlsx\n\
+  ├── Rscore_feature_parameters.csv\n├── corseg_postprocess_stats.json\n└── run_summary.json\n```\n\n\
+  `Rscore_result.xlsx` contains the primary `Rscore_z` output and the unstandardized\n`raw_Rscore`. `run_summary.json`\
+  \ records model, pipeline, program, weight, and\npackage versions and SHA-256 identifiers for reproducibility.\n\
+  \n## Locked model definition\n\nThe elastic-net model was developed in 610 A-center participants.\n\n\
+  - Training target: `CMRRI_z`\n- Primary exported outcome: `Rscore_z`\n- Nonzero radiomics features:\
+  \ 23\n- Selected alpha: 0.6\n- Selected lambda: 0.0300311770330127\n- Selection rule: global minimum\
+  \ inner-CV MSE\n- A-center OOF raw Rscore mean: 0.000397984875998731\n- A-center OOF raw Rscore SD:\
+  \ 0.629442418702308\n\nFor feature value `x_j`, training mean `mu_j`, training SD `sigma_j`, and locked\n\
+  coefficient `beta_j`:\n\n```text\nraw_Rscore = intercept + sum(beta_j * (x_j - mu_j) / sigma_j)\nRscore_z\
+  \   = (raw_Rscore - OOF_mean) / OOF_SD\n```\n\nThe model-development target and exported score should\
+  \ not be conflated:\n`CMRRI_z` is the training target, whereas `Rscore_z` is the standardized\nradiomics\
+  \ prediction used as the primary program output.\n\n## Locked radiomics method\n\n`CineSAX-Rad-v1` uses:\n\
+  \n- ED phase defined by maximum summed LV blood-pool area across SAX slices;\n- DICOM geometry reconstruction\
+  \ from Image Position/Orientation and Pixel Spacing;\n- 1 × 1 × 8 mm³ resampling;\n- B-spline image\
+  \ interpolation and label-preserving mask interpolation;\n- myocardial ROI P1–P99 clipping and linear\
+  \ rescaling to 0–255;\n- fixed bin width 5;\n- `force2D=True`, `force2Ddimension=0`;\n- Original and\
+  \ LoG sigma 1, 2, and 3 mm image types;\n- no wavelet features;\n- PyRadiomics 3.1.0.\n\nWhen absolute\
+  \ `TriggerTime` values differ slightly across slices but every\nslice has the same phase count and a\
+  \ unique within-slice temporal ordering, the\nprogram preserves the locked development behavior and\
+  \ aligns frames by their\nwithin-slice temporal rank. This is recorded as a warning and in\n`run_summary.json`;\
+  \ no frame is fabricated, discarded, or reassigned.\n\nAny change to these settings requires a new pipeline\
+  \ ID and model validation.\n\n## Validation and limitations\n\n- Automated segmentation must be visually\
+  \ reviewed before scientific use.\n- This release supports conventional single-frame-per-file SAX cine\
+  \ DICOM only.\n- It does not automatically select a SAX series from a mixed study folder.\n- ED is inferred\
+  \ from LV cavity area and may differ from scanner-reported timing.\n- Generalizability depends on scanner,\
+  \ sequence, population, segmentation quality,\n  and adherence to the locked preprocessing method.\n\
+  - No clinical safety, diagnostic-performance, or regulatory claim is made.\n\nRun formula tests without\
+  \ patient data:\n\n```powershell\npython -m unittest discover -s tests -v\n```\n\n## Citation\n\nUse\
+  \ `CITATION.cff` to cite this software. Also cite the upstream CorSeg work:\n\nXu R, Jiang S, Zhai Y,\
+  \ Chen Y. *CorSeg-CineSAX: An Open-Source Deep Learning\nFramework for Fully Automatic Segmentation\
+  \ of Short-Axis Cine Cardiac MRI\nAcross Multiple Cardiac Diseases*. 2026. DOI:\n<https://doi.org/10.64898/2026.04.01.26349955>.\n\
+  \n## License\n\nOriginal contributions by Shuo Shi are released under the MIT License. Adapted\nCorSeg\
+  \ portions and model weights remain subject to the upstream project's terms.\nSee `LICENSE`, `THIRD_PARTY_NOTICES.md`,\
+  \ and `licenses/CorSeg-NOTICE.txt`.\n"

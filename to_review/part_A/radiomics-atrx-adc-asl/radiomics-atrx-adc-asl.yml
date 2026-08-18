@@ -1,0 +1,39 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Revati-N/Radiomics_ATRX_ADC_ASL
+url: https://github.com/Revati-N/Radiomics_ATRX_ADC_ASL
+platform: github
+description: ''
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-02T11:17:13Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# ATRX Mutation Prediction from Multiparametric MRI\n\n## Overview\nThis repository contains\
+  \ the code for predicting ATRX mutation status in \nglioblastoma patients using radiomic features extracted\
+  \ from multiparametric \nMRI sequences. The goal is to develop a non-invasive imaging-based prediction\
+  \ \nmodel as an alternative to tissue biopsy.\n\n## Dataset\n- **Source**: UCSD-PTGBM (The Cancer Imaging\
+  \ Archive — TCIA)\n- **Link**: https://www.cancerimagingarchive.net/collection/ucsd-ptgbm/\n- **Patients**:\
+  \ 106 with complete multiparametric MRI and ATRX labels\n- **Labels**: ATRX Intact (n=95) vs ATRX Loss\
+  \ (n=19)\n\n> ⚠️ The dataset is not included in this repository due to patient privacy. \n> Please download\
+  \ it directly from TCIA.\n\n## Models\n| Model   | Sequences                        | Best AUC | Best\
+  \ Classifier |\n|---------|----------------------------------|----------|-----------------|\n| Model\
+  \ 1 | T1CE + FLAIR + T2                | 0.721    | LightGBM        |\n| Model 1A| T1CE + FLAIR + T2\
+  \ + ADC + ASL   | 0.753    | GradientBoost   |\n\n## Pipeline\n``` bash\nRaw MRI + Tumor Mask\n↓\nPyRadiomics\
+  \ Feature Extraction (7 feature classes)\n↓\nCorrelation Filtering + ANOVA Feature Selection\n↓\nSMOTE\
+  \ (class imbalance handling)\n↓\nModel Training (6 classifiers tested)\n↓\nEvaluation: AUC, DeLong Test,\
+  \ SHAP, DCA\n```\n\n## Requirements\n```bash\npip install -r requirements.txt\n\n```\n\n## Configuration\n\
+  Before running, update all paths in `config.py` to match your local setup.\n\n## Results\nKey outputs\
+  \ saved to `results/`:\n- `combined_roc.png` — ROC curves for Model 1 and Model 1A\n- `shap_model1.png`\
+  \ — SHAP feature importance for Model 1\n- `shap_model1A.png` — SHAP feature importance for Model 1A\n\
+  - `dca_curve.png` — Decision Curve Analysis\n\n## Statistical Validation\nDeLong test comparing Model\
+  \ 1 vs Model 1A on identical 106-patient cohort:\n- Most significant result: threshold=0.90, k=5, **p=0.000030**\n\
+  - Result: Statistically significant improvement ✅\n"

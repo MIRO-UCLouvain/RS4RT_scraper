@@ -1,0 +1,77 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: jpjuvo/RSNA-MICCAI-Brain-Tumor-Classification
+url: https://github.com/jpjuvo/RSNA-MICCAI-Brain-Tumor-Classification
+platform: github
+description: solution to https://www.kaggle.com/c/rsna-miccai-brain-tumor-radiogenomic-classification/overview
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 6
+updated_at: '2025-11-17T06:24:49Z'
+image_source: https://raw.githubusercontent.com/jpjuvo/RSNA-MICCAI-Brain-Tumor-Classification/HEAD/media/registered_sample.png
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "## RSNA-MICCAI Brain Tumor Radiogenomic Classification\n\nTeam Rähmä AI's solution to\
+  \ [RSNA-MICCAI Brain Tumor Radiogenomic Classification 2021](https://www.kaggle.com/c/rsna-miccai-brain-tumor-radiogenomic-classification)\n\
+  \n### Task\nPredict the status of an MGMT promoter methylation important for brain cancer treatment.\n\
+  \n\n### Solution Overview\n- Four MRI modalities and tumor segmentation masks were cropped to the brain\
+  \ region and registered to aligned 3D RGB + 3D tumor masks.\n- 3D Unet was trained to segment tumor.\
+  \ Pretrained weights were loaded from [2D MRI tumor segmentation model](https://github.com/mateuszbuda/brain-segmentation-pytorch).\n\
+  - Linear models were trained to predict MGMT status from segmentation prediction radiomics features\
+  \ (shape, intensity stats, location)\n- 2D CNN models were trained to predict MGMT status from tumor\
+  \ region T2W axial slices.\n- Three linear segmentation feature models and 3 2D CNN models were ensembled\
+  \ to predict MGMT status. The ensemble was an average of Z-score normalized model predictions.\n\n----------------------------------\n\
+  \n#### Folder & file structure\n```\nroot\n|_input\n|  |_rsna-miccai-brain-tumor-radiogenomic-classification\n\
+  |    |_...\n|\n|media\n|  |_...\n|_notebooks\n|  |_...\n|_src\n|  |_...\n|\n|_wandb_params.json\n|_...\n\
+  ```\n\n## Step descriptions\n\nMost steps were done in Jupyter notebooks but CV-training scripts were\
+  \ also converted to python and shell scripts.\n\n1. [cv-splits](./notebooks/1-cv-splits.ipynb) Split\
+  \ all train cohort BraTS21IDs into five folds stratified by MGMT_value.\n\n2. [Case registration](./notebooks/2-case-registration.ipynb).\
+  \ Registers all MRI modalities to axial plane and saves patient cases as 100x256x256x3 (z,x,y,c) `BraTSID.npy`\
+  \ arrays (R:t1w, G:T1ce, B:T2). Additionally, registers [Task-1](https://www.synapse.org/#!Synapse:syn25829067/wiki/610863)\
+  \ segmentation masks to case and saves them as `BraTSID_seg.npy` 100x256x256 (z,x,y) arrays. This requires\
+  \ accepting Task-1 terms and downloading & extracting [this](https://www.kaggle.com/dschettler8845/load-task-1-dataset-comparison-w-task-2-dataset/data)\
+  \ set that @dschettler8845 uploaded. Here is a sample visualization of a registered case with tumor\
+  \ segmentation map.\n\n![registered_sample](./media/registered_sample.png)\n\n3. [Registered DS sanity\
+  \ check](./notebooks/3-registered-ds-sanity-check.ipynb) Show how to open registered case files and\
+  \ check that everything looks right visually. Saves [tumor map videos](./media/registered-tumor-map.mp4)\
+  \ for visualization.\n\n4. [Segmentation model](./notebooks/4-segmentation-model.ipynb). Training to\
+  \ segment tumor mask. Pretrained 2D MRI tumor segmentation model was used as base but converted to 3D.\
+  \ Pretrained 2D weights were also converted to 3D. A more recent version of this part has been converted\
+  \ to CV-training script `train_seg_folds.sh`.\n\n<img src=\"./media/segmentation_model_predictions.png\"\
+  \ alt=\"seg pred\"\n\ttitle=\"Seg pred\" width=\"400\" />\n\n5. [Extracting radiomics features from\
+  \ seg. masks](./notebooks/5.2-segmentation_features-256-noise-augs.ipynb) OOF tumor segmentation prediction\
+  \ features were collected. Features include shape, intensity statistics, glcm and location. Linear regression,\
+  \ LassoLarsIC, and Ridge regression models were trained with segmentation features. STD-Noise augmentatation\
+  \ was used and models reached ~0.63 AUC (5-fold CV averages) with < 0.01 STDs.\n\n<img src=\"./media/linreg-feat-model.png\"\
+  \ alt=\"LinReg\"\n\ttitle=\"LinReg\" width=\"400\" />\n\n6. [2D single modality CNN](./notebooks/6-2D-axial-tumor-height-cnn.ipynb)\
+  \ Training 2D CNN models. Tumor prediction masks were used to select the axial slices from tumor region.\
+  \ Several slices were MIPed together (maximum intensity projection). A more recent version of this part\
+  \ has been converted to CV-training script `train_clf_folds.sh`.\n\n7. [Ensembling seg. feature and\
+  \ CNN models](./notebooks/7-Ensemble.ipynb). OOF AUC reached 0.65.\n\n<img src=\"./media/final_ensemble_oof.png\"\
+  \ alt=\"Ensemble\"\n\ttitle=\"OOF ensemble\" width=\"400\" />\n\n8. [GradCAM visualization of MGMT areas](./notebooks/8-GradCAM.ipynb).\
+  \ Models seemed to highlight edges of brains and white regions in T2W modality. The visualization below\
+  \ is from resnet50 validation fold.\n\n<img src=\"./media/gradcam_resnet50-4.png\" alt=\"GradCAM\"\n\
+  \ttitle=\"GradCAM\" width=\"250\" />\n\n______________________________\n\n## Environment setup for training\n\
+  \n- Python 3.8\n- Anaconda\n\nPreferable way of setting up the development environment is with `conda`\n\
+  ```sh\nconda create -n brainclf python=3.8 jupyter pip\nconda activate brainclf\n```\n\nInstall pytorch\n\
+  ```sh\nconda install pytorch torchvision torchaudio cudatoolkit=11.0 -c pytorch\n```\n\nInstall GDCM\
+  \ for reading some of the dicom formats\n```sh\nconda install -c conda-forge gdcm -y\n```\n\nInstall\
+  \ python packages\n```sh\npip install -r requirements.txt\n```\n\n## Preparing data - Registering modalities\n\
+  \nSee [notebook #2](./notebooks/2-case-registration.ipynb) for generating registered tumor segmentation\
+  \ annotations.\n\n#### Registering process\n\n<img src=\"./media/registering_process.png\" alt=\"registering\"\
+  \n\ttitle=\"registering\" width=\"400\" />\n\n```\nfrom src.registering import Registered_BraTS_Case\n\
+  \ndicom_dir = \"./input/rsna-miccai-brain-tumor-radiogenomic-classification/test/\"\nresize_to=[256,256,100]\n\
+  reg = Registered_BraTS_Case(dicom_dir, resize_to)\n\nbrat_id_str = \"00709\"\n\nrgb_cube_arr = reg.get_registered_case(brat_id_str)\n\
+  print(rgb_cube_arr.shape)\n```\nPrints:\n`(100,256,256,3)`\n\n## Training segmentation model\n\nBefore\
+  \ training, create a `wandb_params.json` file in root folder with wandb profile name.\n\nExample file:\n\
+  ```\n{\n    \"entity\": \"your_profile_name\",\n    \"project\": \"raehmae-miccai-brainclf\"\n}\n```\n\
+  \nTrain 5 fold models and one model with all training data:\n\n`sh train_seg_folds.sh`\n\n## Training\
+  \ 2D CNN model\n\nTrains 5 fold models and one model with all training data.\n\n`sh train_clf_folds.sh`\n\
+  \nThe parameters were chosen based on W&B parallel coordinates plot of different training parameters.\
+  \ Best models reached ~0.61 CV (5-fold) average with std of 0.05.\n\n![2D CNN training runs](./media/miccai_cnn_training_parameters.png)\n"

@@ -1,0 +1,53 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: robustml-eurecom/conformal-tumor-segmentation
+url: https://github.com/robustml-eurecom/conformal-tumor-segmentation
+platform: github
+description: 'Beyond morphological dilation: revisiting conformal prediction for 3D tumor segmentation
+  (UNSURE2026 @ MICCAI).'
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-14T15:56:34Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# Conformal prediction for 3D brain-tumor segmentation\n\nDistribution-free conformal\
+  \ prediction (CP) sets for multi-region (WT / TC / ET)\n3D tumor segmentation, from the UNSURE @ MICCAI\
+  \ paper\n*Beyond Morphological Dilation: Revisiting Conformal Prediction for 3D Tumor\nSegmentation*.\n\
+  \n## Methods\n\n| Method | Idea | Guarantee |\n|---|---|---|\n| `threshold` | Softmax-threshold RCPS\
+  \ baseline, `C = {p >= t*}` | `P(coverage ratio >= tau) >= 1 - alpha` |\n| `dilation` | Morphological\
+  \ dilation (Mossina-Friedrich, 3D) | same, but vacuous under structural misses |\n| `geodesic` | Model-guided\
+  \ fast-marching margins, speed `= softmax + eps` | same, set adapts to anatomy |\n| `instance` | Per-component\
+  \ split plus volumetric residual | two-part (below) |\n| `unified`  | Geodesic margins for matched foci\
+  \ plus volumetric residual | two-part (below) |\n\nTwo-part instance guarantee (per region, Bonferroni\
+  \ `alpha/2` split):\n\n    P( {matched foci covered at tau}  AND  {structural-miss fraction <= beta*}\
+  \ ) >= 1 - alpha\n\nThis is not full containment `Y ⊆ C`: foci the model never detected cannot be\n\
+  reached by growing the prediction, so they are certified by volume (`beta*`)\nrather than contained.\n\
+  \n## Layout\n\n    conformal/            importable, unit-tested library (no I/O in the math)\n    \
+  \  config.py           YAML-backed typed config\n      logging_utils.py    logging\n      data.py  \
+  \           label conversion, WT/TC/ET regions, nnU-Net softmax loading\n      morphology.py       dilation\
+  \ curves + fast-marching geodesic travel time\n      scores.py           per-case nonconformity scoring\
+  \ -> cached curves\n      conformal.py        finite-sample quantile, per-method evaluators, multi-split,\
+  \ Mondrian\n      pipeline.py         compute_one() + run_experiments()\n    scripts/\n      01_compute_scores.py\
+  \   parallel per-case scoring over data -> cache/\n      02_run_experiments.py  multi-split CP for all\
+  \ methods -> tables/*.csv\n    tests/test_core.py       pytest: quantile exactness, coverage validity,\
+  \ vacuity\n    config.yaml              default paths + hyper-parameters\n    config_brats.yaml    \
+  \    BraTS 2021 example config\n\nDesign note: the expensive geometry (dilation sweeps, fast marching)\
+  \ runs once\nper case and caches reusable curves; every coverage number is then read exactly\nfrom the\
+  \ cache, which keeps the multi-split, multi-method analysis cheap and the\nvalidity exact.\n\n## Install\n\
+  \n    pip install -r requirements.txt\n\n## Use\n\n    # unit tests on synthetic phantoms (no data required)\n\
+  \    pytest -q\n\n    # real data: set the paths in config_brats.yaml, then\n    python scripts/01_compute_scores.py\
+  \  --config config_brats.yaml\n    python scripts/02_run_experiments.py --config config_brats.yaml\n\
+  \nStep 01 caches per-case score curves under `paths.results_dir/cache/`. Step 02\nruns the split-conformal\
+  \ analysis for all methods and writes\n`experiment_summary.csv`, `experiment_per_split.csv`, `mondrian.csv`,\
+  \ and\n`sensitivity.csv` under `paths.results_dir/tables/`.\n\n## Data\n\nBraTS 2021 (four MRI channels,\
+  \ labels {0,1,2,4}). Hard predictions and\nper-region (WT / TC / ET) nnU-Net softmax maps are produced\
+  \ once by a fixed\nsegmentation model and kept fixed. Point `config_brats.yaml` at your prediction,\n\
+  ground-truth, and softmax directories.\n\n## Citation\n\n    (BibTeX to be added once the proceedings\
+  \ reference is available.)\n"

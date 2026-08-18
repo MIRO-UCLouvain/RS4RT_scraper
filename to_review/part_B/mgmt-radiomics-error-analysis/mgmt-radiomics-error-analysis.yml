@@ -1,0 +1,55 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: MargoBenedichuk/MGMT-radiomics-error-analysis
+url: https://github.com/MargoBenedichuk/MGMT-radiomics-error-analysis
+platform: github
+description: mgmt-radiomics-error-analysis
+license: MIT
+language: R
+keywords: []
+stars: 1
+updated_at: '2026-05-11T10:43:11Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# MGMT Radiomics Error Analysis\n\nInvestigates classification error patterns in MGMT\
+  \ promoter methylation prediction via MRI radiomics.\nTargets Q1 journal publication.\n\n## Scientific\
+  \ context\n\nAnalyzes why ML classifiers trained on radiomics fail for specific glioma patients:\n-\
+  \ **THI** (Tumor Texture Heterogeneity Index) = PC1 of radiomics PCA\n- **GLMM** (E04/E05): which PC\
+  \ dimensions predict errors, controlling for site shift (PSI)\n- **RRS** (E08): radiomic reliability\
+  \ score — misclassification probability from PC profile\n- **LDA/QDA** (E09): separability of FP/FN\
+  \ error types in PC space\n- **E10**: THI correlation with site-level PSI — bridge to main paper (descriptive,\
+  \ n=3)\n- **Discordance analysis**: radiomics stack vs CNN stack comparison at patient level\n\n**Configuration:**\
+  \ Ext & Ext — External train → External test, 47 patients, 64 best models.\n\n## Requirements\n\n**Python**\
+  \ ≥ 3.10 (Anaconda). Packages: `data/requirements.txt` + `pip install pyarrow`.\n\n**R** ≥ 4.5. Packages:\
+  \ `lme4`, `lmerTest`, `broom.mixed`, `performance`, `MASS`, `tidyverse`, `pROC`, `ggplot2`, `jsonlite`.\
+  \ For discordance: `arrow`, `car`, `rms` (optional: `logistf`, `geepack`).\n\n## Repository structure\n\
+  \n```\nerror_analysis/scripts/py/   — Python scripts (experiments, aggregation, GLMM prep)\nerror_analysis/scripts/R/\
+  \    — R scripts (PCA, GLMM, RRS, LDA/QDA)\ndiscordance_analysis/scripts/py/  — Discordance pipeline\
+  \ Python\ndiscordance_analysis/scripts/R/   — Discordance pipeline R\ndata/                        —\
+  \ Input data (gitignored — patient data, available on request)\nr_results/                   — R outputs\
+  \ (gitignored — regenerate via scripts)\nexperiments_results/         — Python outputs (gitignored —\
+  \ regenerate via scripts)\n```\n\n**See [USAGE_GUIDE.md](USAGE_GUIDE.md) for all run commands.**\n\n\
+  ## Experiment index\n\n| ID | Script | Output |\n|----|--------|--------|\n| E00/E01 | `auto_experiments_best.py`\
+  \ | 64 best models (Ext & Ext) |\n| E02/E03 | `PCA_radiomics.r` | PCA scores, biplot |\n| E04/E05 |\
+  \ `analysis_glmm.R` | GLMM coefficients, OR tables |\n| E06 | `analyze_error_correlations.py` | error\
+  \ correlation summary |\n| E07 | `thi_loading_analysis.R` | THI naming validation |\n| E08 | `compute_rrs_E8.R`\
+  \ | RRS scores, LOOCV ρ=0.43 |\n| E09 | `lda_errtype.R`, `qda_errtype.R` | LDA/QDA boundaries |\n| E10\
+  \ | `pc1_per_site_bridge.py` | PC1 vs PSI scatter |\n\n## Site mapping\n\n| Prefix | Site ID | n | PSI\
+  \ |\n|--------|---------|---|-----|\n| BO | 23 | 26–27 | 0.0 (reference) |\n| KA | 25 | 12 | 3.16 |\n\
+  | NSK | 27 | 6 | 5.26 |\n| FO | 24 | 1 | NaN (n < 2) |\n| ME | 26 | 2 | NaN (n < 2) |\n\n## Citation\n\
+  \nIf you use this software in your research, please cite it as below.\n\n```bibtex\n@software{benedichuk2026reliability,\n\
+  \  author       = {Benedichuk, Margaret},\n  title        = {Instance-Level ML Reliability Scoring:\
+  \ Predicting Classifier Errors Under Multi-Site Domain Shift},\n  year         = 2026,\n  version  \
+  \    = {1.0.0},\n  url          = {https://github.com/MargoBenedichuk/ML-reliability-scoring-pipeline},\n\
+  \  license      = {MIT}\n}\n```\n\nSee also [CITATION.cff](CITATION.cff).\n\n## Key constraints\n\n\
+  - Threshold selection: models filtered by **validation AUROC only**\n- PC consistency: all experiments\
+  \ E04–E10 read from `patient_pca_scores_enriched.csv`\n- RRS: always report **LOOCV- Leave One Out Clinic\
+  \ Validation** Spearman ρ (not in-sample)\n- `(1|site_id)` singular fit is expected and documented (n\
+  \ = 3 levels)\n- E10: never interpret p-values — n = 3 sites has zero statistical power\n- Discordance\
+  \ models: descriptive only — EPV < 5 at n = 47\n"

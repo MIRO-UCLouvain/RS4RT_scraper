@@ -1,0 +1,122 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hajizadehvida5-ops/dvh-dosiomics-xerostomia
+url: https://github.com/hajizadehvida5-ops/dvh-dosiomics-xerostomia
+platform: github
+description: ''
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-24T19:01:03Z'
+image_source: null
+heuristic_total_score: 29
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 10 support term(s).
+readme_excerpt: "# DVH vs Dosiomics Feature Space Comparison for Xerostomia Prediction\n\n> **Manuscript:**\
+  \ Vida Hajizadeh et al. — \"Exploratory Comparison of DVH and Dosiomic Feature Spaces for Machine-Learning-Based\
+  \ Prediction of Radiation-Induced Xerostomia in Head-and-Neck Cancer\" — *Physical and Engineering Sciences\
+  \ in Medicine*, under revision (2026)\n\nThis repository contains the full machine learning pipeline\
+  \ for an exploratory comparison of dose-volume histogram (DVH) metrics and three-dimensional dosiomic\
+  \ feature spaces for predicting **severe radiation-induced xerostomia** in head and neck cancer patients\
+  \ treated with helical TomoTherapy.\n\n> ⚠️ **Data and results are not included** in this public repository\
+  \ (patient data protected under ethics approval IR.MUI.MED.REC.1403.408). Full data, figures, and result\
+  \ tables will be released upon manuscript acceptance. To request early access for review purposes, please\
+  \ contact the author directly.\n\n---\n\n## Clinical Problem\n\nNormal tissue complication probability\
+  \ (NTCP) models for radiation-induced xerostomia traditionally rely on DVH metrics (e.g. mean parotid\
+  \ dose) that summarise dose distributions but discard spatial heterogeneity. Three-dimensional dosiomic\
+  \ descriptors extracted from RTDOSE maps have been proposed as a way to capture spatial dose texture\
+  \ and gradients within organs at risk.\n\nThis study asks a focused question: **do dosiomic features\
+  \ provide meaningful predictive value beyond conventional DVH metrics** in a realistic small-cohort\
+  \ clinical setting, and if so, under what modelling conditions?\n\n---\n\n## Dataset Overview\n\n| Property\
+  \ | Detail |\n|---|---|\n| Patients | 60 head and neck cancer patients |\n| Institution | Single-centre\
+  \ retrospective cohort |\n| Treatment | Helical TomoTherapy · 50–70 Gy · 25–35 fractions |\n| Dose data\
+  \ | 3D RTDOSE maps + DVH (planning CT geometry) |\n| Dosiomic features | 125 per parotid gland (left\
+  \ + right independently) |\n| DVH features | V5–V50, Dmean, Dmax per parotid gland |\n| Clinical covariates\
+  \ | Age, sex, tumor site, T stage, N stage |\n| Outcome | Severe xerostomia at 3 months (UMXQ ≥ 60/100)\
+  \ |\n| Class distribution | 16 severe (27%) · 44 non-severe (73%) |\n\n---\n\n## Feature Frameworks\n\
+  \nSix feature frameworks are evaluated, plus two clinical baselines:\n\n| ID | Framework | Description\
+  \ |\n|---|---|---|\n| A | DVH only | V5–V50, Dmean, Dmax per parotid |\n| B | First-order dosiomics\
+  \ | First-order statistics from RTDOSE |\n| C | Full dosiomics | All dosiomic features (GLCM, GLDM,\
+  \ GLRLM, GLSZM, NGTDM, shape) |\n| D | DVH + Full dosiomics | Combined dosimetric feature set |\n| E\
+  \ | DVH + Clinical | DVH features + age, sex, tumor site, T/N stage |\n| F | DVH + Dosiomics + Clinical\
+  \ | Full combined set |\n| — | DVH-NTCP baseline | Logistic regression with mean parotid Dmean only\
+  \ |\n| — | Clinical-only baseline | Logistic regression with clinical covariates only |\n\n---\n\n##\
+  \ Pipeline Overview\n\n```\nRTDOSE DICOM + parotid contours\n     │\n     ▼\nDosiomic feature extraction\
+  \ (PyRadiomics v3.1.0 via 3D Slicer)\n     │  125 features × 2 parotid glands = 250 dosiomic features/patient\n\
+  \     │  DVH metrics extracted from treatment planning system\n     ▼\n[01] Feature Selection & Stability\
+  \ Analysis\n     │  Zero-variance removal\n     │  Framework definition (A–F)\n     │  ANOVA F-test\
+  \ reference ranking (documentation only)\n     │  Stability analysis: 100 × 5-fold CV\n     ▼\n[02]\
+  \ Classification\n     │  6 frameworks × 2 classifiers × 3 balancing strategies = 36 configs\n     │\
+  \  + 2 baseline models (DVH-NTCP, clinical-only)\n     │  Leakage-free: ANOVA selection inside each\
+  \ training fold\n     ▼\n[03] Statistical Comparison\n     │  Pairwise Mann-Whitney U tests\n     │\
+  \  All balancing conditions (Original, SMOTE, ClassWeighted)\n     ▼\n[04] Validation\n     │  Calibration\
+  \ curves + Brier score + ECE\n     │  Decision Curve Analysis (threshold 10–50%)\n     │  Bootstrap\
+  \ 95% CI for AUC (1,000 resamples)\n     ▼\n[05] Figures\n     │  Correlation heatmaps (Figure 2)\n\
+  \     │  ROC curves — two key configurations (Figure 3)\n     ▼\nResults\n```\n\n---\n\n## Repository\
+  \ Structure\n\n```\ndvh-dosiomics-xerostomia/\n│\n├── data/                          # Input files (gitignored\
+  \ — not shared)\n│   ├── final_dataset_complete_scaled_correct.xlsx\n│   └── clinical_data.xlsx\n│\n\
+  ├── results/                       # Auto-created by scripts 01–04\n│   ├── feature_sets_summary.csv\n\
+  │   ├── global_top15_per_framework.csv\n│   ├── stability_selection_rates.csv\n│   ├── table2_all_36_configs.csv\n\
+  │   ├── table2_best_per_framework.csv\n│   ├── baseline_models.csv\n│   ├── fold_aucs_all_configs.csv\n\
+  │   ├── mannwhitney_all_comparisons.csv\n│   ├── calibration_metrics.csv\n│   ├── dca_net_benefit.csv\n\
+  │   └── bootstrap_ci.csv\n│\n├── figures/                       # Auto-created by scripts 04–05\n│ \
+  \  ├── stability_top20.png\n│   ├── heatmap_A_DVH.png\n│   ├── heatmap_B_FirstOrder.png\n│   ├── heatmap_C_FullDosiomics.png\n\
+  │   ├── heatmap_D_Combined.png\n│   ├── roc_baselines.png\n│   ├── roc_C_FullDosiomics_RF_SMOTE.png\n\
+  │   ├── roc_D_Combined_RF_Original.png\n│   ├── calibration_D_combined_rf.png\n│   ├── dca_D_combined_rf.png\n\
+  │   ├── auc_boxplots_rf.png\n│   └── bootstrap_auc_ci.png\n│\n├── 01_feature_selection.py\n├── 02_classification.py\n\
+  ├── 03_statistical_comparison.py\n├── 04_validation.py\n├── 05_figures.py\n│\n├── requirements.txt\n\
+  ├── LICENSE\n└── README.md\n```\n\n---\n\n## Scripts\n\n### `01_feature_selection.py`\nDefines the six\
+  \ feature frameworks and performs feature selection stability analysis.\n\n**Key steps:**\n- Loads the\
+  \ combined dosimetric dataset and removes zero-variance features\n- Defines frameworks A–F by pattern-matching\
+  \ column names\n- Computes a global ANOVA ranking for reference and documentation only (not used in\
+  \ training)\n- Runs 100 × 5-fold cross-validation repeats with within-fold ANOVA selection to quantify\
+  \ feature selection stability\n- Reports selection rate (%) per feature; threshold for \"moderately\
+  \ stable\" = ≥50%\n\n**Design note:** Clinical covariates (frameworks E & F) are never passed through\
+  \ ANOVA filtering — they enter as a fixed block, consistent with Section 2.6 of the manuscript.\n\n\
+  ---\n\n### `02_classification.py`\nTrains and evaluates all 36 model configurations (Table 2) plus two\
+  \ baselines.\n\n**36 main configurations:**\n\n| Axis | Options |\n|---|---|\n| Feature frameworks |\
+  \ A · B · C · D · E · F |\n| Classifiers | Random Forest · RBF-SVM |\n| Balancing strategies | Original\
+  \ · SMOTE · ClassWeighted |\n\n**Baselines:**\n- DVH-NTCP: logistic regression with mean parotid Dmean\
+  \ (standard NTCP reference)\n- Clinical-only: logistic regression with age, sex, tumor site, T/N stage\n\
+  \n**Leakage-free design:** A custom `FoldwiseSelectKBest` transformer re-runs `f_classif` inside `fit()`\
+  \ so feature ranking only ever uses the current training fold. SMOTE is applied after scaling, inside\
+  \ the training fold only. All 36 configurations share the same stratified 80/20 CV splits.\n\n---\n\n\
+  ### `03_statistical_comparison.py`\nPairwise Mann-Whitney U tests comparing fold-wise AUC distributions\
+  \ between feature frameworks.\n\n**Comparisons performed (Section 3.6):**\n- DVH vs Full Dosiomics —\
+  \ Original\n- DVH vs Combined — Original, SMOTE, ClassWeighted\n- Full Dosiomics vs Combined — Original,\
+  \ SMOTE, ClassWeighted\n\nUses fold AUCs saved by `02_classification.py` — the same CV run, the same\
+  \ held-out samples, one statistical test. Produces a boxplot of fold-AUC distributions across frameworks\
+  \ and balancing strategies.\n\n---\n\n### `04_validation.py`\nThree validation analyses on the best-performing\
+  \ model (D_Combined · RF · Original):\n\n**Calibration & Brier Score** — per-fold calibration curves,\
+  \ Brier score (mean ± SD), Expected Calibration Error (ECE, 5-bin weighted average)\n\n**Decision Curve\
+  \ Analysis** — net benefit vs. treat-all / treat-none across threshold probabilities 10–50% (clinically\
+  \ realistic range for xerostomia NTCP planning)\n\n**Bootstrap 95% CI** — 1,000-sample bootstrap resampling\
+  \ of out-of-fold predicted probabilities; reports CV AUC, bootstrap mean, and 95% CI\n\nAll three analyses\
+  \ share one CV run for consistency — same model instances, same held-out samples.\n\n---\n\n### `05_figures.py`\n\
+  Produces manuscript figures 2 and 3:\n\n**Figure 2** — Pearson correlation heatmaps of globally ranked\
+  \ top-15 features + xerostomia score for each of the four primary frameworks. Feature tick labels are\
+  \ colour-coded: DVH (blue) · Dosiomic (green) · Outcome (red).\n\n**Figure 3** — Per-fold and mean ROC\
+  \ curves for the two configurations highlighted in the manuscript: C_FullDosiomics·RF·SMOTE (Figure\
+  \ 3a) and D_Combined·RF·Original (Figure 3b). Both use leakage-free within-fold ANOVA selection.\n\n\
+  ---\n\n## Installation\n\n```bash\ngit clone https://github.com/your-username/dvh-dosiomics-xerostomia.git\n\
+  cd dvh-dosiomics-xerostomia\npip install -r requirements.txt\n```\n\n---\n\n## Usage\n\nPlace input\
+  \ files in `data/`, then run scripts in order:\n\n```bash\npython 01_feature_selection.py\npython 02_classification.py\n\
+  python 03_statistical_comparison.py\npython 04_validation.py\npython 05_figures.py\n```\n\nEach script\
+  \ auto-creates `results/` and `figures/` output directories. Scripts 03–05 depend on outputs from earlier\
+  \ scripts.\n\n---\n\n## Citation\n\nIf you use this code or methodology, please cite:\n\n```bibtex\n\
+  @article{hajizadeh2026dosiomics,\n  title   = {Exploratory Comparison of DVH and Dosiomic Feature Spaces\n\
+  \             for Machine-Learning-Based Prediction of Radiation-Induced\n             Xerostomia in\
+  \ Head-and-Neck Cancer},\n  author  = {Hajizadeh, Vida and EtehadTavakol, Mahnaz and\n             Roayaei,\
+  \ Mahnaz and Shanei, Ahmad},\n  journal = {Physical and Engineering Sciences in Medicine},\n  year \
+  \   = {2026},\n  note    = {Under revision}\n}\n```\n\n---\n\n## Authors\n\n**Vida Hajizadeh** — Conceptualisation\
+  \ · data curation · formal analysis · methodology · software · writing\n**Mahnaz EtehadTavakol** — Methodology\
+  \ · supervision · software · validation\n**Mahnaz Roayaei** — Resources · investigation · validation\n\
+  **Ahmad Shanei** *(corresponding)* — Project administration · supervision · funding\n\n\U0001F4E7 hajizadehvida5@gmail.com\
+  \ · shanei@med.mui.ac.ir\n\n---\n\n## Ethics\n\nEthics approval: Isfahan University of Medical Sciences\
+  \ (IR.MUI.MED.REC.1403.408). All participants provided written informed consent. Patient data are not\
+  \ included in this repository.\n\n---\n\n## License\n\nMIT License — see `LICENSE` for details.\n"

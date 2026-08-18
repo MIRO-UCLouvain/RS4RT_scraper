@@ -1,0 +1,67 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: harshitAgr/CBCTSym
+url: https://github.com/harshitAgr/CBCTSym
+platform: github
+description: An implementation for generating simulated dataset for CBCT scans
+license: MIT
+language: Python
+keywords: []
+stars: 9
+updated_at: '2026-04-09T14:29:42Z'
+image_source: https://raw.githubusercontent.com/harshitAgr/CBCTSym/HEAD/imgs/ground_truth.png
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# CBCTSym\nAn implementation for generating simulated datasets for CBCT scans. \n\n***The\
+  \ work was done as a part of TomoHead project while working at Planmeca Oy, Helsinki, Finland.***\n\n\
+  We follow the implementation provided in \"Convolutional Neural Network Based Metal Artifact Reduction\
+  \ in X-ray Computed Tomography,\" by Yanbo Zhang and Hengyong Yu, 2018, which was used to generate the\
+  \ dataset for CT scans. However, the corresponding code was in MATLAB, and the metal dataset was not\
+  \ available. We will use the same approach to generate the dataset for CBCT scans using python and open\
+  \ source CT dataset.\n\nWe will use the open sourced CTPelvic1K Dataset for non-metal images and Clinic\
+  \ Metal dataset to generate the metal masks. Further, we will use TIGRE toolbox to generate the metal\
+  \ artifact projections and fdk-reconstrcuted images.\n\n# Steps\n1. Download the non-metal CT images\
+  \ from [CTPelvic1K Dataset6](https://zenodo.org/records/4588403/files/CTPelvic1K_dataset6_data.tar.gz?download=1),\
+  \ place all the zip files under the folder dataset/deeplesion.\n2. Download metal corrputed dataset\
+  \ from [Clinic Metal](https://zenodo.org/records/4588403/files/CTPelvic1K_dataset7_data.tar.gz?download=1),\
+  \ place the extracted files under the folder dataset/metals.\n3. Since I can not find the metal only\
+  \ segmentation online, I will segment the metals using thresholding from the metal corrupted images\
+  \ obtained from the data in step 2.\n4. Generate the metal only images using the segmentation masks\
+  \ obtained from step 3.\n5. Generate the metal artifact images by adding the metal only images to the\
+  \ non-metal images and following the metal simulation process in Yanbo Zhang and Hengyong Yu, 2018.\n\
+  \n# Example images\n\n<table style=\"border-collapse: collapse; padding: 0; margin: 0;\">\n  <tr>\n\
+  \    <td style=\"text-align: center;\">\n    Ground truth<br>\n      <img src=\"./imgs/ground_truth.png\"\
+  \ alt=\"Another image\">\n    <td>\n    <td style=\"text-align: center;\">\n    Simulated metal projection<br>\n\
+  \      <img src=\"./imgs/simulated_metal_projection.png\" alt=\"Simulated metal projection\">\n    <td>\n\
+  \    <td style=\"text-align: center;\">\n      Simulated metal artifact<br>\n      <img src=\"./imgs/simulated_metal_artifact.png\"\
+  \ alt=\"Simulated metal artifact\">\n    <td>\n    <td style=\"text-align: center;\">\n      Only-metal\
+  \ image<br>\n      <img src=\"./imgs/only_metal.png\" alt=\"Yet another image\">\n    </td>\n  </tr>\n\
+  </table>\n# Note\nThe images are converted to positve values to save them as unsigned 16 bit images\
+  \ (range of 0-65535). This saves the storage space. Further, the images are shifted by 1000 HU, therefore,\
+  \ water is 1000 HU and air is 0 HU, instead of the usual -1000 HU and 0 HU.\n\n# Installation\n1. Clone\
+  \ the repository using the following command:\n```git clone git@github.com:harshitAgr/CBCTSym.git```\n\
+  2. Change the directory to the cloned repository:\n```cd CBCTSym```\n3. Install the required packages\
+  \ using the requirements.txt file.\n```pip install -r requirements.txt```\n4. Install the TIGRE toolbox\
+  \ using the following commands at: [TIGRE](https://github.com/CERN/TIGRE/blob/master/Frontispiece/python_installation.md)\n\
+  \n# Using the code\n\n1. Run the code using the following command:\n```python cbctsym/prepare_dataset.py\
+  \ -c path/to/config.yaml```\n\nThe code will load the config.yaml file, which contains various parameters\
+  \ for the dataset generation. The code will generate the dataset and save it in the specified output\
+  \ directory. The correspondig config file will also be saved for future reference. Pease, check [config\
+  \ file](./cbctsym/config.yaml) for the available default parameters.\n\n# Citation\n\nIf you find this\
+  \ code useful, you can cite our related metal segmentation network:\n```\n@ARTICLE{10250444,\n  author={Agrawal,\
+  \ Harshit and Hietanen, Ari and Särkkä, Simo},\n  journal={IEEE Access}, \n  title={Deep Learning Based\
+  \ Projection Domain Metal Segmentation for Metal Artifact Reduction in Cone Beam Computed Tomography},\
+  \ \n  year={2023},\n  volume={11},\n  number={},\n  pages={100371-100382},\n  doi={10.1109/ACCESS.2023.3314700}}\n\
+  ```\n\nPlease, also consider citing the original paper:\n\n```\n@article{zhang2018convolutional,\n \
+  \ title={Convolutional neural network based metal artifact reduction in X-ray computed tomography},\n\
+  \  author={Zhang, Yanbo and Yu, Hengyong},\n  journal={IEEE transactions on medical imaging},\n  volume={37},\n\
+  \  number={6},\n  pages={1370--1381},\n  year={2018},\n  publisher={IEEE}\n}\n\n```\nand TIGRE toolbox:\
+  \ \n\n```\n@article{biguri2016tigre,\n  title={TIGRE: a MATLAB-GPU toolbox for CBCT image reconstruction},\n\
+  \  author={Biguri, Ander and Dosanjh, Manjit and Hancock, Steven and Soleimani, Manuchehr},\n  journal={Biomedical\
+  \ Physics & Engineering Express},\n  volume={2},\n  number={5},\n  pages={055010},\n  year={2016},\n\
+  \  publisher={IOP Publishing}\n}\n\n```\n"

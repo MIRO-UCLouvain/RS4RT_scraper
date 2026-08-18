@@ -1,0 +1,84 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Shayan1999rokh/Brain-Tumor-Segmentation-Attention-Residual-UNet
+url: https://github.com/Shayan1999rokh/Brain-Tumor-Segmentation-Attention-Residual-UNet
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 1
+updated_at: '2026-07-24T14:23:54Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Brain Tumor Segmentation using Attention Residual U-Net with CBAM & GradCAM\n\n## Overview\n\
+  \nThis project implements an advanced deep learning framework for **brain tumor segmentation from MRI\
+  \ images** using an enhanced U-Net architecture. The proposed model integrates **Residual Learning,\
+  \ Attention Mechanisms, CBAM modules, and Deep Supervision** to improve feature extraction, localization\
+  \ accuracy, and segmentation performance.\n\nThe main objective is to automatically identify tumor regions\
+  \ from brain MRI scans by learning pixel-level representations and generating accurate binary segmentation\
+  \ masks.\n\n---\n\n## Dataset\n\nThe model is trained on the **LGG Brain MRI Segmentation Dataset**.\n\
+  \nDataset characteristics:\n\n* **Modality:** Brain MRI images\n* **Task:** Binary semantic segmentation\n\
+  * **Input:** MRI images (`.tif`)\n* **Output:** Tumor segmentation masks (`.tif`)\n* **Image resolution:**\
+  \ Resized to 256×256 during preprocessing\n\nThe dataset preparation pipeline:\n\n* Automatically searches\
+  \ image-mask pairs.\n* Removes invalid samples.\n* Filters low-information masks.\n* Keeps informative\
+  \ tumor samples while preserving a limited number of healthy MRI slices to reduce class imbalance.\n\
+  \n---\n\n# Data Preprocessing and Augmentation\n\nA custom PyTorch Dataset class is developed for loading\
+  \ MRI images and masks.\n\nTraining augmentation includes:\n\n* Horizontal flipping\n* Vertical flipping\n\
+  * Rotation\n* Random resized cropping\n* Brightness and contrast variation\n* Additional intensity transformations\n\
+  \nThese augmentations improve model robustness and reduce overfitting by increasing training data diversity.\n\
+  \n---\n\n# Proposed Model Architecture\n\nThe proposed architecture is an enhanced version of U-Net\
+  \ called:\n\n## Attention Residual U-Net\n\nThe network consists of four main components:\n\n---\n\n\
+  ## 1. Residual Blocks\n\nInstead of conventional convolution blocks, residual blocks are used in encoder\
+  \ and decoder stages.\n\nEach residual block contains:\n\n* Two 3×3 convolution layers\n* Batch normalization\n\
+  * ReLU activation\n* Shortcut connection\n\nResidual connections improve:\n\n* Gradient propagation\n\
+  * Training stability\n* Feature preservation\n* Deep network optimization\n\n---\n\n## 2. CBAM Attention\
+  \ Module\n\nThe **Convolutional Block Attention Module (CBAM)** is applied to encoder feature maps before\
+  \ skip connections.\n\nCBAM contains two sequential attention mechanisms:\n\n### Channel Attention\n\
+  \nLearns which feature channels contain the most important information.\n\nIt uses:\n\n* Adaptive average\
+  \ pooling\n* Adaptive max pooling\n* Fully connected layers\n\n### Spatial Attention\n\nLearns important\
+  \ spatial locations by analyzing feature map regions.\n\nThe combination enables the network to focus\
+  \ on:\n\n* Tumor-related features\n* Important anatomical regions\n* Relevant MRI structures\n\n---\n\
+  \n## 3. Attention Gate\n\nAttention gates are incorporated into skip connections.\n\nThe attention mechanism\
+  \ combines:\n\n* Encoder feature maps\n* Decoder gating signals\n\nThe generated attention coefficients\
+  \ suppress irrelevant background information and selectively transfer important tumor-related features\
+  \ to the decoder.\n\nThis improves:\n\n* Tumor localization\n* Boundary detection\n* Segmentation precision\n\
+  \n---\n\n## 4. Deep Supervision\n\nThe model produces additional intermediate segmentation outputs during\
+  \ decoding.\n\nDeep supervision helps:\n\n* Improve gradient flow\n* Stabilize training\n* Encourage\
+  \ meaningful feature learning at different scales\n\n---\n\n# Training Strategy\n\nThe model is trained\
+  \ using:\n\n## Optimizer\n\nAdamW optimizer\n\nParameters:\n\n* Learning rate: 3e-5\n* Weight decay:\
+  \ 1e-4\n\n## Learning Rate Scheduling\n\nA two-stage scheduling strategy is applied:\n\n1. Warm-up phase:\n\
+  \n   * First 5 epochs\n   * Gradually increases learning rate\n\n2. ReduceLROnPlateau:\n\n   * Monitors\
+  \ validation Dice score\n   * Reduces learning rate when improvement stops\n\n## Regularization\n\n\
+  Early stopping is used to prevent overfitting.\n\n---\n\n# Cross Validation\n\nA **5-Fold Cross Validation**\
+  \ strategy is implemented.\n\nFor each fold:\n\n* Training data and validation data are separated.\n\
+  * The model is trained independently.\n* Performance is evaluated on unseen validation samples.\n\n\
+  This provides a more reliable estimation of model generalization.\n\n---\n\n# Loss Functions and Evaluation\
+  \ Metrics\n\nThe training objective combines multiple segmentation losses:\n\n## Dice Loss\n\nOptimizes\
+  \ overlap between predicted and ground truth tumor regions.\n\n## Focal Loss\n\nHandles class imbalance\
+  \ by focusing on difficult pixels.\n\n## Combined Loss\n\nThe final loss combines Dice and Focal loss\
+  \ to improve segmentation performance, especially for small tumor regions.\n\n---\n\nEvaluation metrics:\n\
+  \n* Dice Score\n* Intersection over Union (IoU)\n* Sensitivity (Recall)\n* Specificity\n* Validation\
+  \ loss\n\n---\n\n# Experimental Results\n\nFive-fold cross-validation results:\n\n| Fold   | Dice Score\
+  \ |\n| ------ | ---------- |\n| Fold 1 | 0.8831     |\n| Fold 2 | 0.8876     |\n| Fold 3 | 0.8399  \
+  \   |\n| Fold 4 | 0.8806     |\n| Fold 5 | 0.8659     |\n\nOverall performance:\n\n* Mean Dice Score:\
+  \ **0.8714**\n* Standard Deviation: **0.0173**\n\nThe results demonstrate stable segmentation performance\
+  \ across different validation splits.\n\n---\n\n# Explainability using Grad-CAM\n\nTo improve model\
+  \ interpretability, Grad-CAM is implemented.\n\nGrad-CAM generates visual explanations by:\n\n* Extracting\
+  \ intermediate feature activations.\n* Computing gradients with respect to the target layer.\n* Producing\
+  \ heatmaps showing influential image regions.\n\nThis allows visualization of areas that contribute\
+  \ most to the segmentation decision and improves transparency in medical AI applications.\n\n---\n\n\
+  # Technologies and Libraries\n\nMain frameworks and libraries:\n\n* Python\n* PyTorch\n* Torchvision\n\
+  * OpenCV\n* Albumentations\n* NumPy\n* Scikit-learn\n* Matplotlib\n\n---\n\n# Summary\n\nThis project\
+  \ presents a robust deep learning framework for brain tumor segmentation using MRI images.\n\nThe proposed\
+  \ Attention Residual U-Net combines:\n\n* Residual learning for improved optimization\n* CBAM for adaptive\
+  \ feature attention\n* Attention Gates for focused skip connections\n* Deep supervision for enhanced\
+  \ learning\n* Grad-CAM for model interpretability\n\n---\nReadMe is generated usign GPT. Check the important\
+  \ info\n"

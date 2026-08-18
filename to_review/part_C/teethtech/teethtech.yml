@@ -1,0 +1,111 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: micvolo/teethtech
+url: https://github.com/micvolo/teethtech
+platform: github
+description: Prototipo di guida endodontica — visualizzazione 3D e guida in tempo reale da CBCT
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-25T07:49:10Z'
+image_source: https://raw.githubusercontent.com/micvolo/teethtech/HEAD/docs/images/viewer.png
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "# TeethTech\n\nA desktop viewer that turns a CBCT/TAC scan into an interactive 3D endodontic\n\
+  scene: it finds the tooth, finds the canal, and shows a tracked instrument moving\nthrough it in real\
+  \ time.\n\n![The TeethTech viewer](docs/images/viewer.png)\n\n> **Prototype only — not clinical software.**\
+  \ TeethTech has not been validated for\n> diagnosis, treatment planning, navigation, measurement, or\
+  \ patient care. The\n> canal overlay is a visualisation aid, not a drilling route, a target depth, or\
+  \ a\n> safety limit. Use only authorised, de-identified data.\n\n## What you need\n\nPython 3.10 or\
+  \ newer, a normal laptop with a screen, and about 2 GB of disk\nspace. That is the whole list — no database,\
+  \ no server, no system packages, and\nno dedicated graphics card. Windows, macOS, and Linux all work.\n\
+  \n## Install\n\n```bash\ngit clone https://github.com/micvolo/teethtech.git\ncd teethtech\npython3 -m\
+  \ venv .venv\nsource .venv/bin/activate\npip install -e .\n```\n\nOn Windows PowerShell:\n\n```powershell\n\
+  py -m venv .venv\n.\\.venv\\Scripts\\Activate.ps1\npython -m pip install -e .\n```\n\nAdd `[serial]`\
+  \ if a sensor will connect over USB: `pip install -e \".[serial]\"`.\n\nThen check the machine is ready:\n\
+  \n```bash\nteethtech --check\n```\n\nIt verifies Python, every library, and that the 3D window can actually\
+  \ open, and\nprints what to fix if not.\n\n**[docs/INSTALL.md](docs/INSTALL.md) is the step-by-step\
+  \ guide** to hand to\nsomeone installing this themselves — including installing Python, the Windows\n\
+  PATH and PowerShell gotchas, and setting the scan folder.\n\n## Run it with your scans\n\nPut your scans\
+  \ anywhere and point at the top folder. Nested study/series\ndirectories are searched for you.\n\n```bash\n\
+  teethtech --dicom ~/Scans/Patient042\n```\n\nIf several scans are found you get a picker:\n\n```\n \
+  \  #  Scan                Slices  Date        Patient\n  --  ------------------  ------  ----------\
+  \  --------------------\n   1  CBCT maxilla           412  2026-03-11  ROSSI Maria\n   2  CBCT mandible\
+  \          398  2026-05-02  ROSSI Maria\n   3  Scout                    6  2026-03-11  ROSSI Maria\n\
+  \nSelect scan [1-3, Enter for 1, q to quit]:\n```\n\n### The simple way: drop scans in `./scans`\n\n\
+  The repository has a `scans/` folder. Copy your TAC folders into it and run\nTeethTech with no arguments\
+  \ at all:\n\n```bash\ncp -r ~/Downloads/rossi-maria-2026-03 scans/\nteethtech\n```\n\nThat is the whole\
+  \ workflow. The path is relative, so it works the same on every\nmachine with nothing to configure.\n\
+  \nIf the clinic keeps scans on another drive and you would rather not copy them,\npoint at it once instead:\n\
+  \n```bash\nexport TEETHTECH_SCANS=/Volumes/ClinicData/Scans   # add to ~/.zshrc to keep it\n```\n\n\
+  | Command | Purpose |\n| --- | --- |\n| `teethtech` | Pick a scan from the default folder |\n| `teethtech\
+  \ --dicom FOLDER` | Search a specific folder |\n| `teethtech --list` | Show what was found and exit\
+  \ |\n| `teethtech --pick 2` | Open scan 2 without being asked |\n| `teethtech --sensor plugin:./my_sensor.py`\
+  \ | Drive the viewer from a tracked drill |\n| `teethtech --help` | Full options |\n\n`python -m teethtech`\
+  \ and `python main.py` accept exactly the same arguments.\n\n## Connecting a sensor to the drill\n\n\
+  **The viewer runs perfectly well with no sensor at all** — that is the default,\nand the keyboard drives\
+  \ a simulated instrument. A sensor is optional.\n\n**NDI Aurora** is supported by a finished plugin,\
+  \ no code required:\n\n```bash\npip install sksurgerynditracker\nteethtech --sensor plugin:examples/aurora_sensor.py\n\
+  ```\n\nNote: the NDI wrapper is a C extension with no build for Python 3.13+, so use\n**Python 3.11\
+  \ or 3.12** when running an Aurora. Nothing else in TeethTech cares.\n\nOther processors that already\
+  \ emit pose data are covered by two more adapters:\n\n```bash\n# Processor prints \"x y z qw qx qy qz\"\
+  \ lines over USB\npip install \"teethtech[serial]\"\nteethtech --sensor \"plugin:examples/serial_sensor.py?port=COM3\"\
+  \n\n# Processor sends UDP datagrams (separate box, or another program on the laptop)\nteethtech --sensor\
+  \ \"plugin:examples/udp_sensor.py?port=9000\"\n```\n\nBoth accept spaces, commas, tabs, or semicolons,\
+  \ and pick the format from the\nfield count — `x y z`, `x y z dx dy dz`, or `x y z qw qx qy qz [quality]`.\
+  \ The\nUDP one also takes JSON. Unparseable lines are ignored, so boot banners are\nharmless. `scale=10`\
+  \ converts centimetres; `invert=true` flips the tip direction.\n\nIf the output format is different,\
+  \ write one Python file instead:\n\n```python\n# my_sensor.py\nfrom teethtech.sensor import Pose\n\n\
+  def create_source(port=\"COM3\"):\n    return MySensor(port)\n\nclass MySensor:\n    def read(self):\n\
+  \        return Pose(position_mm=(x, y, z), quaternion=(qw, qx, qy, qz))\n```\n\n```bash\nteethtech\
+  \ --sensor plugin:./my_sensor.py --calibration cal.json\n```\n\n**[docs/SENSOR_INTEGRATION.md](docs/SENSOR_INTEGRATION.md)\
+  \ is the full guide** —\nthe plugin contract, threading, calibration and chairside anchoring, and\n\
+  troubleshooting. Start from `examples/sensor_plugin_template.py`.\n\nTo try the whole path with no hardware\
+  \ attached:\n\n```bash\nteethtech --sensor plugin:examples/mock_sensor.py\n```\n\n## Finding the canal\n\
+  \nThe canal is detected automatically and the viewer always tells you how much to\ntrust it:\n\n| Shown\
+  \ | Meaning |\n| --- | --- |\n| *(no message)* | Strong internal contrast — the canal is unambiguous\
+  \ |\n| `Canal confidence LOW` | Found with relaxed thresholds; verify before use |\n| `No canal detected`\
+  \ | Nothing plausible found — seed it yourself |\n\nTeethTech will not invent a canal. On a scan where\
+  \ there is nothing convincingly\ndarker than the dentine it reports nothing rather than highlighting\
+  \ a guess.\n\nWhen automatic detection is not enough, press **C** and click inside the crown.\nThe canal\
+  \ is grown from that point, and a click on solid dentine is rejected\nrather than silently producing\
+  \ a wrong overlay. `--canal-percentile P` raises the\ndarkness threshold if you want to push the automatic\
+  \ pass harder.\n\nTo make the canal easy to see, the viewer draws it in bright amber with a glow, a\n\
+  cyan ring at the entry, and a beacon rising out of the crown so you can find the\norifice from any angle.\
+  \ Press **F** to zoom to it and **T** to fade the tooth\naway.\n\n## Viewer controls\n\nAlways available:\n\
+  \n| Key | Action |\n| --- | --- |\n| `F` | Zoom to the canal |\n| `T` | Fade the tooth |\n| `R` | Reset\
+  \ the view |\n| `C` | Arm canal seeding, then click inside the crown |\n| Mouse | Orbit, pan, zoom |\n\
+  \nNo instrument is shown until something reports one — the sensor, or your first\nkey press. Keyboard\
+  \ simulation, when no sensor is connected:\n\n| Key | Action |\n| --- | --- |\n| `W`/`S` `A`/`D` `Q`/`E`\
+  \ | Move the tip along Z / X / Y |\n| `I`/`K` `J`/`L` | Tilt and turn the tip |\n| `Space` | Precision\
+  \ mode (halved speed) |\n| `0` | Place the instrument, or return it to the start |\n\nWith a sensor\
+  \ connected, `A` anchors the sensor origin to the canal entry and `S`\nsaves the calibration.\n\nThe\
+  \ bottom-left panel reads out distance to the canal, alignment against the\ncanal axis, and depth from\
+  \ the entry. These are readouts, not limits.\n\n## Data privacy\n\nCBCT/DICOM data may contain patient\
+  \ identifiers. Keep it out of the repository —\n`.gitignore` already excludes `data/`, `scans/`, `*.dcm`,\
+  \ `DICOMDIR`, and the\ncalibration file. Check `git status` before committing, and use only authorised,\n\
+  appropriately de-identified data.\n\n## Project layout\n\n```text\nteethtech/\n├── teethtech/\n│   ├──\
+  \ app.py           # CLI: pick a scan, run the pipeline, open the viewer\n│   ├── io_dicom.py      #\
+  \ Recursive DICOM discovery and loading\n│   ├── segmentation.py  # Tooth mask\n│   ├── mesh.py    \
+  \      # Mask to 3D surface\n│   ├── canal.py         # Canal detection, confidence tiers, manual seeding\n\
+  │   ├── scene.py         # Display geometry and the transform back to scan mm\n│   ├── viewer.py   \
+  \     # 3D scene and interaction\n│   ├── hud.py           # Screen-space overlay layout\n│   ├── sensor.py\
+  \        # Pose, PoseSource, plugin loading, calibration\n│   ├── simulation.py    # Keyboard pose source\n\
+  │   └── geometry.py      # Vector and rotation helpers\n├── examples/\n│   ├── aurora_sensor.py    \
+  \     # Ready to use: NDI Aurora\n│   ├── serial_sensor.py         # Ready to use: USB/serial processor\n\
+  │   ├── udp_sensor.py            # Ready to use: network processor\n│   ├── sensor_plugin_template.py#\
+  \ Starting point for a custom device\n│   └── mock_sensor.py           # Works with no hardware at all\n\
+  └── docs/\n    ├── INSTALL.md               # Laptop setup, step by step\n    └── SENSOR_INTEGRATION.md\
+  \    # Connecting the drill sensor\n```\n\n## Troubleshooting\n\n| Problem | What to check |\n| ---\
+  \ | --- |\n| `No DICOM series found` | Point `--dicom` at a folder that contains the slice files somewhere\
+  \ beneath it. `--list` shows what was detected. |\n| `No module named teethtech` | Use `.venv/bin/teethtech`,\
+  \ or activate the virtual environment. |\n| Viewer does not open | Needs a desktop session with OpenGL;\
+  \ a headless shell cannot open the window. |\n| Canal missing or wrong | Press `C` and click inside\
+  \ the crown, or try `--canal-percentile 40`. |\n| Wrong tooth segmented | The tooth nearest the middle\
+  \ of the scan is chosen. Crop the scan, or set `--threshold`. |\n| Sensor problems | See [docs/SENSOR_INTEGRATION.md](docs/SENSOR_INTEGRATION.md#5-troubleshooting).\
+  \ |\n"

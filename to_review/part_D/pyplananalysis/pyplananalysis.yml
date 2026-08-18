@@ -1,0 +1,59 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: oncoray/PyPlanAnalysis
+url: https://github.com/oncoray/PyPlanAnalysis
+platform: github
+description: Python module to analyse dose and LETd distributions and extract dose/LETd parameters. It
+  allows computing variable RBE, extracting DVH, LVH, DLVH parameters. It also allows computing relevant
+  NTCP for brain treatments. Tested against RayStation.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-31T11:31:11Z'
+image_source: https://raw.githubusercontent.com/oncoray/PyPlanAnalysis/HEAD/docs/logo.svg
+heuristic_total_score: 36
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 5 particle-therapy term(s).
+- Matched 6 support term(s).
+readme_excerpt: "<p align=\"center\">\n  <img src=\"docs/logo.svg\" alt=\"PyPlanAnalysis logo\" width=\"\
+  500\">\n</p>\n\n# PyPlanAnalysis\n\nPython module for computing dose-volume, LET-volume, and dose-LET-volume\
+  \ histograms from proton therapy DICOM plans. It allows also NTCP calculation for brain irradiations.\n\
+  \n## Features\n\n- **DVH** – Physical dose, fixed RBE×1.1, and variable RBE (McNamara, Wedenberg, Carabe)\n\
+  - **LVH** – LETd-volume histograms per structure\n- **DLVH** – 2-D dose-LET-volume histogram (colormap)\n\
+  - **Metrics** – Dmin/mean/max, Dx%, Vx, gEUD, EQD2, dose-averaged LET, LETd-thresholded DVH, D_Lx%,\
+  \ L_Dx%\n- **Outputs** – CSV, Excel, multi-page PDF (DVH/LVH), per-structure PNG (DLVH), NTCP summaries\
+  \ over RBE models\n\n---\n\n## Documentation\nFull documentation [here.](https://oncoray.github.io/PyPlanAnalysis/)\n\
+  \n## Installation\n\n```bash\ngit clone https://github.com/oncoray/PyPlanAnalysis.git\ncd PyPlanAnalysis\n\
+  conda env create -f Environment.yml\nconda activate PyPlan_env\n```\n### For Users:  \n\n```bash\npip\
+  \ install . --no-build-isolation  --no-deps  \n```\n\n### For Devs: install in editable format (-e)\n\
+  ```bash\n\npip install -e . --no-build-isolation --no-deps\n```\n\n### Alternative: use requirements_conda.txt\
+  \ to setup your own environment\n```bash\nconda create -n YourEnv -c conda-forge --file requirements_conda.txt\n\
+  conda activate YourEnv\npip install . --no-build-isolation  --no-deps  \n```\n---\n\n## Single patient\
+  \ Example\nRun the example code on test data to have an example:\n\n```PowerShell\ncd PyPlanAnalysis\n\
+  python -m Examples.single_test_patient\n```\n\n\n## Quick start\n### Input DICOM files \n\n#### Auto-discover\
+  \ from a folder\n```python\nplan = PatientPlan.from_folder(\"data/Patient_01/\")\n```\n#### Manual input\n\
+  ```python\nfrom PyPlanAnalysis import PatientPlan, RBEConfig, MetricConfig\n\nplan = PatientPlan(\n\
+  \    patient_id = \"Patient_01\",\n    dose_file  = \"RD_physicaldose.dcm\",\n    let_file   = \"RD_LETd.dcm\"\
+  ,\n    rtstruct   = \"RS_structures.dcm\",\n)\n```\n\n### Custom RBE and metric configuration\n\n```python\n\
+  from PyPlanAnalysis import RBEConfig, MetricConfig, RadiobiologyConfig\n\nrbe_cfg = RBEConfig(models=[\"\
+  mcnamara\", \"linear\"])\n\nmetric_cfg = MetricConfig(\n    dx = [2, 50, 98],\n    vx = [20, 40],\n\
+  )\n\nradiobio_cfg = RadiobiologyConfig(\n    alpha_beta_map     = {\"ctv\": 10.0, \"brainstem\": 2.0},\n\
+  \    alpha_beta_default = 2.0,\n)\n\nNTCP_config = NTCPConfig() # uses built-in defaults\n```\n### Run\
+  \ the Analysis\n```\nresults = plan.analyse(structures=[\"CTV\", \"Brainstem\"],\n                 \
+  \      rbe_cfg=rbe_cfg,\n                       metric_cfg=metric_cfg,\n                       radiobio_cfg=radiobio_cfg)\n\
+  ```\n\n### Save results \n```\nresults.to_excel(\"metrics.xlsx\")\n#or\nresults.save_all(\"output/Patient_01/\"\
+  )\n\n#save DLVH plots\nresults.plot_dlvh(output_dir / \"dlvh_2d\")\n```\n\n### Compute and save NTCP\
+  \ \n```\nNTCP_summary = results.CalcNTCP(NTCP_config)\n\nNTCP_summary = pd.DataFrame.from_dict(NTCP_summary)\n\
+  save_ntcp = output_dir /  \"NTCP_metrics.xlsx\"\nNTCP_summary.to_excel(save_ntcp)\n```\n---\n\n## Module\
+  \ layout\n\n```\nPyPlanAnalysis/\n├── __init__.py      \n├── data             # Folder containing NTCPModels_params.xlsx\
+  \ for default NTCP computation\n├── io.py            # DICOM loading, grid resampling, structure masks\n\
+  ├── rbe.py           # RBE models (fixed, McNamara, Wedenberg, Carabe, Linear (phys + 0.1 LET))\n├──\
+  \ metrics.py       # DVH/LVH metric computation, histogram helpers\n├── plots.py         # matplotlib\
+  \ plotting\n├── NTCP.py          # NTCP config and computation\n└── plan.py          # PatientPlan and\
+  \ AnalysisResults classes\n```\n\n---\n\n## Dependencies (details coming soon)\n\n- Python ≥ 3.10\n\
+  - numpy>=1.24\n- scipy>=1.10\n- matplotlib>=3.7\n- pandas>=2.0\n- pydicom>=2.4\n- openpyxl>=3.1\n- scikit-image\n\
+  - simpleitk\n- pip\n- setuptools \n- wheel\n\n---\n\n"

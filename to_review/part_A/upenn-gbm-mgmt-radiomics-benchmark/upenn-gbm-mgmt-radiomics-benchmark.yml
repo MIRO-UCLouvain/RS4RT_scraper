@@ -1,0 +1,66 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: junseoparkX/upenn-gbm-mgmt-radiomics-benchmark
+url: https://github.com/junseoparkX/upenn-gbm-mgmt-radiomics-benchmark
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-01-14T05:39:01Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# UPENN-GBM MGMT Prediction (Segmentation-based Radiomics) — Reproduction & Comparison\n\
+  \n## Goal\nOur goal is to reproduce and compare the paper’s **Random Forest (RF) radiomics baseline**\
+  \ for **MGMT methylation classification** using **segmentation-based radiomic features** (CaPTk `segm_*`\
+  \ CSVs) from the UPENN-GBM cohort.\n\nWe will specifically compare our results against the paper’s reported\
+  \ **Mean AUC ± STD** for each **MRI/DTI sequence × tumor area** combination.\n\n**Scope decision:**\
+  \ we will **exclude WT (whole tumor)** and focus on:\n- **NET** (necrosis / non-enhancing tumor core\
+  \ depending on naming)\n- **ED** (edema)\n- **EN** (enhancing tumor)\n\n## What we are comparing to\
+  \ (paper)\nThe paper reports RF performance summarized as:\n- **Table 1:** MRI sequences (e.g., FLAIR,\
+  \ T1Gd, T1, T2, and all_modality) × areas (NET, ED, EN, WT)\n- **Table 2:** DTI sequences (AD, FA, RD,\
+  \ TR, and all_modality) × areas (NET, ED, EN, WT)\n\nWe will compare our computed AUCs (and variability)\
+  \ to these tables, focusing on **NET/ED/EN only**.\n\n\n### Key inputs\n- `preprocessing_data/Radiomic_Features_CaPTk_segm_<SEQUENCE>_<AREA>.csv`\n\
+  \  - Radiomics features extracted from **segmentation-based** tumor regions.\n  - Contains `SubjectID`\
+  \ and many feature columns.\n- `preprocessing_data/UPENN-GBM_clinical_info_v2.1.csv`\n  - Clinical labels\
+  \ including `MGMT` (Methylated / Unmethylated).\n- `data/XY_mgmt.csv`\n  - A merged “master” table containing\
+  \ `ID`, `y_mgmt`, and radiomic features (used to build a reliable small “core” set).\n\n## Label definition\n\
+  We build the binary label:\n- `y_mgmt = 1` if `MGMT == \"Methylated\"`\n- `y_mgmt = 0` if `MGMT == \"\
+  Unmethylated\"`\nAny `MGMT` values outside these two classes (e.g., Not Available / Indeterminate) are\
+  \ dropped.\n\n## Method overview (what we do)\n### 1) Build a fixed test set (30 subjects, 15/15)\n\
+  We create a fixed test set in two stages to avoid:\n- tiny training sets if we only sample from the\
+  \ strict intersection across all parts\n- zero-overlap test sets if we sample fully at random from the\
+  \ full cohort\n\n**Stage A: Core-10 from `XY_mgmt.csv`**\n- Drop XY rows with **≥ 50 NaNs** across feature\
+  \ columns.\n- Sample **10 subjects**: **5 methylated + 5 unmethylated**.\n\n**Stage B: Extra-20 from\
+  \ clinical cohort**\n- From `UPENN-GBM_clinical_info_v2.1.csv`, keep only clean MGMT labels.\n- Exclude\
+  \ the Core-10 IDs.\n- Sample **20 subjects**: **10 methylated + 10 unmethylated**.\n\n**Final test set:**\
+  \ 30 unique subjects with balanced classes (15/15),\nsaved as:\n- `data/test_ids_core10_plus_extra20_seed340.csv`\n\
+  \n### 2) Build X and y for a given (Sequence, Area)\nFor each segmentation-based radiomics file (example:\
+  \ `FLAIR_NC`):\n- Load the features CSV\n- Merge with clinical labels on `SubjectID` ↔ `ID`\n- Drop\
+  \ non-binary MGMT labels\n- Build:\n  - `X`: numeric radiomic feature matrix\n  - `y`: binary MGMT label\
+  \ vector\n\n### 3) Verify test ID overlap and split train/test\nUsing the fixed test IDs:\n- `test =\
+  \ subjects in current df whose ID is in test_ids`\n- `train = remaining subjects`\nNote: for a specific\
+  \ (Sequence, Area) file, test overlap may be < 30 if some test subjects do not exist in that file.\n\
+  \n### 4) Feature filtering with XGBoost (importance > 0)\nBefore final training, we optionally reduce\
+  \ dimensionality:\n- Train an `XGBClassifier` on `(X_train, y_train)`\n- Keep only features with `feature_importances_\
+  \ > 0`\n- Filter both train and test matrices to these selected features\n- Report how many features\
+  \ remain\n\n### 5) Save model-ready matrices for this (Sequence, Area)\nFor downstream model training/evaluation\
+  \ (e.g., RF baseline):\n- Save to `MRI/Net/`:\n  - `X_train.csv`, `y_train.csv`, `X_test.csv`, `y_test.csv`\n\
+  \n## Planned experiments (NET/ED/EN only)\nWe will iterate over segmentation-based radiomics CSVs for:\n\
+  - MRI sequences: `FLAIR`, `T1Gd`, `T1`, `T2`, `all_modality`\n- DTI sequences: `AD`, `FA`, `RD`, `TR`,\
+  \ `all_modality`\nand tumor areas:\n- `NET`, `ED`, `EN`\n(we will **not run WT**)\n\nFor each (Sequence,\
+  \ Area):\n1) Build `X, y` from the corresponding CaPTk segm CSV + clinical labels\n2) Split using the\
+  \ fixed test set\n3) (Optional) apply XGBoost importance filtering\n4) Train and evaluate a Random Forest\
+  \ baseline\n5) Record AUC (and variability if using CV/bootstrap)\n6) Compare against the paper’s Table\
+  \ 1 / Table 2 values\n\n## Reporting\nFor each (Sequence, Area), we will report:\n- `n_train`, `n_test_used`\
+  \ (overlap size)\n- AUC (and STD if applicable)\n- Whether feature filtering was applied and how many\
+  \ features remained\n\n## Notes on naming (NET / NC)\nSome files may use names like `NC` for necrosis\
+  \ / non-enhancing core.\nWe treat this as the paper’s **NET** region for comparison, but we keep the\
+  \ raw filename tag in our logs for clarity.\n\n"

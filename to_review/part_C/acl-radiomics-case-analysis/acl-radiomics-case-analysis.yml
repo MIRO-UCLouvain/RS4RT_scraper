@@ -1,0 +1,73 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: jingjingzhang1230/acl-radiomics-case-analysis
+url: https://github.com/jingjingzhang1230/acl-radiomics-case-analysis
+platform: github
+description: A radiomics-based workflow for ACL classification, case-level evidence analysis, and LLM-assisted
+  summarization.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-14T09:02:26Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# ACL Radiomics Case Analysis\n\nA research prototype for three-class ACL status classification\
+  \ from knee MRI\nradiomics. The workflow combines Random Forest and XGBoost predictions with\nSHAP-guided\
+  \ feature analysis, reference-case retrieval, uncertainty flags, and\nLLM-assisted case summarization.\n\
+  \nThe classifiers use all 107 radiomics features for prediction. After model\nfitting, SHAP values are\
+  \ used to identify a shared top-20 feature set for\ncase-level comparison and reference retrieval; this\
+  \ feature set is not used to\nreduce the classifiers' prediction input.\n\n> **Research use only:**\
+  \ This repository is a retrospective research prototype\n> and is not a clinically validated diagnostic\
+  \ system.\n\n## Repository contents\n\n| File | Purpose |\n| --- | --- |\n| `model_training.py` | Creates\
+  \ the patient-level split, evaluates and fits RF/XGBoost models, calculates SHAP rankings, and saves\
+  \ inference artifacts. |\n| `clinical_workflow.py` | Provides cohort splitting, reference-case retrieval,\
+  \ uncertainty assessment, and held-out case analysis. |\n| `rad_llm_utils.py` | Calculates SHAP importance\
+  \ and feature z-scores, constructs case prompts, and supports optional LLM providers. |\n| `GUI.py`\
+  \ | Tkinter interface for model training, held-out case analysis, model performance, and LLM-assisted\
+  \ summarization. |\n\n## Workflow\n\n1. Load knee MRI metadata and precomputed PyRadiomics features.\n\
+  2. Separate patients into development and locked demonstration cohorts.\n3. Evaluate RF and XGBoost\
+  \ using patient-level cross-validation and fit the\n   final models on the development cohort.\n4. Combine\
+  \ model-specific SHAP rankings to select 20 features for case-level\n   evidence analysis.\n5. For a\
+  \ held-out case, generate dual-model predictions, standardized feature\n   deviations, five nearest\
+  \ reference cases, and uncertainty flags.\n6. Optionally provide these structured outputs to an LLM\
+  \ for a concise research\n   summary. The LLM does not receive the raw MRI or the held-out ground-truth\n\
+  \   label.\n\n## Requirements\n\n- Python 3.10 or later\n- Tkinter for the desktop interface\n- NumPy,\
+  \ pandas, joblib, scikit-learn, SHAP, and XGBoost\n- An optional provider package and API token for\
+  \ LLM summarization\n\nInstall the core dependencies in an isolated environment:\n\n```bash\npython\
+  \ -m venv .venv\nsource .venv/bin/activate\npython -m pip install \"numpy<2\" \"pandas<2.1\" joblib\
+  \ scikit-learn shap \"xgboost>=2,<3\"\n```\n\nOn Windows, activate the environment with:\n\n```powershell\n\
+  .\\.venv\\Scripts\\Activate.ps1\n```\n\nFor OpenAI or ModelScope API inference:\n\n```bash\npython -m\
+  \ pip install \"openai>=1,<3\"\n```\n\nAnthropic and Gemini require their respective Python SDKs.\n\n\
+  ## Expected data layout\n\nThe dataset is not included in this repository. `model_training.py` currently\n\
+  expects the data folders to be located beside the cloned repository:\n\n```text\nworkspace/\n├── acl-radiomics-case-analysis/\n\
+  │   ├── GUI.py\n│   ├── model_training.py\n│   ├── clinical_workflow.py\n│   └── rad_llm_utils.py\n\
+  ├── KneeMRI/\n│   ├── metadata.csv\n│   └── vol*_reg/\n│       └── *.nii or *.nii.gz\n└── binary_classification/\n\
+  \    ├── radiomics_results/\n    │   └── radiomics_results_wide.csv\n    └── predicted_masks_901/\n\
+  \        └── *.nii.gz\n```\n\nThe training script uses the precomputed radiomics CSV as model input.\
+  \ MRI and\nmask paths are matched and checked for completeness, but online segmentation and\nradiomics\
+  \ extraction are not performed by this repository.\n\n## Train the models\n\nFrom the repository root,\
+  \ run:\n\n```bash\npython model_training.py --model both\n```\n\nOptional arguments include:\n\n```bash\n\
+  python model_training.py \\\n  --model both \\\n  --n-estimators 500 \\\n  --cv-folds 5 \\\n  --seed\
+  \ 42\n```\n\nTraining creates a local `results/` directory containing the frozen models,\ncross-validation\
+  \ metrics, split manifest, reference data, demonstration data,\nSHAP rankings, and `inference_config.json`.\
+  \ Generated artifacts are excluded from\nGit by default.\n\n## Run the GUI\n\nTrain both models first,\
+  \ then start the desktop interface:\n\n```bash\npython GUI.py\n```\n\nThe interface provides:\n\n- held-out\
+  \ case selection with ground truth hidden until analysis is complete;\n- independent RF and XGBoost\
+  \ predictions and probabilities;\n- patient-specific top-feature deviations;\n- five nearest development/reference\
+  \ cases;\n- disagreement, low-confidence, and atypical-profile flags;\n- optional evidence-grounded\
+  \ LLM summarization;\n- development-cohort cross-validation metrics; and\n- a tab for retraining both\
+  \ models.\n\n## Optional LLM configuration\n\nCreate an untracked `.env` file in the repository root\
+  \ and add only the token for\nthe provider you intend to use:\n\n```ini\nOPENAI_API_KEY=\nANTHROPIC_API_KEY=\n\
+  GOOGLE_API_KEY=\nMODELSCOPE_API_TOKEN=\n```\n\nDo not commit `.env` or any API token. The repository's\
+  \ `.gitignore` excludes it.\n\n## Scope and limitations\n\nThis implementation focuses on the reproducible\
+  \ integration of radiomics-based\nclassification and case-level evidence presentation. It relies on\
+  \ existing masks\nand precomputed radiomics features, and external or clinician-facing validation is\n\
+  outside the current scope. Further work should extend the end-to-end\nimage-to-feature pipeline and\
+  \ evaluate generated summaries on external data with\nexpert readers.\n"

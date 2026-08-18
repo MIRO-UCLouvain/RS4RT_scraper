@@ -1,0 +1,61 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: linhduongtuan/CT_CBCT
+url: https://github.com/linhduongtuan/CT_CBCT
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2025-10-17T11:59:45Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# CT_CBCT\n\n```python\npython improved_classify_ct_images.py \\\n/Users/linh/Downloads/cumulative_imaging_dose_MV_CBCT/\
+  \ \\\n--patient 25001565 \\\n--output /Users/linh/Downloads/cumulative_imaging_dose_MV_CBCT/correct_classified\n\
+  ```\n\n```python\npython dicom_viewer_with_gdcm.py \\\n/Users/linh/Downloads/cumulative_imaging_dose_MV_CBCT/correct_classification/25001565_ct_planning_files.txt\
+  \ \\\n/Users/linh/Downloads/cumulative_imaging_dose_MV_CBCT/correct_classification/25001565_cbct_files.txt\n\
+  ```\n\n\n```python\npython organize_dicom_by_patient_date.py /đường/dẫn/đến/thư/mục/DICOM --output /thư/mục/đầu/ra\n\
+  ```\n\n```python\n# Hay Để tiết kiệm không gian lưu trữ, bạn có thể sử dụng tùy chọn tạo liên kết (symbolic\
+  \ link):\npython organize_dicom_by_patient_date.py /đường/dẫn/đến/thư/mục/DICOM --output /thư/mục/đầu/ra\
+  \ --link\n```\n\n```python\n# Điều chỉnh số luồng xử lý song song để tăng tốc độ:\npython organize_dicom_by_patient_date.py\
+  \ /đường/dẫn/đến/thư/mục/DICOM --output /thư/mục/đầu/ra --workers 8\n```\n\n\n### Cấu Trúc Thư Mục Sau\
+  \ Khi Phân Loại \n```bash\nthư_mục_đã_tổ_chức/\n├── 20138770/                      # ID bệnh nhân\n\
+  │   ├── CT/                        # Chỉ chứa ảnh CT ngày đầu tiên\n│   │   └── 2024-11-21/        \
+  \    # Ngày chụp ban đầu\n│   │       └── CT.20138770.*.dcm\n│   ├── CBCT/                      # Thư\
+  \ mục mới cho ảnh CBCT\n│   │   ├── 2024-12-05/            # Ngày điều trị\n│   │   │   └── CT.20138770.*.dcm\n\
+  │   │   └── 2024-12-10/            # Ngày điều trị khác\n│   │       └── CT.20138770.*.dcm\n│   ├──\
+  \ RS/                        # Structure sets\n│   ├── RI/                        # Các ảnh RT Image\
+  \ khác\n│   ├── RT/                        # RT Plans\n│   └── RD/                        # RT Dose\n\
+  └── 25001565/                      # Bệnh nhân khác\n    ├── CT/\n    ├── CBCT/\n    └── ...\n```\n\n\
+  ---\n\n## Kiểm tra và loại bỏ các files (có thể) trùng lặp trong các thư mục sau khi phân loại\n\n```python\n\
+  # Sử dụng phương pháp mới \"advanced\" (mặc định)\npython duplicate_detection.py /thư/mục/đầu/ra \n\
+  # /thư/mục/đầu/ra là thư mục chạy ở bước truóc đó với script:\n# `python organize_dicom_by_patient_date.py\
+  \ /đường/dẫn/đến/thư/mục/DICOM --output /thư/mục/đầu/ra --workers 8`\n\n# Di chuyển các file trùng lặp\
+  \ vào thư mục riêng\npython duplicate_detection.py /thư/mục/đầu/ra  --action move\n\n```\n\n#### Có\
+  \ thể kiểm tra lại 1 lần nữa thư mục vừa kiểm tra các files trùng lặp\n\n```python\npython duplicate_detection.py\
+  \ /thư/mục/đầu/ra \n```\n\n### Lưu ý: dường như files trùng lặp chỉ xuất hiện trong các folder chứa\
+  \ ảnh CT, nên ta chỉ nên chạy đoạn code này (thay vì chạy script duplicate_detection.py)\n\n```python\n\
+  # Chỉ tạo báo cáo trùng lặp trong thư mục CT (không thay đổi file)\npython duplicate_detection_ct_only.py\
+  \ /thư/mục/đầu/ra --action report\n\n# Di chuyển các file trùng lặp trong CT (giữ lại file nhỏ nhất)\n\
+  python duplicate_detection_ct_only.py /thư/mục/đầu/ra --action move\n\n# Xóa các file trùng lặp trong\
+  \ CT (giữ lại file nhỏ nhất)\npython duplicate_detection_ct_only.py /thư/mục/đầu/ra --action delete\n\
+  ```\n\n---\n\n### Kiểm tra lại việc sắp xếp lại cấu trúc folders ở trên\n\n```python\npython verify_dicom_organization.py\
+  \ /thư/mục/đầu/ra\n# Or\nuv run verify_dicom_organization.py /thư/mục/đầu/ra\n```\n\n### Kiểm tra lại\
+  \ việc tìm kiếm và gom dữ liệu CT và CBCT dựa trên sự khác biệt về dung lượng và độ phân giải của các\
+  \ files CT và CBCT\n\n```python\npython cross_validate_dicom_stats.py /đường/dẫn/đến/thư/mục/dữ/liệu\n\
+  \n# Hay chạy\npython cross_validate_dicom_stats_1.py /đường/dẫn/đến/thư/mục/dữ/liệu\n```\n\n---\n\n\
+  ### Tính Năng Chính\n\n- Phân loại tự động dựa trên tên file và metadata\n  \n- Tổ chức theo ngày điều\
+  \ trị từ metadata của ảnh\n  \n- Báo cáo tổng hợp số lượng ảnh cho mỗi bệnh nhân\n  \n- Xử lý song song\
+  \ để tăng tốc độ với số lượng ảnh lớn\n  \n- Lựa chọn sao chép hoặc tạo liên kết để tiết kiệm không\
+  \ gian\n\n**Lưu Ý:**\n\n- Script sẽ bỏ qua các file không phải ảnh CT hoặc CBCT như RT Records, RT Structure...\n\
+  \  \n- Nếu file không có thông tin ngày trong metadata, nó sẽ được đặt trong thư mục \"unknown_date\"\
+  \n  \n- Báo cáo CSV sẽ giúp bạn dễ dàng kiểm tra số lượng ảnh của mỗi bệnh nhân theo ngày\n\nCấu trúc\
+  \ thư mục này giúp bạn dễ dàng theo dõi tiến trình điều trị của từng bệnh nhân theo thời gian, và phân\
+  \ biệt rõ giữa ảnh CT lập kế hoạch và ảnh CBCT kiểm tra hàng ngày.\n"

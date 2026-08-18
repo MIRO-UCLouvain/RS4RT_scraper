@@ -1,0 +1,65 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: mrhugoraposo/lung1-redundancy-audit
+url: https://github.com/mrhugoraposo/lung1-redundancy-audit
+platform: github
+description: Leakage-controlled, multi-representation audit of multimodal fusion and calibration for NSCLC
+  2-year overall-survival prediction on the public NSCLC-Radiomics Lung1 cohort.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-29T02:12:36Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "# Lung1 Redundancy Audit\n\nA leakage-controlled, multi-representation evaluation of\
+  \ multimodal fusion and probability\ncalibration for **2-year overall-survival (OS) prediction in non-small-cell\
+  \ lung cancer\n(NSCLC)** on the public **NSCLC-Radiomics \"Lung1\"** cohort.\n\nThis repository accompanies\
+  \ the manuscript *\"Is Imaging Redundant? A Leakage-Controlled,\nMulti-Representation Audit of Multimodal\
+  \ Fusion and Calibration for Non-Small-Cell Lung\nCancer Survival Prediction.\"* It releases the analysis\
+  \ code, configuration, fixed seeds,\nand **aggregate** result metrics so that every table and figure\
+  \ can be reproduced.\n\n## What this audit does\n\nUnder **one fixed, leakage-safe protocol** — patient-level\
+  \ 5×5 repeated stratified\ncross-validation in which feature scaling, the classifier head, the probability\
+  \ calibrator,\nand the decision threshold are all fit **on training folds only** — a simple clinical\n\
+  baseline (age, sex, overall stage, histology) is compared against four independent CT\nimaging representations,\
+  \ alone and fused with the clinical model:\n\n1. **Deep 2.5D CNN** — a ResNet-18 ImageNet-pretrained\
+  \ encoder on a GTV-centred 2.5D patch.\n2. **Hand-crafted GTV radiomics** — first-order, shape, gradient/Laplacian,\
+  \ and GLCM texture.\n3. **Frozen CT foundation encoders** — MedicalNet, CT-FM (self-supervised on ≈148\
+  \ 000 CT\n   scans), and a generic 3D reference (r3d18), applied frozen and zero-shot.\n4. **Extra-tumoral\
+  \ host-physiology markers** — emphysema/COPD density and body composition.\n\nEach contrast is reported\
+  \ with bootstrap 95% confidence intervals and paired DeLong /\nMcNemar tests, the full calibration suite\
+  \ (ECE, MCE, Brier, NLL, slope, intercept), and a\npre-set decision rule: *a fusion gain is claimed\
+  \ only if the paired ΔAUROC confidence\ninterval excludes zero against a calibrated clinical baseline.*\n\
+  \nThe headline finding is negative and corrective: under strict leakage control, all four\nimaging representations\
+  \ are **redundant** with the clinical model, and the locus of value\nis **calibration, not fusion**.\n\
+  \n## Data (not redistributed)\n\nThis study is a secondary analysis of the **NSCLC-Radiomics \"Lung1\"\
+  ** cohort from\n**The Cancer Imaging Archive (TCIA)**, released under **CC BY-NC 3.0**. **No patient\n\
+  imaging or clinical data are included in this repository.** Obtain the data from its\nofficial source:\n\
+  \n- TCIA collection: NSCLC-Radiomics (\"Lung1\"), DOI `10.7937/K9/TCIA.2015.PF0M9REI`\n- Original radiomics\
+  \ study: Aerts HJWL, et al. *Nat Commun* 2014;5:4006.\n\nThe download helpers under `services/ai/califusion-cnn/scripts/`\
+  \ (`download_tcia_lung1.py`,\n`download_lung1_imaging.py`) fetch the public CT + RTSTRUCT series from\
+  \ TCIA into a local,\ngit-ignored cache.\n\n## Repository layout\n\n```\nservices/ai/califusion-cnn/\n\
+  \  src/califusion/        shared utilities (evaluation, statistics, calibration, data I/O)\n  scripts/\
+  \               the Lung1 audit pipeline (clinical, radiomics, foundation, host, fusion)\n  results/\
+  \               computed AGGREGATE metrics only (no patient-level data)\n  configs/default.yaml   configuration\n\
+  \  requirements.txt       Python dependencies\nfigures/\n  make_figures.py        regenerates every\
+  \ paper figure from results/\n  fig1..fig5.png         the rendered figures\n```\n\n## Reproduce\n\n\
+  ```bash\n# 1. Environment\npython3.12 -m venv .venv && source .venv/bin/activate\npip install -r services/ai/califusion-cnn/requirements.txt\n\
+  \n# 2. Obtain the public Lung1 data from TCIA (see \"Data\" above), then preprocess\npython services/ai/califusion-cnn/scripts/download_tcia_lung1.py\n\
+  python services/ai/califusion-cnn/scripts/preprocess.py\n\n# 3. Run the audit arms (each writes aggregate\
+  \ metrics under results/)\npython services/ai/califusion-cnn/scripts/run_clinical_baseline.py\npython\
+  \ services/ai/califusion-cnn/scripts/radiomics_diagnostic.py\npython services/ai/califusion-cnn/scripts/extract_foundation_embeddings.py\n\
+  python services/ai/califusion-cnn/scripts/compare_foundation.py\npython services/ai/califusion-cnn/scripts/lung1_hostmarkers.py\n\
+  python services/ai/califusion-cnn/scripts/fusion_radiomics.py\n\n# 4. Regenerate the figures from the\
+  \ result files\npython figures/make_figures.py\n```\n\nThe clinical baseline reproduces from a single\
+  \ command and is verifiable in a fresh\nenvironment. All result artefacts carry their configuration\
+  \ and fixed seeds; figures are\nregenerated directly from the result files. Every non-placeholder number\
+  \ is computed from a\nreal run; nothing is fabricated.\n\n## Citing\n\nPlease cite the archived release\
+  \ via its Zenodo DOI (added on release) and the accompanying\nmanuscript.\n\n## License\n\nMIT — see\
+  \ [`LICENSE`](LICENSE). The Lung1 dataset itself remains under its own CC BY-NC 3.0\nterms and is not\
+  \ redistributed here.\n"

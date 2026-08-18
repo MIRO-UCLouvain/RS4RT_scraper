@@ -1,0 +1,76 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: shuya-GUO/MSTox
+url: https://github.com/shuya-GUO/MSTox
+platform: github
+description: MSTox is designed for multi-species and multi-route acute toxicity prediction using 5000-bit
+  mass spectrum fingerprints.
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-08-02T14:10:32Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# MSTox\n\nMSTox is a multi-task learning framework for unified acute toxicity prediction\
+  \ across multiple species and exposure routes based on mass spectrum fingerprints.\n\nThe framework\
+  \ integrates species-specific and exposure-route information into a multimodal deep learning architecture\
+  \ and enables simultaneous prediction of LD50 values for multiple biological conditions.\n\n---\n\n\
+  ## Overview\n\nMSTox is designed for multi-species and multi-route acute toxicity prediction using 5000-bit\
+  \ mass spectrum fingerprints.\n\nThe framework supports:\n\n- Multiple species:\n  - Mouse\n  - Rat\n\
+  \  - Rabbit\n  - Dog\n  - Cat\n  - Guinea pig\n\n- Multiple exposure routes:\n  - Oral\n  - Intravenous(iv)\n\
+  \nThe model predicts:\n\n- Log-transformed LD50 values\n- Original LD50 values (mg/kg)\n- Toxicity categories\n\
+  \n---\n\n## Framework Architecture\n\nMSTox is built upon a Cross-Attention-based multimodal deep learning\
+  \ framework consisting of:\n\n- Chemical Encoder\n- Condition Encoder\n- Cross-Attention Layer\n- Multi-gate\
+  \ Mixture-of-Experts (MMoE)\n- Adaptive Task Heads\n\n### Chemical Encoder\n\nThe chemical encoder uses\
+  \ a two-layer fully connected neural network to transform 5000-dimensional mass spectrum fingerprints\
+  \ into 128-dimensional chemical feature vectors.\n\n### Condition Encoder\n\nThe condition encoder integrates:\n\
+  \n- Species embedding (32 dimensions)\n- Exposure route embedding (8 dimensions)\n- Outer-product interaction\
+  \ features (256 dimensions)\n\nThese features are projected into a 128-dimensional condition representation.\n\
+  \n### Feature Fusion\n\nChemical and condition features are fused through a Cross-Attention mechanism\
+  \ to capture interactions between molecular structures and biological conditions.\n\n### MMoE Module\n\
+  \nThe fused representations are refined using a Multi-gate Mixture-of-Experts (MMoE) module for task-specific\
+  \ feature extraction.\n\n### Graph Regularization\n\nTask embeddings are mapped into feature space to\
+  \ construct endpoint relationship graphs for graph regularization and enhanced task correlation learning.\n\
+  \n### Adaptive Task Heads\n\nAdaptive task heads dynamically determine learning strategies based on:\n\
+  \n- Low-performance tasks:\n  - R² < 0.5\n\n- Extremely low-sample tasks:\n  - Sample size < 20\n\n\
+  Different strategies include:\n\n- Residual shrinkage\n- Ordinal classification\n- Specialized prediction\
+  \ heads\n\n---\n\n## Input\n\n### Molecular Representation\n\n- 5000-bit mass spectrum fingerprints\n\
+  \n---\n\n## Output\n\n### Regression Tasks\n\n- Log-transformed LD50 values\n- Original LD50 values\
+  \ (mg/kg)\n\n### Toxicity Classification\n\n| Toxicity Level | LD50 Range |\n|---|---|\n| High Toxicity\
+  \ | LD50 < 100 mg/kg |\n| Moderate Toxicity | 100 mg/kg ≤ LD50 ≤ 1000 mg/kg |\n| Low Toxicity | LD50\
+  \ > 1000 mg/kg |\n\n---\n\n## Installation\n\n### Conda Environment\n\n```bash\nconda env create -f\
+  \ MSTox.yml\nconda activate MSTox\n```\n\n### Pip Installation\n\n```bash\npip install -r requirements.txt\n\
+  ```\n\n---\n\n## Project Structure\n\n```text\nMSTox/\n│\n├── data/                                #\
+  \ Dataset\n│   ├──all_species_route_summary.csv     # Mass spectrum fingerprints for training\n│   ├──\
+  \ ECRFS_fps.csv                    # Mass spectrum fingerprints for testing\n│   ├── Sharing High-Quality\
+  \ LC-MS_MS Spectral Data of over 100 Emerging Chemical Risks in the Food Chain_1_all.zip           \
+  \      # ECRFS dataset metadata involving MS/MS information\n│   ├── mouse/                        \
+  \   # Mouse MS & LD50 data (oral & iv)\n│   ├── rat/                             # Rat MS & LD50 data\
+  \ (oral & iv)\n│   ├── rabbit/                          # Rabbit MS & LD50 data (oral & iv)\n│   ├──\
+  \ dog/                             # Dog MS & LD50 data (oral & iv)\n│   ├── cat/                  \
+  \           # Cat MS & LD50 data (oral & iv)\n│   └── guinea_pig/                      # Guinea pig\
+  \ MS & LD50 data (oral & iv)\n├── notebooks/                           # Data processing notebooks\n\
+  ├── train.ipynb                          # Training notebook\n├── predict.py                       \
+  \    # Inference script\n├── requirements.txt\n├── MSTox.yml\n├── LICENSE\n└── README.md\n```\n\n> **Note:**\
+  \ Trained model weights (`models/`) are not included due to file size.\n> Please download them separately\
+  \ and place them in the `models/` directory before running `predict.py`.\n\n---\n\n## Usage\n\n### Training\n\
+  \n```bash\njupyter notebook train.ipynb\n```\n\nOr execute all cells headlessly:\n\n```bash\njupyter\
+  \ nbconvert --to notebook --execute train.ipynb\n```\n\n### Prediction\n\n```bash\npython predict.py\n\
+  ```\n\nMake sure the trained model weights are placed in the `models/` directory before running inference.\n\
+  \n---\n\n## Dependencies\n\nMain dependencies include:\n\n- PyTorch\n- NumPy\n- Pandas\n- Scikit-learn\n\
+  - Optuna\n- RDKit\n\n---\n\n## Toxicity Tasks\n\nMSTox supports unified toxicity prediction for combinations\
+  \ of:\n\n- Species\n- Exposure routes\n\nunder a multi-task learning paradigm.\n\n---\n\n## Future Work\n\
+  \nPotential future extensions include:\n\n- Additional species and exposure routes\n- Pretraining strategies\
+  \ for low-resource toxicity tasks\n- Explainable AI for toxicity mechanism interpretation\n\n---\n\n\
+  ## License\n\nMIT License\n\n---\n\n## Citation\n\nIf you use MSTox in your research, please cite our\
+  \ paper:\n\n```bibtex\n@article{mstox2026,\n  title={Predicting Cross-Species and Cross-Route Acute\
+  \ Toxicity from Mass Spectra via a Multi-Modal Deep Learning Framework},\n  author={Shuya Guo, Qiao\
+  \ Xue*, Wenxiao Pan, Jianjie Fu*, Aiqian Zhang},\n  year={2026}，\n  note = {Manuscript in preparation}\n\
+  }\n```\n"

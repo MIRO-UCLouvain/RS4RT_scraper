@@ -1,0 +1,113 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: skku-aihclab/proj25-molecule-toxicity-prediction
+url: https://github.com/skku-aihclab/proj25-molecule-toxicity-prediction
+platform: github
+description: 'MoltiTox: a multimodal fusion model for molecular toxicity prediction'
+license: MIT
+language: Python
+keywords:
+- ai
+- computational-biology
+- deep-learning
+- multimodal
+- tox21
+stars: 3
+updated_at: '2026-03-25T08:02:30Z'
+image_source: https://raw.githubusercontent.com/skku-aihclab/proj25-molecule-toxicity-prediction/HEAD/figure/MoltiTox_figure.jpg
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# MoltiTox: a multimodal fusion model for molecular toxicity prediction\n\n[View Paper](https://doi.org/10.3389/ftox.2025.1720651)\n\
+  \nA comprehensive deep learning model for molecular toxicity prediction using a multimodal approach.\
+  \ The model combines molecular graphs, SMILES sequences, 2D structure images, and NMR spectra to predict\
+  \ toxicity across 12 different endpoints from the Tox21 dataset.\n\n## Table of Contents\n- [Overview](#overview)\n\
+  - [Features](#features)\n- [Project Structure](#project-structure)\n- [Installation](#installation)\n\
+  - [Data Download](#data-download)\n- [Data Preprocessing](#data-preprocessing)\n- [Running Experiments](#running-experiments)\n\
+  - [Results](#results)\n\n## Overview\n\nThis model leverages pre-trained molecular encoders and multimodal\
+  \ fusion for toxicity prediction, achieving superior performance compared to single-modal baselines\
+  \ on the Tox21 benchmark.\n\n![MoltiTox Architecture](figure/MoltiTox_figure.jpg)\n\nIt supports:\n\
+  - **4 Single-Modal Encoders**: Graph (GNN), SMILES (Transformer), Image (CNN), Spectrum (1D CNN)\n-\
+  \ **8 Multimodal Fusion Models**: All pairwise and higher-order combinations of the modalities\n- **12\
+  \ Toxicity Endpoints**: NR-AR, NR-AR-LBD, NR-AhR, NR-Aromatase, NR-ER, NR-ER-LBD, NR-PPAR-gamma, SR-ARE,\
+  \ SR-ATAD5, SR-HSE, SR-MMP, SR-p53\n\nThe multimodal models use self-attention fusion mechanisms to\
+  \ effectively combine complementary information from different molecular representations.\n\n## Features\n\
+  \n- **Automated Hyperparameter Tuning**: Optuna-based TPE optimization\n- **Two-Stage Training**: Train/valid\
+  \ split optimization → Full dataset retraining\n- **Pre-trained Backbones**:\n  - MoLFormer-XL for SMILES\
+  \ encoding\n  - ImageMol (ResNet18) for image encoding\n  - CReSS for NMR spectrum encoding\n- **Multi-Task\
+  \ Learning**: Simultaneous prediction of 12 toxicity endpoints\n\n## Project Structure\n\n```\n[root]/\n\
+  ├── models/\n│   └── models.py              # All encoder and classifier models\n├── utils/\n│   ├──\
+  \ dataset.py             # Dataset classes for all modalities\n│   └── attention_analysis.py  # Attention\
+  \ analysis utilities\n├── experiments/\n│   ├── graph/                 # Graph Encoder\n│   ├── smiles/\
+  \                # SMILES Encoder\n│   ├── image/                 # Image Encoder\n│   ├── spectrum/\
+  \              # Spectrum Encoder\n│   └── multimodal/            # Multimodal fusion experiments\n\
+  │       ├── gph_smi/           # Graph + SMILES\n│       ├── gph_img/           # Graph + Image\n│ \
+  \      ├── gph_spec/          # Graph + Spectrum\n│       ├── smi_img/           # SMILES + Image\n\
+  │       ├── smi_spec/          # SMILES + Spectrum\n│       ├── spec_img/          # Image + Spectrum\n\
+  │       ├── gph_smi_img/       # Graph + SMILES + Image\n│       └── moltitox/          # Graph + SMILES\
+  \ + Image + Spectrum\n├── data/\n│   ├── train.csv              # Training data\n│   ├── valid.csv \
+  \             # Validation data\n│   ├── test.csv               # Test data\n│   ├── train_spectra.csv\
+  \      # Training data with spectra only\n│   ├── valid_spectra.csv      # Validation data with spectra\
+  \ only\n│   ├── test_spectra.csv       # Test data with spectra only\n│   ├── images/              \
+  \  # Molecular 2D images\n│   └── spectra/               # NMR spectral data\n├── checkpoints/\n│  \
+  \ ├── encoder/               # Saved encoder weights\n│   │   ├── train_only/        # Encoders trained\
+  \ on train set only\n│   │   └── train_and_valid/   # Encoders trained on train+valid\n│   ├── model/\
+  \                 # Saved full model weights\n│   ├── parameters/            # Best hyperparameters\
+  \ (JSON)\n│   └── pretrained_models/     # Pre-trained model checkpoints\n├── main.py              \
+  \      # Run all experiments sequentially\n├── requirements.txt           # Python dependencies\n└──\
+  \ README.md                  \n```\n\n\n## Installation\n\n### Requirements\n- Python 3.8+\n- PyTorch\
+  \ 1.12+\n- PyTorch Geometric\n- Transformers (Hugging Face)\n- RDKit\n- scikit-learn\n- optuna\n- pandas\n\
+  - numpy\n- PIL\n- matplotlib\n- seaborn\n\n### Setup\n\n```bash\n# Clone the repository\ngit clone https://github.com/skku-aihclab/proj25-molecule-toxicity-prediction.git\n\
+  cd proj25-molecule-toxicity-prediction\n\n# Install dependencies\npip install -r requirements.txt\n\
+  ```\n\nSee the [Data Download](#data-download) section below for downloading datasets and pre-trained\
+  \ models.\n\n## Data Download\n\nAll required data files, pre-trained models, and checkpoints are available\
+  \ on Google Drive:\n\n**Google Drive Link:** https://drive.google.com/drive/folders/13QLMfp9T_C8tiHabWEwB1knieR9ZOZO9?usp=drive_link\n\
+  \n### Directory Structure on Google Drive\n\n```\nMoltiTox/\n├── data/\n│   ├── 1st/\n│   │   ├── train.csv\n\
+  │   │   ├── valid.csv\n│   │   ├── test.csv\n│   │   ├── train_spectra.csv\n│   │   ├── valid_spectra.csv\n\
+  │   │   └── test_spectra.csv\n│   ├── 2nd/\n│   │   └── [same structure]\n│   ├── 3rd/\n│   │   └──\
+  \ [same structure]\n│   ├── 4th/\n│   │   └── [same structure]\n│   └── 5th/\n│       └── [same structure]\n\
+  ├── checkpoints/\n│   ├── 1st/\n│   │   ├── encoder/\n│   │   ├── model/\n│   │   └── parameters/\n\
+  │   ├── 2nd/\n│   │   └── [same structure]\n│   ├── 3rd/\n│   │   └── [same structure]\n│   ├── 4th/\n\
+  │   │   └── [same structure]\n│   └── 5th/\n│       └── [same structure]\n├── ImageMol.pth\n└── 8.pth\n\
+  ```\n\n### Download Instructions\n\n1. **Download Dataset**\n   Images and spectra are included in this\
+  \ repository.\n   \n   However, if you want to use the same data splits as reported in the paper, download\
+  \ the CSV files from Google Drive:\n   - Navigate to the `data/` folder on Google Drive\n   - Choose\
+  \ one of the 5 splits (1st through 5th)\n   - Download all 6 CSV files:\n     - `train.csv`, `valid.csv`,\
+  \ `test.csv` (full datasets)\n     - `train_spectra.csv`, `valid_spectra.csv`, `test_spectra.csv` (spectra\
+  \ subset only)\n   - Place the downloaded CSV files in your local `data/` directory\n\n2. **Download\
+  \ Pre-trained Checkpoints (Optional)**\n   - Navigate to the `checkpoints/` folder on Google Drive\n\
+  \   - Choose the corresponding split (1st through 5th) that matches your data\n   - Download the entire\
+  \ folder structure (`encoder/`, `model/`, `parameters/`)\n   - Place the downloaded folders in your\
+  \ local `checkpoints/` directory\n   - The checkpoint structure must match the original:\n     ```\n\
+  \     checkpoints/\n     ├── encoder/\n     │   ├── train_only/\n     │   └── train_and_valid/\n   \
+  \  ├── model/\n     └── parameters/\n     ```\n\n3. **Download Pre-trained Backbones**\n   - Download\
+  \ `ImageMol.pth` from the Google Drive root\n   - Place it in `experiments/image/ImageMol.pth`\n   -\
+  \ Download `8.pth` from the Google Drive root\n   - Place it in `experiments/spectrum/8.pth`\n\n###\
+  \ Data File Descriptions\n\n- **Standard CSV files** (`train.csv`, `valid.csv`, `test.csv`):\n  - Used\
+  \ for single-modal (graph, SMILES, image) and multimodal experiments without spectra\n\n- **Spectra\
+  \ CSV files** (`train_spectra.csv`, `valid_spectra.csv`, `test_spectra.csv`):\n  - Contains only molecules\
+  \ with available NMR spectra\n  - Subset of the standard datasets\n\n## Data Preprocessing\n\nThe preprocessing\
+  \ pipeline for the Tox21 dataset is documented in `data/preprocess.ipynb`.\n\n**Note:** The preprocessing\
+  \ notebook requires access to the original spectral databases (NMRShiftDB2, NP-MRD, HMDB). These databases\
+  \ are not included in this repository due to licensing and size constraints.\n\nIf you wish to reproduce\
+  \ the preprocessing pipeline or need access to the raw spectral databases, please contact me.\n\nThe\
+  \ pre-processed data (CSV files, images, and binary spectra) are already available and can be used directly\
+  \ without running the preprocessing pipeline.\n\n## Running Experiments\n\n### Running All Experiments\n\
+  \nTo run all experiments sequentially (single-modal + multimodal):\n\n```bash\npython -u main.py 2>&1\
+  \ | tee result.txt\n```\n\n### Running Individual Experiments\n\nTo run a specific experiment:\n\n```bash\n\
+  # Single-modal examples\ncd experiments/graph\npython train.py  # Train graph model\npython test.py\
+  \   # Test graph model\n\ncd ../smiles\npython train.py  # Train SMILES model\npython test.py   # Test\
+  \ SMILES model\n\n# Multimodal examples\ncd ../multimodal/gph_smi\npython train.py  # Train Graph+SMILES\
+  \ fusion model\npython test.py   # Test Graph+SMILES fusion model\n\ncd ../smi_img\npython train.py\
+  \  # Train SMILES+Image fusion model\npython test.py   # Test SMILES+Image fusion model\n```\n\n## Citation\n\
+  \nIf you use this model in your research, please cite:\n\n```\n@article{park2025moltitox,\n  title={MoltiTox:\
+  \ a multimodal fusion model for molecular toxicity prediction},\n  author={Park, Junwoo and Lee, Sujee},\n\
+  \  journal={Frontiers in Toxicology},\n  volume={7},\n  pages={1720651},\n  year={2025}\n}\n```\n\n\
+  ## License\n\nThis project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.\n\
+  \n## Contact\n\nFor questions or issues, please contact:\n- Email: jw0528@g.skku.edu\n\n---\n\n**Last\
+  \ Updated**: December 2025\n"

@@ -1,0 +1,61 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: vboussot/Panther
+url: https://github.com/vboussot/Panther
+platform: github
+description: PANTHER 2025 Challenge – Code and weights for pancreatic tumor segmentation on T2-weighted
+  MRI using transfer learning, fine-tuning, and ensembling.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-05T15:40:04Z'
+image_source: null
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "[![Grand Challenge](https://img.shields.io/badge/Grand%20Challenge-PANTHER_2025-blue)](https://panther.grand-challenge.org/)\
+  \ \n[![Hugging Face](https://img.shields.io/badge/\U0001F917%20Hugging%20Face-PANTHER_2025-orange)](https://huggingface.co/VBoussot/Panther)\n\
+  \n# PANTHER 2025: Pancreatic Tumor Segmentation on T2W MRI (2nd place \U0001F948)\n\nThis repository\
+  \ provides the full code and configurations used for our submission to the **PANTHER Challenge 2025**,\
+  \ focused on **automatic pancreatic tumor segmentation on MR-Linac T2-weighted MRI**.  \nOur approach\
+  \ leverages **transfer learning**, **fine-tuning**, and **ensemble methods** to tackle the few-shot\
+  \ setting (50 annotated cases).\n\n---\n\n## \U0001F4CA Results\n\n### \U0001F3C1 Official Challenge\
+  \ Leaderboard\n\n| Rank | Team / User | Method                          | DSC (↑) | NSD (↑) | HD95 [mm]\
+  \ (↓) | ASD [mm] (↓) | Vol. [mm³] (↑) |\n|------|-------------|---------------------------------|---------|---------|---------------|--------------|----------------|\n\
+  | 1st  | MIC-DKFZ    | Bauchspeichel-Doppel-Düse       | **0.5289** | **0.6999** | **23.0110** | **5.1319**\
+  \ | 17163.5753 (4) |\n| 2nd  | BreizhSeg   | docker_Task2                    | 0.4910  | 0.6736  | 25.2634\
+  \ (4)   | 6.1722 (2)   | 16714.9043 (2) |\n| 2nd  | LiboZhang   | Task2Baseline                   |\
+  \ 0.4814  | 0.6507  | 24.0864 (2)   | 7.6881 (3)   | **16647.2197 (1)** |\n| 4th  | amparobt9   | PANTHER\
+  \ baseline (MRSegmentator)| 0.4784  | 0.6457  | 24.1735 (3)   | 8.1224 (4)   | 16846.2910 (3) |\n\n\n\
+  \U0001F517 [View the full leaderboard](https://panther.grand-challenge.org/evaluation/closed-testing-phase-task-2/leaderboard/)\n\
+  \n---\n\n## \U0001F9E9 Methods\n\nOur approach explored three main strategies:\n\n1. **MRI → CT Transfer**\
+  \  \n   - Used SynthRAD2025 models to generate synthetic CT (sCT) from T2 MRI https://github.com/vboussot/Synthrad2025_Task_1.\
+  \  \n   - Applied pretrained CT tumor segmentation models from Curvas2025 challenge https://github.com/vboussot/CurvasPDACVI.\
+  \  \n   - Limitation: tumors often blurred or absent in sCT.\n\n2. **Direct MRI Fine-tuning**  \n  \
+  \ - Fine-tuned a pretrained **PANORAMA ResUNetL** (winner of CT segmentation) on Panther T2W MRIs. \
+  \ \n   - Showed competitive performance but high inter-patient variability.  \n\n3. **SAM 2.1 Fine-tuning\
+  \ with Prompts**  \n   - Used method (2) segmentations as prompts for **SAM 2.1**.  \n   - Fine-tuned\
+  \ SAM on Panther dataset. \n   - Improvement marginal; SAM struggled with medical tumor characteristics.\
+  \  \n\n### ✅ Final Submission  \nWe combined the panther curvas with multiple fine-tuned models with\
+  \ **STAPLE ensembling**, which provided the **most robust approach** across cases.  \n\n---\n\n## \U0001F4E6\
+  \ Models & Weights\n\n- \U0001F517 **Our fine-tuned Panther weights**: [Hugging Face – VBoussot/Panther](https://huggingface.co/VBoussot/Panther)\
+  \  \n- \U0001F517 **Official baseline model (MRSegmentator v1.2.0)**: [GitHub Release](https://github.com/hhaentze/MRSegmentator/releases/tag/v1.2.0)\
+  \  \n\n---\n\n## \U0001F680 Build & run\n\nThe weights are **not** committed (`resources/` is git-ignored)\
+  \ and are baked into the image at build\ntime. Place them first, then build:\n\n```\nresources/\n├──\
+  \ nnUNet_results/   # 5-fold nnUNet ResEncUNet-L ensemble (from Hugging Face VBoussot/Panther)\n└──\
+  \ Model/            # MRSegmentator v1.2.0 weights\n```\n\n```bash\n./do_build.sh                 #\
+  \ docker build --platform=linux/amd64 --tag panther-baseline\n./do_test_run.sh              # forward\
+  \ pass over test/input → test/output (GPU, --network none)\n./do_save.sh                  # export the\
+  \ image as a gzipped tar for Grand Challenge upload\n```\n\n**Runtime pipeline:** MRSegmentator localizes\
+  \ the pancreas (label 7) → margin-crop ROI →\n5-model nnUNet **ResEncUNet-L** ensemble → `STAPLE` fusion\
+  \ (0.5) → un-crop → `tumor_seg.mha`.\n`nnUNetTrainer_Xepochs.py` is injected into the nnUNet install\
+  \ at build time because it is required to\nload the custom-epoch checkpoints. I/O follows the Grand\
+  \ Challenge convention\n(`/input/images/*mri*` → `/output/images/pancreatic-tumor-segmentation/tumor_seg.mha`).\n\
+  \n## \U0001F9E0 Framework note\n\n[KonfAI](https://github.com/vboussot/KonfAI) produced the **auxiliary/experimental**\
+  \ models explored\nduring development (SynthRAD sCT, Curvas CT — strategies 1–2 above). The **final**\
+  \ submitted container\nis a standard **nnUNet + MRSegmentator** pipeline and has no KonfAI dependency\
+  \ at inference.\n\nSource files carry Apache-2.0 headers.\n\n---\n"

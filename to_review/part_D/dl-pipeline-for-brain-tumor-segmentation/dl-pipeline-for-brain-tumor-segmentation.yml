@@ -1,0 +1,62 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: roobak-1234/DL-Pipeline-For-Brain-Tumor-Segmentation
+url: https://github.com/roobak-1234/DL-Pipeline-For-Brain-Tumor-Segmentation
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-10T17:04:25Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# NeuroScan\n\n> **Final-Year Academic Project** — Deep learning + classical ML pipeline\n\
+  > for brain tumor MRI analysis: segmentation → grade prediction → risk prediction\n> → priority scoring\
+  \ → explainability → clinical report.\n\n---\n\n## Project Structure\n\n```\nNeuroScan/\n├── .venv/\
+  \                          ← virtual environment (gitignored)\n├── requirements.txt\n├── config/\n│\
+  \   ├── config.yaml                 ← all paths, thresholds, hyperparameters\n│   └── pyradiomics_params.yaml\n\
+  ├── data/\n│   ├── raw/                        ← MRI scans (gitignored, never committed)\n│   └── processed/\
+  \                  ← extracted features CSV (gitignored)\n├── models/                         ← trained\
+  \ weights (gitignored)\n├── src/\n│   ├── stage1_segmentation/        ← MONAI/nnU-Net inference + MC\
+  \ Dropout\n│   ├── stage2_feature_extraction/  ← PyRadiomics wrapper\n│   ├── stage3_grade_prediction/\
+  \    ← XGBoost grade classifier\n│   ├── stage4_risk_prediction/     ← Random Survival Forest\n│   ├──\
+  \ stage5_priority_score/      ← rule-based scoring + nilearn atlas\n│   ├── stage6_explainability/ \
+  \     ← Grad-CAM + SHAP\n│   ├── stage7_report/              ← Jinja2 report + TF-IDF QA\n│   └── pipeline.py\
+  \                 ← end-to-end orchestrator\n├── app/\n│   └── streamlit_app.py            ← doctor-facing\
+  \ UI\n├── tests/                          ← pytest unit + integration tests\n├── notebooks/        \
+  \              ← exploration & stage demos\n└── docs/\n```\n\n---\n\n## Quick Start\n\n### 1. Environment\
+  \ Setup\n\n```powershell\n# From project root (neuropriority/)\npython -m venv .venv\n# If ExecutionPolicy\
+  \ blocks this, run first:\n# Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass\n.venv\\Scripts\\\
+  Activate.ps1\npython -m pip install --upgrade pip\n```\n\n### 2. Install Dependencies\n\n```powershell\n\
+  pip install -r requirements.txt\n```\n\n> **Note:** `torch` is installed as CPU-only. For GPU training\
+  \ on Colab, replace the\n> torch line in requirements.txt with the CUDA build from https://pytorch.org.\n\
+  \n### 3. Configure Paths\n\nEdit `config/config.yaml` to set your data paths. Never hard-code paths\
+  \ in source files.\n\n### 4. Run the Pipeline\n\n```python\nfrom src.pipeline import run_pipeline\n\n\
+  report = run_pipeline(\n    scan_paths={\n        \"t1\":    \"data/raw/brats2024/BraTS001/t1.nii.gz\"\
+  ,\n        \"t1ce\":  \"data/raw/brats2024/BraTS001/t1ce.nii.gz\",\n        \"t2\":    \"data/raw/brats2024/BraTS001/t2.nii.gz\"\
+  ,\n        \"flair\": \"data/raw/brats2024/BraTS001/flair.nii.gz\",\n    },\n    patient_id=\"BraTS001\"\
+  ,\n)\nprint(f\"Report saved: {report}\")\n```\n\n### 5. Launch the Streamlit Demo\n\n```powershell\n\
+  streamlit run app/streamlit_app.py\n```\n\n### 6. Run Tests\n\n```powershell\npytest tests/ -v\n```\n\
+  \n---\n\n## Build Order (Stage-by-Stage)\n\n| Stage | Module | What it does |\n|-------|--------|-------------|\n\
+  | 1 | `stage1_segmentation` | MONAI BraTS model → tumor mask + MC Dropout uncertainty |\n| 2 | `stage2_feature_extraction`\
+  \ | PyRadiomics → radiomic feature vector |\n| 3 | `stage3_grade_prediction` | XGBoost → LGG / GBM grade\
+  \ + probability |\n| 4 | `stage4_risk_prediction` | Random Survival Forest → risk score + 1-yr survival\
+  \ |\n| 5 | `stage5_priority_score` | Rule-based scoring + nilearn atlas → Urgent/Moderate/Routine |\n\
+  | 6 | `stage6_explainability` | Grad-CAM (CNN) + SHAP (XGBoost) |\n| 7 | `stage7_report` | Jinja2 Markdown\
+  \ report + TF-IDF QA (no API calls) |\n\n---\n\n## Datasets Required\n\n| Dataset | Purpose | Source\
+  \ |\n|---------|---------|--------|\n| BraTS 2024 | Segmentation training/inference | [Synapse](https://www.synapse.org/)\
+  \ |\n| TCGA-GBM | Grade model (GBM labels) | [TCIA](https://www.cancerimagingarchive.net/) |\n| TCGA-LGG\
+  \ | Grade model (LGG labels) | [TCIA](https://www.cancerimagingarchive.net/) |\n| BraTS Survival | Risk\
+  \ model (OS in days) | [Synapse](https://www.synapse.org/) |\n\n> **[WARNING]** Never commit raw MRI\
+  \ data or patient records to version control.\n\n---\n\n## Important Constraints\n\n- **No external\
+  \ API calls** in Stage 7 (report/QA). Fully template + rule-based.\n- **No hard-coded paths** — all\
+  \ paths read from `config/config.yaml`.\n- **No global pip installs** — always activate `.venv` first.\n\
+  - **Honest evaluation** — k-fold CV results are reported as mean ± std, never cherry-picked.\n\n---\n\
+  \n## Python Version\n\nPython 3.10.x (3.10 or 3.11 are both supported by MONAI and nnU-Net v2).\n\n\
+  ---\n\n*Academic project — not for clinical use.*\n"

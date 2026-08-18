@@ -1,0 +1,85 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: thecosmos42/brain-tumor-segmentation
+url: https://github.com/thecosmos42/brain-tumor-segmentation
+platform: github
+description: Deep learning models (U-Net variants) for automated brain tumor segmentation on BraTS dataset
+license: null
+language: null
+keywords: []
+stars: 0
+updated_at: '2026-08-07T17:04:37Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: '# Brain Tumor Segmentation Using Deep Learning
+
+
+  This project segments brain tumors in MRI scans using U-Net and its variants, trained on the [BraTS
+  2018 dataset](https://www.med.upenn.edu/cbica/brats2018/data.html). Tumor regions are classified into
+  four categories:
+
+
+  - `0`: Not Tumor
+
+  - `1`: Necrotic/Core
+
+  - `2`: Edema
+
+  - `4`: Enhancing Tumor
+
+
+  ## Approach
+
+
+  Tumor shapes, sizes, and contrast vary a lot across scans, and the classes are heavily imbalanced, so
+  the project relies on a few things to keep segmentation robust:
+
+
+  - Encoder-decoder architectures — U-Net, V-Net, and 3D U-Net — for the core segmentation
+
+  - A custom Dice loss that penalizes minority classes more heavily, so the model doesn''t just learn
+  to predict "not tumor" everywhere
+
+  - A 2D U-Net ensemble trained separately on axial, coronal, and sagittal views, with outputs fused at
+  inference — this multi-view fusion reduces overfitting compared to any single 2D view
+
+
+  ## Results
+
+
+  | Model                       | Dice Coefficient |
+
+  | --------------------------- | ---------------- |
+
+  | U-Net                       | 0.65              |
+
+  | V-Net                       | 0.68              |
+
+  | 3D U-Net                    | 0.74              |
+
+  | 2D U-Net (Axes Integration) | 0.76              |
+
+
+  The 2D U-Net ensemble came out ahead by combining information across all three anatomical views rather
+  than relying on one.
+
+
+  ## Dataset
+
+
+  [BraTS 2018](https://www.med.upenn.edu/cbica/brats2018/data.html) — annotated MRI scans for brain tumor
+  segmentation, provided by the BraTS Challenge organizers.
+
+
+  ## Credits
+
+
+  Built on the BraTS Challenge dataset and benchmarks, and on open-source U-Net/V-Net architectures from
+  the wider deep learning community.
+
+  '

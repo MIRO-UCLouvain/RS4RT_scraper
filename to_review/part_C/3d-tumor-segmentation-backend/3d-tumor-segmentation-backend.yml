@@ -1,0 +1,115 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: favourachara07/3d-tumor-segmentation-backend
+url: https://github.com/favourachara07/3d-tumor-segmentation-backend
+platform: github
+description: ''
+license: null
+language: HTML
+keywords: []
+stars: 0
+updated_at: '2026-05-20T14:45:27Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# 3D Brain Tumor Segmentation API\n\nThis project is the backend service for a 3D medical\
+  \ imaging analysis application. It uses a trained 3D U-Net model (built with MONAI and PyTorch) to perform\
+  \ semantic segmentation on multi-modal brain MRI scans.\n\nThe API is built with FastAPI and is designed\
+  \ to:\n1.  Accept a ZIP file containing DICOM series (FLAIR, T1, T1ce, T2).\n2.  Preprocess the images\
+  \ and run inference with a 3D U-Net.\n3.  Calculate the tumor volume in cubic millimeters.\n4.  Generate\
+  \ a simplified 3D mesh (.glb format) of the segmented tumor.\n5.  Return the volume and the mesh to\
+  \ a frontend client.\n\n## Setup and Installation\n\n### 1. Model Placement\nThis repository does not\
+  \ include the trained model file due to its size.\n- **Download the model:** You can download the trained\
+  \ model (`best_model.pth`) from [LINK TO YOUR KAGGLE NOTEBOOK OUTPUT OR GOOGLE DRIVE].\n- **Place the\
+  \ model:** Create a `models/` directory in the project root and place the `best_model.pth` file inside\
+  \ it.\n\n### 2. Environment Setup\nIt is highly recommended to use a virtual environment.\n\n```bash\n\
+  # Create a virtual environment\npython -m venv venv\n\n# Activate it (Windows)\nvenv\\\\Scripts\\\\\
+  activate\n# Or (macOS/Linux)\n# source venv/bin/activate\n\n# Install the required packages\npip install\
+  \ -r requirements.txt\n```\n\n# Deep Learning Core: 3D Brain Tumor Segmentation\n\nThis document details\
+  \ the machine learning pipeline used to build the 3D segmentation model for this project. As my first\
+  \ deep learning project, this work represents a practical application of Convolutional Neural Networks\
+  \ (CNNs) to complex, volumetric medical data.\n\n## 1. Conceptual Foundation: From 2D CNNs to 3D Segmentation\n\
+  \n### Understanding the Basics\nA traditional **Convolutional Neural Network (CNN)** operates on 2D\
+  \ images (like a photo of a cat). It scans the image with small filters (kernels) to detect features\
+  \ like edges, textures, and eventually, complex shapes.\n\n### The Challenge of 3D Medical Data\nAn\
+  \ MRI scan is not a flat image; it is a 3D volume composed of stacked 2D slices (voxels instead of pixels).\
+  \ A simple 2D CNN would lose critical spatial context along the depth (Z) axis. For example, a tumor\
+  \ usually persists across multiple slices. To capture this, we need a model that can \"see\" in 3D.\n\
+  \n### The Solution: 3D U-Net\nFor this project, I utilized the **3D U-Net architecture**, the industry\
+  \ standard for medical image segmentation.\n*   **Encoder (Contracting Path):** The model applies 3D\
+  \ convolutions to capture context (what the tumor looks like), reducing the image size while increasing\
+  \ feature complexity.\n*   **Decoder (Expanding Path):** The model upsamples the features back to the\
+  \ original size to enable precise localization (where the tumor is).\n*   **Skip Connections:** Critical\
+  \ links between the encoder and decoder layers that preserve fine-grained details lost during downsampling,\
+  \ ensuring the segmentation mask has sharp, accurate boundaries.\n\n---\n\n## 2. The Tech Stack\n\n\
+  The project leverages a specialized stack of libraries designed for deep learning and medical imaging.\n\
+  \n### Core Framework\n*   **PyTorch (`torch`):** The underlying deep learning framework. It provides\
+  \ the tensor data structures and automatic differentiation needed to train neural networks.\n    * \
+  \  *Why `cu121`?* The specific installation command (`--index-url .../cu121`) ensures we install the\
+  \ version of PyTorch optimized for CUDA 12.1, allowing the model to train on NVIDIA GPUs for massive\
+  \ speedups.\n\n### The Medical AI Specialist\n*   **MONAI (`monai[all]`):** The **Medical Open Network\
+  \ for AI**. This library sits on top of PyTorch and abstracts away the massive complexity of handling\
+  \ medical data.\n    *   **Role:** Instead of writing custom code to read NIfTI files, handle 3D data\
+  \ augmentation, or build a 3D U-Net from scratch, MONAI provides optimized, pre-built components for\
+  \ all these tasks. It is the engine that makes this project possible.\n\n### Data Processing & Utilities\n\
+  *   **`nibabel`:** A low-level library used to read and write neuroimaging files (specifically the `.nii`\
+  \ / NIfTI format used in the BraTS dataset).\n*   **`simpleitk` (Sitk):** A powerful image analysis\
+  \ toolkit.\n    *   *In Backend:* Used to read directories of raw DICOM files (the standard format from\
+  \ hospital scanners) and robustly convert them into the NIfTI format the model expects. It handles spacing,\
+  \ orientation, and metadata alignment.\n*   **`scikit-image`:** A collection of algorithms for image\
+  \ processing.\n    *   *Key Function:* `marching_cubes`. This algorithm takes the raw 3D voxel cloud\
+  \ produced by the model (the segmentation mask) and converts it into a geometric mesh (vertices and\
+  \ faces) that can be rendered in 3D.\n*   **`trimesh`:** A library for manipulating 3D meshes.\n   \
+  \ *   *Role:* Used to process the raw mesh from `marching_cubes`, simplify it (reduce polygon count)\
+  \ for web performance, and export it as a `.glb` file for the frontend.\n*   **`tqdm`:** Provides progress\
+  \ bars (e.g., during training loops), essential for monitoring long-running processes.\n\n---\n\n##\
+  \ 3. Model Training (The Notebook)\n\nThe training process was conducted in a Kaggle notebook to leverage\
+  \ free GPU resources.\n\n### A. Data Preparation\nThe model was trained on the **BraTS 2020 dataset**,\
+  \ a benchmark dataset for brain tumor segmentation.\n1.  **Multi-Modal Input:** Each patient sample\
+  \ consists of **4 different MRI scans** (modalities):\n    *   **FLAIR:** Fluid-Attenuated Inversion\
+  \ Recovery (good for edema).\n    *   **T1:** T1-weighted (structural).\n    *   **T1ce:** T1-weighted\
+  \ contrast-enhanced (good for active tumor).\n    *   **T2:** T2-weighted.\n2.  **The Input Tensor:**\
+  \ These 4 scans are stacked into a single 4-channel 3D tensor `(4, H, W, D)`.\n\n### B. Preprocessing\
+  \ Pipeline (MONAI Transforms)\nRaw medical data is messy. A robust pipeline was built using MONAI transforms:\n\
+  *   **`LoadImaged`:** Reads the 4 files into memory.\n*   **`EnsureChannelFirstd`:** Reformats data\
+  \ to PyTorch standards `(Channels, Spatial...)`.\n*   **`Orientationd`:** Re-orients all brains to a\
+  \ standard position (RAS - Right, Anterior, Superior) so the model doesn't have to learn rotation.\n\
+  *   **`Spacingd`:** **Crucial Step.** Resamples all images to a standard resolution (1mm x 1mm x 1mm\
+  \ voxels). This ensures physical size is consistent across patients, regardless of the scanner used.\n\
+  *   **`ScaleIntensityRanged`:** Normalizes pixel values to a 0-1 range for stable training.\n*   **`CropForegroundd`:**\
+  \ Crops out the empty black space around the head to save memory.\n*   **`RandCropByPosNegLabeld`:**\
+  \ Extracts smaller 3D patches (e.g., `96x96x96`) from the full brain for training. It ensures a balance\
+  \ of healthy tissue and tumor tissue in every batch.\n\n### C. Training Loop\n*   **Loss Function:**\
+  \ `DiceCELoss`. A combination of Dice Loss (measures overlap quality) and Cross-Entropy Loss. This combination\
+  \ is robust against the **class imbalance** problem (tumors are very small compared to the rest of the\
+  \ brain).\n*   **Optimizer:** `Adam`. An adaptive learning rate optimization algorithm.\n*   **Scheduler:**\
+  \ `ReduceLROnPlateau`. Automatically lowers the learning rate when the validation score stops improving,\
+  \ allowing the model to fine-tune its weights.\n*   **Early Stopping:** Monitored the validation Dice\
+  \ score and stopped training automatically when the model stopped improving to prevent overfitting.\n\
+  \n---\n\n## 4. Backend Inference System\n\nThe trained model (`best_model.pth`) is deployed via a **FastAPI**\
+  \ backend. The inference process mirrors the training but adapts it for real-world usage.\n\n### The\
+  \ Challenge: Real-World Data\nIn the wild, data comes as **DICOM** series (folders of .dcm slices),\
+  \ often with varying resolutions and field-of-views. The model expects aligned, isotropic **NIfTI**\
+  \ tensors.\n\n### The Inference Pipeline\n1.  **Ingestion:** The API accepts a ZIP file containing DICOM\
+  \ series.\n2.  **Intelligent Conversion:** `SimpleITK` scans the folder, groups files by Series UID,\
+  \ identifies the modality (FLAIR, T1, etc.), and converts each series into a 3D NIfTI volume in memory.\n\
+  3.  **Robust Preprocessing:**\n    *   Each of the 4 modalities is loaded and processed **independently**\
+  \ using `Spacingd` and `Orientationd`. This ensures that even if the T1 scan has a different resolution\
+  \ than the FLAIR scan, they are both resampled to the exact same 1mm grid *before* being stacked.\n\
+  \    *   `ConcatItemsd` stacks them into the required 4-channel tensor.\n    *   `ResizeWithPadOrCropd`\
+  \ forces the tensor to a standard size (e.g., `240x240x155`) to match the model's expected input geometry.\n\
+  4.  **Sliding Window Inference:**\n    *   Since the full brain volume is larger than the training patch\
+  \ size (`96x96x96`), we cannot feed it all at once.\n    *   MONAI's `sliding_window_inference` moves\
+  \ a window across the large input volume, generating predictions for each chunk, and stitching them\
+  \ together into a seamless 3D segmentation map.\n5.  **Post-Processing & Visualization:**\n    *   **Volume\
+  \ Calculation:** We count the non-background voxels in the prediction mask and multiply by the voxel\
+  \ volume (1mm³) to get the clinical tumor volume.\n    *   **3D Mesh Generation:**\n        1.  `marching_cubes`\
+  \ (scikit-image) converts the voxel mask into a high-resolution mesh.\n        2.  `trimesh.decimate`\
+  \ (trimesh) simplifies this mesh (e.g., reduces 100k faces to 15k faces) to make it lightweight enough\
+  \ to render in a web browser without crashing.\n    *   **Export:** The final lightweight mesh is exported\
+  \ as `.glb` (Base64 encoded) and sent to the frontend."

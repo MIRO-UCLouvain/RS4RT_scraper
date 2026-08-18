@@ -1,0 +1,285 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: MadsAlk/pet-mr-tumor-segmentation
+url: https://github.com/MadsAlk/pet-mr-tumor-segmentation
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-12T15:09:36Z'
+image_source: https://raw.githubusercontent.com/MadsAlk/pet-mr-tumor-segmentation/HEAD/project/results/part1_pet_last_frame.png
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: '# PET / MR Coregistration & Brain-Tumour Segmentation
+
+
+  A complete medical-imaging pipeline for a **dynamic FDG-PET** brain study coregistered to a
+
+  contrast-enhanced **T1 MR**, followed by **semi-automatic tumour segmentation** and a
+
+  quantitative accuracy evaluation against a manually drawn gold standard.
+
+
+  ---
+
+
+  ## Why this project
+
+
+  Multi-modal imaging is central to neuro-oncology: PET shows metabolic activity (where a
+
+  tumour is *active*) while MR shows anatomy (where structures *are*). Fused together they
+
+  localize a lesion far more reliably than either alone, but only after the two volumes,
+
+  acquired on different scanners with different geometry, are brought into the same physical
+
+  space. This project implements that full chain end to end, from raw DICOM to a scored
+
+  segmentation.
+
+
+  The study data is a dynamic PET volume (36 temporal frames × 47 slices) and a co-acquired
+
+  T1+C MR of the same patient. The raw patient scans are not included in this repository
+
+  for privacy; the pipeline and all generated results are.
+
+
+  ---
+
+
+  ## Part 1: DICOM loading & visualization
+
+
+  Both modalities are read from DICOM, with the metadata (patient position, voxel spacing,
+
+  frame timing) used to reconstruct anatomically correct volumes. The PET pixel array is
+
+  stored as a flat `(1692, 256, 256)` stack; it is reshaped to `(36 frames, 47 slices, 256,
+
+  256)` and the slice axis is flipped to match radiological superior→inferior convention.
+
+  Coronal and sagittal views are resampled by the voxel-size ratio (3.27 / 1.17) so they
+
+  display isotropically.
+
+
+  | Last temporal frame (peak uptake) | Temporal mean of all 36 frames |
+
+  | --- | --- |
+
+  | ![PET last frame](project/results/part1_pet_last_frame.png) | ![PET temporal mean](project/results/part1_pet_mean.png)
+  |
+
+
+  The temporal evolution of each median plane is rendered as an animation:
+
+
+  | Axial | Coronal | Sagittal |
+
+  | --- | --- | --- |
+
+  | ![axial](project/results/axial.gif) | ![coronal](project/results/coronal.gif) | ![sagittal](project/results/sagittal.gif)
+  |
+
+
+  ---
+
+
+  ## Part 2: 3D rigid coregistration
+
+
+  The temporal-average PET (moving) is rigidly registered to the T1+C MR (fixed) with a
+
+  6-parameter **Euler transform**, optimizing **Mattes Mutual Information**, the right choice
+
+  for multi-modal data, since it assumes no linear intensity relationship between PET and MR.
+
+  Registration runs in Elastix with adaptive stochastic gradient descent over a 4-level
+
+  multi-resolution pyramid. The PET is resampled onto the isotropic MR grid and the MR is
+
+  zero-padded so both share a field of view. An **inverse transform** is estimated (roles
+
+  swapped) so a mask drawn in MR space can later be mapped back into PET space.
+
+
+  ![Coregistration QC: original PET, MR reference, registered PET, and alpha-fusion overlay](project/results/part2_qc.png)
+
+
+  Registration quality improves on both intensity metrics:
+
+
+  | Metric | Before | After |
+
+  | --- | --- | --- |
+
+  | Normalized Mutual Information (NMI) | 1.1535 | **1.2302** |
+
+  | Normalized Cross-Correlation (NCC) | 0.4688 | **0.6584** |
+
+
+  Rotating maximum-intensity projections confirm the alignment in 3D, MR, registered PET,
+
+  and their fusion:
+
+
+  | MR MIP | PET MIP | Fusion MIP |
+
+  | --- | --- | --- |
+
+  | ![MR MIP](project/results/mr_mip.gif) | ![PET MIP](project/results/pet_mip.gif) | ![Fusion MIP](project/results/fusion_mip.gif)
+  |
+
+
+  ---
+
+
+  ## Part 3: Semi-automatic tumour segmentation
+
+
+  **Prompt selection.** The lesion is most conspicuous in the last PET frame. The script lays
+
+  out every axial slice in a grid, the user picks the slice, drags one 2D box around the
+
+  lesion, and the box is propagated to 3D with a ±4-slice margin, keeping human input to two
+
+  interactions.
+
+
+  ![Axial slice grid used for prompt selection](project/results/part3_pet_all_slices.png)
+
+
+  **Deep-learning attempt (documented honestly).** The segmentation was first built around a
+
+  **MONAI Label** server. DeepEdit (trained on abdominal CT) grew a mask over most of the
+
+  brain, and VISTA-3D collapsed to a tiny region because a brain tumour is out of its
+
+  supervised class set and the exported MR intensity range did not match its expectations.
+
+  Neither produced a usable brain-tumour mask out of the box, a useful negative result about
+
+  applying general-purpose medical models off-distribution.
+
+
+  **Gold standard + reproducible baseline.** To proceed, a reference mask was drawn
+
+  interactively in **3D Slicer** (Grow-from-seeds / Paint), giving 41,224 tumour voxels. A
+
+  fully reproducible **intensity-based 3D region-growing** baseline was then implemented on
+
+  the MR inside the prompt box (threshold τ = µ − 0.4σ, binary closing, largest connected
+
+  component) and scored against the Slicer reference.
+
+
+  | MR + Slicer manual reference | PET with mask overlay |
+
+  | --- | --- |
+
+  | ![Slicer 3-plane segmentation](project/results/part3_segmentation.png) | ![Mask overlay on PET](project/results/part3_slicer_overlay.png)
+  |
+
+
+  **Evaluation.** Automatic region-growing vs. the Slicer gold standard:
+
+
+  | Metric | Value |
+
+  | --- | --- |
+
+  | Dice | 0.614 |
+
+  | IoU | 0.443 |
+
+  | Sensitivity | **0.966** |
+
+  | Specificity | 0.997 |
+
+  | Hausdorff (vox) | 30.0 |
+
+  | Volume, automatic / reference (voxels) | 88,592 / 41,224 |
+
+
+  ![Automatic vs. Slicer reference with TP (green) / FP (red) / FN (blue)](project/results/part3_auto_vs_slicer.png)
+
+
+  **Interpretation.** Sensitivity of 0.97 means the baseline recovers almost the entire
+
+  lesion, but it over-segments (nearly 2× the reference volume) into adjacent tissue sharing
+
+  the tumour''s intensity range, which pulls Dice/IoU down. It is reliable for *localizing* the
+
+  lesion and would make a good coarse initialization for an interactive editing stage, but is
+
+  not precise enough as a standalone quantitative tool without post-processing.
+
+
+  ---
+
+
+  ## Tech stack
+
+
+  Python · PyDicom · NumPy / SciPy · **Elastix / PyElastix** (registration) · NiBabel ·
+
+  3D Slicer · MONAI Label · Matplotlib · ImageIO
+
+
+  ## Repository layout
+
+
+  ```
+
+  project/
+
+  ├── part1_dicom.py            DICOM loading, PET reshape, temporal-plane GIFs
+
+  ├── part2_coregistration.py   rigid Euler + Mattes-MI registration, inverse field, MIPs
+
+  ├── part3_segmentation.py     prompt selection + MONAI Label client (with region-grow fallback)
+
+  ├── part3_evaluate_slicer.py  region-growing baseline vs. Slicer mask; Dice/IoU/Sens/Hausdorff
+
+  ├── report.tex                LaTeX source of the technical report
+
+  └── results/                  curated figures, animations and metrics
+
+  ```
+
+
+  ## Running
+
+
+  ```bash
+
+  python -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
+
+  pip install pydicom numpy scipy matplotlib opencv-python imageio pyelastix nibabel
+
+
+  python part1_dicom.py
+
+  python part2_coregistration.py      # requires the Elastix binary (set ELASTIX_PATH)
+
+  python part3_evaluate_slicer.py
+
+  ```
+
+
+  Part 2 needs the external **Elastix** binary; Part 3''s deep-learning path needs a MONAI
+
+  Label server (optional, the region-growing baseline runs without it). Patient DICOM,
+
+  intermediate `.npy` volumes and model weights are excluded from version control.
+
+  '

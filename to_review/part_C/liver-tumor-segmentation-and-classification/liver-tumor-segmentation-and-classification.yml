@@ -1,0 +1,73 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: varunisood06/liver-tumor-segmentation-and-classification
+url: https://github.com/varunisood06/liver-tumor-segmentation-and-classification
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-02T16:21:31Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Liver Tumor Segmentation and Stage Classification System\n\nAn end-to-end medical deep\
+  \ learning pipeline featuring an **Attention U-Net** for pixel-level liver and tumor segmentation, a\
+  \ **DenseNet121** model for clinical disease stage classification, and **Grad-CAM** for Explainable\
+  \ AI (XAI) clinical visualization and decision support.\n\n---\n\n## Project Overview\n\nIn clinical\
+  \ oncology, accurate identification of liver boundaries, tumor detection, and disease staging are critical\
+  \ steps in treatment planning. This repository hosts a multi-stage deep learning pipeline designed to\
+  \ automate these tasks:\n\n1. **Liver and Tumor Segmentation (Attention U-Net)**: Performs pixel-level\
+  \ segmentation on raw CT scans to extract the liver area and identify localized tumors.\n2. **Tumor\
+  \ Burden Classification (DenseNet121)**: Evaluates the tumor volume relative to the total liver volume,\
+  \ classifying the patient's condition into four distinct severity stages (Normal, Mild, Moderate, Severe).\n\
+  3. **Explainable AI (Grad-CAM)**: Generates gradient-weighted activation heatmaps on the classification\
+  \ model's final convolutional layer, providing visual explanations of which features the network used\
+  \ to make its diagnosis.\n\n---\n\n## Technical Pipeline Architecture\n\nThe overall structure of the\
+  \ deep learning pipeline, from raw files to explainable predictions, is detailed below:\n\n```mermaid\n\
+  flowchart TD\n    A[Liver Tumor Segmentation Dataset] --> B[NIfTI Volumes and Masks]\n    B --> C[Slice\
+  \ Extraction & Preprocessing]\n    C --> D[Attention U-Net Segmentation]\n    D --> E[Liver & Tumor\
+  \ Mask Generation]\n    E --> F[Tumor-to-Liver Volume Calculation]\n    F --> G[Disease Stage Labeling]\n\
+  \    G --> H[DenseNet121 Classification Model]\n    H --> I[Grad-CAM Visual Explanations]\n```\n\n---\n\
+  \n## Dataset and Preprocessing\n\nThe system processes data from the benchmark **Liver Tumor Segmentation**\
+  \ dataset:\n* **Format**: NIfTI files (`.nii`) containing high-resolution 3D medical volumes.\n* **Volume-to-Slice\
+  \ Extraction**: Converts 3D volumes into 2D slices (`256x256` pixels) using `nibabel` and `opencv-python`.\n\
+  * **Normalization**: Liver windowing (HU window adjustment) and min-max scaling to enhance anatomical\
+  \ boundaries.\n\n---\n\n## Models and Methodologies\n\n### 1. Pixel-Level Segmentation: Attention U-Net\n\
+  * **Architecture**: A modified U-Net featuring customized Attention Gates integrated at the skip connections.\n\
+  * **Role of Attention Gates**: Suppresses background noise and highlights salient anatomical features\
+  \ directly in the encoder-decoder pathways, reducing false positives in non-liver regions.\n* **Loss\
+  \ & Optimization**: Compiled using Adam optimizer and Sparse Categorical Crossentropy.\n* **Checkpointing**:\
+  \ Leverages early stopping and model checkpoint tracking to save the best-performing weights (`best_attention_unet.keras`).\n\
+  \n### 2. Multi-Class Staging: DenseNet121\n* **Architecture**: Transfer learning with a DenseNet121\
+  \ backbone, optimized for medical imaging feature extraction.\n* **Staging Logic**: Classes are determined\
+  \ by calculating the percentage of tumor volume relative to the total liver volume:\n\n| Class ID |\
+  \ Stage | Condition |\n| :--- | :--- | :--- |\n| **Class 0** | Normal | 0% tumor volume |\n| **Class\
+  \ 1** | Mild | Less than or equal to 1% tumor volume |\n| **Class 2** | Moderate | Between 1% and 10%\
+  \ tumor volume |\n| **Class 3** | Severe | Greater than 10% tumor volume |\n\n* **Class Balancing**:\
+  \ Balanced using computed class weights in scikit-learn during training to handle dataset imbalance.\n\
+  \n### 3. Interpretability: Grad-CAM\n* **Methodology**: Computes gradients of the target class score\
+  \ with respect to the output feature maps of the last convolutional block (`conv5_block16_2_conv`).\n\
+  * **Visual Verification**: Overlays heatmaps on the input scans to allow radiologists and clinical teams\
+  \ to verify if the model is focusing on the actual tumor tissue or random background artifacts.\n\n\
+  ---\n\n## Installation & Setup\n\n### Prerequisites\n* Python 3.8 or higher\n* Jupyter Notebook or JupyterLab\n\
+  * GPU support recommended for model training (TensorFlow CUDA configuration)\n\n### 1. Clone the Repository\n\
+  ```bash\ngit clone <your-repository-url>\ncd <your-repository-name>\n```\n\n### 2. Create and Activate\
+  \ a Virtual Environment\n```bash\n# On macOS/Linux\npython3 -m venv venv\nsource venv/bin/activate\n\
+  \n# On Windows\npython -m venv venv\nvenv\\Scripts\\activate\n```\n\n### 3. Install Dependencies\n```bash\n\
+  pip install -r requirements.txt\n```\n\n### 4. Run the Pipeline\nOpen the notebook locally and execute\
+  \ the cells in order:\n```bash\njupyter notebook livertumor.ipynb\n```\n\n---\n\n## Publishing to GitHub\n\
+  \nTo upload this project to your GitHub account, run the following commands in your terminal from the\
+  \ project root:\n\n```bash\n# Initialize a local Git repository\ngit init\n\n# Stage all files for commit\n\
+  git add .\n\n# Create the initial commit\ngit commit -m \"Initial commit: Liver tumor segmentation (Attention\
+  \ U-Net) and classification (DenseNet121) with Grad-CAM\"\n\n# Rename default branch to main\ngit branch\
+  \ -M main\n\n# Link your local repository to your remote GitHub repository\ngit remote add origin https://github.com/your-username/your-repository-name.git\n\
+  \n# Push your project to GitHub\ngit push -u origin main\n```\n"

@@ -1,0 +1,100 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ramadeef/dcm-mri-radiomics-propensity-balancing
+url: https://github.com/ramadeef/dcm-mri-radiomics-propensity-balancing
+platform: github
+description: Source code for multivendor, multisite cervical MRI radiomics analysis for detection of degenerative
+  cervical myelopathy after propensity-based cohort balancing.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-25T19:35:52Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# RSNA DCM Radiomics Classification Code\n\nThis repository contains a cleaned, script-based\
+  \ version of the notebook workflow used for degenerative cervical myelopathy (DCM) radiomics classification.\n\
+  \nThe workflow supports:\n\n- train/test CSV loading\n- subject-level overlap-weight merging by `subject_id`\n\
+  - exclusion of `overlap_weight_norm` from predictor features\n- overlap-weighted model training\n- unweighted\
+  \ and weighted 5-fold stratified cross-validation metrics\n- held-out test evaluation\n- final full-training-set\
+  \ model fitting\n- ROC, precision-recall, and calibration plots\n- optional SHAP beeswarm/bar plots\n\
+  - lightweight unit tests using synthetic/dummy data\n\n## Repository layout\n\n```text\n.\n├── src/rsna_dcm_radiomics/\n\
+  │   ├── config.py              # ExperimentConfig dataclass\n│   ├── data.py                # CSV loading,\
+  \ weight merge, feature preparation\n│   ├── metrics.py             # AUROC, AUPRC, accuracy, sensitivity,\
+  \ specificity, PPV, NPV, etc.\n│   ├── models.py              # CatBoost, LightGBM, XGBoost, RandomForest\
+  \ builders\n│   ├── cv.py                  # Stratified CV, OOF predictions, fold metrics\n│   ├── evaluate.py\
+  \            # Held-out test and final-model evaluation\n│   ├── shap_analysis.py       # Optional SHAP\
+  \ outputs\n│   └── train.py               # Command-line entry point\n├── scripts/\n│   └── add_overlap_weights.py\
+  \ # Merge overlap_weight_norm into train/test CSVs\n├── examples/\n│   ├── make_dummy_data.py     #\
+  \ Generate non-PHI example CSVs\n│   └── config_example.json    # Example JSON config\n├── tests/  \
+  \                   # Dummy unit tests\n├── requirements.txt           # Full environment\n├── requirements-minimal.txt\
+  \   # Minimal environment for tests/RandomForest\n└── pyproject.toml\n```\n\n## Important data note\n\
+  \nDo **not** commit patient-level CSV files, model files, prediction files, or other private derived\
+  \ outputs to a public GitHub repository unless your institution has approved release. The `.gitignore`\
+  \ is configured to exclude `/data/**/*.csv`, `/data/**/*.xlsx`, `/outputs/`, `*.pkl`, and related artifacts.\n\
+  \nFor a public RSNA supplement/GitHub repository, commit the source code, tests, README, and synthetic\
+  \ examples. Keep real data private or provide a deidentified/public data-access statement if allowed\
+  \ by the IRB/data-use agreement.\n\n## Install\n\nCreate and activate a clean environment:\n\n```bash\n\
+  python -m venv .venv\nsource .venv/bin/activate       # macOS/Linux\n# .venv\\Scripts\\activate    \
+  \    # Windows PowerShell\n\npython -m pip install --upgrade pip\npython -m pip install -e \".[full,test]\"\
+  \n```\n\nFor a lightweight test-only install:\n\n```bash\npython -m pip install -e \".[test]\"\n```\n\
+  \n## Run unit tests\n\n```bash\npytest -q\n```\n\nThe tests use synthetic data only. They verify that\
+  \ overlap weights merge correctly, the weight column is excluded from predictors, metrics are computed,\
+  \ and a small cross-validation run saves expected artifacts.\n\n## Run the workflow with synthetic dummy\
+  \ data\n\nGenerate dummy train/test files and dummy overlap weights:\n\n```bash\npython examples/make_dummy_data.py\n\
+  ```\n\nRun the full pipeline using the example config:\n\n```bash\nrsna-dcm-train --config examples/config_example.json\n\
+  ```\n\nEquivalent module form:\n\n```bash\npython -m rsna_dcm_radiomics.train --config examples/config_example.json\n\
+  ```\n\nExpected outputs will be written to:\n\n```text\noutputs/example_run/\n```\n\n## Run with the\
+  \ manuscript train/test CSVs\n\nPlace your private CSVs locally, for example:\n\n```text\ndata/private/t2_radiomics_clinical_mri_3d_train.csv\n\
+  data/private/t2_radiomics_clinical_mri_3d_test.csv\ndata/private/cohort_with_overlap_weights_full.csv\n\
+  ```\n\nThen run:\n\n```bash\nrsna-dcm-train \\\n  --train-csv data/private/t2_radiomics_clinical_mri_3d_train.csv\
+  \ \\\n  --test-csv data/private/t2_radiomics_clinical_mri_3d_test.csv \\\n  --weight-csv-train data/private/cohort_with_overlap_weights_full.csv\
+  \ \\\n  --weight-csv-test data/private/cohort_with_overlap_weights_full.csv \\\n  --outdir outputs/dcm_radiomics_weighted\
+  \ \\\n  --target-col demo_type \\\n  --id-col subject_id \\\n  --weight-col overlap_weight_norm \\\n\
+  \  --model-names catboost,lightgbm,xgboost,randomforest \\\n  --n-splits 5 \\\n  --seed 42\n```\n\n\
+  If your train/test CSVs already contain `overlap_weight_norm`, you can omit `--weight-csv-train` and\
+  \ `--weight-csv-test`:\n\n```bash\nrsna-dcm-train \\\n  --train-csv data/private/t2_radiomics_clinical_mri_3d_train.csv\
+  \ \\\n  --test-csv data/private/t2_radiomics_clinical_mri_3d_test.csv \\\n  --outdir outputs/dcm_radiomics_weighted\
+  \ \\\n  --model-names catboost,lightgbm,xgboost,randomforest \\\n  --n-splits 5 \\\n  --seed 42\n```\n\
+  \n## Merge overlap weights into train/test CSVs only\n\nUse this when the train/test CSVs do not already\
+  \ contain `overlap_weight_norm`:\n\n```bash\npython scripts/add_overlap_weights.py \\\n  --train-csv\
+  \ data/private/t2_radiomics_clinical_mri_3d_train.csv \\\n  --test-csv data/private/t2_radiomics_clinical_mri_3d_test.csv\
+  \ \\\n  --weights-csv data/private/cohort_with_overlap_weights_full.csv \\\n  --train-out data/private/t2_radiomics_clinical_mri_3d_train_with_overlap_weight_norm.csv\
+  \ \\\n  --test-out data/private/t2_radiomics_clinical_mri_3d_test_with_overlap_weight_norm.csv\n```\n\
+  \nThe script checks for missing IDs, duplicate IDs in the weight table, and accidental overwrite of\
+  \ the weight column.\n\n## Run SHAP outputs\n\nSHAP can take longer, especially for non-tree fallback\
+  \ explainers. To create top-10 SHAP plots for the best fold model of each algorithm:\n\n```bash\nrsna-dcm-train\
+  \ \\\n  --train-csv data/private/t2_radiomics_clinical_mri_3d_train.csv \\\n  --test-csv data/private/t2_radiomics_clinical_mri_3d_test.csv\
+  \ \\\n  --outdir outputs/dcm_radiomics_weighted_shap \\\n  --model-names catboost,lightgbm,xgboost,randomforest\
+  \ \\\n  --n-splits 5 \\\n  --seed 42 \\\n  --run-shap \\\n  --shap-max-display 10\n```\n\nSHAP artifacts\
+  \ are saved under each model folder, for example:\n\n```text\noutputs/dcm_radiomics_weighted_shap/CatBoost/shap_best_fold_model/\n\
+  ```\n\n## Main output files\n\nFor each model folder, the pipeline saves:\n\n```text\nfold_metrics.csv\n\
+  summary_metrics.csv\noof_predictions.csv\nmisclassified_oof.csv\noof_confusion_matrix.csv\ncalibration_oof.png\n\
+  <MODEL>_best_model.pkl\nreproducibility_manifest.json\nfeature_names.json\ntest_predictions.csv\ntest_results.json\n\
+  test_confusion_matrix.csv\ntest_roc.png\ntest_pr.png\ntest_calibration.png\nfinal_model/\n```\n\nAt\
+  \ the run level, it also saves:\n\n```text\nrun_config.json\nfeature_columns.json\ncv_artifacts_manifest.csv\n\
+  test_leaderboard_best_fold_models.csv\ntest_leaderboard_final_full_train_models.csv\n```\n\n## Methods\
+  \ alignment with the notebook\n\nThis code preserves the key notebook logic:\n\n1. `subject_id`, `demo_type`,\
+  \ and `overlap_weight_norm` are treated as non-feature columns.\n2. `overlap_weight_norm` is passed\
+  \ as `sample_weight` during model fitting when available.\n3. Weighted validation/test metrics are computed\
+  \ separately from unweighted metrics.\n4. The held-out test set is not used during cross-validation\
+  \ model selection.\n5. A final model is retrained on the full training set and evaluated on the held-out\
+  \ test set.\n\n## Minimal citation-style methods text\n\nYou can adapt this text in the manuscript or\
+  \ supplement:\n\n> Model development code was organized as a reproducible Python package. Radiomics\
+  \ feature matrices were loaded from pre-specified training and held-out test CSV files. Subject-level\
+  \ overlap weights derived from age and sex were merged by `subject_id` and used only as sample weights,\
+  \ not as predictor features. Candidate models were evaluated using stratified 5-fold cross-validation\
+  \ on the training set with overlap-weighted fitting when weights were available. Model performance was\
+  \ summarized using unweighted and weighted metrics, including AUROC, AUPRC, accuracy, sensitivity, specificity,\
+  \ PPV, NPV, F1 score, Brier score, log loss, and Matthews correlation coefficient. Final models were\
+  \ retrained on the full training set and evaluated on the held-out test set.\n\n## Reproducibility checklist\
+  \ before GitHub upload\n\nBefore uploading publicly:\n\n1. Confirm no private CSV, Excel, model `.pkl`,\
+  \ predictions, or output folders are staged.\n2. Run `pytest -q` successfully.\n3. Run the dummy example\
+  \ once to confirm the README commands work.\n4. Add a data availability statement rather than uploading\
+  \ restricted patient-level data.\n5. Tag the repository release used for submission, for example `v1.0-rsna-submission`.\n"

@@ -1,0 +1,141 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Siddharthpo03/3D-Helical-CT-LSQR-Reconstruction
+url: https://github.com/Siddharthpo03/3D-Helical-CT-LSQR-Reconstruction
+platform: github
+description: High-performance 3D Helical Cone-Beam CT image reconstruction system using ray-casting geometry,
+  CUDA GPU acceleration, and LSQR iterative solver.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-10T20:42:27Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# \U0001F4D0 3D Helical Cone-Beam CT Image Reconstruction (LSQR Algorithm)\n\nAn end-to-end\
+  \ high-performance system for **3D Helical Cone-Beam Computed Tomography (CT) Image Reconstruction**.\
+  \ This project uses ray-casting geometry and the **LSQR (Least Squares QR)** iterative solver algorithm\
+  \ to reconstruct 3D attenuation volume densities ($X$) from 2D X-ray projection measurements ($B$).\n\
+  \nBoth **CPU (C)** and **GPU-accelerated (CUDA)** implementations are provided.\n\n---\n\n## \U0001F4CB\
+  \ Table of Contents\n1. [Project Overview](#-project-overview)\n2. [Mathematics & Geometry](#-mathematics--geometry)\n\
+  3. [Complete Installation & Setup Guide](#-complete-installation--setup-guide)\n   - [Part 1: Python\
+  \ Setup](#part-1-python-setup)\n   - [Part 2: NVIDIA CUDA Toolkit Setup (GPU Acceleration)](#part-2-nvidia-cuda-toolkit-setup-gpu-acceleration)\n\
+  \   - [Part 3: C/C++ Compiler Setup](#part-3-cc-compiler-setup)\n4. [Quick Start Guide (Step-by-Step\
+  \ Execution)](#-quick-start-guide-step-by-step-execution)\n   - [Step 1: Environment Setup & Data Preparation](#step-1-environment-setup--data-preparation)\n\
+  \   - [Step 2: Generate X-Ray Projections (Matrix B)](#step-2-generate-x-ray-projections-matrix-b)\n\
+  \   - [Step 3: Run 3D Reconstruction (LSQR Solver)](#step-3-run-3d-reconstruction-lsqr-solver)\n   -\
+  \ [Step 4: Visualize & Evaluate Results](#step-4-visualize--evaluate-results)\n5. [Directory & File\
+  \ Map](#-directory--file-map)\n6. [Methodology & Data Flow](#-methodology--data-flow)\n7. [Troubleshooting\
+  \ & FAQ](#-troubleshooting--faq)\n\n---\n\n## \U0001F52C Project Overview\n\nIn Computed Tomography\
+  \ (CT) scanning, an X-ray source and detector rotate around an object, recording total X-ray absorption\
+  \ along rays (line integrals). \n\nThis project solves the linear inverse problem:\n$$\\mathbf{A} \\\
+  cdot \\mathbf{X} = \\mathbf{B}$$\n\nWhere:\n- $\\mathbf{X}$ is the unknown **3D Voxel Density Grid**\
+  \ ($512 \\times 512 \\times 512 = 134,217,728$ voxels, $\\sim 536.87 \\text{ MB}$).\n- $\\mathbf{B}$\
+  \ is the **Projection Measurements Vector** ($473 \\text{ angles} \\times 512 \\times 512 \\text{ detector\
+  \ pixels} = 123,994,112$ values, $\\sim 495.98 \\text{ MB}$).\n- $\\mathbf{A}$ is the implicit system\
+  \ projection operator (ray-voxel interaction matrix).\n\n---\n\n## ⚙️ Mathematics & Geometry\n\n| Parameter\
+  \ | Value | Description |\n| :--- | :--- | :--- |\n| **Volume Grid ($\\mathbf{X}$)** | $512 \\times\
+  \ 512 \\times 512$ | 3D Voxel resolution |\n| **Object Diameter** | $80.86 \\text{ mm}$ | Physical bounding\
+  \ diameter ($\\text{voxel size} = 0.157929 \\text{ mm}$) |\n| **Projections ($N_{pa}$)** | $473 \\text{\
+  \ angles}$ | Angular projections over $640^\\circ$ span |\n| **Detector Grid ($N_{det} \\times N_{slice}$)**\
+  \ | $512 \\times 512$ | Detector pixels per projection angle |\n| **Source-to-Object ($\\text{scob}$)**\
+  \ | $166.641 \\text{ mm}$ | Distance from X-ray source to rotation center |\n| **Source-to-Detector\
+  \ ($\\text{scd}$)** | $1238.157 \\text{ mm}$ | Distance from X-ray source to detector panel |\n| **Detector\
+  \ Pitch ($d$)** | $0.8 \\text{ mm}$ | Size of each detector pixel |\n| **Helical Shift** | $0.136 \\\
+  text{ mm}$ | Helical vertical movement per angle |\n\n---\n\n## \U0001F4E6 Complete Installation & Setup\
+  \ Guide\n\nEven if you have a completely fresh machine with zero development tools installed, follow\
+  \ these instructions step-by-step for your operating system.\n\n---\n\n### Part 1: Python Setup\n\n\
+  Python is used for visualizing reconstructed 3D slices, calculating SSIM/MSE/MAE metrics, and generating\
+  \ graphs.\n\n#### 1. Install Python (v3.8 or newer)\n- **Windows:**\n  1. Download Python installer\
+  \ from [python.org/downloads](https://www.python.org/downloads/).\n  2. Run the `.exe` file.\n  3. ⚠️\
+  \ **IMPORTANT:** Check the box **\"Add Python to PATH\"** before clicking *Install Now*.\n- **Ubuntu\
+  \ / Debian Linux:**\n  ```bash\n  sudo apt update\n  sudo apt install python3 python3-pip python3-venv\
+  \ -y\n  ```\n- **macOS:**\n  ```bash\n  brew install python\n  ```\n\n#### 2. Verify Python Installation\n\
+  Open a terminal (Command Prompt / PowerShell on Windows, or Terminal on Linux/Mac) and run:\n```bash\n\
+  python --version\npip --version\n```\n*(On Linux/Mac, if `python` isn't bound, use `python3` and `pip3`)*.\n\
+  \n#### 3. Install Required Python Libraries\nRun the following command in your terminal:\n```bash\n\
+  pip install numpy matplotlib scikit-image\n```\n\n*Or using a virtual environment (recommended):*\n\
+  ```bash\n# Create virtual environment\npython -m venv venv\n\n# Activate it:\n# Windows:\nvenv\\Scripts\\\
+  activate\n# Linux / Mac:\nsource venv/bin/activate\n\n# Install dependencies:\npip install numpy matplotlib\
+  \ scikit-image\n```\n\n---\n\n### Part 2: NVIDIA CUDA Toolkit Setup (GPU Acceleration)\n\n> **Note:**\
+  \ CUDA is **optional**. If you do not have an NVIDIA GPU, you can skip this part and run the project\
+  \ using the **CPU implementation**!\n\n#### 1. Verify NVIDIA GPU & Driver\nCheck if your machine has\
+  \ an NVIDIA GPU and driver installed:\n```bash\nnvidia-smi\n```\nIf this displays your GPU details (e.g.\
+  \ RTX 3050, RTX 4060, etc.) and driver version, proceed to install CUDA.\n\n#### 2. Download & Install\
+  \ CUDA Toolkit\n1. Go to official [NVIDIA CUDA Downloads Portal](https://developer.nvidia.com/cuda-downloads).\n\
+  2. Select your OS (Windows / Linux), Architecture (`x86_64`), and Installer type (`exe local` for Windows,\
+  \ `deb local` or `runfile` for Linux).\n3. Download CUDA Toolkit (v11.8 or v12.x recommended).\n4. Run\
+  \ the installer and choose **Express Installation**.\n\n#### 3. Configure System PATH for `nvcc` Compiler\n\
+  After installation, verify if the CUDA compiler `nvcc` is available:\n```bash\nnvcc --version\n```\n\
+  \nIf `nvcc` is **not recognized**, add CUDA to your System Environment variables:\n\n- **Windows:**\n\
+  \  1. Press `Win + R`, type `sysdm.cpl`, hit Enter $\\rightarrow$ Advanced $\\rightarrow$ **Environment\
+  \ Variables**.\n  2. Under *System Variables*, edit `Path` and add:\n     ```text\n     C:\\Program\
+  \ Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v12.x\\bin\n     C:\\Program Files\\NVIDIA GPU Computing\
+  \ Toolkit\\CUDA\\v12.x\\libnvvp\n     ```\n  3. Restart Command Prompt or PowerShell.\n\n- **Linux (Ubuntu):**\n\
+  \  Add the following lines to your `~/.bashrc` or `~/.zshrc`:\n  ```bash\n  export PATH=/usr/local/cuda/bin:$PATH\n\
+  \  export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH\n  ```\n  Then run:\n  ```bash\n  source\
+  \ ~/.bashrc\n  ```\n\n---\n\n### Part 3: C/C++ Compiler Setup\n\nA C compiler (`gcc` or MSVC) is required\
+  \ to compile the CPU-based matrix generation and LSQR solver routines.\n\n#### 1. Windows Setup\n- **Option\
+  \ A (Recommended - MinGW GCC via WinLibs):**\n  1. Download standalone GCC for Windows from [winlibs.com](https://winlibs.com/).\n\
+  \  2. Extract the ZIP folder (e.g., to `C:\\mingw64`).\n  3. Add `C:\\mingw64\\bin` to your System `PATH`.\n\
+  \  4. Test in CMD: `gcc --version`\n\n- **Option B (Visual Studio C++ Build Tools):**\n  1. Download\
+  \ [Visual Studio Community](https://visualstudio.microsoft.com/vs/community/) or Visual Studio Build\
+  \ Tools.\n  2. Select workload **\"Desktop development with C++\"** and install.\n\n#### 2. Linux Setup\
+  \ (Ubuntu/Debian)\n```bash\nsudo apt update\nsudo apt install build-essential gcc g++ cmake -y\ngcc\
+  \ --version\n```\n\n#### 3. macOS Setup\n```bash\nxcode-select --install\ngcc --version\n```\n\n---\n\
+  \n## \U0001F680 Quick Start Guide (Step-by-Step Execution)\n\nFollow these steps sequentially to build\
+  \ and execute the complete pipeline on any computer.\n\n### Step 1: Environment Setup & Data Preparation\n\
+  1. Open terminal and navigate to the project directory:\n   ```bash\n   cd \"AA Project\"\n   ```\n\n\
+  2. Ensure your ground truth volume file (`sim_512.dat` or `sim_512.bin`) is present in the project folder.\n\
+  \n> **Tip:** If you only have `sim_512.dat` (text file), run this quick Python command to convert it\
+  \ to binary `sim_512.bin` for fast loading:\n> ```bash\n> python -c \"import numpy as np; data = np.fromfile('sim_512.dat',\
+  \ sep=' ', dtype=np.float32); data.tofile('sim_512.bin'); print('Converted sim_512.bin successfully!')\"\
+  \n> ```\n\n---\n\n### Step 2: Generate X-Ray Projections (Matrix B)\n\nYou can choose either **CPU (C)**\
+  \ or **GPU (CUDA)** mode to generate projection data $\\mathbf{B}$.\n\n#### Option A: GPU Acceleration\
+  \ (Recommended - Fast)\n1. Compile CUDA kernel:\n   ```bash\n   nvcc -O3 generate_B.cu -o generate_B_gpu\n\
+  \   ```\n2. Execute generator:\n   - **Linux / Mac:** `./generate_B_gpu sim_512.bin Vector_B.bin`\n\
+  \   - **Windows:** `generate_B_gpu.exe sim_512.bin Vector_B.bin`\n\n#### Option B: CPU Execution\n1.\
+  \ Compile C code:\n   ```bash\n   gcc -O3 matrix_b_gen.c -o generate_B_cpu -lm\n   ```\n2. Execute generator:\n\
+  \   - **Linux / Mac:** `./generate_B_cpu sim_512.dat Vector_B.bin`\n   - **Windows:** `generate_B_cpu.exe\
+  \ sim_512.dat Vector_B.bin`\n\n*Output created:* `Vector_B.bin` ($\\sim 495.98 \\text{ MB}$)\n\n---\n\
+  \n### Step 3: Run 3D Reconstruction (LSQR Solver)\n\nNow solve the inverse problem to reconstruct the\
+  \ original 3D volume $\\mathbf{X}$ from the projection measurements `Vector_B.bin`.\n\n#### Option A:\
+  \ GPU Acceleration (Fast)\n1. Compile CUDA LSQR solver:\n   ```bash\n   nvcc -O3 lsqr_solver.cu -o lsqr_solver_gpu\n\
+  \   ```\n2. Execute solver:\n   - **Linux / Mac:** `./lsqr_solver_gpu`\n   - **Windows:** `lsqr_solver_gpu.exe`\n\
+  \n#### Option B: CPU Execution\n1. Compile C LSQR solver:\n   ```bash\n   gcc -O3 lsqr_solver.c -o lsqr_solver_cpu\
+  \ -lm\n   ```\n2. Execute solver (inputs: projection binary, output binary, iterations):\n   - **Linux\
+  \ / Mac:** `./lsqr_solver_cpu Vector_B.bin reconstructed_X.bin 10`\n   - **Windows:** `lsqr_solver_cpu.exe\
+  \ Vector_B.bin reconstructed_X.bin 10`\n\n*Output created:* `reconstructed_X.bin` ($\\sim 536.87 \\\
+  text{ MB}$)\n\n---\n\n### Step 4: Visualize & Evaluate Results\n\nRun the automated Python verification\
+  \ scripts to generate visual comparison figures, SSIM plots, and quantitative metric reports:\n\n####\
+  \ 1. Full Metric Analysis (SSIM, MSE, MAE & Heatmaps):\n```bash\npython visualize_results.py\n```\n\
+  *Generated Figures:*\n- `ssim_vs_slice.png`: SSIM plot across all 512 slices.\n- `slice_comparison.png`:\
+  \ Side-by-side comparison of original vs reconstructed middle slice.\n- `error_heatmap.png`: Absolute\
+  \ error intensity distribution.\n- `metrics_bar.png`: Bar chart of overall quality metrics.\n\n####\
+  \ 2. Orthogonal 3-Plane View (Axial, Sagittal, Coronal):\n```bash\npython 3plane_compare.py\n```\n*Generated\
+  \ Figure:*\n- `3plane_comparison.png`: 6-panel grid comparing XY (Axial), YZ (Sagittal), and XZ (Coronal)\
+  \ cross-sections.\n\n#### 3. Side-by-Side Normalized Comparison:\n```bash\npython Compiled/compare_final.py\n\
+  ```\n*Generated Figure:*\n- `final_comparison.png`: Side-by-side figure showing reconstructed volume\
+  \ quality.\n\n---\n\n## \U0001F4C1 Directory & File Map\n\n```\nAA Project/\n├── README.md         \
+  \             # Complete project documentation & installation guide\n├── matrix_b_gen.c            \
+  \     # Forward projection matrix generator (CPU / C)\n├── generate_B.cu                  # GPU-accelerated\
+  \ ray-casting generator (CUDA)\n├── lsqr_solver.c                  # CPU Paige & Saunders LSQR solver\
+  \ algorithm\n├── lsqr_solver.cu                 # GPU-accelerated iterative backprojection solver\n\
+  ├── lsqr_cpu_eval.c                # CPU solver with real-time MSE/MAE tracking\n├── mergecode.c / mergecode.cu\
+  \     # Integrated forward projection benchmarks\n├── 3plane_compare.py              # 3-Plane (Axial,\
+  \ Coronal, Sagittal) visualizer\n├── visualize_results.py           # SSIM, MSE, MAE calculator & plotter\n\
+  ├── CUDA/                          # CUDA auxiliary scripts & kernel files\n│   ├── generate_B.cu\n\
+  │   └── test_gpu.cu\n├── Compiled/                      # Pre-compiled utilities and diagram generators\n\
+  │   ├── compare_final.py           # Normalized side-by-side comparison\n│   ├── uml_hybrid.py     \
+  \         # Generates CPU-GPU hybrid UML diagram\n│   └── solver_diagram.py          # High-level architecture\
+  \ diagram generator\n├── Diagrams/                      # Generated evaluation images & plots\n└── PICS/\
+  \                          # Architectural flowchart diagrams\n```\n\n---\n\n## \U0001F504 Methodology\
+  \ & Data Flow\n\n```\n+--------------------------+\n| Original 3D Density (X)  |\n|  (sim_512.dat /\
+  \ .bin)    |\n+------------+-------------+\n             |\n             v  [Forward Projection: matrix_b_gen.c\
+  \ / generat"

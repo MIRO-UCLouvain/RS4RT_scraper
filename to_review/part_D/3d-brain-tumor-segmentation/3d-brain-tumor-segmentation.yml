@@ -1,0 +1,93 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: MahranAmor/-3D-brain-tumor-segmentation
+url: https://github.com/MahranAmor/-3D-brain-tumor-segmentation
+platform: github
+description: ''
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-23T22:33:20Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# \U0001F9E0 GlioScan\n\n> 3D brain tumor segmentation on BraTS 2021 with a U-Net pipeline,\
+  \ FastAPI web UI, and **mean Dice 0.942**.\n\nGlioScan trains 2D and 3D U-Net models on the BraTS 2021\
+  \ multi-modal MRI dataset\n(FLAIR, T1, T1ce, T2) and serves predictions through a clean web interface\
+  \ — drop\nthe 4 NIfTI volumes for a patient, click **Predict**, and see the tumor overlaid\non axial\
+  \ slices in seconds.\n\n---\n\n## ✨ Highlights\n\n| Metric | Score |\n|---|---|\n| **Mean Dice (3D U-Net)**\
+  \ | **0.9420** |\n| Whole Tumor (WT) | 0.926 |\n| Tumor Core (TC) | 0.953 |\n| Enhancing Tumor (ET)\
+  \ | 0.946 |\n| Trained on | 600 patients (subset of BraTS 2021's 1251) |\n| Hardware | Single NVIDIA\
+  \ RTX 4050 Laptop (6 GB VRAM) |\n| 3D training wall time | ~80 minutes |\n\n---\n\n## \U0001F3D7️ Project\
+  \ structure\n\n```\ngliosсan/\n├── src/                              # Core PyTorch pipeline\n│   ├──\
+  \ config.py                     # paths, hyperparameters, seeds\n│   ├── dataset.py                \
+  \    # 2D slice dataset + DataLoader\n│   ├── dataset3d.py                  # 3D volume dataset + DataLoader\n\
+  │   ├── model.py                      # 2D U-Net\n│   ├── model3d.py                    # 3D U-Net\n\
+  │   ├── losses.py                     # Dice + CE combo\n│   ├── metrics.py                    # WT\
+  \ / TC / ET Dice\n│   ├── train.py                      # 2D training entry point\n│   ├── train3d.py\
+  \                    # 3D training entry point\n│   ├── infer.py                      # 2D inference\
+  \ (supports TTA)\n│   ├── visualize.py                  # plotting helpers\n│   └── smoke_test.py  \
+  \               # end-to-end sanity check\n│\n├── scripts/                          # one-shot data\
+  \ tools\n│   ├── extract_brats_tar.py          # extract first N patients from Kaggle tar\n│   ├── preprocess.py\
+  \                 # 2D slice cache (.npy)\n│   └── preprocess3d.py               # 3D volume cache (.npy)\n\
+  │\n├── app/                              # FastAPI web service\n│   ├── main.py                    \
+  \   # /predict endpoint\n│   └── templates/index.html          # upload UI\n│\n├── notebooks/\n│   └──\
+  \ 01_eda.ipynb                  # dataset exploration\n│\n├── outputs/\n│   ├── checkpoints/       \
+  \           # trained models (.pt)\n│   └── predictions/                  # per-patient inference outputs\n\
+  │\n├── requirements.txt\n└── README.md\n```\n\n---\n\n## \U0001F680 Quick start\n\n### 1. Install\n\n\
+  ```bash\ngit clone https://github.com/<your-username>/gliosсan.git\ncd gliosсan\npip install -r requirements.txt\n\
+  ```\n\nFor GPU support, install the CUDA build of PyTorch instead:\n\n```bash\npip install torch torchvision\
+  \ --index-url https://download.pytorch.org/whl/cu121\n```\n\n### 2. Get the data\n\nDownload BraTS 2021\
+  \ from Kaggle:\nhttps://www.kaggle.com/datasets/dschettler8845/brats-2021-task1\n\nPlace `BraTS2021_Training_Data.tar`\
+  \ anywhere and extract the first 600 patients:\n\n```bash\npython scripts/extract_brats_tar.py --tar\
+  \ /path/to/BraTS2021_Training_Data.tar --limit 600\n```\n\n### 3. Preprocess\n\n```bash\npython scripts/preprocess.py\
+  \    # 2D slices (.npy cache, ~22 GB)\npython scripts/preprocess3d.py  # 3D volumes (.npy cache, ~15\
+  \ GB)\n```\n\n### 4. Train\n\n```bash\npython -m src.train     # 2D U-Net, ~3-4 hours on RTX 4050\n\
+  python -m src.train3d   # 3D U-Net, ~80 min on RTX 4050  (recommended)\n```\n\nBest checkpoints are\
+  \ saved to `outputs/checkpoints/`.\n\n### 5. Predict (CLI)\n\n```bash\npython -m src.infer --patient\
+  \ BraTS2021_00009                    # 2D\npython -m src.infer --patient BraTS2021_00009 --tta     \
+  \         # 2D + 8x TTA\npython -m src.infer --patient BraTS2021_00009 --save-nifti       # also write\
+  \ .nii.gz\n```\n\nOutputs land in `outputs/predictions/<patient>/`:\n- `pred.npy` — the prediction volume\n\
+  - `montage.png` — 6-slice visualization\n- `pred.nii.gz` — optional NIfTI for radiologist review\n\n\
+  ### 6. Web UI\n\n```bash\npython -m uvicorn app.main:app --host 127.0.0.1 --port 8000\n```\n\nOpen **http://127.0.0.1:8000**,\
+  \ drop the 4 modality `.nii.gz` files, click **Predict**.\n\n---\n\n## \U0001F52C What's inside\n\n\
+  ### Pipeline overview\n\n```\nNIfTI (4 modalities) → z-score normalize → center-crop H/W → resize depth\n\
+  \                                                                     ↓\n                          \
+  \                  3D U-Net (16 base channels, 5.9M params)\n                                      \
+  \                               ↓\n                                  (B, 4, 96, 128, 128) → (B, 4, 96,\
+  \ 128, 128) → argmax\n                                                                     ↓\n     \
+  \                                                  4-class segmentation map\n```\n\n### Label convention\n\
+  \nBraTS uses `{0, 1, 2, 4}`. Internally we remap label `4 → 3` for contiguous indices:\n\n| Index |\
+  \ Region |\n|---|---|\n| 0 | background |\n| 1 | NCR / NET (necrotic / non-enhancing core) |\n| 2 |\
+  \ ED (peritumoral edema) |\n| 3 | ET (enhancing tumor) — original label 4 |\n\nEvaluation regions follow\
+  \ the BraTS protocol:\n\n- **WT** (Whole Tumor) = classes {1, 2, 3}\n- **TC** (Tumor Core)  = classes\
+  \ {1, 3}\n- **ET** (Enhancing)   = class {3}\n\n### Design choices\n\n| Choice | Why |\n|---|---|\n\
+  | **2D U-Net (baseline) + 3D U-Net (best)** | 2D is fast & low-VRAM; 3D uses inter-slice context → +0.047\
+  \ Dice |\n| **Pre-extracted `.npy` slices/volumes** | Replaces 300 MB/sample NIfTI loads with ~100 KB\
+  \ reads — frees the GPU from I/O starvation |\n| **Patient-level train/val split** | Avoids leakage\
+  \ between sets |\n| **Dice + Cross-Entropy loss** | Dice optimizes overlap; CE stabilizes early-training\
+  \ gradients |\n| **Cosine LR + AMP mixed precision** | Faster convergence, less VRAM |\n| **Center-crop\
+  \ instead of resize for H, W** | Preserves tumor pixel scale (resize would distort the model's calibration)\
+  \ |\n| **Depth resize for 3D** | Brings 155 axial slices down to 96 to fit 6 GB VRAM |\n\n---\n\n##\
+  \ \U0001F4CA Results\n\n### Final 3D U-Net (per-region Dice)\n\n| Region | Dice |\n|---|---|\n| Whole\
+  \ Tumor (WT) | **0.926** |\n| Tumor Core (TC)  | **0.953** |\n| Enhancing Tumor (ET) | **0.946** |\n\
+  | **Mean** | **\U0001F947 0.942** |\n\n### Run-by-run comparison\n\n| Run | Patients | Input | Epochs\
+  \ | Mean Dice |\n|---|---|---|---|---|\n| 2D U-Net (baseline) | 300 | 128² | 29 | 0.879 |\n| 2D U-Net\
+  \ (tuned)    | 600 | 192² | 25 | 0.8955 |\n| 2D U-Net + TTA      | 600 | 192² | — | 0.896 |\n| **3D\
+  \ U-Net**        | **600** | **128²×96** | **56** | **0.9420** |\n\n---\n\n## \U0001F6E0️ Hardware requirements\n\
+  \n| Mode | VRAM | Disk |\n|---|---|---|\n| 2D training (img_size=192, batch=16) | ~3.5 GB | ~22 GB cache\
+  \ |\n| 3D training (96×128×128, batch=1) | ~4.5 GB | ~15 GB cache |\n| Inference / FastAPI | ~1 GB |\
+  \ — |\n| Full raw dataset (600 patients) | — | ~9 GB |\n\nCPU-only is supported but ~50× slower; not\
+  \ recommended for training.\n\n---\n\n## ⚠️ Limitations\n\n- Trained on **600** of BraTS 2021's **1251**\
+  \ patients — using the full set would\n  likely push Dice past 0.95.\n- 3D model resizes depth from\
+  \ 155 → 96 to fit 6 GB VRAM. Full-resolution 3D\n  inference would need a bigger GPU or patch-based\
+  \ prediction.\n- This is research-grade code, **not for clinical use**.\n\n---\n\n## \U0001F4DA References\n\
+  \n- BraTS 2021 challenge: https://www.synapse.org/brats2021\n- Original U-Net paper: Ronneberger et\
+  \ al., *U-Net: Convolutional Networks for Biomedical Image Segmentation*, MICCAI 2015.\n- Dataset (Kaggle\
+  \ mirror): https://www.kaggle.com/datasets/dschettler8845/brats-2021-task1\n\n---\n\n## \U0001F4C4 License\n\
+  \nMIT — see `LICENSE`.\n"

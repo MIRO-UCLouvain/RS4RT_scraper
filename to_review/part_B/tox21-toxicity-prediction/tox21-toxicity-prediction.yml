@@ -1,0 +1,63 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: mehzaayesh-alt/tox21-toxicity-prediction
+url: https://github.com/mehzaayesh-alt/tox21-toxicity-prediction
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-14T05:08:15Z'
+image_source: https://raw.githubusercontent.com/mehzaayesh-alt/tox21-toxicity-prediction/HEAD/roc_pr_curves.png
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# molecular toxicity prediction (tox21 / SR-p53)\n\n## what this does\n\nPredicts whether\
+  \ a compound triggers the p53 stress-response pathway\n(SR-p53 in the Tox21 dataset) directly from its\
+  \ molecular structure. p53\nis basically the cell's DNA-damage alarm, so a positive here is a rough\n\
+  proxy for carcinogenicity / genotoxic risk - the kind of signal you'd\nactually want flagged early in\
+  \ drug development, long before a compound\ngets anywhere near a clinical trial.\n\nPipeline:\n1. take\
+  \ each molecule's SMILES string (a compact text representation of\n   chemical structure) and convert\
+  \ it to an ECFP4 fingerprint (2048-bit\n   vector encoding local substructures) using RDKit\n2. train\
+  \ a Random Forest (and a Logistic Regression baseline) to predict\n   the binary toxicity label from\
+  \ the fingerprint\n3. pull out which fingerprint bits the Random Forest relied on most, and\n   map\
+  \ those back to actual chemical substructures instead of leaving\n   them as opaque bit indices\n\n\
+  ## dataset\n\nTox21 - a real NIH/EPA toxicology screening dataset, 6,767 compounds with\nvalid SMILES\
+  \ after cleaning, ~6% positive for SR-p53 (real imbalance, not\nsomething I balanced artificially).\
+  \ It's a standard benchmark\n(part of MoleculeNet) so my numbers are checkable against published\nbaselines,\
+  \ not just numbers I'm asserting are good.\n\n## results\n\n| model | ROC-AUC | PR-AUC |\n|---|---|---|\n\
+  | Logistic Regression | 0.777 | 0.294 |\n| **Random Forest** | **0.852** | **0.360** |\n\nUsing ROC-AUC\
+  \ and PR-AUC instead of plain accuracy on purpose - with only\n6% positives, a model that just predicts\
+  \ \"not toxic\" every time gets 94%\naccuracy and is completely useless. 0.852 ROC-AUC is in line with\
+  \ what\npublished Tox21 baselines report for this task, which is the number I\nactually care about since\
+  \ it means I'm not fooling myself with a broken\ntrain/test split or leakage somewhere.\n\n![roc pr\
+  \ curves](roc_pr_curves.png)\n\n### what the model actually keyed on\n\n![top fragments](top_fragments.png)\n\
+  \nPulled the 8 fingerprint bits the Random Forest weighted highest and\nmapped each back to the actual\
+  \ substructure in a real molecule from the\ntraining set (using RDKit's Morgan bit visualization, so\
+  \ these are real\nfragments from real compounds, not made up). A few of the top bits are\nphenolic /\
+  \ aromatic-hydroxyl groups - which lines up with known\ntoxicology, since phenols can get metabolized\
+  \ into reactive quinone\nintermediates that cause oxidative damage, which is exactly the kind of\nstress\
+  \ that triggers a p53 response. Wasn't specifically looking for that\ngoing in, and I want to be careful\
+  \ not to over-claim a story from 8 bits\nout of 2048 - could easily be partially coincidental given\
+  \ how many bits\nI didn't inspect - but it's a plausible enough signal that it made me\ntrust the model\
+  \ wasn't just pattern-matching noise.\n\n## running it\n\n```\npip install rdkit scikit-learn pandas\
+  \ numpy matplotlib\npython3 preprocess.py     # SMILES -> ECFP4 fingerprints, saves X.npy / y.npy\n\
+  python3 experiment.py     # trains RF + LogReg, prints metrics, saves results.json\n```\nPreprocessing\
+  \ takes under a minute, training under a minute too - fingerprints\nare pre-computed so RF training\
+  \ itself is fast even on ~5,400 samples.\n\n## limitations / what I'd want to check next\n\n- only used\
+  \ one of the 12 assays in Tox21 (SR-p53). would want to check\n  whether the same fingerprint + RF setup\
+  \ holds up across the other 11,\n  or whether SR-p53 happens to be an easier one\n- ECFP fingerprints\
+  \ throw away 3D structure entirely - a lot of real\n  toxicity mechanisms depend on 3D shape/binding\
+  \ pose, so there's a\n  ceiling here that a graph neural network or a 3D-aware model wouldn't\n  have\n\
+  - the phenol/quinone story from the top fragments is a plausible\n  mechanism, not something I verified\
+  \ against actual metabolism data -\n  would want to check it against known reactive-metabolite literature\n\
+  \  before treating it as more than a suggestive pattern\n- single train/test split, no cross-validation\
+  \ - given how imbalanced\n  the positive class is, results could shift somewhat with a different\n \
+  \ split\n\n## data source\n\nTox21 dataset, via a public CSV mirror of the MoleculeNet-distributed\n\
+  version on GitHub (originally from the NIH/EPA Tox21 screening program).\n"

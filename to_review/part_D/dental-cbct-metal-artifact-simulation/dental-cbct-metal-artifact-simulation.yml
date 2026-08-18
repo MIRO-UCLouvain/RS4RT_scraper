@@ -1,0 +1,99 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: YEH-YU-YANG/Dental-CBCT-Metal-Artifact-Simulation
+url: https://github.com/YEH-YU-YANG/Dental-CBCT-Metal-Artifact-Simulation
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-02T01:46:12Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# Dental-CBCT-Metal-Artifact-Simulation\n\nThis project provides a suite of tools for\
+  \ simulating metal artifacts in dental Cone Beam Computed Tomography (CBCT) scans. The primary goal\
+  \ is to generate realistic and **diverse** training data for tasks like artifact reduction. The project\
+  \ is written in Python.\n\nThe core functionalities are:\n\n1.  **Tooth Instance Segmentation:** Converts\
+  \ a binary tooth segmentation mask into an instance-labeled volume, where each tooth is assigned a unique\
+  \ ID.\n2.  **Metal Mask Generation:** Allows the user to select specific tooth IDs to create a \"metal\
+  \ mask,\" simulating the placement of metallic restorations or implants.\n3.  **Diverse Artifact Simulation:**\
+  \ Uses a physics-based model to simulate the appearance of metal artifacts on the CBCT scan. It can\
+  \ generate multiple versions from a single input by randomizing parameters like metal density, photon\
+  \ count (noise), and beam hardening effects.\n4.  **Visualization:** Provides a set of scripts to visually\
+  \ inspect the intermediate and final results, such as the tooth instances, metal masks, and the final\
+  \ simulated artifact.\n\n## Project Structure\n\nThe project has been refactored into a Python package\
+  \ with a unified command-line interface (CLI).\n\n```\nsrc/\n├── __init__.py\n├── cli.py\n├── processing/\n\
+  │   ├── __init__.py\n│   ├── metal_mask.py\n│   └── tooth_instances.py\n├── simulation/\n│   ├── __init__.py\n\
+  │   └── artifact_simulation.py\n├── utils/\n│   ├── __init__.py\n│   ├── ids.py\n│   ├── io.py\n│  \
+  \ └── visualization.py\n├── visualization/\n│   ├── __init__.py\n│   ├── overview.py\n│   ├── slice_export.py\n\
+  │   └── tooth_slices.py\n├── output/\n│   └── {patient_id}/\n│       ├── metal_masks/\n│       │   ├──\
+  \ metal_mask.npy\n│       │   ├── tooth_{id}_mask.npy\n│       │   ├── tooth_{id}_roi_info.json\n│ \
+  \      │   └── tooth_{id}_roi.npy\n│       ├── simulations/\n│       │   ├── artifact_{version}.npy\n\
+  │       │   └── clean_gt_{version}.npy\n│       ├── simulations_slice_visualizations/\n│       │   ├──\
+  \ 0000.png\n│       │   └── ... (images for each slice)\n│       ├── tooth_labels.npy\n│       └── tooth_stats.csv\n\
+  ├── .gitignore\n├── GEMINI.md\n├── README.md\n├── README_zh.md\n\n```\n\n*   `src/`: The main Python\
+  \ package.\n*   `src/cli.py`: The unified command-line interface for the project.\n*   `src/processing/`:\
+  \ Modules related to data processing, such as tooth instance creation and metal mask generation.\n*\
+  \   `src/simulation/`: Modules for simulating metal artifacts.\n*   `src/utils/`: General utility functions\
+  \ (e.g., ID parsing, I/O helpers, visualization helpers).\n*   `src/visualization/`: Modules for visualizing\
+  \ results.\n\n## Dependencies\n\nThe project relies on several scientific and medical imaging libraries.\
+  \ A dedicated Conda environment is recommended.\n\nA recommended Conda environment setup for Python\
+  \ 3.9 is:\n\n```bash\nconda create -n dental_metal_artifact_simulation python=3.9 -y\nconda activate\
+  \ dental_metal_artifact_simulation\npip install numpy scipy pandas SimpleITK opencv-python scikit-image\
+  \ Pillow tqdm click odl astra-toolbox\n```\n\n## Workflow and Usage (via CLI)\n\nThe project is now\
+  \ operated through a single command-line interface `src/cli.py`. You can activate the conda environment\
+  \ and then run commands like:\n\n```bash\nconda activate dental_metal_artifact_simulation\npython -m\
+  \ src.cli --help\n```\n\nHere are the main commands available:\n\n*   **`create-instances`**: Creates\
+  \ tooth instances from a mask.\n    \n    *   `--mask_npy`: 3D mask npy (D,H,W) (Required)\n    *  \
+  \ `--out_label_npy`: (Required)\n    *   `--out_stats_csv`: (Required)\n    *   `--tooth_value`: Value\
+  \ representing tooth in mask (Default: 1)\n    *   `--tooth_nonzero`: Treat any non-zero value as tooth\n\
+  \    *   `--min_voxels`: Minimum voxels for a valid tooth instance (Default: 5000)\n    *   `--connectivity`:\
+  \ Connectivity for post ops (1=6-neighbor, 2=18, 3=26) (Default: 1)\n    *   `--method`: Method for\
+  \ instance creation: cc (connected components) or watershed (split touching teeth) (Default: \"watershed\"\
+  )\n    *   `--erode`: Erosion iterations before split (Default: 0)\n    *   `--dilate`: Dilation iterations\
+  \ after erosion (Default: 0)\n    *   `--ws_min_distance`: Watershed: min distance (voxels) between\
+  \ tooth seeds (Default: 6)\n    *   `--ws_threshold`: Watershed: min distance value for peaks (Default:\
+  \ 2.0)\n    *   `--ws_compactness`: Watershed: compactness factor (Default: 0.0)\n    ```bash\n    python\
+  \ -m src.cli create-instances --mask_npy <path_to_mask.npy> --out_label_npy <output_label.npy> --out_stats_csv\
+  \ <output_stats.csv> --help\n    ```\n*   **`export-metal-mask`**: Exports selected tooth IDs as a metal\
+  \ mask.\n    \n    *   `--label_npy`: tooth_cc_label.npy (D,H,W), values=0..N (Required)\n    *   `--stats_csv`:\
+  \ tooth_cc_stats.csv (Required)\n    *   `--out_dir`: Output directory for masks and info (Required)\n\
+  \    *   `--ids`: e.g. 2,4,6,11 or 1-12 (Required)\n    *   `--margin`: Bbox margin in voxels (Default:\
+  \ 8)\n    *   `--save_merged_mask`: Save merged 0/1 mask. If provided, saves to `<out_dir>/<value>`\
+  \ (Default: None)\n    ```bash\n    python -m src.cli export-metal-mask --label_npy <path_to_label.npy>\
+  \ --stats_csv <path_to_stats.csv> --out_dir <output_dir> --ids \"1,2,3\" --help\n    ```\n*   **`simulate-artifact`**:\
+  \ Simulates multiple diverse versions of metal artifacts.\n    \n    *   `--ct_file_path`: Path to the\
+  \ clean CT NPY file (e.g., origin.npy) (Required)\n    *   `--mask_file_path`: Path to the metal mask\
+  \ NPY file (Required)\n    *   `--output_dir`: Directory to save simulation results (Required)\n   \
+  \ *   `--num_augmentations`: Number of augmented versions to generate (Default: 5)\n    ```bash\n  \
+  \  python -m src.cli simulate-artifact --ct_file_path <path_to_clean_ct.npy> --mask_file_path <path_to_metal_mask.npy>\
+  \ --output_dir <output_dir> --num_augmentations 5 --help\n    ```\n*   **`visualize-slices`**: Visualizes\
+  \ simulated artifact slices.\n    \n    *   `--artifact_path`: Path to the simulated artifact NPY file\
+  \ (Required)\n    *   `--clean_path`: Path to the clean GT NPY file (Required)\n    *   `--output_dir`:\
+  \ Directory to save output PNG slices (Required)\n    *   `--window_center`: Window center for HU normalization\
+  \ (Default: 1750)\n    *   `--window_width`: Window width for HU normalization (Default: 5500)\n   \
+  \ ```bash\n    python -m src.cli visualize-slices --artifact_path <path_to_artifact.npy> --clean_path\
+  \ <path_to_clean_gt.npy> --output_dir <output_dir> --help\n    ```\n*   **`vis-overview`**: Visualizes\
+  \ an overview of tooth instances.\n    \n    *   `--dicom_dir`: DICOM directory (if volume_npy is not\
+  \ provided) (Default: None)\n    *   `--volume_npy`: Path to the volume NPY file (e.g., origin.npy)\
+  \ (Default: None)\n    *   `--label_npy`: Path to the label NPY file (Required)\n    *   `--out_dir`:\
+  \ Output directory for overview images (Required)\n    *   `--alpha`: Alpha blending value for overlay\
+  \ (Default: 0.35)\n    *   `--seed`: Random seed for label coloring (Default: 0)\n    *   `--z_list`:\
+  \ Comma-separated list of Z-slices to visualize (e.g., '120,160,200') (Default: \"\")\n    ```bash\n\
+  \    python -m src.cli vis-overview --volume_npy <path_to_volume.npy> --label_npy <path_to_label.npy>\
+  \ --out_dir <output_dir> --help\n    ```\n*   **`vis-tooth-slices`**: Visualizes slices for a specific\
+  \ tooth ID.\n    \n    *   `--volume_npy`: e.g. ../data/49095613/origin.npy (D,H,W) (Required)\n   \
+  \ *   `--label_npy`: tooth_cc_label.npy (D,H,W) (Required)\n    *   `--tooth_id`: Tooth instance ID\
+  \ (new_id) (Required)\n    *   `--out_dir`: (Required)\n    *   `--alpha`: (Default: 0.35)\n    *  \
+  \ `--save_all_z`: Save all z slices (even if tooth not present)\n    *   `--min_pixels`: Only save a\
+  \ slice if mask pixels >= this (ignored if --save_all_z) (Default: 20)\n    ```bash\n    python -m src.cli\
+  \ vis-tooth-slices --volume_npy <path_to_volume.npy> --label_npy <path_to_label.npy> --tooth_id 7 --out_dir\
+  \ <output_dir> --help\n    ```\n\nTo get detailed help on any command, append `--help` to it."

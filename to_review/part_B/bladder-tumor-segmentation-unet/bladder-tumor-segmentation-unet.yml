@@ -1,0 +1,81 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Claude-ud/bladder-tumor-segmentation-unet
+url: https://github.com/Claude-ud/bladder-tumor-segmentation-unet
+platform: github
+description: 膀胱肿瘤MRI影像语义分割 — UNet+PyTorch多类别分割框架，支持7种损失函数、10+评估指标、K-fold交叉验证
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-27T14:37:15Z'
+image_source: https://raw.githubusercontent.com/Claude-ud/bladder-tumor-segmentation-unet/HEAD/results/images/2-IM116.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# 膀胱肿瘤 MRI 影像语义分割 — UNet + PyTorch\n\n基于 PyTorch 实现的医学图像语义分割框架，针对膀胱 MRI 影像进行**膀胱壁**与**肿瘤区域**的多类别自动分割。支持可配置深度的\
+  \ UNet 架构、多种损失函数、完善的评估指标体系，以及 K-fold 交叉验证训练流程。\n\n---\n\n## 目录\n\n- [项目特性](#项目特性)\n- [数据集](#数据集)\n-\
+  \ [网络架构](#网络架构)\n- [损失函数](#损失函数)\n- [评估指标](#评估指标)\n- [项目结构](#项目结构)\n- [环境配置](#环境配置)\n- [训练](#训练)\n-\
+  \ [验证与可视化](#验证与可视化)\n- [结果示例](#结果示例)\n- [参考](#参考)\n\n---\n\n## 项目特性\n\n- **可配置 UNet 架构**：5 层编码器-解码器结构，编码器深度可调，支持自定义通道数\n\
+  - **6 种损失函数**：Dice Loss、Tversky Loss、Focal Tversky Loss、加权 BCE、加权 BCE-Dice 联合损失等\n- **10+ 评估指标**：Dice（3种变体）、Jaccard/IoU、Pixel\
+  \ Accuracy、Precision、Recall/Sensitivity、Specificity、Hausdorff 距离、RMS 表面距离、平均对称表面距离\n- **K-fold 交叉验证**（5折）：确保模型泛化能力，避免过拟合\n\
+  - **完整训练设施**：早停机制（Early Stopping）、PolyLR / StepLR / ReduceLROnPlateau 学习率衰减、TensorBoard 可视化\n- **数据增强**：CenterCrop、在线数据预处理管道\n\
+  \n---\n\n## 数据集\n\n膀胱 MRI 影像分割数据集，包含 3 个语义类别：\n\n| 像素值 | 类别 | 说明 |\n|--------|------|------|\n| 0 |\
+  \ 背景 (Background) | 图像中非组织区域 |\n| 128 | 膀胱壁 (Bladder Wall) | 膀胱器官壁组织 |\n| 255 | 肿瘤 (Tumor) | 膀胱内肿瘤区域\
+  \ |\n\n数据集通过 5 折交叉验证划分训练集/验证集，每折独立训练评估。\n\n---\n\n## 网络架构\n\n```\n输入 (1, H, W)\n    │\n    ├── Encoder\
+  \ Block 1 (64) ─────────────────┐\n    │   MaxPool                               │\n    ├── Encoder\
+  \ Block 2 (128) ──────────────┐ │\n    │   MaxPool                             │ │\n    ├── Encoder\
+  \ Block 3 (256) ───────────┐  │ │\n    │   MaxPool                          │  │ │\n    ├── Encoder\
+  \ Block 4 (512) ────────┐  │  │ │\n    │   MaxPool                       │  │  │ │\n    ├── Encoder\
+  \ Block 5 (512)         │  │  │ │\n    │                                 │  │  │ │\n    ├── Decoder\
+  \ Block 4 ←────────────┘  │  │ │\n    │   + Skip Connection (enc4)         │  │ │\n    ├── Decoder Block\
+  \ 3 ←───────────────┘  │ │\n    │   + Skip Connection (enc3)            │ │\n    ├── Decoder Block 2\
+  \ ←──────────────────┘ │\n    │   + Skip Connection (enc2)              │\n    ├── Decoder Block 1 ←────────────────────┘\n\
+  \    │   + Skip Connection (enc1)\n    │\n    └── Conv 1×1 → 输出 (3, H, W)\n```\n\n采用经典的 U-Net 对称结构，跳跃连接将编码器浅层特征与解码器深层特征融合，保留空间细节信息。\n\
+  \n---\n\n## 损失函数\n\n项目实现了以下损失函数，位于 `utils/loss.py`：\n\n| 损失函数 | 类名 | 特点 |\n|----------|------|------|\n\
+  | Dice Loss | `SoftDiceLoss` | 适用于类别不均衡场景，直接优化 Dice 系数 |\n| 加权 Dice Loss | `SoftDiceLossV2` | 对每个类别赋予不同权重，缓解小目标问题\
+  \ |\n| Tversky Loss | `TverskyLoss` | 引入 α 参数控制 FP/FN 的权衡 |\n| 加权 Tversky Loss | `TverskyLossV2` | 类别加权\
+  \ + Tversky，α=0.7 |\n| Focal Tversky Loss | `FocalTverskyLoss` | 增加 γ 参数聚焦困难样本 |\n| BCE + Dice 联合损失\
+  \ | `BCE_Dice_Loss` | 像素级 + 区域级联合优化 |\n| 加权 BCE + Dice | `WBCE_Dice_Loss` | 加权版本的联合损失 |\n\n---\n\n##\
+  \ 评估指标\n\n实现了以下评估指标，位于 `utils/metrics.py`：\n\n| 指标类别 | 具体指标 | 说明 |\n|----------|----------|------|\n\
+  | 重叠度 | Dice Coefficient（3种变体）、Jaccard / IoU | 衡量分割区域与金标准的重叠程度 |\n| 像素准确率 | Pixel Accuracy | 逐像素分类正确率\
+  \ |\n| 分类指标 | Precision、Recall / Sensitivity、Specificity | 查准率、查全率、特异度 |\n| 边界距离 | Hausdorff Distance、RMS\
+  \ Surface Distance、Average Symmetric Surface Distance | 衡量分割边界的空间距离误差 |\n\n---\n\n## 项目结构\n\n```\npytorch-medical-image-segmentation-master/\n\
+  ├── datasets/\n│   └── bladder.py                # 膀胱数据集加载器（3分类 / K-fold / One-hot编码）\n├── dataprepare/\n\
+  │   └── kfold.py                  # K折交叉验证数据集划分脚本\n├── networks/\n│   ├── u_net.py                 \
+  \ # UNet Baseline 模型定义\n│   └── custom_modules/\n│       ├── basic_modules.py      # EncoderBlock /\
+  \ DecoderBlock 基础模块\n│       ├── attention.py          # 注意力机制模块\n│       └── DenseASPP.py         \
+  \ # DenseASPP 模块\n├── utils/\n│   ├── loss.py                   # 损失函数集合（7种）\n│   ├── metrics.py   \
+  \             # 评估指标集合（10+种）\n│   ├── helpers.py                # 数据格式转换工具\n│   ├── image_transforms.py\
+  \       # 联合图像变换（CenterCrop等）\n│   ├── transforms.py             # 单图像变换（Tensor转换等）\n│   ├── LRScheduler.py\
+  \            # PolyLR 学习率调度器\n│   ├── pytorchtools.py           # Early Stopping 早停机制\n│   └── misc.py\
+  \                   # 权重初始化等工具\n├── train/\n│   └── train_bladder.py          # 膀胱分割训练主脚本\n├── validate/\n\
+  │   └── validate_bladder.py       # 模型验证脚本\n├── media/Datasets/Bladder/       # 数据集目录\n├── results/\
+  \                      # 分割结果可视化\n│   ├── images/                   # 原始影像\n│   ├── gt/            \
+  \           # 金标准标注\n│   └── pred/                     # 模型预测结果\n├── checkpoint/                   #\
+  \ 模型权重保存目录\n├── log/                          # TensorBoard 日志\n└── README.md\n```\n\n---\n\n## 环境配置\n\
+  \n```bash\n# Python 3.9+\npip install torch torchvision\npip install opencv-python pillow numpy pandas\
+  \ scipy\npip install scikit-learn matplotlib tqdm tensorboardX\npip install SimpleITK          # 医学影像读写\n\
+  ```\n\n核心依赖：\n\n| 依赖 | 版本 |\n|------|------|\n| Python | 3.9+ |\n| PyTorch | 2.8.0 |\n| torchvision\
+  \ | 0.23.0 |\n| OpenCV | 4.12 |\n| SimpleITK | 2.5.5 |\n| NumPy | 2.0+ |\n\n---\n\n## 训练\n\n```bash\n\
+  # 1. 准备数据集（首次需运行 K-fold 划分）\npython dataprepare/kfold.py\n\n# 2. 开始训练\npython train/train_bladder.py\n\
+  ```\n\n训练超参数在 `train/train_bladder.py` 中配置：\n\n```python\ncrop_size = 256          # 输入图像裁剪大小\nbatch_size\
+  \ = 2           # 批大小\nn_epoch = 300            # 最大训练轮数\ninitial_lr = 1e-4        # 初始学习率（Adam）\nloss_name\
+  \ = 'dice'       # 损失函数选择\nfold = 1                 # K-fold 折数（1-5）\ndepth = 2                # UNet\
+  \ 编码器卷积层数\n```\n\n训练过程通过 TensorBoard 实时监控：\n\n```bash\ntensorboard --logdir=log/\n```\n\n---\n\n## 验证与可视化\n\
+  \n```bash\npython validate/validate_bladder.py\n```\n\n验证脚本加载训练好的最优模型（由 Early Stopping 自动保存），在验证集上计算完整评估指标并输出分割结果可视化。\n\
+  \n---\n\n## 结果示例\n\n### 分割效果对比\n\n以下为验证集上的分割结果，从左至右依次为：**原始影像** | **金标准标注** | **模型预测**\n\n<div align=\"\
+  center\">\n\n| 原始影像 | 金标准 (GT) | 模型预测 (Pred) |\n|:--------:|:-----------:|:---------------:|\n| ![](results/images/2-IM116.png)\
+  \ | ![](results/gt/2-IM116.png) | ![](results/pred/2-IM116.png) |\n\n</div>\n\n*蓝色区域为膀胱壁，红色区域为肿瘤。模型预测结果与金标准高度一致。*\n\
+  \n### 评估指标（5 折交叉验证 · 第 1 折 · 5 样本）\n\n| 指标 | 膀胱壁 (Bladder Wall) | 肿瘤 (Tumor) | 平均 |\n|------|:---------------------:|:------------:|:----:|\n\
+  | Dice Coefficient | 0.516 ± 0.239 | 0.819 ± 0.053 | 0.667 |\n| Jaccard / IoU | 0.384 ± 0.227 | 0.696\
+  \ ± 0.079 | 0.540 |\n| Sensitivity / Recall | 0.513 ± 0.227 | 0.742 ± 0.100 | 0.628 |\n| Precision |\
+  \ 0.522 ± 0.253 | 0.924 ± 0.034 | 0.723 |\n| Pixel Accuracy | — | — | 0.9795 ± 0.004 |\n\n*膀胱壁（薄壁结构）分割难度较高，当前模型在膀胱壁类别上存在假阴性偏高的问题，可通过增加膀胱壁类别损失权重、引入边界感知损失或增大训练数据量进一步优化。*\n\
+  \n---\n\n## 参考\n\n- [U-Net: Convolutional Networks for Biomedical Image Segmentation](https://arxiv.org/abs/1505.04597)\
+  \ (Ronneberger et al., MICCAI 2015)\n- [Tversky Loss Function for Image Segmentation using 3D FCDNs](https://arxiv.org/abs/1706.05721)\
+  \ (Salehi et al., 2017)\n- [Focal Loss for Dense Object Detection](https://arxiv.org/abs/1708.02002)\
+  \ (Lin et al., ICCV 2017)\n\n---\n\n## License\n\nThis project is for educational and research purposes.\n"
