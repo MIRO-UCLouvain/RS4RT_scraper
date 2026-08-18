@@ -4,6 +4,14 @@ import re
 from dataclasses import dataclass
 from typing import Any
 
+# When True, a term also matches its simple plural ("beam" matches "beams").
+# This keeps recall close to the old substring behaviour, where "proton" used
+# to match inside "protons".
+MATCH_PLURALS = True
+
+_PATTERN_CACHE: dict[str, re.Pattern[str]] = {}
+_NEVER_MATCHES = re.compile(r"(?!x)x")
+
 
 @dataclass
 class HeuristicResult:
@@ -27,9 +35,47 @@ def normalize(text: str) -> str:
     text = re.sub(r"\s+", " ", text)
     return text.strip()
 
+
+def compile_term(term: str) -> re.Pattern[str]:
+    """Compile a taxonomy term into a whole-word pattern.
+
+    The pattern is built against *normalized* text, so separators inside a
+    multi-word term have already been flattened to single spaces. The word
+    boundaries stop acronyms from matching inside longer alphanumeric runs:
+
+        "DVH", "(dvh)", "dvh.", ".DVH", "dvh-related"  -> match
+        "leodvh52", "sumdvh", "DVH2"                   -> no match
+    """
+    normalized = normalize(term)
+
+    cached = _PATTERN_CACHE.get(normalized)
+    if cached is not None:
+        return cached
+
+    if not normalized:
+        pattern = _NEVER_MATCHES
+    else:
+        body = re.escape(normalized)
+        suffix = ""
+        if MATCH_PLURALS and normalized[-1].isalpha() and not normalized.endswith("s"):
+            suffix = "s?"
+        pattern = re.compile(rf"\b{body}{suffix}\b")
+
+    _PATTERN_CACHE[normalized] = pattern
+    return pattern
+
+
+def term_matches(term: str, text: str) -> bool:
+    """True if `term` appears in `text` as a standalone token."""
+    return compile_term(term).search(normalize(text)) is not None
+
+
+def _count_hits_normalized(blob: str, terms: list[str]) -> int:
+    return sum(1 for term in terms if compile_term(term).search(blob))
+
+
 def count_hits(text: str, terms: list[str]) -> int:
-    blob = normalize(text)
-    return sum(1 for term in terms if normalize(term) in blob)
+    return _count_hits_normalized(normalize(text), terms)
 
 
 def score_text(
@@ -45,15 +91,22 @@ def score_text(
     negative_terms = taxonomy.get("negative_terms", [])
     generic_radiotherapy_terms = taxonomy.get("generic_radiotherapy_terms", [])
 
-    strong_particle_hits = count_hits(blob, strong_terms)
-    particle_hits = count_hits(blob, particle_terms)
-    support_hits = count_hits(blob, support_terms)
-    ai_hits = count_hits(blob, ai_terms)
-    negative_hits = count_hits(blob, negative_terms)
-    generic_radiotherapy_hits = count_hits(blob, generic_radiotherapy_terms)
+    normalized_blob = normalize(blob)
+    normalized_title = normalize(title_blob)
 
-    title_strong_particle_hits = count_hits(title_blob, strong_terms) if title_blob else 0
-    title_ai_hits = count_hits(title_blob, ai_terms) if title_blob else 0
+    strong_particle_hits = _count_hits_normalized(normalized_blob, strong_terms)
+    particle_hits = _count_hits_normalized(normalized_blob, particle_terms)
+    support_hits = _count_hits_normalized(normalized_blob, support_terms)
+    ai_hits = _count_hits_normalized(normalized_blob, ai_terms)
+    negative_hits = _count_hits_normalized(normalized_blob, negative_terms)
+    generic_radiotherapy_hits = _count_hits_normalized(normalized_blob, generic_radiotherapy_terms)
+
+    title_strong_particle_hits = (
+        _count_hits_normalized(normalized_title, strong_terms) if normalized_title else 0
+    )
+    title_ai_hits = (
+        _count_hits_normalized(normalized_title, ai_terms) if normalized_title else 0
+    )
 
     has_strong_particle_anchor = (strong_particle_hits > 0) or (title_strong_particle_hits > 0)
 
@@ -84,8 +137,8 @@ def score_text(
     #     reasons.append(f"Matched {negative_hits} negative term(s).")
 
     passes = (
-        negative_hits == 0 and 
-        strong_particle_hits >= 1 and 
+        negative_hits == 0 and
+        strong_particle_hits >= 1 and
         #and ((ai_hits + title_ai_hits) >= 1)
         total_score >= min_total
     )
