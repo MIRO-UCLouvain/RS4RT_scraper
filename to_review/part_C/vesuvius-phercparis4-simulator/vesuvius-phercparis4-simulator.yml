@@ -1,0 +1,110 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: DBbun/vesuvius-phercparis4-simulator
+url: https://github.com/DBbun/vesuvius-phercparis4-simulator
+platform: github
+description: Synthetic CT tile simulator for Vesuvius Challenge scroll imaging — patch-level SNR analysis,
+  5 scenarios, 10 figures, parameter sensitivity sweep. Zero dependencies beyond numpy + matplotlib.
+license: NOASSERTION
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-05-21T16:45:29Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# DBbun · PHerc.Paris.4 Ink-Contrast Simulation Companion\n\n**Vesuvius Challenge — Synthetic\
+  \ CT Tile Exploratory Simulator**  \nDBbun LLC · Cambridge, MA · [dbbun.com](https://dbbun.com)  \n\
+  CAGE: `16VU3` | UEI: `QY39Y38E6WG8`\n\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)\n\
+  [![Python 3.8+](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)\n[![Vesuvius\
+  \ Challenge](https://img.shields.io/badge/Vesuvius-Challenge-8B4513.svg)](https://scrollprize.org)\n\
+  [![Progress Prize Submission](https://img.shields.io/badge/Progress%20Prize-May%202026-gold.svg)](https://scrollprize.org/prizes)\n\
+  \n---\n\n> **Disclaimer:** This is not an official Vesuvius Challenge or ScrollPrize result.  \n> No\
+  \ text recovery, decipherment, or validated ink detection is claimed.  \n> All outputs are **synthetic\
+  \ and experimental**, intended for workflow and pipeline development.\n\n---\n\n## What This Is\n\n\
+  A self-contained synthetic simulation companion for the released **PHerc.Paris.4** CT tile from the\
+  \ [Vesuvius Challenge](https://scrollprize.org). It is designed to help researchers prototype, benchmark,\
+  \ and teach patch-based CT image analysis pipelines — without requiring access to restricted archival\
+  \ scroll data.\n\nThe simulator generates synthetic CT-like grayscale intensity fields modelled on the\
+  \ PHerc.Paris.4 acquisition parameters (7.91 µm voxel size, 54 keV beam energy), extracts 64 × 64 patches\
+  \ at stride=16 matching Vesuvius Challenge conventions, and computes patch-level statistics across five\
+  \ imaging scenarios. All outputs — figures, CSVs, a summary JSON, and a Jupyter notebook — are fully\
+  \ reproducible from a single `python Simulator.py` call.\n\n### Why It Matters for the Vesuvius Challenge\n\
+  \nThe core bottleneck in scroll ink detection is not the model — it is the ability to rapidly prototype\
+  \ and stress-test detection pipelines under varied imaging conditions *before* committing to expensive\
+  \ inference runs on real scroll data. This tool:\n\n- Lets teams **simulate degraded imaging conditions**\
+  \ (elevated noise, reduced contrast, physical damage) to pre-validate robustness of their pipelines.\n\
+  - Provides **ground-truth binary ink masks** for patch-level precision/recall estimation without needing\
+  \ hand-annotated scroll labels.\n- Produces a **12 × 12 parameter sensitivity surface** over contrast\
+  \ and noise that maps exactly where ink detection becomes unreliable (SNR < 6 dB).\n- Is **zero-dependency\
+  \ beyond numpy and matplotlib** — reproducible on any machine in the community.\n\n---\n\n## Quick Start\n\
+  \n```bash\ngit clone https://github.com/DBbun/vesuvius-phercparis4-simulator.git\ncd vesuvius-phercparis4-simulator\n\
+  pip install numpy matplotlib\npython Simulator.py --output sim_outputs\n```\n\nAll outputs appear in\
+  \ `sim_outputs/` within ~60 seconds on a standard laptop. No GPU required.\n\nFor an interactive walkthrough,\
+  \ open the Jupyter notebook:\n\n```bash\npip install jupyter\njupyter notebook DBbun_PHercParis4_Simulator.ipynb\n\
+  ```\n\n---\n\n## Repository Structure\n\n```\nvesuvius-phercparis4-simulator/\n├── Simulator.py    \
+  \                    # Runnable simulator — self-contained\n├── Spec.json                          \
+  \ # Machine-readable simulation specification\n├── DBbun_PHercParis4_Simulator.ipynb   # Interactive\
+  \ Jupyter notebook walkthrough\n├── sim_outputs/                        # Pre-generated reference outputs\n\
+  │   ├── fig1_baseline_tile.png          # Synthetic baseline CT-like tile\n│   ├── fig2_binary_mask_patch.png\
+  \      # 64×64 patch with binary ground-truth mask\n│   ├── fig3_higher_noise_tile.png      # Elevated\
+  \ noise scenario\n│   ├── fig4_lower_contrast_tile.png    # Reduced contrast scenario + local contrast\
+  \ map\n│   ├── fig5_damaged_region_tile.png    # 25% void/damaged region scenario\n│   ├── fig6_snr_surface.png\
+  \            # SNR sensitivity surface (contrast × noise)\n│   ├── fig7_intensity_histograms.png   #\
+  \ Intensity distributions across all scenarios\n│   ├── fig8_patch_snr_lines.png        # Per-patch\
+  \ SNR across all scenarios\n│   ├── fig9_contrast_vs_ink_prob.png   # Local contrast vs ink probability\
+  \ scatter\n│   ├── fig10_snr_vs_contrast.png       # Mean patch SNR vs contrast scale\n│   ├── simulation_outputs.csv\
+  \          # 3,190 rows × 23 columns, per-patch outputs\n│   ├── scenario_summary.csv            # 5\
+  \ rows × 43 columns, scenario-level aggregates\n│   ├── parameters_used.csv             # 22 model parameters\
+  \ with provenance\n│   └── summary.json                    # Compact scenario metrics\n├── LICENSE \
+  \                            # MIT License\n└── README.md\n```\n\n---\n\n## Scenarios\n\n| Scenario\
+  \ | noise | contrast_scale | damage | Description |\n|----------|-------|----------------|--------|-------------|\n\
+  | `baseline` | 0.02 | 1.00 | 0.00 | Nominal synthetic CT-like tile |\n| `higher_noise` | 0.08 | 1.00\
+  \ | 0.00 | Elevated noise, degraded acquisition |\n| `lower_contrast` | 0.02 | 0.35 | 0.00 | Faint ink,\
+  \ ambiguous regions |\n| `damaged_region` | 0.03 | 1.00 | 0.25 | 25% tile void / physical loss |\n|\
+  \ `parameter_sensitivity` | 0.05 | 0.70 | 0.00 | Sweep anchor; see 12×12 surface |\n\nThe **parameter\
+  \ sensitivity sweep** independently varies `contrast_scale` (0.1 → 2.0) and `noise_level` (0.005 → 0.15)\
+  \ across a 12 × 12 grid, producing 144 SNR measurements. A 6 dB contour line marks the detectability\
+  \ threshold.\n\n---\n\n## Outputs\n\n### simulation_outputs.csv — 3,190 rows × 23 columns\n\nPer-patch\
+  \ record for every 64 × 64 tile extracted at stride=16 across all five scenarios.\n\n| Column | Description\
+  \ |\n|--------|-------------|\n| `scenario` | Scenario label |\n| `patch_index` | Sequential patch ID\
+  \ |\n| `patch_row`, `patch_col` | Top-left pixel coordinates |\n| `voxel_size_um` | 7.91 µm (extracted\
+  \ from PHerc.Paris.4 metadata) |\n| `beam_energy_keV` | 54 keV (extracted) |\n| `noise_level`, `contrast_scale`,\
+  \ `damage_fraction` | Scenario parameters |\n| `mean_intensity`, `std_intensity`, `min_intensity`, `max_intensity`\
+  \ | Patch intensity statistics |\n| `local_contrast` | Michelson contrast: (max−min)/(max+min) |\n|\
+  \ `ink_fraction_gt` | Ground-truth ink pixel fraction |\n| `patch_snr_dB` | SNR = 20·log10(ink_mean\
+  \ / bg_std), clipped 0–40 dB |\n| `ink_probability_mean` | Sigmoid of (local_contrast − 0.70)/0.10 |\n\
+  | `binary_mask_sum` | Count of ink-labelled pixels in patch |\n| `void_fraction`, `papyrus_fraction`\
+  \ | Material-type fractions |\n| `is_valid_patch` | 1 if void < 50% and fragment coverage > 60% |\n\n\
+  ### Key Findings\n\n| Scenario | Mean SNR (dB) | Valid Patches |\n|----------|---------------|---------------|\n\
+  | baseline | **13.99** | 509 / 638 |\n| higher_noise | 10.52 | 508 / 638 |\n| lower_contrast | 12.86\
+  \ | 507 / 638 |\n| damaged_region | 12.74 | 472 / 638 |\n| parameter_sensitivity | 11.99 | 517 / 638\
+  \ |\n\nSNR surface sweep: min = 6.62 dB · mean = 11.74 dB · max = 16.61 dB\n\n---\n\n## Model Parameters\n\
+  \n22 parameters, 5 extracted from PHerc.Paris.4 TIFF filename metadata, 17 assumed defaults with documented\
+  \ provenance.\n\n| Parameter | Value | Unit | Source |\n|-----------|-------|------|--------|\n| voxel_size_um\
+  \ | 7.91 | µm | extracted |\n| beam_energy_keV | 54.0 | keV | extracted |\n| tile_size_px | 64 | px\
+  \ | extracted |\n| stride_px | 16 | px | extracted |\n| scale_factor | 0.20 | fraction | extracted |\n\
+  | papyrus_bg_mean | 0.35 | a.u. | assumed |\n| ink_intensity_offset | 0.28 | a.u. | assumed |\n| ink_density\
+  \ | 0.18 | fraction | assumed |\n| snr_threshold_dB | 6.0 | dB | assumed |\n| … | … | … | … |\n\nFull\
+  \ table in [`sim_outputs/parameters_used.csv`](sim_outputs/parameters_used.csv).\n\n---\n\n## Known\
+  \ Limitations\n\n- **Parameter extraction:** 5 of 22 parameters extracted from TIFF filename; 17 are\
+  \ assumed defaults.\n- **Ink probability:** Deterministic sigmoid from `local_contrast`, not a learned\
+  \ or validated detection model.\n- **Binary masks:** Generated from a percentile threshold on the synthetic\
+  \ field, not validated ground-truth annotation.\n- **Synthetic only:** No pixel data from the original\
+  \ PHerc.Paris.4 TIFF is reproduced in any output.\n- **Not ML-ready out of the box:** Not validated\
+  \ as training data for deep learning ink detection without independent verification.\n\n---\n\n## Source\
+  \ Material\n\nInspired by the released **PHerc.Paris.4** sample tile from the [Vesuvius Challenge /\
+  \ ScrollPrize](https://scrollprize.org). This repository does not redistribute any original CT data.\
+  \ All original imagery remains subject to ScrollPrize data release terms.\n\n---\n\n## Citation\n\n\
+  ```bibtex\n@misc{kartoun2026dbbun,\n  author    = {Kartoun, Uri},\n  title     = {{DBbun PHerc.Paris.4\
+  \ Ink-Contrast Simulation Companion (v1.0)}},\n  year      = {2026},\n  publisher = {DBbun LLC},\n \
+  \ url       = {https://github.com/DBbun/vesuvius-phercparis4-simulator}\n}\n```\n\n---\n\n## License\n\
+  \nMIT License — see [LICENSE](LICENSE). You are free to use, modify, and redistribute this work with\
+  \ attribution. If you win a Vesuvius Challenge prize using this work, you agree to open-source your\
+  \ contributions under a permissive license per ScrollPrize terms.\n\n---\n\n## Contact\n\nDBbun LLC\
+  \ · Cambridge, MA  \n[https://dbbun.com](https://dbbun.com)  \nCAGE: `16VU3` | UEI: `QY39Y38E6WG8`\n"

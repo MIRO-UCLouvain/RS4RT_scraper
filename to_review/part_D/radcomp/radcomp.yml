@@ -1,0 +1,73 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: LuisParedesOcampo/RadComp
+url: https://github.com/LuisParedesOcampo/RadComp
+platform: github
+description: Online Radiation Therapy BED EQD2 comparision schemes and Reirradiation analysis based on
+  Python and Streamlit
+license: MIT
+language: Python
+keywords:
+- brachytherapy
+- dose-prediction
+- medical
+- medicalphysics
+- oncology
+- phyton
+- radiation-oncology
+- radiotherapy
+- radiotherapy-treatment-planning
+- re-irradiation
+- reirradiation
+stars: 3
+updated_at: '2026-08-05T16:13:18Z'
+image_source: null
+heuristic_total_score: 29
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 9 support term(s).
+readme_excerpt: "# \U0001F9EC RadComp: Radiobiology Calculator for Medical Physics\n\n![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=Streamlit&logoColor=white)\n\
+  ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)\n\
+  <!--![Medical Physics](https://img.shields.io/badge/Medical_Physics-Clinical_Tool-01579b?style=for-the-badge)-->\n\
+  \ \n\n**RadComp** is a Radiotherapy clinical decision support tool designed to streamline the conversion\
+  \ of physical doses into biologically equivalent doses ($BED$ and $EQD2$) and to perform risk analysis\
+  \ in complex re-irradiation scenarios, including **SBRT/SRS**.\n\n\U0001F680 **Live App Access:** [https://radcomp.streamlit.app/]\n\
+  \n## ✨ Key Features\n- **Dual-Engine Modeling:** Seamless switching between Standard LQ and **Linear-Quadratic-Linear\
+  \ (LQL)** models based on dose per fraction.\n- **Smart Clinical Alerts:** Dynamic detection of biological\
+  \ validity thresholds ($d_T = 2\\cdot\\alpha/\\beta$) specific to the selected tissue (e.g., Spinal\
+  \ Cord vs. Tumor), preventing model misuse.\n- **Clinical Database:** Pre-configured $\\alpha/\\beta$\
+  \ ratios and dose-volume constraints based on QUANTEC, HyTEC, and international peer-reviewed literature.\n\
+  - **Advanced Re-irradiation Module:**\n  - Time-based biological recovery modeling (12-24 months).\n\
+  \  - Spatial overlap penalty adjustment for high-dose regions.\n  - Logic validation to prevent penalties\
+  \ on zero-dose structures.\n  - Cumulative dose assessment with dynamic stacked charts.\n\n## \U0001F9EE\
+  \ Radiobiological Models\n\nRadComp utilizes a hybrid approach to prevent the known overestimation of\
+  \ cell kill by the LQ model at high doses per fraction (SBRT/SRS).\n\n### 1. Standard Linear-Quadratic\
+  \ (LQ) Model\nUsed for conventional fractionation where dose per fraction $d$ is within the \"shoulder\"\
+  \ of the survival curve.\n\n$$BED = D \\times \\left(1 + \\frac{d}{\\alpha/\\beta}\\right)$$\n\n###\
+  \ 2. High-Dose Correction (LQL Model)\nFor hypofractionated treatments (SBRT/SRS), RadComp implements\
+  \ the **Linear-Quadratic-Linear (LQL)** model proposed by *Astrahan (2008)*  https://doi.org/10.1118/1.2969065.\
+  \ The model transitions from a quadratic curve to a straight line at a specific threshold dose $d_T$:\n\
+  \n**Validity Threshold:**\n$$d_T = 2 \\cdot (\\alpha/\\beta)$$\n\n**Calculation ($d > d_T$):**\n$$BED_{LQL}\
+  \ = \\frac{1}{\\alpha} \\left[ \\alpha d_T + \\beta d_T^2 + \\gamma (d - d_T) \\right] \\times N$$\n\
+  \n*This correction is suggested automatically by the interface when the dose per fraction exceeds the\
+  \ specific biological threshold of the selected organ.*\n\n### 3. Equivalent Dose in 2 Gy (EQD2)\nTo\
+  \ normalize treatment schemes to a standard 2 Gy fractionation:\n   \n$$EQD2 = \\frac{BED}{1 + \\frac{2}{\\\
+  alpha/\\beta}}$$\n\n## \U0001F9EA Clinical Validation\nReliability is our priority. RadComp's calculation\
+  \ engine has been validated using test vectors compared against reference clinical cases:\n\n| Test\
+  \ Case | Reference Model | Expected Cumulative EQD2 | Status |\n| :--- | :--- | :--- | :--- |\n| Spinal\
+  \ Cord Re-irrad | Nieder et al. (2006) | ~56 Gy | ✅ Validated |\n| Lung Re-irrad | Central Toxicity\
+  \ Protocols | ~69 Gy | ✅ Validated |\n\n*Note: Validation assumes a 50% recovery factor at 12 months\
+  \ and an overlap penalty applied to RT1 (Previous Course).*\n\n## ⚖️ License\nThis project is licensed\
+  \ under the **MIT License**. Feel free to use, modify, and collaborate. See the [LICENSE](LICENSE) file\
+  \ for details.\n\n## \U0001F6E0️ Tech Stack\n- **Python 3.10+**\n- **Streamlit** (UI Framework)\n- **Plotly**\
+  \ (Interactive Visualizations)\n- **NumPy/Pandas** (Calculation Engine)\n\n## \U0001F680 Installation\
+  \ & Local Run\nTo run this project locally, clone the repository and install the dependencies:\n\n```bash\n\
+  \ git clone [https://github.com/LuisParedesOcampo/RadComp.git](https://github.com/LuisParedesOcampo/RadComp.git)\n\
+  \ cd RadComp\n pip install -r requirements.txt\n streamlit run main.py\n```\n\n## ⚠️ Disclaimer\n\n\
+  For Research and Educational Use Only. This tool is not a medical device and has not been cleared for\
+  \ clinical use by any regulatory authority. All calculations must be independently verified by a certified\
+  \ Medical Physicist or Radiation Oncologist. The author assumes no liability for clinical errors or\
+  \ misuse of this software.\n\n✉️ Contact & Collaboration\n## LinkedIn: Luis Fernando Paredes [https://www.linkedin.com/in/lfparedes1/]\n\
+  Email: luisfernandoparedes2@gmail.com\n"

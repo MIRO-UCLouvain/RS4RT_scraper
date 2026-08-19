@@ -1,0 +1,164 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hannahgsimon/HALModeling2024
+url: https://github.com/hannahgsimon/HALModeling2024
+platform: github
+description: Developed code using the Hybrid Automata Library (HAL) to create a spatial agent-based model
+  of radio-immune response to spatially fractionated radiotherapy. This project was in association with
+  the Cleveland Clinic Lerner Research Institute, Jacob Scott Lab.
+license: MIT
+language: Java
+keywords:
+- agent-based-model
+- bifurcation-analysis
+- cancer-models
+- computational-biology
+- data-visualization
+- hybrid-automata
+- immune-response
+- mathematical-modelling
+- ordinary-differential-equations
+- radiation-therapy
+- spatial-model
+- statistics
+- systems-biology
+stars: 0
+updated_at: '2026-01-04T14:47:18Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# OnLattice2DGrid\n\n## Overview\nIn the \"OnLattice2DCells\" folder is the `OnLattice2DGrid`\
+  \ class, a component of the HALModeling2024 project. This class extends `AgentGrid2D<CellFunctions>`\
+  \ and serves as the foundation for modeling and simulating tumor and immune cell populations in a 2D\
+  \ grid environment. It supports agent-based simulations by facilitating cell interactions, movement,\
+  \ and other on-lattice dynamics. This Java code uses the Hybrid Automata Library (HAL) [1] to create\
+  \ a spatial agent-based model of an ordinary differential equations model [2] to simulate radio-immune\
+  \ response to spatially fractionated radiotherapy.\n\nCode to develop and analyze statistical graphs\
+  \ for this model can be found at https://github.com/hannahgsimon/HALModeling2024Graphs.\n\n## Prerequisites\n\
+  - Java Development Kit (JDK): Version 8 or higher.\n- HAL Framework: Ensure the HAL framework dependencies\
+  \ are installed and properly configured.\n\n## Installation\n1. Clone the repository:\n    - git clone\
+  \ https://github.com/hannahgsimon/HALModeling2024.git\n2. Navigate to the project directory: cd HALModeling2024/OnLattice2DCells\n\
+  3. Import the project into your preferred Java IDE.\n4. Build the project to ensure all dependencies\
+  \ are resolved.\n\n## Radio-Immune Response Ordinary Differential Equations (ODE) Model [2]\n- Tumor\
+  \ Cells: \U0001D447<sub>\U0001D45B+1</sub> = \U0001D447<sub>\U0001D45B</sub> \U0001D452<sup>(\U0001D707\
+  −\U0001D44D<sub>\U0001D45B</sub>)</sup> \U0001D446<sub>\U0001D447</sub>\n- Lymphocytes: \U0001D43F<sub>\U0001D45B\
+  +1</sub> = (1−\U0001D706<sub>\U0001D43F</sub>) \U0001D446<sub>\U0001D43F</sub> \U0001D43F<sub>\U0001D45B\
+  </sub> + \U0001D70C\U0001D447<sub>\U0001D45B</sub> + \U0001D713\U0001D700\U0001D434<sub>\U0001D45B</sub>\U0001D447\
+  <sub>\U0001D45B</sub>\n- Triggering Cells: \U0001D434<sub>\U0001D45B+1</sub> = (1−\U0001D452) (\U0001D434\
+  <sub>\U0001D45B</sub> \U0001D446<sub>\U0001D456</sub> + ∆\U0001D434<sub>\U0001D45B</sub>)\n- Activation\
+  \ Function: \U0001D452 = tanh⁡((1−\U0001D446<sub>\U0001D447</sub>) \U0001D449<sub>\U0001D436</sub>)\n\
+  - Primary Immune Response: \U0001D44D<sub>\U0001D45D,\U0001D45B</sub> = $\\frac{wL_{n}}{1 + \\frac{\\\
+  kappa T_{n}^{2/3} L_{n}}{1}}$\n- Secondary Immune Response: $Z_{s,n} = \\sum_{i=0}^{n} \\gamma \\frac{(1\
+  \ + c_i)}{(r + c_i)} Z_{p,i}$\n- Doomed Cells: \U0001D437<sub>\U0001D45B+1</sub> = (1−\U0001D706<sub>\U0001D437\
+  </sub>) \U0001D437<sub>\U0001D45B</sub> + (1−\U0001D446<sub>\U0001D447</sub>) \U0001D447<sub>\U0001D45B\
+  </sub> \U0001D452<sup>\U0001D707</sup> + \U0001D446<sub>\U0001D447</sub> \U0001D447<sub>\U0001D45B</sub>\
+  \ \U0001D452<sup>\U0001D707</sup> (1−\U0001D452<sup>−\U0001D44D<sub>\U0001D45B</sub></sup>)\n- Surviving\
+  \ Fraction: \U0001D446 = \U0001D452<sup>(−\U0001D6FC\U0001D451<sub>\U0001D45B</sub>−\U0001D6FD\U0001D451\
+  <sub>\U0001D45B</sub><sup>2</sup>)</sup>\n\n### Key\n- **$(\\alpha, \\beta)_{T,L}$**: Radiation sensitivity\
+  \  \n- **$\\mu$**: Tumor growth rate  \n- **$\\rho$**: Tumor infiltration rate  \n- **$w$**: Rate of\
+  \ cell killing  \n- **$\\lambda_{D,L}$**: Decay constant  \n- **$\\psi$**: Radiation-induced infiltration\
+  \  \n- **$\\kappa$**: Immune suppression effect  \n- **$d_n$**: Radiation dose  \n\n\n## Radio-Immune\
+  \ Response Spatial Model Agents\n1. $${\\color{blue}Lymphocytes} \\space {\\color{blue}(blue)}$$\n \
+  \   - Lymphocyte Migration: \U0001D70C\U0001D447<sub>\U0001D45B</sub> + \U0001D713\U0001D700\U0001D434\
+  <sub>\U0001D45B</sub>\U0001D447<sub>\U0001D45B</sub>  \n        Depends on the presence of triggering\
+  \ cells:\n        ```java\n        if (TriggeringCells.count > 0)\n        {\n            new CellFunctions().lymphocyteMigration(model,\
+  \ win);\n        }\n        ```\n    - Survival: \U0001D446<sub>\U0001D43F</sub> (1−\U0001D706<sub>\U0001D43F\
+  </sub>)\n    - Removal by Radiation: 1−\U0001D446<sub>\U0001D43F</sub>\n    - Removal by Exhaustion:\
+  \ \U0001D446<sub>\U0001D43F</sub> \U0001D706<sub>\U0001D43F</sub>\n2. $${\\color{lightgreen}\\text{Triggering\
+  \ Cells (immune cells that attract lymphocytes to the tumor site, green)}}$$\n    - Survival: \U0001D706\
+  <sub>\U0001D434</sub> (1−\U0001D446<sub>\U0001D43F</sub>) (1−\U0001D700) + \U0001D446<sub>\U0001D456\
+  </sub> (1−\U0001D700)\n    - Removal by Radiation: (1−\U0001D446<sub>\U0001D456</sub>) (1−\U0001D706\
+  <sub>\U0001D434</sub>)\n    - Removal by Activation: (1−\U0001D446<sub>\U0001D456</sub>) \U0001D706\
+  <sub>\U0001D434</sub> \U0001D700 + \U0001D446<sub>\U0001D456</sub> \U0001D700\n    - Each timestep 1\
+  \ random triggering cell is removed.\n3. $${\\color{red}Tumor\\ Cells\\ (red)}$$\n    - Survival: \U0001D446\
+  <sub>\U0001D447</sub> (1−\U0001D44D<sub>\U0001D45B</sub>) (1−\U0001D707)\n    - Division: \U0001D446\
+  <sub>\U0001D447</sub> (1−\U0001D44D<sub>\U0001D45B</sub>) \U0001D707\n    - Doomed by Radiation: 1−\U0001D446\
+  <sub>\U0001D447</sub>\n    - Doomed by Immune System: \U0001D446<sub>\U0001D447</sub> \U0001D44D<sub>\U0001D45B\
+  </sub>\n4. $${\\color{yellow}Doomed} \\space {\\color{yellow}Cells} \\space {\\color{yellow}(dead} \\\
+  space {\\color{yellow}tumor} \\space {\\color{yellow}cells,} \\space {\\color{yellow}yellow)}$$\n  \
+  \  - Remain on Grid: 1−\U0001D706<sub>\U0001D437</sub>\n    - Clearance: \U0001D706<sub>\U0001D437</sub>\n\
+  \       \n## Spatial Model Features\n- Agent-Based Model (ABM): This computer simulation studies the\
+  \ interactions between agents (here, cells), radiation, and time.\n- On-Lattice ABM: Discrete, limited\
+  \ in where the agents can move.\n- 2D Grid: The space with defined dimensions within which agents can\
+  \ move.\n- Stochastic: At each timestep, each agent can have one of several random outcomes with probabilities\
+  \ defined in the `CellFunctions` class, such as death, division, and survival (see agent definitions\
+  \ above).\n- Agent Management: Agents and their attributes can be tracked within the 2D grid.\n- Figures:\
+  \ Each figure (2-6) is defined by different parameters, which are specified in the `FigParameters` class\
+  \ and derived from Table 1 [2]. The only modification occurs in Figure 3, where the tumor infiltration\
+  \ rate is set to 0.05 instead of 0.5 to improve model performance by preventing excessive lymphocyte\
+  \ migration.\n- Scenarios: See the \"Simulation GIFs\" folder for definitions of each scenario (A-E),\
+  \ which is a figure with immune suppression effect (\U0001D705) at a threshold value.\n- Sample Simulations:\
+  \ The \"Simulation GIFs\" folder defines and contains GIFs of figure 3 with different radiation approaches,\
+  \ and of each scenario (A-E). These were generated with `writeGIF = true`.\n\n## Usage\nBefore running\
+  \ the code, you will need to update the file paths if any of the following booleans are set to true:\
+  \ `printCounts`, `printProbabilities`, `printNeighbors`, or `writeGIF`.\n\nThe simulation starts with\
+  \ the below initial conditions (modifiable in the code). You can update these parameters in the indicated\
+  \ lines of code to fit your specific simulation requirements.\n- **<ins>Figure</ins>:** 3. The figure\
+  \ for which the code will run.\n     ```java\n    public static int figure = 3;\n     ```\n- **<ins>Scenario\
+  \ Active</ins>:** Disabled. Used for simulation testing of scenarios A, B, C, or D to study birfurcation\
+  \ of a tumor from controlled growth (immune limited) to uncontrolled growth (immune escape). The threshold\
+  \ is determined by the value of immune suppression (*\U0001D705*).\n    ```java\n    public static boolean\
+  \ scenarioActive = false; public static char scenario = 'A';\n    ```\n- **<ins>Initial Cell Populations\
+  \ at Timestep 0</ins>:** 0 lymphocytes, 1 tumor cell, & 500 triggering cells. The tumor cells are initialized\
+  \ at the center of the grid, while all other cells are randomly distributed in the remaining spaces.\n\
+  \    ```java\n    int lymphocitePopulation = 0;\n    int tumorSize = 1;\n    int triggeringPopulation\
+  \ = 500;\n    ```\n- **<ins>Grid Size</ins>:** 100 x 100 cells.\n    ```java\n    int x = 100;\n   \
+  \ int y = 100;\n    ```\n- **<ins>Timesteps</ins>:** 1000. The total number of timesteps for which the\
+  \ simulation runs.\n    ```java\n    int timesteps = 1000;\n    ```\n- **<ins>Total Radiation</ins>:**\
+  \ Disabled. Radiates the entire grid.\n    ```java\n    public static boolean totalRadiation = false\n\
+  \    ```\n- **<ins>Center Radiation</ins>:** Enabled. Calculates the tumor's center at that timestep\
+  \ and radiates a specified percentage (modifiable via *public static double targetPercentage = 0.7;*)\
+  \ of the tumor in a circular area centered on that point.\n    ```java\n    centerRadiation = true\n\
+  \    ```\n- **<ins>Spatial Radiation</ins>:** Disabled. Calculates the tumor's center at the current\
+  \ timestep and defines a circular area around it with a specified radius (modifiable via *public static\
+  \ int radius = 10;*). Additional circular areas are calculated to fit within the tumor, maintaining\
+  \ a 2-cell gap between adjacent circles and a 1-cell buffer between each circle and the tumor's edge.\
+  \ Each circle is radiated if the percentage of tumor and doomed cells within it meets or exceeds the\
+  \ specified threshold (modifiable via *public static double thresholdPercentage = 0.8;*).\n    ```java\n\
+  \    spatialRadiation = false\n    ```\n- **<ins>Base Radiation Dose</ins>:** *0 Gy*. The default radiation\
+  \ dose applied to the entire grid during each timestep when radiation is turned off.\n    ```java\n\
+  \    public static int baseRadiationDose = 0\n    ```\n- **<ins>Applied Radiation Dose</ins>:** *10\
+  \ Gy*. The radiation dose delivered using the specified method (total, center, or spatial) during active\
+  \ radiation timesteps.\n    ```java\n    appliedRadiationDose = 10\n    ```\n- **<ins>Radiation Timesteps</ins>:**\
+  \ 200. The timesteps during which radiation is applied using the specified method (total, center, or\
+  \ spatial).\n    ```java\n    public static List<Integer> radiationTimesteps = List.of(200);\n    ```\n\
+  - **<ins>Neighborhood Radius for Lymphocyte Migration</ins>:** 0.75. The percentage of the minimum grid\
+  \ dimension within which lymphocytes can migrate. The closer to the center of the tumor an empty space\
+  \ is, the higher the probability a lymphocyte has of migrating there.\n    ```java\n    double radiusFraction\
+  \ = 0.75;\n    ```\n- **<ins>Lymphocyte Density Management</ins>:** 4. The maximum number of lymphocyte\
+  \ neighbors any grid space can have in an adjacent space (including diagonally).\n    ```java\n    int\
+  \ maxNeighbors = 4;\n    ```\n- **<ins>Print Counts</ins>:** Disabled. Outputs a CSV file with the following\
+  \ data at each timestep: populations of lymphocytes, triggering cells, all tumor cells, tumor cells\
+  \ previously exposed to radiation, all doomed cells, and doomed cells that are dead from radiation.\
+  \ Additionally, for the entire grid, it records the probabilities of lymphocyte death, tumor cell death\
+  \ from radiation, tumor cell death from immune system activity, and tumor cell division. It also prints\
+  \ the average surviving fraction of tumor cells (including the surviving fraction for radiation-exposed\
+  \ tumor cells during their last moment of radiation), primary immune response, secondary immune response,\
+  \ total immune response, the number of lymphocytes attempting to migrate onto the grid, and immune suppression\
+  \ effect.\n    ```java\n    public static final boolean printCounts = false\n    ```\n- **<ins>Print\
+  \ Probabilities</ins>:** Disabled. Outputs a CSV file with the following data for every cell on the\
+  \ grid at each timestep: type, color, whether it was previously exposed to radiation, the dose of radiation\
+  \ received that timestep, whether the cell is dead from radiation. It also records the probabilities\
+  \ of death, activation, death from radiation, death from immune system activity, and division. It also\
+  \ prints the number of lymphocyte neighbors (including diagonally).\n    ```java\n    printProbabilities\
+  \ = false\n    ```\n- **<ins>Print Neighbors</ins>:** Disabled. Outputs a CSV file with the number of\
+  \ lymphocyte neighbors (including diagonally) at each timestep, for both every cell on the grid and\
+  \ empty grid spaces.\n    ```java\n    printNeighbors = false\n    ```\n- **<ins>Write GIF</ins>:**\
+  \ Disabled. Outputs a GIF file of the simulation.\n    ```java\n    public static boolean writeGIF =\
+  \ false;\n    ```\n- **<ins>Immune Suppression Effect Threshold</ins>:** Disabled. When enabled, the\
+  \ immune suppression effect (*\U0001D705*) dynamically adjusts at each timestep to its threshold value,\
+  \ as defined by equation 5 [2]: $e_{\\kappa} = \\frac{w}{\\mu \\ T_{n}^{2/3}} - \\frac{1}{L_{n} \\ T_{n}^{2/3}}$\n\
+  \    ```java\n    public static boolean immuneSuppressionEffectThreshold = false;\n    ```\n\n## Contributing\n\
+  Contributions are welcome! To contribute:\n1. Fork the repository.\n2. Create a new branch for your\
+  \ feature or bug fix:\n    - git checkout -b feature-name\n3. Commit your changes and push the branch:\n\
+  \    - git commit -m \"Add new feature\"\n    - git push origin feature-name\n4. Open a pull request\
+  \ and describe your changes in detail.\n\n## References\n[1] Bravo, R. R., Baratchart, E., West, J.,\
+  \ Schenck, R. O., Miller, A. K., Gallaher, J., Gatenbee, C. D., Basanta, D., Robertson-Tessi, M., &\
+  \ Anderson, A. R. A. (2020). Hybrid Automata Library: A flexible platform for hybrid modeling with real-time\
+  \ visualization. *PLOS Computational Biology*, 16(3), e1007635. https://doi.org/10.1371/journal.pcbi.1007635\n\
+  \n[2] Cho, Y.-B., Yoon, N., Suh, J. H., & Scott, J. G. (2023). Radio-immune response modelling for spatially\
+  \ fractionated radiotherapy. *Physics in Medicine & Biology*, 68(16)"

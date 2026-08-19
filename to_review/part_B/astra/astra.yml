@@ -1,0 +1,79 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: cesarjesusvalls/ASTRA
+url: https://github.com/cesarjesusvalls/ASTRA
+platform: github
+description: A novel range telescope concept for proton CT
+license: null
+language: C++
+keywords: []
+stars: 0
+updated_at: '2025-11-26T09:21:38Z'
+image_source: https://raw.githubusercontent.com/cesarjesusvalls/ASTRA/HEAD/docs/pct_system_sketch.png
+heuristic_total_score: 20
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 5 particle-therapy term(s).
+readme_excerpt: "# ASTRA\n\n<h3 align=\"center\"><b>A</b> <b>S</b>uper <b>T</b>hin pl<b>A</b>stic <b>RA</b>nge\
+  \ telescope</h3>\n\n<p align=\"center\">\n  <i>A novel plastic-scintillator-based range telescope concept\
+  \ for proton computed tomography (pCT)</i>\n</p>\n\n---\n\n## Overview\n\nASTRA is a GEANT4-based Monte\
+  \ Carlo simulation toolkit for evaluating the performance of a range telescope made of orthogonal thin\
+  \ bars of plastic scintillator for proton CT imaging.\n\n![pCT System](docs/pct_system_sketch.png)\n\
+  *3D visualization of the pCT system showing the proton beam, four DMAPS tracker planes, a spherical\
+  \ phantom with cylindrical inserts, and the ASTRA range telescope. Multiple protons (dark blue lines)\
+  \ are tracked simultaneously.*\n\n### Key Performance\n\n| Metric | Value |\n|--------|-------|\n| Energy\
+  \ resolution (by range) | ~0.7% |\n| Energy resolution (with calorimetry) | ~0.5% |\n| Data collection\
+  \ rate | 10<sup>8</sup> protons/s (100 MHz) |\n| Spatial resolution | ~1.1 mm |\n| RSP accuracy | <\
+  \ 0.5% |\n\n---\n\n## Publication\n\nThis code was developed for the following publication:\n\n> M.\
+  \ Granado-González, C. Jesús-Valls, T. Lux, T. Price, F. Sánchez,\n> **\"A novel range telescope concept\
+  \ for proton CT\"**,\n> *Phys. Med. Biol.* **67** (2022) 035013\n>\n> DOI: [10.1088/1361-6560/ac4b39](https://doi.org/10.1088/1361-6560/ac4b39)\
+  \ | arXiv: [2109.03452](https://arxiv.org/abs/2109.03452)\n\n**If you use this code, please cite the\
+  \ above publication.**\n\n---\n\n## System Components\n\n### 1. DMAPS Position Tracker\nFour Depleted\
+  \ Monolithic Active Pixel Sensors arranged in pairs on either side of the phantom:\n- **Thickness**:\
+  \ 100 μm silicon\n- **Pixel size**: 40×40 μm²\n- **Coverage**: 10×10 cm²\n- **Frame rate**: 40 MHz\n\
+  \n### 2. ASTRA Range Telescope\nPlastic scintillator bars (EJ-200) arranged in alternating orthogonal\
+  \ layers:\n- **Bar dimensions**: 3×3×96 mm³\n- **Layers**: 120 (360 mm total depth, stops protons up\
+  \ to 240 MeV)\n- **Readout**: SiPMs directly coupled to scintillator\n- **Scintillation**: 0.9 ns rise\
+  \ time, 2.1 ns decay time\n\n### 3. Phantom\nConfigurable test objects for imaging studies, including\
+  \ spherical phantoms with cylindrical inserts of various tissue-equivalent materials.\n\n---\n\n## Event\
+  \ Reconstruction\n\n### 2D Event Display\n\nThe simulation produces detailed 2D event displays showing\
+  \ proton energy deposits in ASTRA:\n\n![2D Event Display](docs/edep_event_display.png)\n*Top and side\
+  \ views of multiple proton tracks in ASTRA. The color scale indicates energy deposit (MeV), with the\
+  \ characteristic Bragg peak visible at the end of each track where protons stop and deposit maximum\
+  \ energy.*\n\n### 3D Multi-Proton Tracking\n\nASTRA's bar-based geometry enables simultaneous tracking\
+  \ of multiple protons:\n\n![3D Track Reconstruction](docs/opt3.png)\n*3D reconstruction of six simultaneous\
+  \ protons in ASTRA. Each color represents a different reconstructed track. The orthogonal bar arrangement\
+  \ allows unambiguous 3D position reconstruction even when multiple protons traverse the detector simultaneously.*\n\
+  \n---\n\n## Imaging Results\n\n### Proton CT Reconstruction\n\nThe system produces high-quality 3D RSP\
+  \ (Relative Stopping Power) maps:\n\n![pCT Slices](docs/pCT_2SetsInserts.png)\n*Two slices from a pCT\
+  \ reconstruction of a 75 mm diameter Perspex phantom with six cylindrical tissue-equivalent inserts.\
+  \ Left slice: hard cortical bone (bright), lung (dark), air (black). Right slice: rib bone, water, adipose\
+  \ tissue. RSP values are reconstructed with < 0.5% accuracy.*\n\n### Spatial Resolution\n\n![RSP Profile](docs/insert_profile.png)\n\
+  *RSP profile along the red dashed line in the pCT image. The transition regions between materials are\
+  \ characterized by error function fits, yielding a spatial resolution of σ ≈ 1.1 mm.*\n\n---\n\n## Requirements\n\
+  \n- [GEANT4](https://geant4.web.cern.ch/) (tested with v4.10.05)\n- [ROOT](https://root.cern/) (for\
+  \ analysis and visualization)\n- CMake (≥ 3.0)\n- C++11 compatible compiler\n\n## Installation\n\n```bash\n\
+  git clone https://github.com/cesarjesusvalls/ASTRA.git\ncd ASTRA\nmkdir build && cd build\ncmake ../\n\
+  make\n```\n\n**Post-installation:**\n```bash\n# Move dictionary file\ncp build/src/*.pcm lib/\n\n# Create\
+  \ output directories\nmkdir -p output plots\n```\n\n---\n\n## Usage\n\n### Quick Start\n\n```bash\n\
+  cd scripts\n\n# Run energy resolution study\npython make_res_prod.py    # GEANT4 simulation\npython\
+  \ make_res_ana.py     # Analysis\n\n# Generate plots\ncd ../bin\n./plot_energy_res\n```\n\n### Phantom\
+  \ Imaging\n\n```bash\ncd scripts\npython make_imag_prod.py   # GEANT4 simulation\npython make_imag_ana.py\
+  \    # Analysis\ncd ../bin\n./plot_phantom_image\n```\n\n### Configuration\n\nEdit XML files in `/config`\
+  \ to modify:\n- Beam settings (energy, profile, position)\n- Detector geometry (bar size, number of\
+  \ layers)\n- Phantom properties (materials, dimensions)\n- Number of simultaneous protons (`Nprotons`)\n\
+  \n---\n\n## Repository Structure\n\n```\nASTRA/\n├── analysis/        # Analysis source code\n├── cmake/\
+  \           # CMake configuration for ROOT\n├── config/          # XML configuration files\n├── docs/\
+  \            # Documentation and figures\n├── include/         # Header files\n├── mac/            \
+  \ # GEANT4 macro files\n├── plotters/        # ROOT plotting scripts\n├── scripts/         # Python\
+  \ automation scripts\n├── src/             # Source code\n│   ├── CMOS/        # DMAPS tracker geometry\n\
+  │   ├── SciDet/      # ASTRA detector geometry\n│   └── phantom/     # Phantom definitions\n├── utils/\
+  \           # Utility functions\n└── pCTsimulation.cc # Main simulation entry point\n```\n\n---\n\n\
+  ## Authors\n\n- **Marc Granado-González** — University of Birmingham\n- **César Jesús-Valls** — IFAE\
+  \ Barcelona\n- **Thorsten Lux** — IFAE Barcelona\n- **Tony Price** — University of Birmingham\n- **Federico\
+  \ Sánchez** — University of Geneva\n\n## Acknowledgments\n\nThis work was supported by:\n- Spanish Ministerio\
+  \ de Economía y Competitividad (SEIDI-MINECO) — Grants PID2019-107564GB-I00, SEV-2016-0588\n- CERCA\
+  \ program of the Generalitat de Catalunya\n- Swiss National Foundation — Grant 200021_85012\n- EPSRC\
+  \ — Grant EP/R023220/1\n\n"

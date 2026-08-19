@@ -1,0 +1,139 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: vengjean/sfrt-esapi
+url: https://github.com/vengjean/sfrt-esapi
+platform: github
+description: Varian Eclipse ESAPI script for spatially fractionated radiation therapy (SFRT) and lattice
+  radiation therapy planning.
+license: null
+language: C#
+keywords: []
+stars: 0
+updated_at: '2026-08-11T19:55:06Z'
+image_source: null
+heuristic_total_score: 36
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+- Matched 12 support term(s).
+readme_excerpt: "# SFRT_ESAPI\n\nSFRT_ESAPI is a Varian Eclipse ESAPI script for spatially fractionated\
+  \ radiation therapy (SFRT) and lattice radiation therapy planning. It creates lattice peak and valley\
+  \ structures, tuning structures, VMAT beams, and optimization objectives from UI selections and local\
+  \ protocol templates.\n\n> [!warning]\n> This script is a planning aid and research/clinical workflow\
+  \ tool. It must be commissioned, validated, and approved locally before clinical use. The template doses\
+  \ and objectives in this repository are examples and may not match your institution's protocol.\n\n\
+  ## Who This Is For\n\nThis README is intended for new users and local maintainers who need to:\n\n-\
+  \ Build and deploy the ESAPI script.\n- Configure local machines and energies.\n- Understand the WashU,\
+  \ Mayo, and Custom preset files.\n- Adjust prescription/objective templates safely.\n- Run the current\
+  \ preview, structure creation, and objective setup workflow.\n\n## Requirements\n\n- Varian Eclipse\
+  \ with ESAPI scripting enabled.\n- Eclipse v18+ for the SABR/SBRT NTO behavior used by optimization\
+  \ setup.\n- Windows build environment with Visual Studio/MSBuild and the .NET Framework 4.8 Developer\
+  \ Pack.\n- Access to a non-clinical Eclipse environment for commissioning and testing.\n\nThe project\
+  \ targets .NET Framework 4.8. The cross-platform `dotnet` SDK alone is usually not enough unless the\
+  \ .NET Framework 4.8 reference assemblies are also available.\n\n## Repository Layout\n\n- `SFRT_PlanningScript.sln`:\
+  \ Visual Studio solution.\n- `SFRT_PlanningScript.csproj`: Main script project.\n- `ESAPIWorker/`: ESAPI\
+  \ dispatcher/context helpers.\n- `Model/Model.cs`: Main geometry, structure creation, beam setup, preview,\
+  \ and optimization logic.\n- `ViewModels/SphereDialogViewModel.cs`: UI state and workflow orchestration.\n\
+  - `Views/SphereDialog.xaml`: Main WPF interface.\n- `templates/`: Protocol objective and prescription\
+  \ templates.\n- `configs/machines.config`: Local linac IDs, display names, and available energies.\n\
+  \nBuild output copies the runtime configuration files into:\n\n- `bin/x64/Release/templates/`\n- `bin/x64/Release/configs/`\n\
+  \nThese runtime copies are what Eclipse uses when the script is launched from the built `.esapi` assembly.\n\
+  \n## Build And Deploy\n\n1. Open `SFRT_PlanningScript.sln` in Visual Studio on a machine with .NET Framework\
+  \ 4.8 Developer Pack installed.\n2. Edit `configs/machines.config` for your local treatment units.\n\
+  3. Review and localize the files in `templates/`.\n4. Build the solution in `Release|x64`.\n5. Confirm\
+  \ the output folder contains:\n   - `SFRT_PlanningScript.esapi.dll`\n   - `templates/*.csv`\n   - `templates/*.json`\n\
+  \   - `configs/machines.config`\n6. Link or copy `SFRT_PlanningScript.esapi.dll` to your Eclipse scripts\
+  \ location according to your local ESAPI deployment process.\n7. Test in a non-clinical patient/course\
+  \ before clinical use.\n\n## Runtime Configuration Files\n\nThe script expects configuration files next\
+  \ to the built assembly:\n\n```text\nbin/x64/Release/\n  SFRT_PlanningScript.esapi.dll\n  configs/\n\
+  \    machines.config\n  templates/\n    washu_objectives.csv\n    washu_prescription.json\n    mayo_objectives.csv\n\
+  \    mayo_prescription.json\n```\n\n### `configs/machines.config`\n\nThis JSON file controls the machine\
+  \ dropdown and available energy dropdown.\n\nExample entry:\n\n```json\n{\n  \"MachineId\": \"ACUnit1TB\"\
+  ,\n  \"DisplayName\": \"Unit 1\",\n  \"Energies_MV\": [\"6X\", \"6X-FFF\", \"10X\", \"10X-FFF\", \"\
+  15X\"],\n  \"Notes\": \"HDMLCs\"\n}\n```\n\nFields:\n\n- `MachineId`: The Eclipse machine ID used when\
+  \ beams are created.\n- `DisplayName`: Friendly UI label.\n- `Energies_MV`: Energies shown when the\
+  \ machine is selected.\n- `Notes`: Optional human-readable notes.\n\nIf the file is missing or invalid,\
+  \ the script falls back to built-in example machine IDs and energies. Sites should not rely on those\
+  \ fallback values clinically.\n\n## Protocol Presets\n\nThe UI currently lists:\n\n- `WashU`\n- `Mayo`\n\
+  - `Custom`\n\nEach preset is loaded from two files:\n\n```text\ntemplates/{preset}_objectives.csv\n\
+  templates/{preset}_prescription.json\n```\n\nFor example, selecting Mayo loads:\n\n```text\ntemplates/mayo_objectives.csv\n\
+  templates/mayo_prescription.json\n```\n\nIf you want to use `Custom`, add:\n\n```text\ntemplates/custom_objectives.csv\n\
+  templates/custom_prescription.json\n```\n\nThe preset files must be present in the build output `templates/`\
+  \ folder. The project copies files from the repository `templates/` folder on build.\n\n## Prescription\
+  \ JSON Templates\n\nPrescription JSON files control built-in target, peak, valley, ring, and body-minus-spheres\
+  \ objectives. Dose values are in cGy.\n\nCommon keys:\n\n- `PTVLow`: Adds a lower point objective to\
+  \ the selected PTV-low structure. If omitted, this objective is skipped.\n- `PTVLowPriority`: Priority\
+  \ for the `PTVLow` objective.\n- `Peak_Upper`: Upper objective dose for peak structures.\n- `Peak_Lower`:\
+  \ Lower objective dose for peak structures.\n- `EnablePeakUpperObjective`: Enables/disables peak upper\
+  \ objective.\n- `EnablePeakLowerObjective`: Enables/disables peak lower objective.\n- `EnablePeakLower95Objective`:\
+  \ Enables/disables a 95% lower peak objective.\n- `PeakUpperPriority`, `PeakLowerPriority`, `PeakLower95Priority`:\
+  \ Peak objective priorities.\n- `EnableRepresentativePeakObjective`: Adds one representative peak objective\
+  \ to the first peak structure.\n- `RepresentativePeakDose`, `RepresentativePeakVolumePercent`, `RepresentativePeakPriority`:\
+  \ Representative peak objective settings.\n- `TS_Peak_Ring1`, `TS_Peak_Ring2`, `TS_Peak_Ring3`: Tuning-ring\
+  \ objective doses.\n- `TS_Peak_Ring1Priority`, `TS_Peak_Ring2Priority`, `TS_Peak_Ring3Priority`: Tuning-ring\
+  \ objective priorities.\n- `TS_Ring1`, `TS_Ring2`: Legacy/global tuning ring doses used when matching\
+  \ structures exist.\n- `EnableValleyObjectives`: Enables/disables valley objectives.\n- `Valley_Upper`,\
+  \ `Valley_Lower`, `Valley_EUD`: Valley objective doses.\n- `CreateBodyMinusSpheresStructure`: Creates\
+  \ a body-minus-spheres control structure.\n- `BodyMinusSpheresStructureId`: Name for that structure,\
+  \ usually `BODY_Spheres`.\n- `EnableBodyMinusSpheresObjective`: Adds an objective to `BodyMinusSpheresStructureId`.\n\
+  - `BodyMinusSpheresDose`, `BodyMinusSpheresVolumePercent`, `BodyMinusSpheresPriority`: Body-minus-spheres\
+  \ objective settings.\n\n### WashU Prescription\n\n`washu_prescription.json` includes `PTVLow`, peak\
+  \ objectives, valley objectives, and grouped tuning-ring doses.\n\nCurrent WashU behavior:\n\n- Peak\
+  \ structures are grouped by slice/row unless the UI option for per-sphere tuning structures is enabled.\n\
+  - Tuning rings are generated as grouped `TS_Peak_Ring1`, `TS_Peak_Ring2`, and `TS_Peak_Ring3` structures\
+  \ in the default grouped mode.\n- Valley objectives are enabled by default through the prescription\
+  \ defaults/templates.\n\n### Mayo Prescription\n\n`mayo_prescription.json` intentionally omits `PTVLow`,\
+  \ so the PTV-low point objective is skipped.\n\nCurrent Mayo behavior:\n\n- Peak spheres stay individual\
+  \ as `TS_Peak_#`.\n- Per-sphere temporary ring geometry is combined by shell.\n- Combined tuning shells\
+  \ are named:\n  - `TS_Peak_Ring_Inner`\n  - `TS_Peak_Ring_Middle`\n  - `TS_Peak_Ring_Outer`\n- Temporary\
+  \ per-sphere ring helper structures are removed after the combined shells are created.\n- `CombineTuningRingShells:\
+  \ true` controls this behavior.\n- `BODY_Spheres` can be created and can receive an objective if enabled\
+  \ in the template.\n\n## Objective CSV Templates\n\nObjective CSV files add additional objectives after\
+  \ the built-in prescription objectives are set.\n\nHeader:\n\n```csv\nStructureType,Labels,ObjectiveType,ObjectiveOperator,ObjectiveParameter,ObjectiveValue,Priority,ApplyDoseReduction\n\
+  ```\n\nSupported fields:\n\n- `StructureType`: Informational/grouping label.\n- `Labels`: Semicolon-separated\
+  \ structure IDs or aliases to match. The special label `__SELECTED_OARS__` applies the row to all OARs\
+  \ selected in the UI.\n- `ObjectiveType`: `dvh` or `mean`.\n- `ObjectiveOperator`: Usually `Upper`,\
+  \ `Lower`, or `Exact`.\n- `ObjectiveParameter`: Examples include `D0`, `D20%`, `D2cc`, `V1800`, `V1800cc`,\
+  \ `VS1250`.\n- `ObjectiveValue`: Dose in cGy for D-type objectives, or volume for V/VS-type objectives.\n\
+  - `Priority`: Optional objective priority. If omitted, code defaults are used.\n- `ApplyDoseReduction`:\
+  \ Optional `true`/`false`; used by the later dose-reduction workflow for selected OARs.\n\nExamples:\n\
+  \n```csv\nOAR,__SELECTED_OARS__,dvh,Upper,D0,800,10,false\nSpinalCord,SpinalCord;Cord;Spinal_Cord,dvh,Upper,D0,2800\n\
+  Brainstem,Brainstem,mean,Upper,D0,3100\n```\n\nNotes:\n\n- The CSV parser is simple and does not support\
+  \ quoted commas.\n- Structure labels are matched case-insensitively against structure IDs.\n- Rows that\
+  \ do not match any structures are skipped.\n\n## Current Planning Workflow\n\n1. Open a patient and\
+  \ plan in Eclipse.\n2. Run the script.\n3. Select a preset: `WashU`, `Mayo`, or `Custom`.\n4. Select:\n\
+  \   - GTV/target structure.\n   - PTV-low structure.\n   - Body/external structure.\n   - OARs and OAR\
+  \ margins.\n   - Machine and energy.\n   - Sphere diameter and lattice spacing.\n5. Use the preview\
+  \ panel to inspect geometry.\n6. Click `Create structures`.\n7. Review created structures in Eclipse.\n\
+  8. If needed, adjust shift/rotation sliders and run `Preview 3D` or `Refine preview`.\n9. Click `Create\
+  \ structures` again to regenerate structures with updated preview parameters.\n10. Click `Set Objectives`/optimize\
+  \ workflow to apply objectives.\n11. Continue with normal Eclipse inverse planning and institutional\
+  \ QA.\n\n## Preview Behavior\n\nThe preview panel is designed to reduce unnecessary ESAPI structure\
+  \ writes.\n\n### Live Preview\n\nBefore structures are created, slider changes trigger an approximate\
+  \ live preview. This path is read-oriented and does not create `zzz_preview_*` helper structures.\n\n\
+  Live preview displays:\n\n- Target/core boundary.\n- Hot sphere centers.\n- Selected OAR meshes as translucent\
+  \ overlays.\n\nAfter `Create structures` has completed, automatic slider-triggered live preview is paused\
+  \ to avoid repeated ESAPI calls while the structure set contains generated lattice structures.\n\n###\
+  \ Preview 3D\n\n`Preview 3D` is an explicit preview request. It is allowed before and after structure\
+  \ creation. After a successful `Create structures` run, the script automatically calls this explicit\
+  \ preview path once so the preview window refreshes.\n\n### Refine Preview\n\n`Refine preview` is the\
+  \ exact preview path. It may create temporary `zzz_preview_*` structures to match the structure-generation\
+  \ safe-core logic more closely. It is gated so it cannot run at the same time as structure creation.\n\
+  \nUse `Refine preview` when you want to:\n\n- Recompute preview from current shift/rotation values.\n\
+  - Fine-tune after an initial structure creation.\n- Then run `Create structures` again using the updated\
+  \ parameters.\n\n## Generated Structures\n\nCommon structures include:\n\n- `zzz_GTV_core`: Temporary\
+  \ safe core used during structure generation.\n- `zzz_SFRT_PRV`: Temporary PRV structure.\n- `PTV_Peak`:\
+  \ Union of peak spheres.\n- `TS_Peak_#`: Peak sphere structures.\n- `PTV_Valley`: Union of valley spheres.\n\
+  - `TS_Valley_#`: Valley structures.\n- `PTV_Control`: PTV control structure outside peak margins.\n\
+  - `TS_Peak_Ring1`, `TS_Peak_Ring2`, `TS_Peak_Ring3`: Default grouped tuning rings.\n- `TS_Peak_Ring_Inner`,\
+  \ `TS_Peak_Ring_Middle`, `TS_Peak_Ring_Outer`: Mayo combined tuning-ring shells.\n- `BODY_Spheres`:\
+  \ Optional body-minus-spheres control structure.\n\nThe script overwrites generated structures with\
+  \ the same IDs when rerun.\n\n## Validation And QA\n\nBefore clinical use:\n\n- Validate structure generation\
+  \ on phantom and retrospective cases.\n- Confirm lattice placement, sphere diameter, spacing, OAR avoidance,\
+  \ and generated tuning structures.\n- Validate all prescription JSON values and objective CSV rows against\
+  \ local protocol.\n- Check beam geometry, jaw fitting, dose calculation settings, and optimization settings.\n\
+  - Perform end-to-end dosimetric QA according to local policy.\n\n## Troubleshooting\n\n### Preset Fails\
+  \ To Load\n\nConfirm both files exist in the runtime `templates/` folder:\n\n```text\n{preset}_objectives.csv\n\
+  {preset}_p"

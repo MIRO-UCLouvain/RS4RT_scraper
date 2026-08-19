@@ -1,0 +1,73 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ivszhuravlev/rt-bioeval
+url: https://github.com/ivszhuravlev/rt-bioeval
+platform: github
+description: Local web tool for DVH-based TCP/NTCP analysis and VMAT vs IMRT plan comparison in lung radiotherapy.
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-08-17T05:10:32Z'
+image_source: null
+heuristic_total_score: 49
+heuristic_reasons:
+- Matched 7 strong particle-therapy term(s) in metadata/content.
+- Matched 14 support term(s).
+readme_excerpt: "# DVH Analysis Tool\r\n\r\nAutomated analysis of DVH (Dose-Volume Histogram) data for\
+  \ lung cancer radiotherapy.\r\nCompares **VMAT/VIMA** vs **IMRT** treatment plans.\r\n\r\n**Status:**\
+  \ Release Candidate (RC) / Pre-release\r\n\r\n**Note:** Executable build is planned. Current version\
+  \ requires Python installation (temporary).\r\n\r\n---\r\n\r\n## Quick Start Guide\r\n\r\n### Step 1:\
+  \ Install Python (one-time setup)\r\n\r\n**Check if Python is already installed:**\r\n```bash\r\npython3\
+  \ --version\r\n```\r\n\r\nIf you see \"Python 3.10\" or higher, skip to Step 2.\r\n\r\n**If not installed:**\r\
+  \n- Download from: https://www.python.org/downloads/\r\n- Install version 3.10 or newer\r\n- On macOS,\
+  \ use `python3` instead of `python`\r\n\r\n### Step 2: Install Dependencies (one-time setup)\r\n\r\n\
+  Open Terminal and run:\r\n```bash\r\npython3 -m pip install -r requirements.txt\r\n```\r\n\r\n**Note:**\
+  \ Use `python3 -m pip` instead of just `pip` to ensure correct Python version.\r\n\r\nWait for installation\
+  \ to complete (1-2 minutes).\r\n\r\n### Step 3: Start the Application\r\n\r\n```bash\r\npython3 web/app.py\r\
+  \n```\r\n\r\nYour browser will automatically open to `http://localhost:5000`\r\n\r\n### Step 4: Use\
+  \ the Application\r\n\r\n1. **Upload Files**\r\n   - Drag and drop your DVH `.txt` files into the upload\
+  \ area\r\n   - Or click to browse and select files\r\n   - You can upload multiple files at once\r\n\
+  \r\n2. **Run Analysis**\r\n   - Click the green **\"Run Analysis\"** button\r\n   - Wait 10-30 seconds\
+  \ for processing\r\n\r\n3. **Download Results**\r\n   - Click **\"Download JSON\"** for detailed data\r\
+  \n   - Click **\"Download CSV\"** to open in Excel\r\n\r\n---\r\n\r\n## What Files to Upload\r\n\r\n\
+  **File Format:**\r\n- `.txt` files exported from your Treatment Planning System\r\n- Must be **Differential\
+  \ DVH** format\r\n- Dose in cGy (centirays)\r\n- Volume in cm³ (cubic centimeters)\r\n  - Note: Header\
+  \ may show \"Volume Units: %\" but actual data is in cm³\r\n  - Software automatically normalizes volumes\r\
+  \n\r\n**Required Structures in Files:**\r\nYour DVH files must contain these structures:\r\n- `PTV_6000`\
+  \ or `PTV_6600` — tumor target\r\n- `LUNG_TOTAL` — lungs\r\n- `HEART` — heart\r\n- `ESOPHAGUS` — esophagus\r\
+  \n- `SPINAL_CORD` — spinal cord\r\n\r\n**Example Files:**\r\nSee `examples/` folder for correctly formatted\
+  \ files (LCMD2, LCMD3).\r\n\r\n---\r\n\r\n## Output Files\r\n\r\n### JSON Format\r\n\r\nComplete results\
+  \ including:\r\n- TCP (Tumor Control Probability) for PTV\r\n- NTCP (Normal Tissue Complication Probability)\
+  \ for organs at risk\r\n- DVH metrics (Mean Lung Dose, V5, V20, Dmax)\r\n- Plan comparison (VMAT vs\
+  \ IMRT deltas)\r\n\r\n### CSV Format\r\n\r\nOne row per treatment plan with columns:\r\n- Patient ID,\
+  \ Plan Name\r\n- TCP values\r\n- NTCP values (lung, heart, esophagus, spinal cord)\r\n- DVH metrics\r\
+  \n\r\nImport into Excel or any spreadsheet software for further analysis.\r\n\r\n---\r\n\r\n## Models\
+  \ Used\r\n\r\n### TCP (Tumor Control Probability)\r\n- Model: Niemierko (EUD-based)\r\n- Reference:\
+  \ Niemierko A. (1997). Med Phys 24(1):103-110\r\n\r\n### NTCP (Normal Tissue Complication Probability)\r\
+  \n- Model: Lyman-Kutcher-Burman (LKB)\r\n- References:\r\n  - Lyman JT. (1985). Radiat Res Suppl 8:S13-19\r\
+  \n  - Kutcher GJ, Burman C. (1989). Int J Radiat Oncol Biol Phys 16(6):1623-1630\r\n  - Marks LB et\
+  \ al. (2010). Int J Radiat Oncol Biol Phys 76(3 Suppl):S10-19\r\n\r\n---\r\n\r\n## Common Issues\r\n\
+  \r\n**Browser doesn't open:**\r\n- Open any browser and type: `http://localhost:5000`\r\n\r\n**\"Structure\
+  \ not found\" error:**\r\n- Your DVH file is missing required structures (see \"What Files to Upload\"\
+  )\r\n- Check that structure names match exactly (e.g., `LUNG_TOTAL` not `LUNGS`)\r\n\r\n**\"Port 5000\
+  \ already in use\":**\r\n- Close other programs that might use port 5000\r\n- Restart your computer\
+  \ if needed\r\n\r\n**\"Module not found\" errors:**\r\n- Run installation again: `python3 -m pip install\
+  \ -r requirements.txt`\r\n- Make sure you're using Python 3.10 or newer: `python3 --version`\r\n\r\n\
+  **Files uploaded but no results:**\r\n- Check that files are **Differential DVH** format (not Cumulative)\r\
+  \n- Verify dose is in cGy (~6000 for PTV), not Gy (~60)\r\n- Ensure your TPS exports differential histograms\r\
+  \n\r\n---\r\n\r\n## Support\r\n\r\nFor technical support or questions about clinical parameters, refer\
+  \ to the model references above or consult with your medical physics team.\r\n\r\n---\r\n\r\n## Roadmap\r\
+  \n\r\n### Planned Features\r\n\r\n- **Standalone Executable** (high priority)\r\n  - No Python installation\
+  \ required\r\n  - Single-file distribution for Windows/macOS\r\n  - Options being evaluated:\r\n   \
+  \ - Clean build on non-conda environment\r\n    - Windows-specific build\r\n    - Embedded Python launcher\r\
+  \n\r\n- **Additional Features** (future)\r\n  - Statistical analysis of plan comparisons\r\n  - DVH\
+  \ visualization (matplotlib/plotly)\r\n  - Batch export options\r\n\r\n---\r\n\r\n## Development Status\r\
+  \n\r\n**Current Version:** Release Candidate (RC1)\r\n\r\n**What Works:**\r\n- ✅ DVH parsing (differential\
+  \ format, automatic volume normalization)\r\n- ✅ TCP/NTCP calculations (validated on real data)\r\n\
+  - ✅ All metrics (MLD, V5, V20, Dmax)\r\n- ✅ Web interface (upload, process, download)\r\n- ✅ JSON +\
+  \ CSV export\r\n- ✅ VMAT vs IMRT comparison\r\n\r\n**Known Limitations:**\r\n- ⚠️ Requires Python installation\
+  \ (temporary)\r\n- ⚠️ Cord D0.1cc/D1cc metrics require absolute volumes (currently only Dmax)\r\n\r\n\
+  ---\r\n\r\n## License\r\n\r\nResearch tool for radiotherapy plan evaluation.\r\n"

@@ -1,0 +1,142 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: georgeDV2002/Explainable-modality-adaptive-radiomics-for-MGMT-methylation-prediction-in-high-grade-glioma
+url: https://github.com/georgeDV2002/Explainable-modality-adaptive-radiomics-for-MGMT-methylation-prediction-in-high-grade-glioma
+platform: github
+description: Code for Explainable Radiomics with Probability Calibration for Postoperative Glioblastoma
+  Surveillance. Includes preprocessing, radiomics extraction, feature selection, LightGBM training, Optuna
+  tuning, calibration, and SHAP explainability. Uses the MU-Glioma-Post TCIA dataset.
+license: BSD-3-Clause
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-01-09T20:26:09Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Radiomics-based Progression Classification on MU-Glioma-Post\n\nThis repository implements\
+  \ an end-to-end, reproducible **radiomics classification pipeline** for postoperative glioma surveillance\
+  \ using the **MU-Glioma-Post** dataset. The pipeline includes:\n\n- In-memory MRI preprocessing and\
+  \ radiomics extraction with PyRadiomics  \n- Integration with clinical progression data  \n- Construction\
+  \ of a timepoint-level radiomics + clinical dataset  \n- Patient-aware feature ranking and selection\
+  \  \n- Group-aware train/validation/test split at patient level  \n- Binary classification of progression\
+  \ vs no progression  \n- Probability calibration and diagnostic plots (ROC, calibration curves, Brier\
+  \ scores)  \n- Correlation and redundancy analysis of radiomics features  \n- Clinical cohort statistics\
+  \  \n\nThe repository is organized so that each step can be run and inspected independently.\n\n---\n\
+  \n## 1. Dataset\n\nThe code assumes access to the **MU-Glioma-Post** dataset (TCIA), which provides:\n\
+  \n- Postoperative MRI scans for multiple timepoints per patient  \n- Tumor masks for the enhancing or\
+  \ residual lesion  \n- Clinical spreadsheet with diagnosis, treatment and follow-up data  \n\nYou must\
+  \ download the dataset from TCIA and organize the MRI files locally. The expected naming and folder\
+  \ structure (which you can adjust in the code) is:\n\n```text\nBASE_DIR/\n  PatientID_0001/\n    Timepoint_1/\n\
+  \      PatientID_0001_Timepoint_1_brain_t1c.nii.gz\n      PatientID_0001_Timepoint_1_brain_t1n.nii.gz\n\
+  \      PatientID_0001_Timepoint_1_brain_t2w.nii.gz\n      PatientID_0001_Timepoint_1_brain_t2f.nii.gz\n\
+  \      PatientID_0001_Timepoint_1_tumorMask.nii.gz\n    Timepoint_2/\n      ...\n  PatientID_0002/\n\
+  \    Timepoint_1/\n    ...\n```\n\nModalities are detected from filename tokens:\n\n- `brain_t1c`  →\
+  \ post-contrast T1 (T1CE)  \n- `brain_t1n`  → native T1  \n- `brain_t2w`  → T2-weighted  \n- `brain_t2f`\
+  \  → FLAIR  \n- `tumorMask`  → tumor mask (binary)  \n\nClinical information is read from:\n\n- `MU-Glioma-Post_ClinicalData-July2025.xlsx`\n\
+  \n---\n\n## 2. Environment and Dependencies\n\nThe code has been tested with Python 3.10+.\n\nTypical\
+  \ dependencies:\n\n- numpy  \n- pandas  \n- scipy  \n- matplotlib  \n- seaborn  \n- nibabel  \n- SimpleITK\
+  \  \n- pyradiomics  \n- scikit-learn  \n- lightgbm  \n- optuna  \n- shap  \n- openpyxl  \n\nExample\
+  \ installation:\n\n```bash\npip install numpy pandas scipy matplotlib seaborn nibabel SimpleITK pyradiomics\
+  \ \\\n            scikit-learn lightgbm optuna shap openpyxl\n```\n\n---\n\n## 3. Repository Structure\n\
+  \nThe main working directory is `code/`. The key files and folders are:\n\n```text\ncode/\n  MU-Glioma-Post_ClinicalData-July2025.xlsx\
+  \   # clinical spreadsheet (input)\n  radiomics_params.yaml                       # PyRadiomics configuration\n\
+  \  pipeline_extract_catalogue__1.py            # in-memory MRI + radiomics extraction\n  collect_dataset__2.py\
+  \                       # merge radiomics + clinical table\n  dataset__2.xlsx                      \
+  \       # merged dataset (generated)\n  corr_plot__4a.py                            # global correlation\
+  \ heatmaps\n  corr_plot__4b.py                            # family-level correlation plots\n  violin_plot__4c.py\
+  \                          # redundancy violins\n  violin_plot__4d.py                          # redundancy\
+  \ tail plots\n  stats__3.py                                 # clinical cohort statistics\n  derivatives/\
+  \                                # radiomics outputs (generated)\n  outputs__4a/                   \
+  \             # correlation heatmap images (generated)\n  outputs__4b/                             \
+  \   # family-level correlation plots (generated)\n  stats_outputs/                              # CSV\
+  \ summaries for statistics (generated)\n\n  bin_class/\n    rank_and_split__4.py                   \
+  \   # feature ranking + patient-aware split\n    logreg__5a.py                             # logistic\
+  \ regression with Optuna\n    lightGBM__5b.py                           # LightGBM with Optuna + Platt\
+  \ + SHAP\n    randfor__5c.py                            # random forest with Optuna + Platt\n    svc__5d.py\
+  \                                # SVM with Optuna + Platt\n    helper_plots__7.py                 \
+  \       # helper for combined figures (e.g. ROC + CM)\n    print_confusion_mat__6.py               \
+  \  # high-quality confusion matrix plot\n    64_features/                              # example runs\
+  \ for top-K features (generated)\n    128_features/\n    256_features/\n    512_features/\n```\n\n---\n\
+  \n## 4. Label Definition\n\nAll classifiers solve a **binary classification** problem defined as:\n\n\
+  - `y = 1` (progression) if `Time to First Progression (Days)` is non-missing for that patient  \n- `y\
+  \ = 0` (no progression) if `Time to First Progression (Days)` is missing (NaN)  \n\nThe merged dataset\
+  \ also stores:\n\n- `timepoint`: the timepoint index for that MRI  \n- `days_from_dx`: days from initial\
+  \ diagnosis to the MRI timepoint  \n- `Time to First Progression (Days)`: patient-level progression\
+  \ time  \n- `delta_days`: `days_from_dx - Time to First Progression (Days)`  \n  (negative values are\
+  \ set to NaN; only timepoints at or after progression retain non-negative deltas)\n\n---\n\n## 5. Step\
+  \ 1 – In-Memory Radiomics Extraction\n\nScript: `pipeline_extract_catalogue__1.py`\n\nThis script implements\
+  \ the radiomics extraction pipeline:\n\n- Recursively scans `BASE_DIR` for `(patient_id, timepoint)`\
+  \ folders  \n- Checks that all required modalities and the tumor mask exist  \n- Loads images with `nibabel`\
+  \ and wraps them into SimpleITK images  \n- Optionally performs N4 bias-field correction  \n- Resamples\
+  \ all images and the mask to 1 mm isotropic spacing  \n- Optionally applies z-score normalization within\
+  \ the mask  \n- Uses PyRadiomics with `radiomics_params.yaml` to extract:\n  - First-order features\
+  \  \n  - Shape features  \n  - Texture features  \n  - Filtered features (LoG, wavelets, depending on\
+  \ YAML)  \n\nConfiguration parameters (edit in the script):\n\n- `BASE_DIR`: root directory with MRI\
+  \ scans  \n- `OUTDIR`: output directory for radiomics results (e.g. `derivatives/`)  \n- `PARAMS_YAML`:\
+  \ path to PyRadiomics configuration file  \n- `APPLY_N4`: whether to run N4 bias correction  \n- `ZSCORE_WITHIN_MASK`:\
+  \ whether to z-score within the tumor mask  \n- `OUTPUT_SPACING_MM`: target spacing (e.g. `(1.0, 1.0,\
+  \ 1.0)`)  \n\nTypical output (in `derivatives/`):\n\n- `radiomics_features.xlsx`: one row per (subject_id,\
+  \ timepoint), columns = radiomics features  \n- `availability_*.csv`: per-timepoint checks for sequences\
+  \ and masks  \n\nRun:\n\n```bash\ncd code\npython pipeline_extract_catalogue__1.py\n```\n\n---\n\n##\
+  \ 6. Step 2 – Merge Radiomics and Clinical Data\n\nScript: `collect_dataset__2.py`\n\nThis script merges:\n\
+  \n- Radiomics table from `derivatives/radiomics_features.xlsx`  \n- Clinical information from `MU-Glioma-Post_ClinicalData-July2025.xlsx`\
+  \  \n\nMain operations:\n\n1. Restrict clinical data to glioblastoma (GBM) if desired.  \n2. Reshape\
+  \ progression-related columns of the form  \n   `Number of Days from Diagnosis to ... (Timepoint_X)`\
+  \  \n   into a long format with one row per `(Patient_ID, timepoint)`.  \n3. Join radiomics on `(subject_id,\
+  \ timepoint)` to clinical rows on `(Patient_ID, timepoint)`.  \n4. Carry forward patient-level progression\
+  \ time to all timepoints.  \n5. Compute `days_from_dx` and `delta_days`.  \n6. Build the final table\
+  \ `dataset__2.xlsx`.  \n\nOutput:\n\n- `dataset__2.xlsx` – main dataset used in all downstream analysis.\n\
+  \nRun:\n\n```bash\ncd code\npython collect_dataset__2.py\n```\n\n---\n\n## 7. Step 3 – Feature Ranking\
+  \ and Patient-Aware Split\n\nScript: `bin_class/rank_and_split__4.py`\n\nThis step performs:\n\n1. **Patient-aware\
+  \ split**  \n   - Reads `dataset__2.xlsx`.  \n   - Finds the subject column (`subject_id`, `Patient_ID`\
+  \ or `Subject_ID`).  \n   - Randomly selects a fixed number of test patients (`N_TEST_PATIENTS`).  \n\
+  \   - Assigns all timepoints of those patients to the test set.  \n   - The remaining patients form\
+  \ the train/validation set (\"train-cv\").  \n\n2. **Feature ranking** (train-cv only)  \n   - Exclude\
+  \ meta / non-radiomics columns:  \n     `subject_id`, `Patient_ID`, `Subject_ID`, `timepoint`,  \n \
+  \    `Time to First Progression (Days)`, `delta_days`, `days_from_dx`.  \n   - Apply a pipeline:\n \
+  \    - median imputation (`SimpleImputer`)  \n     - low-variance filter (`VarianceThreshold`)  \n \
+  \    - correlation-based pruning (custom `CorrelationFilter`, Spearman)  \n     - standardization (`StandardScaler`)\
+  \  \n     - L1-penalized Logistic Regression (`solver=\"saga\"`, `class_weight=\"balanced\"`)  \n  \
+  \ - Perform stratified K-fold cross-validation.  \n   - Aggregate coefficients and (optionally) permutation\
+  \ importance across folds.  \n   - Rank features by a consensus importance metric.  \n\n3. **Top-K feature\
+  \ selection**  \n   - Keep the top `K` features requested by the user (`--topk`).  \n   - Save train/test\
+  \ sets restricted to these features.  \n\nUsage example (K = 256):\n\n```bash\ncd code/bin_class\npython\
+  \ rank_and_split__4.py --topk 256\n```\n\nOutputs (under `bin_class/256_features/`):\n\n- `traincv_set__4.xlsx`\
+  \ – train-cv set (all features)  \n- `test_set__4.xlsx` – test set (all features)  \n- `traincv_set__4_topk.xlsx`\
+  \ – train-cv restricted to top-K  \n- `test_set__4_topk.xlsx` – test set restricted to top-K  \n- `importance_traincv__4.csv`\
+  \ – feature ranking and diagnostics  \n- `feature_list__4.csv` – list of selected features  \n- `radiomics_family_summary_top256__4.csv`\
+  \ – counts of features per radiomics family  \n\nYou can repeat the procedure for different values of\
+  \ `--topk` (e.g. 64, 128, 512). Each run writes to its own `<TOPK>_features` folder.\n\n---\n\n## 8.\
+  \ Step 4 – Classification Models\n\nAll classifiers expect that `rank_and_split__4.py` has already been\
+  \ run with a specific `--topk`, so that the corresponding `<TOPK>_features/` directory exists with:\n\
+  \n- `traincv_set__4_topk.xlsx`  \n- `test_set__4_topk.xlsx`  \n\nCommon points:\n\n- Label: `y = 1`\
+  \ if `Time to First Progression (Days)` is non-missing, otherwise `y = 0`.  \n- Group-aware cross-validation\
+  \ using `StratifiedGroupKFold` with patient ID as group.  \n- Objective: maximize out-of-fold (OOF)\
+  \ ROC AUC.  \n- Threshold: selected to minimize `(FP + FN)` on OOF predictions.  \n- Calibration (if\
+  \ enabled): Platt (sigmoid) calibration on OOF probabilities.  \n\n### 8.1 Logistic Regression\n\nScript:\
+  \ `bin_class/logreg__5a.py`\n\n- Model: `LogisticRegression` with elastic net penalty (`solver=\"saga\"\
+  `, `class_weight=\"balanced\"`).  \n- Pipeline: imputation → variance threshold → correlation filter\
+  \ → standardization → logistic regression.  \n- Hyperparameter tuning via Optuna: `C`, `l1_ratio`, `corr_threshold`.\
+  \  \n- Output artifact: `radiomics_logreg_enet.joblib`.  \n\nRun (example with K = 256):\n\n```bash\n\
+  cd code/bin_class\npython logreg__5a.py --topk 256\n```\n\nPrinted metrics include:\n\n- OOF AUC and\
+  \ threshold on train-cv  \n- Test ROC AUC  \n- Confusion matrix and classification report on test set\
+  \  \n\n### 8.2 LightGBM (with Platt Calibration and SHAP)\n\nScript: `bin_class/lightGBM__5b.py`\n\n\
+  - Model: `LGBMClassifier` (GBDT) with `class_weight=\"balanced\"`.  \n- Preprocessing: imputation, variance\
+  \ threshold, correlation filter.  \n- Hyperparameter tuning via Optuna (learning rate, `n_estimators`,\
+  \ `num_leaves`, `min_child_samples`, `subsample`, `colsample_bytree`, regularization, `corr_threshold`).\
+  \  \n- OOF predictions used for:\n  - Threshold selection (FP + FN minimization).  \n  - Optional Platt\
+  \ calibration (logistic regression on OOF probabilities).  \n\nTest-time evaluation:\n\n- ROC curve\
+  \  \n- Calibration curves (train-cv and test)  \n- Brier scores (raw vs calibrated)  \n- Confusion matrix\
+  \ and classification report  \n\nSHAP-based explanations:\n\n- TreeSHAP on the fitted LightGBM model\
+  \  \n- Mapping from numeric indices to original radiomics feature names  \n- Beeswarm, bar, waterfall\
+  \ and dependence plots  \n\nRun:\n\n```bash\ncd code/bin_class\npython lightGBM__5b.py --topk 256\n\
+  ```\n\nMain outputs under `256_features/`:\n\n- `radiomics_lgbm.joblib`  \n- `roc_plot_test__5.png`\
+  \  \n- `calibration_oof_vs_test__5.png`  \n- `brier_bars__5.png`  \n- Various SHAP plots and `feature_index_name_map.csv`\
+  \  \n\n### 8.3 Random Forest\n\n"

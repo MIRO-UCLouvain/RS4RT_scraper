@@ -1,0 +1,137 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: MAKER-park/automatic-wbi-vmat-planning
+url: https://github.com/MAKER-park/automatic-wbi-vmat-planning
+platform: github
+description: Deep learning-based dose prediction and RayStation planning workflow for whole-breast VMAT
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-10T00:24:43Z'
+image_source: https://raw.githubusercontent.com/MAKER-park/automatic-wbi-vmat-planning/HEAD/image/Fig9_representative_one_case.png
+heuristic_total_score: 44
+heuristic_reasons:
+- Matched 5 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 13 support term(s).
+readme_excerpt: "# Automatic radiation treatment planning via deep learning-based dose prediction for\
+  \ whole-breast VMAT\n\nResearch code for a four-stage whole-breast volumetric-modulated arc therapy\
+  \ (VMAT) workflow: DICOM preprocessing, deep-learning dose prediction, RTDOSE/parameter postprocessing,\
+  \ and RayStation dose mimicking/optimization.\n\n> **Research use only.** This repository is not a medical\
+  \ device and has not been validated for independent clinical use. Predictions and generated plans require\
+  \ institution-specific commissioning, independent dose verification, and review by qualified radiation-oncology\
+  \ professionals. Never commit identifiable DICOM or derived patient data.\n\n## Workflow\n\n```mermaid\n\
+  flowchart LR\n  A[CT + RTSTRUCT + RTDOSE] --> B[01 Preprocessing<br/>aligned 9-channel NPY]\n  B -->\
+  \ C[02 Training / inference<br/>predicted 3D dose]\n  C --> D[03 Postprocessing<br/>RTDOSE + TOW/VDP]\n\
+  \  D --> E[04 RayStation<br/>dose mimicking + optimization]\n  E --> F[Independent QA<br/>clinical review]\n\
+  ```\n\nThe representative example below follows the same case through the complete pipeline. The top\
+  \ row compares axial dose distributions; the bottom row shows the corresponding DVHs and clinical-goal\
+  \ reference markers.\n\n![Representative original, prediction, dose-mimicking and optimization results\
+  \ with corresponding DVHs](image/Fig9_representative_one_case.png)\n\n## Repository layout\n\n```text\n\
+  01_preprocessing/   DICOM alignment and array generation notebooks\n02_training/        2D, 2.5D and\
+  \ HD-3D dose models and dose checkpoints\n03_postprocessing/  evaluation, NPY→RTDOSE and TOW/VDP inference\n\
+  04_raystation/      left/right RayStation planning and optimization scripts\ndocs/               detailed\
+  \ code analysis\nimage/              dose, DVH and optimization figures used in this README\nweights/\
+  \            parameter-checkpoint download instructions\n```\n\n## Installation\n\nUse a Linux workstation\
+  \ with a CUDA-capable PyTorch installation for model training/inference. RayStation scripts run separately\
+  \ on a commissioned RayStation workstation.\n\n```bash\ngit clone https://github.com/MAKER-park/automatic-wbi-vmat-planning.git\n\
+  cd automatic-wbi-vmat-planning\npython -m venv .venv\nsource .venv/bin/activate\npip install -r requirements.txt\n\
+  ```\n\nDownload the parameter checkpoints described in [`weights/README.md`](weights/README.md) from\
+  \ the [`model-weights` Release](https://github.com/MAKER-park/automatic-wbi-vmat-planning/releases/tag/model-weights).\
+  \ Clinical DICOM and derived arrays are intentionally not distributed.\n\nBefore running any script,\
+  \ configure paths and privacy settings from [`config.example.env`](config.example.env). The complete\
+  \ variable reference and DICOM privacy limitations are documented in [`docs/CONFIGURATION.md`](docs/CONFIGURATION.md).\
+  \ Never commit the resulting local configuration.\n\n## End-to-end use\n\n### 1. Prepare data\n\nDe-identify\
+  \ DICOM before moving it to the research environment. In `01_preprocessing/interpolate_ct_first.ipynb`,\
+  \ configure input/output roots and verify the ROI-to-channel mapping. Run the notebook to create paired\
+  \ arrays:\n\n```text\ndata/\n├── Train/{CT_and_Contour,Dose}/\n├── Validation/{CT_and_Contour,Dose}/\n\
+  └── Test/{CT_and_Contour,Dose}/\n```\n\n`CT_and_Contour` must have shape `(H,W,Z,9)` and dose `(H,W,Z)`,\
+  \ with identical geometry and deterministic case pairing. Inspect several overlays before training.\n\
+  \n### 2. Predict dose with the recommended 3D path\n\nFrom the 3D model directory, adjust dataset paths\
+  \ in the scripts, then run stage 1 and stage 2:\n\n```bash\ncd 02_training/5.HD-3D-unet_DVH_LOSS\npython\
+  \ 0.train-HD-3D-Unet-DVH_loss-1stage.py\npython 0.train-HD-3D-Unet-DVH_loss-2stage.py\npython 1.inference_3d_2stage.py\n\
+  ```\n\nFor pretrained inference, retain `weights/best_model_weight_stage2.pth` and point the inference\
+  \ script to the test `CT_and_Contour` directory. Output is a normalized predicted-dose NPY volume. The\
+  \ alternative 2D/2.5D scripts are preserved for comparison; their filenames and local path constants\
+  \ should be reviewed before execution.\n\n### 3. Evaluate and create RTDOSE\n\nRun the matching evaluation\
+  \ script in `03_postprocessing` after configuring ground-truth and prediction directories. For RayStation\
+  \ import, configure `03_postprocessing/npy_to_rtdose.py` with the predicted array, a case-matched reference\
+  \ RTDOSE, and output path. Verify the resulting SOP class, UIDs, Frame of Reference, grid dimensions/offsets,\
+  \ orientation, `DoseUnits`, `DoseType`, `DoseSummationType`, and `DoseGridScaling` using a DICOM validator\
+  \ and visual overlay.\n\nThe following examples compare reference dose, predicted dose and their voxel-wise\
+  \ difference for left- and right-sided cases at two axial levels. Contours identify the target and relevant\
+  \ organs at risk. Difference maps should be interpreted together with DVH and clinical endpoint evaluation\
+  \ rather than as a standalone acceptance test.\n\n![Reference and predicted dose overlays with voxel-wise\
+  \ difference maps for representative left- and right-sided cases](image/Fig6_prediction_dose_overlay_cases.png)\n\
+  \n### 4. Predict RayStation mimicking parameters\n\nExample for the 3D dose model:\n\n```bash\npython\
+  \ 03_postprocessing/5.HD-3D-unet_DVH_LOSS/predict_mimicking_parameters.py \\\n  --pred_dir outputs/predicted_dose\
+  \ \\\n  --ct_dir data/Test/CT_and_Contour \\\n  --model_path weights/parameter_models/3d_best_model.pth\
+  \ \\\n  --output_dir outputs/mimicking_parameters \\\n  --dose_source pred \\\n  --img_size 256 256\
+  \ 256 \\\n  --device cuda \\\n  --scan_mode all_npy\n```\n\nThe main output, `final_prediction.csv`,\
+  \ contains one row per case with `TOW` (Target:OAR weight ratio) and `VDP` (voxel dose priority). Confirm\
+  \ filename matching in `inference_details.csv`; failed cases appear in `missing_matches.csv`. These\
+  \ values are model recommendations, not automatically safe RayStation settings.\n\nThe two outputs correspond\
+  \ to the fields in RayStation's dose-mimicking dialog:\n\n<p align=\"center\">\n  <img src=\"image/ray_station_mimicking_parameter.png\"\
+  \ alt=\"RayStation dose-mimicking dialog showing Target versus OAR weight ratio and voxel dose priority\"\
+  \ width=\"463\">\n</p>\n\n### 5. Use the result in RayStation\n\n1. Work on a non-clinical/test database\
+  \ and import the case-matched predicted RTDOSE.\n2. Confirm anatomy, laterality, ROI names, registration/frame\
+  \ of reference and dose-grid alignment.\n3. Choose one angle script for the correct side and model family\
+  \ (`01`=2D, `02`=2.5D, `03`=3D).\n4. In RayStation dose mimicking, use the reviewed TOW and VDP values\
+  \ from `final_prediction.csv`.\n5. Run `04_*_COPY_*_angle.py` to export/copy the mimicked plan, then\
+  \ run `05_*_OPT_REV.py` for goal-driven optimization.\n6. Recalculate dose with the commissioned algorithm\
+  \ and complete independent patient-specific QA and clinical approval.\n\nSite-specific prerequisites\
+  \ and script order are detailed in [`04_raystation/README.md`](04_raystation/README.md); code behavior\
+  \ is documented in [`docs/CODE_GUIDE.md`](docs/CODE_GUIDE.md).\n\n## Cohort-level performance visualization\n\
+  \nThe figures below summarize the study-level behavior of the dose-prediction and RayStation dose-mimicking\
+  \ workflow. They should be interpreted as descriptive research results from the evaluated cohort, not\
+  \ as acceptance criteria for another institution, scanner, contouring protocol, RayStation version or\
+  \ patient population.\n\n### Dose-prediction endpoint accuracy\n\nThe first endpoint summary compares\
+  \ predicted dose against the original clinical dose for target coverage, high-dose target behavior,\
+  \ OAR dose metrics and total voxel-wise MAE. The results show model-dependent trade-offs: the 2D and\
+  \ 2.5D models show lower total MAE in this cohort, while the 3D model shows a stronger PTV V95 tendency\
+  \ but higher voxel-wise MAE. Because endpoint accuracy and spatial dose similarity do not always move\
+  \ together, model selection should be validated against the intended clinical endpoint set.\n\n![Box\
+  \ plots of dose-prediction endpoint differences across 2D, 2.5D and 3D models](image/Fig1_prediction_box_array.png)\n\
+  \n### DVH-guided training effect\n\nFor the 2.5D and 3D workflows, DVH-guided training shifts several\
+  \ clinically relevant endpoints compared with the non-DVH-guided baseline. The displayed cohort statistics\
+  \ show significant differences for multiple target and OAR endpoints, including PTV V95, PTV Dmax, Heart\
+  \ V1.5Gy and ipsilateral lung V8Gy. This supports the use of DVH-aware objectives when the downstream\
+  \ planning task depends on clinical dose-volume endpoints rather than only voxel-wise error.\n\n![Box\
+  \ plots comparing dose-prediction endpoint differences with and without DVH-guided training](image/Fig2_dvh_guided_box_array.png)\n\
+  \n<details>\n<summary><strong>Representative DVH-guided DVH examples</strong></summary>\n\nThe example\
+  \ DVHs show how the DVH-guided model can alter target and OAR curves relative to the non-DVH-guided\
+  \ prediction and original clinical dose. These examples are visual aids; cohort-level endpoint statistics\
+  \ should be used for quantitative interpretation.\n\n![Representative DVH curves comparing original,\
+  \ non-DVH-guided and DVH-guided dose predictions](image/Fig7_dvh_guided_overlay_cases.png)\n\n</details>\n\
+  \n### RayStation mimicking-parameter effect\n\nThe trained parameter models recommend the two RayStation\
+  \ dose-mimicking inputs, Target:OAR weight ratio (TOW) and voxel dose priority (VDP), from the predicted\
+  \ dose and anatomy channels. Compared with default mimicking settings, the recommended parameters reduce\
+  \ several OAR endpoint deviations in this cohort, especially heart, ipsilateral lung and contralateral\
+  \ lung metrics. The PTV V95 behavior remains a trade-off and must be reviewed with the full clinical-goal\
+  \ set before plan acceptance.\n\n![Box plots comparing default RayStation dose mimicking with predicted-parameter\
+  \ dose mimicking](image/Fig3_mimicking_box_array.png)\n\nThe SSIM trend provides a complementary spatial-distribution\
+  \ view. Across isodose thresholds, predicted-parameter mimicking generally tracks the predicted dose\
+  \ more closely than default mimicking, indicating that the parameter recommendation step improves the\
+  \ geometric similarity of the mimicked dose distribution to the neural-network dose prediction.\n\n\
+  ![SSIM trend comparing default and predicted-parameter RayStation dose mimicking across isodose thresholds](image/Fig4_mimicking_ssim_trend.png)\n\
+  \n<details>\n<summary><strong>Representative RayStation mimicking dose-map example</strong></summary>\n\
+  \nThe dose-map example illustrates the same behavior visually: default mimicking leaves larger local\
+  \ differences from the predicted dose, while the predicted-parameter mimicking result more closely follows\
+  \ the prediction in the displayed axial slice.\n\n![Representative dose maps comparing prediction, default\
+  \ mimicking and predicted-parameter mimicking](image/Fig8_mimicking_dose_map.png)\n\n</details>\n\n\
+  ### Final optimization endpoint summary\n\nThe following box plots summarize six planning endpoints\
+  \ across four stages: original clinical dose, neural-network prediction, RayStation mimicking and final\
+  \ optimization. Dashed lines denote the displayed clinical criteria. These figures are intended to show\
+  \ the complete workflow trajectory from dose prediction through RayStation optimization.\n\n<details>\n\
+  <summary><strong>2D model results</strong></summary>\n\n![Box plots of target coverage and OAR endpoints\
+  \ for the 2D workflow](image/Fig5_optimization_value_box_2D.png)\n\n</details>\n\n<details>\n<summary><strong>2.5D\
+  \ model results</strong></summary>\n\n![Box plots of target coverage and OAR endpoints for the 2.5D\
+  \ workflow](image/Fig5_optimization_value_box_2_5D.png)\n\n</details>\n\n<details>\n<summary><strong>3D\
+  \ model results</strong></summary>\n\n![Box plots of target coverage and OAR endpoints for the 3D workflow](image/Fig5_optimization_value_box_3D.png)\n\
+  \n</details>\n\n## Known limitations\n\n- Paths and several experiment settings remain script constants\
+  \ inherited from the research workflow.\n- The preprocessing notebooks are not a single command-line\
+  \ pipeline and require explicit ROI/channel verification.\n- P"

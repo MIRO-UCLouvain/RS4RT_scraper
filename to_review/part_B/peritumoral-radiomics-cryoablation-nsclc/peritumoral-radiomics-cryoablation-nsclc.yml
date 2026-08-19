@@ -1,0 +1,77 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: CrimsonUMO/peritumoral-radiomics-cryoablation-nsclc
+url: https://github.com/CrimsonUMO/peritumoral-radiomics-cryoablation-nsclc
+platform: github
+description: Reproducibility package for the 2 mm peritumoral radiomics signature and tumor-host interface
+  transcriptomic analysis in cryoablation-treated advanced NSCLC.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-19T00:44:05Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Peritumoral Radiomics in Cryoablation-Treated Advanced NSCLC — Reproducibility Package\n\
+  \nThis repository contains the analysis code and environment configuration for the study:\n\n**Multi-Omics\
+  \ Analysis of the Tumor-Host Interface in Cryoablation-Treated Advanced Non-Small Cell Lung Cancer:\
+  \ Integrating Radiomics and Transcriptomics**\n\n*Journal of Translational Internal Medicine (JTIM),\
+  \ 2025*\n\n---\n\n## Repository Structure\n\n```\n├── code/                          # Analysis scripts\
+  \ (Python + R)\n│   ├── Preprocessing\n│   │   ├── lungtumormask_batch.py          # Lung tumor mask\
+  \ generation\n│   │   ├── extract_radiomics_features_multi.py  # PyRadiomics feature extraction\n│ \
+  \  │   ├── dilate.py                       # 1/2/3 mm peritumoral dilation\n│   │   ├── dilate_cumulative.py\
+  \            # Cumulative vs. annular dilation\n│   │   ├── dilate_sen.py                   # Sensitivity\
+  \ analysis dilation\n│   │   └── extract_cumulative_features.py  # Cumulative region features\n│   │\n\
+  │   ├── Modeling\n│   │   ├── ml_survival.py                  # Core: Survival SVM + 5 models + CV\n\
+  │   │   ├── train_cumulative_svm.py         # Per-region SVM training (E6)\n│   │   ├── stability_analysis.py\
+  \           # 200-seed stability (E2)\n│   │   ├── bca_bootstrap_ci.py             # BCa bootstrap CI\
+  \ (E3)\n│   │   └── utils.py                        # Utility functions\n│   │\n│   └── Statistical\
+  \ Analysis\n│       ├── E4_incremental_analysis_v2.R    # Clinical incremental value (E4)\n│       ├──\
+  \ E4_schoenfeld_ph_test.R         # Proportional hazards test\n│       ├── E6_sensitivity_analysis_v2.R\
+  \    # Peritumoral sensitivity (E6)\n│       ├── E8_adjusted_interaction.R       # Margin interaction\
+  \ (E8)\n│       ├── power_analysis.R                # Statistical power\n│       └── correlation_radio_trans.R\
+  \       # Radiomics–transcriptomics (E7)\n│\n└── env/                          # Environment configuration\n\
+  \    ├── mlpython_env.yml          # ML analysis environment (Python 3.10)\n    └── radiomics_env.yml\
+  \         # Radiomics feature extraction (Python 3.7)\n```\n\n---\n\n## Environment Setup\n\nTwo separate\
+  \ conda environments are required:\n\n### 1. Radiomics Feature Extraction (Python 3.7)\n\n```bash\n\
+  conda env create -f env/radiomics_env.yml\nconda activate radiomics\n```\n\nUsed for: `extract_radiomics_features_multi.py`,\
+  \ `lungtumormask_batch.py`, `dilate*.py`, `extract_cumulative_features.py`\n\n### 2. ML Analysis (Python\
+  \ 3.10)\n\n```bash\nconda env create -f env/mlpython_env.yml\nconda activate mlpython\n```\n\nUsed for:\
+  \ `ml_survival.py`, `train_cumulative_svm.py`, `stability_analysis.py`, `bca_bootstrap_ci.py`, `utils.py`\n\
+  \n### R Dependencies\n\nR scripts require the following packages: `survival`, `survminer`, `compareC`,\
+  \ `timeROC`, `rms`, `rmda`, `boot`, `ggplot2`, `reshape2`, `dplyr`, `tableone`. Install via:\n\n```R\n\
+  install.packages(c(\"survival\", \"survminer\", \"compareC\", \"timeROC\", \"rms\", \"rmda\", \"boot\"\
+  , \"ggplot2\", \"reshape2\", \"dplyr\", \"tableone\"))\n```\n\n---\n\n## Code Execution Order\n\n###\
+  \ Step 1: Image Preprocessing\n```bash\n# 1. Generate lung tumor masks\npython lungtumormask_batch.py\n\
+  \n# 2. Extract radiomics features (PyRadiomics)\n#    Parameters: binWidth=25, LoG sigma 2-5, 7 image\
+  \ types, 6 feature classes\npython extract_radiomics_features_multi.py\n\n# 3. Generate peritumoral\
+  \ regions (1/2/3 mm)\npython dilate.py\n\n# 4. Cumulative vs. annular dilation (E6 sensitivity)\npython\
+  \ dilate_cumulative.py\n\n# 5. Parenchyma-constrained masks (sensitivity analysis)\npython dilate_sen.py\n\
+  \n# 6. Extract features from cumulative regions\npython extract_cumulative_features.py\n```\n\n### Step\
+  \ 2: Model Development\n```bash\n# 7. Core: feature selection + 5 survival models + 5-fold CV\n#   \
+  \ Output: C-index, time-dependent AUC, model coefficients\npython ml_survival.py\n\n# 8. Per-region\
+  \ SVM training and comparison (E6)\npython train_cumulative_svm.py\n\n# 9. 200-seed stability analysis\
+  \ (E2)\npython stability_analysis.py\n\n# 10. BCa bootstrap confidence intervals (E3)\npython bca_bootstrap_ci.py\n\
+  ```\n\n### Step 3: Statistical Analysis (R)\n```r\n# 11. Clinical incremental value analysis (E4)\n\
+  #     C-index comparison, DeLong test, timeAUC, DCA, calibration\nRscript E4_incremental_analysis_v2.R\n\
+  \n# 12. Proportional hazards assumption test\nRscript E4_schoenfeld_ph_test.R\n\n# 13. Peritumoral region\
+  \ sensitivity analysis (E6)\nRscript E6_sensitivity_analysis_v2.R\n\n# 14. Ablation margin interaction\
+  \ analysis (E8)\nRscript E8_adjusted_interaction.R\n\n# 15. Statistical power analysis\nRscript power_analysis.R\n\
+  \n# 16. Radiomics–transcriptomics correlation (E7)\nRscript correlation_radio_trans.R\n```\n\n---\n\n\
+  ## Key Parameters\n\n| Parameter | Value | Source |\n|-----------|-------|--------|\n| Peritumoral range\
+  \ | 2 mm | Selected as optimal across 1/2/3 mm |\n| Risk score cutoff | −0.02554 | Training cohort median\
+  \ |\n| Final model features | 5 | Selected via 3-step pipeline |\n| Cross-validation | 5-fold | Random\
+  \ seed = 42 |\n| Bootstrap iterations | 1000 (BCa CI) | 2000 (stability) |\n| Model | Survival SVM (linear\
+  \ ranking) | FastSurvivalSVM, rank ratio = 1.0, no intercept |\n\nPyRadiomics extraction parameters\
+  \ are hardcoded in `extract_radiomics_features_multi.py` (binWidth = 25, LoG sigma values 2–5, 7 image\
+  \ types, 6 feature classes).\n\n---\n\n## Data Availability\n\nOriginal imaging data and clinical records\
+  \ are not publicly available due to patient privacy and ethical restrictions. Anonymized feature matrices,\
+  \ risk scores, and model coefficients are available from the corresponding author upon reasonable request.\n\
+  \n---\n\n## Citation\n\n[Citation information to be added upon publication]\n\n---\n\n## License\n\n\
+  This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details."

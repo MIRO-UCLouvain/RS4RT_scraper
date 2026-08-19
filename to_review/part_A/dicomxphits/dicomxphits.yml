@@ -1,0 +1,138 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: inata169/dicomxphits
+url: https://github.com/inata169/dicomxphits
+platform: github
+description: Research software for DICOM RT Plan to PHITS fixed-field 3D-CRT workflows.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-19T05:21:10Z'
+image_source: https://raw.githubusercontent.com/inata169/dicomxphits/HEAD/docs/assets/dicomxphits-gui-workflow.gif
+heuristic_total_score: 27
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+- Matched 8 support term(s).
+readme_excerpt: "\uFEFF# dicomxphits\n\ndicomxphits is an education and research workflow for preparing\
+  \ strict\nfixed-field 3D-CRT PHITS inputs from DICOM RT Plans and for controlling the\nexplicit PHITS,\
+  \ Sumtally, RTDOSE, coordinate-correction, and external GPR\nhandoff stages.\n\nWithin its documented\
+  \ non-patient phantom scope, this repository is a working\npublic implementation of that complete chain\
+  \ rather than only a proposal that\nthe interfaces might be connected. It provides a bounded engineering\n\
+  demonstration—a constructive proof of feasibility—for an openly inspectable\nand modifiable DICOM-to-PHITS-to-RTDOSE\
+  \ research workflow.\n\nIt is not clinical commissioning, patient QA, vendor certification, or a\nsubstitute\
+  \ for independent clinical validation. Real patient DICOM, licensed\ntool distributions, and real-tool\
+  \ outputs must remain outside this repository.\n\n## Status\n\nVersion 1.0.3 includes standalone public\
+  \ adapters for strict 3D-CRT workspace\npreparation, PHITS segment execution, Sumtally generation and\
+  \ execution,\nRTDOSE conversion and coordinate correction, and an optional external\nGPR-comparing handoff.\
+  \ See the [v1.0.3 release notes](docs/release-notes-v1.0.3.md)\nfor the changes since v1.0.2.\n\nThe\
+  \ current public release is\n[`v1.0.3`](https://github.com/inata169/dicomxphits/releases/tag/v1.0.3).\
+  \ It is\npublished without a custom Windows offline ZIP. The v1.0.2 custom offline ZIP\nwas withdrawn\
+  \ and removed after a later endpoint-protection compatibility\nfailure and should not be used. The v1.0.2\
+  \ tag, GitHub Release, source archives,\nand historical artifact identity remain recorded in its\n[release\
+  \ notes](docs/release-notes-v1.0.2.md).\n\n## Supported Environment\n\nThe supported use depends on\
+  \ the host environment. Installing the Python\npackage on a platform does not by itself mean that the\
+  \ complete external-tool\nworkflow is supported there.\n\n| Environment | Documented use | Important\
+  \ boundary |\n| --- | --- | --- |\n| Windows host with Python 3.12 | Guided desktop GUI and the public\
+  \ CLI adapters, including the Windows CT2PHITS frontend and explicitly authorized real-tool workflow\
+  \ | The supplied GUI launcher and `RTphits_win.bat` adapter are Windows-only. Licensed external tools\
+  \ and confirmed non-patient inputs remain user-supplied and outside this repository. |\n| Linux or the\
+  \ project Dev Container | Python 3.12 development, synthetic/mock tests, CLI validation, and the public-tree\
+  \ audit | The Dev Container is not a real-tool runtime. It does not support the Windows CT2PHITS frontend\
+  \ or the supplied PowerShell GUI launcher. |\n| GitHub Actions on Ubuntu and Windows | Python 3.12 synthetic/mock\
+  \ compilation, tests, and public-tree validation | CI does not run PHITS, RT-PHITS, CT2PHITS, Sumtally,\
+  \ phits2dicom, GPR, or real DICOM. |\n| macOS | Outside the v1 support range | Package installation\
+  \ or partial Python execution must not be interpreted as support for the guided workflow or external\
+  \ tools. |\n\nThe documented guided GUI workflow is therefore a Windows-host workflow. The\nrepository's\
+  \ Linux Dev Container is a separate development and validation\nenvironment; its Python installation\
+  \ does not create the Windows host\n`.venv` required by the launcher. Python 3.12 is the only supported\
+  \ Python\nruntime for v1. Python 3.11 and earlier and Python 3.13 and later are outside\nthe v1 support\
+  \ range; this statement does not claim that every later version\nis technically incapable of running\
+  \ any part of the package.\n\n## Windows GUI Quick Start\n\nOn a Windows host, run the following commands\
+  \ from the repository root in\nPowerShell. Do not run this launcher from the Linux Dev Container terminal.\n\
+  \n```powershell\npy -3.12 --version\npy -3.12 -m venv .venv\n.\\.venv\\Scripts\\python.exe -m pip install\
+  \ -e .\n.\\launchers\\run_gui_venv.cmd\n```\n\nConfirm that the first command reports Python 3.12. If\
+  \ the Python launcher is\nunavailable, use `python --version` only when it reports Python 3.12, then\
+  \ run\n`python -m venv .venv`. The `.cmd` launcher is the default Windows entry point\nbecause it is\
+  \ not governed by PowerShell's `.ps1` script execution policy. It\nadds the repository-local `.venv\\\
+  Scripts` directory to the child process PATH\nand starts the GUI with that environment's Python.\n\n\
+  The equivalent PowerShell launcher remains available where local policy allows\nunsigned repository\
+  \ scripts:\n\n```powershell\n.\\launchers\\run_gui_venv.ps1\n```\n\nIf PowerShell reports `PSSecurityException`\
+  \ or says that the downloaded script\nis not digitally signed, keep the machine or organization execution\
+  \ policy in\nplace and use `run_gui_venv.cmd`. Neither launcher creates an environment,\ninstalls dependencies,\
+  \ or reuses the Dev Container's Linux Python. See\n[Guided Desktop GUI](#guided-desktop-gui) for tool\
+  \ setup and case-path behavior.\nFor the complete v1.0.x walkthrough, see the\n[GUI User Guide](docs/gui-user-guide.md).\n\
+  \n## Windows Offline Installation\n\nThe v1.0.3 GitHub Release does not include a public Windows offline\
+  \ ZIP. A\nlocally built v1.0.3 bundle passed bounded human installation and GUI-startup\nchecks, but\
+  \ behavior-based endpoint protection blocked the verified\nuninstaller. The candidate was therefore\
+  \ not accepted as a public release\nasset. Do not disable endpoint protection or exclude system PowerShell\
+  \ to work\naround this limitation.\n\nThe v1.0.2 custom offline ZIP used the same relevant installer\
+  \ and uninstaller\nimplementation and was withdrawn and removed from its GitHub Release. The\nv1.0.2\
+  \ tag, GitHub Release, and source archives remain available, but the custom\nZIP should not be used\
+  \ or redistributed.\n\nThe repository retains the bundle builder for maintainer evaluation; its\noutput\
+  \ is not a v1.0.3 public release artifact. A future public offline asset\nrequires a newly reviewed\
+  \ exact-HEAD bundle and a successful complete\ninstall/launch/verified-uninstall lifecycle under the\
+  \ intended endpoint\nprotection environment.\n\nFor controlled maintainer evaluation only, an online\
+  \ Windows 10/11 x64\ncomputer can create a candidate bundle with:\n\n```powershell\n.\\tools\\prepare_offline_bundle.ps1\n\
+  ```\n\nDuring that controlled maintainer evaluation, the offline-computer procedure\nis:\n\n1. Copy\
+  \ and fully extract the ZIP to a writable local-disk folder.\n2. Run `install_offline.cmd` from the\
+  \ extracted folder.\n3. Approve the Windows administrator prompt for the verified installation\n   stage.\n\
+  \nThe installer verifies the bundle before requesting elevation, uses elevation\nonly to construct its\
+  \ authenticated Python runtime in protected storage,\ncreates the repository-local `.venv`, uses only\
+  \ bundled wheels, verifies the required\nimports, and offers the existing GUI launcher after success.\
+  \ Denying elevation\nstops before Python starts. It does not bundle, discover, or run PHITS-related\n\
+  external tools. These steps do not make the candidate a public or supported\nrelease asset. See the\
+  \ complete maintainer-evaluation boundary in the\n[English offline installation guide](docs/windows-offline-installation.md)\n\
+  or [Japanese offline installation guide](docs/windows-offline-installation.ja.md).\nThe bounded 2026-08-07\
+  \ human check is recorded in the\n[Windows offline installation validation record](docs/windows-offline-installation-validation-2026-08-07.md)\n\
+  ([Japanese](docs/windows-offline-installation-validation-2026-08-07.ja.md));\nit is installation evidence,\
+  \ not clinical validation.\n\n## Workflow at a Glance\n\n![Guided dicomxphits 3D-CRT workflow](docs/assets/dicomxphits-gui-workflow.gif)\n\
+  \nThe animation shows the guided staged workflow with local paths and identifiers\nredacted.\n\nThe\
+  \ guided workflow keeps each stage explicit and gated:\n\n1. **CT2PHITS** — on Windows, `dicomxphits-run-ct2phits`\
+  \ invokes the\n   user-supplied `RTphits_win.bat` for a confirmed non-patient phantom; it never\n  \
+  \ calls `ct2phits_win.exe` directly.\n2. **Workspace Prepare** — validate the frozen handoff and prepare\
+  \ strict\n   fixed-field 3D-CRT PHITS inputs.\n3. **PHITS** — explicitly run every active segment.\n\
+  4. **Sumtally Generate / Run** — generate and explicitly execute the\n   all-active-segments totalfield\
+  \ Sumtally job.\n5. **RTDOSE Prepare / Run** — prepare conversion, invoke phits2dicom, and apply\n \
+  \  the validated coordinate-correction handoff.\n6. **Optional GPR** — execute the external comparison\
+  \ or record an explicit\n   knowledge-based skip.\n\n## What This Repository Demonstrates\n\nThe public\
+  \ adapters implement the path from non-patient phantom DICOM CT and\nRT Plan inputs, through the user-supplied\
+  \ CT2PHITS handoff, fixed-field 3D-CRT\nPHITS input generation and segment calculation, Sumtally dose\
+  \ aggregation,\nDICOM RT Dose conversion and coordinate correction, to an external\nGPR-comparing comparison\
+  \ using a TPS-derived RT Dose as the reference and the\ncoordinate-corrected PHITS-derived RTDOSE as\
+  \ the evaluation.\n\nTwo bounded non-patient phantom cases have been confirmed by the author to\ncomplete\
+  \ this end-to-end workflow: a centered `20 × 20 cm²` field on a water\nphantom and a case using the\
+  \ PHITSgeoTest plan. A read-only review of four\nlocally retained comparison reports and their run logs\
+  \ mapped one record to\nPHITSgeoTest, two records to the same centered water-phantom case, and one\n\
+  record to a separate non-patient phantom. The PHITSgeoTest case produced a\nGamma Passing Rate of at\
+  \ least 95%. The two centered water-phantom records\nproduced values around 95%, slightly below 95%\
+  \ in both records.\n\nAll four records used global `3% / 3 mm` gamma with a `10%` dose cutoff,\nglobal-maximum\
+  \ normalization, linear interpolation, and an interpolation\nfraction of 3. A separate non-patient phantom\
+  \ record also produced a passing\nrate of at least 95%. The available evidence for that record establishes\
+  \ the\ncomparison outcome, but not the human-confirmed completion of the full chain\nused to define\
+  \ the two demonstrated cases, so it is retained only as supporting\ncomparison evidence. Exact individual\
+  \ pass rates, external paths, identifiers,\nand result files are not published.\n\nThis is a working\
+  \ end-to-end demonstration within a deliberately narrow\nresearch scope. It demonstrates that the public\
+  \ implementation and external\ntool handoffs can be made operational; it does not demonstrate clinical\n\
+  accuracy, commissioning, general machine compatibility, or suitability for\npatient QA. The reported\
+  \ Gamma Passing Rates are research observations, not\nclinical acceptance thresholds or QA decisions.\
+  \ See\n[Public Feasibility Demonstration](docs/public-feasibility-demonstration.md)\nfor the evidence\
+  \ and reproducibility boundaries.\n\n## v1.0.x Workflow\n\nThe v1.0.x workflow is intentionally narrow:\n\
+  \n- strict 3D-CRT RT Plan input\n- strict MU gate before downstream stages\n- generated PHITS input\
+  \ workspace through public adapters\n- explicit PHITS execution stage\n- explicit Sumtally generation\
+  \ and execution stage\n- explicit RTDOSE conversion stage\n\nEach stage must write command metadata,\
+  \ return code when executed, stdout and\nstderr capture paths or content, major input and output paths,\
+  \ and a summary JSON\npath.\n\n## v1.0.x Supported Scope\n\nFor v1.0.x, dicomxphits supports fixed-field\
+  \ 3D-CRT up to the centered\n`20 × 20 cm²` effective-aperture boundary for education and research. After\n\
+  DICOM Control Point inheritance is resolved, the jaw and MLC common effective\naperture at every Control\
+  \ Point must remain inside the closed collimator-local\nisocenter-plane box from `-100.000 mm` to `+100.000\
+  \ mm` on both X and Y. Each\neffective width must also be no greater than `200.000 mm`.\n\nOnly coplanar\
+  \ plans are supported (`コプラナーのみ対応`): the patient\nsupport/couch angle must be zero. The public v1 runtime\
+  \ rejects nonzero couch\nangles.\n\nA centered `20 × 20 cm²` aperture is therefore the largest square\
+  \ at the\nboundary. A narrower offset aperture is eligible only when every effective\npoint remains\
+  \ inside the same box. The workflow rejects overruns rather than\nclipping, recentering, or expanding\
+  \ the source cone.\n\nThe v1 scope is fixed-field 3D-CRT only. IMRT, dynamic MLC delivery, and VMAT\n\
+  are outside the supported scope.\n\nThis narrow initial boundary was selected for a maintainable educa"

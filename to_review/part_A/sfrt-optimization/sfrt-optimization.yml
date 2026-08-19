@@ -1,0 +1,55 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: sfrt-optimization/sfrt_optimization
+url: https://github.com/sfrt-optimization/sfrt_optimization
+platform: github
+description: an open source repository for spatially fractionated radiation therapy treatment planning
+  decision making optimization and analysis
+license: null
+language: Python
+keywords: []
+stars: 2
+updated_at: '2025-04-28T02:45:05Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "# sfrt_optimization\nan open source repository for spatially fractionated radiation therapy\
+  \ treatment planning decision making optimization and analysis\n\n* Note: path variable in `ingest/dicom_reader`\
+  \ must be changed to the relevant CT\\RS\\ file\n* Note: maintain repository structure on implementation\
+  \ as repository is highly interdependent\n\n## Installation\n\nTo run, download poetry with `pip install\
+  \ poetry`.\n\nOnce poetry is downloaded, configure virtual environment with `poetry install`.\n\nAfter\
+  \ virtual environment has been created, activate with `poetry shell`.\n\n### Running Ingest\n\nTo run\
+  \ ingest, make sure you are in the root directory `Research/`, and then execute `python ingest.py`.\n\
+  \n## Description\n\n### Running Models (Start Here)\n\nThe simplest way to quickly run a robust and\
+  \ effective model is to download the entire `sfrt_optimal_placement/` folder, place the structural dicom\
+  \ file in the `dicom_file/` folder (and only the rstruct file, not the folder of all slices) and execute\
+  \ `run_model.py`. Optimal coordiantes of centers will be placed in `Optimal_Points.csv` inside `sfrt_optimal_placement/`.\n\
+  \n### primary pipeline\n\ndicom_reader.py - creates a list of all points within a given ROI, prints\
+  \ to json file - requires `*_grid_placement.py` - writes .pkl files to `/data`\n* Note: `relative_grid_placement.py`,\
+  \ `triangle_grid_placement.py`, and `grid_placement.py` (independent descritization method) can be selected\
+  \ by changing the import statement in `dicom_reader.py` The files run the same way with methods of the\
+  \ same names, only the import statement needs to be changed. \n\nparameter_writer.py - reads candidate_points.json,\
+  \ calculates nodes and arcs, writes node_data.pkl, arc_data.pkl, arc_list.pkl, adjacency_matrix.pkl,\
+  \ neighborhood.pkl files\n\narc_optimization.py - a preliminary implementation of the Maximum Independent\
+  \ Set problem in Gurobi, reads node_data.json and arc_data.json\n\n**All model files require `data/`\
+  \ files created and updated by dicom_reader.py and parameter_writer.py\n\n## Secondary Models\n\n####\
+  \ Other Optimization Models:\n\n* Clique_Optimization.py : solves MIS problem using all maximal cliques\
+  \ rather than edges. Needs cliques.json from Clique_Problem.py\n    \n* Node_Optimization.py : solves\
+  \ MIS problem using aggregated constraints, such that there is only one adjacency constraint per node.\
+  \ Needs arc_list.json and node_data.json\nTo initialize env, run `poetry install`\n\n* continuous_adjacency_optimizaton.py:\
+  \ solves with a continuous optimization model based off an adjacency matrix\n\n* warm_start_optimization.py:\
+  \ utilizes a warm start heuristic to initialize branch and bound model\n\n#### Heuristics:\n\n* cube_heuristic.py\
+  \ : finds a solution for the MIS problem by assuming that the spheres all sit on a uniform grid, which\
+  \ is optimal for a rectangular shape. Finds every possible grid solution and returns best solution.\n\
+  \    \n* Greedy_Algorithm.py : Implementation of a Greedy algorithm that performs suspiciously poorly.\
+  \ Needs validation, potentially correction.\n\n* spherical_heuristic.py : finds a quality solution by\
+  \ implementing a continuous optimization over a sphere to initialize the model\n    \n\n## Other Files\n\
+  \n* Clique_Problem.py - uses networkX library to find all cliques and create cliques.json. Requires\
+  \ node_data.json and arc_data.json\n\n* grid_placement.py - containes helper funcitons for dicom_reader.py\n\
+  \n* Structure_Visualizer.py - can be used to visualize ROIs in 3D and 2D slices\n\n\n\n## Miscellaneous\
+  \ files\n\n* cube_optimization.py - another implementation of the MIS problem to test computation time,\
+  \ data storage\n* dicom_tester.py - reads dicom files, don't use\n"

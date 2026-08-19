@@ -1,0 +1,49 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Cookie-Guo/Radiomics-TotalSpineSeg-LDD
+url: https://github.com/Cookie-Guo/Radiomics-TotalSpineSeg-LDD
+platform: github
+description: Automated Radiomics Pipeline with TotalSpineSeg for Lumbar Disc Degeneration Classification
+  and SHAP Interpretability Analysis.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-18T02:34:25Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Automated Radiomics Pipeline with TotalSpineSeg for Lumbar Disc Degeneration Classification\
+  \ and SHAP Interpretability Analysis\n\nSource code and de-identified tables for:\n\n*Automated Radiomics\
+  \ Pipeline with TotalSpineSeg for Classification of Lumbar Disc Degeneration on T2-Weighted MRI: Development\
+  \ and Interpretability Analysis*\n\nFrontiers in Medicine (manuscript 1929252).\n\n## Which folder to\
+  \ use\n\n| Folder | Role |\n|---|---|\n| **[`revision/`](revision/)** | **Current manuscript.** Patient-level\
+  \ split. Primary CatBoost macro AUC **0.936**. |\n| [`original_submission/`](original_submission/) |\
+  \ First submission only. Disc-level split. Historical AUC 0.932. Do not use these scripts for the revised\
+  \ numbers. |\n\n```text\n.\n├── revision/                 # current paper\n│   ├── data/           \
+  \      # anonymous features + labels\n│   ├── splits/assignments.csv\n│   ├── scripts/             \
+  \ # b1–b3, c1–c3, d_spider, e5\n│   ├── results/\n│   └── figures/\n└── original_submission/      #\
+  \ first submission (archived)\n    ├── config/\n    ├── data/\n    ├── scripts_python/\n    ├── scripts_R/\n\
+  \    └── output/models/\n```\n\n## Revision (patient-level; August 2026)\n\n| Item | Value |\n|---|---|\n\
+  | Split | Patient-level 80:20 (`revision/splits/assignments.csv`, seed 4321) |\n| Train / test | 168\
+  \ / 42 patients (504 / 126 discs) |\n| Primary model | **CatBoost**, pre-specified (depth 2, lr 0.05,\
+  \ l2 1, 223 iterations) |\n| 3D features after reduction | 1,762 → 1,548 → 1,548 → **517** |\n| **Primary\
+  \ 3D macro AUC** | **0.936 (0.913–0.958)** |\n| Same-pipeline 2D mid-sagittal | 0.916 (0.884–0.945)\
+  \ |\n| Simple baseline (disc/CSF SI) | 0.760 |\n| Frozen ResNet50 | 0.864 |\n| Volume-only | 0.552 |\n\
+  | Mask ±1-voxel ICC > 0.75 | 45.3% of features (median ICC 0.713) |\n| SPIDER external (frozen 517;\
+  \ expert masks) | **0.838 (0.816–0.860)** — not a new primary AUC |\n\n```text\npython revision/scripts/b1/b1_unified_primary.py\n\
+  python revision/scripts/b1/b1_ten_models_unified.py\n```\n\nBoth scripts read only `revision/splits/assignments.csv`\
+  \ plus the de-identified feature tables. They do not re-split the data.\n\nDetails: [`revision/README.md`](revision/README.md).\n\
+  \n## What is not in this repository\n\n- Raw MRI and TotalSpineSeg masks (institutional ethics)\n- The\
+  \ name-to-ID map (never published)\n- SPIDER images (use the public SPIDER release on Zenodo, record\
+  \ 10159290)\n\nImaging data may be shared by the corresponding author upon reasonable academic request\
+  \ and ethics approval (Wangjing Hospital, China Academy of Chinese Medical Sciences).\n\n## Requirements\n\
+  \n**Python 3.10+** (PyRadiomics feature extraction needs 3.10): `pandas`, `numpy`, `scipy`, `scikit-learn`,\
+  \ `catboost`, `openpyxl`.  \nOptional extractors: `pyradiomics`, `SimpleITK`, `torch`, `torchvision`,\
+  \ `pingouin`.\n\n**R**: `caret`, `pROC`, `ggplot2`, `shapviz`, `catboost`.\n\nSee `revision/requirements.txt`\
+  \ for the revision modelling stack.\n\n## License\n\nMIT — see [LICENSE](LICENSE).\n"

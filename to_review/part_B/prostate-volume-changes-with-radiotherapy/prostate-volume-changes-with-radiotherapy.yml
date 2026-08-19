@@ -1,0 +1,98 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: sianation/Prostate-volume-changes-with-radiotherapy
+url: https://github.com/sianation/Prostate-volume-changes-with-radiotherapy
+platform: github
+description: Coding for the MOMENTUM repository
+license: MIT
+language: R
+keywords: []
+stars: 0
+updated_at: '2025-12-01T12:48:02Z'
+image_source: null
+heuristic_total_score: 23
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 4 support term(s).
+readme_excerpt: "# Prostate Volume Changes with Radiotherapy\n\n## MOMENTUM Study - Analysis Pipeline\n\
+  \n**Repository for statistical analysis of prostate volume trajectories during radiotherapy**\n\n---\n\
+  \n## Overview\n\nThis repository contains production-ready R scripts for analyzing longitudinal prostate\
+  \ volume measurements during radiotherapy. The pipeline includes data cleaning, mixed effects modeling,\
+  \ validation analysis, and trajectory clustering.\n\n### Key Features\n\n- **Data Cleaning & QC**: ROI\
+  \ harmonization, outlier detection, quality control\n- **Statistical Modeling**: Linear mixed effects\
+  \ models with multiple specifications\n- **External Validation**: Logistic regression with ROC analysis\
+  \ and bootstrapping\n- **Pattern Recognition**: Trajectory clustering to identify distinct volume change\
+  \ patterns\n- **Synthetic Data**: Test dataset generator for pipeline validation\n\n---\n\n## Repository\
+  \ Structure\n\n```\n.\n├── 00_synthetic_data_generator.R      # Generate test data\n├── 01_data_cleaning_roi_harmonization.R\
+  \    # Data QC and preparation  \n├── 02_linear_mixed_effects_modeling.R      # LMM analysis\n├── 03_logistic_regression_validation.R\
+  \     # External validation\n├── 04_trajectory_cluster_analysis.R        # Clustering analysis\n└──\
+  \ README.md                               # This file\n```\n\n---\n\n## Quick Start\n\n### 1. Install\
+  \ Required Packages\n\n```r\ninstall.packages(c(\n  \"tidyverse\", \"lubridate\",           # Data manipulation\n\
+  \  \"lme4\", \"lmerTest\", \"broom.mixed\",  # Mixed models\n  \"emmeans\", \"performance\",       \
+  \    # Model diagnostics\n  \"pROC\", \"caret\", \"boot\",            # Validation\n  \"kml\", \"lcmm\"\
+  , \"factoextra\",        # Clustering\n  \"ggrepel\", \"MASS\"                   # Visualization\n))\n\
+  ```\n\n### 2. Generate Synthetic Test Data\n\n```r\nsource(\"00_synthetic_data_generator.R\")\n# Creates:\
+  \ data/synthetic_volume_data.csv\n```\n\n### 3. Run Analysis Pipeline\n\n```r\n# Step 1: Data cleaning\n\
+  source(\"01_data_cleaning_roi_harmonization.R\")\ncleaned_data <- process_volume_data(\n  input_file\
+  \ = \"data/synthetic_volume_data.csv\",\n  output_file = \"data/cleaned_volume_data.csv\"\n)\n\n# Step\
+  \ 2: Mixed effects modeling  \nsource(\"02_linear_mixed_effects_modeling.R\")\nmodel_results <- build_lmm_models(\n\
+  \  data = cleaned_data %>% filter(qc_flag == \"pass\"),\n  outcome = \"volume_change_percent\",\n  time_var\
+  \ = \"weeks_from_rt_start\"\n)\n\n# Step 3: Validation (if external cohort available)\nsource(\"03_logistic_regression_validation.R\"\
+  )\n# See script for validation workflow\n\n# Step 4: Trajectory clustering\nsource(\"04_trajectory_cluster_analysis.R\"\
+  )\ntrajectory_results <- perform_trajectory_analysis(\n  data = cleaned_data,\n  k = NULL  # Auto-select\
+  \ optimal clusters\n)\n```\n\n---\n\n## Script Documentation\n\n### `00_synthetic_data_generator.R`\n\
+  \n**Purpose**: Generate realistic synthetic prostate volume data for testing\n\n**Features**:\n- 200\
+  \ patients, 10 timepoints each\n- Three trajectory patterns (stable, gradual decrease, rapid decrease)\n\
+  - Baseline characteristics: age, PSA, treatment type\n- Optional QC issues for testing cleaning pipeline\n\
+  \n**Usage**:\n```r\nsource(\"00_synthetic_data_generator.R\")  # Run interactively\n```\n\n---\n\n###\
+  \ `01_data_cleaning_roi_harmonization.R`\n\n**Purpose**: Clean raw volume data and perform quality control\n\
+  \n**Key Functions**:\n- `harmonize_roi_names()`: Standardize ROI nomenclature\n- `calculate_volume()`:\
+  \ Convert voxel counts to volumes\n- `flag_volume_outliers()`: Identify implausible measurements\n-\
+  \ `flag_change_rate_outliers()`: Detect unrealistic rate of change\n- `process_volume_data()`: Complete\
+  \ cleaning pipeline\n\n**Output**:\n- Cleaned dataset with QC flags\n- Baseline volumes and percentage\
+  \ changes\n- Time variables (days/weeks from RT start)\n\n**Configuration**:\n```r\nVOXEL_VOLUME <-\
+  \ 0.001     # cm^3 per voxel\nMIN_VOLUME <- 5           # Minimum plausible volume\nMAX_VOLUME <- 200\
+  \         # Maximum plausible volume\nMAX_VOLUME_CHANGE_RATE <- 0.5  # Max fractional change per day\n\
+  ```\n\n---\n\n### `02_linear_mixed_effects_modeling.R`\n\n**Purpose**: Fit linear mixed effects models\
+  \ for volume trajectories\n\n**Key Functions**:\n- `fit_lmm()`: Fit lmer models with convergence control\n\
+  - `get_model_coefficients()`: Extract tidy coefficients with p-values\n- `get_model_diagnostics()`:\
+  \ Calculate AIC, BIC, R², ICC\n- `check_model_assumptions()`: Diagnostic plots\n- `build_lmm_models()`:\
+  \ Compare multiple model specifications\n\n**Models Tested**:\n1. Null model (random intercept only)\n\
+  2. Time effect (random intercept)\n3. Time with random slope\n4. Time + covariates\n\n**Output**:\n\
+  - Model comparison table (AIC/BIC)\n- Fixed effects coefficients\n- Diagnostic plots (residuals, Q-Q,\
+  \ scale-location)\n\n---\n\n### `03_logistic_regression_validation.R`\n\n**Purpose**: Binary outcome\
+  \ modeling and external validation\n\n**Key Functions**:\n- `fit_logistic()`: Fit logistic regression\
+  \ models\n- `get_odds_ratios()`: Extract ORs with confidence intervals\n- `calculate_performance()`:\
+  \ AUC, accuracy, sensitivity, specificity\n- `bootstrap_performance()`: Bootstrapped confidence intervals\n\
+  - `validate_model()`: External cohort validation with plots\n- `plot_roc_curve()`: ROC visualization\n\
+  - `plot_calibration()`: Calibration plots\n\n**Metrics**:\n- AUC-ROC\n- Accuracy, sensitivity, specificity\n\
+  - Positive/negative predictive value\n- Calibration assessment\n\n---\n\n### `04_trajectory_cluster_analysis.R`\n\
+  \n**Purpose**: Identify distinct patterns of volume change\n\n**Key Functions**:\n- `prepare_trajectory_data()`:\
+  \ Convert to wide format for clustering\n- `perform_kmeans_clustering()`: K-means on trajectories\n\
+  - `evaluate_cluster_number()`: Elbow method for optimal k\n- `plot_trajectory_clusters()`: Visualization\
+  \ with confidence bands\n- `characterize_clusters()`: Summarize by baseline features\n- `perform_trajectory_analysis()`:\
+  \ Complete clustering workflow\n\n**Output**:\n- Cluster assignments\n- Elbow curve plot\n- Trajectory\
+  \ visualization\n- Cluster characteristics\n\n---\n\n## Data Format\n\n### Input Data Requirements\n\
+  \nYour raw data should have the following columns:\n\n| Column | Type | Description |\n|--------|------|-------------|\n\
+  | `patient_id` | character | Unique patient identifier |\n| `scan_date` | Date/character | Scan date\
+  \ (YYYY-MM-DD) |\n| `roi_name` | character | ROI name (e.g., \"Prostate\", \"CTV_Prostate\") |\n| `scan_timepoint`\
+  \ | character | Timepoint label (e.g., \"Fraction_1\", \"Week_4\") |\n| `volume` or `voxel_count` |\
+  \ numeric | Volume in cm³ or voxel count |\n| Additional covariates | numeric/character | Age, treatment\
+  \ type, etc. |\n\n### Example Data\n\n```csv\npatient_id,scan_date,roi_name,scan_timepoint,voxel_count,age,treatment_type\n\
+  P001,2023-01-15,Prostate,Fraction_1,45231,68,IMRT\nP001,2023-02-12,Prostate,Week_4,42187,68,IMRT\nP002,2023-01-20,CTV_Prostate,Fraction_1,38942,72,SBRT\n\
+  ```\n\n---\n\n## Key Outputs\n\n### 1. Cleaned Data\n- Quality-controlled volume measurements\n- Harmonized\
+  \ ROI names\n- Calculated time variables and percentage changes\n\n### 2. Model Results\n- Fixed and\
+  \ random effects estimates\n- Model fit statistics (AIC, BIC, R²)\n- Predicted trajectories\n\n### 3.\
+  \ Validation Metrics\n- ROC curves and AUC\n- Calibration plots\n- Performance comparison (training\
+  \ vs validation)\n\n### 4. Trajectory Clusters\n- Distinct volume change patterns\n- Cluster characteristics\n\
+  - Individual and mean trajectory plots\n\n---\n\n## Citation\n\nIf you use this code in your research,\
+  \ please cite:\n\n```\nMOMENTUM Study Team (2024). \nProstate Volume Changes with Radiotherapy: Statistical\
+  \ Analysis Pipeline.\nGitHub repository: github.com/sianation/Prostate-volume-changes-with-radiotherapy\n\
+  ```\n\n---\n\n## License\n\nThis code is provided for academic and research purposes.\n\n---\n\n## Contact\n\
+  \nFor questions or issues, please open a GitHub issue or contact the MOMENTUM study team.\n\n---\n\n\
+  ## Notes\n\n- All scripts are designed to work with de-identified data only\n- No hardcoded file paths\
+  \ or PHI\n- Scripts include extensive documentation and examples\n- Tested on R >= 4.0.0\n\n---\n\n\
+  **Last Updated**: December 2024\n"

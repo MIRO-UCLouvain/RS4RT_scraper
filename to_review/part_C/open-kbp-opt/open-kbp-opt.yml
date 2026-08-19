@@ -1,0 +1,113 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ababier/open-kbp-opt
+url: https://github.com/ababier/open-kbp-opt
+platform: github
+description: Develop plan optimization models for knowledge-based planning in radiotherapy
+license: MIT
+language: Python
+keywords:
+- convex-optimization
+- inverse-optimization
+- medical-imaging
+- medical-physics
+stars: 24
+updated_at: '2026-05-24T22:47:29Z'
+image_source: https://raw.githubusercontent.com/ababier/open-kbp-opt/HEAD/pipeline.png
+heuristic_total_score: 21
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 6 support term(s).
+readme_excerpt: "# OpenKBP-Opt\n\n![](pipeline.png)\n\nThe _open-kbp-opt_ repository is part of the OpenKBP-Opt\
+  \ project, which is an extension of the [OpenKBP Grand Challenge](https://aapm.onlinelibrary.wiley.com/doi/pdfdirect/10.1002/mp.14845).\
+  \ This repository provides code and open data to reproduce the experiments from our paper, however,\
+  \ we encourage others to modify our experiments to extend this work.\n\n\n## Citation\n\nPlease use\
+  \ our paper as the citation for this dataset or code repository:\n\nA. Babier, R. Mahmood, B. Zhang,\
+  \ V.G.L. Alves, A.M. Barragán-Montero, J. Beaudry, C.E. Cardenas, Y. Chang, Z. Chen, J. Chun, K. Diaz,\
+  \ H.D. Eraso, E. Faustmann, S. Gaj, S. Gay, M. Gronberg, B. Guo, J. He, G. Heilemann, S. Hira, Y. Huang,\
+  \ F. Ji, D. Jiang, J.C.J. Giraldo, H. Lee, J. Lian, S. Liu, K. Liu, J. Marrugo, K. Miki, K. Nakamura,\
+  \ T. Netherton, D. Nguyen, H. Nourzadeh, A.F.I. Osman, Z. Peng, J.D.Q. Muñoz, C. Ramsl, D.J. Rhee, J.D.\
+  \ Rodriguez, H. Shan, J.V. Siebers, M.H. Soomro, K. Sun, A.U. Hoyos, C. Valderrama, R. Verbeek, E. Wang,\
+  \ S. Willems, Q. Wu, X. Xu, S. Yang, L. Yuan, S. Zhu, L. Zimmermann, K.L. Moore, T.G. Purdie, A.L. McNiven,\
+  \ T.C.Y. Chan, “[OpenKBP-Opt: An international and reproducible evaluation of 76 knowledge-based planning\
+  \ pipelines](https://iopscience.iop.org/article/10.1088/1361-6560/ac8044),” Physics in Medicine and\
+  \ Biology, Vol. 67, pp. 185012, 2022.\n\n\n# Table of Contents\n\n- [Data](#data)\n- [What this code\
+  \ does](#what-this-code-does)\n  + [Main scripts](#main-scripts)\n  + [Supporting functions and classes](#supporting-functions-and-classes)\n\
+  - [Prerequisites](#prerequisites)\n  + [Note about Gurobi and other solvers](#note-about-gurobi-and-other-solvers)\n\
+  - [Created folder structure](#created-folder-structure)\n- [Getting started](#getting-started)\n- [Running\
+  \ the code](#running-the-code)\n- [Citation](#citation)\n\n## Data\n\nThe details of the provided data\
+  \ are available in our paper [OpenKBP-Opt: An international and reproducible evaluation of 76 knowledge-based\
+  \ planning pipelines](https://iopscience.iop.org/article/10.1088/1361-6560/ac8044). In short, we provide\
+  \ data for 100 patients who were treated for head-and-neck cancer with intensity modulated radiation\
+  \ therapy (IMRT), and they are the same patients as those in the testing set from the [OpenKBP Grand\
+  \ Challenge](https://github.com/ababier/open-kbp). Every patient in this dataset has a reference plan\
+  \ dose distribution (i.e., a ground truth), 21 predicted dose distributions, a dose influence matrix,\
+  \ CT images, structure masks, a feasible dose mask (i.e., mask of where dose can be non-zero), and voxel\
+  \ dimensions. Each predicted dose distribution was produced by a model that was trained on an out-of-sample\
+  \ training set (n=200 patients) and validation set (n=40 patients) by practitioners who only had the\
+  \ ground truth data (i.e., dose distribution) for the training set. Please note that researchers who\
+  \ are interested in developing their own dose prediction methods should use the [open-kbp repository](https://github.com/ababier/open-kbp).\n\
+  \n## What this code does\n\nThis code will solve optimization models to generate radiotherapy treatment\
+  \ plans. This repository includes two scripts and eight other PY files that contain functions and classes\
+  \ that are specific to this repository.\n\n### Main scripts\n\nThese two main scripts will complete\
+  \ all experiments and produce all visualizations/tables from our paper. \n\n- _main.py_: Solves an optimization\
+  \ model on all patients (n=100) in the dataset and each of their high-quality predictions (n=19), which\
+  \ is a total of 7600 optimization models. On most computers this will take at least 1 month to complete\
+  \ (outputs are stored as part of the complementary dataset), however, the solutions are available in\
+  \ the dataset associated with this repository.\n- _main_analysis.py_: Generates the tables and plots\
+  \ from the complementary paper.\n\n### Supporting functions and classes\nWe summarize the functionality\
+  \ of the eight files that contain our repository specific functions and classes. More details are provided\
+  \ in the files/functions themselves.\n\n- _analysis_data_prep.py_: Contains several functions that prepare\
+  \ data for easier analysis\n- _constants_class.py_: Contains the _ModelParameters_ class, which has\
+  \ several attributes that are used in many of the functions in this repository. \n- _data_loader.py_:\
+  \ Contains the _DataLoader_ class, which loads the data from the dataset in a standard format. \n- _dose_evaluation_class.py_:\
+  \ Contains the _EvaluateDose_ class, which is used to evaluate the competition metrics.\n- _general_functions.py_:\
+  \ Contain several functions with a variety of purposes.\n- _optimizer.py_: Contains the _PlanningModel_\
+  \ class, which constructs and solves each optimization model.\n- _plotting.py_: Contains functions to\
+  \ construct several of the plots in the complementary paper.\n- _resources.py_: Contains the _Patient_\
+  \ class, which is used to store and manipulate patient data (e.g., generating optimization structures)\n\
+  \n## Prerequisites\n\nThe following are required to run the given scripts.\n\n- Linux\n- Python 3.7.5\n\
+  - Gurobi 9.1.2 installed with license \n\n### Note about Gurobi and other solvers\nGurobi can be installed\
+  \ by following the first 5 pages of [these instructions](https://www.gurobi.com/wp-content/plugins/hd_documentations/documentation/9.1/quickstart_linux.pdf).\
+  \ Academics can use Gurobi for free by [downloading the solver](https://www.gurobi.com/downloads/gurobi-software/)\
+  \ and requesting an [Academic License](https://www.gurobi.com/downloads/end-user-license-agreement-academic/).\n\
+  \nThis code was only tested with Gurobi, however, we construct the models via [Google OR-Tools](https://developers.google.com/optimization).\
+  \ As a result, this code should also work with other solvers that are compatible with Google OR-Tools\
+  \ (e.g., CPLEX, SCIP, GLPK, GLOP) by changing the optimization solver on Line 53 in [optimizer.py](provided_code/optimizer.py).\
+  \  \n\n## Created folder structure\nThis repository will use a file structure that branches from a directory\
+  \ called _open-kbp-opt-data_. All the reference patient data (e.g., reference dose, contours) are stored\
+  \ in _reference-plans_. The predictions that were generated during the OpenKBP Grand Challenge are stored\
+  \ in _paper-predictions_, and the plans that we generated using those predictions are stored in _paper-plans_.\
+  \ The _paper-plans_ directory also has a subdirectory for each optimization model (identified by the\
+  \ name of the appropriate optimization model). Lastly, _results-data_ contains the summary statistics\
+  \ from the reference plans/predictions/KBP generated plans that are used to generate the aggregate results\
+  \ (e.g., plots, tables in paper), which are stored in _results_.\n\n```\nopen-kbp-opt-data\n├── reference-plans\n\
+  │   ├── pt_*\n│   │   ├── *.csv\n├── paper-predictions\n│   ├── set_*\n│   │   ├── pt_*.csv\n├── paper-plans\n\
+  │   ├── model_names\n│   │   ├── plan-dose\n│   │   │   ├── pt_*.csv\n│   │   ├── plan-fluence\n│  \
+  \ │   │   ├── pt_*.csv\n│   │   ├── plan-gap\n│   │   │   ├── pt_*.csv\n│   │   ├── plan-weights\n│\
+  \   │   │   ├── pt_*.csv\n├── results-data\n│   ├── *\n└── results\n    ├── *\n```\n\n## Getting started\n\
+  \n1. Make a virtual environment and activate it\n    ```\n    virtualenv -p python3 open-kbp-opt-venv\n\
+  \    source open-kbp-opt-venv/bin/activate\n    ```\n2. Clone this repository, navigate to its directory,\
+  \ and install the requirements.\n    ```\n    git clone https://github.com/ababier/open-kbp-opt\n  \
+  \  cd open-kbp-opt\n    pip3 install -r requirements.txt\n    ```\n\n3. Download the data for _reference-plans_\
+  \ and _paper-predictions_ directories (10.19 GB) from our [OneDrive](https://1drv.ms/u/c/2150c5a213e729e3/EeMp5xOixVAggCFvAAAAAAABEDPNyGWc32_OuGeTHUFZkw?e=x3V3fq).\
+  \ \n   \n4. __Optional__:  Download the data for _paper-plans_, _results-data_, and _results_ directories\
+  \ (13.08 GB) from our [OneDrive](https://1drv.ms/u/c/2150c5a213e729e3/EeMp5xOixVAggCFwAAAAAAABgPUYh9eHaIT0pv-w-8yF6A?e=2QDrwB).\n\
+  \n5. Unzip all the downloaded data, and add it to a to a folder called `open-kbp-opt-data` in the project\
+  \ directory. The location and name of `open-kbp-opt-data` can be changed on line 12 of [constants_class.py](provided_code%2Fconstants_class.py).\n\
+  \n## Running the code\n\nRunning the code on the intended platform should be straightforward. Any errors\
+  \ are likely the result of data being in an unexpected directory or issues related to Gurobi installation.\
+  \ and running _main_analysis.py_ will generate new results.\n\nRun the main files in your newly created\
+  \ virtual environment.\n\n```\npython3 main.py\npython3 main_analysis.py\n```\n\n If the code is running\
+  \ correctly then running _main.py_ should solve an optimization model for each pair of patients and\
+  \ predictions. No optimization will be performed if solutions (i.e., plans) for the optimization model\
+  \ are already saved. For example, if you download the optional data, which contains the solutions to\
+  \ all optimization models solved in the paper) the script will bypass all optimization models because\
+  \ solutions already exist. Note that running the optimization models for all pairs of patients and prediction\
+  \ will take several weeks. \n \nOnce solutions exist _main_analysis.py_ can be run to generate summary\
+  \ statistics and plots to summarize the performance of the models. Note that the first run of main analysis\
+  \ will take about an 15 minutes per optimization model to complete because it needs to load and summarize\
+  \ the data for 1900 treatment plans for each optimization model. Following the first run, the summary\
+  \ statistics are saved such that successive runs will take a few seconds.\n"

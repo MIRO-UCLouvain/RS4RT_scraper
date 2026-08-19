@@ -1,0 +1,137 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: WrightGroupSRI/XRay_to_CT_Vessel_Registration
+url: https://github.com/WrightGroupSRI/XRay_to_CT_Vessel_Registration
+platform: github
+description: 'Aligns X-Ray fluoroscopy to cone beam CT images to highlight blood vessels '
+license: GPL-3.0
+language: Python
+keywords: []
+stars: 1
+updated_at: '2025-10-20T18:10:38Z'
+image_source: https://raw.githubusercontent.com/WrightGroupSRI/XRay_to_CT_Vessel_Registration/HEAD/readme_assets/Summary_figure.png
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "<!--\nCopyright (c) 2025 Moujan Saderi.\n\nThis file is part of XRay_to_CT_Vessel_Registration\
+  \ \n(see https://github.com/WrightGroupSRI/XRay_to_CT_Vessel_Registration_v1).\n\nThis program is free\
+  \ software: you can redistribute it and/or modify\nit under the terms of the GNU General Public License\
+  \ as published by\nthe Free Software Foundation, either version 3 of the License, or\n(at your option)\
+  \ any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT\
+  \ ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\
+  \  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU\
+  \ General Public License\nalong with this program. If not, see <http://www.gnu.org/licenses/>.\n-->\n\
+  # XRay_to_CT_Vessel_Registration\n## About\nThis work aligns X-Ray fluoroscopy to cone beam CT images\
+  \ to highlight blood vessels. It has been developed in the context of revascularization interventions\
+  \ for peripheral arterial disease.\n\nDetails can be found in the paper [3D CT to 2D X-ray image registration\
+  \ for improved visualization of tibial vessels in endovascular procedures](https://pubmed.ncbi.nlm.nih.gov/39755836/)\
+  \ (Saderi et al, 2025).\n\n![A diagram showing an overview of the project. First sub-figure is a diagram\
+  \ of an x-ray C-arm system, with the six degrees of freedom determining the field of view of the x-ray\
+  \ labelled. The second sub-figure illustrates the idea of taking a projection through a 3D CT volume\
+  \ to create a Digitally Reconstructed Radiograph, and comparing it to the target 2D XRF using a Masked\
+  \ Normalized Cross-Correlation loss function. The third subfigure is a flowchart of how the optimization\
+  \ of the 6 parameters is broken up into substeps. The final subfigure illustrates the resulting XRF\
+  \ with added artery overlay from the CBCT volume.](readme_assets/Summary_figure.png)\n\n## Overview\
+  \ of Code Structure  \n\n### Directory structure\nI. **Preprocessing**\n   - src\n      - 1-manually-configure-FOV\n\
+  \      - 2-generate-drr-library\n\nII. **Run-time**\n  - src\n    - 1-preprocessing\n    - 2-registration\n\
+  \      - 1-preprocess-xrf\n      - 2-crop-xrf-gui\n      - 3-rough-alignment\n      - 4-iterative-optimization\n\
+  \      - 5-show-vessel-results\n    - 3-analysis\n\n### Explanation of Structure\n- Each folder within\
+  \ `src` is a use case / workflow\n- Each subfolder is a specific task, numbered to create a pipeline\
+  \ used to process data\n- Each subfolder contains folders: input, src, output. Some contain optional\
+  \ folder: hand\n  - `Input`: contains input files/data that are manipulated/created by a previous task\n\
+  \  - `Hand`: contains manually created input files such as configuration parameters\n  - `Output`: output\
+  \ files (created by the system)\n  - `Src`: script files\n- GNU Make is the program used to run these\
+  \ pipelines\n- The “Makefile” controls the execution of scripts, and linking of the output produced\
+  \ by one task to the input of future tasks.\n\n---  \n\n# I. Preprocessing\n## Setting up the Environment:\
+  \ Pre-processing  \nThis submodule requires a CUDA GPU with at least 8 GB of memory to run, but preferably\
+  \ 11 GB of memory or more. You can use docker or a compute cluster.\n\n### Docker setup\nRunning the\
+  \ docker image requires an NVIDIA GPU with support for CUDA 11.8 or higher. This workflow has been tested\
+  \ with Docker versions 24.0.2 and 27.4.0, on Linux platforms. The preprocessing docker image will not\
+  \ work on Mac OS.\n\n#### Build\nFrom the Preprocessing directory, build the preprocessing image:\n\
+  ```bash\ndocker build -t mxct-pre .\n```\n\nNote this is a large image, approximately 14.3 GB in size.\n\
+  \n### Compute Cluster setup\nThe submodule has been tested on the Digital Research Alliance of Canada\
+  \ computational cluster, using the following steps to set up the environment with required libraries.\n\
+  \nNote that there are some pecularities with the installing of modules on this computational cluster.\
+  \ Specifically, not all required modules are included in `requirements.txt`, as some must be loaded\
+  \ using \"module load\" prior to loading the virtual environment. In addition, the module DeepDRR is\
+  \ not available in the Python wheels, and so must be downloaded from PyPI. Note that this cannot be\
+  \ done from the compute notes (due to lack of network access), so the virtual environment must be created\
+  \ ahead of time on a login node (as per instructions here). This module is installed outside of `requirements.txt`\
+  \ so that all other packages can be installed from available wheels (using the `--no-index` tag). A\
+  \ complete list of all required packages (ie. without considering these pecularities) is included in\
+  \ `requirements-full.txt`, and can be used if the environment is being set up somewhere other than the\
+  \ Digital Research Alliance of Canada computational cluster.\n\n1. Connect to cluster with user account.\
+  \  \n   Ex: `<username>@graham.alliancecan.ca`  \n2. Navigate to your home directory on the cluster\
+  \ (or a project directory within the home directory), and copy in `requirements.txt` from local repo.\n\
+  3. To create the virtual environment:\n   ```bash\n   module load StdEnv/2020\n   module load python/3.10.2\n\
+  \   module load scipy-stack/2022a\n\n   module load cuda/11.7\n\n   module load gcc/9.3.0\n   module\
+  \ load opencv/4.5.5\n\n   virtualenv --no-download <env-name>\n   source <env-name>/bin/activate\n\n\
+  \   pip install --no-index --upgrade pip\n   pip install --no-index -r requirements.txt\n   pip install\
+  \ deepdrr==1.1.2\n\n   deactivate\n   ```\n4. Note: to re-use the already created virtual environment\
+  \ (as used in run.sh scripts):\n   ```bash\n   module load StdEnv/2020\n   module load python/3.10.2\n\
+  \   module load scipy-stack/2022a\n\n   module load cuda/11.7\n\n   module load gcc/9.3.0\n   module\
+  \ load opencv/4.5.5\n\n   source <env-name-path>/bin/activate\n   ```\n\n5. (This is clunky but I don't\
+  \ know how to avoid it right now): Update the virtual environment path in `src/1-manually-configure-FOV/run.sh`\
+  \ and `src/2-generate-drr-library/run.sh` to match the one created -- line: `source <environment-dir>/bin/activate`.\n\
+  \n\n## Description of input files\n- `deep_drr_config.yaml`: Configuration parameters used by the [DeepDRR](https://deepdrr.readthedocs.io/)\
+  \ library. It is not expected that these will need to be adjusted.\n- `CT-leg.nii.gz`: Nifti file of\
+  \ full CT volume (see: README-manual-data-prep.md)\n- `CT-bone.nii.gz`: CT volume with same FOV as CT-leg,\
+  \ but containing only bone voxels(see: README-manual-data-prep.md)\n- `CT-artery.nii.gz`: CT volume\
+  \ with same FOV as CT-leg, but containing only voxels of the artery of interest (see: README-manual-data-prep.md)\n\
+  \n## Description of configuration (/hand) files:\n- `configs.yaml`: Configuration parameters used by\
+  \ the DeepDRR library and other pre-processing steps that will need to be adjusted.\n\n## Description\
+  \ of output files:\n- `drr_lib_metadata.yaml`: Metadata about the generated library of computed CT projections.\n\
+  - `lmdb_drr_lib`: Lightning Memory-Mapped Database ([LMDB](https://www.symas.com/lmdb)) directory, containing\
+  \ computed projections through the CT volume, accessible using keys of the form: `<drr name>_x<x rotation\
+  \ value>_z<z rotation value>_ds<downsample factor>`\n  \n## Step-by-step Pipeline Instructions\n###\
+  \ src/1-manually-configure-FOV\n\n#### Task Description:\nThis submodule is used to test values for\
+  \ configuration of digitally reconstructed radiograph (DRR) generation using DeepDRR library. The goal\
+  \ is to ensure that the CT volume is oriented correctly, with directions of angles consistent with expectations,\
+  \ and that the relevant anatomy is visible within the field of view of generated projections (over the\
+  \ range of C-arm angles expected).\n#### Compute cluster\nIf using a compute cluster, input and output\
+  \ files should be in the repository directories as described in the steps below, and files will need\
+  \ to be transferred in and out.\n#### Docker: run with mounted directories\nIf using the docker setup,\
+  \ set up input, intermediate output, and final output directories on your host system. These should\
+  \ be mounted to the source folders in the container.\n\nFor example, first create the \"hand\", \"input\"\
+  , \"fov-out\", and \"drr-out\" directories on the host system, populate the first two directories with\
+  \ the appropriate files as instructed below, then run docker with:\n```bash\ndocker run --gpus all -it\
+  \ -v </path/to>/hand:/xct/1-manually-configure-FOV/hand -v </path/to>/input:/xct/1-manually-configure-FOV/input\
+  \ -v </path/to>/fov-out:/xct/1-manually-configure-FOV/output -v </path/to>/drr-out:/xct/2-generate-drr-library/output\
+  \ mxct-pre:latest\n```\n(replacing `</path/to>` with the absolute path leading up to the created directories)\n\
+  \nThis will open a shell prompt in the docker container, in the `/xct` directory which contains the\
+  \ sources. The pipeline can be run using commands from inside the container. Input, intermediate, and\
+  \ output files can be inspected and edited from the host (outside the container).\n\n#### Input:  \n\
+  - `deep_drr_config.yaml`\n- `CT-bone.nii.gz`\n- `CT-leg.nii.gz`\n- `CT-artery.nii.gz`\n\n#### Hand:\n\
+  - `configs.yaml`\n\n#### Output:\n- `drr_lib_config.yaml`\n- `leg_alpha_...\\_beta\\_....png`  x 13\n\
+  \n#### Steps to run:\n1. In local directory: `1-manually-configure-FOV/input`, (or selected input folder\
+  \ on the docker container host) place the following files:\n   - `deep_drr_config.yaml`\n   - `CT-bone.nii.gz`\n\
+  \   - `CT-leg.nii.gz`\n   - `CT-artery.nii.gz`\n2. Open the configuration file (locally): `hand/configs.yaml`\n\
+  \   Adjust the following parameter values to approximate the XRFs you are trying to emulate:\n     \
+  \ - `pixel_size` (mm)\n      - `source_to_detector_distance`, `source_to_isocenter_vertical_distance`\
+  \  \n         - Magnification is defined by ratio: $`\\frac{\\text{source to isocenter vertical distance}}{\\\
+  text{source to detector distance}}`$\n         - So having these values in the correct approximate range\
+  \ will create geometric distortions that are close to those seen in XRF, improving the accuracy of registration\
+  \ results)\n3. For cluster setup: Connect to cluster and copy in src folder.\n   Ex: `scp -r <local-file-path>\
+  \ username@graham.alliancecan.ca:<project-folder>`\n4. To run:\n   - cluster setup: In the `1-manually-configure-FOV`\
+  \ folder, run the command to submit script to run: `sbatch run.sh`\n   - docker setup:\n     - `cd /xct/1-manually-configure-FOV/`\n\
+  \     - `make`\n       - you will see warnings about deprecated tex3D function calls in the output:\
+  \ these can be ignored\n5. A number of DRRs will be generated into the /output folder (`fov-out` if\
+  \ using docker as per the example).\n   The goal is to check that the field of view, and angle directions\
+  \ are correct, before generating the library of DRRs that will be used for registration.  \n\n\n   a.\
+  \ For cluster setup: Copy output files to local storage: `scp -r username@graham.alliancecan.ca:<project-folder>/1-manually-configure-FOV/output/\
+  \ <local-file-path>/1-manually-configure-FOV/output/`\n\n   b. Check that the full CT volume is visible\
+  \ in the field of view.  \n   If this is not the case, and the field of view includes lots of background,\
+  \ or cuts off the volume adjust the parameters: `sensor_height`, `sensor_width`  \n     \n   c. Check\
+  \ that Left/Right and Superior/Inferior are as expected.  \n   If not, adjust parameters: `flip_left_right`,\
+  \ `flip_up_down` (boolean values, either *True* or *False*).  \n     \n   d. Check that the angle directions\
+  \ (ie. positive vs. negative directions) match what is expected (see figures below.) If not, adjust\
+  \ parameters: `switch_alpha_angle_direction`, `switch_beta_angle_direction` (boolean values, either\
+  \ *True* or *False*)  \n\n\n   ![Diagram demonstrating the nomenclature of different angle directions.\
+  \ The X-ray source is below the table and the detector above, and the patient in a head-first supine\
+  \ position. RAO is the rotation of the detector towards the patient's right, and LAO is the rotation\
+  \ of the detector towards the patient's left. CR is the rotation of the detector towards the patient's\
+  \ head, and CA is the rotation of the detector towards the patient's feet.](readme_a"

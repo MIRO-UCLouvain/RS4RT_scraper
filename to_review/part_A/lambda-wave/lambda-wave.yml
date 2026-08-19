@@ -1,0 +1,116 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: fderuiter/lambda-wave
+url: https://github.com/fderuiter/lambda-wave
+platform: github
+description: Fail-Safe, Real-Time Surface Guided Radiation Therapy (SGRT) System Utilizing 60 GHz Millimeter-Wave
+  Radar and Haskell
+license: AGPL-3.0
+language: C++
+keywords: []
+stars: 2
+updated_at: '2026-07-22T22:36:45Z'
+image_source: null
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# Lambda-Wave: Surface Guided Radiation Therapy System\n\n[![Build Status](https://github.com/fderuiter/lambda-wave/workflows/Build%20and%20Test/badge.svg)](https://github.com/fderuiter/lambda-wave/actions)\n\
+  [![License](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)\n[![IEC 62304](https://img.shields.io/badge/IEC%2062304-Class%20C-critical.svg)](docs/PURPOSE_AND_ARCHITECTURE.md)\n\
+  \n> **Safety-critical mmWave radar system for real-time patient motion tracking during cancer radiotherapy**\n\
+  \n---\n\n## \U0001F3AF What is Lambda-Wave?\n\nLambda-Wave is a **medical device software system** that\
+  \ uses millimeter-wave (mmWave) radar to monitor patient position during radiation therapy with **sub-millimeter\
+  \ accuracy**. When patient motion is detected, the system automatically controls the radiation beam\
+  \ to prevent healthy tissue exposure.\n\n### Key Features\n\n- \U0001F3AF **Sub-millimeter tracking\
+  \ accuracy** using phase-based radar processing\n- ⚡ **Real-time beam gating** with <50ms latency\n\
+  - \U0001F6E1️ **Safety-critical design** compliant with IEC 62304 Class C\n- \U0001F4E1 **Non-contact\
+  \ monitoring** - no markers or devices on patient\n- \U0001F4B0 **Cost-effective** - uses commodity\
+  \ mmWave sensor (~$500 vs $100K+ optical systems)\n- \U0001F513 **Open source** - transparent, auditable,\
+  \ community-driven\n\n---\n\n## \U0001F4DA Documentation\n\n**Quick Links:**\n- \U0001F680 [Quick Start\
+  \ Guide](docs/QUICKSTART.md) - Get running in 15 minutes\n- \U0001F4CB [TODO](TODO.md) - Prioritized\
+  \ development tasks\n- \U0001F4D6 [Documentation Index](docs/README.md) - Complete documentation map\n\
+  \n**By Role:**\n\n| Role | Start Here |\n|------|------------|\n| \U0001F464 **New User** | [Quick Start](docs/QUICKSTART.md)\
+  \ → [Purpose & Architecture](docs/PURPOSE_AND_ARCHITECTURE.md) |\n| \U0001F468‍\U0001F4BB **Developer**\
+  \ | [Developer Guide](docs/reference/DEVELOPER_GUIDE.md) → [Build Guide](docs/BUILD_GUIDE.md) → [TODO](TODO.md)\
+  \ |\n| \U0001F3E5 **Medical Physicist** | [Purpose & Architecture](docs/PURPOSE_AND_ARCHITECTURE.md)\
+  \ → [Mathematical Framework](docs/reference/mathematical_framework.md) |\n| \U0001F6E1️ **QA/Compliance**\
+  \ | [Project Status](docs/PROJECT_STATUS.md) → [Purpose & Architecture](docs/PURPOSE_AND_ARCHITECTURE.md#safety--compliance)\
+  \ |\n| \U0001F4CA **Project Manager** | [Project Status](docs/PROJECT_STATUS.md) → [TODO](TODO.md) |\n\
+  \n**All Documentation:**\n\n| Document | Description |\n|----------|-------------|\n| [**Quick Start\
+  \ Guide**](docs/QUICKSTART.md) | Get running in 15 minutes |\n| [**TODO**](TODO.md) | Prioritized development\
+  \ tasks (replaces roadmap.md) |\n| [**Project Status**](docs/PROJECT_STATUS.md) | Current implementation\
+  \ status and roadmap |\n| [**Build Guide**](docs/BUILD_GUIDE.md) | Comprehensive build and dependency\
+  \ management |\n| [**Purpose & Architecture**](docs/PURPOSE_AND_ARCHITECTURE.md) | System design and\
+  \ medical context |\n| [**Developer Guide**](docs/reference/DEVELOPER_GUIDE.md) | Development workflow\
+  \ and code structure |\n| [**Mathematical Framework**](docs/reference/mathematical_framework.md) | Signal\
+  \ processing algorithms and theory |\n| [**Contributing**](CONTRIBUTING.md) | How to contribute to the\
+  \ project |\n| [**Documentation Index**](docs/README.md) | Complete documentation navigation |\n\n---\n\
+  \n## \U0001F680 Quick Start\n\n### Option 1: Docker (Recommended)\n\n```bash\n# Build and run in simulation\
+  \ mode\ndocker build -t lambda-wave .\ndocker run -it lambda-wave\n```\n\n### Option 2: Native Build\n\
+  \n```bash\n# Install dependencies (Ubuntu/Debian)\nsudo apt-get update\nsudo apt-get install -y ghc\
+  \ cabal-install g++ \\\n    libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev\n\n# Build and test\ncabal\
+  \ update\ncabal build\ncabal test\n\n# Run application\ncabal run sgrt-radar-system-exe\n```\n\n###\
+  \ Option 3: Hardware Mode (Requires TI IWR6843ISK)\n\n```bash\n# Configure environment\nexport SGRT_SENSOR_PORT=/dev/ttyUSB0\n\
+  export SGRT_CLI_PORT=/dev/ttyUSB1\n\n# Run with hardware access\ndocker run -it \\\n    --device=/dev/ttyUSB0\
+  \ \\\n    --device=/dev/ttyUSB1 \\\n    -e SGRT_SENSOR_PORT=/dev/ttyUSB0 \\\n    -e SGRT_CLI_PORT=/dev/ttyUSB1\
+  \ \\\n    lambda-wave\n```\n\nSee [Quick Start Guide](docs/QUICKSTART.md) for detailed instructions.\n\
+  \n---\n\n## \U0001F3D7️ System Architecture\n\n```\n┌─────────────────────────────────────────────────────────────┐\n\
+  │                    Lambda-Wave System                       │\n├─────────────────────────────────────────────────────────────┤\n\
+  │                                                             │\n│  ┌──────────┐    ┌──────────┐   \
+  \ ┌────────────┐           │\n│  │ Control  │───▶│   Data   │───▶│  Hardware  │           │\n│  │  Plane\
+  \   │    │  Plane   │    │ Interface  │           │\n│  │(Haskell) │    │(Haskell) │    │  (C++/FFI)\
+  \ │           │\n│  └──────────┘    └──────────┘    └────────────┘           │\n│        │         \
+  \     │                  │                  │\n│        └──────────────┴──────────────────┘        \
+  \          │\n│                       │                                     │\n│            ┌──────────▼──────────┐\
+  \                          │\n│            │   Safety Layer      │                          │\n│   \
+  \         │ (Watchdog, Audit)   │                          │\n│            └─────────────────────┘ \
+  \                         │\n└─────────────────────────────────────────────────────────────┘\n     \
+  \                   │\n                        ▼\n          ┌─────────────────────────┐\n          │\
+  \  TI IWR6843ISK Sensor   │\n          │  (77-81 GHz mmWave)     │\n          └─────────────────────────┘\n\
+  ```\n\n**Technology Stack:**\n- **Core Logic:** Haskell (safety, type safety, pure functions)\n- **Hardware\
+  \ I/O:** C++ (zero-copy, low latency)\n- **Signal Processing:** FMCW radar, Chirp Z-Transform, Kalman\
+  \ filtering\n- **Visualization:** OpenGL/GLUT\n- **Build System:** Cabal + GHC <!-- METADATA:ghc_version\
+  \ -->9.6.7<!-- /METADATA:ghc_version -->+\n- **Testing:** Hspec + QuickCheck (property-based testing)\n\
+  \n---\n\n## \U0001F4CA Current Status\n\n**Version:** <!-- METADATA:project_version -->0.1.0.0<!-- /METADATA:project_version\
+  \ --> (Beta)  \n**Phase:** <!-- METADATA:project_status -->Phase 3 - Signal Processing Core (In Progress)<!--\
+  \ /METADATA:project_status -->  \n**Lines of Code:** ~1,287 (Haskell + tests)\n\n### Implementation\
+  \ Progress\n\n| Phase | Component | Status |\n|-------|-----------|--------|\n| Phase 1 | Infrastructure\
+  \ & RTS | ✅ Complete |\n| Phase 2 | Hardware Interface | ✅ Complete |\n| Phase 3 | Signal Processing\
+  \ | \U0001F504 In Progress (80%) |\n| Phase 4 | Safety & Control | ⏳ Pending |\n| Phase 5 | User Interface\
+  \ | ⏳ Pending |\n| Phase 6 | System Validation | ⏳ Pending |\n\n**Recent Milestone:** Phase unwrapping\
+  \ implementation (FR-DSP-002) ✅\n\nSee [Project Status](docs/PROJECT_STATUS.md) for detailed roadmap.\n\
+  \n---\n\n## \U0001F9EA Running Tests\n\n```bash\n# Run all tests\ncabal test\n\n# Run with verbose output\n\
+  cabal test --test-show-details=direct\n\n# Run specific test suite\ncabal test --test-options=\"-m FFI.RingBuffer\"\
+  \n\n# Generate coverage report\ncabal test --enable-coverage\n```\n\n**Test Coverage:**\n- Unit tests\
+  \ for all modules\n- Property-based testing with QuickCheck\n- FFI layer memory safety validation\n\
+  - Hardware parser fuzz testing\n\n---\n\n## \U0001F512 Safety & Compliance\n\nPlease review our [Security\
+  \ Policy](SECURITY.md) for details on vulnerability reporting and triage for safety-critical flaws.\n\
+  \nLambda-Wave is developed to meet **IEC 62304 Class C** requirements (highest rigor for medical device\
+  \ software):\n\n- ✅ **Traceable Requirements:** FR-* and SR-* identifiers\n- ✅ **Strict Code Standards:**\
+  \ `-Wall` compiler warnings, `hlint` static analysis\n- ✅ **Comprehensive Testing:** Unit + property\
+  \ + integration tests\n- ✅ **Code Review:** Four-eyes principle for safety-critical code\n- ✅ **Version\
+  \ Control:** Git with semantic versioning\n- ✅ **Audit Trail:** Immutable logging of all events\n- ✅\
+  \ **Risk Management:** FMEA analysis per ISO 14971\n\nSee [Purpose & Architecture](docs/PURPOSE_AND_ARCHITECTURE.md)\
+  \ for compliance details.\n\n---\n\n## \U0001F91D Contributing\n\nWe welcome contributions! Please read\
+  \ our [Contributing Guide](CONTRIBUTING.md) for:\n\n- Development workflow (Git-flow)\n- Code standards\
+  \ (Haskell + C++)\n- Pull request process\n- Safety-critical code guidelines\n\n**Quick Start for Contributors:**\n\
+  \n```bash\n# Fork and clone\ngit clone https://github.com/YOUR_USERNAME/lambda-wave.git\ncd lambda-wave\n\
+  \n# Create feature branch\ngit checkout -b feature/my-feature\n\n# Make changes, test, commit\ncabal\
+  \ test\ngit add .\ngit commit -m \"feat: Add new feature\"\n\n# Push and create PR\ngit push origin\
+  \ feature/my-feature\n```\n\n---\n\n## \U0001F4C4 License\n\nThis project is licensed under the **GNU\
+  \ Affero General Public License v3.0** - see the [LICENSE](LICENSE) file for details.\n\n```\nCopyright\
+  \ (c) 2024-2026, Frederick de Ruiter, Ayoola Okuribido\nAll rights reserved.\n```\n\n---\n\n## \U0001F465\
+  \ Authors\n\n- **Frederick de Ruiter** - Project Lead & Maintainer ([@fderuiter](https://github.com/fderuiter))\n\
+  - **Ayoola Okuribido** - Co-Creator\n\n---\n\n## \U0001F4DE Contact & Support\n\n- **Issues:** [GitHub\
+  \ Issues](https://github.com/fderuiter/lambda-wave/issues)\n- **Discussions:** [GitHub Discussions](https://github.com/fderuiter/lambda-wave/discussions)\n\
+  - **Maintainer:** Frederick de Ruiter ([@fderuiter](https://github.com/fderuiter))\n- **Email:** fpderuiter@gmail.com\n\
+  - **Documentation:** [docs/](docs/)\n\n---\n\n## \U0001F31F Acknowledgments\n\n- **Research Foundation:**\
+  \ Based on algorithms from [Bressler et al., Medical Physics 2024](docs/reference/mathematical_framework.md)\n\
+  - **Hardware:** Texas Instruments IWR6843ISK mmWave evaluation kit\n- **Community:** Haskell, GHC, and\
+  \ Cabal teams\n\n---\n\n## \U0001F4C8 Project Metrics\n\n- **Build Time:** ~5-10 minutes (clean build)\n\
+  - **Test Suite:** <60 seconds\n- **Docker Image:** ~2-3 GB\n- **Dependencies:** 15 core Haskell packages\n\
+  - **Target Latency:** <50ms end-to-end\n\n---\n\n**Ready to get started?** → [Quick Start Guide](docs/QUICKSTART.md)\n\
+  \n**Want to contribute?** → [Contributing Guide](CONTRIBUTING.md)\n\n**Need help?** → [Open an issue](https://github.com/fderuiter/lambda-wave/issues)\n"

@@ -1,0 +1,138 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: noodlesCQMU/delta-dosiomics
+url: https://github.com/noodlesCQMU/delta-dosiomics
+platform: github
+description: delta-dosiomics for  radiotherapy error identification
+license: null
+language: MATLAB
+keywords: []
+stars: 0
+updated_at: '2026-08-19T08:51:53Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 8 support term(s).
+readme_excerpt: "# Hierarchical Radiotherapy Error Identification Using 3D Dose-Difference Maps\n\n##\
+  \ Overview\n\nThis repository contains the core MATLAB code used in our study for hierarchical identification\
+  \ of radiotherapy errors during patient-specific quality assurance (PSQA) using three-dimensional (3D)\
+  \ dose-difference maps.\n\nThe workflow integrates two complementary analysis strategies:\n\n1. **Delta-dosiomics-based\
+  \ machine learning**, in which quantitative features are extracted from 3D dose-difference maps and\
+  \ used to train conventional machine-learning classifiers.\n2. **3D deep learning**, in which a pretrained\
+  \ 3D ResNet-50 is fine-tuned directly on preprocessed 3D dose-difference maps.\n\nThe radiotherapy errors\
+  \ are organized hierarchically according to error type, direction, and magnitude. The code provided\
+  \ here contains the preprocessing, feature-selection, model-development, patient-level data splitting,\
+  \ bootstrap evaluation, and 3D ResNet-50 transfer-learning procedures used in the study.\n\n> **Important:**\
+  \ Patient-level clinical imaging, RTDOSE, RTSTRUCT, and other potentially identifiable data are not\
+  \ included in this repository because of privacy, ethical, and institutional restrictions.\n\n---\n\n\
+  ## Repository structure\n\n```text\n.\n├── README.md\n├── LICENSE\n│\n├── processing/\n│   ├── Diff_Dicom_generation.m\n\
+  │   ├── Diff_Dicom_generation.mlx\n│   ├── Feature_ROI.mlx\n│   └── helpers/\n│       ├── cal_diff.m\n\
+  │       ├── ROI_extract.m\n│       └── CROPDICOM.m\n│\n├── machine_learning/\n│   ├── Body_Clinical_Level1_patient_split.m\n\
+  │   ├── Boostrap2000_Level1.mlx\n│   └── helpers/\n│       ├── correlate_feature.m\n│       ├── FeatureToRecursion.m\n\
+  │       ├── RandomForest.m\n│       ├── XGBoost.m\n│       ├── SVM.m\n│       ├── NeuralNet.m\n│   \
+  \    ├── eval_model.m\n│       ├── AddNoise.m\n│       ├── Clinicaleval_model.m\n│       ├── XGBoost_eval_model.m\n\
+  │       ├── plot_roc_curve.m\n│       └── plot_roc_curve4.m\n│\n├── Deep_learning/\n│   ├── MLC_DeepLearning_Clinic_Test_Level1_patient_split.m\n\
+  │   ├── resnet50TL3Dfun.mlx\n│   ├── Bootstrap_CTEST_Level1.mlx\n│   ├── params.mat\n│   ├── license.txt\n\
+  │   └── helpers/\n│       ├── matRead.m\n│       ├── Eval_Metrics.m\n│       └── EvalDeepModel.m\n│\n\
+  └── splits/\n    └── patient_split.csv\n```\n\nThe exact filenames may be adjusted in future releases,\
+  \ but the analysis sequence described below should be preserved.\n\n---\n\n## Analysis workflow\n\n\
+  The overall analysis pipeline is:\n\n```text\nOriginal RTDOSE + error-induced RTDOSE + RTSTRUCT\n  \
+  \                   │\n                     ▼\n          3D dose-difference generation\n           \
+  \          │\n          ┌──────────┴──────────┐\n          │                     │\n          ▼    \
+  \                 ▼\n  DICOM dose-difference    BODY ROI extraction\n        maps               and\
+  \ resampling\n          │                     │\n          ▼                     ▼\n Dosiomics feature\
+  \        224 × 224 × 224\n     extraction              MAT volumes\n          │                    \
+  \ │\n          ▼                     ▼\n Feature selection        3D ResNet-50\n          │        \
+  \       transfer learning\n          ▼                     │\n ML model development           │\n  \
+  \        └──────────┬──────────┘\n                     ▼\n        Independent test evaluation\n    \
+  \                 │\n                     ▼\n       Clinical validation evaluation\n               \
+  \      │\n                     ▼\n        Bootstrap confidence intervals\n```\n\nThe machine-learning\
+  \ and deep-learning branches use the **same fixed patient-level data split** defined in `splits/patient_split.csv`.\n\
+  \n---\n\n# 1. Preprocessing\n\n## `processing/Diff_Dicom_generation.m`\n\n### Purpose\n\nGenerates signed\
+  \ 3D dose-difference distributions from the original/reference RTDOSE and error-induced RTDOSE distributions.\n\
+  \n### Input\n\n- RTSTRUCT DICOM file\n- Reference/original RTDOSE DICOM file\n- Error-induced RTDOSE\
+  \ DICOM files\n\n### Main operations\n\n1. Read RTDOSE and RTSTRUCT information.\n2. Identify the reference\
+  \ dose distribution.\n3. Align dose grids when necessary.\n4. Calculate the signed dose difference:\n\
+  \n```text\nDose difference = Error-induced dose − Original dose\n```\n\n5. Preserve positive and negative\
+  \ dose deviations.\n6. Write the resulting dose-difference distribution as an RTDOSE-compatible DICOM\
+  \ file.\n\n### Output\n\n- Signed 3D dose-difference DICOM files\n- Optional verification figures\n\n\
+  ### Dependencies\n\n- `processing/helpers/cal_diff.m`\n\n---\n\n## `processing/Diff_Dicom_generation.mlx`\n\
+  \n### Purpose\n\nLive-script implementation of the dose-difference generation workflow, with additional\
+  \ preprocessing options for subsequent deep-learning analysis.\n\n### Input\n\nSame as `Diff_Dicom_generation.m`.\n\
+  \n### Main operations\n\n- Dose-difference generation\n- ROI extraction where enabled\n- Volume resampling\n\
+  - Organization of output data by error category\n\n### Output\n\nDepending on the selected branch:\n\
+  \n- 3D dose-difference DICOM files\n- Resampled 3D MATLAB arrays such as `Diff_interp`\n\n### Dependencies\n\
+  \n- `cal_diff.m`\n- `ROI_extract.m`\n- `CROPDICOM.m` where the optional crop routine is used\n\n---\n\
+  \n## `processing/Feature_ROI.mlx`\n\n### Purpose\n\nMaps the BODY structure from RTSTRUCT to the dose\
+  \ grid and prepares BODY-based 3D dose-difference volumes for deep learning.\n\n### Input\n\n- RTSTRUCT\
+  \ DICOM\n- 3D dose-difference DICOM files\n\n### Main operations\n\n1. Read BODY contours from RTSTRUCT.\n\
+  2. Convert contours into a voxelized 3D mask on the dose grid.\n3. Interpolate missing mask slices where\
+  \ necessary.\n4. Perform mask cleanup and morphological processing.\n5. Crop the BODY-containing region.\n\
+  6. Resample the volume to:\n\n```text\n224 × 224 × 224\n```\n\n7. Set voxels outside the BODY ROI to\
+  \ zero.\n8. Save the processed volume into label-specific subdirectories.\n\n### Output\n\n- `.mat`\
+  \ files containing preprocessed 3D volumes\n- Typical variable name: `cropImage`\n\n### Expected directory\
+  \ structure\n\n```text\nDeepLearningData/\n├── SETUP/\n├── MU/\n├── MLCR/\n├── MLCS/\n├── Gantry/\n\
+  ├── BodyChanges/\n└── ErrorFree/\n```\n\nThe folder names are used as class labels by MATLAB `imageDatastore`.\n\
+  \n---\n\n# 2. Delta-dosiomics feature extraction\n\nThe machine-learning workflow assumes that dosiomics\
+  \ features have been extracted from the 3D dose-difference maps before model development.\n\nThe feature\
+  \ table used by the current Level-1 workflow should contain:\n\n```text\nPatientID\nLabel\nFeature_1\n\
+  Feature_2\n...\nFeature_107\n```\n\n`PatientID` is used only for dataset assignment and is **never used\
+  \ as a model feature**.\n\nThe feature-extraction configuration should be kept identical across the\
+  \ training, independent test, and clinical validation cohorts.\n\n---\n\n# 3. Machine-learning workflow\n\
+  \n## `machine_learning/Body_Clinical_Level1_patient_split.m`\n\n### Purpose\n\nPerforms Level-1 delta-dosiomics\
+  \ feature selection, model development, and evaluation using a fixed patient-level split.\n\n### Input\n\
+  \n- Dosiomics feature table containing `PatientID`, `Label`, and feature columns\n- `splits/patient_split.csv`\n\
+  \n### Main operations\n\n1. Read the feature table.\n2. Match each sample to `patient_split.csv` through\
+  \ `PatientID`.\n3. Create:\n   - training set,\n   - independent test set,\n   - clinical validation\
+  \ set.\n4. Verify that no patient appears in more than one set.\n5. Remove highly correlated features.\n\
+  6. Perform recursive feature selection.\n7. Select the final feature subset.\n8. Train the machine-learning\
+  \ classifiers.\n9. Evaluate the trained models on the independent test and clinical validation sets.\n\
+  10. Generate ROC curves, confusion matrices, and classification metrics.\n\n### Feature selection\n\n\
+  The workflow includes:\n\n```text\nCorrelation filtering\n        ↓\nRecursive feature selection\n \
+  \       ↓\nFinal selected feature set\n```\n\nThe correlation threshold used in the original implementation\
+  \ is:\n\n```text\n|ρ| > 0.8\n```\n\nHighly correlated features are removed before recursive selection.\n\
+  \n### Models\n\nThe workflow includes:\n\n- Support Vector Machine (SVM)\n- Artificial Neural Network\
+  \ (ANN)\n- Extreme Gradient Boosting (XGBoost)\n- Random Forest (RF), where applicable in the corresponding\
+  \ analysis script\n\n### Output\n\nTypical outputs include:\n\n- selected feature names,\n- trained\
+  \ model objects,\n- predicted class labels,\n- class probabilities/scores,\n- confusion matrices,\n\
+  - ROC curves,\n- AUC,\n- accuracy,\n- precision,\n- recall,\n- F1-score.\n\n### Dependencies\n\nThe\
+  \ helper functions are located in:\n\n```text\nmachine_learning/helpers/\n```\n\nand include:\n\n```text\n\
+  correlate_feature.m\nFeatureToRecursion.m\nRandomForest.m\nXGBoost.m\nSVM.m\nNeuralNet.m\neval_model.m\n\
+  AddNoise.m\nClinicaleval_model.m\nXGBoost_eval_model.m\nplot_roc_curve.m\nplot_roc_curve4.m\n```\n\n\
+  ---\n\n# 4. Machine-learning bootstrap evaluation\n\n## `machine_learning/Boostrap2000_Level1.mlx`\n\
+  \n### Purpose\n\nEstimates model performance and 95% confidence intervals using stratified bootstrap\
+  \ resampling.\n\n### Input\n\n- trained machine-learning models,\n- selected feature set,\n- independent\
+  \ test data,\n- clinical validation data.\n\n### Bootstrap settings\n\n```text\nNumber of bootstrap\
+  \ resamples: 2000\nRandom seed: 2026\nBootstrap strategy: stratified\n```\n\n### Evaluated metrics\n\
+  \n- ROC-AUC\n- accuracy\n- precision\n- recall\n- F1-score\n\nWhere appropriate, macro-averaged metrics\
+  \ are used for multiclass evaluation.\n\n### Output\n\nExamples include:\n\n```text\nML_Bootstrap2000_TwoTestSets.xlsx\n\
+  ```\n\ntogether with ROC figures and detailed model-specific evaluation results.\n\n---\n\n# 5. 3D ResNet-50\
+  \ transfer learning\n\n## `Deep_learning/resnet50TL3Dfun.mlx`\n\n### Purpose\n\nConstructs the pretrained\
+  \ 3D ResNet-50 architecture used for transfer learning.\n\n### Input\n\n```text\nparams.mat\n```\n\n\
+  ### Network input\n\n```text\n224 × 224 × 224 × 1\n```\n\n### Output\n\n- MATLAB `layerGraph`\n- pretrained\
+  \ convolutional feature extractor ready for task-specific fine-tuning\n\nThe original classification\
+  \ layer is replaced according to the number of target classes.\n\n---\n\n## `Deep_learning/MLC_DeepLearning_Clinic_Test_Level1_patient_split.m`\n\
+  \n### Purpose\n\nTrains and evaluates the Level-1 3D ResNet-50 using the same fixed patient-level split\
+  \ as the machine-learning workflow.\n\n### Input\n\n- preprocessed `.mat` volumes,\n- `splits/patient_split.csv`,\n\
+  - `params.mat`,\n- helper functions,\n- class labels encoded by folder names.\n\n### Patient-level split\n\
+  \nThe script maps each `.mat` file to a de-identified `PatientID` and obtains the corresponding dataset\
+  \ assignment from `patient_split.csv`.\n\nIt creates:\n\n- `Data_Train`\n- `Data_Test`\n- `Data_clinic_Test`\n\
+  \nwithout using sample-level random splitting.\n\n### Five-fold cross-validation\n\nThe `CVFold` column\
+  \ in `patient_split.csv` defines the grouped patient-level cross-validation folds.\n\nFor each fold:\n\
+  \n```text\nCVFold = current fold   → validation patients\nCVFold ≠ current fold   → training patients\n\
+  ```\n\nAll samples from a patient remain in the same fold.\n\n### Training configuration\n\nThe current\
+  \ implementation uses:\n\n| Setting | Value |\n|---|---:|\n| Architecture | 3D ResNet-50 |\n| Optimizer\
+  \ | Adam |\n| Input size | `224 × 224 × 224 × 1` |\n| Initial learning rate | `1 × 10^-4` |\n| Mini-batch\
+  \ size | 16 |\n| Maximum epochs | 20 |\n| LR schedule | Piecewise |\n| LR drop factor | 0.5 |\n| LR\
+  \ drop period | 5 epochs |\n| Validation patience | 8 |\n| L2 regularization | `1 × 10^-4` |\n| Cross-validation\
+  \ | Fixed patient-level 5-fold |\n| Training execution | GPU |\n\n### Output\n\n- five trained fold-specific\
+  \ 3D ResNet-50 models,\n- training information,\n- validation predictions,\n- independent test predictions,\n\
+  - clinical validation predictions,\n- confusion matrices,\n- classification metrics.\n\nTypical saved\
+  \ model names may follow:\n\n```text\n3DRESNet_Level1_PatientCV_Fold1.mat\n3DRESNet_Level1_PatientCV_Fold2.mat\n\
+  3DRESNet_Level1_PatientCV_Fold3.mat\n3DRESNet_Level1_PatientCV_Fold4.mat\n3DRESNet_Level1_PatientCV_Fold5.mat\n\
+  ```\n\n### Dependencies\n\n```text\nDeep_learning/helpers/matRead.m\nDeep_learning/helpers/Eval_Metrics.m\n\
+  Deep_learning/helpers/EvalDeepModel.m\n```\n\n---\n\n# 6. Deep-learning bootstrap evaluation\n\n## `Deep_learning/Bootstrap_CTEST_Level1.mlx`\n\
+  \n### Purpose\n\nPerforms 2,000 stratified bootstrap evaluations of "

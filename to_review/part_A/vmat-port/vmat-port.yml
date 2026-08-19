@@ -1,0 +1,67 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: polinalazebnikova/vmat-port
+url: https://github.com/polinalazebnikova/vmat-port
+platform: github
+description: ''
+license: null
+language: C
+keywords: []
+stars: 0
+updated_at: '2021-12-28T16:30:12Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Численные методы решения дифференциальных уравнений\nПостановка задачи: составить программу,\
+  \ которая реализует численные методы решения дифференциальных уравнений (метод Эйлера, метод Рунге-Кутта,\
+  \ дифференциальные уравнения второго порядка, система дифференциальных уравнений). Программа должна\
+  \ содержать меню выбора конкретного метода.\n\n```\n#include <stdio.h>\n#include <stdlib.h>\n#include\
+  \ <math.h>\n\nfloat fdy(float xf, float yf)\n{\n  float d = yf * (1 - xf);\n  return d;\n}\n\nvoid m_eiler()\
+  \ //метод Эйлера\n{\n  float a, b, y, h, x;\n  int n; \n  printf(\"Euler Method\\n\\n\");\n  printf(\"\
+  Enter a number a: \");\n  scanf(\"%f\", &a);\n  printf(\"Enter a number b: \");\n  scanf(\"%f\", &b);\n\
+  \  printf(\"Enter number of breaks n: \");\n  scanf(\"%d\", &n);\n  printf(\"Enter a number y: \");\n\
+  \  scanf(\"%f\", &y);\n  h = (b - a) / n;\n  printf(\"Step h: %f\\n\", h);\n  printf(\"\\n x y\\n\\\
+  n\");\n  printf(\" %.4f %f\\n\", a, y);\n  for(x = a; x <= b - h; x += h)\n  {\n    y += h * y * (1\
+  \ - x);\n    printf(\" %.4f %f\\n\", x + h, y);\n  }\n}\n\nvoid m_rung_kutt() //метод Рунге-Кутта\n\
+  {\n  float a, b, y, n, h, x, f, k1, k2, k3, k4;\n  printf(\"Runge-Kutta Method\\n\\n\");\n  printf(\"\
+  Enter a number a: \");\n  scanf(\"%f\", &a);\n  printf(\"Enter a number b: \");\n  scanf(\"%f\", &b);\n\
+  \  printf(\"Enter number of breaks n: \");\n  scanf(\"%f\", &n);\n  printf(\"Enter a number y: \");\n\
+  \  scanf(\"%f\", &y);\n  h = (b - a) / n;\n  printf(\"Step h: %.4f\\n\", h);\n  printf(\"\\n x y\\n\\\
+  n\");\n  printf(\" %.4f %f\\n\", a, y);\n  for(x = a; x <= b - h; x += h)\n  {\n    k1 = h * fdy(x,\
+  \ y);\n    k2 = h * fdy(x + h / 2, y + k1 / 2);\n    k3 = h * fdy(x + h / 2, y + k2 / 2);\n    k4 =\
+  \ h * fdy(x + h, y + k3);\n    f = (k1 + 2 * k2 + 2 * k3 + k4) / 6;\n    y += f;\n    printf(\" %.4f\
+  \ %f\\n\", x + h, y);\n  }\n}\n\nvoid m_system_euler() //система диф. ур-ий\n{\n  float a, b, h, x,\
+  \ y, z, x1, y1, z1, t;\n  printf(\"Differential equation system\\n\\n\");\n  printf(\"Enter a number\
+  \ a: \");\n  scanf(\"%f\", &a);\n  printf(\"Enter a number b: \");\n  scanf(\"%f\", &b);\n  printf(\"\
+  Enter step h: \");\n  scanf(\"%f\", &h);\n  printf(\"Enter a number x: \");\n  scanf(\"%f\", &x);\n\
+  \  printf(\"Enter a number y: \");\n  scanf(\"%f\", &y);\n  printf(\"Enter a number z: \");\n  scanf(\"\
+  %f\", &z);\n  printf(\"\\n t x y z\\n\");\n  printf(\" %.4f %f %f %f\\n\", a, x, y, z);\n  for(t = a;\
+  \ t <= b - h; t += h)\n  {\n    x1 = x;\n    y1 = y;\n    z1 = z;\n    x1 += h * (-2 * x + 5 * z);\n\
+  \    y1 += h * (sin(t - 1) * x - y + 3 * z);\n    z1 += h * (-x + 2 * z);\n    printf(\" %.4f %f %f\
+  \ %f\\n\", t + h, x1, y1, z1);\n    x = x1;\n    y = y1;\n    z = z1;\n  }\n}\n\nvoid m_dy_second_order()\
+  \ //диф. ур-ия 2-ого порядка\n{\n  float a, b, h, x, y, z, y1;\n  printf(\"Second order differential\
+  \ equations\\n\\n\");\n  printf(\"Enter a number a: \");\n  scanf(\"%f\", &a);\n  printf(\"Enter a number\
+  \ b: \");\n  scanf(\"%f\", &b);\n  printf(\"Enter step h: \");\n  scanf(\"%f\", &h);\n  printf(\"Enter\
+  \ a number y: \");\n  scanf(\"%f\", &y);\n  printf(\"Enter a number y': \");\n  scanf(\"%f\", &z);\n\
+  \  printf(\"Step h: %f\\n\", h);\n  printf(\"\\n x y z\\n\\n\");\n  printf(\" %.4f %f %f\\n\", a, y,\
+  \ z);\n  for(x = a; x <= b - h; x += h)\n  {\n    y1 = y + h * z;\n    z = z - h * (z / x + y);\n  \
+  \  y = y1;\n    printf(\" %.4f %f %f\\n\", x + h, y, z);\n  }\n}\n\nvoid m_x_y() //y'=x+y\n{\n  float\
+  \ a, b, y, h, x;\n  printf(\"y' = x + y\\n\\n\");\n  printf(\"Enter a number a: \");\n  scanf(\"%f\"\
+  , &a);\n  printf(\"Enter a number b: \");\n  scanf(\"%f\", &b);\n  printf(\"Enter step h: \");\n  scanf(\"\
+  %f\", &h);\n  printf(\"Enter a number y: \");\n  scanf(\"%f\", &y);\n  printf(\"\\n x y\\n\\n\");\n\
+  \  printf(\" %.4f %f\\n\", a, y);\n  for(x = a; x <= b - h; x += h)\n  {\n    y = y + h * (x + y);\n\
+  \    printf(\" %.4f %f\\n\", x + h, y);\n  }\n}\n\nvoid menu()\n{\n  int meth;\n  do{\n    system(\"\
+  cls\");\n    printf(\"Main menu:\\n\\n\");\n    printf(\"1. Euler Method\\n2. Runge-Kutta Method\\n3.\
+  \ Differential equation system\\n4. Second order differential equations\\n5. y' = x + y\\n6. exit\\\
+  n\");\n    scanf(\"%d\",&meth);\n    switch (meth)\n    {\n      case 1:\n        system(\"cls\");\n\
+  \        m_eiler();\n        system(\"pause\");\n        break;\n      case 2:\n        system(\"cls\"\
+  );\n        m_rung_kutt();\n        system(\"pause\");\n        break;\n      case 3:\n        system(\"\
+  cls\");\n        m_system_euler();\n        system(\"pause\");\n        break;\n      case 4:\n    \
+  \    system(\"cls\");\n        m_dy_second_order();\n        system(\"pause\");\n        break;\n  \
+  \    case 5:\n        system(\"cls\");\n        m_x_y();\n        system(\"pause\");\n        break;\n\
+  \    }\n  }while (meth != 6);\n}\n\nint main() //главная функция\n{\n  menu();\n  return 0;\n}\n```\n"

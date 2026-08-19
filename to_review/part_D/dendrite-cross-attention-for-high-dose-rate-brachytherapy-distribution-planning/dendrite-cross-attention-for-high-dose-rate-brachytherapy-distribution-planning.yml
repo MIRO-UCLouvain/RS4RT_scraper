@@ -1,0 +1,99 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Sourav0118/Dendrite-Cross-Attention-for-High-dose-rate-Brachytherapy-Distribution-Planning
+url: https://github.com/Sourav0118/Dendrite-Cross-Attention-for-High-dose-rate-Brachytherapy-Distribution-Planning
+platform: github
+description: This repo contains the code for predicting radiation dose maps for HDR-BT using DiCA-UNet
+  model architecture. This problem is part of an effort to optimize and predict the distribution of radiation
+  dose for cervical cancer treatments, allowing clinicians to personalize therapy based on patient anatomy
+  while ensuring safety for surrounding organs.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-01-11T15:20:39Z'
+image_source: https://github.com/Sourav0118/Dendrite-Cross-Attention-for-High-dose-rate-Brachytherapy-Distribution-Planning/blob/main/eccvw.png?raw=True
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 6 support term(s).
+readme_excerpt: "# Dose Prediction Using DiCA-UNet for Internal Beam Radiation Tharepy\n\nThis repository\
+  \ contains the code for predicting radiation dose maps for High-Dose Rate (HDR) Brachytherapy using\
+  \ a DiCA-UNet architecture with a feature extraction approach. This problem is part of an effort to\
+  \ optimize and predict the distribution of radiation dose for cervical cancer treatments, allowing clinicians\
+  \ to personalize therapy based on patient anatomy while ensuring safety for surrounding organs. This\
+  \ repo has the official implementation of the DiCA-UNet architecture proposed in - \n\n>#### Title:\
+  \ [High-dose-rate Brachytherapy Planning with Dendrite Cross-Attention UNet](https://spie.org/medical-imaging/presentation/High-dose-rate-brachytherapy-planning-with-dendrite-cross-attention-UNet/13408-83)\
+  \ (To Be Updated!) [Journal at SPIE Medical Imaging 2024]\n> ##### Authors: [Souarv Saini](https://scholar.google.com/citations?hl=en&user=r_NVq3IAAAAJ&view_op=list_works&gmla=AOAOcb2PwAT-WhcOFo33z3wArFzRwQYnAWvt8sY8tBA9ASJ4pVJOY9nFRY7D0TPjY698ITJHugLs3-oDgY6wiTAHgGjX_JKJ9jIZ9656K-Sx5lhngQS2gmYTUNs21Whmqloc0CaJQJc),\
+  \ [Zhen Li](https://orcid.org/0000-0002-3769-8612), [Xiaofeng Liu](https://scholar.google.com/citations?user=VighnTUAAAAJ&hl=en)\n\
+  \n---\n\n## Task Description\n\nIn High-Dose-Rate (HDR) Brachytherapy, radiation is delivered directly\
+  \ to the tumor site using various types of applicators. These applicators can vary in shape and design,\
+  \ making dose distribution prediction a complex task. Precise prediction of the radiation dose distribution\
+  \ is critical to ensure that the tumor receives the required dose while minimizing exposure to adjacent\
+  \ organs such as the bladder and rectum.\n\nThe challenge in HDR Brachytherapy lies in generalizing\
+  \ the dose map prediction across different applicator types. Traditional methods may struggle to accurately\
+  \ predict dose distributions for new or varied applicator designs. This work aims to address this issue\
+  \ by employing deep learning models to automate dose map prediction. By training on diverse datasets\
+  \ and generalizing across different applicator types, the proposed approach seeks to improve the accuracy\
+  \ and efficiency of treatment planning.\n\n### References\n\n- [HDR Brachytherapy: Overview and Techniques](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6723180/)\n\
+  - [Applicator Types and Dose Distribution in Brachytherapy](https://www.sciencedirect.com/science/article/pii/S0360301619301667)\n\
+  - [Machine Learning for Medical Image Analysis in Brachytherapy](https://www.journalofmedicalimaging.org/doi/10.1117/1.JMI.6.2.021001)\n\
+  \n---\n\n### Objective\n\nThe goal is to develop a deep learning model that can predict the dose distribution\
+  \ from CT scans and organ segmentations (CTV, bladder, rectum) with high accuracy.\n\n---\n\n## Dataset\n\
+  \nThe dataset used for this project contains CT scans of patients undergoing brachytherapy treatment.\
+  \ Each patient case includes:\n\n![alt text](https://github.com/Sourav0118/Dendrite-Cross-Attention-for-High-dose-rate-Brachytherapy-Distribution-Planning/blob/main/eccvw.png?raw=True)\n\
+  \n- **CT Scan (CT):** Imaging data of the patient's anatomy.\n- **CTV Segmentation:** Clinical Target\
+  \ Volume, indicating the tumor area.\n- **Bladder Segmentation:** Bladder area segmentation.\n- **Rectum\
+  \ Segmentation:** Rectum area segmentation.\n- **Applicator Segmentation:** The applicator's position\
+  \ within the body for delivering the radiation.\n- **Dose Map:** Ground truth radiation dose delivered\
+  \ to the tumor and surrounding areas.\n\n- Here's the revised section for the README with a single data\
+  \ directory:\n\n---\n\n### Dataset Structure\n\nThe dataset is organized into a single directory containing\
+  \ multiple subdirectories for individual cases. Each case includes several NIfTI files corresponding\
+  \ to different imaging modalities and segmentations. The directory structure is as follows:\n\n```\n\
+  /data \n │\n ├───1785 \n │      └───ct.nii.gz\n │      └───ctv.nii.gz\n │      └───bladder.nii.gz\n\
+  \ │      └───rectum.nii.gz\n │      └───dose.nii.gz\n │\n ├───1759\n │      └───ct.nii.gz\n │      └───ctv.nii.gz\n\
+  \ │      └───bladder.nii.gz\n │      └───rectum.nii.gz\n │      └───dose.nii.gz\n │\n ├───...\n```\n\
+  \nPlease ensure that the Patient ID, which is a subfolder of the data, is unique for each patient. The\
+  \ dataset is divided into training and validation sets, with an 80:20 split.\n\n---\n\n## Model Architecture\n\
+  \n![alt text](https://github.com/Sourav0118/Dendrite-Cross-Attention-for-High-dose-rate-Brachytherapy-Distribution-Planning/blob/main/Multi-Unet-with-scans.png?raw=True)\n\
+  \nThe model used consists of two main components:\n\n1. **Feature Extractor:** A Dendrite-like U-Net\
+  \ architecture that processes the CT scans and organ segmentations to extract features.\n2. **Label\
+  \ Predictor:** A smaller network that takes the extracted features and predicts the radiation dose map.\n\
+  \n---\n\n## Training and Inference\n\n### Requirements\n\nTo run the code, ensure you have the following\
+  \ libraries installed:\n\n- PyTorch\n- TorchVision\n- NumPy\n- nibabel (for handling `.nii.gz` files)\n\
+  - tqdm\n- WandB (Weights and Biases for experiment tracking)\n\nYou can install the necessary packages\
+  \ via:\n\n```bash\npip install -r requirements.txt\n```\n\n### Training\n\nTo train the model on your\
+  \ dataset, use the following command:\n\n```bash\npython main.py --data_path <path_to_dataset> --ckpt_path\
+  \ <path_to_checkpoint> --batch_size <batch_size> --num_epochs <num_epochs> --lr <learning_rate> --device\
+  \ <cuda/cpu> --use_wandb <1/0>\n```\n\n- **data_path:** Path to the dataset (which should include CT,\
+  \ CTV, bladder, rectum, and dose maps in `.nii.gz` format).\n- **ckpt_path:** Path to store the model\
+  \ checkpoints.\n- **batch_size:** Batch size for training.\n- **num_epochs:** Number of training epochs.\n\
+  - **lr:** Learning rate for the optimizer.\n- **device:** Set to `cuda` if using a GPU, otherwise `cpu`.\n\
+  - **use_wandb:** Set to `1` to enable logging with WandB, or `0` to disable it.\n\n### Inference\n\n\
+  For running inference on new test data, use the `inference.py` script:\n\n```bash\npython inference.py\
+  \ --model_path <path_to_model> --input_dir <path_to_test_data> --output_dir <path_to_save_results> --use_wandb\
+  \ <1/0>\n```\n\n- **model_path:** Path to the trained model weights.\n- **input_dir:** Directory containing\
+  \ the test data in `.nii.gz` format.\n- **output_dir:** Directory to save the predicted dose maps.\n\
+  - **use_wandb:** Enable WandB logging for inference by setting this to `1`.\n\n### Example Usage\n\n\
+  ```bash\n# For training\npython main.py --data_path ./dataset --ckpt_path ./checkpoints --batch_size\
+  \ 3 --num_epochs 200 --lr 1e-5 --device cuda --use_wandb 1\n\n# For inference\npython inference.py --model_path\
+  \ ./checkpoints/model.pth --input_dir ./test_data --output_dir ./output --use_wandb 1\n```\n\n### Checkpointing\
+  \ and Resuming Training\n\nThe model automatically saves checkpoints during training. If the training\
+  \ is interrupted or you wish to resume from a previous checkpoint, ensure the model weights are stored\
+  \ at the `ckpt_path`. The script will load the latest saved weights and continue training.\n\n---\n\n\
+  ## Logging and Visualization with WandB\n\nWeights and Biases (WandB) is used for experiment tracking,\
+  \ model logging, and performance visualization. If enabled, each training run logs metrics like training\
+  \ and validation loss, and stores model checkpoints.\n\nTo enable WandB, use the `--use_wandb 1` flag\
+  \ during training and inference.\n\nIf you want to track experiments for team-based projects, you can\
+  \ specify a WandB entity with the `--wandb_entity <entity_name>` argument.\n\n---\n\n## Model Evaluation\n\
+  \nDuring training, the model is evaluated based on the weighted average of Masked Root Mean Squared\
+  \ Error (masked RMSE) between the predicted dose map and the ground truth dose map over masked regions\
+  \ of CTV, bladder, rectum, and applicator. The best-performing model is saved based on validation loss.\n\
+  \n## Citations\n\n```\nto be updated.\n```\n\n---\n\n## Contribution and Issues\n\nFeel free to raise\
+  \ issues or contribute to improving the code. You can fork this repository, make your changes, and submit\
+  \ a pull request. We welcome contributions in the form of bug fixes, code improvements, or even new\
+  \ features like additional metrics for model evaluation.\n\n"

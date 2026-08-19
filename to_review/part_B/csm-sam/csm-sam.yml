@@ -1,0 +1,137 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: NatalieCarlebach1/csm-sam
+url: https://github.com/NatalieCarlebach1/csm-sam
+platform: github
+description: Cross-Session Memory SAM for adaptive radiotherapy mid-treatment tumor segmentation (NeurIPS
+  2026)
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-04-23T06:26:47Z'
+image_source: null
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# RALM-SAM: Retrieval-Augmented Longitudinal Memory SAM\n\n[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)\n\
+  [![PyTorch 2.1+](https://img.shields.io/badge/pytorch-2.1+-orange.svg)](https://pytorch.org/)\n[![License:\
+  \ MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)\n\n> **RALM-SAM**: A retrieval-augmented\
+  \ longitudinal memory framework for adaptive radiotherapy tumor segmentation. Reframes mid-treatment\
+  \ segmentation as a longitudinal distribution-shift problem addressed by (i) cross-session memory, (ii)\
+  \ cross-patient retrieval, and (iii) continuous-time conditioning.\n\n## Abstract\n\nAdaptive MRI-guided\
+  \ radiotherapy (MRgRT) requires re-segmentation of head and neck tumors during a treatment course as\
+  \ they respond — shrinking, growing, or migrating over weeks. Treating each scan independently ignores\
+  \ the rich structural prior from the pre-treatment planning scan, while naive per-patient temporal modeling\
+  \ is data-starved: each patient contributes only two time points.\n\nWe recast mid-treatment segmentation\
+  \ as a **longitudinal distribution-shift** problem and propose **RALM-SAM**, a retrieval-augmented longitudinal\
+  \ memory extension of SAM2. RALM-SAM (1) encodes the pre-RT scan into a cross-session memory bank M_pre\
+  \ and attends across visits when segmenting the mid-RT scan; (2) retrieves the top-K most similar pre-RT\
+  \ patients from a **cross-patient bank** built on the training set, concatenating their tumor-localized\
+  \ \"change templates\" onto M_pre so that longitudinal evolution can be borrowed in-context from similar\
+  \ cases; (3) replaces the discrete week embedding with a **continuous-time encoder** f(t) over weeks\
+  \ elapsed; and (4) is regularized by a **feature-evolution consistency loss** that trains a light auxiliary\
+  \ predictor g(pre_features, t) to forecast mid-RT features on tumor regions. A dual-head decoder produces\
+  \ per-structure GTVp and GTVn masks via pre-RT mask prompting of SAM2, and training uses a sequence\
+  \ mode that accumulates within-session memory across consecutive slices. On the HNTS-MRG 2024 benchmark,\
+  \ RALM-SAM targets **>75 aggDSC**, exceeding the challenge winner (72.7) and MedSAM2 baselines.\n\n\
+  ## Key Novelties\n\n- **Cross-patient retrieval memory.** A `CrossPatientBank` stores pre-RT summaries\
+  \ and tumor-localized `(mid - pre)` change templates for every training patient. At inference, top-K\
+  \ similar patients are retrieved and their templates are injected as additional tokens onto M_pre, turning\
+  \ longitudinal segmentation into an in-context retrieval task.\n- **Continuous-time temporal conditioning.**\
+  \ A sinusoidal + MLP encoder `f(t)` over continuous weeks-elapsed replaces the discrete `nn.Embedding(weeks)`.\
+  \ The discrete variant is retained as an ablation.\n- **Feature-evolution consistency loss.** A small\
+  \ `FeatureEvolutionPredictor` (~200k params) is trained so that `g(pre_features, t) ~ mid_features`\
+  \ on tumor regions, forcing the backbone to represent *how* tumors evolve, not just *where* they are.\n\
+  - **Dual-head decoder with pre-RT mask prompting.** SAM2 is prompted separately for GTVp and GTVn using\
+  \ the pre-RT mask as a spatial prior, giving per-structure probability maps instead of a single argmax.\n\
+  - **Sequence-mode training.** Within-session memory M_mid is accumulated across consecutive mid-RT slices\
+  \ during training, so the within-session attention and temporal gate actually learn instead of collapsing\
+  \ to a no-op.\n\n## Method\n\n```\nPre-RT  ─► SAM2 Enc ─► M_pre ─┐\n                               ├─►\
+  \ M_aug ─► CrossSessionAttn ─► Decoder ─► (GTVp, GTVn)\nBank ── top-K retrieval ──►  ──┘           \
+  \     │\n                                                ├─► ChangeHead   (auxiliary)\n            \
+  \                                    └─► EvolutionPred → Consistency Loss\nMid-RT  ─► SAM2 Enc ─► M_mid\
+  \ ──► CrossSessionAttn (same block)\n```\n\n**CrossSessionMemoryAttention**\n- Cross-session attention:\
+  \ mid-RT features attend to the augmented memory `M_aug = [M_pre ; retrieved change templates]`, conditioned\
+  \ on the continuous-time embedding f(t).\n- Within-session attention: current features attend to M_mid\
+  \ (prior mid-RT slices in sequence mode).\n- A learned gate combines cross-session and within-session\
+  \ contexts.\n\n**CrossPatientRetrieval**. For every training patient the bank stores a pre-RT embedding\
+  \ key and a set of change templates obtained by spatial-pooling `(mid_features - pre_features)` at tumor\
+  \ locations. At inference, cosine similarity over pre-RT keys selects the top-K donors whose templates\
+  \ are injected into M_aug.\n\n**ChangeHead (auxiliary).** 3-class prediction (stable / grown / shrunk),\
+  \ supervised by XOR-derived labels from pre/mid masks — no extra annotation required.\n\n**FeatureEvolutionPredictor\
+  \ (auxiliary).** Predicts mid-RT tumor-region features from pre-RT features and weeks-elapsed; the MSE\
+  \ between predicted and actual mid-RT features enters the loss as `lambda_consistency * L_cons`.\n\n\
+  **Losses.** `L = L_dice + 0.3 * L_ce(change_map) + 0.2 * L_consistency` (coefficients configurable).\n\
+  \n**Parameter budget.** Frozen SAM2 image encoder (ViT-H) and most of the mask decoder. Trainable: `CrossSessionMemoryAttention`,\
+  \ `ChangeHead`, continuous-time encoder, `CrossPatientRetrieval`, `FeatureEvolutionPredictor`, and the\
+  \ final mask decoder layer — roughly 2M parameters.\n\n## Ablations\n\n| Variant                   \
+  \            | aggDSC |\n| ------------------------------------- | ------ |\n| RALM-SAM (full)     \
+  \                  | TBD    |\n| — no cross-patient retrieval          | TBD    |\n| — discrete temporal\
+  \ embed (CSM-SAM)   | TBD    |\n| — no change map                       | TBD    |\n| — no consistency\
+  \ loss                 | TBD    |\n| — no sequence training (single slice) | TBD    |\n| — pre-RT mask\
+  \ as prompt → argmax      | TBD    |\n\nThe `discrete temporal embed` row corresponds to the **CSM-SAM**\
+  \ ablation — the original cross-session-memory-only variant that motivated this work and remains the\
+  \ natural comparison for isolating the retrieval and continuous-time contributions.\n\n## Results\n\n\
+  | Method | GTVp DSC | GTVn DSC | aggDSC | HD95 (mm) |\n|---|---|---|---|---|\n| *Published challenge\
+  \ winners* | | | | |\n| UW LAIR (SegResNet + mask attn) | -- | -- | **0.733** | -- |\n| mic-dkfz (nnU-Net\
+  \ 3d) | -- | -- | 0.727 | -- |\n| *Our baselines (real HNTS-MRG test set)* | | | | |\n| registration-warp\
+  \ (B-spline) | 0.376 | **0.739** | **0.558** | **14.4** |\n| identity (pre-RT mask) | 0.363 | 0.558\
+  \ | 0.460 | 49.9 |\n| MedSAM2 (within-session only) | 0.200 | 0.300 | 0.250 | -- |\n| SAM2 video (within-session)\
+  \ | 0.200 | 0.300 | 0.250 | -- |\n| SAM2 point prompt (no memory) | 0.200 | 0.300 | 0.250 | -- |\n|\
+  \ CLIPSeg (text-prompted) | 0.114 | 0.057 | 0.085 | 63.1 |\n| SAM (ViT-H, center prompt) | 0.002 | 0.003\
+  \ | 0.002 | 150.2 |\n| DINOv2 + linear probe | 0.001 | 0.001 | 0.001 | 172.5 |\n| random (5% density)\
+  \ | 0.001 | 0.001 | 0.001 | 593.3 |\n| *Ours* | | | | |\n| CSM-SAM | -- | -- | -- | -- |\n| RALM-SAM\
+  \ (+ retrieval) | -- | -- | **--** | -- |\n\n*Naive/foundation baselines evaluated on 20 HNTS-MRG test\
+  \ patients. Classical/longitudinal baselines (need training) and CSM-SAM rows will be filled after training.*\n\
+  \n## Installation\n\n```bash\n# Clone this repo\ngit clone https://github.com/YOUR_USERNAME/csm-sam.git\n\
+  cd csm-sam\n\n# Create conda environment\nconda create -n csmsam python=3.10\nconda activate csmsam\n\
+  \n# Install PyTorch (adjust CUDA version)\npip install torch==2.1.0 torchvision==0.16.0 --index-url\
+  \ https://download.pytorch.org/whl/cu118\n\n# Install SAM2\ngit clone https://github.com/facebookresearch/sam2.git\n\
+  cd sam2 && pip install -e . && cd ..\n\n# Install MedSAM2\ngit clone https://github.com/bowang-lab/MedSAM2.git\n\
+  cd MedSAM2 && pip install -e . && cd ..\n\n# Install RALM-SAM\npip install -e \".[dev]\"\n\n# Download\
+  \ SAM2 checkpoint\nmkdir -p checkpoints/sam2\nwget -P checkpoints/sam2 https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_large.pt\n\
+  ```\n\n## Data\n\n### HNTS-MRG 2024\n\nThe HNTS-MRG 2024 dataset contains 150 head & neck cancer patients\
+  \ with paired:\n- **Pre-RT**: T2-weighted MRI + GTVp/GTVn manual contours (planning scan, week 0)\n\
+  - **Mid-RT**: T2-weighted MRI + GTVp/GTVn manual contours (week 2-3 of treatment)\n\n**Access**: Register\
+  \ at [Grand Challenge](https://hnts-mrg.grand-challenge.org/) then download from [Zenodo](https://zenodo.org/record/11199559).\n\
+  \n```bash\n# After registering and obtaining access token:\npython data/download_hnts_mrg.py \\\n  \
+  \  --zenodo_token YOUR_TOKEN \\\n    --output_dir data/raw\n\n# Preprocess (registration + normalization\
+  \ + slice extraction)\npython data/preprocess.py \\\n    --input_dir data/raw \\\n    --output_dir data/processed\
+  \ \\\n    --n_workers 8\n```\n\n## Training\n\n```bash\n# Default training: RALM-SAM with sequence mode\
+  \ on fold 0 of 5-fold CV\npython train.py \\\n    --config configs/default.yaml \\\n    --sequence_train\
+  \ \\\n    --fold 0 --n_folds 5\n\n# Full override example\npython train.py \\\n    --config configs/default.yaml\
+  \ \\\n    --sequence_train \\\n    --fold 0 --n_folds 5 \\\n    --batch_size 4 \\\n    --lr 1e-4 \\\n\
+  \    --epochs 200 \\\n    --sam2_checkpoint checkpoints/sam2/sam2.1_hiera_large.pt \\\n    --data_dir\
+  \ data/processed \\\n    --output_dir checkpoints/ralmsam_run1\n\n# Resume training\npython train.py\
+  \ --config configs/default.yaml --resume checkpoints/ralmsam_run1/latest.pth\n```\n\nKey flags:\n- `--sequence_train`\
+  \ enables sequence-mode training (M_mid accumulated across consecutive slices).\n- `--fold` / `--n_folds`\
+  \ select the K-fold CV split.\n- Set `temporal_encoder_type: discrete` in the config to train the CSM-SAM\
+  \ ablation.\n- Set `retrieval.enabled: false` to ablate cross-patient retrieval.\n- Set `loss.lambda_consistency:\
+  \ 0.0` to ablate the evolution consistency loss.\n\n## Building the Cross-Patient Bank\n\nBefore evaluating\
+  \ with retrieval enabled, build the bank over the training split:\n\n```bash\n# NOTE: scripts/build_bank.py\
+  \ is forthcoming — not yet in the repo.\npython scripts/build_bank.py \\\n    --checkpoint checkpoints/best.pth\
+  \ \\\n    --data_dir data/processed \\\n    --split train \\\n    --output bank.pt\n```\n\nThe resulting\
+  \ `bank.pt` stores per-patient pre-RT keys and tumor-localized change templates consumed by `CrossPatientRetrieval`\
+  \ at inference time. Internally `test.py` and `visualize.py` call `model.set_patient_bank(bank)` after\
+  \ loading.\n\n## Evaluation\n\n```bash\n# Evaluate on test set with retrieval and test-time augmentation\n\
+  python test.py \\\n    --checkpoint checkpoints/best.pth \\\n    --bank bank.pt \\\n    --data_dir data/processed\
+  \ \\\n    --split test \\\n    --tta \\\n    --output_dir results/ralmsam\n\n# K-fold CV evaluation\n\
+  python test.py \\\n    --checkpoint checkpoints/best.pth \\\n    --bank bank.pt \\\n    --fold 0 --n_folds\
+  \ 5 \\\n    --output_dir results/ralmsam_fold0\n\n# Output: results/ralmsam/\n#   metrics.json     \
+  \  — per-patient and aggregate aggDSC, HD95\n#   metrics_table.txt  — formatted comparison table\n#\
+  \   predictions/       — .nii.gz prediction files\n```\n\n## Visualization\n\n```bash\n# Visualize 10\
+  \ random test patients\npython visualize.py \\\n    --checkpoint checkpoints/best.pth \\\n    --bank\
+  \ bank.pt \\\n    --data_dir data/processed \\\n    --n_samples 10 \\\n    --output_dir results/visualizations\n\
+  \n# Output per patient:\n#   {patient_id}_overlay.png       — pre-RT and mid-RT with GT + prediction\
+  \ overlay\n#   {patient_id}_change_map.png    — predicted change map (stable/grown/shrunk)\n#   {patient_id}_retrieved.png\
+  \     — top-K retrieved training donors\n#   {patient_id}_slice_gallery.png — multi-slice gallery\n\
+  ```\n\n## Baselines\n\nThe `baselines/` directory contains **36 baselines** spanning naive / classical\
+  \ medical / foundation-model / longitudinal-medical / binary change-detection / semantic change-detection.\
+  \ Each has a top-of-file uniqueness note stating what CSM-SAM does that the baseline does not. See [`baselines/LANDSCAPE.md`](baselines/LANDSCAPE.md)\
+  \ for a 6-axis positioning map and [`baselines/SOTA.md`](baselines/SOTA.md) for current state-of-the-art\
+  \ numbers + per-method blurbs.\n\n```bash\n# Run all baselines (auto-routes to the right"

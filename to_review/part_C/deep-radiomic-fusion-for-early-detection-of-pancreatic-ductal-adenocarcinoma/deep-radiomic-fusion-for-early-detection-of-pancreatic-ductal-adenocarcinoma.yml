@@ -1,0 +1,80 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: GeoLek/Deep-Radiomic-Fusion-for-Early-Detection-of-Pancreatic-Ductal-Adenocarcinoma
+url: https://github.com/GeoLek/Deep-Radiomic-Fusion-for-Early-Detection-of-Pancreatic-Ductal-Adenocarcinoma
+platform: github
+description: 'The repository for the paper ''Deep-Radiomic Fusion for Early Detection of Pancreatic Ductal
+  Adenocarcinoma'' '
+license: null
+language: Python
+keywords: []
+stars: 3
+updated_at: '2026-07-24T05:22:21Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Deep-Radiomic Fusion for Early Detection of Pancreatic Ductal Adenocarcinoma\n\nThe\
+  \ repository contains the code implementation used for the paper [Deep-Radiomic Fusion for Early Detection\
+  \ of Pancreatic Ductal Adenocarcinoma](https://www.mdpi.com/2076-3417/15/24/13024) published in [MDPI\
+  \ Applied Sciences Journal](https://www.mdpi.com/journal/applsci), in [Biomedical Engineering](https://www.mdpi.com/journal/applsci/sections/biomedical_engineering)\
+  \ section, under the Special Issue [Recent Advances in Biomedical Data Analysis](https://www.mdpi.com/journal/applsci/special_issues/I685B4TN91).\n\
+  \n# Dataset used\n[PANORAMA Challenge](https://panorama.grand-challenge.org/)  \nThis dataset contains\
+  \ contrast-enhanced CT scans from 2238 patients acquired at two centers (Radboud University Medical\
+  \ Center, University Medical Center Groningen) based in The Netherlands. Additionally, it contains 194\
+  \ cases from the [Medical Segmentation Decathlon](http://medicaldecathlon.com/) dataset and 80 cases\
+  \ from [National Institutes of Health](https://www.cancerimagingarchive.net/collection/pancreas-ct/).\
+  \ \n\n\n## Models performance\n\n| # | Model (abbr.) | Precise methodology / input pipeline | Metric\
+  \ | Internal<br>(Siemens/Philips) | External<br>(Toshiba) |\n|---|---------------|--------------------------------------|--------|------------------------------|-----------------------|\n\
+  | **A** | **Radiomics&nbsp;+&nbsp;SVM** | 16-dim PyRadiomics signature → linear SVM (C = 1) | **Accuracy**\
+  \ | **0.974** | **0.937** |\n| | | | Sensitivity | 0.968 | 0.993 |\n| | | | Specificity | 0.977 | 0.923\
+  \ |\n| | | | Precision | 0.953 | 0.769 |\n| | | | F<sub>1</sub> | 0.961 | 0.866 |\n| | | | ROC-AUC |\
+  \ 0.997 | 0.991 |\n| | | | Brier | 0.021 | 0.053 |\n| **B** | **3-D CBAM-ResNet-18** | End-to-end 3-D\
+  \ ResNet-18 with CBAM attention; single stream, no handcrafted features | **Accuracy** | **0.764** |\
+  \ **0.612** |\n| | | | Sensitivity | 0.746 | 0.575 |\n| | | | Specificity | 0.773 | 0.622 |\n| | | |\
+  \ Precision | 0.619 | 0.283 |\n| | | | F<sub>1</sub> | 0.676 | 0.379 |\n| | | | ROC-AUC | 0.827 | 0.649\
+  \ |\n| | | | Opt. threshold | 0.291 | 0.142 |\n| **C-1** | **Frozen Fusion** | Radiomics + CNN streams\
+  \ frozen; 1 k-param gating block + 6 k-param classifier trained | **Accuracy** | **0.911** | **0.901**\
+  \ |\n| | | | Sensitivity | 0.825 | 0.840 |\n| | | | Specificity | 0.953 | 0.917 |\n| | | | F<sub>1</sub>\
+  \ | 0.860 | 0.778 |\n| | | | ROC-AUC | 0.981 | 0.969 |\n| | | | Avg. Precision | 0.962 | 0.900 |\n|\
+  \ **C-2** | **End-to-End Fusion** | Radiomics + CNN adapter unfrozen and co-trained with gate & classifier\
+  \ | **Accuracy** | **0.969** | **0.932** |\n| | | | Sensitivity | 0.905 | 0.936 |\n| | | | Specificity\
+  \ | **1.000** | 0.931 |\n| | | | F<sub>1</sub> | 0.950 | 0.850 |\n| | | | ROC-AUC | **0.999** | 0.987\
+  \ |\n| | | | Avg. Precision | 0.997 | 0.964 |\n\n<sup>† Thresholds for Models B and C were chosen at\
+  \ the operating point that maximised Youden’s J on the internal validation fold.</sup>\n\n---\n\n\n\
+  ## Dataset splits\n\n| Split (purpose)         | Scanner vendors | Cases&nbsp;(N) | non-PDAC | PDAC\
+  \ |\n|-------------------------|-----------------|---------------:|---------:|-----:|\n| **Train (70\
+  \ %)**        | Siemens / Philips | **880** | 593 (592 A / 1 M) | 287 (91 A / 196 M) |\n| **Internal\
+  \ Validation (15 %)** | Siemens / Philips | **186** | 125 A | 61 (25 A / 36 M) |\n| **Internal Test\
+  \ (15 %)**| Siemens / Philips | **191** | 128 (127 A / 1 M) | 63 (24 A / 39 M) |\n| **Calibration Train**\
+  \   | Toshiba          | **156** | 124 A | 32 (9 A / 23 M) |\n| **Calibration Validation** | Toshiba\
+  \      | **39**  | 31 A  | 8 (4 A / 4 M) |\n| **External Test**       | Toshiba          | **456** |\
+  \ 362 (361 A / 1 M) | 94 (32 A / 62 M) |\n\n<sup>*A = automatically segmented; M = manually segmented*</sup>\n\
+  \n\n---\n\n## Model description\n\n| Model | Essence | Key takeaway |\n|-------|---------|--------------|\n\
+  | **A – Radiomics + SVM** | 16 carefully selected PyRadiomics features fed to a linear SVM. No deep\
+  \ learning. | Sets a *very* high handcrafted baseline (AUC ≈ 0.99 int./ext.), showing that a lean, interpretable\
+  \ radiomic signature can outperform larger, noisier feature sets in the literature. |\n| **B – 3-D CBAM-ResNet-18**\
+  \ | Pure CNN with CBAM attention on volumetric input. | Decent in-house (AUC ≈ 0.83) but drops to ~0.65\
+  \ externally, echoing vendor-shift fragility seen in prior single-stream CNN studies. |\n| **C-1 – Frozen\
+  \ Fusion** | Radiomic & deep streams passed through a small trainable gate; all pretrained weights frozen.\
+  \ | Minimalist fusion already restores external AUC to 0.97 and keeps good calibration/specificity,\
+  \ suggesting the gate filters out noisy CNN channels. |\n| **C-2 – End-to-End Fusion** | Same architecture\
+  \ as C-1 but radiomics-guided CNN adapter is unfrozen and co-trained. | Peaks at AUC ≈ 0.999/0.987 and\
+  \ perfect vendor-specific specificity internally; Grad-CAM shows the network now focuses on the pancreatic\
+  \ head/body, indicating true feature complementarity. |\n\n\n---\n\n## Selected Radiomics Features\n\
+  \n| #  | Feature Name                                                 |\n| -- | ------------------------------------------------------------\
+  \ |\n| 1  | `log-sigma-1-0-mm-3D_firstorder_10Percentile`                |\n| 2  | `log-sigma-1-0-mm-3D_firstorder_Mean`\
+  \                        |\n| 3  | `log-sigma-1-0-mm-3D_glszm_SmallAreaHighGrayLevelEmphasis`   |\n\
+  | 4  | `log-sigma-2-0-mm-3D_firstorder_Range`                       |\n| 5  | `log-sigma-2-0-mm-3D_glszm_SmallAreaHighGrayLevelEmphasis`\
+  \   |\n| 6  | `log-sigma-3-0-mm-3D_glrlm_GrayLevelNonUniformityNormalized` |\n| 7  | `original_firstorder_Minimum`\
+  \                                |\n| 8  | `original_gldm_LargeDependenceLowGrayLevelEmphasis`     \
+  \     |\n| 9  | `wavelet-HHH_gldm_DependenceVariance`                        |\n| 10 | `wavelet-HHL_glszm_SmallAreaHighGrayLevelEmphasis`\
+  \           |\n| 11 | `wavelet-HLH_gldm_LargeDependenceEmphasis`                   |\n| 12 | `wavelet-HLL_firstorder_Maximum`\
+  \                             |\n| 13 | `wavelet-LLH_firstorder_10Percentile`                      \
+  \  |\n| 14 | `wavelet-LLH_firstorder_Maximum`                             |\n| 15 | `wavelet-LLL_glcm_SumAverage`\
+  \                                |\n| 16 | `wavelet-LLL_glszm_GrayLevelVariance`                   \
+  \     |\n"

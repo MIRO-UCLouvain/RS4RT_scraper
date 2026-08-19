@@ -1,0 +1,101 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hyvndo/ESCC-PDL1-Radiomics
+url: https://github.com/hyvndo/ESCC-PDL1-Radiomics
+platform: github
+description: ''
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2025-12-03T16:08:37Z'
+image_source: null
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Multivariable Radiomics Model for Predicting PD-L1 Expression in Esophageal Squamous\
+  \ Cell Carcinoma\n\nThis repository contains the code implementation for predicting PD-L1 expression\
+  \ levels in esophageal squamous cell carcinoma (ESCC) using radiomics features extracted from CT images\
+  \ after neoadjuvant chemoradiotherapy (nCRT).\n\n## \U0001F4C4 Paper Information\n\n**Title:** Multivariable\
+  \ Radiomics Model for Predicting Programmed Death-Ligand 1 Expression After Neoadjuvant Chemoradiotherapy\
+  \ in Esophageal Squamous Cell Carcinoma\n\n**Authors:** \n\n**Journal:** \n\n## \U0001F3AF Overview\n\
+  \nThis project implements three different modeling approaches for predicting PD-L1 expression categories\
+  \ (<1%, 1-10%, >10%):\n\n1. **Traditional Radiomics** with machine learning (PyCaret/Logistic Regression)\n\
+  2. **TabNet** deep learning on tabular features\n3. **ResNet18** deep learning on CT images\n\nOur findings\
+  \ demonstrate that traditional radiomics approaches outperform deep learning methods on small medical\
+  \ imaging datasets (n=101).\n\n## \U0001F4C1 Repository Structure\n\n```\nESCC-PDL1-Radiomics/\n├──\
+  \ README.md                          # This file\n├── LICENSE                            # MIT License\n\
+  ├── requirements.txt                   # Python dependencies\n├── .gitignore                       \
+  \  # Git ignore rules\n├── preprocessing/\n│   └── featureExtractor.py           # PyRadiomics feature\
+  \ extraction\n├── models/\n│   ├── resnet.py            # ResNet18 training script\n│   ├── tabnet.ipynb\
+  \          # TabNet training notebook\n│   └── pycaret_pipeline.ipynb # PyCaret ML pipeline\n├── data/\
+  \                              # Place your data here (not included)\n└── results/                 \
+  \          # Model outputs saved here\n```\n\n## \U0001F680 Quick Start\n\n### Prerequisites\n\n- Python\
+  \ 3.8+\n- PyTorch 1.10+ (with CUDA for GPU training)\n- PyRadiomics\n- PyCaret\n- TabNet\n\n### Installation\n\
+  \n```bash\n# Clone the repository\ngit clone https://github.com/[hyvndo]/ESCC-PDL1-Radiomics.git\ncd\
+  \ ESCC-PDL1-Radiomics\n\n# Install dependencies\npip install -r requirements.txt\n```\n\n### Data Preparation\n\
+  \n**⚠️ Important:** This repository does not include patient data. You need to provide your own data\
+  \ in the following format:\n\n#### For PyRadiomics Feature Extraction:\n- CT images in NIfTI format\
+  \ (.nii.gz)\n- Tumor segmentation masks in NIfTI format\n- Organized by patient ID\n\n#### For Model\
+  \ Training:\n- Extracted radiomics features (CSV format)\n- Clinical data (optional, for combined models)\n\
+  - Labels file with PD-L1 categories: 0 (<1%), 1 (1-10%), 2 (>10%)\n\nPlace your data in the `data/`\
+  \ directory:\n```\ndata/\n├── train_features.csv\n├── test_features.csv\n├── train_labels.csv\n├── test_labels.csv\n\
+  └── clinical_data.xlsx (optional)\n```\n\n## \U0001F52C Usage\n\n### 1. Feature Extraction with PyRadiomics\n\
+  \n```python\nfrom preprocessing.featureExtractor import radiomics_extract\nimport numpy as np\n\n# Load\
+  \ your CT image and mask (as numpy arrays)\nimage_array = ...  # Your CT image\nmask_array = ...   #\
+  \ Your segmentation mask\n\n# Extract features\nfeatures, feature_names = radiomics_extract(image_array,\
+  \ mask_array)\n\nprint(f\"Extracted {len(features)} features\")\n```\n\n**Configuration:**\n- binWidth:\
+  \ 2.8\n- interpolator: sitkGaussian\n- resampledPixelSpacing: [0, 0, 0] (no resampling)\n- force2D:\
+  \ True\n- Feature classes: firstorder, shape, glcm, glszm, glrlm, ngtdm, gldm\n- Image types: Original,\
+  \ LoG, Wavelet\n\n### 2. Training with PyCaret (Recommended)\n\nSee `models/pycaret_pipeline.ipynb`\
+  \ for the complete workflow:\n\n1. Load radiomics features and clinical data\n2. Feature selection using\
+  \ stability selection\n3. PyCaret setup and model comparison\n4. Train final logistic regression model\n\
+  5. Evaluate on hold-out test set\n\n**Key Results:**\n- AUROC: 0.8214\n- Balanced Accuracy: 0.778\n\
+  - Macro F1-score: 0.776\n\n### 3. Training TabNet\n\nSee `models/tabnet.ipynb` for TabNet implementation\
+  \ on tabular features.\n\n**Configuration:**\n- Learning rate: 0.02\n- Batch size: 2048\n- Early stopping\
+  \ patience: 20\n- Virtual batch size: 512\n\n**Note:** TabNet showed poor generalization on our small\
+  \ dataset (AUROC=0.51).\n\n### 4. Training ResNet18\n\n```bash\npython models/resnet.py \\\n    --data_dir\
+  \ ./data/pre_train \\\n    --post_data_dir ./data/post_train \\\n    --test_dir ./data/pre_test \\\n\
+  \    --post_test_dir ./data/post_test \\\n    --label_file ./data/train_labels.csv \\\n    --test_label_file\
+  \ ./data/test_labels.csv \\\n    --model_type resnet18 \\\n    --batch_size 64 \\\n    --num_epochs\
+  \ 30 \\\n    --learning_rate 0.000927 \\\n    --output_dir ./results\n```\n\n**Configuration:**\n- Optimizer:\
+  \ Adam (lr=0.000927)\n- Scheduler: CosineAnnealingLR (T_max=25, eta_min=1e-6)\n- Early stopping patience:\
+  \ 5\n- Dropout: 0.5\n- Weight decay: 1e-4\n- No data augmentation (normalization only)\n\n**Note:**\
+  \ ResNet18 also showed poor performance on our small dataset (AUROC=0.48).\n\n## \U0001F4CA Expected\
+  \ Results\n\nBased on our study with n=101 patients (80 training, 21 test):\n\n| Model | AUROC | Balanced\
+  \ Acc | Macro F1 |\n|-------|--------|--------------|----------|\n| **Final Combined (Radiomics + Clinical)**\
+  \ | **0.8214** | **0.778** | **0.776** |\n| All Radiomics (Pre+Post+Delta) | 0.7008 | 0.648 | 0.622\
+  \ |\n| Clinical Only | 0.8171 | 0.574 | 0.595 |\n| Delta-Radiomics Only | 0.7937 | 0.722 | 0.667 |\n\
+  | Post-Radiomics Only | 0.7286 | 0.593 | 0.590 |\n| TabNet | 0.5111 | 0.407 | 0.353 |\n| ResNet18 |\
+  \ 0.4778 | 0.287 | 0.137 |\n\n**Key Findings:**\n- Traditional radiomics consistently outperforms deep\
+  \ learning on small datasets\n- Delta-radiomics (temporal changes) are particularly informative for\
+  \ low PD-L1 (<1%) detection\n- Clinical factors alone provide reasonable predictive power\n- Deep learning\
+  \ approaches fail to generalize with limited data\n\n## \U0001F527 Customization\n\n### Modify PyRadiomics\
+  \ Settings\n\nEdit `preprocessing/featureExtractor.py`:\n\n```python\nsettings = {}\nsettings['binWidth']\
+  \ = 2.8  # Adjust discretization bin width\nsettings['interpolator'] = 'sitkGaussian'  # Change interpolation\
+  \ method\nsettings['force2D'] = True  # Set to False for 3D features\n```\n\n### Adjust Model Hyperparameters\n\
+  \nFor PyCaret, modify the notebook cell:\n```python\npdl1_clf = setup(\n    data=train_data,\n    target='encoded_PDL1',\n\
+  \    session_id=123,\n    # Add your custom settings here\n)\n```\n\nFor ResNet18, use command-line\
+  \ arguments (see `python models/resnet.py --help`)\n\n## ⚠️ Important Notes\n\n1. **Small Dataset Performance:**\
+  \ Our results demonstrate that deep learning approaches (ResNet, TabNet) perform poorly on small medical\
+  \ imaging datasets (n=101). Traditional radiomics with machine learning is more appropriate for such\
+  \ scenarios.\n\n2. **Data Privacy:** This repository contains NO patient data. All data paths are placeholders.\
+  \ Users must provide their own data.\n\n3. **Reproducibility:** We provide exact hyperparameters and\
+  \ configurations used in our study to facilitate reproduction.\n\n4. **Hardware Requirements:** \n \
+  \  - ResNet18 training: GPU recommended (CUDA-capable)\n   - TabNet/PyCaret: CPU sufficient\n\n## \U0001F4DA\
+  \ Citation\n\nIf you use this code in your research, please cite our paper:\n\n```bibtex\n@article{your_paper_2025,\n\
+  \  title={Multivariable Radiomics Model for Predicting Programmed Death-Ligand 1 Expression After Neoadjuvant\
+  \ Chemoradiotherapy in Esophageal Squamous Cell Carcinoma},\n  author={[Your names]},\n  journal={[Journal\
+  \ name]},\n  year={2025},\n  doi={[DOI]}\n}\n```\n\n## \U0001F4DD License\n\nThis project is licensed\
+  \ under the MIT License - see the [LICENSE](LICENSE) file for details.\n\n## \U0001F91D Contributing\n\
+  \nWe welcome contributions! Please feel free to submit issues or pull requests.\n\n## \U0001F4E7 Contact\n\
+  \nFor questions about the code or paper:\n- GitHub: [@hyvndo](https://github.com/hyvndo)\n- Email: hyundo@yonsei.ac.kr\n\
+  \n## \U0001F64F Acknowledgments\n\n- PyRadiomics developers for the excellent feature extraction library\n\
+  - PyCaret team for the automated machine learning framework\n- All co-authors and institutions involved\
+  \ in this research\n\n## \U0001F4D6 Additional Resources\n\n- [PyRadiomics Documentation](https://pyradiomics.readthedocs.io/)\n\
+  - [PyCaret Documentation](https://pycaret.org/)\n- [TabNet Paper](https://arxiv.org/abs/1908.07442)\n\
+  - [Our Paper (link to be added)]\n\n---\n\n**Last Updated:** December 2025\n"

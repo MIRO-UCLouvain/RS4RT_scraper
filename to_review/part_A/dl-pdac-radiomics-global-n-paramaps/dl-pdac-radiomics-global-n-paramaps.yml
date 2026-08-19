@@ -1,0 +1,88 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: briandzt/dl-pdac-radiomics-global-n-paramaps
+url: https://github.com/briandzt/dl-pdac-radiomics-global-n-paramaps
+platform: github
+description: '[ISBI 2026] From Global Radiomics to Parametric Maps: A Unified Workflow Fusing Radiomics
+  and Deep Learning for PDAC Detection'
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-17T18:57:11Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# From Global Radiomics to Parametric Maps for PDAC Detection\n\n[ISBI 2026] Reproducible\
+  \ inference code for **From Global Radiomics to Parametric Maps: A Unified Workflow Fusing Radiomics\
+  \ and Deep Learning for PDAC Detection**.\n\nThis repository is organized in the same spirit as PANORAMA\
+  \ solution repositories such as [han-liu/PanDx](https://github.com/han-liu/PanDx): a top-level local\
+  \ entrypoint, vendored packages, an nnU-Net workspace, model-download instructions, and clear inference/output\
+  \ sections. The Docker workflow remains the canonical reproduction path for the accepted grand-challenge\
+  \ submission.\n\nPaper page: <https://huggingface.co/papers/2602.17986>\n\nModel weights: <https://huggingface.co/briandzt/radiomics_nnUNet>\n\
+  \nHugging Face upload/download tutorial: [docs/HUGGINGFACE_REPRODUCTION.md](docs/HUGGINGFACE_REPRODUCTION.md)\n\
+  \n## Repository Layout\n\n```text\ndl-pdac-radiomics-global-n-paramaps/\n├── Dockerfile\n├── main.py\n\
+  ├── requirements.txt\n├── scripts/\n│   ├── prepare_checkpoints.ps1\n│   ├── download_checkpoints_from_hf.ps1\n\
+  │   └── verify_repository.py\n├── src/\n│   ├── process.py\n│   ├── process_local.py\n│   ├── data_utils.py\n\
+  │   ├── voxel_radiomics.py\n│   ├── nnUNet_results/\n│   ├── nnunetv2_global_rad/\n│   ├── dynamic-network-architectures_global_rad/\n\
+  │   ├── pyradiomics-3.1.0-Zengtian/\n│   ├── pytorchradiomics-main/\n│   └── report-guided-annotation/\n\
+  └── workspace/                  # create locally, ignored by git\n    ├── nnUNet_raw/\n    ├── nnUNet_preprocessed/\n\
+  \    ├── nnUNet_results/\n    └── test_example/\n        ├── input/\n        └── output/\n```\n\n`src/nnUNet_results/`\
+  \ contains model metadata and fold folders. Checkpoint weights are intentionally not tracked by git.\n\
+  \n## Installation\n\n### Requirements\n\n- Linux or Windows with PowerShell for the helper scripts\n\
+  - NVIDIA GPU for full inference\n- CUDA-compatible PyTorch\n- Python 3.10 recommended for parity with\
+  \ the Dockerfile\n\n### Create an environment\n\n```bash\nconda create -n pdac-rad python=3.10 -y\n\
+  conda activate pdac-rad\npip install -r requirements.txt\n```\n\nInstall the vendored packages in editable\
+  \ mode:\n\n```bash\npip install -e src/dynamic-network-architectures_global_rad/dynamic-network-architectures\n\
+  pip install -e src/nnunetv2_global_rad\npip install -e src/pyradiomics-3.1.0-Zengtian\npip install -e\
+  \ src/pytorchradiomics-main\npip install -e src/report-guided-annotation\n```\n\n## Model Checkpoints\n\
+  \nThe Python workflow uses `checkpoint_best.pth` for every fold. The full-resolution checkpoints downloaded\
+  \ as `checkpoint_1009.pth` should be placed/linked under the repo as `checkpoint_best.pth`.\n\nRequired\
+  \ model layout:\n\n```text\nsrc/nnUNet_results/\n├── Dataset001_LR/\n│   └── nnUNetTrainer__nnUNetPlans__3d_fullres/\n\
+  │       ├── fold_0/checkpoint_best.pth\n│       ├── fold_1/checkpoint_best.pth\n│       ├── fold_2/checkpoint_best.pth\n\
+  │       ├── fold_3/checkpoint_best.pth\n│       └── fold_4/checkpoint_best.pth\n└── Dataset002_stage2/\n\
+  \    └── nnUNetTrainer_Loss_CE_checkpoints__nnUNetPlans__3d_fullres/\n        ├── fold_0/checkpoint_best.pth\n\
+  \        ├── fold_1/checkpoint_best.pth\n        ├── fold_2/checkpoint_best.pth\n        ├── fold_3/checkpoint_best.pth\n\
+  \        └── fold_4/checkpoint_best.pth\n```\n\nIf your Stage-2 downloads are stored as:\n\n```text\n\
+  PANORAMA/\n├── fold0/checkpoint_1009.pth\n├── fold1/checkpoint_1009.pth\n├── fold2/checkpoint_1009.pth\n\
+  ├── fold3/checkpoint_1009.pth\n└── fold4/checkpoint_1009.pth\n```\n\nprepare local hard links with:\n\
+  \n```powershell\npowershell -ExecutionPolicy Bypass -File .\\scripts\\prepare_checkpoints.ps1 `\n  -CheckpointRoot\
+  \ C:\\Users\\yiyh1\\Documents\\Winter2026\\PANORAMA `\n  -Stage1ModelDir C:\\Users\\yiyh1\\Documents\\\
+  Winter2026\\PANORAMA\\submission_fullrad\\PANORAMA_submission_voxrad\\src\\nnUNet_results\\Dataset001_LR\\\
+  nnUNetTrainer__nnUNetPlans__3d_fullres `\n  -Link\n```\n\nOmit `-Link` to copy instead of hard-linking.\
+  \ Do not commit `.pth` files.\n\nThe model weights are hosted on Hugging Face. Fresh users can download\
+  \ the checkpoints with:\n\n```powershell\npowershell -ExecutionPolicy Bypass -File .\\scripts\\download_checkpoints_from_hf.ps1\
+  \ `\n  -RepoId briandzt/radiomics_nnUNet\n```\n\nSee [docs/HUGGINGFACE_REPRODUCTION.md](docs/HUGGINGFACE_REPRODUCTION.md)\
+  \ for the full GitHub + Hugging Face release workflow.\n\n## CPU-Safe Verification\n\nThis does not\
+  \ run inference and does not require a GPU:\n\n```bash\npython scripts/verify_repository.py\n```\n\n\
+  It checks required files, nnU-Net metadata, fold folders, and whether both Stage-1 and Stage-2 checkpoints\
+  \ are locally available.\n\n## Local Inference\n\nSet nnU-Net environment variables if desired:\n\n\
+  ```bash\nexport nnUNet_raw=\"./workspace/nnUNet_raw\"\nexport nnUNet_preprocessed=\"./workspace/nnUNet_preprocessed\"\
+  \nexport nnUNet_results=\"./src/nnUNet_results\"\n```\n\nRun:\n\n```bash\npython main.py -i ./workspace/test_example/input\
+  \ -o ./workspace/test_example/output --image-ext .nii.gz\n```\n\nFor challenge-style `.mha` inputs:\n\
+  \n```bash\npython main.py -i ./workspace/test_example/input -o ./workspace/test_example/output --image-ext\
+  \ .mha\n```\n\nThe workflow uses all five folds: `0,1,2,3,4`.\n\n## Docker Inference\n\nBuild:\n\n```bash\n\
+  docker build -t pdac-radiomics-paramaps .\n```\n\nRun:\n\n```bash\ndocker run --gpus all --rm \\\n \
+  \ -v /path/to/input:/input:ro \\\n  -v /path/to/output:/output \\\n  pdac-radiomics-paramaps\n```\n\n\
+  Challenge-style input path:\n\n```text\n/input/images/venous-ct/\n```\n\n## Outputs\n\nOutputs are written\
+  \ in challenge-compatible form:\n\n```text\noutput/\n├── <case>_pdac-likelihood.json\n└── images/\n\
+  \    └── pdac-detection-map/\n        └── <case>_detection_map.mha\n```\n\nThe detection map stores\
+  \ voxel-level PDAC likelihood. The JSON stores the case-level PDAC likelihood score.\n\n## Notes\n\n\
+  - Checkpoints are excluded from git via `.gitignore`.\n- `checkpoint_1009.pth` is used locally after\
+  \ being renamed or linked to `checkpoint_best.pth`.\n- `process.py` is the canonical workflow; `main.py`\
+  \ and `src/process_local.py` are local convenience wrappers.\n- Full inference requires GPU-enabled\
+  \ PyTorch and nnU-Net dependencies.\n\n## Citation\n\nIf you use this repository, model weights, or\
+  \ reproduction workflow, please cite the associated arXiv paper. A BibTeX copy is also available in\
+  \ [CITATION.bib](CITATION.bib).\n\n```bibtex\n@misc{deng2026globalradiomicsparametricmaps,\n  title\
+  \         = {From Global Radiomics to Parametric Maps: A Unified Workflow Fusing Radiomics and Deep\
+  \ Learning for PDAC Detection},\n  author        = {Deng, Zengtian and He, Yimeng and Shi, Yu and Wang,\
+  \ Lixia and Qureshi, Touseef Ahmad and Huang, Xiuzhen and Li, Debiao},\n  year          = {2026},\n\
+  \  eprint        = {2602.17986},\n  archivePrefix = {arXiv},\n  primaryClass  = {eess.IV},\n  doi  \
+  \         = {10.48550/arXiv.2602.17986},\n  url           = {https://arxiv.org/abs/2602.17986}\n}\n\
+  ```\n\n## Acknowledgement\n\nThis workflow builds on nnU-Net, PyRadiomics, [lyhyl/pytorchradiomics](https://github.com/lyhyl/pytorchradiomics),\
+  \ and report-guided annotation utilities. Please cite or acknowledge the original tools where appropriate.\n"

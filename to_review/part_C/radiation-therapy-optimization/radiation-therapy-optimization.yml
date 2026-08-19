@@ -1,0 +1,96 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: AryanAnandGupta/radiation-therapy-optimization
+url: https://github.com/AryanAnandGupta/radiation-therapy-optimization
+platform: github
+description: Linear-programming models for radiation therapy treatment planning
+license: MIT
+language: Jupyter Notebook
+keywords:
+- linear-programming
+- operations-research
+- optimization
+- python
+- radiation-therapy
+stars: 0
+updated_at: '2026-07-24T10:36:01Z'
+image_source: https://raw.githubusercontent.com/AryanAnandGupta/radiation-therapy-optimization/HEAD/final_deliverables/OutputFiles/task1_5_iterative_beams.png
+heuristic_total_score: 19
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# Radiation Therapy Treatment Planning — From Infeasible LP to Zero Violations\n\nOptimization\
+  \ models for **intensity-modulated radiation therapy (IMRT)** planning, built as the\nfinal project\
+  \ for *OR 7245 — Network Analysis and Advanced Optimization* (Northeastern University,\nSpring 2026).\n\
+  \n**Authors:** Aryan Anand Gupta, Jenna Manning\n\n## Headline result\n\nThe realistic planning instance\
+  \ (60×80 grid, 126 beams, dose limits `L=10`, `U=2`) is\n**provably infeasible** — no intensities for\
+  \ the given beam set can hit every tumor pixel's\nminimum dose without over-irradiating critical tissue.\
+  \ Standard practice resolves this by\nrelaxing the prescription.\n\nInstead, this project **restores\
+  \ feasibility by constructing new beams**: a shortfall-driven\naugmentation algorithm reads the LP's\
+  \ slack variables to locate geometrically shielded tumor\npixels, then synthesizes beams that thread\
+  \ between critical structures to cover them.\n\n- **5 synthetic beams** (a 4% expansion of the beam\
+  \ set), added in **2 iterative rounds**,\n  take the large instance from 60 tumor shortfalls to **0**.\n\
+  - The augmented model holds **zero violations — both tumor shortfall and critical excess —\n  across\
+  \ all 36 (L, U) scenario combinations** where the baseline fails persistently at\n  aggressive limits.\n\
+  \n![Iterative beam augmentation](final_deliverables/OutputFiles/task1_5_iterative_beams.png)\n\n![Baseline\
+  \ vs augmented across the sensitivity grid](final_deliverables/OutputFiles/task1_5_sensitivity_comparison.png)\n\
+  \n## The problem\n\nIn radiation therapy, high-energy beams are aimed at a tumor from multiple angles\
+  \ so that their\ndoses **add up at the target** while staying manageable everywhere else. The catch\
+  \ is that the\nregion around a tumor also contains **critical tissue** you must not over-irradiate.\n\
+  \nThe core planning question: *what beam intensities deliver **at least** a minimum dose `L` to\nevery\
+  \ tumor pixel while keeping **no more than** a maximum dose `U` on every critical pixel?*\n\nThe project\
+  \ develops this as a progression of linear programs (LPs), each relaxing a limitation\nof the last,\
+  \ and finishes with the beam-augmentation algorithm.\n\n## Modeling progression\n\n| Task | Model |\
+  \ Idea |\n|------|-------|------|\n| **1.1** | Basic LP | Hard constraints: every tumor pixel ≥ `L`,\
+  \ every critical pixel ≤ `U`. Feasible on the small 8×8 example; **infeasible** on the large instance.\
+  \ |\n| **1.2** | Relaxed-threshold LP | Tumor *shortfalls* and critical *excess* become penalized slack\
+  \ variables, so a plan always exists. Full 36-scenario sensitivity study of `L` vs. `U`. |\n| **1.3**\
+  \ | Border-penalty LP | Adds a penalty on dose deposited in non-tumor pixels adjacent to critical tissue\
+  \ (weight `λ_B` × border depth), surfacing the scatter-risk vs. tumor-coverage tradeoff as a tunable\
+  \ clinical parameter. |\n| **1.4** | Enhancement brainstorming | Three directions: synthetic beam construction,\
+  \ shortfall-driven beam augmentation, and multi-session fractionated treatment with cell regeneration.\
+  \ |\n| **1.5** | Beam augmentation | Implements synthetic beam construction plus greedy and iterative\
+  \ augmentation — turning the infeasible large case into a solved one. |\n\n## How the augmentation works\n\
+  \n1. Solve the relaxed LP and read the tumor-shortfall slack variables — they identify **where**\n \
+  \  coverage fails, geometrically.\n2. Generate candidate beams from every grid-boundary entry point\
+  \ through targets derived from\n   the shortfalled pixels (centroid plus offset targets), traced with\
+  \ **Bresenham's line\n   algorithm** and extended edge-to-edge as a ~5-pixel band.\n3. Score candidates\
+  \ by shortfalled pixels covered, **requiring zero critical-tissue pixels in\n   the band** — synthetic\
+  \ beams thread the gaps between critical structures rather than\n   crossing them.\n4. Synthetic beams\
+  \ reproduce the intensity structure reverse-engineered from the 126 reference\n   beams: piecewise-linear\
+  \ center decay (0.99, dropping 0.01 every ~3 path steps) with linear\n   lateral falloff.\n5. Add the\
+  \ best batch, re-solve the LP (the solver globally rebalances all intensities), and\n   repeat until\
+  \ shortfalls reach zero — converged in 2 rounds on the large instance.\n\n## Repository layout\n\n```\n\
+  .\n├── RadiationTherapyReport_Final.pdf           # Final written report (23 pages)\n├── radiation_therapy_presentation_final.pptx\
+  \  # Final presentation\n├── requirements.txt\n│\n├── final_deliverables/          # Polished submission\n\
+  │   ├── PythonScripts/           # Task notebooks (1.1–1.5) + sensitivity + figure generation\n│   ├──\
+  \ actualexample/           # Large instance (60×80 grid, 126 beams)\n│   ├── smallexample/         \
+  \   # Small 8×8 test instance (5 beams)\n│   ├── max_matrix/              # Beam-matrix construction\
+  \ helper (docplex)\n│   ├── OutputFiles/             # Solver outputs (.out), plots, sensitivity CSV\n\
+  │   └── Visualizations/          # Final figures used in the report\n│\n└── task/                  \
+  \      # Development / exploration history (see task/README.md)\n```\n\nIf you just want the finished\
+  \ work, look in **`final_deliverables/`**. The `task/` folder is\nkept as the working history — drafts,\
+  \ scratch notebooks, and earlier runs.\n\n## Data format\n\nEach example folder holds plain-text instance\
+  \ files:\n\n- `tumor_raw.txt` — tumor pixel map\n- `critical_raw.txt` — critical-structure pixel map\n\
+  - `beam_raw.txt` — beam geometry / dose-deposition data\n- `specs.txt` — problem parameters (grid size,\
+  \ `L`, `U`, etc.)\n\n## Running the notebooks\n\n```bash\npip install -r requirements.txt\njupyter notebook\n\
+  ```\n\n**Solver note:** the models are built in AMPL via `amplpy` and solved with **CPLEX**, so a\n\
+  working AMPL + CPLEX installation is required (free community/academic editions handle these\ninstance\
+  \ sizes). The pure-Python packages alone are not enough to re-run the solves; all solver\noutputs, dose\
+  \ matrices, and figures are committed so results can be inspected without licenses.\n\nOpen a notebook\
+  \ in `final_deliverables/PythonScripts/` (e.g. `Task1.1Script.ipynb`). The\nnotebooks change into their\
+  \ parent directory on the first cell so relative paths to\n`smallexample/`, `actualexample/`, and `OutputFiles/`\
+  \ resolve — run cells top to bottom.\n\n## Key results\n\n- The **basic hard-constraint LP** is feasible\
+  \ on the small instance but **infeasible** on the\n  realistic large instance — the given beam set cannot\
+  \ hit every dose target.\n- The **relaxed LP** always produces a plan but leaves 60 tumor shortfalls\
+  \ and 59 critical\n  excesses at the prescribed limits; the L-vs-U sensitivity grid shows feasibility\
+  \ only at\n  low `L` / high `U`.\n- The **border-penalty model** exposes scatter-risk vs. tumor-coverage\
+  \ as an explicit tradeoff\n  curve instead of a fixed assumption.\n- The **beam-augmentation algorithm**\
+  \ recovers full feasibility — zero shortfall *and* zero\n  critical excess — across the entire 36-scenario\
+  \ parameter grid with a 4% beam-set expansion.\n\nFull derivations, formulations, and analysis are in\n\
+  **[`RadiationTherapyReport_Final.pdf`](RadiationTherapyReport_Final.pdf)**, with an\naccompanying slide\
+  \ deck.\n\n---\n\n*Academic coursework, shared for portfolio purposes. MIT license.*\n"

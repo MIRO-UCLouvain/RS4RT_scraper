@@ -1,0 +1,56 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: claszachrisson/Project10Radiotherapy
+url: https://github.com/claszachrisson/Project10Radiotherapy
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-01-03T21:58:50Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 4 support term(s).
+readme_excerpt: "# Project Overview\n\nThis project is part of the course **\"Project in Computational\
+  \ Science\"** at Uppsala University. The focus is on exploring the **Multi-Objective Simplex Method**\
+  \ for potential application in radiotherapy.\n\nIn radiotherapy, the goal is to treat cancer by delivering\
+  \ high doses of radiation to the tumor while minimizing damage to the surrounding healthy tissue. These\
+  \ objectives inherently conflict: increasing radiation improves tumor treatment but also increases harm\
+  \ to nearby healthy tissue.\n\nThis trade-off can be formulated as a **Multi-Objective Linear Programming\
+  \ (MOLP)** problem, which can be solved using specialized algorithms like the Multi-Objective Simplex\
+  \ Method. This project aims to explore and implement this method.\n\n---\n\n# How to Run\n\nThe current\
+  \ implementation is located in `MOLP_simplex_linprog.py`. To run the script:\n\n1. Install the required\
+  \ dependencies listed in the `requirements.txt` file.\n2. If you have your matrices, to run the MOLP\
+  \ Simplex algorithm use:\n\n$$\nindices, solutions = \\text{simplex}(A, b, C, \\text{std\\_form} = \\\
+  text{True}, \\text{Initial\\_basic} = \\text{None}, \\text{num\\_sol} = \\infty)\n$$\n\nWhere `A` is\
+  \ a 2D numpy array representing the constraint matrix of size ($m \\times n$), `b` is a 1D numpy array\
+  \ representing the right-hand side of the constraints of size ($m$), and `C` is a 2D numpy array with\
+  \ coefficients for each objective function of size ($k \\times n$).\n\nThe function assumes that the\
+  \ provided problem is feasible.\n\nThe function accepts three optional arguments:\n\n- **`std_form`**:\
+  \ Specifies whether the problem is in standard form. If set to `False`, the matrices will be converted\
+  \ to standard form. The default is `True`.\n- **`Initial_basic`**: An optional initial basic feasible\
+  \ basis. If provided, it will be used to initialize the algorithm; otherwise, the method will take the\
+  \ last variables in the problem formulation. The default is `None`.\n- **`num_sol`**: Specifies the\
+  \ maximum number of solutions to return. If the total number of solutions is less than or equal to `num_sol`,\
+  \ it will return all solutions.\n\nReturns:\n**`indices`**: A 2D np.array where each row is the basic\
+  \ variables of each solution. \n**`solutions`**: A 2D np.array where each row is the result vector.\
+  \ \n\n\n4. If you want to use the CORT dataset some files are provided under CORT/binaries. To run with\
+  \ these you can modify `run_cort.py` to your case. For the current allowed cases, see utils.py. To retrive\
+  \ the matrices the following script is used:\n$$\nA,b,C,i = \\text{prob}(\\text{case}=\\text{'Prostate'},\
+  \ \\text{from_files}=\\text{False}, \\text{BDY_downsample}=1, \\text{OAR_downsample}=1, \\text{PTV_downsample}=1)\n\
+  $$\n\nThe function accepts five optional arguments:\n\n- **`case`**: Specifies which case to be ran,\
+  \ default is `Prostate`.\n- **`from_files`**: Specifies if you want to run with data from a binary file\
+  \ in the directory under CORT/binaries.\n- **`BDY_downsample`**: Specifies how many times to downsample\
+  \ the data from BDY. A value of 10 will approximately reduce the number of samples by a factor of 10.\
+  \ Default 1.\n- **`OAR_downsample`**: Specifies how many times to downsample the data from OAR. A value\
+  \ of 10 will approximately reduce the number of samples by a factor of 10. Default 1.\n- **`PTV_downsample`**:\
+  \ Specifies how many times to downsample the data from PTV. A value of 10 will approximately reduce\
+  \ the number of samples by a factor of 10. Default 1.\n\n5. After retrieving the matrices these can\
+  \ be put into the Multi-Objective Simplex method in point 2.\n> **Note:** The implementation MAXIMIZES\
+  \ the objectives. If you have a minimizing problem inputing -C instead of C into the simplex function\
+  \ would turn the problem into a minimization problem.\n"

@@ -1,0 +1,133 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: medical-physics-usz/sct-implants
+url: https://github.com/medical-physics-usz/sct-implants
+platform: github
+description: Generating Synthetic CT for Patients with Hip Implants
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-25T09:48:29Z'
+image_source: https://raw.githubusercontent.com/medical-physics-usz/sct-implants/HEAD/imgs/Dosimetric-Evaluation.png
+heuristic_total_score: 32
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+- Matched 8 support term(s).
+readme_excerpt: "# Attention is Matter for Inclusiveness: Generating Synthetic CT for Patients with Hip\
+  \ Implants\nThe work investigates the use of GAN-based deep learning methods for generating synthetic\
+  \ CTs from MR images in patients with hip implants, addressing the challenges of metal-induced artifacts.\
+  \ The goal is to enable more robust and inclusive MR-only radiotherapy workflows.\n\n---\n## Setup Instructions\n\
+  \n### Installation\n\nClone the github repository:  \n```\ngit clone https://github.com/nczala/sct-metal-implants-paper.git\
+  \  \ncd sct-metal-implants-paper\n```\n\n### Create the environment\nThis project uses [Conda](https://docs.conda.io/en/latest/)\
+  \ for dependency management.\n```\nconda env create -f environment.yml\n```\n\n---\n## Run environment\n\
+  The performance requiring calculations were run on a HPC environment with the open-source job-scheduler\
+  \ SLURM. All scripts in this thesis have been designed accordingly, please see https://slurm.schedmd.com\
+  \ for details. \n\n---\n## Data\n\nThis project was performed using two datasets:\n\n- **Internal dataset**,\
+  \ which cannot be shared publicly due to data protection and privacy restrictions.\n- **SynthRAD2023\
+  \ dataset**, which can be downloaded from [Zenodo](https://zenodo.org/records/7260705).\n\n### Expected\
+  \ structure\n\nPatients are organized into two groups:\n- **With hip implant** → patient IDs start with\
+  \ `Pat0XX`\n- **Without implant** → patient IDs start with `Pat2XX`\n\nFor each patient, the following\
+  \ data are required:\n- **CT** scans (co-registered to MR in-phase)\n- **Dixon MR reconstruction**:\
+  \ in-phase \n- **RTst** folder containing the structure file (contours)\n\nThe raw data should be arranged\
+  \ as follows:\n\n```text\nraw_data/\n    patients_with_hip_implant/\n        Pat001/\n            CT/\
+  \        # Coregistered CT images\n            MR_in/     # MR in-phase\n            RTst/      # Structure\
+  \ file (contours)\n        Pat002/\n            ...\n    patients_without_implant/\n        Pat201/\n\
+  \            CT/\n            MR_in/\n            RTst/\n        Pat202/\n            ...\n```\n\n###\
+  \ SynthRAD2023 Dataset\n\nThe cases used in this study are tagged in the **`synthRAD_2023_dataset.xlsx`**\
+  \ file located in [/synthRAD2023](data/synthRAD2023). The dataset can be downloaded from Zenodo: https://doi.org/10.5281/zenodo.7260705.\n\
+  \nBefore running the experiments, prepare the SynthRAD2023 data as follows:\n\n1. Generate the required\
+  \ anatomical segmentations using TotalSegmentator:\n\n```bash\npip install TotalSegmentator\n\nTotalSegmentator\
+  \ -i <PATH_TO_INPUT_CT> -o <PATH_TO_OUTPUT> --labels femur_left femur_right sacrum urinary_bladder prostate\
+  \ colon\n```\n\n2. Convert the generated segmentations to RTSTRUCT DICOM files:\n\n```bash\nsbatch prepare_synthRAD_data.sh\n\
+  ```\n\nOnce the data has been prepared, continue with the **Data Preprocessing** pipeline.\n\n---\n\
+  ## Data Preprocessing\n\n#### Prerequisites:\n- Set up directory where preprocessed data should be saved\n\
+  - Define **patient_info.xlsx** according to the example in [/configs](/configs/preprocessing) containing\
+  \ information\nabout data set split and slice information per patient. Place it in ```/Excel``` folder\
+  \ of preprocessing directory.\n\n### Running the pipeline\n#### Running from single script\nThe entire\
+  \ pipeline can be run with a single bash script (in [/scripts](/scripts) directory):\n\n```bash\nsbatch\
+  \ preprocessing_pipeline.sh\n```\n\n**Note:** Adjust dataset paths and parameters directly in the bash\
+  \ script.\nJob logs will be saved to the path defined in the --output argument of the script.\n\n####\
+  \ Running step by step\nEach preprocessing stage can also be executed individually via command line\
+  \ in the following order:\n\n```python 01_preprocessing.py --help```  → Converts DICOM to NIfTI, extracts\
+  \ body/metal masks, and saves metadata  \n```python 02_resampling_and_resizing.py --help```  → Resamples\
+  \ to fixed voxel spacing and resizes to desired image size.  \n```python 03_normalization.py --help```\
+  \   → Normalizes CT and MR intensity ranges.  \n```python 04_dataset_creation.py  --help```   → Splits\
+  \ volumes into 2D slices for training/test datasets. \n\nFor the available parameters, use the ```--help```\
+  \ flag or check the python files. The files can be found in the [/sct_metal_implants/preprocessing](/sct_metal_implants/preprocessing)\
+  \ folder.\n\n---\n## Model Training, Inference and Evaluation\n\nThis project builds on the existing\
+  \ GAN framework **Pix2Pix** based on the official [repository](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix).\
+  \  \n\nThe adapted framework is located in the [/external_models](/external_models) directory.  \nDetails\
+  \ on the modifications made for this project can be found in the [README](/external_models/README.md)\
+  \ of the `/external_models` folder.  \n\n#### Prerequisites:\n- Preprocessed data from the **Data Preprocessing**\
+  \ step is required as input.  \n- Make sure to have defined cross-validation splits in **patient_info.xlsx**\
+  \ according to the example in [/configs](/configs/preprocessing).\n\n#### Run Pix2Pix model from single\
+  \ script (training, testing, evaluation)\n\nFor convenience, the model has a wrapper script that executes\
+  \ training, testing, and evaluation in sequence.\nThe scripts can be found in the folder [/scripts](/scripts).\n\
+  \n```sbatch train_test_eval_pix2pix.sh```\n\n#### Procedure (running step by step)\n\n1. **Training**\
+  \  \n   Calls the corresponding `train.py` inside the model framework.  \n\n2. **Inference**  \n   Calls\
+  \ the corresponding `test.py` to generate synthetic CTs from MR.  \n\n3. **Evaluation**  \n   Runs `evaluation.py`\
+  \ to compute image similarity metrics between synthetic and ground-truth CT. \n\n#### Notes:\n- Paths,\
+  \ hyper-parameters, and dataset splits are configured inside `train_test_eval_pix2pix.sh` script.  \n\
+  - For available options in the original frameworks, check:\n  ```\n  python train.py --help\n  python\
+  \ test.py --help\n  python evaluation.py --help\n  ```\n  \n### Pretrained synthRAD model\n\nWe provide\
+  \ pretrained pix2pix models trained on synthRAD data in the [/data/pretrained_models](/data/pretrained_models)\
+  \ directory.  \nSet `CHECKPOINT_DIR` in the inference script to the parent directory containing the\
+  \ experiment folder `NAME`, so that the checkpoint is found at `<CHECKPOINT_DIR>/<NAME>/latest_net_G.pth`.\
+  \  \n\nRun inference and evaluation on the pretrained models using the following bash script, which\
+  \ can be found in the [/scripts](/scripts) folder:\n\n```sbatch test_eval_pretrained_pix2pix.sh``` \
+  \ \n\nPlease configure parameters inside the script.\n\n---\n## Model Evaluation\n\n### Image Similarity\
+  \ Evaluation\n\nThe files can be found in the [/sct_metal_implants/evaluation/image_similarity_evaluation](/sct_metal_implants/evaluation/image_similarity_evaluation)\
+  \ folder.  \nThe image similarity evaluation can be run with the following script. \nFor the available\
+  \ parameters, use the ```--help``` flag or check the python files.\n\n```python evaluation.py --help```\n\
+  \nThe model evaluation is typically applied directly in the train-test-eval pipeline as described above.\n\
+  \n### Dosimetric Evaluation\n![Dosimetric-Evaluation.png](imgs/Dosimetric-Evaluation.png)\nClone the\
+  \ [MatRad](https://github.com/e0404/matRad) repository. \nUse the file ```dosimetric_evaluation_hip_implants.m```\
+  \ to calculate DVH differences\nin the partial arc scenario (avoiding irradiation through implant).\
+  \ And use the file ```dosimetric_evaluation_hip_implants_all_angles.m```\nfor the full arc scenario\
+  \ (irradiating through implant). The files can be found in the [/sct_metal_implants/evaluation/dosimetric_evaluation](/sct_metal_implants/evaluation/dosimetric_evaluation)\
+  \ folder.\n\n\nBefore running the dosimetric evaluation, the synthetic CT NFTI files have to be resized\
+  \ and resampled to\nDICOM files with original voxel and image size. The following script can be used\
+  \ for this: ```sbatch postprocessing.sh```\n\nThe dosimetric evaluation can be run using the bash script:\
+  \ ```dosimetric_evaluation.sh```.\nAdjust dataset paths and parameters directly in the bash script,\
+  \ which can be found in the [/scripts](/scripts) directory.\n\n\n### Gamma analysis\n<p align=\"center\"\
+  >\n    <img src=\"imgs/Gamma-Analysis.png\" alt=\"Description\" width=\"70%\">\n</p>\n\nTo further analyze\
+  \ the agreement between the dose distribution on the sCT and the dose distribution calculated by matRad,\n\
+  run the gamma analysis using the bash script: ```run_gamma_analysis.sh```.\nAdjust dataset paths and\
+  \ parameters directly in the bash script, which can be found in the [/scripts](/scripts) directory.\n\
+  \nIt can also be run from command line:  \n\n```python gamma_analysis.py --help```\n\nFor the available\
+  \ parameters, use the ```--help``` flag or check the python files. The file can be found in [/sct_metal_implants/evaluation/gamma_analysis](/sct_metal_implants/evaluation/gamma_analysis)\
+  \ folder.\n\n---\n## Data Augmentation\n\n### Donor-Receiver (DR) Augmentation\n![Data-Augmentation.png](imgs/Data-Augmentation.png)\n\
+  \nThe DR augmentation pipeline extracts hip implants from a donor patient and inserts them into a receiver\
+  \ patient. \nIt also supports inserting implants from two different donors into the same receiver.\n\
+  \n#### Prerequisites:\n- Define **data_augmentation_configurations.xlsx** according to [example](/configs/data_augmentation)\
+  \ in ```/configs```. \nThis excel contains the information about donor and receiver patients.\n\n####\
+  \ Run DR Augmentation Pipeline\n\nThe DR augmentation pipeline can be run via bash script directly (in\
+  \ [/scripts](/scripts) directory):  \n\n```sbatch donor_receiver_augmentation.sh```  \n\n**Note:** Adjust\
+  \ dataset paths and parameters directly in the bash script.\n\nIt can also be run from command line:\
+  \  \n\n```python run_data_augmentation.py --help```\n\nFor the available parameters, use the ```--help```\
+  \ flag or check the python files. The file can be found in [/sct_metal_implants/data_augmentation/donor_receiver](/sct_metal_implants/data_augmentation/donor_receiver)\
+  \ folder.\n\n### Physics-Guided (Ph) Augmentation\n![Ph-Augmentation.png](imgs/Ph-Augmentation.png)\n\
+  \nThe Ph augmentation differs only in the MR augmentation to the DR approach.\nTo model the susceptibility-driven\
+  \ intravoxel dephasing, this approach employs a sinc-product intravoxel dephasing model driven by local\
+  \ B0 field gradients.\nFirst the off-resonance map is computed using the implant CT mask, from which\
+  \ the spatial field gradients, attenuation maps and finally distorted MR are created.\n\n#### Prerequisites:\n\
+  - Create augmented CTs by using DR augmentation and extract metal masks from augmented CTs.\n- Make\
+  \ sure implants rotated correctly relative to B0. Always check that the orientation is axial, coronal,\
+  \ sagittal in clock wise order when opening df.V on volumeViewer.\n\n#### Run Ph Augmentation Pipeline\n\
+  \nThe code to the pipeline can be found in [/sct_metal_implants/data_augmentation/physics_guided](/sct_metal_implants/data_augmentation/physics_guided)\
+  \ folder.\n\n1. **Off-resonance map creation** (in MatLab; scripts located in located in [/off-freq](/sct_metal_implants/data_augmentation/physics_guided/off-freq)\
+  \ folder)\n   1. Permutations: Rotate metal-implants to have right rotation + Save as ```.MAT``` files.\
+  \  \n    Run ```nifti_to_mat.m``` in MatLab  \n   2. Run ```calculateoff_frq_usz.m``` in MatLab  \n\
+  \    Adjust ```B0``` (field strength) according to your scanner.  \n    Use the ```gamma``` (gyromagnetic\
+  \ ratio) for the imaged nucleus (for proton MRI: *gamma* = 267.51e6 rad/s/T).  \n    Adjust material\
+  \ susceptibility: *titanium alloy* = 154e-6, *cobalt chrom* = 900e-6.\n\n\n2. **MR Augmentation** (in\
+  \ python)  \n    The Ph augmenation pipeline can be run via bash script directly (in [/scripts](/scripts)\
+  \ directory): ```sbatch physics_guided_augmentation.sh``` or from command line: ```python run_Ph_augmentation.py\
+  \ --help```. The pipeline performs the following 3 steps:\n   1. Undistorted MR creation (```create_undistorted_mr.py```)\n\
+  \   2. Permutations: To make sure off-frequency map matches undistorted MR (```permute_B0_maps.py```)\n\
+  \   3. Creation of distorted (augmented) MR   \n    The pipeline is configured for Dixon In-phase images.\
+  \ Please adjust ```TE_ms``` (echo time) and ```BW_pere_pixel``` (bandwidth) a"

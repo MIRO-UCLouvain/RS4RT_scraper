@@ -1,0 +1,92 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: neuralmedicalimages/Stochastic-Dose-Prediction
+url: https://github.com/neuralmedicalimages/Stochastic-Dose-Prediction
+platform: github
+description: Stochastic Dose Prediction for Radiotherapy Using VQ-VAE
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-08-15T05:34:11Z'
+image_source: https://raw.githubusercontent.com/neuralmedicalimages/Stochastic-Dose-Prediction/HEAD/img/img.png
+heuristic_total_score: 22
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 7 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Stochastic Dose Prediction for Radiotherapy Using VQ-VAE\n\nThis repository implements\
+  \ an end-to-end deep learning framework for stochastic dose prediction in radiotherapy planning. Our\
+  \ method uses a VQ-VAE architecture augmented with Adaptive Instance Normalization (ADAIN) and a KL\
+  \ divergence–based loss to capture the inherent variability in clinical dose distributions. By perturbing\
+  \ latent style features with Gaussian noise, the model generates multiple clinically plausible dose\
+  \ maps from CT images and ROI masks.\n\n---\n\n## Table of Contents\n\n- [Overview](#overview)\n- [Methodology](#methodology)\n\
+  \  - [Architecture](#architecture)\n  - [Loss Functions](#loss-functions)\n- [Datasets](#datasets)\n\
+  - [Installation](#installation)\n- [Training & Evaluation](#training--evaluation)\n- [Acknowledgements](#acknowledgements)\n\
+  - [License](#license)\n- [Citation](#citation)\n\n---\n\n## Overview\n\nRadiotherapy treatment planning\
+  \ is complex and inherently variable. Traditional deterministic models produce only a single dose distribution\
+  \ per patient, while our framework generates multiple, clinically acceptable dose distributions. Key\
+  \ features include:\n\n- **VQ-VAE Backbone:** Encodes high-dimensional CT images and ROI masks into\
+  \ a discrete latent space via a learned codebook.\n- **Adaptive Instance Normalization (ADAIN):** Enables\
+  \ the decoder to adapt to varying input distributions.\n- **Stochastic Prediction:** Injects Gaussian\
+  \ noise into style features to produce diverse dose predictions.\n- **KL Divergence Loss:** Aligns the\
+  \ latent distributions of style features (extracted from CT images and ROI masks) and dose-related features\
+  \ (extracted from multi-case dose inputs) to capture clinical variability.\n\n![Fig. 1](./img/img.png)\n\
+  ---\n\n## Methodology\n\n### Architecture\n\nThe overall workflow of the model (illustrated in Fig.\
+  \ 1 of the paper) comprises two main components:\n\n1. **Dose Generation Network (VQ-VAE):**\n   - **Encoder:**\
+  \ Processes the input CT images and ROI masks. It partitions the input into patches and generates latent\
+  \ feature maps through down-sampling convolution blocks.\n   - **Codebook Quantization:** The latent\
+  \ features are discretized by mapping them to the nearest vector in a learned codebook (with L2 normalization).\n\
+  \   - **Decoder:** Receives the stacked quantized features and perturbed style features; it reconstructs\
+  \ the dose distribution using adaptive instance normalization.\n\n2. **Style Feature Extraction & Random\
+  \ Perturbation:**\n   - **Dual CNN Encoders:**  \n     - One extracts style features from the concatenated\
+  \ CT image and ROI masks.  \n     - A second extracts dose-related features from the CT image, ROI masks,\
+  \ and dose distributions from multiple clinical replans.\n   - **KL Divergence Alignment:**  \n    \
+  \ The extracted feature distributions \\( P(i) \\) and \\( Q(i) \\) are aligned using KL divergence:\n\
+  \     \\[\n     D_{KL}(P \\parallel Q) = \\sum_i P(i) \\log \\frac{P(i)}{Q(i)}\n     \\]\n   - **Stochastic\
+  \ Perturbation:**  \n     A Gaussian noise tensor \\( \\epsilon \\) is applied to the computed style\
+  \ feature mean and variance, following the reparameterization:\n     \\[\n     q_{\\text{st\\_re}} =\
+  \ q_{\\text{st\\_mean}} + \\epsilon \\times q_{\\text{st\\_var}}\n     \\]\n     This perturbation encourages\
+  \ diversity in the predicted dose maps.\n\n### Loss Functions\n\nThe overall loss function is a weighted\
+  \ sum of several components:\n\\[\n\\mathcal{L} = \\gamma_d\\,\\mathcal{L}_{\\text{dose}} + \\gamma_m\\\
+  ,\\mathcal{L}_{\\text{mask}} + \\gamma_p\\,\\mathcal{L}_{\\text{perceptual}} + \\gamma_c\\,\\mathcal{L}_{\\\
+  text{codebook}} + \\gamma_k\\, D_{KL}\n\\]\nwhere:\n\n- **\\(\\mathcal{L}_{\\text{dose}}\\):** An \\\
+  ( L_1 \\) loss measuring the voxel-wise difference between predicted and ground truth doses.\n- **\\\
+  (\\mathcal{L}_{\\text{mask}}\\):** A loss term that emphasizes dose differences within critical ROI\
+  \ masks.\n- **\\(\\mathcal{L}_{\\text{perceptual}}\\):** Operates on high-level feature maps to preserve\
+  \ structural details.\n- **\\(\\mathcal{L}_{\\text{codebook}}\\):** Ensures that the encoder outputs\
+  \ match the corresponding codebook entries.\n- **\\(D_{KL}\\):** Enforces consistency between the latent\
+  \ distributions of the style and dose features.\n\n---\n\n## Datasets\n\nTwo datasets are used for training\
+  \ and evaluation:\n\n1. **In-House Dataset:**\n   - Contains CT images, structure contours, and radiotherapy\
+  \ (RT) dose distributions for 76 patients.\n   - Each patient has five slightly varied replanning cases,\
+  \ providing a range of dose distributions.\n   - The images are preprocessed (e.g., resampled to 512×512)\
+  \ and normalized (CT values from –1024 to 2048 HU).\n\n2. **OpenKBP Dataset:**\n   - A public head-and-neck\
+  \ dataset from the 2020 AAPM Grand Challenge with 340 cases.\n   - Partitioned into training (n=200),\
+  \ validation (n=40), and test (n=100) sets.\n   - Consistent image spacing and resolution allow for\
+  \ reproducible dose prediction experiments.\n\n---\n\n## Installation\n\n1. **Clone the Repository:**\n\
+  \   ```bash\n   git clone https://github.com/yourusername/yourrepository.git\n   cd yourrepository\n\
+  \   ```\n\n2. **Create and Activate a Virtual Environment:**\n   ```bash\n   python -m venv venv\n \
+  \  source venv/bin/activate  # For Windows: venv\\Scripts\\activate\n   ```\n\n3. **Install Dependencies:**\n\
+  \   ```bash\n   pip install -r requirements.txt\n   ```\n   *(Make sure to include dependencies such\
+  \ as PyTorch, torchvision, and other required libraries.)*\n\n---\n\n## Training & Evaluation\n\n###\
+  \ Training Details\n\n- **Input Resolution:** 128×128 pixels (modifiable based on dataset characteristics).\n\
+  - **Batch Size:** 16.\n- **Learning Rate:** Initially set to 1e-5 with decay after 100 epochs.\n- **Epochs:**\
+  \ 200.\n- **Data Augmentation:** Applied during training to improve model robustness.\n\nTo start training:\n\
+  ```bash\npython main.py\n```\n\n### Evaluation Metrics\n\nThe model’s performance is assessed using:\n\
+  - **Mean Absolute Error (MAE):**\n  \\[\n  MAE(y, \\hat{y}) = \\frac{1}{N}\\sum_{i=1}^{N} \\left|y_i\
+  \ - \\hat{y}_i\\right|\n  \\]\n- **Dosimetric Metrics:** \\(D_{2}\\), \\(D_{95}\\), and \\(D_{\\text{mean}}\\\
+  ) for targets and organs-at-risk (OARs).\n- **Dose-Volume Histograms (DVH):** To compare the clinical\
+  \ relevance of the predicted dose distributions.\n\nRun evaluation with:\n```bash\npython main.py\n\
+  # command line about training\n```\n\nThis will output:\n- Predicted dose distributions.\n- DVH curves\
+  \ for visual and quantitative analysis.\n\n\n*Detailed performance metrics, error maps, and DVH curves\
+  \ are available in the supplementary documentation and accompanying figures.*\n\n---\n\n## Acknowledgements\n\
+  \nWe thank our collaborators at Fudan University Shanghai Cancer Center and the broader research community\
+  \ in radiotherapy dose prediction. Special thanks to the developers of the OpenKBP dataset.\n\n---\n\
+  \n## License\n\nThis project is licensed under the MIT License. See the [LICENSE](LICENSE) file for\
+  \ further details.\n\n---\n\n## Citation\n\nIf you find this work useful, please cite:\n```bibtex\n\
+  @article{yourcitation2025,\n  title={Stochastic Dose Prediction in Radiotherapy via VQ-VAE with KL Divergence},\n\
+  \  author={Your Name and Collaborators},\n  journal={IEEE Transactions on Medical Imaging},\n  year={2025},\n\
+  \  publisher={IEEE}\n}\n```\n\n---\n\nFeel free to open issues or submit pull requests if you have suggestions\
+  \ for improvements.\n\n"

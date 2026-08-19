@@ -1,0 +1,91 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: lorenzomarini96/epid2dose
+url: https://github.com/lorenzomarini96/epid2dose
+platform: github
+description: Deep learning-based portal dose prediction from transit EPID images.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-18T14:27:29Z'
+image_source: https://raw.githubusercontent.com/lorenzomarini96/epid2dose/HEAD/docs/images/workflow.png
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 6 support term(s).
+readme_excerpt: "# epid2dose\n\n![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)\n\
+  ![TensorFlow](https://img.shields.io/badge/TensorFlow-2.16-FF6F00?logo=tensorflow&logoColor=white)\n\
+  ![License](https://img.shields.io/badge/License-MIT-green.svg)\n[![Documentation Status](https://app.readthedocs.org/projects/epid2dose/badge/?version=latest)](https://epid2dose.readthedocs.io/en/latest/)\n\
+  \n**epid2dose** is an open-source deep learning framework for predicting two-dimensional **Portal Dose\
+  \ (PD)** distributions directly from transit **Electronic Portal Imaging Device (EPID)** images.\n\n\
+  The software implements the inference pipeline described in:\n\n> **Marini L. et al.** *Improving patient\
+  \ treatment accuracy using transit dosimetry with Electronic Portal Imaging Device images and deep learning*.\
+  \ Physics and Imaging in Radiation Oncology, 39, 100966 (2026).\n\n---\n\n## Overview\n\nConventional\
+  \ EPID-based dosimetry requires multiple detector-specific calibration and correction procedures before\
+  \ estimating the corresponding Portal Dose distribution.\n\n**epid2dose** replaces this workflow with\
+  \ a single deep learning model that directly predicts the Portal Dose from the measured transit EPID\
+  \ image.\n\nThe package provides:\n\n- automatic EPID preprocessing;\n- Portal Dose prediction using\
+  \ an ensemble of trained U-Net models;\n- optional gamma-index validation against reference Portal Dose\
+  \ distributions;\n- automatic PDF report generation.\n\n<p align=\"center\">\n<img src=\"docs/images/workflow.png\"\
+  \ width=\"850\">\n</p>\n\n\n## Model architecture\n\nThe prediction model is based on a U-Net convolutional\
+  \ neural network trained to directly estimate two-dimensional Portal Dose distributions from transit\
+  \ EPID images.\n\n<p align=\"center\">\n  <img src=\"docs/images/architecture.png\" width=\"750\">\n\
+  </p>\n\n\n## Example prediction\n\nThe following example shows an input EPID image together with the\
+  \ corresponding predicted Portal Dose distribution.\n\n<p align=\"center\">\n  <img src=\"docs/images/prediction_example.png\"\
+  \ width=\"900\">\n</p>\n---\n\n# Repository structure\n\n```text\nepid2dose\n├── LICENSE\n├── README.md\n\
+  ├── docs\n├── examples\n│   ├── input\n│   │   ├── EPID_001.dcm\n│   │   ├── EPID_002.dcm\n│   │   └──\
+  \ EPID_003.dcm\n│   ├── output\n│   │   ├── predictions\n│   │   └── reports\n│   └── reference\n│  \
+  \     ├── PD_001.txt\n│       ├── PD_002.txt\n│       └── PD_003.txt\n├── models\n│   ├── unet.py\n\
+  │   └── weights\n│       ├── README.md\n├── pd_prediction.py\n├── requirements.txt\n└── utils\n    ├──\
+  \ __init__.py\n    ├── constants.py\n    ├── io.py\n    ├── plotting.py\n    ├── prediction.py\n   \
+  \ ├── preprocessing.py\n    └── report.py\n```\n\nwhere:\n\n- **examples/input/** contains sample EPID\
+  \ DICOM images.\n- **examples/reference/** contains reference Portal Dose distributions.\n- **examples/output/**\
+  \ contains example predictions and validation reports.\n- **models/** contains the U-Net architecture\
+  \ and trained weights.\n- **utils/** contains preprocessing, inference, plotting, and reporting utilities.\n\
+  - \n---\n\n# Installation\n\nClone the repository\n\n```bash\ngit clone https://github.com/lorenzomarini96/epid2dose.git\n\
+  \ncd epid2dose\n```\n\nCreate a virtual environment (recommended)\n\n```bash\npython -m venv .venv\n\
+  ```\n\nActivate it\n\nLinux / macOS\n\n```bash\nsource .venv/bin/activate\n```\n\nWindows\n\n```bash\n\
+  .venv\\Scripts\\activate\n```\n\nInstall the required packages\n\n```bash\npip install -r requirements.txt\n\
+  ```\n\n---\n\n# Download trained weights\n\nThe trained network weights are distributed separately because\
+  \ they exceed GitHub file size limits.\n\nDownload the weights from:\n\n**[(link here)](https://drive.google.com/drive/folders/1kV3Vw6ueXHsnLeENCj65CruUSFxBfPMC?usp=drive_link)**\n\
+  \nand extract them inside\n\n```text\nmodels/weights/\n```\n\nThe expected folder structure is\n\n```text\n\
+  models/\n└── weights/\n    └── cv_1/\n        ├── model_1/\n        ├── model_2/\n        ├── model_3/\n\
+  \        ├── model_4/\n        └── model_5/\n```\n\n---\n\n# Example dataset\n\nThe repository contains\
+  \ a small example dataset:\n\n```text\nexamples/\n├── input/\n│     EPID DICOM images\n│\n├── reference/\n\
+  │     Portal Dose reference (.txt)\n│\n└── output/\n```\n\n---\n\n# Running inference\n\nPredict Portal\
+  \ Dose images\n\n```bash\npython pd_prediction.py \\\n-i examples/input \\\n-o examples/output\n```\n\
+  \nTo additionally generate a gamma-index validation report\n\n```bash\npython pd_prediction.py \\\n\
+  -i examples/input \\\n-o examples/output \\\n--reference_dir examples/reference \\\n--report\n```\n\n\
+  ---\n\n# Output\n\nThe software automatically creates\n\n```text\noutput/\n\n├── predictions/\n│   \
+  \  PD_*.npy\n│\n└── reports/\n      prediction_overview.pdf\n      validation_report.pdf\n```\n\n---\n\
+  \n# Validation report\n\nIf reference Portal Dose distributions are available, the software automatically\
+  \ computes gamma-index analysis and generates a validation report.\n\nThe report includes\n\n- reference\
+  \ Portal Dose;\n- predicted Portal Dose;\n- gamma-index histogram;\n- gamma passing rates.\n\n<p align=\"\
+  center\">\n<img src=\"docs/images/validation_report.png\" width=\"900\">\n</p>\n\n---\n\n# Requirements\n\
+  \nThe software has been tested using\n\n```\ntensorflow==2.16.2\nnumpy==1.26.4\nscipy==1.14.1\nh5py==3.12.1\n\
+  matplotlib==3.10.0\nopencv-python==4.10.0.84\npydicom==3.0.1\npymedphys==0.40.0\ntqdm==4.67.1\nfpdf2==2.8.7\n\
+  ```\n\nApple Silicon users may optionally install `tensorflow-metal` to enable GPU acceleration.\n\n\
+  ---\n\n# Citation\n\nIf you use this software in your work, please cite\n\n```bibtex\n@article{MARINI2026100966,\n\
+  title = {Improving patient treatment accuracy using transit dosimetry with Electronic Portal Imaging\
+  \ Device images and deep learning},\njournal = {Physics and Imaging in Radiation Oncology},\nvolume\
+  \ = {39},\npages = {100966},\nyear = {2026},\ndoi = {https://doi.org/10.1016/j.phro.2026.100966},\n\
+  author = {Lorenzo Marini and Carlotta Mozzi and Michele Avanzo and Francesca Lizzi and Icro Meattini\
+  \ and Giovanni Pirrone and Alessandra Retico and Emmanuel Uwitonze and Aafke Christine Kraan and Cinzia\
+  \ Talamonti}\n}\n```\n\n---\n\n# Acknowledgements\n\nThis software was developed during the **38th Cycle\
+  \ of the Italian National PhD Programme in Artificial Intelligence** at the **University of Pisa**,\
+  \ in collaboration with the **University of Florence**, as part of the **InTrEPID** research project.\n\
+  \nI would like to express my deepest gratitude to **Dr. Francesca Lizzi** and **Dr. Aafke Christine\
+  \ Kraan** for their continuous supervision, insightful scientific guidance, and unwavering support throughout\
+  \ my PhD research.\n\nI would also like to thank all collaborators who contributed to the development,\
+  \ validation, and clinical evaluation of the proposed methodology:\n\n- Dr. Carlotta Mozzi\n- Dr. Michele\
+  \ Avanzo\n- Dr. Francesca Lizzi\n- Prof. Icro Meattini\n- Dr. Giovanni Pirrone\n- Dr. Emmanuel Uwitonze\n\
+  - Dr. Aafke Christine Kraan\n- Prof. Cinzia Talamonti\n- Dr. Alessandra Retico\n\nThe authors gratefully\
+  \ acknowledge the support of the **Department of Computer Science, University of Pisa**, the **INFN\
+  \ Pisa Division**, and, in particular, the **INFN Pisa Computing Centre** for providing the computational\
+  \ resources that made the training and validation of the deep learning models possible.\n\nI also acknowledge\
+  \ the collaboration of the **Medical Physics Unit of Careggi University Hospital (Florence)** for supporting\
+  \ the experimental acquisition and clinical validation activities.\n\n---\n\n# License\n\nThis project\
+  \ is distributed under the MIT License.\n"

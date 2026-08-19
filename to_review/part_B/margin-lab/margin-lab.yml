@@ -1,0 +1,172 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: marina15rodriguez/margin-lab
+url: https://github.com/marina15rodriguez/margin-lab
+platform: github
+description: Calculation and evaluation of margins for radiotherapy treatment planning in different clinical
+  scenarios
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-03-29T15:15:58Z'
+image_source: null
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 8 support term(s).
+readme_excerpt: '# PTV Margin Analysis for Radiotherapy
+
+
+  Analysis of Planning Target Volume (PTV) margins for five respiratory motion management strategies in
+  radiotherapy, developed as part of the LGBIO2070 course at UCLouvain.
+
+
+  ## Overview
+
+
+  The Van Herk margin formula ensures ≥95% CTV coverage for 90% of patients:
+
+
+  ```
+
+  M = α·Σ_total + β·(√(σ_total² + σ_p²) − σ_p)
+
+  ```
+
+
+  where α=2.5, β=1.64, Σ is the total systematic error, σ is the total random error, and σ_p is the beam
+  penumbra.
+
+
+  Five motion management strategies are compared across three axes (LR, CC, AP):
+
+
+  | Strategy | Description |
+
+  |---|---|
+
+  | **ITV** | Internal Target Volume — encompasses full motion range |
+
+  | **MidPosition** | Scan at mid-exhale; residual motion treated as random error |
+
+  | **Free Breathing** | Motion contributes to both systematic and random errors |
+
+  | **Gating** | Beam active only near exhale; residual motion ≈ A/9 |
+
+  | **Tracking** | Real-time tumour tracking; no residual motion margin |
+
+
+  ## Project Structure
+
+
+  ```
+
+  margin-lab/
+
+  ├── src/
+
+  │   ├── margins.py         # Van Herk formula for all five strategies
+
+  │   ├── motion_analysis.py # sin⁶ breathing trajectory, histogram, analytical PDF
+
+  │   ├── linear_fit.py      # Linear regression → simplified margin law
+
+  │   └── main.py            # Full analysis pipeline
+
+  ├── notebooks/
+
+  │   └── marginlab.ipynb    # Original lab notebook
+
+  ├── reports/
+
+  │   └── marginlabfinal.pdf # Full report with results
+
+  ├── results/               # Generated plots (not tracked)
+
+  ├── requirements.txt
+
+  └── README.md
+
+  ```
+
+
+  ## Installation
+
+
+  ```bash
+
+  git clone https://github.com/marina15rodriguez/margin-lab.git
+
+  cd margin-lab
+
+  pip install -r requirements.txt
+
+  ```
+
+
+  ## Usage
+
+
+  ```bash
+
+  python src/main.py
+
+  ```
+
+
+  Results are saved to `results/`.
+
+
+  ## Physics
+
+
+  ### Van Herk Margin Formula
+
+
+  PTV margin = CTV → PTV expansion that accounts for:
+
+  - **Σ_BL**: baseline shift systematic error
+
+  - **Σ_SETUP**: setup systematic error
+
+  - **σ_BL**, **σ_SETUP**: corresponding random errors
+
+  - **σ_tm**: tumour motion random component (strategy-dependent)
+
+
+  ### Breathing Motion Model
+
+
+  The respiratory trajectory is modelled as:
+
+  ```
+
+  x(t) = A · sin⁶(2π·t/T)
+
+  ```
+
+  This produces a characteristic PDF with peaks near exhale (x ≈ 0) due to the natural dwell time of breathing.
+
+
+  ### Simplified Margin Law
+
+
+  Linear regression on M(σ) = 2.5Σ + 1.64·(√(σ²+σ_p²) − σ_p) yields the approximation:
+
+  ```
+
+  M ≈ 2.5Σ + 0.7σ''
+
+  ```
+
+
+  ## Authors
+
+
+  Marina Rodríguez — LGBIO2070, UCLouvain
+
+  '

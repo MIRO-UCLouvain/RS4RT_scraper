@@ -1,0 +1,631 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: georgeDV2002/metastasis_radiomics
+url: https://github.com/georgeDV2002/metastasis_radiomics
+platform: github
+description: This repository implements a radiomics machine learning pipeline for lesion-level brain metastasis
+  classification using multi-modal MRI. The workflow includes feature extraction, correlation filtering,
+  L1-based ranking, top-K feature selection, model optimization (LR, RF, LightGBM, SVC), calibration,
+  and SHAP-based explainability.
+license: BSD-3-Clause
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-13T23:16:25Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: '# Radiomics3 — End-to-End Radiomics Machine Learning Pipeline
+
+
+  ## Overview
+
+
+  This repository implements a fully reproducible radiomics machine learning pipeline for lesion-level
+  classification using multi-modal MRI features. The workflow covers dataset construction, feature redundancy
+  reduction, supervised ranking, model optimization, probability calibration, evaluation, and explainability.
+  The dataset folder and excel file are used exactly as downloaded from the TCIA website: https://www.cancerimagingarchive.net/collection/pretreat-metstobrain-masks/
+
+
+  The pipeline is designed to:
+
+
+  - prevent **patient-level data leakage**
+
+  - evaluate performance across multiple feature subset sizes (Top-K)
+
+  - compare multiple model families under identical preprocessing
+
+  - generate standardized validation and independent test outputs
+
+  - produce publication-ready figures and statistical summaries
+
+
+  Supported models:
+
+
+  - Logistic Regression (Elastic Net)
+
+  - Random Forest
+
+  - LightGBM
+
+  - Support Vector Classifier (externally calibrated)
+
+
+  ---
+
+
+  ## Repository Structure
+
+
+  ```
+
+  radiomics3_new4/
+
+  │
+
+  ├── config.json                     # Central pipeline configuration
+
+  ├── requirements.txt                # Python dependencies
+
+  │
+
+  ├── collect_dataset__2.py           # Build ML-ready dataset
+
+  ├── stats__3.py                     # Baseline clinical statistics
+
+  ├── rank_and_split__4.py            # Feature filtering + Top-K splits
+
+  │
+
+  ├── logreg__5a.py                   # Logistic Regression training
+
+  ├── lightGBM__5b.py                 # LightGBM training
+
+  ├── randfor__5c.py                  # Random Forest training
+
+  ├── svc__5d.py                      # SVC training
+
+  │
+
+  ├── posthoc_calibrate_probs__7.py   # Probability calibration
+
+  ├── collect_test_results__6.py      # Aggregate model outputs
+
+  ├── collect_val_test_reports.py     # Validation/Test summaries
+
+  ├── top3_per_model_family.py        # Best Top-K selection
+
+  │
+
+  ├── corr_plot__4a.py
+
+  ├── corr_plot__4b.py
+
+  ├── violin_plot__4c.py
+
+  ├── violin_plot__4d.py              # Correlation analysis plots
+
+  │
+
+  ├── make_rank4_figs.py              # Ranking visualizations
+
+  ├── plot_model_family_distribution_test_auc.py
+
+  ├── print_confusion_mat.py
+
+  │
+
+  └── pipeline_extract_catalogue__1.py
+
+  ```
+
+
+  Generated experiment folders:
+
+
+  ```
+
+  top_{K}_features/
+
+  ├── traincv_set__4_topK.xlsx
+
+  ├── test_set__4_topK.xlsx
+
+  ├── *_oof_probs.csv
+
+  ├── *_test_probs.csv
+
+  └── *_posttest/
+
+  ```
+
+
+
+  ---
+
+
+  ## Installation
+
+
+  ### 1. Create virtual environment
+
+
+  ```bash
+
+  python -m venv venv
+
+  source venv/bin/activate
+
+  ```
+
+
+  ### 2. Install Dependencies
+
+
+  ```bash
+
+  pip install -r requirements.txt
+
+  ```
+
+
+  ---
+
+
+  ---
+
+
+  ## Configuration (`config.json`)
+
+
+  All pipeline behaviour is controlled through a single configuration file:
+
+
+  ```
+
+  config.json
+
+  ```
+
+
+  This file centralizes dataset paths, experiment parameters, and training
+
+  settings, allowing the entire workflow to run without modifying source code.
+
+
+  ---
+
+
+  ### Location
+
+
+  The configuration file must be placed in the **repository root**:
+
+
+  ```
+
+  radiomics3_new4/
+
+  ├── config.json   ← required here
+
+  ├── collect_dataset__2.py
+
+  ├── rank_and_split__4.py
+
+  ...
+
+  ```
+
+
+  All pipeline scripts load parameters using:
+
+
+  ```bash
+
+  python <script>.py --config config.json
+
+  ```
+
+
+  ---
+
+
+  ### Configuration Sections
+
+
+  #### Dataset Paths
+
+
+  Defines all input and output locations, including:
+
+
+  - radiomics feature tables
+
+  - clinical metadata files
+
+  - experiment output directories
+
+
+  These paths should be updated first when running the pipeline on a new system.
+
+
+  ---
+
+
+  #### Splitting Parameters
+
+
+  Controls leakage-safe dataset partitioning:
+
+
+  - patient/group identifiers
+
+  - train/test split ratio
+
+  - random seed for reproducibility
+
+
+  All splits are performed at the **patient level** to prevent data leakage.
+
+
+  ---
+
+
+  #### Feature Selection Settings
+
+
+  Defines preprocessing and ranking behaviour:
+
+
+  - variance filtering thresholds
+
+  - missingness filtering limits
+
+  - correlation pruning threshold
+
+  - supervised ranking parameters
+
+  - evaluated Top-K feature sizes
+
+
+  Changing these values affects dimensionality reduction and model input size.
+
+
+  ---
+
+
+  #### Model Training Parameters
+
+
+  Shared configuration used across all model scripts:
+
+
+  - cross-validation settings
+
+  - Optuna optimization trials
+
+  - random seeds
+
+  - evaluation metrics
+
+
+  Model hyperparameters are optimized automatically during training.
+
+
+  ---
+
+
+  #### Calibration & Evaluation
+
+
+  Controls post-training evaluation:
+
+
+  - probability calibration settings
+
+  - evaluation and reporting options
+
+  - explainability generation (e.g., SHAP)
+
+
+  ---
+
+
+  ### Recommended Workflow
+
+
+  1. Copy `config.json`.
+
+  2. Update dataset paths for your environment.
+
+  3. Keep remaining parameters unchanged for reproducibility.
+
+  4. Run pipeline scripts using:
+
+
+  ```bash
+
+  python <script>.py --config config.json
+
+  ```
+
+
+  ---
+
+
+  ### Reproducibility Note
+
+
+  Because all experimental parameters are stored in `config.json`,
+
+  experiments can be fully reproduced by sharing:
+
+
+  - repository code
+
+  - the configuration file
+
+  - the dataset version
+
+
+  ---
+
+
+  ## Pipeline Execution
+
+
+  The pipeline **must be executed in order**.
+
+
+  ---
+
+
+  ### Step 1 — Dataset Construction
+
+
+  Creates the ML-ready radiomics table.
+
+
+  ```bash
+
+  python collect_dataset__2.py --config config.json
+
+  ```
+
+
+  **Output:**
+
+
+  - `dataset__2.xlsx`
+
+
+  ---
+
+
+  ### Step 2 — Baseline Statistics (Optional)
+
+
+  Computes clinical variable comparisons between classes.
+
+
+  ```bash
+
+  python stats__3.py --config config.json
+
+  ```
+
+
+  ---
+
+
+  ### Step 3 — Feature Filtering and Ranking
+
+
+  Performs:
+
+
+  - variance filtering
+
+  - missingness filtering
+
+  - correlation pruning
+
+  - supervised feature ranking
+
+  - patient-level train/test split
+
+
+  ```bash
+
+  python rank_and_split__4.py --config config.json
+
+  ```
+
+
+  Creates multiple experiment folders:
+
+
+  ```
+
+  top_10_features/
+
+  top_20_features/
+
+  ...
+
+  top_440_features/
+
+  ```
+
+
+  Each folder contains **leakage-safe datasets**.
+
+
+  ---
+
+
+  ### Step 4 — Model Training
+
+
+  Run models independently for each Top-K subset.
+
+
+  **Example:**
+
+  ```
+
+
+  ---
+
+
+  ### Step 7 — Select Best Configurations
+
+
+  Identify best Top-K configurations per model:
+
+
+  ```bash
+
+  python top3_per_model_family.py
+
+  ```
+
+
+  ---
+
+
+  ## Correlation & Redundancy Analysis (Optional)
+
+
+  Visualize feature redundancy before and after filtering:
+
+
+  ```bash
+
+  python violin_plot__4c.py
+
+  python violin_plot__4d.py
+
+  ```
+
+
+  Outputs correlation distribution figures and summary statistics.
+
+
+  ---
+
+
+  ## Outputs
+
+
+  Typical outputs include:
+
+
+  - ROC curves and AUC metrics
+
+  - calibrated probability predictions
+
+  - confusion matrices
+
+  - feature importance analyses
+
+  - SHAP explainability plots
+
+  - correlation reduction visualizations
+
+
+  All outputs are stored inside each `top_K_features/` directory.
+
+
+  ---
+
+
+  ## Design Principles
+
+
+  ### Leakage Prevention
+
+
+  - Patient-level splitting
+
+  - Feature ranking learned only on training data
+
+  - Calibration fitted using OOF predictions
+
+
+  ### Reproducibility
+
+
+  - Centralized configuration (`config.json`)
+
+  - Deterministic random seeds
+
+  - Saved model artifacts
+
+
+  ### Modular Experiments
+
+
+  Each Top-K folder represents a fully independent experiment and can be reproduced separately.
+
+
+  ---
+
+
+  ## Requirements
+
+
+  See:
+
+
+  ```
+
+  requirements.txt
+
+  ```
+
+
+  Main dependencies include:
+
+
+  - scikit-learn
+
+  - lightgbm
+
+  - numpy
+
+  - pandas
+
+  - matplotlib
+
+  - shap
+
+  - optuna
+
+
+  ---
+
+
+  ## Citation
+
+
+  If you use this repository in academic work, please cite the associated manuscript (to be added upon
+  publication).
+
+
+  ---
+
+
+  ## License
+
+
+  LICENCE file included in the repository.
+
+  '

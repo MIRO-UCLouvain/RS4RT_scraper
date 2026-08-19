@@ -1,0 +1,81 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: pzaffino/Radiomics.jl
+url: https://github.com/pzaffino/Radiomics.jl
+platform: github
+description: Julia library for radiomics
+license: NOASSERTION
+language: Julia
+keywords:
+- julia
+- medical-imaging
+- radiomics
+stars: 11
+updated_at: '2026-08-07T15:29:33Z'
+image_source: https://raw.githubusercontent.com/pzaffino/Radiomics.jl/refs/heads/main/Logo%20Radiomicsjl.png
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# **Welcome to Radiomics.jl**\n<div align=center>\n  <a href=\"https://github.com/pzaffino/radiomics.jl\"\
+  >\n  <img src=\"https://raw.githubusercontent.com/pzaffino/Radiomics.jl/refs/heads/main/Logo%20Radiomicsjl.png\"\
+  \ alt=\"Logo Radiomicsjl\" width=\"500\"/>\n</a>\n</div>\n</br>\n\n**Radiomics.jl** is an open-source,\
+  \ [IBSI](https://theibsi.github.io/) compliant Julia library for extracting radiomics features from\
+  \ medical images. \n\nYou can integrate the library with your preferred programming language: Radiomics.jl\
+  \ is also  **compatible with Python, C++, R, and many others**!\n\nFor complete documentation, visit\
+  \ the [official website](https://www.radiomicsjl.org).\n\n\U0001F4E7 If you're interested in contributing\
+  \ to the project, please contact us via email at <a href=\"mailto:p.zaffino&#64;unicz.it\">p.zaffino@unicz.it</a>.\n\
+  \n\n\n\n- [Welcome to Radiomics.jl](#welcome-to-radiomicsjl)\n  - [Implemented features](#implemented-features)\n\
+  \  - [Why choose Radiomics.jl for your project](#why-choose-radiomicsjl-for-your-project)\n- [Getting\
+  \ started](#getting-started)\n  - [Example](#example)\n- [Multi threading](#multi-threading)\n- [Using\
+  \ Radiomics.jl from Python](#using-radiomicsjl-from-python)\n  - [Setup](#setup)\n  - [Feature extraction](#feature-extraction)\n\
+  - [Discalaimer](#discalaimer)\n\n## **Implemented features**\nRight now, the implemented features are:\n\
+  - first-order features\n- 2D shape features\n- 3D shape features\n- GLCM features\n- GLDM features\n\
+  - GLRLM features\n- GLSZM features\n- NGTDM features\n\n## **Why choose Radiomics.jl for your project**\n\
+  - **Full IBSI Compliance**: Every feature is calculated according to IBSI 1 - Phase 1 standards—our\
+  \ unit tests are strictly validated against IBSI sample images (go ahead, take a look!).\n- **User-Friendly\
+  \ API:** Simplify your workflow by extracting features from multiple labels with a single call. Handling\
+  \ 2D slices or multiple planes/slices \"in one shot\" has never been easier.\n- **First-class 2D support:**\
+  \ 2D analysis is treated with the same priority as 3D; computing features for a 2D matrix is just as\
+  \ seamless as the 3D case.\n- **Deep Insights:** While other radiomics libraries focus only on final\
+  \ scalar values, Radiomics.jl also lets you easily get the raw matrices used under the hood for texture\
+  \ feature calculations.\n- **No silent failures:** If something looks suspicious or ambiguous—like disconnected\
+  \ segmentation islands or oversized binning—the library raises clear warnings.\n- **Native Multi-threading:**\
+  \ The engine is engineered from the ground up to take full advantage of multi-threaded performance.\n\
+  - **Cross-language ready:** Radiomics.jl delivers a frictionless experience across languages, allowing\
+  \ Python, C++, R, and many other language developers to call Julia’s power with ease.\n\n# **Getting\
+  \ started**\nTo install Radiomics.jl, simply run:\n\n```julia\nimport Pkg\nPkg.add(\"Radiomics\")\n\
+  ```\nYou can install Radiomics.jl on either your local machine or Google Colab.\n\n## **Example**\n\
+  Once the library is installed, radiomics features can be extracted as reported in the following example\
+  \ (sample data shipped with the library are used):\n\n```julia\nusing NIfTI\nusing Radiomics\n\nct =\
+  \ niread(\"sample_data/CTChest.nii.gz\")\nmask = niread(\"sample_data/Lungs.nii.gz\")\nspacing = [ct.header.pixdim[2],\
+  \ ct.header.pixdim[3], ct.header.pixdim[4]]\n\nradiomic_features = Radiomics.extract_radiomic_features(ct.raw,\
+  \ mask.raw, spacing)\n```\n# Multi threading\nRadiomics.jl can be run in multi-threading mode (highly\
+  \ recommended to speed up the computation).\n\nTo do this, you can define and set the following environment\
+  \ variable: JULIA_NUM_THREADS=auto\n\nOn a Linux system, the .bashrc file can be edited by adding the\
+  \ line:\n\n```bash\nexport JULIA_NUM_THREADS=auto\n```\n\nIf you want to use Radiomics.jl from Python\
+  \ by using Juliacall (see below), add also this line:\n\n```bash\nexport PYTHON_JULIACALL_HANDLE_SIGNALS=yes\n\
+  ```\n\n# Using Radiomics.jl from Python\nRadiomics.jl can be used directly from Python in a simple and\
+  \ convenient way.\n\n## Setup\n\nJuliacall acts as a bridge between Python and Julia.\n\nInstall it\
+  \ via:\n\nIf Julia is not already installed on your system, juliacall will download and use its own\
+  \ embedded version.\n\n```bash\npip install juliacall\n```\n\nTo install the Radiomics.jl package, run\
+  \ the following in Python:\n\n```python\nfrom juliacall import Main as jl\njl.seval('import Pkg; Pkg.add(\"\
+  Radiomics\")')\n```\n\n## Feature extraction\n\nOnce the environment is set up, you can extract radiomic\
+  \ features as shown below:\n\n```python\nimport SimpleITK as sitk\nimport numpy as np\n\nfrom juliacall\
+  \ import Main as jl\njl.seval(\"using Radiomics\")\n\nct_sitk = sitk.ReadImage('DATA_PATH/ct.nii.gz')\n\
+  mask_sitk = sitk.ReadImage('DATA_PATH/mask.nii.gz')\n\nct = sitk.GetArrayFromImage(ct_sitk)\nmask =\
+  \ sitk.GetArrayFromImage(mask_sitk)\n\nspacing = ct_sitk.GetSpacing()\n\nradiomic_features = jl.Radiomics.extract_radiomic_features(ct,\
+  \ mask, spacing)\n```\n# Using Radiomics.jl from Docker\nRun the container mounting the current directory\
+  \ as /data and passing the CT image and mask as arguments.\n```bash\ndocker run -it -v $(pwd):/data\
+  \ ghcr.io/pzaffino/radiomics.jl:latest /data/ct.nii.gz /data/mask.nii.gz\n```\nRun the container and\
+  \ save the results to a CSV file.\n```bash\ndocker run -it -v $(pwd):/data ghcr.io/pzaffino/radiomics.jl:latest\
+  \ /data/ct.nii.gz /data/mask.nii.gz -o /data/results.csv\n```\nRun the container with custom parameters.\n\
+  ```bash\ndocker run -it -v $(pwd):/data ghcr.io/pzaffino/radiomics.jl:latest /data/ct.nii.gz /data/mask.nii.gz\
+  \ --keep_largest_only false\n```\nRun the container with multi-threading enabled.\n```bash\ndocker run\
+  \ -it -e JULIA_NUM_THREADS=auto -v $(pwd):/data ghcr.io/pzaffino/radiomics.jl:latest /data/ct.nii.gz\
+  \ /data/mask.nii.gz --keep_largest_only false\n```\n# Discalaimer\nThis software is for research purposes\
+  \ only.\nIt is NOT intended for clinical use, diagnosis, or treatment.\nIt has NOT been cleared or approved\
+  \ by the FDA (USA), CE (EU), or any other regulatory body.\nUse at your own risk.\n"

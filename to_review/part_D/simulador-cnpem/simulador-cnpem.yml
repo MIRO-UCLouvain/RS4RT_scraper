@@ -1,0 +1,92 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: andre-meneses/simulador-cnpem
+url: https://github.com/andre-meneses/simulador-cnpem
+platform: github
+description: A Proton Beam Therapy Simulator
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2024-10-27T21:36:39Z'
+image_source: https://raw.githubusercontent.com/andre-meneses/simulador-cnpem/HEAD/figures/dispositivos/dispositivo.jpeg
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 3 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# Proton Beam Therapy Simulator\n\n## Table of Contents\n1. [Project Overview](#project-overview)\n\
+  \   - [Context](#context)\n   - [Physical Implementation](#physical-implementation)\n   - [System Architecture](#system-architecture)\n\
+  \   - [Implementation Details](#implementation-details)\n     * [Calibration Process](#1-calibration-process)\n\
+  \     * [Tomographic Imaging](#2-tomographic-imaging)\n     * [Irradiation Process](#3-irradiation-process)\n\
+  \   - [Results](#results)\n\n2. [Technical Documentation](#technical-documentation)\n   - [Software\
+  \ Architecture](#software-architecture)\n     * [Calibration Modules](#calibration-modules)\n     *\
+  \ [Auxiliary Modules](#auxiliary-modules)\n     * [Core Processing Modules](#core-processing-modules)\n\
+  \     * [Execution Modules](#execution-modules)\n   - [Usage Instructions](#usage-instructions)\n  \
+  \   * [System Setup](#system-setup)\n     * [Running the Simulation](#running-the-simulation)\n    \
+  \ * [Configuration](#configuration)\n   - [Key Dependencies](#key-dependencies)\n   - [Development Notes](#development-notes)\n\
+  \   - [Contributing](#contributing)\n   - [License](#license)\n\n## Project Overview\n\n### Context\n\
+  Proton beam therapy represents a promising frontier in oncological treatment, offering advantages over\
+  \ conventional radiotherapy modalities. The ability of protons to deposit most of their energy at the\
+  \ Bragg peak allows for concentrated radiation dose delivery to tumors while minimizing exposure to\
+  \ surrounding healthy tissues. This characteristic is particularly advantageous for tumors located near\
+  \ vital organs and in pediatric treatments.\n\nHowever, widespread adoption of proton therapy faces\
+  \ technical and economic challenges, including high infrastructure costs and the need for extreme precision\
+  \ in beam targeting. This project addresses these challenges through an innovative approach of rotating\
+  \ the patient instead of the beam, potentially reducing operational costs and increasing treatment accessibility.\n\
+  \n### Physical Implementation\nBelow are images of the actual device implementation:\n\n<table>\n<tr>\n\
+  <td><img src=\"figures/dispositivos/dispositivo.jpeg\" alt=\"Device with calibration plate\" width=\"\
+  400\"/></td>\n<td><img src=\"figures/dispositivos/dispositivo_tumor.jpeg\" alt=\"Device with tumor\"\
+  \ width=\"400\"/></td>\n</tr>\n<tr>\n<td align=\"center\"><em>Device setup with calibration plate</em></td>\n\
+  <td align=\"center\"><em>Device setup with tumor model</em></td>\n</tr>\n</table>\n\nThe device consists\
+  \ of a goniometer placed between two cameras, with a laser system controlled by mirrors for beam targeting.\
+  \ The setup allows for precise calibration and tumor targeting through controlled rotations and beam\
+  \ positioning.\n\n### System Architecture\n\n<img src=\"figures/diagrama_dispositivo.png\" alt=\"System\
+  \ diagram\" width=\"800\"/>\n\nThe simulator consists of several key components:\n\n- **Goniometer**:\
+  \ Simulates patient chair rotation, positioned between two cameras\n- **Cameras**: \n  - Camera A: Acts\
+  \ as a tomograph, capturing tumor images at various angles\n  - Camera B: Handles laser calibration\
+  \ and position verification\n- **Laser System**:\n  - Controlled via MCP board\n  - Directed by two\
+  \ mirrors (X and Y axes)\n  - Powered by FAST-PS sources\n- **Control Software**: Manages calibration,\
+  \ imaging, and beam targeting\n\n### Implementation Details\n\n#### 1. Calibration Process\nThe calibration\
+  \ involves multiple steps:\n- Alignment of calibration plate with Camera A\n- 89-degree rotation for\
+  \ laser calibration\n- Manual and fine-tuned laser positioning\n- Centroid detection for precise targeting\n\
+  \n#### 2. Tomographic Imaging\n- Captures 360 tumor images at 1-degree intervals\n- Generates 3D tumor\
+  \ model from silhouettes\n- Converts pixel coordinates to cylindrical coordinates for processing\n\n\
+  <img src=\"figures/models/ang1mod.png\" alt=\"3D Model View 1\" width=\"200\"/> <img src=\"figures/models/ang2mod.png\"\
+  \ alt=\"3D Model View 2\" width=\"200\"/> <img src=\"figures/models/ang3mod.png\" alt=\"3D Model View\
+  \ 3\" width=\"200\"/> <img src=\"figures/models/ang4mod.png\" alt=\"3D Model View 4\" width=\"200\"\
+  />\n\n*Different views of the generated 3D tumor model*\n\n#### 3. Irradiation Process\n- Establishes\
+  \ voltage-to-pixel correspondence through linear interpolation\n- Segments tumor model into slices for\
+  \ depth simulation\n- Rotates coordinate system to match physical tumor position\n- Controls laser targeting\
+  \ based on transformed coordinates\n\n### Results\n\nThe project achieved its primary objectives:\n\
+  1. Successfully developed robust software for proton irradiation simulation\n2. Implemented precise\
+  \ calibration modules\n3. Created accurate 3D tumor modeling\n4. Demonstrated effective beam targeting\
+  \ across multiple angles and depths\n\nAreas identified for future improvement include:\n- Enhanced\
+  \ calibration precision\n- Refined depth simulation techniques\n- Improved voltage parameter interpolation\
+  \ methods\n\n## Technical Documentation\n\n### Software Architecture\n\nThe system comprises 12 core\
+  \ modules:\n\n#### Calibration Modules\n1. **Goniometer.py**\n   - Manages goniometer movement and communication\n\
+  \   - Handles serial communication and angle positioning\n   - Integrates with imaging system for tomography\n\
+  \n2. **Painter.py**\n   - Controls laser movement and calibration\n   - Manages beam targeting and tumor\
+  \ irradiation\n   - Implements calibration routines\n\n3. **Image_processor.py**\n   - Processes captured\
+  \ images\n   - Detects contours and centroids\n   - Handles tumor identification\n\n#### Auxiliary Modules\n\
+  4. **Socket_connection.py**\n   - Manages network communications\n   - Handles device connectivity\n\
+  \n5. **Laser.py**\n   - Controls laser operation via MCP2210\n   - Manages beam activation timing\n\n\
+  6. **Camera.py**\n   - Interfaces with imaging devices\n   - Handles image capture and storage\n\n7.\
+  \ **Mcp.py**\n   - Configures USB-to-SPI bridge\n   - Manages hardware communication\n\n#### Core Processing\
+  \ Modules\n8. **Model_generator.py**\n   - Converts 2D silhouettes to 3D models\n   - Handles coordinate\
+  \ transformations\n\n9. **Tumour.py**\n   - Represents tumor in 3D space\n   - Manages rotations and\
+  \ transformations\n\n#### Execution Modules\n10. **Run.py**\n    - Main execution orchestrator\n   \
+  \ - Manages simulation workflow\n\n11. **Function_chain.py**\n    - Implements linked list of execution\
+  \ functions\n    - Controls program flow\n\n### Usage Instructions\n\n1. **System Setup**\n```bash\n\
+  # Clone the repository\ngit clone https://github.com/andre-meneses/simulador-cnpem\n\n# Install dependencies\
+  \ (ensure Python 3.x is installed)\npip install -r requirements.txt\n```\n\n2. **Running the Simulation**\n\
+  ```bash\npython3 Run.py <argument>\n```\nAvailable arguments:\n- `calibrate`: Start from calibration\
+  \ phase\n- `tomography`: Begin with tomographic imaging\n- `generate-model`: Start from model generation\n\
+  - `burn-tumour`: Execute only tumor irradiation\n\n3. **Configuration**\n- Modify `config/config.yaml`\
+  \ for system parameters\n- Adjust calibration settings in respective modules\n\n### Key Dependencies\n\
+  - OpenCV: Image processing\n- NumPy: Numerical computations\n- PyVista: 3D visualization\n- Matplotlib:\
+  \ Data visualization\n- scikit-learn: Data analysis\n\n### Development Notes\n- Follow modular design\
+  \ principles\n- Maintain separation of concerns\n- Document new features and changes\n- Test thoroughly\
+  \ before integration\n"

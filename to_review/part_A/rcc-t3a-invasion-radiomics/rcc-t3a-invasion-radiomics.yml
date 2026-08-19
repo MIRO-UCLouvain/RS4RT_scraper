@@ -1,0 +1,63 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: DOCT-Y/RCC-T3a_Invasion-radiomics
+url: https://github.com/DOCT-Y/RCC-T3a_Invasion-radiomics
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-01-21T19:40:24Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# RCC-T3a_Invasion-radiomics\n\n[![License: CC BY-NC-ND 4.0](https://licensebuttons.net/l/by-nc-nd/4.0/80x15.png)](https://creativecommons.org/licenses/by-nc-nd/4.0/)\
+  \  \n![Python Versions](https://img.shields.io/badge/python-3.7%20%7C%203.8-blue)\n\n## License\n\n\
+  This code is licensed under the [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International\
+  \ License](https://creativecommons.org/licenses/by-nc-nd/4.0/).\n\n## Introduction\n\nThis is the official\
+  \ repository for our recent work: [Enhanced staging of renal cell carcinoma using tumor morphology features:\
+  \ model development and multi-source validation](https://doi.org/10.1038/s41746-025-01723-x). This repository\
+  \ contains ready-to-use codes for inference of the proposed models.\n\n\n## Key Features\n\n- **Features\
+  \ 1**: The training dataset contains sufficient patients with renal cell carcinoma (n = 999) and covers\
+  \ a wide spectrum of disease phenotype （common and rare RCC subtypes, all ISUP/fuhrman grades, all pathological\
+  \ T stages）.\n- **Features 2**: The predictive performance of the models were externally evaluated in\
+  \ data from two medical centers and four TCIA datasets.\n- **Features 3**: The morphology model improved\
+  \ the performance of junior radiologists.\n\n## Get Started\n\n### Main Requirements    \n> numpy  \n\
+  > pandas  \n> pyradiomics  \n> SimpleITK  \n> scikit-learn  \n> tqdm  \n\n### Data preparation\nNIfTI-formatted\
+  \ image and mask files were used for feature extraction and model prediction. Please organize the image\
+  \ and mask files in the following structure.\n```\ntest_data/\n├── Dataset001\n    │── patient_1\n \
+  \   │    ├── image.nii.gz\n    │    ├── tumor_mask.nii.gz\n    │    └── peritumor_mask.nii.gz\n    │──\
+  \ patient_2\n    │    ├── image.nii.gz\n    │    ├── tumor_mask.nii.gz\n    │    └── peritumor_mask.nii.gz\n\
+  \    └── patient_n\n         ├── image.nii.gz\n         ├── tumor_mask.nii.gz\n         └── peritumor_mask.nii.gz\n\
+  ```\n### Config preparation\nDuring inference, the configurations are loaded from a `.json` file. The\
+  \ structure of the file is as follows:\n\n```json\n{\n    \"model\":\"your\\\\path\\\\to\\\\model.pkl\"\
+  , \n    \"extraction parameter\":\"your\\\\path\\\\to\\\\extraction.yaml\", \n    \"dataset\":\"your\\\
+  \\path\\\\to\\\\dataset\", \n    \"image\":\"image.nii.gz\", \n    \"masks\": {\n        \"tumor\":\"\
+  tumor_mask.nii.gz\", \n        \"peritumor\":\"peritumor_mask.nii.gz\"\n    }, \n    \"cutoff\":0.3582773836548992,\
+  \ \n    \"output\":\"your\\\\path\\\\to\\\\results\\\\\"\n}\n```\n\nEach of the parameters is explained\
+  \ as follows:\n\n- `model`: The path to the pickle file of trained model.\n- `extraction parameter`:\
+  \ The path to the yaml file of radiomics feature extraction configurations.\n- `dataset`: The path to\
+  \ the dataset folder.\n- `image`: The name of the image file. Both `.nii` and `.nii.gz` are supported.\n\
+  - `masks`: The names of the mask files. The key is the prefix added to the feature name during extraction,\
+  \ and the value is the mask file name.\n- `cutoff`: The cutoff value that determines whether a case\
+  \ is classified as T3a invasion positive or negative.\n- `output`: The output folder to hold the output\
+  \ `.csv` file.\n\n### Inference\n```python\nfrom inference import ModelInference\n\nif __name__ == '__main__':\n\
+  \    config_dir = '.\\\\inference_config.json'\n    model = ModelInference(config_dir)\n    model.predict()\n\
+  ```\n1. import `ModelInference` class from `inference` module.\n2. initialize an instance of the `ModelInference`\
+  \ class, passing the configuration file path (`inference_config.json`) as an argument.\n3. call the\
+  \ `predict` method of the `ModelInference` class.\n\n## Model Training and validation\n1. use `SignatureExtractor`\
+  \ class in `inference` module and `.yaml` configuration file to extract the radiomic features.\n2. merge\
+  \ the tabular radiomics data with `label` column and save it as `.csv` file.\n3. run `train` in `train_validation`\
+  \ module to train the model and save it as `.pkl` file.\n4. run `internal validaion` in `train_validation`\
+  \ module to internal validate the model using nested-cross validation. The outer loop is 200 repeats\
+  \ 5 fold cross validation, and the inner loop is 20 repeats 5 fold cross validation. For a detailed\
+  \ explanation of nested-cross validation, please refer to [A Guide to Cross-Validation for Artificial\
+  \ Intelligence in Medical Imaging](https://doi.org/10.1148/ryai.220232).\n5. run `external_validation`\
+  \ in `train_validation` module to external validate the model in holdout datasets.\n6. during internal\
+  \ validation and external validation, the raw predictions were saved as `.csv` files.\n"

@@ -1,0 +1,55 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Hohn-001/Classification-Radiomics-
+url: https://github.com/Hohn-001/Classification-Radiomics-
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-04T22:53:27Z'
+image_source: https://raw.githubusercontent.com/Hohn-001/Classification-Radiomics-/HEAD/outputs/RUN_5000/class_distribution.png
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "<!--\n  Image paths assume this file sits in the repo ROOT (next to the outputs/ folder\n\
+  \  and the Classification_*.py scripts). Paths are relative: outputs/RUN_xxxx/...\n-->\n\n# PathMNIST\
+  \ Classification — Results\n\nClassifying PathMNIST (H&E-stained colorectal histology, 9 classes, 28×28\
+  \ RGB)\nwith an RBF-kernel SVM, comparing two feature representations:\n\n- **Imaging (pixel)** — flattened\
+  \ raw pixels (2,352 features)\n- **HOG radiomics** — Histogram of Oriented Gradients on grayscale (1,296\
+  \ features)\n\nEach model is trained on a subset of the training set (5,000 and 10,000 samples)\nand\
+  \ evaluated on the full 7,180-image test set.\n\n---\n## Dependencies\npip install medmnist scikit-learn\
+  \ matplotlib pandas\n\n## Overview of findings\n\n**Pixel beats HOG, clearly.** On the 10K run the pixel\
+  \ SVM reaches **0.570**\naccuracy / **0.51** macro F1 versus **0.458** / **0.40** for HOG. The driver\
+  \ is\ncolor: PathMNIST's signal lives partly in H&E stain color, and the HOG pipeline\nconverts to grayscale\
+  \ first, throwing that away. Both models ace class 0 (pale\nbackground), but HOG collapses on texture-similar\
+  \ tissue types. The pixel model's\nper-class AUCs sit in a tight high band (0.85–0.997); HOG's are scattered\
+  \ with a\nlow floor (class 8 ≈ 0.73).\n\n**More data (5K → 10K) helped only one of them.** The pixel\
+  \ model flat-lined\n(0.572 → 0.570, macro F1 unchanged) — it's *representation-limited*, so more rows\n\
+  of an unseparable problem don't help. HOG gained a real ~2 points (0.436 → 0.458,\nmacro F1 0.37 → 0.40)\
+  \ since it had more room to learn its noisier boundaries.\nTakeaway: doubling the data roughly doubled\
+  \ training time and bought the better\nmodel basically nothing.\n\n**How to improve.** Move to a CNN\
+  \ / transfer learning (biggest lever, standard\nfor PathMNIST at ~0.90+); keep color in the radiomics\
+  \ path (per-channel HOG +\ncolor/texture features); tune `C`/`gamma` with cross-validation; set\n`class_weight=\"\
+  balanced\"`; and add stain normalization, augmentation, and a\nhigher-resolution MedMNIST variant.\n\
+  \n### Headline metrics (test set)\n\n| Metric | Pixel SVM (5K) | Pixel SVM (10K) | HOG SVM (5K) | HOG\
+  \ SVM (10K) |\n|---|---|---|---|---|\n| Accuracy | 0.572 | 0.570 | 0.436 | 0.458 |\n| Macro F1 | 0.51\
+  \ | 0.51 | 0.37 | 0.40 |\n| Weighted F1 | 0.56 | 0.56 | 0.43 | 0.45 |\n\n---\n\n## RUN_5000 — 5,000\
+  \ training samples\n\n### Data\n\n| Class distribution | Sample images |\n|---|---|\n| ![Class distribution](outputs/RUN_5000/class_distribution.png)\
+  \ | ![Sample images](outputs/RUN_5000/sample_images.png) |\n\n### Imaging (pixel) SVM\n\n| Confusion\
+  \ matrix | ROC curves / AUC |\n|---|---|\n| ![Confusion matrix — Pixel SVM (5K)](outputs/RUN_5000/confusion_matrix_pixel_svm.png)\
+  \ | ![ROC — Pixel SVM (5K)](outputs/RUN_5000/roc_curves_pixel_svm.png) |\n\n### HOG radiomics SVM\n\n\
+  | Confusion matrix |\n|---|\n| ![Confusion matrix — HOG SVM (5K)](outputs/RUN_5000/confusion_matrix_hog_svm.png)\
+  \ |\n\n---\n\n## RUN_10000 — 10,000 training samples\n\n### Data distribution\n\n| Test set | Training\
+  \ subset (10K) |\n|---|---|\n| ![Test data distribution](outputs/RUN_10000/distribution_test.png) |\
+  \ ![Training distribution (10K)](outputs/RUN_10000/distribution_train_10k.png) |\n\n### Imaging (pixel)\
+  \ SVM\n\n| Confusion matrix | ROC curves / AUC |\n|---|---|\n| ![Confusion matrix — Pixel SVM (10K)](outputs/RUN_10000/confusion_matrix_pixel_svm.png)\
+  \ | ![ROC — Pixel SVM (10K)](outputs/RUN_10000/roc_curves_pixel_svm.png) |\n\n### HOG radiomics SVM\n\
+  \n| Confusion matrix | ROC curves / AUC |\n|---|---|\n| ![Confusion matrix — HOG SVM (10K)](outputs/RUN_10000/confusion_matrix_hog_svm.png)\
+  \ | ![ROC — HOG SVM (10K)](outputs/RUN_10000/roc_curves_hog_svm.png) |\n"

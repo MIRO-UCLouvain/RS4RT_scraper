@@ -1,0 +1,91 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Soniaaa-ai/RadiomicNet-BrainTumor
+url: https://github.com/Soniaaa-ai/RadiomicNet-BrainTumor
+platform: github
+description: Brain tumor feature extraction using U-Net and radiomics
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-23T10:44:27Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# Brain Tumor Segmentation + Radiomics-Based Failure Prediction\n\n**U-Net Segmentation\
+  \ | Radiomic Feature Extraction | XGBoost Failure Prediction**\n\n[![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://www.python.org/)\n\
+  [![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange)](https://www.tensorflow.org/)\n[![XGBoost](https://img.shields.io/badge/XGBoost-latest-green)](https://xgboost.readthedocs.io/)\n\
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n\
+  \n---\n\n## Overview\n\nThis repository contains a **two-stage pipeline** for automated brain tumor\
+  \ analysis in MRI images:\n\n1. **Stage 1 — U-Net Segmentation**: A standard 2D U-Net trained on a publicly\
+  \ available brain tumor MRI dataset, producing binary tumor masks from MRI slices.\n\n2. **Stage 2 —\
+  \ Radiomics-Based Failure Prediction**: An XGBoost classifier that predicts, from the tumor's own shape,\
+  \ intensity, and texture features, whether the U-Net is likely to succeed or fail on a given case —\
+  \ a lightweight triage mechanism for clinical deployment.\n\nThe second stage emerged directly from\
+  \ an error analysis of the segmentation results, which identified **localization failure** (the network\
+  \ placing a confident mask in the wrong part of the image) as the dominant source of poor segmentation\
+  \ outcomes. The radiomics analysis independently confirmed this finding: tumors with low **sphericity**\
+  \ and low **extent** (irregular shapes filling little of their bounding box) are measurably associated\
+  \ with segmentation failure.\n\n---\n\n## Results Summary\n\n### Stage 1 — U-Net Segmentation (n = 307\
+  \ test cases)\n\n| Metric | Score |\n|--------|-------|\n| Dice (F1) | 0.7511 ± 0.2810 |\n| Jaccard\
+  \ (IoU) | 0.6632 ± 0.2801 |\n| Recall | 0.7477 ± 0.2990 |\n| Precision | 0.8072 ± 0.2848 |\n| F2 Score\
+  \ | 0.7441 ± 0.2874 |\n| HD95 (px) | 15.61 ± 23.93 |\n\n> **Note on the large standard deviation**:\
+  \ Most cases are segmented very well (Dice > 0.95), while a smaller subset (~15%) fails sharply due\
+  \ to localization error. The standard deviation reflects this bimodal distribution, not uniform mediocrity.\n\
+  \n### Stage 2 — XGBoost Failure Predictor (n = 307; 45 failure cases)\n\n| Metric | Score |\n|--------|-------|\n\
+  | Test-set ROC-AUC | **0.8742** |\n| 5-fold CV ROC-AUC | **0.7374 ± 0.0200** |\n| Accuracy | 0.8226\
+  \ |\n| Precision (failure class) | 0.3750 |\n| Recall (failure class) | 0.3333 |\n\n**Top predictive\
+  \ features** (by XGBoost gain):\n1. `firstorder_Energy` — overall signal magnitude in tumor ROI\n2.\
+  \ `shape_Extent` — fraction of bounding box filled by tumor\n3. `shape_Sphericity` — 2D circularity\
+  \ of tumor contour\n\n---\n\n## Repository Structure\n\n```\nBrain-Tumor-segmentation-UNet/\n│\n├──\
+  \ unet.py                        # U-Net architecture\n├── train.py                       # Training\
+  \ script (Stage 1)\n├── test.py                        # Evaluation script (Stage 1)\n├── metrics.py\
+  \                     # Dice coefficient and Dice loss\n│\n├── radiomics/\n│   ├── radiomics_xgboost_v2.py\
+  \    # Stage 2: feature extraction + XGBoost\n│   ├── radiomics_features.csv     # Extracted radiomic\
+  \ features (18 features × 307 cases)\n│   ├── score.csv                  # Per-case U-Net segmentation\
+  \ scores\n│   ├── xgboost_results.csv        # XGBoost classification results summary\n│   └── feature_importance.csv\
+  \     # XGBoost feature importance ranking\n│\n└── README.md\n```\n\n---\n\n## Dataset\n\n**Brain Tumor\
+  \ Segmentation Dataset** — available on Kaggle:\n> https://www.kaggle.com/datasets/nikhilroxtomar/brain-tumor-segmentation\n\
+  \n- 3,064 paired MRI image + binary mask PNG files\n- Split: 2,451 train / 306 validation / 307 test\
+  \ (80/10/10, fixed seed)\n- Images: axial, sagittal, and coronal MRI slices (various planes)\n- Masks:\
+  \ white = tumor, black = background\n\n---\n\n## Stage 1 — U-Net Segmentation\n\n### Architecture\n\
+  Standard U-Net [Ronneberger et al., 2015]:\n- 4 encoder blocks (64→128→256→512 channels) + 1024-channel\
+  \ bottleneck\n- 4 decoder blocks with skip connections (512→256→128→64)\n- ~31 million trainable parameters\n\
+  - Output: 256×256 sigmoid probability map, thresholded at 0.5\n\n### Training Configuration (final run)\n\
+  | Parameter | Value |\n|-----------|-------|\n| Loss function | BCE + Dice (combined) |\n| Optimizer\
+  \ | Adam, lr = 1×10⁻³ |\n| Batch size | 8 |\n| Augmentation | Random horizontal + vertical flips |\n\
+  | Early stopping | Patience 40 (on val_dice_coef) |\n| Best checkpoint | Epoch 84 (val_dice = 0.829)\
+  \ |\n| GPU | Tesla T4 (Google Colab) |\n\n### How to Run (on Google Colab)\n```python\n# 1. Download\
+  \ the dataset via kagglehub\nimport kagglehub\npath = kagglehub.dataset_download(\"nikhilroxtomar/brain-tumor-segmentation\"\
+  )\n\n# 2. Update the dataset path in train.py, then run:\npython train.py\n\n# 3. Evaluate:\npython\
+  \ test.py\n```\n\n---\n\n## Stage 2 — Radiomics-Based Failure Prediction\n\n### Motivation\nError analysis\
+  \ of Stage 1 revealed that ~15% of test cases fail sharply due to **localization error** (Dice < 0.5),\
+  \ driven by irregular, low-contrast tumors. The question: can we predict this failure in advance from\
+  \ the tumor's imaging characteristics alone?\n\n### Features Extracted (18 total)\n\n| Family | Features\
+  \ |\n|--------|---------|\n| **First-order** (7) | Mean, Variance, Skewness, Kurtosis, Min, Max, Energy\
+  \ |\n| **Shape** (6) | Area, Perimeter, Sphericity, Compactness, Extent, BBox Area |\n| **GLCM Texture**\
+  \ (5) | Contrast, Homogeneity, Energy, Correlation, Entropy |\n\nAll features are extracted from the\
+  \ **ground-truth tumor mask** (not the U-Net's prediction), serving as a proxy for what a fast coarse\
+  \ localization step would provide in clinical deployment.\n\n### Failure Definition\n`failure = 1` if\
+  \ Dice < 0.5 (predicted and true regions disagree more than they agree)\n\n### How to Run (on Google\
+  \ Colab — no GPU needed)\n```python\n# Paste the full content of radiomics/radiomics_xgboost_v2.py\n\
+  # into a single Colab cell and click Run.\n# The script will:\n# 1. Mount Google Drive\n# 2. Download\
+  \ the dataset (cached after first run)\n# 3. Extract radiomic features for all test cases\n# 4. Train\
+  \ XGBoost and report: Accuracy, ROC-AUC, 5-fold CV-AUC\n# 5. Save results to Google Drive\n```\n\n###\
+  \ Key Finding\nTwo independent methods — visual inspection of failure cases and the XGBoost feature\
+  \ ranking — converge on the same explanation: **shape irregularity** (low sphericity, low extent) and\
+  \ **low signal energy** predict segmentation failure. This corroborates the localization-failure diagnosis\
+  \ from the error analysis, and motivates a practical pre-segmentation triage step.\n\n---\n\n## Related\
+  \ Publication\n\nThis work extends our prior comparative study of classical tumor detection methods:\n\
+  \n> S. Rezaei, \"A Comparison of Tumor Detection Approaches Based on K-means+GA, Watershed Clustering,\
+  \ and Otsu Threshold Method,\" *Asian Pacific Journal of Cancer Nursing*, 2025.\n> DOI: [10.31557/apjcn.1857](https://doi.org/10.31557/apjcn.1857)\n\
+  \n---\n\n## Citation\n\nIf you use this code or results in your work, please cite (paper under review):\n\
+  \n```\n@article{rezaei2025unet,\n  title={Automated Brain Tumor Segmentation and Radiomics-Based Failure\
+  \ Prediction Using U-Net and XGBoost},\n  author={Rezaei, Sonia},\n  journal={Biomedical Signal Processing\
+  \ and Control (under review)},\n  year={2025}\n}\n```\n\n---\n\n## License\n\nThis project is licensed\
+  \ under the MIT License.\n\n---\n\n## Contact\n\n**Sonia Rezaei**\nDepartment of Radiology, School of\
+  \ Allied Medical Science\nShahid Beheshti University of Medical Sciences, Tehran, Iran\nGitHub: [@Soniaaa-ai](https://github.com/Soniaaa-ai)\n"

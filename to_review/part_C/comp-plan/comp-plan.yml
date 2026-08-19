@@ -1,0 +1,83 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: bwheelz36/comp_plan
+url: https://github.com/bwheelz36/comp_plan
+platform: github
+description: Calculate a wide range of radiobiological metrics from excel DVH files
+license: GPL-3.0
+language: MATLAB
+keywords:
+- radiobiology
+- radiotherapy
+- treatment-planning
+stars: 4
+updated_at: '2026-08-17T05:14:35Z'
+image_source: https://raw.githubusercontent.com/bwheelz36/comp_plan/HEAD/_resources/Part1_screenGrab.PNG
+heuristic_total_score: 20
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 5 support term(s).
+readme_excerpt: "COMP PLAN\n=========\n\n**Authors:** Lois Holloway, Brendan Whelan, many others!\n\n\
+  **Purpose:** Calculate a wide range of radiobiogical metric from DVH files for radiotherapy treatment\
+  \ planning.\n\nIntroduction\n------------\n\nFor a detailed description of the rational, architecture,\
+  \ and capabilities of this code, please prefer to our\n[publication](_resources/2012_Holloway_CompPlan.pdf).\n\
+  \nIn essence, Comp_Plan_main.m will analyse a *base directory*, which is a folder containing:\n\n1)\
+  \ a series of text files which tells comp_plan what to do\n2) the raw data: DVH files in excel format.\
+  \ Column A should contain the dose information, and column B should contain the volume information.\
+  \ \n\nAlthough it is completely possible to use CompPlan without utilising any GUIs, it does require\
+  \ the user to manually\ncreate a large number of text files, which can be rather painstaking and error-prone.\
+  \ Therefore, the easiest way to set \nup your base directory is to use the included GUIs. The below\
+  \ workflow will assume that you are starting with dicom-RT\nfiles. If you are instead starting with\
+  \ DVH files, you can skip the first step.\n\nGUI based workflow to set up base directory\n-------------------------------------------\n\
+  \n1. Use our sister program [DVH_from_dicomRT](https://github.com/bwheelz36/DVH_from_dicomRT) to generate\
+  \ a series of DVHs.\nNow you should have a folder containing one subdirectory for each dicom-RT file\
+  \ you created. Within this subdirectory \nshould be one excel based DSV file for each structure of interest.\
+  \ If you are skipping this step, you can refer to the \n'example base directory' to see what the structure\
+  \ should look like.\n2. Run PART1.m. I'm sorry for the terrible name, but I did this a long time ago\
+  \ and it's quite painful to rename a \nMatlabGUI! From this GUI, you should select the base directory\
+  \ created in step 1 (or you can use the example base directory)\nand select each contour you want to\
+  \ generate metrics for. click next.\n\n![PART1](_resources/Part1_screenGrab.PNG \"GUI Part1\")\n\n3.\
+  \ A second GUI will load. This is where you can add all the metrics you are interested in. There's a\
+  \ lot here! for explanation\n\tof what all these models are and how they work, please refer to our [publication](_resources/2012_Holloway_CompPlan.pdf).\n\
+  \   - In the first column on the structure you would like to add metrics for\n   - In the second column,\
+  \ select the metrics you want to calculate using e.g. ctrl and/or shift, and click 'add selected metrics'\n\
+  \   - In the third column, select each metric one by one, and add all necesarry parameters. Again, see\
+  \ our\n    [publication](_resources/2012_Holloway_CompPlan.pdf) for details. Note that the 'Reference'\
+  \ field can be left blank -\n     this is merely for your own sanity when you try and reproduce your\
+  \ results five years later!\n    - Click through each structure in the first column, and check what\
+  \ metrics you have added. Ensure all necessary \n    parameters are entered.  You can add or remove\
+  \ parameters if you want.\n    - **hint:** for the purpose of this tutorial, it may be easiest to select\
+  \ a few metrics which require no parameters, \n    e.g. min, max etc.\n    - Click 'create text files'.\
+  \ The text files necesary to run comp plan will be added to the base directory.\n\t\n\n![PART2](_resources/Part2_screenGrab.PNG\
+  \ \"GUI Part2\")\n\nLibrary directory\n-----------------\nThe above workflow requires one to manually\
+  \ enter parameters for each metric every time. To avoid this, it is also possible\nto use the 'update\
+  \ from library' button. the code will scan the library directory and, if possible, automatically populate\
+  \ \nthe parameter fields.\nNote that although there are a few files in the library directory, it is\
+  \ not our intention to provide this data for all structures\nand organs - this is very much the responsibility\
+  \ of the user! \n\nInstructions for addin metrics to the library are below: \n\nThe easiest way to set\
+  \ up the library folder is to simply copy all the text\nfiles from a previously set up base directory\
+  \ into this directory.\nNext time you use the code it will search this directory for available data.\n\
+  \nIt is a good idea to make sure that all structures in this folder have as generic\na name as possible\
+  \ - i.e. if you have a structure call 'bladder_kl_1' rename it\nto 'bladder' in all files. This is because\
+  \ the code will check if this name exists WITHIN any new structures.\nSo if you check for data for a\
+  \ structure called 'bladder_kl_1' and the Library\nhas a structure called 'bladder' it should find it\
+  \ - however, the reverse is NOT\ntrue.\n\nFinally, note that this process is not infallible\n   - always\
+  \ check the values for each metric before proceeding\n   - make sure that the structure names for all\
+  \ library names match - otherwise the code will crash\n\nAnalysing a base directory with comp plan\n\
+  -----------------------------------------\n\nFinally, we arrive at the juicy part!\nTo analyse the base\
+  \ directory you have created, simply run comp_plan_main.m. If you run it with no inputs, it will load\n\
+  a GUI where you can point it to your base directory.\nAlternatively, you can input the location of the\
+  \ base directory when you call the code, e.g.::\n\n    comp_plan_main('path/to/basedirectory')\n\nAfter\
+  \ a successful run, you will find a file called metricresults.xls in your base directory. This contains\
+  \ the results \nof all requested metrics, with each organ being displayed on an individual sheet of\
+  \ the xls file. \n\nThere are a few user options you can turn on or off at the top of the page.\n\n\
+  **Mode**='singleDirectory'; %'singleDirectory' or 'batch'. Batch simply loops over all supplied directories.\
+  \ **Warning** - I'm\nnot confident batch mode works properly!\n\n**plotDVHs**=1; % set values below\
+  \ to 1 to plot DVHs, 0 otherwise. Plotting slows code substantially.\n\n**plotparams**=0; % set values\
+  \ below to 1 to add the calculation parameters to the results file\nxlnum=1; %position of data in excel,\
+  \ if you wish to add data to a previous file this\n\nLicense conditions\n------------------\n\nThis\
+  \ code has **not** been cleared for clinical use.\nThis program is distributed in the hope that it will\
+  \ be useful, but WITHOUT ANY WARRANTY; without even the implied \nwarranty of MERCHANTABILITY or FITNESS\
+  \ FOR A PARTICULAR PURPOSE.\nPlease refer to the license file for the exact conditions of use. \n"

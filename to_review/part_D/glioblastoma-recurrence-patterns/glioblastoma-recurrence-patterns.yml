@@ -1,0 +1,73 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: FoghThomsen/glioblastoma-recurrence-patterns
+url: https://github.com/FoghThomsen/glioblastoma-recurrence-patterns
+platform: github
+description: 🧠 Predicting glioblastoma recurrence patterns from 3D MRI using machine learning — includes
+  preprocessing, segmentation, radiomics, and classification 🔬📊
+license: null
+language: null
+keywords: []
+stars: 0
+updated_at: '2025-05-27T11:50:32Z'
+image_source: https://raw.githubusercontent.com/FoghThomsen/glioblastoma-recurrence-patterns/HEAD/images/fig3_1_pipeline_overview.png
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 support term(s).
+readme_excerpt: "# \U0001F9E0 Glioblastoma Recurrence Pattern Classification  \nPredicting recurrence\
+  \ types in GBM patients using 3D MRI and machine learning\n\n## \U0001F9FE Abstract\nGlioblastoma (GBM)\
+  \ is the most aggressive and common adult brain tumor, characterized by inevitable recurrence. Magnetic\
+  \ resonance imaging is a vitally integrated part of the disease treatment and is subject to extensive\
+  \ ongoing research. Based on a novel dataset with T1ce-MRI from 500 patients treated in Danish hospitals,\
+  \ this project assesses the feasibility of classifying the recurrence pattern by three types of features\
+  \ extracted from the original tumor on MRIs: (1) Spatial coordinates relative to the MNI152 brain atlas;\
+  \ (2) intra-tumor segment volumes, estimated by an UNet-model trained using a single (T1ce) MRI sequence\
+  \ of an external dataset; (3) Radiomic features. The project does not find any combination of the features\
+  \ extracted from the original tumor on T1ceMRI predicative of future recurrence pattern classification.\n\
+  \n## \U0001F4C2 Project Files\n\n> ⚠️ Due to patient privacy, the full report cannot be published\n\n\
+  \n## \U0001F50D Highlights\n- \U0001F4DA Based on the largest known GBM recurrence dataset from Danish\
+  \ hospitals\n- \U0001F9EA Full pipeline from MRI preprocessing → segmentation → radiomic extraction\
+  \ → ML\n- \U0001F9E0 Trained nnUNet for intra-tumor segmentation using only T1ce MRI\n- \U0001F4C9 Explored\
+  \ PCA, autoencoders, L1-SVM, and XGBoost for feature reduction\n- ❌ No predictive features or models\
+  \ achieved better-than-baseline results\n- \U0001F9ED Includes replication attempt of state-of-the-art\
+  \ study\n\n## \U0001F504 Pipeline\n\n1. \U0001F3E5 **Data Collection**: Multi-center medical dataset\
+  \ of >500 GBM patients with T1ce MRI and clinical recurrence labels from Danish hospitals  \n2. \U0001F9ED\
+  \ **Rigid Registration**: Registered NIfTI images to MNI152 brain atlas using `SimpleITK` with mutual\
+  \ information & gradient descent  \n3. \U0001F9E0 **Skull Stripping**: Applied pretrained `HD-BET` (U-Net\
+  \ model) for brain extraction on T1ce MRIs  \n4. \U0001F9E9 **Intra-Tumor Segmentation**: Trained `nnUNet`\
+  \ on BraTS 2024 post-treatment dataset using only T1ce input  \n5. \U0001F4CD **Spatial Feature Extraction**:\
+  \ Computed tumor centroid in MNI space (Cartesian & polar) using `nibabel` + affine transforms  \n6.\
+  \ \U0001F4D0 **Volumetric Feature Extraction**: Calculated volumes of ET, NETC, SNFH, and RC subregions\
+  \ across all timepoints  \n7. \U0001F52C **Radiomic Feature Extraction**: Extracted 1700+ features from\
+  \ original & wavelet-transformed images using `PyRadiomics` (GLCM, GLSZM, etc.)  \n8. \U0001F517 **Collinearity\
+  \ Filtering**: Removed redundant features with Pearson correlation ≥ 0.9  \n9. \U0001F6A8 **Outlier\
+  \ Detection**: Identified outliers using ABOD (`pyod`), Isolation Forest (`sklearn`), and Autoencoder\
+  \ reconstruction error (`PyTorch`)  \n10. \U0001F4C9 **Dimensionality Reduction**:  \n    - \U0001F9EE\
+  \ `PCA` and `KernelPCA` (`sklearn`)  \n    - \U0001F9E0 Custom Autoencoder in `PyTorch` (batch norm,\
+  \ leaky ReLU)  \n11. ✂️ **Feature Selection**:  \n    - \U0001F50E L1-SVM (`sklearn`)  \n    - \U0001F4CA\
+  \ Feature gain from `XGBoost`  \n12. ⚖️ **Data Balancing**: Used `SMOTE` (`imblearn`) to handle class\
+  \ imbalance in recurrence types  \n13. \U0001F916 **Model Training**: Built classifiers for recurrence\
+  \ prediction using:  \n    - \U0001F332 `XGBoost` (gradient boosting trees)  \n    - \U0001F9E0 Custom\
+  \ `MLP` neural network (`PyTorch`)  \n14. \U0001F6E0 **Hyperparameter Optimization**: Tuned models using\
+  \ `Optuna` with TPE sampler & median pruner  \n15. \U0001F4C8 **Model Evaluation**: Assessed performance\
+  \ via ROC AUC, PR AUC, and confusion matrices (`sklearn`, `matplotlib`)\n\n## \U0001F4F7 Preview\n\n\
+  <div align=\"center\">  \n  <img src=\"images/fig3_1_pipeline_overview.png\" width=\"1000\"/>  \n  <p><i>Fig\
+  \ 3.1: High-level pipeline from data acquisition to classification</i></p>  \n</div>\n\n<div align=\"\
+  center\">  \n  <img src=\"images/fig_3_7_a_GT.png\" height=\"250\"/>\n  <img src=\"images/fig_3_7_a_pred.png\"\
+  \ height=\"250\"/>\n  <img src=\"images/fig_3_7_a_diff.png\" height=\"250\"/>\n  <p><i>Fig 3.7a: T1ce\
+  \ slice difference map (left), ground truth segmentation (middle), predicted segmentation (right)</i></p>\
+  \  \n</div>\n\n<div align=\"center\">  \n  <img src=\"images/fig4_4_tumor_centroid_mapped_to_MNI152.png\"\
+  \ width=\"500\"/>  \n  <p><i>Fig 4.4: Tumor centroid locations mapped to MNI152 brain space grouped\
+  \ by recurrence type</i></p>  \n</div>\n\n<div align=\"center\">  \n  <img src=\"images/fig5_5_a_autoencoder_mean_abs_reconstruction_error.png\"\
+  \ width=\"250\"/>\n  <img src=\"images/fig5_5_b_outlier_methods_overlap.png\" width=\"250\"/>\n  <p><i>Fig\
+  \ 5.5: (Left) Autoencoder mean absolute reconstruction error. (Right) Overlap between outlier detection\
+  \ methods</i></p>  \n</div>\n\n<div align=\"center\">  \n  <img src=\"images/fig5_6_PCA_var_explained.png\"\
+  \ width=\"250\"/>  \n  <p><i>Fig 5.6: Explained variance by principal components (PCA)</i></p>  \n</div>\n\
+  \n<div align=\"center\">  \n  <img src=\"images/fig5_12_b_hyper_param_search_example.png\" width=\"\
+  250\"/>  \n  <p><i>Fig 5.12b: Example of hyperparameter search trajectory using Optuna</i></p>  \n</div>\n\
+  \n<div align=\"center\">  \n  <img src=\"images/fig5_16_KDE_recurrance_distance_grouped_by_clf.png\"\
+  \ width=\"350\"/>  \n  <p><i>Fig 5.16: KDE plots of recurrence distance distributions grouped by classifier\
+  \ prediction</i></p>  \n</div>"

@@ -1,0 +1,84 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: laremourag/tcia-radiomics-pipeline
+url: https://github.com/laremourag/tcia-radiomics-pipeline
+platform: github
+description: 3D radiomics feature extraction pipeline and unsupervised machine learning clustering for
+  translational survival analysis on thoracic CT scans.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-02T20:07:04Z'
+image_source: https://raw.githubusercontent.com/laremourag/tcia-radiomics-pipeline/HEAD/processed_data/radiomics_clusters_refined_plot.png
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 3 support term(s).
+readme_excerpt: "# \U0001F9EC Translational Radiomics & Unsupervised Phenotyping on Thoracic CT Scans\n\
+  **Author:** Larissa Gonçalves  \n**Affiliation:** Nuclear Engineering Program – COPPE/UFRJ  \n**Field:**\
+  \ Medical Physics / Biomedical Data Science / Computer Vision / Image Analysis \n\n---\n\n## Project\
+  \ Overview\nThis repository hosts a complete, end-to-end **Translational Radiomics and Machine Learning\
+  \ pipeline** designed to extract 3D texture biomarkers from Computed Tomography (CT) scans. Using the\
+  \ public **NSCLC-Radiomics (TCIA)** dataset, the architecture processes volumetric medical images, isolates\
+  \ lung tumor regions of interest (ROIs), extracts multi-dimensional Haralick texture features, and applies\
+  \ unsupervised learning to map data-driven phenotypes directly to real-world clinical survival outcomes.\n\
+  \n---\n\n## Repository Architecture & Pipeline Stages\n\nThe workflow is engineered across 5 modular\
+  \ Python scripts to ensure data reproducibility, memory efficiency, and mathematical rigor:\n\n### 1.\
+  \ Data Cleaning & Alignment (`01_data_scraping.py` & `02_patch_alignment.py`)\n* **The Challenge:**\
+  \ Raw hospital CT data is highly anisotropic (non-uniform voxel spacing across X, Y, and Z axes). Geometric\
+  \ anomalies and voxel spacing instabilities were flagged on the terminal, with uniformity deviations\
+  \ reaching up to `2.44` in subjects like `LUNG1-014` and `LUNG1-021`.\n* **The Solution:** Implemented\
+  \ **3D Isotropic Resampling** using `SimpleITK`. Volumes were standardized via trilinear interpolation\
+  \ onto a uniform $1 \\times 1 \\times 1 \\text{ mm}^3$ grid, while radiotherapy segmentation masks were\
+  \ coregistered using Nearest-Neighbor interpolation.\n\n### 2. Surgical Signal Extraction & Textural\
+  \ Profiling (`03_radiomics_extraction.py`)\n* **HU Windowing:** Intensity values were clipped between\
+  \ $-1000 \\text{ HU}$ and $+400 \\text{ HU}$ to isolate soft tissues and lung parenchyma, eliminating\
+  \ confounding signals from dense bone structures or external air.\n* **3D Bounding Box:** Automated\
+  \ cubic subarray cropping around the volumetric ROI coordinates (`np.where`) to optimize CPU execution\
+  \ and drastically reduce RAM usage.\n* **Surgical GLCM Trimming:** Continuous voxel values were compressed\
+  \ into 64 gray levels. To eliminate background voxel-pair combinations within the bounding box, background\
+  \ voxels were forced to a dummy value of 64. The matrix was built on 65 levels, and cropped at `[:64,\
+  \ :64]` before probabilistic normalization, preventing empty spaces from corrupting the Haralick calculations.\n\
+  \n### 3. Dimensionality Reduction & Outlier Mitigation (`04_statistical_analysis_refined.py`)\n* **Outlier\
+  \ Auditing:** Initial exploratory runs isolated patient `LUNG1-027` into a standalone partition due\
+  \ to an extreme GLCM Contrast value of `82.31` (versus the cohort median of `10.51`). Retaining this\
+  \ outlier skewed the `StandardScaler` variance, flattening variations among the other patients.\n* **Refinement\
+  \ & PCA:** Surgical removal of patient 27 allowed proper Z-score normalization. Principal Component\
+  \ Analysis (PCA) achieved outstanding dimensionality reduction, with **Principal Component 1 (PC1) capturing\
+  \ 74.65%** and **PC2 capturing 14.66%**, retaining **89.31% of the total variance in a 2D space**.\n\
+  * **K-Means Phenotyping:** The remaining 34 typical patients were stratified into two balanced subgroups:\
+  \ **Cluster 1 (n=21)** and **Cluster 2 (n=13)**.\n\n### 4. Translational Medical Analysis (`05_clinical_survival_real.py`)\n\
+  * **Clinical Data Merge:** Aligned data-driven texture clusters with verified hospital medical records\
+  \ (`NSCLC-Radiomics-Lung1.clinical-version3-Oct-2019.csv`) via an inner join on patient IDs.\n* **Survival\
+  \ Modeling:** Modeled overall survival time in days (`Survival.time`) and death events (`deadstatus.event`)\
+  \ utilizing the `lifelines` engine to generate Kaplan-Meier survival curves and calculate the Log-Rank\
+  \ hypothesis test.\n\n---\n\n## Key Results & Visualizations\n\n### 1. Refined Texture Phenotyping Vector\
+  \ Space (PCA & K-Means)\nThe horizontal axis (PC1) mathematically serves as a continuous spectrum of\
+  \ tumor structural heterogeneity. \n\n![Refined Texture Space](./processed_data/radiomics_clusters_refined_plot.png)\n\
+  \n* **Anchor Profiles:** * `LUNG1-035` (Far Left): Minimum Contrast (1.29) / Maximum Homogeneity (0.67)\
+  \ ➔ *Highly uniform tumor tissue*.\n  * `LUNG1-015` (Far Right): Maximum Contrast (25.56) / Minimum\
+  \ Homogeneity (0.34) ➔ *Highly chaotic, heterogeneous mass suggesting structural necrosis or mixed stroma*.\n\
+  \n### 2. Kaplan-Meier Survival Stratification (Real Hospital Data)\nThe pipeline integrated radiomic\
+  \ partitions with actual survival timelines to test the biological impact of the clusters.\n\n![Kaplan-Meier\
+  \ Curve](./processed_data/survival_kaplan_meier_real_plot.png)\n\n* **Statistical Summary:** Log-Rank\
+  \ $\\chi^2 = 1.8185$, **P-Value = 0.1775**.\n* **Scientific Insights:** Although not globally significant\
+  \ under the traditional $\\alpha = 0.05$ threshold due to the constrained pilot sample size ($N=34$),\
+  \ the curve displays a sharp, accelerated drop in survival probability for the heterogeneous phenotype\
+  \ (**Cluster 2 - Red**) up to approximately 200 days post-diagnosis, reinforcing the clinical hypothesis\
+  \ of early textural aggression.\n\n---\n\n## Technical Discussion & Future Milestones\n\nThe p-value\
+  \ of `0.1775` represents a classic challenge in clinical data science, heavily driven by three known\
+  \ methodological factors:\n1. **Pilot Sample Size Limitation:** Small sample partitions expand statistical\
+  \ confidence bands (visible as wide shaded intervals on the plot), decreasing Log-Rank mathematical\
+  \ sensitivity.\n2. **Clinical Confounders:** Survival curves do not account for major independent variables\
+  \ like TNM clinical staging or surgical and chemoradiotherapy interventions.\n3. **Histological Mixture:**\
+  \ The baseline dataset merges distinct cell lines (Adenocarcinomas vs. Squamous Cell Carcinomas), which\
+  \ possess fundamentally different necrotic behaviors and survival dynamics.\n\n### Future Roadmap:\n\
+  * [ ] Expand the automated pipeline execution loop across the entire master database (>400 patients)\
+  \ to shrink confidence intervals.\n* [ ] Implement a multivariate Cox Proportional Hazards model to\
+  \ adjust for TNM stage, age, and gender.\n* [ ] Run stratified Log-Rank evaluations strictly isolated\
+  \ within a single histological cell type line.\n\n---\n*Developed as part of academic research in Medical\
+  \ Physics, Data Science and Image Analysis inside the Nuclear Engineering Program at COPPE/UFRJ.*"

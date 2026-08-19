@@ -1,0 +1,83 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: krishdef7/Deep-Reinforcement-Learning-for-Personalized-Radiotherapy-Beam-Orientation-Optimization
+url: https://github.com/krishdef7/Deep-Reinforcement-Learning-for-Personalized-Radiotherapy-Beam-Orientation-Optimization
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-04-20T08:42:44Z'
+image_source: null
+heuristic_total_score: 25
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 3 particle-therapy term(s).
+- Matched 5 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# \U0001F9E0 Deep Reinforcement Learning for Personalized Radiotherapy Beam Orientation\n\
+  \nThis repository contains the code and experiments for my work on **patient-specific Beam Orientation\
+  \ Optimization (BOO)** in head-and-neck radiotherapy using **Deep Q-Learning (DQN)**. The agent learns\
+  \ to select clinically meaningful gantry angles directly from voxel-level anatomy, **without** repeated\
+  \ Monte Carlo dose simulations.\n\n> **TL;DR:** Given CT anatomy and organ masks, we learn to predict\
+  \ 5 high-value beam angles in under a second, improving PTV coverage and sparing OARs compared to standard\
+  \ equiangular plans.\n\n\n---\n\n## \U0001F517 Quick Navigation\n- \U0001F50D Overview & Motivation\n\
+  - \U0001F4C8 Results (100 Patients)\n- \U0001F4C2 Repository Structure\n- ⚙️ Installation\n- ▶️ Evaluation\n\
+  - \U0001F3CB️ Training\n- \U0001F9EC Model Summary\n- \U0001F52E Future Work\n- \U0001F4C4 Citation\n\
+  - \U0001F64F Acknowledgements\n\n\n---\n\n## \U0001F4CC Overview / Problem\n\nSelecting clinically optimal\
+  \ beam orientations is crucial in radiotherapy.  \nConventional BOO methods:\n\n-  Not personalized\
+  \ to anatomy ❌\n-  Computationally infeasible at large search spaces ❌\n-  Insensitive to voxel-level\
+  \ geometry ❌\n-  Require repeated full dose simulations ❌\n\n---\n\n## \U0001F680 Core Idea\n\nWe formulate\
+  \ BOO as a **sequential decision-making problem** and train a Deep Q-Network to:\n\n- Extract **voxel-level\
+  \ anatomical structure** from CT + organ masks\n- Sequentially choose **5 distinct beam angles**\n-\
+  \ Accumulate a **pseudo-physical dose surrogate** over timesteps\n- Optimize reward balancing:\n  -\
+  \ **PTV coverage** (good)\n  - **OAR sparing** (avoid toxicity)\n\nInference time: **<1 second** per\
+  \ patient.\n\n\n---\n\n## \U0001F4C1 Repository Structure\n\n```\nDeep-Reinforcement-Learning-for-Personalized-Radiotherapy-Beam-Orientation-Optimization/\n\
+  ├── configs/\n│   └── experiments.json\n├── figures/\n│   ├── success_cases/      # Best examples\n\
+  │   ├── typical_cases/      # Typical\n│   ├── failure_cases/     # Failure cases\n│   └── anomaly_cases/\
+  \     # Special discussion\n├── models/\n│   └── best_dqn_model.pt\n├── results/\n│   ├── summary_results.md\n\
+  │   └── test_results.csv\n├── utils/\n│   └── repro.py\n├── baselines.py\n├── eval_main.py\n├── train.py\n\
+  ├── requirements.txt\n└── README.md\n```\n\n\n---\n\n## ⚙️ Installation\n\n```bash\ngit clone https://github.com/krishdef7/Deep-Reinforcement-Learning-for-Personalized-Radiotherapy-Beam-Orientation-Optimization.git\n\
+  cd Deep-Reinforcement-Learning-for-Personalized-Radiotherapy-Beam-Orientation-Optimization\npip install\
+  \ -r requirements.txt\n```\n\n\n---\n\n## \U0001F4C2 Dataset (OpenKBP)\n\nWe use the OpenKBP dataset\
+  \ (head-and-neck):\n\n- CT volumes  \n- PTV mask  \n- OAR masks (cord, brainstem, L/R parotids, mandible)\n\
+  \nSplit:\n\n- Train: **200**\n- Validation: **40**\n- Test: **100**\n\n\U0001F6E0 Users must download\
+  \ OpenKBP separately and update paths in `configs/experiments.json`\n\n\n---\n\n## ▶️ Running Evaluation\
+  \ (Generate Results + Figures)\n\n```bash\npython eval_main.py\n```\n\nOutputs will include:\n\n- `results/test_results.csv`\
+  \ — per-patient metrics (D95, coverage, OAR doses)\n- `figures/patient_XXX_dose_dqn.png` — DQN dose\
+  \ maps overlaid on CT\n- `figures/patient_XXX_dvh_dqn.png` — dose–volume histogram plots\n\n\n---\n\n\
+  ## \U0001F3CB️ Training from Scratch\n\n```bash\npython train.py\n```\n\nTraining summary:\n\n- Replay\
+  \ buffer: 3000\n- Batch size: 32\n- γ = 0.95\n- ε-greedy: 0.90 → 0.10\n- Target network update every\
+  \ 5 epochs\n- Converges in ~3.5 hours CPU\n\n\n---\n\n## \U0001F4C8 Results — 100 Patient Evaluation\n\
+  \n| Method        | Coverage  | D95     |\n|--------------|-----------|---------|\n| **DQN (ours)**\
+  \ | **0.8059** | **0.2405** |\n| Equiangular   | 0.6867    | 0.1207 |\n| Heuristic     | 0.6397    |\
+  \ 0.0949 |\n| RandomMean    | 0.5883    | 0.0554 |\n\n### Key Highlights\n- **+11.9% absolute improvement**\
+  \ in PTV coverage\n- **~2× improvement** in D95\n- **<1 second** per patient (post-training)\n- Strong\
+  \ generalization across **100 unseen CT cases**\n\n\n---\n\n## \U0001F9EC Model Summary\n\n**State (8\
+  \ channels):**\n- CT\n- PTV mask\n- 5 OAR masks\n- Accumulating dose surrogate\n\n**Actions:**\n- 36\
+  \ discrete gantry angles (0–350° at 10° spacing)\n- DQN selects **5 sequential non-repeating beams**\n\
+  \n**Architecture:**\n- 5× Conv layers + BN + ReLU\n- Bottleneck: 4×4×256\n- Fully connected head\n-\
+  \ Masking to prevent repeated beams\n- Model parameters: ~3.4M\n\n**Dose Surrogate:**\n1) Ray-traced\
+  \ geometric field  \n2) Gaussian blur → approximate scatter  \n3) Accumulate dose per timestep  \n\n\
+  **Reward:**\n- Terminal reward based on:\n  - ↑ D95 and coverage\n  - ↓ mean OAR dose\n\n\n---\n\n##\
+  \ \U0001F3A8 Qualitative Examples\n\nLocated in:\n\n```\nfigures/success_cases/\nfigures/typical_cases/\n\
+  figures/failure_cases/\nfigures/anomaly_cases/\n```\n\nHigh-dose regions remain **inside PTV** and spare\
+  \ critical OARs.  \nDVH curves reflect improved target coverage.\n\n\n---\n\n## \U0001F4CA Baselines\
+  \ Implemented\n\nAll evaluated under **identical surrogate dose** to ensure fair comparison:\n\n- **Equiangular\
+  \ beams**\n- **Geometry heuristic**\n- **Random non-repeating beams** (mean)\n\n\n---\n\n## \U0001F9ED\
+  \ Clinical Interpretation\n\n- Higher D95 → higher local tumor control likelihood\n- OAR avoidance reduces\
+  \ severe toxicity risk\n- <1s runtime enables:\n  - Adaptive planning\n  - Online replanning\n  - QA\
+  \ workflow assistive tools\n\n\n---\n\n## \U0001F6A7 Limitations (Honest Assessment)\n\n- Surrogate\
+  \ dose ≠ true Monte Carlo dose\n- Current version operates on **single 2D slice**\n- Trained only on\
+  \ **head-and-neck geometry**\n- Research prototype — **not clinically deployable**\n\n\n---\n\n## \U0001F52E\
+  \ Future Directions\n\n- 3D DQN / U-Net encoders\n- GPU-based Monte Carlo integration\n- Learned neural\
+  \ surrogate physics\n- Multi-objective RL (Pareto optimal)\n- Online robustness against anatomical changes\n\
+  - Multi-disease training (lung, pelvis, liver)\n\n\n---\n\n## \U0001F4C4 Citation\n\nIf you use this\
+  \ repository, please cite:\n\n**Deep Reinforcement Learning for Personalized Radiotherapy Beam Orientation\
+  \ Optimization.  \nKrish Garg, IIT Roorkee, 2025.**\n\n\n---\n\n## \U0001F64F Acknowledgements\n\n-\
+  \ OpenKBP dataset contributors\n- IIT Roorkee — Department of Physics (institutional affiliation)\n\
+  - No external funding used\n\n"

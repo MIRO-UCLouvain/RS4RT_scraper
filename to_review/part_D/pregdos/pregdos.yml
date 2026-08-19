@@ -1,0 +1,56 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Eurados/pregdos
+url: https://github.com/Eurados/pregdos
+platform: github
+description: Tool for MC calculating dose to fetus in proton therapy, and RTDOSE in general.
+license: MIT
+language: Python
+keywords: []
+stars: 4
+updated_at: '2026-07-24T21:49:40Z'
+image_source: null
+heuristic_total_score: 23
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 4 particle-therapy term(s).
+- Matched 5 support term(s).
+readme_excerpt: "# PregDos\n\n[![CI](https://github.com/Eurados/pregdos/actions/workflows/ci.yml/badge.svg)](https://github.com/Eurados/pregdos/actions/workflows/ci.yml)\n\
+  [![Docker](https://github.com/Eurados/pregdos/actions/workflows/docker-pregdos.yml/badge.svg)](https://github.com/Eurados/pregdos/actions/workflows/docker-pregdos.yml)\n\
+  [![Dependabot](https://img.shields.io/badge/dependabot-enabled-025E8C?logo=dependabot)](https://github.com/Eurados/pregdos/security/dependabot)\n\
+  \nA tool for calculating dose to a fetus in proton therapy.\nConverts DICOM RT plans to [OpenTOPAS](https://github.com/OpenTOPAS/OpenTOPAS)\n\
+  Monte Carlo input files and submits them as SLURM jobs.\n\n<table>\n  <tr>\n    <td><img alt=\"PregDos\
+  \ upload page\" src=\"https://github.com/user-attachments/assets/22f3f24e-62b6-43ca-b341-69f2e1588dc0\"\
+  \ /></td>\n    <td><img alt=\"PregDos task list\" src=\"https://github.com/user-attachments/assets/f4741bcf-0546-46a6-8c53-3038208adc1b\"\
+  \ /></td>\n  </tr>\n  <tr>\n    <td><img alt=\"PregDos scorer results\" src=\"https://github.com/user-attachments/assets/4d014c03-303c-4415-831d-56ff1eee3963\"\
+  \ /></td>\n    <td><img alt=\"PregDos PDF report\" src=\"https://github.com/user-attachments/assets/95258f2a-c256-4a44-898f-943a10be5a34\"\
+  \ /></td>\n  </tr>\n</table>\n\n\n> Still under development — not ready for use.\n\n## What it does\n\
+  \n1. Upload a DICOM RT plan via the web UI\n2. Select which structures to include\n3. Convert to TOPAS\
+  \ input files\n4. Run TOPAS via SLURM (job scheduling)\n5. Post-process and display dose/effective dose\
+  \ per structure\n\n## Structure dose and normalization\n\nPregDos reports physical dose/equivalent dose\
+  \ per RT structure, using the native CT voxel\ngrid and a TOPAS mask pre-pass. The details live in\n\
+  [docs/normalization.md](docs/normalization.md).\n\n## Running the webserver locally (development)\n\n\
+  ```bash\npip install -e \".[dev]\"\npregdos-web\n```\n\nThen open http://localhost:5000 in a browser.\n\
+  \nOptionally set a custom secret key:\n\n```bash\nPREGDOS_SECRET_KEY=mysecret pregdos-web\n```\n\n##\
+  \ Running tests\n\n```bash\npytest\n```\n\n## Running as Docker\n\nPre-built images are published to\
+  \ the GitHub Container Registry and work on\nLinux, macOS, and Windows 10/11 (via Docker Desktop + WSL2)\
+  \ — no compilation needed.\n\n```bash\ndocker pull ghcr.io/eurados/pregdos:latest-topas4.2.3\ndocker\
+  \ run --rm -it --hostname localhost -p 5000:5000 ghcr.io/eurados/pregdos:latest-topas4.2.3\n```\n\n\
+  Then open http://localhost:5000 in a browser.\n\nPregDos requires OpenTOPAS 4.2.3 or newer. Older TOPAS/OpenTOPAS\
+  \ builds are not supported\nbecause older multithreaded scorer statistics can be corrupted (issue #49).\n\
+  \n| Tag | OpenTOPAS | Geant4 |\n|-----|-----------|--------|\n| `latest-topas4.2.3` | v4.2.3 | 11.3.2\
+  \ |\n\nFor release-pinned tags (e.g. `v0.2.1-topas4.2.3`) see the\n[Packages](https://github.com/Eurados/pregdos/pkgs/container/pregdos)\
+  \ page.\n\n### Building from source\n\nThe full production image (OpenTOPAS + SLURM + webserver) requires\
+  \ building\nin two steps. See [docker/pregdos/README.md](docker/pregdos/README.md) for\nthe complete\
+  \ build and run instructions.\n\nStandalone OpenTOPAS images (for testing simulations without the webserver)\n\
+  are documented in [docker/opentopas/README.md](docker/opentopas/README.md).\n\n## Project layout\n\n\
+  ```\npregdos/          Python package (Flask webserver, DICOM conversion)\ntests/            pytest\
+  \ test suite\ndocker/\n    opentopas/    Standalone supported OpenTOPAS image (v4.2.3)\n    slurm/ \
+  \       Standalone SLURM image (for testing)\n    pregdos/      Combined production image\n```\n\n##\
+  \ Roadmap / TODO\n\nSee [TODO.md](TODO.md) for the full list of open tasks.\n\n## Acknowledgements\n\
+  \nThis work is part of the\n[SONORA project](https://pianoforte-partnership.eu/sonora/), which has received\n\
+  funding from the European Union's EURATOM research and innovation programme\nunder grant agreement No\
+  \ 101061037\n([PIANOFORTE](https://pianoforte-partnership.eu/) - European Partnership for\nRadiation\
+  \ Protection Research).\n"

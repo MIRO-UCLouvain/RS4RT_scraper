@@ -1,0 +1,146 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: dobrienphd/ParticleZoo
+url: https://github.com/dobrienphd/ParticleZoo
+platform: github
+description: C++ library and utilities (with Python bindings) for reading/writing particle phase space
+  data for Medical Physics or Particle Physics applications.
+license: MIT
+language: C++
+keywords:
+- medical-physics
+- monte-carlo
+- particle-physics
+- phase-space
+- radiotherapy
+stars: 5
+updated_at: '2026-07-10T04:04:58Z'
+image_source: https://raw.githubusercontent.com/dobrienphd/ParticleZoo/HEAD/docs/assets/particlezoo.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# ParticleZoo\n\n<p align=\"center\">\n  <img src=\"docs/assets/particlezoo.png\" alt=\"\
+  ParticleZoo Logo\" width=\"400\"/>\n</p>\n\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)\n\
+  \nA high-performance C++20 library for reading, writing, and manipulating particle phase space files\
+  \ across multiple Monte Carlo simulation ecosystems. ParticleZoo provides a unified API that abstracts\
+  \ away format-specific details, enabling seamless interoperability between different simulation codes\
+  \ and workflows.\n\n## Overview\n\nParticleZoo serves as a universal translator and processor for particle\
+  \ phase space data, which represents the position, momentum, energy, and other properties of particles\
+  \ at specific locations in Monte Carlo simulations. The library is designed around a common `Particle`\
+  \ data model that can represent particles from any supported format, with automatic format detection\
+  \ and conversion capabilities.\n\n### Key Features\n\n- **Unified API**: Single interface to work with\
+  \ multiple phase space formats\n- **Format Transparency**: Automatic format detection with explicit\
+  \ override options\n- **High Performance**: Efficient binary I/O with configurable buffering\n- **Parallel\
+  \ Processing**: Built-in support for multi-threaded reading with history or particle-balanced partitioning\n\
+  - **Random Access**: Seek to specific particles within phase space files\n- **Extensible Architecture**:\
+  \ Plugin-style registry system for adding new formats\n- **Unit Consistency**: Comprehensive unit system\
+  \ ensures proper dimensional handling\n- **Memory Efficient**: Streaming interfaces for processing large\
+  \ files\n- **Cross-Platform**: Windows, Linux and macOS support with standard build tools\n- **Python\
+  \ Bindings**: Optional Python package for scripting and rapid prototyping\n\n## Supported Formats\n\n\
+  The library includes built-in support for major Monte Carlo simulation formats:\n\n- **EGS** (EGSnrc):\
+  \ `.egsphsp` files in MODE0 and MODE2, including suffixed variants (`.egsphsp1`, etc.)\n- **IAEA**:\
+  \ `.IAEAphsp` International Atomic Energy Agency format with header files\n- **TOPAS**: `.phsp` files\
+  \ in Binary, ASCII, and Limited variants\n- **penEasy**: `.dat` ASCII format from the PENELOPE simulation\
+  \ code\n- **ROOT** (optional): `.root` files generated with the CERN ROOT framework. Includes built-in\
+  \ templates for TOPAS and OpenGATE generated files. Also supports custom branch mappings\n\nAdditional\
+  \ formats can be added through the extensible registry system without modifying core library code.\n\
+  \n## Architecture\n\n### Core Components\n\n**`Particle` Class**: The central data model representing\
+  \ a particle with position, momentum, energy, weight, and type information. Supports both standard properties\
+  \ and format-specific extensions through a flexible property system.\n\n**`PhaseSpaceFileReader`**:\
+  \ Abstract base class for reading phase space files. Implementations handle format-specific parsing\
+  \ while presenting a common streaming interface.\n\n**`PhaseSpaceFileWriter`**: Abstract base class\
+  \ for writing phase space files. Handles format-specific serialization with proper history counting.\n\
+  \n**`FormatRegistry`**: Plugin-style system for registering and creating readers/writers. Enables runtime\
+  \ format discovery and automatic format detection from file extensions.\n\n**`ByteBuffer`**: High-performance\
+  \ binary I/O buffer for efficient reading of large files with configurable buffering strategies.\n\n\
+  **`HistoryBalancedParallelReader`**: Multi-threaded reader that partitions phase space files by history\
+  \ count for parallel processing. Each thread receives an approximately equal share of histories.\n\n\
+  **`ParticleBalancedParallelReader`**: Multi-threaded reader that partitions phase space files by particle\
+  \ count for parallel processing. Each thread receives an approximately equal share of particles (with\
+  \ history boundaries respected).\n\n### Data Model\n\nThe `Particle` class provides access to:\n\n-\
+  \ **Spatial coordinates**: Position (x, y, z) in configurable units\n- **Momentum**: Direction cosines\
+  \ and kinetic energy\n- **Particle properties**: PDG particle codes, statistical weight\n- **History\
+  \ tracking**: Original history numbers and incremental counters\n- **Generation tracking**: Primary/secondary\
+  \ status and generation number (where available)\n- **Format-specific data**: Extensible property system\
+  \ for specialized information\n\n### Unit System\n\nParticleZoo includes a comprehensive unit system\
+  \ that ensures dimensional consistency across different formats. The unit system covers length, area,\
+  \ volume, energy, mass, time, frequency, force, pressure, charge, density, dose, and angle:\n\n```cpp\n\
+  // Length units: nm, um, mm, cm, m, km, in, ft\nfloat x_in_cm = particle.getX() / cm;\nfloat y_in_mm\
+  \ = particle.getY() / mm;\n\n// Energy units: eV, keV, MeV, GeV, TeV, J\nfloat energy_MeV = particle.getKineticEnergy()\
+  \ / MeV;\n\n// Dose units: Gy, cGy, rad, Sv, mSv, rem\nfloat dose_cGy = absorbed_dose / cGy;\n\n// Angle\
+  \ units: radian, deg\nfloat angle_deg = angle / deg;\n```\n\n## Building and Installation\n\n### Prerequisites\n\
+  \n- **Operating System**: Linux, macOS, or Windows\n- **Compiler / Toolchain**:\n    - Linux/macOS:\
+  \ C++20 compatible compiler (GCC 10+, Clang 13+)\n    - Windows: Visual Studio 2019 or later with C++\
+  \ development tools (MSVC)\n- **Build Tools**:\n    - Linux/macOS: GNU Make\n    - Windows: Windows\
+  \ Command Prompt or PowerShell (uses `build.bat`)\n- **Optional Dependencies**:\n    - CERN ROOT (for\
+  \ ROOT format support)\n        - Requires `root-config` in PATH on all platforms\n\n### Build Process\n\
+  \n#### Linux and macOS\n```bash\n# Configure the build system (auto-detects compiler and dependencies)\n\
+  ./configure [--prefix=/your/installation/prefix]\n\n# Build the library and tools\nmake          # Release\
+  \ build (default)\nmake debug    # Debug build with symbols\nmake release  # Explicitly build release\
+  \ version\n\n# Install (optional)\nmake install  # defaults to /usr/local for the install PREFIX\nmake\
+  \ install PREFIX=/usr/local\nmake install-debug  # Install debug binaries and library instead\nmake\
+  \ uninstall      # Remove an installation\n\n# Python bindings (optional)\nmake install-python     \
+  \ # Standard installation\nmake install-python-dev  # Editable/development installation\nmake uninstall-python\
+  \    # Remove Python bindings\n```\n\n#### Windows\n```powershell\n# Configure, build, and optionally\
+  \ install\nbuild.bat [--prefix=C:\\path\\to\\install] [debug|release]\nbuild.bat install [--prefix=C:\\\
+  path\\to\\install] [debug|release]\n```\n\nIf GNU Make is available on Windows, the standard `make`\
+  \ targets (`make`, `make debug`, `make install`, `make clean`) also work and forward to `build.bat`\
+  \ automatically. The `PREFIX`, `USE_ROOT=0`, and `JOBS` make variables map to the corresponding `build.bat`\
+  \ flags.\n\n### Build Outputs\n\nThe build system creates the following artifacts:\n\n**Release build**\n\
+  - Linux/macOS: `build/gcc/release/`\n- Windows:   `build/msvc/release/`\n    - Static library:\n   \
+  \     - Linux/macOS: `libparticlezoo.a`\n        - Windows:   `libparticlezoo.lib`\n    - Shared/dynamic\
+  \ library:\n        - Linux: `libparticlezoo.so`\n        - macOS: `libparticlezoo.dylib`\n        -\
+  \ Windows: `build/msvc/release/bin/particlezoo.dll`\n    - Executables:\n        - Linux/macOS: `PHSPConvert`,\
+  \ `PHSPCombine`, `PHSPImage`, `PHSPSplit`\n        - Windows:   `PHSPConvert.exe`, `PHSPCombine.exe`,\
+  \ `PHSPImage.exe`, `PHSPSplit.exe`\n\n**Debug build**\n- Linux/macOS: `build/gcc/debug/`\n- Windows:\
+  \   `build/msvc/debug/`\n    - Static library with debug symbols:\n        - Linux/macOS: `libparticlezoo.a`\n\
+  \        - Windows:   `libparticlezoo.lib`\n    - Shared/dynamic library:\n        - Linux: `libparticlezoo.so`\n\
+  \        - macOS: `libparticlezoo.dylib`\n        - Windows: `build/msvc/debug/bin/particlezoo.dll`\n\
+  \    - Debug executables:\n        - Linux/macOS: `PHSPConvert`, etc.\n        - Windows:   `PHSPConvert.exe`,\
+  \ etc.\n\n**Installation** (optional)\n- Linux/macOS (with `make install`):\n    - Headers: `$PREFIX/include/particlezoo/`\n\
+  \    - Libraries: `$PREFIX/lib/libparticlezoo.a` and `$PREFIX/lib/libparticlezoo.so` (`.dylib` on macOS)\n\
+  \    - Executables: `$PREFIX/bin/PHSPConvert`, etc.\n- Windows (with `build.bat install`):\n    - Headers:\
+  \ `%PREFIX%\\include\\particlezoo\\`\n    - Static Library: `%PREFIX%\\lib\\libparticlezoo.lib`\n  \
+  \  - Executables and DLL: `%PREFIX%\\bin\\PHSPConvert.exe`, etc.\n\n### Configuration Options\n\nThe\
+  \ `configure` script (Linux/macOS) accepts the following options:\n\n- `--prefix=PATH` - Installation\
+  \ prefix (default: `/usr/local`)\n- `--no-root` - Disable ROOT support even if available\n\nThe `build.bat`\
+  \ script (Windows) accepts the following options:\n\n- `--prefix=PATH` - Installation prefix (default:\
+  \ `%LOCALAPPDATA%\\particlezoo`)\n- `--no-root` - Disable ROOT support even if available\n- `-j N` or\
+  \ `--jobs=N` - Number of parallel compilation jobs\n\n\n## Using the Library\n\n### Basic Usage\n\n\
+  Here's a simple example showing how to read from one format and write to another:\n\n```cpp\n#include\
+  \ <particlezoo/PhaseSpaceFileReader.h>\n#include <particlezoo/PhaseSpaceFileWriter.h>\n#include <particlezoo/utilities/formats.h>\n\
+  \nusing namespace ParticleZoo;\n\nint main() {\n    // Create readers and writers - format auto-detected\
+  \ from extension\n    auto reader = FormatRegistry::CreateReader(\"input.IAEAphsp\");\n    auto writer\
+  \ = FormatRegistry::CreateWriter(\"output.egsphsp\");\n    \n    // Process all particles\n    while\
+  \ (reader->hasMoreParticles()) {\n        Particle particle = reader->getNextParticle();\n        \n\
+  \        // Optionally modify particle properties\n        // particle.setWeight(particle.getWeight()\
+  \ * 2.0);\n        \n        writer->writeParticle(particle);\n    }\n    \n    // Clean up\n    writer->close();\n\
+  \    reader->close();\n    \n    return 0;\n}\n```\n\n### Advanced Usage with Options\n\nMany format\
+  \ readers and writers accept configuration options:\n\n```cpp\n// Create options map for custom behavior\n\
+  // Requires: #include <particlezoo/ROOT/ROOTphsp.h>\nUserOptions options;\n// Example: select predefined\
+  \ ROOT template when reading ROOT files\noptions[ParticleZoo::ROOT::ROOTFormatCommand] = { std::string(\"\
+  TOPAS\") };\n\n// Create reader with our user options\nauto reader = FormatRegistry::CreateReader(\"\
+  ROOT\", \"simulation.root\", options);\n```\n\n### Advanced Usage with Fixed Values\n\nMany formats\
+  \ support holding certain values (e.g. X, Y, Z) constant across all particles to reduce file sizes.\n\
+  \n```cpp\n// Create default options map\nUserOptions options;\n\n// Create the flags for the fixed values\
+  \ and set the Z value to be constant at 100 cm\nFixedValues fixedValues;\nfixedValues.zIsConstant =\
+  \ true;\nfixedValues.constantZ = 100 * cm;\n\n// Create writer with explicit format, options, and a\
+  \ fixed Z value\nauto writer = FormatRegistry::CreateWriter(\"IAEA\", \"simulation.IAEAphsp\", options,\
+  \ fixedValues);\n```\n\n### Working with Particles\n\nThe `Particle` class provides extensive access\
+  \ to particle properties:\n\n```cpp\nParticle p = reader->getNextParticle();\n\n// Basic properties\n\
+  float x = p.getX() / cm;           // Position in cm\nfloat y = p.getY() / cm;\nfloat z = p.getZ() /\
+  \ cm;\n\nfloat energy = p.getKineticEnergy() / MeV;  // Energy in MeV\nfloat weight = p.getWeight();\
+  \               // Statistical weight\n\n// Direction (unit vector)\nfloat dx = p.getDirectionalCosineX();\n\
+  float dy = p.getDirectionalCosineY();\nfloat dz = p.getDirectionalCosineZ();\n\n// Generation information\n\
+  bool isPrimary = p.isPrimary();\nif (p.hasIntProperty(IntPropertyType::GENERATION)) {\n    int generation\
+  \ = p.getIntProperty(IntPropertyType::GENERATION);\n}\n```\n\n### Format-Specific Features\n\nDifferent\
+  \ formats support different features. The library provides access to format-specific properties:\n\n\
+  ```cpp\n// EGS-specific latch information\nif (p.hasIntProperty(IntPropertyType::EGS_LATCH)) {\n   \
+  \ int latch = p.getIntProperty(IntPropertyType::EGS_LATCH);\n}\n\n// PENELOPE-specific interaction flags\
+  \  \nif (p.hasIntProperty(IntPropertyType::PENELOPE_ILB1)) {\n    int ilb1 = p.getIntProperty(IntPropertyType::PENELOPE_ILB1);\n\
+  }\n```\n\n### Error Handling\n\nThe library uses standard C++ exception handling:\n\n```cpp\ntry {\n\
+  \    auto reader = Forma"

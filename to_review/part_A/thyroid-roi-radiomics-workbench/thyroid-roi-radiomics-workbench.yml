@@ -1,0 +1,131 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Tuhaibin861126/thyroid-roi-radiomics-workbench
+url: https://github.com/Tuhaibin861126/thyroid-roi-radiomics-workbench
+platform: github
+description: ''
+license: null
+language: JavaScript
+keywords: []
+stars: 0
+updated_at: '2026-06-08T05:33:21Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: '# B-Mode Ultrasound ROI Radiomics Workbench
+
+
+  This folder contains a static web interface for the clinical-first B-mode ultrasound ROI radiomics workflow.
+
+
+  ## Files
+
+
+  - `index.html`: entry page.
+
+  - `styles.css`: page layout and visual styles.
+
+  - `app.js`: DICOM display, ROI editing, feature extraction, scoring, and export logic.
+
+  - `model-config.js`: locked clinical, radiomics, and fusion model coefficients.
+
+  - `assets/demo_case.png`: built-in demonstration ultrasound image.
+
+  - `docs/dicom_audit.csv`: audit summary of the local DICOM files inspected during development.
+
+
+  ## How to Run Locally
+
+
+  Open `index.html` directly in a browser, or run a small local server:
+
+
+  ```powershell
+
+  cd web_roi_extractor_app
+
+  python -m http.server 8787
+
+  ```
+
+
+  Then open:
+
+
+  ```text
+
+  http://127.0.0.1:8787/
+
+  ```
+
+
+  ## How to Publish
+
+
+  Upload the entire `web_roi_extractor_app` folder to any static web host. Examples include a hospital
+  intranet static server, GitHub Pages, Netlify, Vercel static hosting, or an object-storage website bucket.
+
+
+  The current build performs DICOM parsing, ROI drawing, scoring, and exports inside the browser. It does
+  not require a backend server for the supported single-frame uncompressed ultrasound DICOM files.
+
+
+  ## Supported Image Input
+
+
+  The browser build supports:
+
+
+  - Single-frame ultrasound DICOM.
+
+  - 8-bit uncompressed MONOCHROME2 B-mode images.
+
+  - 8-bit uncompressed RGB images for display.
+
+
+  The browser build does not process compressed DICOM transfer syntaxes or multi-frame cine loops. Those
+  files should be converted to a representative single-frame B-mode image before upload.
+
+
+  ## Output
+
+
+  The page can export:
+
+
+  - ROI polygon and model output as JSON.
+
+  - Binary ROI mask as PNG.
+
+  - ROI overlay image as PNG.
+
+  - ROI-derived feature table as CSV.
+
+
+  ## Model Notes
+
+
+  Clinical model coefficients come from Supplementary Table 8 of the manuscript package. The radiomics
+  score coefficients come from Supplementary Table 11. The fusion model is reconstructed from the case-level
+  clinical probability, rad_score, and fusion probability values in the analysis workbook.
+
+
+  The ROI-derived browser feature extractor is a lightweight research-interface implementation intended
+  for workflow demonstration and interface testing. A formal clinical deployment should replace the browser
+  proxy extractor with the locked Python/PyRadiomics pipeline used in the final analysis.
+
+
+  ## Privacy Notes
+
+
+  The page does not upload files to a server. DICOM files are read locally in the browser. Patient identifiers
+  in DICOM metadata are not displayed or exported by the interface. Burned-in annotations inside the ultrasound
+  image itself remain part of the pixel data and should be removed or avoided before formal public demonstration
+  if they contain identifiable information.
+
+  '

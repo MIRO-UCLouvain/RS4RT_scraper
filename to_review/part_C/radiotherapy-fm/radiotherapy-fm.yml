@@ -1,0 +1,72 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: soz223/radiotherapy_fm
+url: https://github.com/soz223/radiotherapy_fm
+platform: github
+description: 'Mayo-RT-VFM: pan-cancer radiotherapy vision foundation model'
+license: NOASSERTION
+language: null
+keywords: []
+stars: 0
+updated_at: '2026-05-24T02:58:22Z'
+image_source: null
+heuristic_total_score: 24
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 5 support term(s).
+readme_excerpt: "# Mayo-RT-VFM\n\n> **Pan-cancer Radiotherapy Vision Foundation Model.**\n> 2.2B params\
+  \ (VoCo-H 1.2B CT + Triad-L ~1B MRI), continued-pretrained on Mayo + TCIA pan-cancer RT data with Δt-Siamese\
+  \ MAE. Five task heads on top: lesion seg, OAR seg, dose prediction, replan classification, recurrence\
+  \ + toxicity outcome.\n> **No LLM. Pure vision.**\n\n---\n\n## 30-second context for the next AI assistant\n\
+  \nIf you are a fresh Claude Code instance picking this up: **read [`CLAUDE.md`](CLAUDE.md) first.**\
+  \ It contains the project rules, conventions, hardware budget, and forbidden actions. Then come back\
+  \ here.\n\nIf you are a human reviewer: this README is your entry point.\n\n## What this project is\n\
+  \nA radiation oncology PhD student at Mayo Clinic has access to ~3-10k longitudinal pan-cancer RT patients\
+  \ with planning CT, on-treatment CBCT, follow-up CT/MRI, RT dose plans, and outcome labels. Their advisor\
+  \ wants a **Foundation Model**. Their team's current \"FM\" effort is RAG-only, which is rejected as\
+  \ insufficient. This project builds a **real trainable** vision FM, with multiple task heads spanning\
+  \ the RT workflow.\n\n## How we got here — conversation summary\n\nThis is the condensed timeline of\
+  \ the 2026-05-23 planning session (full docs in [`docs/`](docs/)):\n\n1. **Brief**: build an RT FM that\
+  \ handles lesion seg, OAR seg, registration, dose prediction, per-visit treatment plan, and outcome.\
+  \ User has high-quality longitudinal Mayo RT data + PhD-level curators.\n2. **5 broad research subagents**\
+  \ dispatched: (1) medical 3D FMs, (2) longitudinal medical imaging, (3) registration with DL, (4) dose\
+  \ prediction, (5) RT AI landscape and venues. See [`docs/research/0*.md`](docs/research/).\n3. **3 proposals**\
+  \ drafted (A: longitudinal RT FM, B: dose-as-input outcome FM, C: failure-mode localizer). See [`docs/proposals/`](docs/proposals/).\
+  \ User initially chose B for speed.\n4. User expanded scope: **add lesion seg, OAR seg, dose prediction,\
+  \ replan classification, plus longitudinal outcome** — basically merging B+ and parts of A.\n5. **7\
+  \ per-module deep-dive subagents** dispatched: M1 backbone, M2 registration, M3 segmentation head, M4\
+  \ dose head, M5 replan head, M6 longitudinal outcome, M7 radiomics baseline. See [`docs/research/modules/M*.md`](docs/research/modules/).\n\
+  6. **Three critical corrections came back from per-module surveys**:\n   - SuPreM is **OUT** (CC-BY-NC-ND\
+  \ blocks fine-tune derivatives).\n   - SynthMorph is brain-MRI-only — **use ANTsPy** for affine on CT/CBCT.\n\
+  \   - On thorax CBCT, classical **ConvexAdam beats every DL submission** (OncoReg 2024). Run uniGradICON\
+  \ + ConvexAdam in parallel, use disagreement as QC channel.\n7. User pushed back that 95M-370M felt\
+  \ \"too small for an FM\". Compute confirmed: **8× H200 single node available for training, more uncertain**.\n\
+  8. User considered adding an LLM (1 of 4 architectural roles: output head / agent / pretraining supervisor\
+  \ / temporal sequence modeler). After thinking it through, **decided no LLM** — pure vision FM is sufficient\
+  \ for the 6 core tasks, complexity-to-benefit ratio doesn't justify the LLM.\n9. **Final locked decisions**\
+  \ (this is what we build):\n   - Backbone: VoCo-H (1.2B) + Triad-L (~1B) = 2.2B multimodal vision FM\n\
+  \   - Continued pretraining: Δt-Siamese MAE + cross-cancer MAE + cross-modal contrastive + masked dose\
+  \ modeling\n   - 5 task heads on the pretrained backbone\n   - Pan-cancer scope (H&N + NSCLC + prostate\
+  \ + others Mayo has)\n   - Target venue: Medical Image Analysis (primary) / Nature Communications (stretch)\n\
+  \n## File map\n\n```\n.\n├── README.md                         ← you are here\n├── CLAUDE.md       \
+  \                  ← rules + conventions for AI assistant\n├── NEXT_STEPS.md                     ← concrete\
+  \ first tasks\n├── LICENSE                           ← Apache 2.0\n├── .gitignore\n├── docs/\n│   ├──\
+  \ 00_intake_and_framing.md      ← original user brief + lead-agent framing\n│   ├── components_and_stack.md\
+  \       ← FINAL SPEC (the buildable doc)\n│   ├── milestones_w1_to_m2.md        ← week 1 → month 2 deliverables\n\
+  │   ├── research/\n│   │   ├── 01-05_*.md                ← broad survey outputs\n│   │   └── modules/\n\
+  │   │       └── M1-M7_*.md            ← per-component deep dives\n│   └── proposals/\n│       └── A/B/C\
+  \ + comparison.md     ← project framings explored\n├── src/rt_vfm/                       ← Python package\
+  \ (empty, to be written)\n├── scripts/                          ← training/eval entrypoints (empty)\n\
+  ├── configs/                          ← YAML configs (empty)\n├── tests/                           \
+  \ ← pytest tests (empty)\n├── notebooks/                        ← exploration (empty)\n├── data/   \
+  \                          ← gitignored, populated locally\n└── weights/                          ←\
+  \ gitignored, populated locally\n```\n\n## Quick links to the most useful docs\n\n- **The buildable\
+  \ spec**: [`docs/components_and_stack.md`](docs/components_and_stack.md)\n- **Week-by-week plan**: [`docs/milestones_w1_to_m2.md`](docs/milestones_w1_to_m2.md)\n\
+  - **AI assistant rules**: [`CLAUDE.md`](CLAUDE.md)\n- **First tasks to start**: [`NEXT_STEPS.md`](NEXT_STEPS.md)\n\
+  \n## Status\n\n- Planning: **complete and locked**\n- Code: **not started**\n- Data inventory: **awaiting\
+  \ Mayo curators**\n- IRB amendments: **filed, pending**\n- Hardware: **8× H200 single node confirmed\
+  \ for training**\n\n## Authors\n\n- Original planning session: PhD student (soz223) × Claude Opus 4.7,\
+  \ 2026-05-23\n"

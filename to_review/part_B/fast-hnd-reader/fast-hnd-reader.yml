@@ -1,0 +1,172 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: NGao-07/fast_hnd_reader
+url: https://github.com/NGao-07/fast_hnd_reader
+platform: github
+description: A high-performance Python/C++ library to read Varian OBI .hnd imaging files
+license: null
+language: Python
+keywords:
+- hnd-file
+- imaging
+- obi
+- python
+- radiotherapy
+- varain
+stars: 0
+updated_at: '2026-03-19T09:39:22Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: '# FastHndReader
+
+
+  **FastHndReader** is a high-performance Python library for reading and decompressing Varian OBI `.hnd`
+  medical imaging files fastly.
+
+
+  ## Background
+
+  Varian `.hnd` files (often used in Varian radiotherapy systems) store image data using a custom compression
+  algorithm involving a Look-Up Table (LUT) and spatial prediction:
+
+  $P(x,y) = P(x-1,y) + P(x,y-1) + diff - P(x-1,y-1)$
+
+
+  Because this algorithm is recursive and pixel-dependent, it is notoriously slow in Python due to loop
+  overhead. **FastHndReader** implements the core decompression logic in optimized C++, allowing you to
+  process large batches of images in seconds.
+
+
+  ## Acknowledgements
+
+  This project is an optimized implementation based on the logic from the [read-hnd](https://pypi.org/project/read-hnd/)
+  package by **Ben George**. We thank the original author for the reverse-engineering and documentation
+  of the HND format.
+
+
+  ## Key Features
+
+  - **Blazing Fast**: Decompress 1024 x 768 images in milliseconds.
+
+  - **Easy Integration**: Use NumPy arrays directly.
+
+  - **Header Parsing**: Full access to all HND metadata (Gantry angle, Energy, Patient ID, etc.).
+
+  - **Intensity Correction**: Automatic exponential intensity adjustment built into the C++ layer.
+
+
+  ---
+
+
+  ## Installation
+
+
+  ### Prerequisites
+
+  - Python 3.7+
+
+  - A C++ compiler (Visual Studio on Windows, GCC on Linux, or Clang on macOS)
+
+  - `pybind11`
+
+
+  ### Build and Install
+
+  Clone the repository and run:
+
+  ```bash
+
+  pip install pybind11 numpy imageio
+
+  cd hnd_decoder
+
+  pip install .
+
+  ```
+
+
+  ---
+
+
+  ## Quick Start
+
+
+  ### 1. Read and Plot an Image
+
+  ```python
+
+  import matplotlib.pyplot as plt
+
+  from read_hnd import HndReader
+
+
+  # Path to your .hnd file
+
+  file_path = "path/to/your/image.hnd"
+
+
+  # Initialize and read
+
+  reader = HndReader(file_path)
+
+  reader.headerData()  # Parse metadata
+
+  reader.pixelData()   # Fast decompression via C++
+
+
+  # Access metadata
+
+  print(f"Patient ID: {reader.hndHeader[''PatientID'']}")
+
+  print(f"Gantry Angle: {reader.hndHeader[''GantryRtn'']}")
+
+
+  # Plot image
+
+  plt.imshow(reader.uncompressedImage, cmap=''gray'')
+
+  plt.title("FastHndReader Output")
+
+  plt.colorbar()
+
+  plt.show()
+
+  ```
+
+
+  ---
+
+
+  ## Performance Comparison
+
+  | Operation | FastHndReader (C++) |
+
+  | :--- | :--- |
+
+  | **1024 x 768 Decoding** | **~0.01 seconds** |
+
+
+  ---
+
+
+  ## File Structure
+
+  - `hnd_decoder.cpp`: Core C++ implementation using `pybind11`.
+
+  - `setup.py`: Build script for the C++ extension.
+
+  - `read_hnd.py`: Python wrapper providing a high-level API.
+
+
+  ## License
+
+  [MIT License](LICENSE)
+
+
+  '

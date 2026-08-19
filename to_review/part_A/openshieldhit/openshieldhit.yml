@@ -1,0 +1,124 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: openshieldhit/openshieldhit
+url: https://github.com/openshieldhit/openshieldhit
+platform: github
+description: '    OpenShieldHIT is an early-stage open-source project building a lean, modular Monte Carlo
+  particle transport framework in C.'
+license: MIT
+language: C
+keywords:
+- monte-carlo-simulation
+- particle-therapy
+- physics-simulation
+- radiotherapy
+stars: 7
+updated_at: '2026-08-18T08:45:17Z'
+image_source: null
+heuristic_total_score: 34
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 7 particle-therapy term(s).
+- Matched 5 support term(s).
+readme_excerpt: "# OpenShieldHIT\n\n[![CMake CI](https://github.com/openshieldhit/openshieldhit/actions/workflows/test.yml/badge.svg)](https://github.com/openshieldhit/openshieldhit/actions/workflows/test.yml)\n\
+  [![clang-format](https://github.com/openshieldhit/openshieldhit/actions/workflows/clang-format.yml/badge.svg)](https://github.com/openshieldhit/openshieldhit/actions/workflows/clang-format.yml)\n\
+  [![clang-tidy](https://github.com/openshieldhit/openshieldhit/actions/workflows/clang-tidy.yml/badge.svg)](https://github.com/openshieldhit/openshieldhit/actions/workflows/clang-tidy.yml)\n\
+  [![codecov](https://codecov.io/gh/openshieldhit/openshieldhit/branch/main/graph/badge.svg)](https://codecov.io/gh/openshieldhit/openshieldhit)\n\
+  \n**Supported platforms:** Linux · macOS · Windows — all three are tested on every commit via CI.\n\n\
+  \nOpenShieldHIT is a modern and lean Monte Carlo particle transport framework written entirely from\
+  \ scratch in C.\n\n> **Work in progress** — OpenShieldHIT is under active development; APIs, input formats,\
+  \ and behaviour may change between releases.\n> Documentation (also work in progress) is at [openshieldhit.github.io/openshieldhit](https://openshieldhit.github.io/openshieldhit).\n\
+  \n## Philosophy\n\nOpenShieldHIT is designed to be:\n- Lean\n- Fast\n- Efficient\n- Readable\n- Modular\n\
+  - Easy to extend\n\nIt is not intended to become a large, monolithic framework like Geant4. Instead,\
+  \ the goal is to maintain a lightweight and transparent code base where the full transport chain can\
+  \ be understood and modified without navigating millions of lines of abstraction.\n\n## Pedagogical\
+  \ Goal\n\nOpenShieldHIT also serves as a pedagogical project, particularly aimed at\nphysicists and\
+  \ students who want to understand what happens under the hood of a\nMonte Carlo transport code.\n\n\
+  The project emphasizes hardware-aware programming with explicit attention to\nmemory layout, cache behavior,\
+  \ branching patterns, and CPU efficiency.  The\ngoal is that the full transport chain — from input parsing\
+  \ through geometry\ntraversal, energy-loss stepping, and scoring — can be traced through a small\nnumber\
+  \ of readable files.\n\nOpaque handles exist at API boundaries to keep the public interface stable,\
+  \ but\nthey hide only plumbing, not physics.  The stepping logic, geometry compiler,\nand scoring accumulation\
+  \ are all open and traceable, without navigating millions\nof lines of framework infrastructure.\n\n\
+  ## Requirements\n\nCMake ≥ 3.21 is required to build.  SDL2 is an optional developer dependency\nfor\
+  \ the interactive geometry viewers in `examples/` (not shipped in releases):\n`sudo apt-get install\
+  \ libsdl2-dev`.\n\n## How to build\n\nOptimised build (`-O3`):\n\n```bash\ncmake --preset release &&\
+  \ cmake --build --preset release --parallel\n```\n\nDebug build (unoptimised, `-O0 -g`):\n```bash\n\
+  cmake --preset debug && cmake --build --preset debug --parallel\n```\n\nAvailable presets: `debug`,\
+  \ `release`, `relwithdebinfo`, `prof`.\nBinaries land in `build/bin/` (release) or `build_debug/bin/`\
+  \ (debug).\n\nUseful cache variables for development:\n\n```bash\n-DOSH_RAYTRACE_ALGORITHM=SIMPLE|SIDDON|JACOBS\n\
+  -DOSH_VOXEL_LAYOUT=ROW_MAJOR|MORTON8\n```\n\n## Install\n\nInstall to the default prefix (`/usr/local/bin/openshieldhit`):\n\
+  \n```bash\nsudo cmake --install build\n```\n\nInstall to `/usr` (`/usr/bin/openshieldhit`):\n\n```bash\n\
+  sudo cmake --install build --prefix /usr\n```\n\nInstall into your home directory — no sudo needed (`~/.local/bin/openshieldhit`):\n\
+  \n```bash\ncmake --install build --prefix ~/.local\n```\n\nInstalls the main executable and documentation.\n\
+  Public library/header installation is still incomplete.\n\n## The `openshieldhit` application\n\nThe\
+  \ main deliverable is the `openshieldhit` (or `openshieldhit.exe` on Windows)\nexecutable built from\
+  \ `src/apps/osh/`.  It reads four plain-text input files from\na working directory and produces scored\
+  \ output.\n\nRun a case (reads `geo.dat`, `beam.dat`, `mat.dat`, and `detect.dat`):\n\n```bash\nopenshieldhit\
+  \ path/to/case/\n```\n\nParse and load inputs only, skip transport:\n\n```bash\nopenshieldhit --dry-run\
+  \ path/to/case/\n```\n\nShow all command-line options:\n\n```bash\nopenshieldhit --help\n```\n\n## Run\
+  \ a Minimal Example\n\n```bash\nbuild/bin/openshieldhit -v tests/cases/00_minimal/\n```\n\nProduces\
+  \ a `.bdo` and `.txt` output file with scored dose vs. depth — a Bragg peak for a proton beam in water.\n\
+  \n## Run a CT Transport Example\n\nCase 05 transports 126 MeV protons through the DCPT head-phantom\
+  \ CT\n(512 × 512 × 177 voxels, Schneider 2000 HU calibration) and scores energy onto\nthe full CT grid\
+  \ as well as an RTDOSE template file.\n\nValidate parsing and geometry compilation without transporting\
+  \ particles:\n\n```bash\nbuild/bin/openshieldhit --dry-run tests/cases/05_dicom_simple/\n```\n\nRun\
+  \ 100 000 primaries:\n\n```bash\nbuild/bin/openshieldhit -v -n 100000 tests/cases/05_dicom_simple/\n\
+  ```\n\nOutput files are written next to the input case:\n\n| File | Content |\n|------|---------|\n\
+  | `NB_ddc.dat` | depth-dose profile along the beam axis (text) |\n| `NB_XZ.bdo` | XZ fluence/energy\
+  \ plane (BDO) |\n| `NB_ct.bdo` | energy scored onto the full CT voxel grid, ~355 MB (BDO) |\n| `NB_rtdose.dcm`\
+  \ | RTDOSE round-trip: scored energy replaces pixel data in the template `.dcm` |\n\nOverlay the RTDOSE\
+  \ output on the CT with the bundled Python tool:\n\n```bash\npython3 tools/plot_dicom.py \\\n    tests/fixtures/dicom/DCPT_headphantom/\
+  \ \\\n    tests/cases/05_dicom_simple/NB_rtdose.dcm\n```\n\nAdd `-o result.png` to save instead of displaying\
+  \ interactively.\nRequires `numpy`, `matplotlib`, and `pydicom`.\n\n<img width=\"927\" height=\"719\"\
+  \ alt=\"signal-2026-05-21-130343_002\" src=\"https://github.com/user-attachments/assets/df6ad7fd-18c5-426e-8f5e-f2c3429ca7aa\"\
+  \ />\n\n\n## Public C API\n\nThe library API lives under `include/openshieldhit/`.  Input descriptions\
+  \ are\nheld in plain, caller-owned structs (cold workspaces); the library compiles them\ninto an opaque\
+  \ simulation handle at run time:\n\n```c\n#include \"openshieldhit/simulation.h\"\n\n// 1. Fill cold\
+  \ workspaces (via parsers or programmatically)\nstruct osh_beam_workspace     *beam    = /* ... */;\n\
+  struct osh_geometry_workspace *geo     = /* ... */;\nstruct osh_material_workspace *mat     = /* ...\
+  \ */;\nstruct osh_scoring_workspace  *scoring = /* ... */;\n\n// 2. Compile into a simulation (zone→material\
+  \ wiring, runtime tables, etc.)\nstruct osh_simulation *sim;\nosh_simulation_create(beam, geo, mat,\
+  \ scoring, &sim);\n\n// 3. Run transport\nosh_simulation_run(sim);\n\n// 4. Release — cold workspaces\
+  \ are NOT freed here, caller owns them\nosh_simulation_free(sim);\nosh_beam_workspace_free(beam);\n\
+  // ...\n```\n\nThe runtime representations are private to `src/simulation/` and never visible\nto calling\
+  \ code.\n\n## Status\n\nThe current codebase has a working end-to-end ion transport path with:\n\n-\
+  \ text-input parsing through the `openshieldhit` application\n- cold-to-runtime compilation for beam,\
+  \ geometry, materials, and scoring\n- analytic GEMCA geometry plus DICOM CT-backed voxel body setup\
+  \ (`DCM`)\n- multiple raytrace implementations with a shared grid contract\n- dose / fluence scoring\
+  \ with BDO, text, and DICOM RTDOSE output\n\nNuclear physics:\n\n- Tripathi nuclear inelastic cross\
+  \ section — beam attenuation in tissue and matter\n- pp nuclear elastic scattering — recoil proton secondaries\
+  \ tracked with full\n  relativistic kinematics (Arndt PSA 1998 + Jones 2010 data); secondary protons\n\
+  \  scored at generation ≥ 1\n- abrasion + Fermi break-up — fast nucleon knock-out followed by statistical\n\
+  \  de-excitation of the light residual (A ≤ 16) into n, p, d, t, ³He, α;\n  charged products are transported,\
+  \ neutrons pushed into the neutron pool with\n  full phase-space (position, direction, energy, RNG stream,\
+  \ generation).\n  The break-up is a sequential-binary semiphysical placeholder for the full\n  simultaneous\
+  \ n-body Fermi model\n\nFast-neutron transport (condensed model):\n\n- JEFF-4.0 PENDF0K cross-section\
+  \ tables condensed into a C header for 35\n  nuclides; log-log interpolation; optical/geometric fallback\
+  \ for unlisted nuclides\n- neutron pool in full SoA layout; produced neutrons queued and transported\n\
+  - reaction sampling: elastic, radiative capture, (n,p)/(n,α), compound nucleus\n  routed to Fermi break-up\
+  \ or heavy-A sink\n- straight-line wavefront transport loop with family-scheduler integration\n- natural\
+  \ elements expanded to per-isotope entries with abundance-weighted number densities\n\nCT voxel transport\
+  \ is working end-to-end:\n\n- Schneider and Permatassari HU calibration/material registration\n- DICOM\
+  \ CT parsed into a voxel body; HU table applied per-voxel at transport time\n- compile-time selectable\
+  \ voxel storage layout (`ROW_MAJOR` baseline, `MORTON8` optional)\n- `DicomCT` and `DicomRTDOSE` scoring\
+  \ geometries converted to Cartesian meshes at\n  the application layer; the transport library remains\
+  \ DICOM-agnostic\n- RTDOSE round-trip: read template file, score energy onto its grid, write back `.dcm`\n\
+  - IEC 61217 gantry and couch rotation: patient body correctly rotated during\n  transport for any HFS/HFP/FFS/FFP/HFDL/HFDR/FFDL/FFDR\
+  \ position and angle\n\nNot yet implemented:\n\n- elastic p-hadron reactions (pn, pα, …) — only pp elastic\
+  \ is currently modelled\n- full simultaneous n-body Fermi break-up and SMM — current break-up is a\n\
+  \  sequential-binary approximation; heavy residues (A > 16) are counted but not\n  de-excited\n- neutron\
+  \ energy scoring and ion feedback from neutron reactions\n- phase-space (PHSP) source and output support\n\
+  - ridge filter / range modulator support\n- RTSTRUCT import for structure-based scoring\n\nThe detailed\
+  \ implementation roadmap lives in [TODO.md](TODO.md).\n\n## Repository layout\n\n- `include/openshieldhit/`\
+  \ — public headers\n- `src/apps/osh/` — CLI application, file parsing, app-side orchestration\n- `src/common/`\
+  \ — shared low-level utilities, math, raytrace, and helpers\n- `src/gemca/` — geometry preparation and\
+  \ runtime compilation\n- `src/material/`, `src/beam/`, `src/scoring/`, `src/transport/`, `src/simulation/`\
+  \ — core runtime modules\n\n\n# Disclaimer and License\nWhile conceptually inspired by the application\
+  \ domain of the closed source [SHIELD-HIT12A](https://shieldhit.org), it shares no source code with\
+  \ the original SHIELD-HIT. The architecture, implementation, and code base are completely new and designed\
+  \ according to modern, explicit software engineering principles. Parts of OpenShieldHIT may be reused\
+  \ in SHIELD-HIT12A. OpenShieldHIT is licensed under the MIT License, permitting reuse, modification,\
+  \ and incorporation of its code into other software projects under compatible licensing terms.\n"

@@ -1,0 +1,116 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: tju-thomas-lab/tju-echo-vmat-workbench
+url: https://github.com/tju-thomas-lab/tju-echo-vmat-workbench
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-16T15:16:41Z'
+image_source: https://raw.githubusercontent.com/tju-thomas-lab/tju-echo-vmat-workbench/HEAD/docs/screenshots/ui-2025-12-22.jpg
+heuristic_total_score: 24
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 8 support term(s).
+readme_excerpt: "# TJU ECHO-VMAT Workbench\n![ECHO-VMAT Workbench UI](docs/screenshots/ui-2025-12-22.jpg)\n\
+  \nProject page: https://tju-thomas-lab.github.io/tju-echo-vmat-workbench/\n\nRepository: https://github.com/tju-thomas-lab/tju-echo-vmat-workbench\n\
+  \n\nLocal, research-only workbench for running ECHO-VMAT example patients, capturing plan quality (DVH\
+  \ + metrics), and timing the end-to-end optimization pipeline. The code wraps the official ECHO-VMAT\
+  \ example flow and avoids re-implementing solver logic.\n\n## Current Status (Living Checklist)\n\n\
+  - [x] Project scaffold created (`echo-workbench/` layout)\n- [x] Python venv created (`echo-vmat-venv`,\
+  \ Python 3.10)\n- [x] ECHO-VMAT cloned into `echo-workbench/echo-vmat`\n- [x] ECHO-VMAT dependencies\
+  \ installed, MOSEK Python package installed\n- [x] Runner wrapper (`backend/runner.py`) instrumented\
+  \ with timing + artifacts\n- [x] Fast + super-fast modes for lower-resolution test runs\n- [x] Adapter\
+  \ skeletons (example + Hugging Face)\n- [x] FastAPI backend with run management + SSE logs + artifacts\n\
+  - [x] Next.js UI with run setup, live logs, DVH, and clinical metrics\n- [x] Interactive DVH plot (hover\
+  \ values, percent axes)\n- [x] Run comparison (overlay DVHs + metric deltas)\n- [x] CT viewer with window/level\
+  \ + wheel slice navigation (square viewport)\n- [x] Structure overlay (per-slice outlines)\n- [x] Optional\
+  \ 3D dose export + CT/dose color overlay\n- [x] Population plan score dataset (99 lung patients, DVH-only,\
+  \ no beam data)\n- [x] Plan score API + per-run plan score artifacts\n- [x] Plan score UI (daisy plot\
+  \ + population tab with histogram)\n- [x] RT Plan DICOM export (from ECHO template plan)\n- [x] RT Dose\
+  \ DICOM export (per run)\n- [x] CT DICOM export (per patient, generated once)\n- [x] Standalone DVH\
+  \ + clinical criteria figure generator\n- [x] Agent Mode (closed-loop parameter tuning with budget +\
+  \ decision log)\n- [~] Full-resolution example run validated (fast mode ok; full-resolution still pending)\n\
+  - [ ] ESAPI adapter (future)\n\n## Repository Layout\n\n```\necho-workbench/\n├── backend/         \
+  \        # FastAPI app + runner\n├── compressrtp/             # CompressRTP repo (submodule)\n├── data/\
+  \                    # dataset cache (raw/processed)\n├── echo-vmat/               # ECHO-VMAT repo\
+  \ (submodule)\n├── frontend/                # Next.js UI\n└── README.md\n```\n\n## Quick Start\n\n###\
+  \ 1) Submodule (ECHO-VMAT)\nIf you cloned this repo fresh:\n```\ngit submodule update --init --recursive\n\
+  ```\nThis also pulls the CompressRTP submodule under `echo-workbench/compressrtp`.\n\n### 2) Python\
+  \ venv\n```\npython -m venv echo-vmat-venv\nsource echo-vmat-venv/bin/activate\n```\n\n### 3) Install\
+  \ ECHO-VMAT requirements\n```\npython -m pip install -r echo-workbench/echo-vmat/requirements.txt\n\
+  ```\nOptional (RT Plan export):\n```\npython -m pip install \"portpy[pydicom]\"\n```\nCompressRTP dependencies\
+  \ (wavelets + SVD helpers):\n```\npython -m pip install -r echo-workbench/backend/requirements.txt\n\
+  ```\nOptional (GPU acceleration for supported CompressRTP steps):\n```\npython -m pip install cupy-cuda12x\n\
+  ```\n\n### 4) Run the ECHO example (CLI)\n```\n/mnt/d/_PROJECTS/ECHO-VMAT_Project/echo-vmat-venv/bin/python\
+  \ \\\n  /mnt/d/_PROJECTS/ECHO-VMAT_Project/echo-workbench/backend/runner.py \\\n  --case-id Lung_Patient_11\
+  \ \\\n  --data-dir /mnt/d/_PROJECTS/ECHO-VMAT_Project/echo-workbench/PortPy/data \\\n  --super-fast\n\
+  ```\n\n### 5) Backend API\n```\ncd /mnt/d/_PROJECTS/ECHO-VMAT_Project/echo-workbench\npython -m uvicorn\
+  \ backend.main:app --reload --port 8000\n```\nFaster dev server (limits watch scope, avoids large repo\
+  \ scan):\n```\n/mnt/d/_PROJECTS/ECHO-VMAT_Project/echo-workbench/scripts/dev_backend.sh\n```\nThis script\
+  \ also disables access logs to keep errors visible.\n\n### 6) Frontend UI\n```\ncd /mnt/d/_PROJECTS/ECHO-VMAT_Project/echo-workbench/frontend\n\
+  npm install\nnpm run dev\n```\nConvenience dev script:\n```\n/mnt/d/_PROJECTS/ECHO-VMAT_Project/echo-workbench/scripts/dev_frontend.sh\n\
+  ```\nOpen: http://localhost:3000\n\nUI notes:\n- Load a run from the Run Queue.\n- Click \"Create 3D\
+  \ Dose\" once to save `dose_3d.npy` for that run.\n- Toggle Dose Overlay in the CT viewer (fast, no\
+  \ recompute).\n- Use Run Comparison to overlay two DVHs and compute metric deltas.\n- Use the Plan Score\
+  \ Population tab to compare reference plan score distribution vs the selected run.\n- Use the top patient\
+  \ search bar to filter the run list to a single patient.\n- Patient list is populated from population\
+  \ DVH metadata; search + filter at the top.\n- Use the DICOM Exports panel to generate CT/RTSTRUCT and\
+  \ RTPLAN/RTDOSE.\n- Add a run tag to label experiments and comparisons.\n- The \"Safe (low memory)\"\
+  \ preset uses planner beams + sparse matrix to reduce RAM.\n- Batch runs (sequential queue): POST `/runs/batch`\
+  \ and poll `/runs/batch/{batch_id}`.\n- Agent Mode runs a closed-loop sweep with a fixed budget (see\
+  \ `docs/agent_mode.md`).\n- Use the Parameter Sweep card to launch a batch of runs with opt-parameter\
+  \ overrides.\n- All runs are currently capped to 3 beams (memory-safe). Update `BEAM_LIMIT` in `echo-workbench/frontend/app/page.js`\
+  \ or send `beam_count` via API to change.\n\nParameter sweeps (ECHO-VMAT):\n- Source config file: `echo-workbench/echo-vmat/echo_vmat/config_files/<protocol>_opt_params.json`\n\
+  - Supported overrides:\n  - `opt_parameters`: direct key overrides (e.g., `step_size_increment`, `termination_gap`,\
+  \ `inf_matrix_scale_factor`)\n  - `objective_weight_scale`: scales `{ target, oar, aperture, dfo }`\n\
+  \  - `objective_weights`: explicit overrides `{ step, type, structure_name, weight }`\n- CLI example:\n\
+  ```\npython echo-workbench/backend/runner.py \\\n  --case-id Lung_Patient_11 \\\n  --protocol Lung_2Gy_30Fx\
+  \ \\\n  --beam-count 3 \\\n  --opt-params-overrides @/path/to/overrides.json\n```\n- API example (batch\
+  \ sweep):\n```\ncurl -X POST http://127.0.0.1:8000/runs/batch \\\n  -H \"Content-Type: application/json\"\
+  \ \\\n  -d '{\"label\":\"sweep-target\",\"runs\":[\n        {\"case_id\":\"Lung_Patient_11\",\"protocol\"\
+  :\"Lung_2Gy_30Fx\",\"optimizer\":\"echo-vmat\",\"beam_count\":3,\"opt_params_overrides\":{\"objective_weight_scale\"\
+  :{\"target\":0.8}},\"tag\":\"target=0.8\"},\n        {\"case_id\":\"Lung_Patient_11\",\"protocol\":\"\
+  Lung_2Gy_30Fx\",\"optimizer\":\"echo-vmat\",\"beam_count\":3,\"opt_params_overrides\":{\"objective_weight_scale\"\
+  :{\"target\":1.0}},\"tag\":\"target=1.0\"},\n        {\"case_id\":\"Lung_Patient_11\",\"protocol\":\"\
+  Lung_2Gy_30Fx\",\"optimizer\":\"echo-vmat\",\"beam_count\":3,\"opt_params_overrides\":{\"objective_weight_scale\"\
+  :{\"target\":1.2}},\"tag\":\"target=1.2\"}\n      ]}'\n```\n\nCompressRTP notes:\n- Select Optimizer\
+  \ = CompressRTP and choose a compression mode.\n- Use Pipeline Step = DDC Only for fast validation runs.\n\
+  - GPU toggle (optional) uses CuPy for supported matrix ops; solver remains CPU.\n- For large matrices,\
+  \ GPU dose uses chunked transfers; set `ECHO_GPU_CHUNK_MB` to tune (default 512).\n- For GPU compression\
+  \ (sparse+low-rank thresholding), set `ECHO_GPU_COMPRESS_CHUNK_MB` to tune chunk size (default 256).\n\
+  - CompressRTP outputs are saved under `echo-workbench/backend/runs-compressrtp/<run_id>/`.\n- The UI\
+  \ lists both ECHO-VMAT and CompressRTP runs with type labels.\nStep diagnostics (CLI, stop after a stage):\n\
+  ```\npython echo-workbench/backend/runner.py --optimizer compressrtp --step ddc --beam-ids 0,1,2\n```\n\
+  GPU (CLI):\n```\npython echo-workbench/backend/runner.py --optimizer compressrtp --gpu --beam-ids 0,1,2\n\
+  ```\n\nProfiling + GPU feasibility notes:\n- `docs/optimization_profiling.md`\n- `docs/gpu_feasibility.md`\n\
+  \nBaseline capture:\n```\npython echo-workbench/scripts/record_baseline.py --run-id <RUN_ID>\n```\n\n\
+  CT DICOM export (once per patient):\n```\ncurl -X POST http://127.0.0.1:8000/runs/<run_id>/ct-dicom\n\
+  ```\nRT Structure Set export (once per patient):\n```\ncurl -X POST http://127.0.0.1:8000/runs/<run_id>/rtstruct\n\
+  ```\n\n## Artifacts Per Run\nAll run outputs are saved under:\n```\necho-workbench/backend/runs/<run_id>/\n\
+  ```\nCompressRTP outputs are stored separately:\n```\necho-workbench/backend/runs-compressrtp/<run_id>/\n\
+  ```\nKey files:\n- `config.json`, `status.json`, `timing.json`\n- `metrics.json` (clinical criteria\
+  \ table)\n- `dvh.json` + `dvh_steps.png`\n- `solver_trace.json`\n- `clinical_criteria.html` (shareable\
+  \ report)\n- `dose_3d.npy` + `dose_3d_meta.json` (optional, generated on demand)\n- `rt_plan_portpy_vmat.dcm`\
+  \ (optional, generated on demand)\n- `rt_dose_portpy_vmat.dcm` (optional, generated on demand)\n\n`timing.json`\
+  \ now includes stage durations (beams/compression) and peak RSS (`max_rss_mb`) for quick profiling.\n\
+  \nCT DICOM (generated once per patient) is saved under:\n```\necho-workbench/data/processed/dicom/<case_id>/ct/\n\
+  ```\nRT Structure Set DICOM (generated once per patient) is saved under:\n```\necho-workbench/data/processed/dicom/<case_id>/rtstruct/rt_struct_portpy.dcm\n\
+  ```\n\n## Tests\nCompressRTP integration smoke tests (may take time, uses Lung_Patient_11):\n```\npython\
+  \ -m unittest echo-workbench/backend/tests/test_compressrtp_integration.py\n```\nGPU utilities (skips\
+  \ if CuPy unavailable):\n```\npython -m unittest echo-workbench/backend/tests/test_gpu_utils.py\n```\n\
+  MOSEK license: ensure `mosek.lic` is present at repo root or set `MOSEKLM_LICENSE_FILE`.\n\n## Data\
+  \ Management\n- Raw data is expected under `echo-workbench/PortPy/data`.\n- Hugging Face datasets cache\
+  \ to `echo-workbench/data/raw/huggingface/`.\n- Raw data is never modified.\n- Population plan score\
+  \ metadata (RTDOSE + structure masks only) is stored under:\n  `echo-workbench/data/processed/plan-score/Lung_2Gy_30Fx/population_metrics.json`.\n\
+  \n## Notes / Known Issues\n- Full-resolution runs can be long and memory-heavy; use `--fast` or `--super-fast`\
+  \ for smoke tests.\n- Some datasets may be missing `voxel_coordinate_XYZ_mm`; the runner computes a\
+  \ fallback using PortPy utilities.\n- Warnings about DVH dose limits can appear if dose thresholds exceed\
+  \ max dose; these do not stop the run.\n\n## License\nPortPy uses Apache 2.0 with a Commons Clause (non-commercial\
+  \ research only). Review upstream license terms before distribution.\n"

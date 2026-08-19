@@ -1,0 +1,45 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ckehayiasbwh/DL-SpiQA
+url: https://github.com/ckehayiasbwh/DL-SpiQA
+platform: github
+description: Quality assurance tool for dosimetric target verification of spine radiation therapy treatment
+  plans.
+license: BSD-3-Clause
+language: Python
+keywords: []
+stars: 5
+updated_at: '2026-06-10T19:17:08Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 4 support term(s).
+readme_excerpt: "# DL-SpiQA\nQuality assurance tool for dosimetric target verification of spine radiation\
+  \ therapy treatment plans.\n\nSystem requirements:\nPC with Linux-based operating system and dedicated\
+  \ graphics processing unit for auto-segmentation. Must have TotalSegmentator installed: https://github.com/wasserth/TotalSegmentator\n\
+  \nSystem recommendations:\nUbuntu 20.04 or later with a 16GB GPU or better and at least 16GB RAM.\n\n\
+  Usage:\nUsers must first edit the directory paths declared in lines 786-789 of the source code for DL-SpiQA.py.\n\
+  \nLine 786: dataPullPath points to a data input folder containing deidentified patient data in NRRD\
+  \ format.<br />\nLine 787: dataPushPath points to a destination folder to store results (by default,\
+  \ this is the same as the input folder).<br />\nLine 788: workingRoot specifies an empty folder on the\
+  \ local machine to serve as a working directory for file handling.<br />\nLine 789: aiModelPath points\
+  \ to the location of the TotalSegmentator model.<br />\n\nThe data input folder (labeled as \"spine_data\"\
+  \ in the below example) must have the following tree structure:\n\n    .\n    spine_data\n    ├── Patient1\n\
+  \    │   ├── CT\n    │   │   └── CT.nrrd\n    │   │\n    │   ├── DOSE\n    │   │   └── DOSE.nrrd\n \
+  \   │   │\n    ├── Patient2\n    ├── Patient3\n    │   ...\n    ├── PatientN\n    └── vert_volume_statistics.csv\n\
+  \nThe DL-SpiQA workflow will process any arbitrary number of spine RT data within the same batch. If\
+  \ a single patient has two or more associated CTs, they must be separated into two different folders\
+  \ with different patient names.\nThe text file for each patient, \"RT Plan Data.txt\", must include\
+  \ the RT plan label (or any indication of the targeted vertebral levels) as well as the prescription\
+  \ dose.\nExample contents of an arbitrary \"RT Plan Data.txt\" file are shown below:\n\n\nRT Plan Label:\
+  \ A1_T6-T8<br />\nPrescription Dose (Gy): 35.0\n\n\nThe labels \"RT Plan Label: \" and \"Prescription\
+  \ Dose (Gy): \" must remain unchanged.\n\nThe vert_volume_statistics.csv file contains a statistical\
+  \ summary of a vertebral volumes from a large number of patients. The file must be contained inside\
+  \ the data input folder along with the patient data folders.\n\n\nOnce the setup of path directories\
+  \ and data input folder structures are completed, then the user can simply run the DL-SpiQA code. An\
+  \ output file labeled \"DL-SpiQA Report.txt\" will be generated at the specified dataPushPath directory\
+  \ containing a summary of QA results for each patient/treatment plan, including any flags raised due\
+  \ to overdosed or underdosed vertebral levels as well as detected vertebral volume discrepancies.\n"

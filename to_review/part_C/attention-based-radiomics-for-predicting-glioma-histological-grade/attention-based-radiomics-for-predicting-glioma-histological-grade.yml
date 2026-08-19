@@ -1,0 +1,77 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: salvatorecalderaro/Attention-Based-Radiomics-for-predicting-glioma-histological-grade
+url: https://github.com/salvatorecalderaro/Attention-Based-Radiomics-for-predicting-glioma-histological-grade
+platform: github
+description: Deep learning–based pipeline for glioma histological grading using multimodal MRI. The framework
+  performs MRI preprocessing, automatic tumor segmentation with HD-GLIO-AUTO, radiomics feature extraction,
+  and attention-based neural network fusion for grade prediction.
+license: MIT
+language: Python
+keywords:
+- attention-mechanism
+- deep-learning
+- glioma
+- mri-images
+- radiomics
+stars: 1
+updated_at: '2026-08-18T09:49:33Z'
+image_source: https://raw.githubusercontent.com/salvatorecalderaro/Attention-Based-Radiomics-for-predicting-glioma-histological-grade/HEAD/pipeline.png
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Attention-Based Glioma Histological Grading <img src=\"labelRL.svg\" width=\"120\"\
+  \ alt=\"badge\">\n\nThis repository contains the implementation of an attention-based deep learning\
+  \ framework for automatic glioma histological grade classification using multimodal MRI radiomic features,\
+  \ in accordance with the World Health Organization (WHO) criteria.\n\n## Overview\nThe proposed pipeline\
+  \ integrates deep learning and radiomics to provide an accurate and interpretable assessment of glioma\
+  \ histological grade. The method is designed to support clinical decision-making, prognosis estimation,\
+  \ and early risk stratification.\n\n## Pipeline\n1. MRI preprocessing (normalization, registration)\n\
+  2. Automatic tumor segmentation using state-of-the-art deep learning models\n3. Radiomic feature extraction\
+  \ (intensity, texture, shape)\n4. Attention-based classification network\n5. Model evaluation and external\
+  \ validation\n\n![Pipeline overview](pipeline.png)\n\n## Datasets\n- **UCSF-PDGM Dataset**  \n  Publicly\
+  \ available dataset for glioma grading\n  \U0001F449 https://www.cancerimagingarchive.net/collection/ucsf-pdgm/\n\
+  \n- **External Clinical Cohort**  \n  Independent dataset used for external validation (not publicly\
+  \ available)\n\n## Radiomic Features\nRadiomic features are extracted following standardized definitions\
+  \ and include:\n- First-order statistics\n- Texture features (GLCM, GLRLM, GLSZM)\n- Shape and morphological\
+  \ descriptors\n\n## Model\nThe classification framework employs:\n- Attention mechanisms to weight informative\
+  \ radiomic features\n- Convolutional layers to capture local patterns and interactions among radiomic\
+  \ features\n- MLP for final classification\n\n## Results\nExperimental results on the UCSF-PDGM dataset\
+  \ and an independent clinical cohort demonstrate performance comparable to existing baselines, while\
+  \ offering enhanced interpretability through radiomic feature analysis.\n\n## Clinical Impact\nBy combining\
+  \ deep learning with interpretable radiomic features, the proposed approach supports:\n- Accurate glioma\
+  \ grading\n- Prognosis estimation\n- Early risk stratification and preventive clinical decision-making\n\
+  \n## Requirements\n- FSL \U0001F449 https://fsl.fmrib.ox.ac.uk/fsl/docs/\n- HD-BET \U0001F449 https://github.com/MIC-DKFZ/HD-BET\
+  \ \n- HD-GLO-AUTO \U0001F449 https://github.com/CCI-Bonn/HD-GLIO\n\nEnsure all tools are correctly installed\
+  \ and available in your system `PATH`.\n\n\nTo install all the Python dependencies, run the following\
+  \ command:\n\n```bash\npip install -r requirements.txt\n```\n## Usage\n\nThis pipeline performs MRI\
+  \ preprocessing, automatic tumor segmentation, and radiomic feature extraction from multimodal brain\
+  \ MRI data.\n\n### Input Requirements\nThe input directory must contain the following NIfTI files corresponding\
+  \ to a single patient:\n\n- `T1.nii.gz`\n- `CT1.nii.gz` (contrast-enhanced T1)\n- `T2.nii.gz`\n- `FLAIR.nii.gz`\n\
+  \nAll images must be spatially aligned and stored in the same directory.\n\n### Running the Pipeline\
+  \ for Preprocessing, Segmentation, and Feature Extraction\n```bash\npython run_pipeline.py \\\n  -i\
+  \ /path/to/input_directory \\\n  -o /path/to/output_directory \\\n  --device 0 \\\n  --verbose\n````\n\
+  \n- `-i` or `--input_dir`: Path to the input directory containing the input NIfTI files.\n- `-o` or\
+  \ `--output_dir`: Path to the output directory where the results will be saved.\n- `--device`: Index\
+  \ of the CUDA device to use (default: 0).\n- `--verbose`: Print the commands before running them (default:\
+  \ False).\n\n#### Model Training and Evaluation on UCSF-PDGM Dataset\n```bash\npython train_AttnFuseNet.py\
+  \ -c binary or multiclass \n```\n\n- `-c` or `--classification`: Type of classification task to perform\
+  \ (either \"binary\" or \"multiclass\").\n\nNote: The model is trained  and tested using the UCSF-PDGM\
+  \ radiomic features extracted and stored in /data/UCSF_features.csv.\n\n\n### To evaluate the model\
+  \ on the  UCSF-PDGM test set\n```bash\npython test_UCSF_testset.py -c binary or multiclass \n```\n\n\
+  - `-c` or `--classification`: Type of classification task to perform (either \"binary\" or \"multiclass\"\
+  ).\n\n### To evaluate the model on the whole UCSF-PDGM dataset\n```bash\npython test_all_UCSF.py -c\
+  \ binary or multiclass \n```\n\n- `-t` or `--task`: Type of classification task to perform (either \"\
+  binary\" or \"multiclass\").\n\nIf you use this model in your research, please cite:\n```\n@InProceedings{10.1007/978-3-032-31927-2_2,\n\
+  author=\"Amato, Domenico\nand Caruso Bavisotto, Celeste\nand Calderaro, Salvatore\nand Lo Bosco, Giosu{\\\
+  `e}\nand Palazzotto, Francesca Maria\nand Rizzo, Riccardo\nand Veiceschi, Pierlorenzo\nand Vella, Filippo\"\
+  ,\neditor=\"De Marsico, Maria\nand Ho, Tin Kam\nand Jurie, Frederic\nand Liu, Cheng-Lin\nand Lopresti,\
+  \ Daniel\nand Nystr{\\\"o}m, Ingela\nand Ogier, Jean-Marc\nand Ross, Arun\nand Wang, Liang\",\ntitle=\"\
+  Attention-Based Radiomics to Predict Histological Grade of Gliomas\",\nbooktitle=\"Pattern Recognition\"\
+  ,\nyear=\"2027\",\npublisher=\"Springer Nature Switzerland\",\naddress=\"Cham\",\npages=\"17--31\",\n\
+  isbn=\"978-3-032-31927-2\"\n}\n\n\n```\n\n## Contact \nFor questions, feedback, or collaboration opportunities,\
+  \ please contact:\n\U0001F4E7 salvatore.calderaro01@unipa.it\n"

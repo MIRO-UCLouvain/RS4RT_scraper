@@ -1,0 +1,83 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: m1balcerak/GliODIL
+url: https://github.com/m1balcerak/GliODIL
+platform: github
+description: '[Nature Communications 2025] Official repository for "Glioma Radiotherapy Design by Optimization
+  of a Data and Physics Informed Discrete Loss"'
+license: MIT
+language: Python
+keywords: []
+stars: 35
+updated_at: '2026-07-28T15:31:08Z'
+image_source: https://raw.githubusercontent.com/m1balcerak/GliODIL/HEAD/figures/overview_new.png
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "\n# Glioma Radiotherapy Design by Optimization of a Data and Physics-Informed Discrete\
+  \ Loss (GliODIL)\n\n## Introduction\n\nThis repository contains the implementation of the GliODIL framework,\
+  \ as introduced in our paper \"Glioma Radiotherapy Design by Optimization of a Data and Physics Informed\
+  \ Discrete Loss.\" \\[1\\] GliODIL is an innovative optimization framework for inferring estimates of\
+  \ tumor cell concentrations and migration pathways in gliomas, using data from MRI and PET scans.\n\n\
+  Our approach integrates traditional numerical methods with data-driven paradigms, offering a comprehensive\
+  \ understanding of tumor behavior. GliODIL builds upon  the Optimizing a Discrete Loss (ODIL) technique\
+  \ \\[2,3\\] (GitHub: https://github.com/cselab/odil),  enabling PDE-constrained optimization with multigrid\
+  \ methods.\n\n\n![Overview Figure](figures/overview_new.png) \n**GliODIL Overview:**\n- **a. Multi-modal\
+  \ patient data:** This includes MRI and PET imaging to provide comprehensive information about the tumor.\n\
+  - **b. Features extraction:** Tissue extraction using an atlas registration. Automated segmentation\
+  \ of tumor regions is performed. The areas identified include:\n  - **Edema:** Characterized by tissue\
+  \ swelling due to fluid accumulation.\n  - **Enhancing core:** Indicative of active tumor growth, characterized\
+  \ by altered vascular properties.\n  - **Necrotic core:** Shows tissue death due to hypoxia or nutrient\
+  \ deprivation.\n  - Corresponding PET scans provide metabolic insight, further aiding in accurate tumor\
+  \ delineation.\n- **c. Calculation of discrepancy and tumor physics residual:** This involves the calculation\
+  \ of discrepancy between the patient's tumor characteristics \\(denoted as $L_{\\text{DATA}}$ \\) and\
+  \ the tumor cell distribution proposed by GliODIL at the final timestep. Also, the calculation of the\
+  \ tumor physics residual \\(denoted as $L_{\\text{PDE}}$ \\) and a single focal initial condition \\\
+  (denoted as $L_{\\text{IC}}$ \\).\n- **d. Spatio-temporal progression of a tumor:** The progression\
+  \ is observed within the patient's anatomy. Values are stored on a multi-resolution grid, where each\
+  \ level is coarser than the previous one. The table includes Tumor Growth and Imaging Model parameters.\
+  \ The optimization process utilizes automatic differentiation and is guided by the loss function. \n\
+  - **e. GliODIL outputs.** The framework infers the complete distribution of tumor cells, facilitating\
+  \ the development of a radiotherapy plan. This plan effectively covers areas of tumor recurrence identified\
+  \ in post-operative data, while maintaining the total radiotherapy volume in line with standard clinical\
+  \ guidelines.}\n## Requirements\n\nTo run the GliODIL framework, install all Python dependencies listed\
+  \ in `requirements.txt`.  \nIt is recommended to use **Python 3.11.2**.\n\n### Debian Packages\n- libmpich-dev\n\
+  - rsync\n\n### Hardware\nTakes around 30-45 minutes on a single GPU (requires >18.5 GB of memory). Can\
+  \ run on CPUs if necessary.\n\n\n## Usage\n\n### Running GliODIL\n\nUse the provided bash script `run_GliODIL.sh`\
+  \ with a directory containing the necessary .nii or .nii.gz files.\n\n```bash\n./run_GliODIL.sh <directory>\n\
+  ```\nThe script searches for files in the specified directory with the extensions .nii or .nii.gz, including\
+  \ segmentation files, white matter, grey matter, and optional PET scan files. The naming convention\
+  \ for these files should be `*_segm_*`, `*_wm_*`, `*_gm_*`, and `*_pet_*` for segmentations, WM, GM,\
+  \ and PET files, respectively. Segmentations should follow the BraTS toolkit segmentation convention\
+  \ \\[4], with voxel values representing different tumor regions: 1.0 for enhancing core, 3.0 for edema,\
+  \ and 4.0 for necrotic core. The command creates a subdirectory with results in a given directory. \
+  \ To evaluate the recurrence coverage results, please use the [PredictGBM tool](https://github.com/BrainLesion/PredictGBM?tab=readme-ov-file)\
+  \ \\[5]. This package is also recommended for preprocessing your raw MRI data.\n\n\n\n\n### Generating\
+  \ Synthetic Patients\n\nGenerate synthetic patients with tumors using the following commands:\n\nFor\
+  \ a single focal tumor:\n```bash\npython run_synthetic_generator1T.py --N 1\n```\nCreates a patient\
+  \ in `synthetic_runs1T/synthetic1Trun0`.\n\nFor three focal tumors:\n```bash\npython run_synthetic_generator3T.py\
+  \ --N 1\n```\nCreates a patient in `synthetic_runs3T/synthetic3Trun0`.\n\nThe seeds are fixed to enable\
+  \ recreation of the paper's synthetic dataset. \n\n### Real Patients\nLink to download patient data\
+  \ used in the study [Link](https://huggingface.co/datasets/m1balcerak/GliODIL)\n\n## Recurrence\nWe\
+  \ provide the recurrence % numbers for studied patients in figures/SourceData.txt\n\n## Contribution\n\
+  \nSuggestions are welcome. \n\n## \U0001F4DA Cite\n\nIf GliODIL (or data released with this framework)\
+  \ contributes to your research, please cite:\n\n> **Balcerak M., Weidner J., Karnakov P. _et al._**\
+  \  \n> *Individualizing glioma radiotherapy planning by optimization of a data and physics-informed\
+  \ discrete loss.*  \n> **Nature Communications 16**, 5982 (2025).  \n> https://doi.org/10.1038/s41467-025-60366-4\n\
+  \n<summary>\U0001F4D1 BibTeX</summary>\n\n```bibtex\n@article{Balcerak2025GliODIL,\n  title     = {Individualizing\
+  \ glioma radiotherapy planning by optimization of a data and physics-informed discrete loss},\n  author\
+  \    = {Balcerak, Michal and Weidner, Julian and Karnakov, Pavel and Ezhov, Ilya and Litvinov, Sergey\
+  \ and Koumoutsakos, Petros and Zhang, Rui Z. and Lowengrub, John S. and Wiestler, Benedikt and Menze,\
+  \ Björn},\n  journal   = {Nature Communications},\n  volume    = {16},\n  pages     = {5982},\n  year\
+  \      = {2025},\n  doi       = {10.1038/s41467-025-60366-4},\n  publisher = {Nature Publishing Group}\n\
+  }\n```           \n\n## Other references\n2. Karnakov P. et al. Solving inverse problems in physics\
+  \ by optimizing a discrete loss: fast and accurate learning without neural networks. *PNAS Nexus* 2024,\
+  \ 3 (1), pgae005. \n3. Karnakov P. et al. Flow reconstruction by multiresolution optimization of a discrete\
+  \ loss with automatic differentiation. *EPJ E* 2023, 46 (7), 59. \n4. Kofler F. et al. BraTS Toolkit:\
+  \ translating BraTS brain tumor segmentation algorithms into clinical and scientific practice. *Frontiers\
+  \ in Neuroscience* 2020, 14, 125. \n5. Zimmer L. et al. PredictGBM: Tools for image processing, brain\
+  \ segmentation, and evaluation of glioblastoma growth models. [GitHub repository](https://github.com/BrainLesion/PredictGBM?tab=readme-ov-file).\n\
+  \n"

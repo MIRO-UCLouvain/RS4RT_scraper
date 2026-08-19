@@ -1,0 +1,140 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: atinukeinyang-hue/dicom-rt-data-inspector
+url: https://github.com/atinukeinyang-hue/dicom-rt-data-inspector
+platform: github
+description: A Python tool for safely inspecting DICOM radiotherapy metadata and data structures.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-15T11:19:06Z'
+image_source: https://raw.githubusercontent.com/atinukeinyang-hue/dicom-rt-data-inspector/HEAD/assets/dicom-rt-data-inspector-banner.png
+heuristic_total_score: 30
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 9 support term(s).
+readme_excerpt: "![DICOM RT Data Inspector](assets/dicom-rt-data-inspector-banner.png)\n\n# DICOM RT Data\
+  \ Inspector\n\n[![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)\n\
+  [![Version](https://img.shields.io/badge/version-v1.0.0-1F8A8A)](https://github.com/atinukeinyang-hue/dicom-rt-data-inspector/releases)\n\
+  [![Tests](https://img.shields.io/badge/tests-268%20passed-2E8B57)](https://github.com/atinukeinyang-hue/dicom-rt-data-inspector)\n\
+  [![CI](https://github.com/atinukeinyang-hue/dicom-rt-data-inspector/actions/workflows/tests.yml/badge.svg)](https://github.com/atinukeinyang-hue/dicom-rt-data-inspector/actions/workflows/tests.yml)\n\
+  [![License: MIT](https://img.shields.io/badge/License-MIT-D4A017.svg)](LICENSE)\n\nA Python command-line\
+  \ application for safely inspecting, validating and\nreporting approved technical information from radiotherapy\
+  \ DICOM files.\n\n## Project Status\n\n**Version 1.0.0 — First stable release**\n\nThe application reads\
+  \ valid DICOM Part 10 files and performs detailed\ntechnical inspection of DICOM RT Structure Set (`RTSTRUCT`),\
+  \ RT Plan\n(`RTPLAN`) and RT Dose (`RTDOSE`) objects.\n\nIt can validate relationships across supplied\
+  \ radiotherapy objects and\ngenerate privacy-conscious JSON or human-readable text reports.\n\n## Current\
+  \ Features\n\n### General DICOM inspection\n\n- Reads valid DICOM Part 10 files with `pydicom`\n- Accepts\
+  \ string and `Path` file locations\n- Validates missing paths and directories\n- Rejects empty and ordinary\
+  \ non-DICOM files\n- Rejects non-Part-10 datasets under strict reading\n- Resolves SOP Class UIDs into\
+  \ readable names\n- Handles missing optional DICOM elements\n- Displays approved technical metadata\n\
+  - Excludes direct patient identifiers from terminal summaries\n- Provides clear expected errors without\
+  \ internal tracebacks\n- Returns meaningful command-line exit codes\n\n### RT Structure Set inspection\n\
+  \n- Validates `RTSTRUCT` modality and SOP Class identity\n- Extracts structure-set labels and names\n\
+  - Extracts ROI numbers, names and generation algorithms\n- Extracts ROI Frame of Reference UIDs\n- Detects\
+  \ duplicated ROI numbers\n- Links ROI definitions to contour records\n- Extracts ROI display colours\n\
+  - Counts contour records, contours and contour points\n- Extracts contour geometric types\n- Compares\
+  \ declared and calculated contour-point counts\n- Detects incomplete coordinate triplets\n- Extracts\
+  \ referenced image SOP Instance UIDs\n- Extracts ROI observation numbers and interpreted types\n- Links\
+  \ observation records to ROI definitions\n- Detects missing, duplicate and undefined relationships\n\
+  - Separates ROI-level and structure-set-level warnings\n- Displays complete RTSTRUCT summaries through\
+  \ the CLI\n\n### RT Plan inspection\n\n- Validates `RTPLAN` modality and SOP Class identity\n- Extracts\
+  \ approved plan-level metadata\n- Reports plan label, name, intent, geometry and approval status\n-\
+  \ Extracts referenced RT Structure Set identifiers\n- Extracts fraction groups and planned fraction\
+  \ counts\n- Extracts referenced beam and application-setup numbers\n- Compares declared and actual reference\
+  \ counts\n- Extracts approved dose-reference information\n- Extracts external-beam definitions\n- Reports\
+  \ beam, radiation and treatment-delivery types\n- Reports treatment-machine and dosimeter information\n\
+  - Extracts beam control-point geometry\n- Reports gantry, collimator and patient-support angles\n- Reports\
+  \ isocentre positions and cumulative meterset weights\n- Compares declared and actual control-point\
+  \ counts\n- Extracts brachytherapy source definitions\n- Reports source type, isotope, half-life and\
+  \ air-kerma rate\n- Extracts brachytherapy application setups and channels\n- Extracts source-applicator\
+  \ and transfer-tube information\n- Extracts brachytherapy control-point positions and time weights\n\
+  - Detects missing and duplicate technical identifiers\n- Detects invalid control-point coordinate lengths\n\
+  - Detects missing and unused beams, setups and sources\n- Displays complete RTPLAN summaries through\
+  \ the CLI\n\n### RT Dose inspection\n\n- Validates `RTDOSE` modality and SOP Class identity\n- Extracts\
+  \ approved dose-level metadata\n- Reports dose units, type and summation type\n- Extracts dose-grid\
+  \ dimensions and frame geometry\n- Reports pixel spacing, image position and image orientation\n- Extracts\
+  \ and validates the Grid Frame Offset Vector\n- Compares declared frame counts with frame offsets\n\
+  - Decodes pixel data with `pydicom` and NumPy\n- Applies Dose Grid Scaling to stored pixel values\n\
+  - Calculates whole-grid minimum, maximum and mean dose\n- Counts total, finite, zero-dose and nonzero-dose\
+  \ voxels\n- Distinguishes relative dose values from absolute dose in Gy\n- Handles missing, corrupt\
+  \ or undecodable pixel data safely\n- Extracts referenced RT Plan identifiers\n- Extracts nested fraction-group,\
+  \ beam and brachy references\n- Detects missing, invalid and duplicated plan references\n- Displays\
+  \ complete RTDOSE summaries through the CLI\n\n### Cross-file relationship inspection\n\n- Accepts related\
+  \ objects through repeatable `--related-file` options\n- Resolves RTPLAN-to-RTSTRUCT relationships\n\
+  - Resolves RTDOSE-to-RTPLAN relationships\n- Detects referenced objects that were not supplied\n- Detects\
+  \ missing referenced SOP Instance UIDs\n- Detects incorrect referenced SOP Class identities\n- Detects\
+  \ supplied targets with incorrect RT object types\n- Detects duplicate supplied SOP Instance UIDs\n\
+  - Detects Study Instance UID mismatches\n- Detects Frame of Reference UID mismatches\n- Displays resolved,\
+  \ missing and mismatched relationship counts\n\n### Reporting and validation\n\n- Generates structured\
+  \ JSON inspection reports\n- Generates human-readable text inspection reports\n- Infers report format\
+  \ from `.json`, `.txt` or `.text`\n- Supports explicit `--report-format` selection\n- Protects existing\
+  \ reports from accidental replacement\n- Supports deliberate replacement with `--overwrite-report`\n\
+  - Normalizes nested DICOM-derived values for serialization\n- Excludes direct patient identifiers from\
+  \ reports\n- Collects unified validation findings\n- Classifies findings as `info`, `warning` or `error`\n\
+  - Produces validation summaries and counts\n- Returns exit code `2` when validation errors are detected\n\
+  \n## Supported Objects\n\n| DICOM object | Current support |\n|---|---|\n| Planning CT | Basic technical\
+  \ metadata |\n| RT Structure Set (`RTSTRUCT`) | Detailed inspection and reporting |\n| RT Plan (`RTPLAN`)\
+  \ | Detailed external-beam and brachytherapy inspection |\n| RT Dose (`RTDOSE`) | Detailed grid, scaling,\
+  \ statistics and reference inspection |\n\n## Screenshots\n\n### RT Structure Set example output\n\n\
+  ![RT Structure Set inspection](assets/screenshots/rtstruct-summary.png)\n\n### RT Plan and external-beam\
+  \ inspection\n\n![RT Plan and external-beam inspection](assets/screenshots/rtplan-beam-summary.png)\n\
+  \n### Brachytherapy and RT Plan relationship inspection\n\n![Brachytherapy and RT Plan relationship\
+  \ inspection](assets/screenshots/rtplan-brachy-summary.png)\n\n### RT Dose grid inspection\n\n![RT Dose\
+  \ grid inspection](assets/screenshots/rtdose-summary.png)\n\n### Cross-file relationship example output\n\
+  \n![Cross-file relationship inspection](assets/screenshots/cross-file-relationships.png)\n\n## Project\
+  \ Structure\n\n```text\ndicom-rt-data-inspector/\n├── .github/\n│   └── workflows/\n│       └── tests.yml\n\
+  ├── assets/\n│   ├── dicom-rt-data-inspector-banner.png\n│   └── screenshots/\n│       ├── cross-file-relationships.png\n\
+  │       ├── rtdose-summary.png\n│       ├── rtplan-beam-summary.png\n│       ├── rtplan-brachy-summary.png\n\
+  │       └── rtstruct-summary.png\n├── data/\n│   └── README.md\n├── outputs/\n│   └── .gitkeep\n├──\
+  \ src/\n│   └── dicom_rt_inspector/\n│       ├── __init__.py\n│       ├── app.py\n│       ├── exceptions.py\n\
+  │       ├── metadata.py\n│       ├── reader.py\n│       ├── relationships.py\n│       ├── reporting.py\n\
+  │       ├── rtdose.py\n│       ├── rtplan.py\n│       ├── rtstruct.py\n│       └── validation.py\n├──\
+  \ tests/\n│   ├── __init__.py\n│   ├── test_app.py\n│   ├── test_metadata.py\n│   ├── test_reader.py\n\
+  │   ├── test_relationships.py\n│   ├── test_reporting.py\n│   ├── test_rtdose.py\n│   ├── test_rtplan.py\n\
+  │   ├── test_rtstruct.py\n│   └── test_validation.py\n├── .gitignore\n├── CHANGELOG.md\n├── LICENSE\n\
+  ├── pyproject.toml\n├── README.md\n└── RELEASE_NOTES.md\n```\n\n## Installation\n\n### 1. Clone the\
+  \ repository\n\n```powershell\ngit clone https://github.com/atinukeinyang-hue/dicom-rt-data-inspector.git\n\
+  cd dicom-rt-data-inspector\n```\n\n### 2. Create and activate a virtual environment\n\n```powershell\n\
+  python -m venv .venv\n.venv\\Scripts\\Activate.ps1\n```\n\n### 3. Install the project\n\n```powershell\n\
+  python -m pip install --upgrade pip\npython -m pip install -e \".[dev]\"\n```\n\nRuntime dependencies:\n\
+  \n- `pydicom` for DICOM reading and pixel decoding\n- NumPy for dose-grid scaling and technical statistics\n\
+  \nDevelopment dependencies:\n\n- pytest for automated testing\n- Ruff for code-quality checks\n- build\
+  \ for source-distribution and wheel creation\n\n## Usage\n\nDisplay command help:\n\n```powershell\n\
+  dicom-rt-inspector --help\n```\n\nInspect one DICOM file:\n\n```powershell\ndicom-rt-inspector path\\\
+  to\\sample.dcm\n```\n\nAlternatively:\n\n```powershell\npython -m dicom_rt_inspector.app path\\to\\\
+  sample.dcm\n```\n\nInspect an RT Dose with related RT Plan and RT Structure Set files:\n\n```powershell\n\
+  dicom-rt-inspector path\\to\\dose.dcm `\n    --related-file path\\to\\plan.dcm `\n    --related-file\
+  \ path\\to\\structures.dcm\n```\n\nThe `--related-file` option may be repeated to supply multiple related\n\
+  RTSTRUCT, RTPLAN or RTDOSE files.\n\n### Generate a JSON report\n\n```powershell\ndicom-rt-inspector\
+  \ path\\to\\sample.dcm `\n    --report outputs\\inspection.json\n```\n\n### Generate a text report\n\
+  \n```powershell\ndicom-rt-inspector path\\to\\sample.dcm `\n    --report outputs\\inspection.txt\n```\n\
+  \nThe report format is normally inferred from the output-file extension.\n\nIt may also be selected\
+  \ explicitly:\n\n```powershell\ndicom-rt-inspector path\\to\\sample.dcm `\n    --report outputs\\inspection-report\
+  \ `\n    --report-format json\n```\n\n### Replace an existing report\n\nExisting report files are protected\
+  \ by default. Use the overwrite option only\nwhen replacement is intentional:\n\n```powershell\ndicom-rt-inspector\
+  \ path\\to\\sample.dcm `\n    --report outputs\\inspection.json `\n    --overwrite-report\n```\n\n###\
+  \ Generate a cross-file report\n\n```powershell\ndicom-rt-inspector path\\to\\dose.dcm `\n    --related-file\
+  \ path\\to\\plan.dcm `\n    --related-file path\\to\\structures.dcm `\n    --report outputs\\cross-file-inspection.json\n\
+  ```\n\nThe paths in these examples are placeholders. Replace them with paths to\nactual approved DICOM\
+  \ files before running the commands.\n\n## Validation Exit Codes\n\n| Exit code | Meaning |\n|---|---|\n\
+  | `0` | Inspection completed without validation errors |\n| `1` | Expected file, DICOM, argument or\
+  \ report-writing error |\n| `2` | Inspection completed but validation errors were detected |\n\nWarnings\
+  \ do not produce a failing exit code.\n\n## Strict DICOM Reading\n\nThe application expects standard\
+  \ DICOM Part 10 files containing the required\nfile-format header and `DICM` prefix.\n\nIt does not\
+  \ use `force=True` by default because forced reading can cause\nordinary or malformed files to be interpreted\
+  \ incorrectly as DICOM.\n\nSome genuine raw DICOM datasets and test fixtures may therefore be rejected\n\
+  even when their internal elements resemble DICOM data. This is an intentional\nsafety and predictability\
+  \ decision.\n\n## Testing\n\nRun all automated tests:\n\n```powershell\npytest -q\n```\n\nCurrent checkpoint:\n\
+  \n```text\n268 passed\n```\n\nRun the reporting tests:\n\n```powershell\npytest tests/test_reporting.py\
+  \ -v\n```\n\nRun the validation tests:\n\n```powershell\npytest tests/test_validation.py -v\n```\n\n\
+  Run the CLI tests:\n\n```powershell\npytest tests/test_app.py -v\n```\n\nRun the RT Dose tests:\n\n\
+  ```powershell\npytest tests/test_rtdose.py -v\n```\n\nRun the RT Plan tests:\n\n```powershell\npytest\
+  \ tests/test_rtplan.py -v\n```\n\nRun the RT Structure Set tests:\n\n```powershell\npytest tests/test_rtstruct.py\
+  \ -v\n```\n\nRun the cross-file relationship tests:\n\n```powershell\npytest tests/test_relationships.py\
+  \ -"

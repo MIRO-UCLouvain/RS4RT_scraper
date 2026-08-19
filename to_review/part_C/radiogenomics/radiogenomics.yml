@@ -1,0 +1,139 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: roshanlodha/radiogenomics
+url: https://github.com/roshanlodha/radiogenomics
+platform: github
+description: ''
+license: null
+language: null
+keywords: []
+stars: 0
+updated_at: '2023-08-25T14:50:42Z'
+image_source: https://raw.githubusercontent.com/roshanlodha/radiogenomics/HEAD/README_files/figure-gfm/UMAP-1.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "Radiogenomic Analysis of Pulmonary Artery Metafeatures\n================\nRoshan Lodha\n\
+  09 December, 2022\n\n  - [Introduction](#introduction)\n  - [Loading Data](#loading-data)\n      - [Creating\
+  \ a Polygenic Risk\n        Score](#creating-a-polygenic-risk-score)\n      - [Loading SNPs Data](#loading-snps-data)\n\
+  \      - [Loading Demographic Data](#loading-demographic-data)\n      - [Loading Scans Data](#loading-scans-data)\n\
+  \  - [Exploratory Data Analysis](#exploratory-data-analysis)\n      - [Examining Correlation Between\n\
+  \        Metafeatures](#examining-correlation-between-metafeatures)\n      - [Examining Counfounders\
+  \ to\n        Metafeature](#examining-counfounders-to-metafeature)\n      - [Univariate Correlation](#univariate-correlation)\n\
+  \      - [Regression](#regression)\n\n# Introduction\n\n``` r\nknitr::opts_chunk$set(warning = FALSE,\
+  \ # turn off warnings\n                      message = FALSE,\n                      results = 'hide')\
+  \ # hide console output\nknitr::opts_chunk$set(fig.width = 10, fig.height = 7) # set figure height and\
+  \ width\n\npkgs <- c(\"umap\", \"readxl\", \"emulator\", \"Hmisc\", \"tidyverse\", \"glmnet\",\n   \
+  \ \"ggprism\", \"ggfortify\", \"RColorBrewer\", \"plotly\", \"viridis\", \"GGally\")\n\ninvisible(lapply(pkgs,\n\
+  \    function(x) suppressMessages(library(x, character.only = TRUE)))) \n\n# git token: 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\n\
+  # rendering: rmarkdown::render('radiogenomics.Rmd', output_file = 'README', envir = new.env())\n```\n\
+  \n# Loading Data\n\n## Creating a Polygenic Risk Score\n\nWe can collapse all 97 SNPs (TODO: insert\
+  \ paper for reference to 97\nSNPs) into a single dimension that describes the odds ratio of having\n\
+  atrial fibrillation for a given patients.\n\n``` r\n# read in the RSID corresponding to each SNP\nrsid\
+  \ <- as.data.frame(read_csv(\"./data/rsid.csv\"))\nrsids <- rsid$rsid\n\n# read in and sort the SNPs\n\
+  pre.snps.df <- read.csv(\"./data/select_SNPs.csv\") %>% \n  mutate(CHROM = as.numeric(CHROM)) %>%\n\
+  \  arrange(CHROM)\n\n# create a dataframe called PRS that converts the SNP to a weight\npre.prs.df <-\
+  \ cbind(rsid, pre.snps.df) %>% \n  mutate(modifier = ifelse(REF == risk, 2, 0)) %>%\n  select(-c(\"\
+  rsid\", \"chr\", \"loc\", \"risk\", \"CHROM\", \"POS\", \"REF\", \"ALT\")) %>%\n  mutate_at(vars(-c(\"\
+  modifier\", \"weight\")), ~abs(modifier - .)) %>%\n  select(-c(\"modifier\")) %>%\n  mutate_at(vars(-c(\"\
+  weight\")), ~.*weight) %>% \n  select(-c(\"weight\")) %>% t()\n\n# sum all the weights to find the polygenic\
+  \ risk score\nprs.df <- as.data.frame(rowSums(pre.prs.df)) %>% \n  rename(\"prs\" = \"rowSums(pre.prs.df)\"\
+  ) %>%\n  tibble::rownames_to_column(\"patient_id\")\nprs.df\n```\n\n### Polygenic Risk Score of 4q25\
+  \ region\n\n(TODO: calculate the polygenic risk score of solely the 4q25 region as\nthe log(odds ratio)\
+  \ \\* ploidy. Look at the correlation between the 4q25\npolygenic risk score and the metafeatures.\n\
+  \n## Loading SNPs Data\n\nLoads data regarding SNPs for each patient.\n\n``` r\nsnps.df <- cbind(rsid,\
+  \ pre.snps.df) %>% \n  mutate(modifier = ifelse(REF == risk, 2, 0)) %>%\n  mutate(id = paste(CHROM,\
+  \ POS, REF, ALT, sep = '_')) %>%\n  select(-c(\"rsid\", \"chr\", \"loc\", \"risk\", \"CHROM\", \"POS\"\
+  , \"REF\", \"ALT\")) %>%\n  mutate_at(vars(-c(\"modifier\", \"weight\", \"id\")), ~abs(modifier - .))\
+  \ %>%\n  select(-c(\"modifier\", \"weight\")) %>%\n  remove_rownames %>% column_to_rownames(var = \"\
+  id\") %>%\n  t() %>%\n  as.data.frame() %>%\n  #mutate_all(factor) %>%\n  tibble::rownames_to_column(\"\
+  patient_id\")\n\nsnps.list <- colnames(snps.df)[-1] # format: CHROM_POS_REF_ALT\npitx2 <- snps.list[26:31]\
+  \ # SNPs in the PITX2 region\nsnps.df\n```\n\n## Loading Demographic Data\n\nLoads in the demographic\
+  \ data associated with each patients and attaches\nthe calculated polygenic to each patient.\n\n```\
+  \ r\n# read in an convert data types\ndem <- as.data.frame(read_excel(\"./data/CCF_CT_demographic.xlsx\"\
+  ))\ndem <- dem %>%\n    dplyr::mutate(Ablation =\n        ifelse(Ablation == \"NA\", NA,\n         \
+  \   ifelse(Ablation == \"TRUE\", TRUE, FALSE))) %>%\n    dplyr::mutate(Weight = as.numeric(as.character(Weight)))\
+  \ %>%\n    dplyr::mutate(af_recur = replace(af_recur, af_recur == \"NA\", NA)) %>%\n    dplyr::mutate(HxStroke\
+  \ = replace(HxStroke, \n        HxStroke == \"Unchecked\" | HxStroke == \"Checked\" | HxStroke == \"\
+  NA\", NA)) \n\n# merge with the polygenic risk score dataframe\ndem <- merge(prs.df, dem)\nrownames(dem)\
+  \ <- dem$image_id\n\ndem[sapply(dem, is.character)] <- lapply(dem[sapply(dem, is.character)], \n   \
+  \                                      as.factor)\ndem\n```\n\n## Loading Scans Data\n\nLoads in the\
+  \ data from the scan (the metafeature values for a given\npatient’s scan). (TODO: remove scaling)\n\n\
+  ``` r\n# read in 750 scans\nLA750 <- scale(read.csv(\"./data/LA_750.csv\", row.names = 1, header = TRUE))\n\
+  LA750 <- LA750[, which(apply(LA750, 2, var) != 0)] # remove columns with 0 variance\n#LA750 <- cbind(LA750,\
+  \ LA750 = 1, LApulm = 0)\nrownames(LA750) <- factor(substr(rownames(LA750), 9, 17))\n\n# read in pulm\
+  \ artery scans\nLApulm <- scale(read.csv(\"./data/LA_pulm.csv\", row.names = 1, header = TRUE))\nLApulm\
+  \ <- LApulm[, which(apply(LApulm, 2, var) != 0)] # remove columns with 0 variance\n#LApulm <- cbind(LApulm,\
+  \ LA750 = 0, LApulm = 1)\nrownames(LApulm) <- factor(substr(rownames(LApulm), 9, 17))\n\n# merge and\
+  \ clean scans\nLA <- dplyr::bind_rows(as.data.frame(LApulm), as.data.frame(LA750))\nmetafeatures <-\
+  \ colnames(LA)\nLA <- as.matrix(LA)\nLA[!is.finite(LA)] <- NA\nas.data.frame(LA)\n```\n\n# Exploratory\
+  \ Data Analysis\n\n## Examining Correlation Between Metafeatures\n\n### Determining the Effect of Scan\n\
+  \n``` r\nLA.umap <- umap(na.omit(LA))\nLA.umap.df <- merge(as.data.frame(LA), as.data.frame(LA.umap$layout),\
+  \ by = 0)\nLA.umap.df <- merge(LA.umap.df, dem, by.x = \"Row.names\", by.y = 0) %>% \n  dplyr::mutate(scan\
+  \ = ifelse(row_number() < dim(LA750)[1], \"LA750\", \"LApulm\"))\n\nLA.umap.plot <- ggplot(data = LA.umap.df,\
+  \ aes(x = V1, y = V2, color = factor(scan))) +\n  geom_point(size = 2) +\n  ggtitle(\"UMAP vs Dataset\"\
+  ) +\n  theme_prism()\n#ggsave(\"./plots/LA.umap.png\", plot = LA.umap.plot, height = 6, width = 6)\n\
+  LA.umap.plot\n```\n\n![](README_files/figure-gfm/UMAP-1.png)<!-- -->\n\nUMAP shows that there is no\
+  \ clusters formed, and no discernible\ncorrelation between the type of CT scan and the values of the\n\
+  metafeatures. This gives us increased confidence to combine the samples\nfrom the two scans to improve\
+  \ our sample size.\n\n### Principal Component Analysis\n\n``` r\nLA.pca <- prcomp(na.omit(LA))\nLA.pca.df\
+  \ <- merge(as.data.frame(LA), as.data.frame(LA.pca$x[,1:12]), by = 0)\nLA.pca.df <- merge(LA.pca.df,\
+  \ dem, by.x = \"Row.names\", by.y = 0) %>% \n  dplyr::mutate(scan = ifelse(row_number() < dim(LA750)[1],\
+  \ \"LA750\", \"LApulm\"))\npca.var.explained <- cumsum(LA.pca$sdev^2 / sum(LA.pca$sdev^2))\n\nscree.plot\
+  \ <- qplot(c(1:169), pca.var.explained) +\n  geom_line() +\n  xlab(\"Principal Component\") +\n  ylab(\"\
+  Variance Explained\") +\n  ggtitle(\"Scree Plot\") +\n  geom_hline(yintercept = 0.8) +\n  theme_prism()\n\
+  #ggsave(\"./plots/LA.scree.png\", plot = scree.plot, height = 6, width = 6) #12\nscree.plot\n```\n\n\
+  ![](README_files/figure-gfm/scree-1.png)<!-- -->\n\nScree plot revealed that 12 principal components\
+  \ captured over 80% of\nthe data. This suggests that there is a high level of correlation\nbetween metafeatures.\n\
+  \n``` r\nLA.pca.plot <- ggplot(data = LA.pca.df, aes(x = PC1, y = PC2, color = factor(scan))) +\n  geom_point(size\
+  \ = 2) +\n  ggtitle(\"PCA vs Dataset\") +\n  theme_prism()\n#ggsave(\"./plots/LA.pca.png\", plot = LA.pca.plot,\
+  \ height = 6, width = 6)\nLA.pca.plot\n```\n\n![](README_files/figure-gfm/PCA-1.png)<!-- -->\n\nPCA\
+  \ similarly shows that the dataset does not correlate with the values\nof the metafeatures.\n\n### Correlation\
+  \ Between Metafeatures\n\n(TODO: look at the correlation between metafeatures and prune those that\n\
+  have a correlation higher than 0.25)\n\n``` r\n# https://stackoverflow.com/questions/18275639/remove-highly-correlated-variables\n\
+  metafeatures.cor <- cor(LA)\nmetafeatures.cor[!lower.tri(metafeatures.cor)] <- 0 # turn into a triangle\
+  \ matrix\n\nLA.trim <- LA[, !apply(metafeatures.cor, \n                       2, \n                \
+  \       function(x) any(abs(x) > 0.25, na.rm = TRUE))]\nselect.metafeatures <- colnames(LA.trim)\nselect.metafeatures\n\
+  ```\n\n## Examining Counfounders to Metafeature\n\nNext we examine for demographic confounders visually.\
+  \ Height and weight\nare of notable interest.\n\n``` r\nLA.pca.height.plot <- ggplot(data = LA.pca.df,\
+  \ aes(x = PC1, y = PC2, color = as.numeric(Height))) +\n  geom_point(size = 2) +\n  scale_color_viridis(discrete\
+  \ = FALSE) +\n  ggtitle(\"PCA vs Height\") +\n  theme(legend.title = element_text()) +\n  theme_prism()\n\
+  #ggsave(\"./plots/LA.height.png\", plot = LA.pca.height.plot, height = 6, width = 6)\nLA.pca.height.plot\n\
+  ```\n\n![](README_files/figure-gfm/confounders-1.png)<!-- -->\n\nExamining if the polygenic risk score\
+  \ is a confounder for the principal\ncomponents is equivalent to asking if they are correlated.\n\n\
+  ``` r\nLA.pca.prs.plot <- ggplot(data = LA.pca.df, aes(x = PC1, y = PC2, color = as.numeric(prs))) +\n\
+  \  geom_point(size = 2) +\n  scale_color_viridis(discrete = FALSE) +\n  ggtitle(\"PCA vs PRS\") +\n\
+  \  theme(legend.title = element_text()) +\n  theme_prism()\n#ggsave(\"./plots/LA.prs.png\", plot = LA.pca.prs.plot,\
+  \ height = 6, width = 6)\nLA.pca.prs.plot\n```\n\n![](README_files/figure-gfm/PRS-PCs-plot-1.png)<!--\
+  \ -->\n\nWhile there does not appear to be a visual correlation between\nmetafeatures and polygenic\
+  \ risk score, this can be further examined\nusing a linear regression model.\n\n``` r\nprs.pca.df <-\
+  \ merge(as.data.frame(LA.pca$x), dem, by = 'row.names') %>% \n  select(c(\"prs\", all_of(colnames(LA.pca$x))))\n\
+  \npca.lm <- lm(prs ~ PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7 + PC8 + PC9 + PC10 + PC11 + PC12, \n  \
+  \          data = prs.pca.df)\nsummary(pca.lm)\n```\n\nThe 3rd and 5th principal components are correlated\
+  \ with the polygenic\nrisk score. These are replotted for visualization.\n\n``` r\nLA.pca.prs.plot <-\
+  \ ggplot(data = LA.pca.df, aes(x = PC3, y = PC5, color = as.numeric(prs))) +\n  geom_point(size = 2)\
+  \ +\n  scale_color_viridis(discrete = FALSE) +\n  ggtitle(\"PCA vs PRS\") +\n  theme(legend.title =\
+  \ element_text()) +\n  theme_prism()\n#ggsave(\"./plots/LA.prs.png\", plot = LA.pca.prs.plot, height\
+  \ = 6, width = 6)\nLA.pca.prs.plot\n```\n\n![](README_files/figure-gfm/PRS-PCs-plot-2-1.png)<!-- -->\n\
+  \n## Univariate Correlation\n\nNext, we look at the correlation between a single metafeature and a\n\
+  single SNP. (TODO: rewrite this code to fit into a single file)\n\n### Univariate Modeling with PITX2\
+  \ Outcomes\n\nSince we are most interested in the SNPs near the PITX2 gene on\nchromosome 4, we can\
+  \ specifically look the the correlation between a\nsingle metafeature and each of those 6 genes. This\
+  \ allows for higher\npower and a more modest significance threshold.\n\n``` r\n# create a modified \"\
+  complete.db\" that has only the pitx2 SNPs\npitx2.df <- snps.df[, c(\"patient_id\", pitx2)]\ncomplete.db\
+  \ <- merge(LA.pca.df, pitx2.df, by = \"patient_id\")\n\n# create an empty dataframe that holds the final\
+  \ correlation SNP and metafeature\ncor.df <- data.frame(snp = character(),\n                 r = double(),\n\
+  \                 p = double(),\n                 metafeature = character(),\n                 stringsAsFactors\
+  \ = FALSE)\n\nfor (i in 1:length(metafeatures)) {\n  # create a new dataframe of a single metafeature\
+  \ vs the pitx2 SNPs\n  snp.df <- complete.db %>%\n    select(append(metafeatures[i], pitx2)) %>%\n \
+  \   rename(\"metafeature\" = 1)\n  \n  snp.matrix <- matrix(as.numeric(as.matrix(snp.df[-1])),\n   \
+  \                  ncol = ncol(as.matrix(snp.df[-1])))\n  colnames(snp.matrix) <- colnames(snp.df[-1])\n\
+  \  \n  # find the correlation between the metafeature and the pitx2 SNPs\n  metafeature.corr <- rcorr(snp.matrix,\
+  \ snp.df$metafeature)\n  \n  metafeature.corr <- \n    cbind(as.data.frame(metafeature.corr$r) %>% dplyr::select(y)\
+  \ %>% rename(r = y),\n          as.data.frame(metafeature.corr$P) %>% dplyr::select(y) %>% rename(p\
+  \ = y))  \n  \n  # save the results to a temporary dataset\n  tempdf <- metafeature.corr %>% \n    tibble::rownames_to_column(\"\
+  snp\") %>%\n    dplyr::mutate(metafeature = metafeatures[i]) %>%\n    drop_na()\n  \n  cor.df <- rbind(cor.df,\
+  \ tempdf)\n  \n  # write the dataset\n  write.csv(metafeature.corr %>% dplyr"

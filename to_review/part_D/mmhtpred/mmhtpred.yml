@@ -1,0 +1,56 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ecoxial2007/MMHTPred
+url: https://github.com/ecoxial2007/MMHTPred
+platform: github
+description: Multimodal Pre-Radiotherapy Hematologic Toxicity Prediction
+license: null
+language: Python
+keywords: []
+stars: 5
+updated_at: '2026-05-08T08:51:39Z'
+image_source: null
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 4 support term(s).
+readme_excerpt: "\n# MMHTPred\nMultimodal integration of CT images, dose map, hematologic and demographic\
+  \ features for pre-radiotherapy prediction of hematologic toxicity in rectal cancer\n\n\n## Project\
+  \ Overview\nThis project focuses on integrating multimodal data, including CT images, dose maps, hematologic,\
+  \ and demographic features, to build a predictive model for hematologic toxicity (HT) in rectal cancer\
+  \ patients undergoing radiotherapy. \nThe pipeline includes CT and dose data preprocessing, feature\
+  \ extraction (MedSAM), and model training/validation, all implemented using the PyTorch framework.\n\
+  \n---\n\n## Directory Structure\n```\nMMHTPred/\n├── checkpoints/            # Pre-trained model weights\n\
+  ├── data/                   # Dataset directory\n│   ├── Annotation/         # Training/validation/testing/external\
+  \ testing splits\n│   ├── LARC/               # CT, Dose, Mask and feature files\n├── src/         \
+  \           # Core scripts for dataset loading, model, and utilities\n│   ├── dataset.py          #\
+  \ Data loading module\n│   ├── model.py            # Model definition\n│   ├── loss.py             #\
+  \ Loss functions\n│   ├── utils.py            # Utility functions\n├── tools/                  # Scripts\
+  \ for data preprocessing and feature preparation\n│   ├── README.md           # Instructions for data\
+  \ pre-processing and feature extraction\n│   ├── step0_analysis_dose_median_range.py\n│   ├── step1_mask_image_process.py\n\
+  │   ├── step2_inference_npy.py\n│   ├── ...\n├── train.sh                # Script to start 10-fold training\
+  \ and validation\n├── test.sh                 # Script to start HT prediction(ROC/AUC...) for val/test/external\
+  \ testset\n```\n\n---\n\n## Installation\nEnsure you have Python 3.8+ installed. Run the following command\
+  \ to install the necessary dependencies:\n```bash\npip install torch==2.0.0 scikit-learn matplotlib\
+  \ tabulate einops\n```\n\n---\n\n## Data Preparation\n1. Refer to `tools/README.md` for detailed instructions\
+  \ on preprocessing and feature preparation. Key steps include:\n   - (Optional) `step0_analysis_dose_median_range.py`:\
+  \ Analyze dose distribution statistics. \n   - `step1_mask_image_process.py`: Center crop for CT, dose\
+  \ and mask. \n   - `step2_inference_npy.py`: Generate intermediate feature files using MedSAM (checkpoint\
+  \ in `./checkpoints/medsam-vit-b/medsam_vit_b/medsam_vit_b.pth`).\n   - `step3_fillnpy2npy.py`: Merge\
+  \ feature sequences.\n   - `step4_check_zero_mask.py`: Select the intermediate sequence based on the\
+  \ mask.\n2. Organize the preprocessed data in the `data/` directory as per the required format.\n\n\
+  ---\n\n## Training and Validation\n1. Configure the `train.sh` script to set appropriate parameters\
+  \ for your experiments.\n2. Start the 10-fold training and validation process by running:\n   ```bash\n\
+  \   bash train.sh\n   ```\n\n---\n\n## Test for ROC / AUC / Accuracy\n1. Configure the `test.sh` script\
+  \ to set appropriate parameters for your experiments.\n2. Start the 10-fold training and validation\
+  \ process by running:\n   ```bash\n   bash test.sh\n   ```\n   \nNote: All parameter settings in `test.sh`,\
+  \ including the checkpoints path, must be consistent with those in `train.sh`, otherwise the checkpoints\
+  \ cannot be automatically loaded.\n\nAfter completing the testing phase, the prediction results for\
+  \ each case, along with the ROC curve and evaluation metrics, will be saved in the following directory\
+  \ structure:\n```\nwork_dir/\n├── HT-2Class-Test/\n│   ├── doses+images-meta+blood-ptv-focal_loss/\n\
+  │   │   ├── fold0-20240717-1510/\n│   │   │   ├── test_auc0.844113.png       # ROC curve visualization\n\
+  │   │   │   ├── test_result.json           # Prediction results for each case\n│   │   │   ├── testing.log\
+  \               # Testing logs\n\n```\n\n---\n\n## Citation\nIf you use this project or its components\
+  \ in your research, please cite as follows:\n```bibtex\n```\n\n---\n\n"

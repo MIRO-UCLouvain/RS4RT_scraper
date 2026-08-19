@@ -1,0 +1,90 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Ash2002-a/Synthetic-CT-Generation-from-MRI-for-Pelvic-Radiotherapy
+url: https://github.com/Ash2002-a/Synthetic-CT-Generation-from-MRI-for-Pelvic-Radiotherapy
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2025-09-15T01:16:50Z'
+image_source: null
+heuristic_total_score: 21
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 strong particle-therapy term(s) in repository name.
+- Matched 3 support term(s).
+readme_excerpt: "# MRI-to-CT Translation Using Deep Learning Models\n\nThis project implements and compares\
+  \ different deep learning approaches for transforming MRI images into synthetic CT images, specifically\
+  \ focusing on Pix2Pix GAN and Autoencoder architectures. The implementation is designed for radiotherapy\
+  \ planning applications.\n\n\n## \U0001F9EC Project Overview\n\nThis project investigates MR-conditioned\
+  \ CT synthesis using both **generative models** and **discriminative baselines**. The aim is to produce\
+  \ realistic, clinically viable synthetic CT volumes to support MRI-only radiotherapy workflows.\n\n\
+  Key goals include:\n- Evaluating whether generative approaches (e.g., GANs, diffusion models) outperform\
+  \ conventional discriminative models.\n- Analysing the impact of training strategies, regularisation,\
+  \ and architectural choices.\n- Assessing the clinical utility of synthetic CT in terms of image quality\
+  \ and radiotherapy relevance.\n\n---\n\n## \U0001F9E0 Model Architectures\n\n### Generative Models\n\
+  - **3D GANs** for volumetric CT synthesis from corresponding MRI inputs.\n- **Denoising Diffusion Models**\
+  \ for progressive refinement of synthetic volumes.\n- Conditioning implemented via concatenation or\
+  \ feature-based encoding of MRI volumes.\n\n### Baseline Models\n- **Supervised Autoencoders** trained\
+  \ to regress CT from MRI using pixel-wise losses.\n- Discriminative pipelines for comparison against\
+  \ generative counterparts.\n\nAll architectures are implemented in PyTorch or TensorFlow and support\
+  \ 3D medical image inputs.\n\n---\n\n## \U0001F9EA Evaluation and Clinical Validation\n\nThe synthetic\
+  \ CT outputs are evaluated using:\n- **Voxel-level similarity metrics**: MAE, MSE, SSIM\n- **Structural\
+  \ and clinical relevance**: PSNR, DICE (organ-specific), and volume similarity\n- **Downstream tasks**\
+  \ (e.g., dosimetry, segmentation surrogate performance — optional extension)\n\nStatistical significance\
+  \ testing (e.g., paired t-tests) is conducted on results across patient volumes.\n\n---\n\n## \U0001F4C1\
+  \ Dataset\n\nThe project uses public datasets provided through the **SynthRAD2023 Challenge**, including:\n\
+  - T2-weighted pelvic MRI volumes\n- Co-registered ground truth CT scans\n- 3D volumes with expert-aligned\
+  \ anatomy\n\nData is preprocessed (resampled, normalized) prior to model input.\n\n> **Note:** If you\
+  \ use this data, please follow the terms set by the dataset providers.\n\n---\n\n## \U0001F4CA Example\
+  \ Results\n\nExample visualizations and results include:\n- Input MR slices alongside synthetic and\
+  \ ground-truth CT\n- Quantitative metrics across validation cohorts\n- Side-by-side comparisons of GAN\
+  \ vs diffusion vs baseline models\n- Analysis of model robustness across patient cases\n\n---\n\n\n\
+  ## Installation\n\n1. Activate the course environment:\n```bash\nconda activate mphy0043\n```\n\n2.\
+  \ Install additional dependencies (if required):\n```bash\npip install -r requirements.txt\n```\n\n\
+  ## Project Structure\n\n```\nMphy0043_cw/\n├── scripts/\n│   ├── pix2pix_model.py\n│   ├── autoencoder.py\n\
+  │   ├── evaluatePix2pix_model.py\n│   └── evaluate_encoder.py\n├── results/\n├── autoencoder_output/\n\
+  ├── pix2pix_evaluation/\n└── autoencoder_evaluation/\n```\n\n## Running \n### Pix2Pix Model Preparation\n\
+  \n#### Dataset Preparation\n\n1. **Download Dataset**\n   - Download the dataset from: [https://zenodo.org/records/7260705]\
+  \ [Task 1]\n   - Place the dataset in: `Mphy0043_cw/Data/mphy0043_cw/post`\n\n2. **Convert NIfTI to\
+  \ PNG**\n   ```bash\n   cd Mphy0043_cw/scripts\n   python convert_nifti_to_png.py\n   ```\n   - Processed\
+  \ images will be saved in: `Mphy0043_cw/Data/mphy0043_cw/processed`\n\n### Pix2Pix Model\n\n```bash\n\
+  cd Mphy0043_cw/scripts\npython pix2pix_model.py\n```\nResults will be saved in: `Mphy0043_cw/results/`\n\
+  \n### Autoencoder Model\n\n```bash\ncd Mphy0043_cw/scripts\npython autoencoder.py\n```\nResults will\
+  \ be saved in: `Mphy0043_cw/autoencoder_output/`\n\n### Model Evaluation\n\nFor Pix2Pix:\n```bash\n\
+  cd Mphy0043_cw/scripts\npython evaluate_Pix2pix.py\n```\nResults will be saved in: `Mphy0043_cw/pix2pix_evaluation/evaluation_[timestamp]/`\n\
+  \nFor Autoencoder:\n```bash\ncd Mphy0043_cw/scripts\npython evaluate_encoder.py\n```\nResults will be\
+  \ saved in: `Mphy0043_cw/autoencoder_evaluation/`\n\n## Output Directories\n\n- `results/`: Contains\
+  \ Pix2Pix model outputs and training logs\n- `autoencoder_output/`: Contains Autoencoder model outputs\n\
+  - `pix2pix_evaluation/`: Contains evaluation metrics and visualisations for Pix2Pix\n- `autoencoder_evaluation/`:\
+  \ Contains evaluation metrics and visualisations for Autoencoder\n\n## Evaluation Metrics\n\nThe evaluation\
+  \ scripts calculate:\n- Mean Absolute Error (MAE)\n- Mean Squared Error (MSE)\n- Peak Signal-to-Noise\
+  \ Ratio (PSNR)\n- Structural Similarity Index (SSIM)\n- Signal-to-Noise Ratio (SNR)\n\n\n# CycleGAN\
+  \ Pix2Pix Implementation Guide- Not used \n\n## Repository Setup\n- Clone repository: [https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix]\n\
+  \n## Preprocessing Scripts\n\n### 1. Data Preparation\n```bash\n# Run preprocessing scripts in order\n\
+  python resample_mri_ct.py\npython split_data.py\npython convert_to_png.py\n```\n\n### 2. Dataset Organization\n\
+  - Create dataset directory: \n  `/Users/aoza/pytorch-CycleGAN-and-pix2pix/datasets/my_dataset_png`\n\
+  \n## Model Training\n\n### Train Pix2Pix Model\n```bash\ncd pytorch-CycleGAN-and-pix2pix\npython train.py\
+  \ \\\n    --dataroot ./datasets/my_dataset_png \\\n    --name mri_to_ct_pix2pix \\\n    --model pix2pix\
+  \ \\\n    --direction AtoB \\\n    --gpu_ids -1\n```\n\n### Model Testing\n```bash\npython test.py \\\
+  \n    --dataroot /Users/aoza/pytorch-CycleGAN-and-pix2pix/datasets/test \\\n    --name mri_to_ct_pix2pix\
+  \ \\\n    --model pix2pix \\\n    --direction AtoB \\\n    --gpu_ids -1\n```\n\n## Post-Processing\n\
+  \n### 1. Sort Real and Fake Images\n```bash\npython real_fake_sort.py\n```\n\n### 2. Model Evaluation\n\
+  ```bash\npython evaluate_cycleGan.py\n```\n\n## Output Directories\n```\npytorch-CycleGAN-and-pix2pix/\n\
+  ├── results/\n│   └── mri_to_ct_pix2pix/\n├── checkpoints/\n│   └── mri_to_ct_pix2pix/\n└── datasets/\n\
+  \    ├── my_dataset_png/\n    └── test/\n```\n\n## Preprocessing tools (Git)\nThe following links were\
+  \ cloned and added to the project folder:\n\nhttps://github.com/SynthRAD2023/preprocessing/tree/main\n\
+  https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix\n\n## Dataset (Task 1):\nhttps://zenodo.org/records/7260705\n\
+  \n\n## End \n```\nMPHY0043_CW/\n│\n├── autoencoder_evaluation/\n│   └── evaluation_20250208_141808/\n\
+  │       ├── comparisons/\n│       │   └── metrics_distribution.png\n│       ├── metrics.csv\n│     \
+  \  └── summary.txt\n│\n├── pix2pix_evaluation/\n│   └── evaluation_20250208_170722/\n│       ├── comparisons/\n\
+  │       │   └── metrics_over_epochs.png\n│       ├── metrics.csv\n│       └── summary.txt\n│\n├── Data/mphy0043_cw/\n\
+  │   └── overview/\n│       ├── post/\n│       └── processed/\n│\n├── scripts/\n│   ├── __pycache__/\n\
+  │   ├── autoencoder.py\n│   ├── convert_nifti_to_png.py\n│   ├── convert_to_png.py\n│   ├── eval_models.py\n\
+  │   ├── eval_pix2.py\n│   ├── evaluate_cycleGAN.py\n│   ├── evaluate_encoder.py\n│   ├── evaluate_pix2pix.py\n\
+  │   ├── main.py\n│   ├── pix2pix_model.py\n│   ├── preprocess.py\n│   ├── real_fake_sort.py\n│   ├──\
+  \ resample_mri_ct.py\n│   └── split_data.py\n│\n├── MPHY0043_Report.pdf\n└── README.md\n```\n"

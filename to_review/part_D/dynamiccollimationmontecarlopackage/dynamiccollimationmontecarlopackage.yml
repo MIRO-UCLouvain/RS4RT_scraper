@@ -1,0 +1,100 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: npnelson3/DynamicCollimationMonteCarloPackage
+url: https://github.com/npnelson3/DynamicCollimationMonteCarloPackage
+platform: github
+description: This is a TOPAS-based Monte Carlo package to help enable the simulation of pencil beam scanning
+  proton therapy beamlines and collimation devices.
+license: GPL-3.0
+language: C++
+keywords:
+- topasmc
+stars: 8
+updated_at: '2026-01-08T03:27:00Z'
+image_source: null
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 3 particle-therapy term(s).
+readme_excerpt: "# Dynamic Collimation Monte Carlo package\nBy Nick Nelson <npnelson3@gmail.com>\n\nPlease\
+  \ see https://doi.org/10.1002/mp.14846 for more information regarding the development of this package.\n\
+  \nTo cite this package, please cite through Zenodo: https://doi.org/10.5281/zenodo.4088273\n\n# Features\n\
+  The Dynamic Collimation Monte Carlo (DCMC) was developed to help facilitate the simulation of pencil\
+  \ beam scanning proton beams and collimation devices. The DCMC package utilized the the TOPAS Monte\
+  \ Carlo platform and consists of a generalized PBS source model and collimator component extensions.\
+  \ This guide assumes that users are fimiliar with the TOPAS Monte Carlo platform. For more info on TOPAS,\
+  \ please see [topasmc.org](topasmc.org).\n\nThe source model is particle generator extension for TOPAS\
+  \ and was specifically written to model a pencil beam scanning proton therapy beamline. It constists\
+  \ of a divergent point source placed at a user-specified SAD that samples a spot size function and back\
+  \ projects the sampled points to the SAD to deduce the angular distribution of the source. For most\
+  \ beamlines, magnets will deflect the beam in X and Y at different locations. This source model includes\
+  \ magnet-specific deflections given distances to the X and Y magnets from isocenter. If the magnet deflections\
+  \ are not invoked in the TOPAS parameter file, the divergent point source will rotate to produce the\
+  \ user-specified deflections.\n\nThe two collimation components included in the package are trimmers\
+  \ and apertures. The trimmers are modeled after the Dynamic Collimation System and linearly translate\
+  \ while rotating about the magnet planes to match the divergence of the scanned beam. The aperture is\
+  \ a Boolean geometry component with a user-specified cutout size and the native TOPAS commands can be\
+  \ used to alter the physical dimensions of the apertures.\n\n# Installation\nPlease see the TOPAS documentation\
+  \ for installing extensions. The .cc and .hh files must be placed in your TOPAS extension folder and\
+  \ cmake must be called to compile the new, extended TOPAS application. For example, if you have all\
+  \ of the extension files in a folder called DCMC, and that's within a folder that houses any other extensions\
+  \ you may have (topas_extensions), go to your topas directory and extecute the following:\n```\ncmake\
+  \ -DTOPAS_EXTENSIONS_DIR=../topas_extensions/DCMC\nmake -j8\n```\n\n# TOPAS Usage\nOnce you have compiled\
+  \ your extended version of TOPAS, the following describes how you would use these extensions in the\
+  \ TOPAS parameter file.\n## Source model (genericPBS)\nThis source was written to mimic a pencil beam\
+  \ scanning source for proton therapy. This source implements (optional) magnet-specific deflections\
+  \ downstream from a divergent point source. If the magnet-specific delfections are not wanted or required,\
+  \ the point source will rotate to provide the requested beam spot.\n\nBelow is a list of the arguments\
+  \ to genericPBS source requires:\n\n  - **MeanEnergy** = Average energy of Guassianly distributed energy\
+  \ spectrum.\n  - **EnergySigma** = Standard deviation of Gaussian energy spectrum.\n  - **Xpos** = Position\
+  \ in X of central axis of beam at isocenter.\n  - **Ypos** = Position in Y of central axis of beam at\
+  \ isocenter.\n  - **SAD** = Source to axis distance. Distance the sampled point source is placed from\
+  \ isocenter. This parameter is something that would be optimized one a beamline-specific basis. This\
+  \ parameter can be manipulated to alter the angular distribution of the point source.\n  - **XMagnetToIsoDistance**\
+  \ = Distance from isocenter to X bending magnet.\n  - **YMagnetToIsoDistance** = Distance from isocenter\
+  \ to Y bending magnet.\n  - **MagnetSpecificDeflections** = Boolean operator (True/False) on whether\
+  \ to invoke magnet-specific deflections. If true, deflections occur at magnet planes; if false, the\
+  \ point source rotates about the SAD to provide beam spot at (Xpos,Ypos).\n\n**IMPORTANT**: When calling\
+  \ this source in the TOPAS parameter file, the parameters d:So/MySource/BeamEnergy and d:So/MySource/BeamEnergySpectrum\
+  \ must be defined for the source to run (for older versions of TOPAS). It should be emphasized that\
+  \ the values entered here have no impact on the simulated energy spectrum, they just need to be defined\
+  \ given the way TOPAS is currently configured. This has since been fixed in recent releases.\n\n###\
+  \ Modifying the source model\nThe spot size at isocenter is the main component in this source model\
+  \ that would need to be changed when modeling a specific beamline. The genericPBS source samples from\
+  \ a Gaussian distributed fluence pattern at isocenter and back-projects the point source location to\
+  \ deduce the angular distribution required to match that spot size at isocenter. In it's current implementation,\
+  \ the source samples an asymmetric spot size (different sigma's in X and Y) specified by a polynomial\
+  \ of the form:\n\n<p align=\"center\">\n<img src=\"https://render.githubusercontent.com/render/math?math=\\\
+  sigma_{X or Y}(E) = a_0E^5 %2B a_1E^4 %2B a_2E^3 %2B a_3E^2 %2B a_4E %2B a_5\">\n\nThese polynomials\
+  \ are defined and can be edited in Lines 60-66 of the genericPBS.cc file. They can also be modified\
+  \ to support lower or higher order polynomial functions.\n\n## Trimmers (X1, X2, Y1, Y2)\nThe trimmer\
+  \ extensions are rectangular prisms that linearly translate and rotate depending upon the beam's position\
+  \ and whether the user wants a specific trimmer to intercept the beam or not. Below is a quick summary\
+  \ of the direction of motion for these extensions.\n  - **X1**: Moves in the negative X-direction.\n\
+  \  - **X2**: Moves in the positive X-direction.\n  - **Y1**: Moves in the negative Y-direction.\n  -\
+  \ **Y2**: Moves in the positive Y-direction.\n  \nEach trimmer type can be called by setting s:Ge/MyTrimmer/Type\
+  \ = \"X1\". Below is a list of the arguments the trimmer extensions require after the type has been\
+  \ declared:\n  - **Parent** = Parent geometry component.\n  - **HalfThickness** = Half thickness of\
+  \ trimmer.\n  - **HalfWidth** = Half width of trimmer.\n  - **HalfLength** = Half length of trimmer.\n\
+  \  - **TrimmerOffset** = Linear distance between medial edge of trimmer and beam central axis.\n  -\
+  \ **Material** = Material of trimmer blade. (see TOPAS documentation for default materials)\n  - **TrimmerToAxisDistance**\
+  \ = Distance from center of trimmer to isocenter.\n  - **DeflectionToIsoDistance** = Distance from bending\
+  \ magnet to isocenter. If MagnetSpecificDeflections are invoked in the source, this should be set to\
+  \ So/MySource/YMagnetToIsoDistance for the Y trimmers and So/MySource/XMagnetToIsoDistance for the X\
+  \ trimmers. If MagnetSpecificDeflections are not invoked, this should be set to So/MySource/SAD.\n \
+  \ - **Ypos or Xpos** = Beam position in X or Y. Ideally, this would be set to So/MySource/Xpos or So/MySource/Ypos\
+  \ for X and Y trimmers, respectively.\n  - **EnableCollimation** = Boolean operator (True/False) on\
+  \ whether the trimmer should collimate the beam or not. If this is set to False, the trimmers will move\
+  \ to their default positions (centroid 6.5 cm from central axis).\n\n## Apertures\nThea aperture extension\
+  \ is a Boolean geometry component defined by the subtraction of two rectangular prisms. The inputs to\
+  \ the aperture component are as follows:\n\n  - **Parent** = Parent geometry component.\n  - **HLZ**\
+  \ = Half Length in Z-direction.\n  - **HLX** = Half Length in X-direction.\n  - **HLY** = Half Length\
+  \ in Y-direction.\n  - **TransX** = Translation in X-direction.\n  - **TransY** = Translation in Y-direction.\n\
+  \  - **ApertureToIsoDistance** = Distance between centroid of aperture and isocenter.\n  - **ApertureHalfWidthX**\
+  \ = Half width of aperture cutout in X-direction. This must always be greater than HLX.\n  - **ApertureHalfWidthY**\
+  \ = Half width of aperture cutout in Y-direction. This must always be greater than HLY.\n  - **Material**\
+  \ = Aperture component material. (see TOPAS documentation for default materials)\n  \n# Examples\nSome\
+  \ example parameter files can be found in the [Examples](https://github.com/npnelson3/DynamicCollimationMonteCarloPackage/tree/master/Examples)\
+  \ folder.\n"

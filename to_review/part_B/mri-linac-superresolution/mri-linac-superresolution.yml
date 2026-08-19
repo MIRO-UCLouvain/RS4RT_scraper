@@ -1,0 +1,69 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Image-X-Institute/MRI-Linac_SuperResolution
+url: https://github.com/Image-X-Institute/MRI-Linac_SuperResolution
+platform: github
+description: Integrating deep learning into MRI and MRI-guided radiation therapy.
+license: MIT
+language: Python
+keywords: []
+stars: 6
+updated_at: '2026-03-02T21:08:30Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "# MRI-Linac_SuperResolution\n## Integrating deep learning into an MRI-linac\n\nAuthors:\
+  \ **James Grover**\n\nContained here is the code and documentation required to integrate super-resolution\
+  \ into Gadgetron. \n\n## Publication Information\n**Super-resolution neural networks improve the spatiotemporal\
+  \ resolution of adaptive MRI-guided radiation therapy** by Grover et al. [https://www.nature.com/articles/s43856-024-00489-9].\
+  \ \nIf you find our work useful in your research, please cite both our paper (above) and the Zenodo\
+  \ archive of this repository [https://zenodo.org/records/10828197].\n\n## Build\n### Prerequisites:\n\
+  #### Gadgetron, Docker, CUDA.\n[Gadgetron](https://github.com/gadgetron/gadgetron) is distributed using\
+  \ Docker containers. A working Docker installation is required. In addition, the [NVIDIA container toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)\
+  \ is required to allow Gadgetron (and the deep learning interface) to utilise CUDA GPUs. \n\n#### PyTorch\
+  \ (and other Python dependencies)\nThis is done in the *Dockerfile_base_ai_image*. Tweaking of the PyTorch\
+  \ / CUDA toolkit version may be needed when using different hardware.\n\n#### Obtaining trained parameters\n\
+  In this repository under releases are the trained model parameters. These will need to be downloaded\
+  \ and placed under code/modules/parameters/.\n* 64_to_256_bicubic_interpolation_JIT.pt    --    the\
+  \ bicubic interpolation model.\n* 2022-09-10_11-22-39_edsr_nonoise.pt    --    the EDSR trained on brains.\n\
+  \n## Building\nOnce Docker is installed with the NVIDIA container runtime we can build a Gadgetron (with\
+  \ deep learning interface) image.\nFirst, build a general Gadgetron AI base image. This image simply\
+  \ has the Python dependencies installed.\n```sh\ndocker build -f Dockerfile_base_ai_image -t gadgetron_ai_base:0.1\
+  \ .\n```\n\nSecond, build the super-resolution image (based on the Gadgetron base ai image built above).\n\
+  ```sh\ndocker build -t gadgetron_ai:0.1 .\n```\n\n## Running\n**The official Gadgetron GitHub repository\
+  \ contains a readthedocs that can be useful.** \nA basic example run command is provided below.\nWhen\
+  \ deploying online, port mapping will need to enabled.\nWhen saving reconstructions for offline analysis\
+  \ (e.g., on the host machine), volume mounting will need to be enabled. \n\n```sh\ndocker run --gpus=all\
+  \ -ti --name=gadgetron --rm gadgetron_ai:0.1\n```\n\n## Testing\nOnce Gadgetron is running, open a new\
+  \ terminal, **leave the terminal where you did docker run ... running**. \n```sh\ndocker exec -ti gadgetron\
+  \ bash\n```\n\n\nIn this connected shell, navigate to /tmp (a good place to store reconstructions).\
+  \ We can generate some test data using an inbuilt Shepp-Logan phantom generator.\n```sh\nismrmrd_generate_cartesian_shepp_logan\
+  \ -r 10 -m 64\n```\nThis will create a testdata.h5 file, simulating an acquisition. For super-resolution\
+  \ methods in this repository it's important the matrix size is 64x64 so don't forget the -m 64 argument!\n\
+  \n\nTest a standard reconstruction with **no** deep learning.\n```sh\ngadgetron_ismrmrd_client -f testdata.h5\
+  \ -c GrappaTrackingDisabled.xml\n```\n\n\nTest a deep learning-based reconstruction.\n```sh\ngadgetron_ismrmrd_client\
+  \ -f testdata.h5 -c GrappaEdsrTrackingDisabled.xml\n```\n\n\nCan also test the integration into MLC\
+  \ tracking using the test server script (locating in test/). \nRun this script locally on the host machine\
+  \ (note: matplotlib and numpy will need to be installed):\n```python\npython test_mlc_tracking_server.py\
+  \ -s 64 -p\n```\n\nWe also need to modify our run command (specify the additional network=host switch).\n\
+  \n```sh\ndocker run --network=host --gpus=all -ti --name=gadgetron --rm gadgetron_ai:0.1\n```\n\nFrom\
+  \ here, we can generate the Shepp-Logan phantom as before and run reconstructions with the tracking\
+  \ enabled:\n```sh\ngadgetron_ismrmrd_client -f testdata.h5 -c GrappaTrackingEnabled.xml\n```\n\nWith\
+  \ super-resolution:\nOn the host machine we need to re-run the server script with updated image dimensions\
+  \ (i.e. 256):\n```python\npython test_mlc_tracking_server.py -s 256 -p\n```\nIn the Docker container:\n\
+  ```sh\ngadgetron_ismrmrd_client -f testdata.h5 -c GrappaEdsrTrackingEnabled.xml\n```\n\nMeta-data should\
+  \ stream to the test_mlc_tracking_server script and a plot should be generated of the first acquisition\
+  \ (if the -p switch was provided).\n\n## Directory Structure\n* code/ - Deep learning framework source\
+  \ code. \n* test/ - Contains a simple test multi-leaf collimator (MLC) tracking server script.\n* .dockerignore\n\
+  * Dockerfile_base_ai_image - This is used to build the Docker image with DL dependencies.\n* Dockerfile\
+  \ - This is used to build the Docker image with the deep learning framework.\n* LICENSE\n* README.md\n\
+  \n## Acknowledgement\nEDSR was trained on brain data from the QIN-GBM Treatment Response Cancer Imaging\
+  \ Archive dataset.\n1. Mamonov A, Kalpathy-Cramer J. Data From QIN GBM Treatment Response. The Cancer\
+  \ Imaging Archive. 2016;\n2. Prah M, Stufflebeam S, Paulson E, et al. Repeatability of standardized\
+  \ and normalized relative CBV in \npatients with newly diagnosed glioblastoma. American Journal of Neuroradiology.\
+  \ 2015;36(9):1654-1661.\n3. Clark K, Vendt B, Smith K, et al. The Cancer Imaging Archive (TCIA): maintaining\
+  \ and operating a public \ninformation repository. Journal of digital imaging. 2013;26(6):1045-1057.\n"

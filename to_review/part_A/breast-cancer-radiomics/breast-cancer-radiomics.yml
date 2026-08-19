@@ -1,0 +1,142 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: elianasv/BREAST-CANCER-RADIOMICS
+url: https://github.com/elianasv/BREAST-CANCER-RADIOMICS
+platform: github
+description: 'Set of codes for neoadjuvant immunotherapy response prediction in triple negative breast
+  cancer using radiomics extracted from MRI. '
+license: MIT
+language: Python
+keywords: []
+stars: 2
+updated_at: '2025-11-25T14:18:00Z'
+image_source: null
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Breast Cancer Radiomics Project\n\nA comprehensive set of tools for neoadjuvant immunotherapy\
+  \ response prediction in triple negative breast cancer using radiomics extracted from MRI.\n\n## \U0001F4CB\
+  \ Overview\n\nThis project provides tools for processing medical imaging data in breast cancer radiomics\
+  \ analysis pipelines, including:\n\n1. **DICOM to NIfTI Conversion**: Essential preprocessing step for\
+  \ medical image analysis\n2. **IRM to nnUNet Conversion**: Preparation of MRI data for deep learning\
+  \ segmentation with nnUNet\n3. **nnUNet Inference**: Deep learning segmentation for tumor detection\n\
+  4. **PCR Prediction**: Pathological Complete Response prediction from segmented images\n\nThese tools\
+  \ form a complete pipeline from raw DICOM images to PCR prediction, crucial for radiomics analysis pipelines\
+  \ in breast cancer research.\n\n## \U0001F3D7️ Project Structure\n\n```\nBREAST-CANCER-RADIOMICS/\n\
+  ├── src/                          # Core functional modules\n│   ├── dcm2nii.py              # DICOM\
+  \ to NIfTI conversion module\n│   ├── irm2nnunet.py           # IRM to nnUNet conversion module\n│ \
+  \  ├── nnunet_inference.py     # nnUNet inference module\n│   └── pcr_prediction.py       # PCR prediction\
+  \ module\n├── dcm2nii_use_case.py          # DICOM to NIfTI batch processing example\n├── irm2nnunet_use_case.py\
+  \       # IRM to nnUNet conversion example\n├── nnunet_inference_use_case.py # nnUNet inference example\n\
+  ├── pcr_prediction_use_case.py   # PCR prediction example\n├── complete_pipeline.py         # Complete\
+  \ pipeline from DICOM to PCR\n├── test_conversion.py           # Installation test script\n├── requirements.txt\
+  \             # Python dependencies\n├── setup.py                    # Package installation configuration\n\
+  ├── README.md                   # Project documentation\n├── LICENSE                     # MIT License\n\
+  ├── CONTRIBUTING.md             # Contributing guidelines\n├── CHANGELOG.md                # Version\
+  \ history\n├── .gitignore                  # Git ignore rules\n└── GITHUB_SUBMISSION_GUIDE.md # GitHub\
+  \ submission instructions\n```\n\n## \U0001F680 Installation\n\n### Prerequisites\n\n- Python 3.7 or\
+  \ higher\n- pip package manager\n\n\n## \U0001F4E6 Dependencies\n\nThe main dependencies for this project\
+  \ are:\n\n- **SimpleITK**: For medical image processing and DICOM handling\n- **pathlib**: For cross-platform\
+  \ path handling (included in Python 3.4+)\n- **argparse**: For command-line argument parsing (included\
+  \ in Python standard library)\n- **nnunetv2**: For deep learning segmentation\n- **numpy**: For numerical\
+  \ computations\n- **scikit-learn**: For machine learning models\n- **pandas**: For data manipulation\n\
+  - **matplotlib**: For visualization\n- **seaborn**: For statistical visualization\n\nInstall from the\
+  \ requirements file:\n\n```bash\npip install -r requirements.txt\n```\n\n## \U0001F310 Environment Setup\n\
+  \n### Creating and Activating Virtual Environment\n\n```bash\n# Create a new virtual environment\npython3\
+  \ -m venv <myvenv>\n\n# Activate on Windows PowerShell\n.\\<myvenv>\\Scripts\\activate\n\n# Activate\
+  \ on Linux/Mac bash\nsource <myvenv>/bin/activate\n```\n\n### Screen Session Management\n\nFor long-running\
+  \ processes, use screen sessions to keep them running even if you disconnect:\n\n```bash\n# Create a\
+  \ new screen session with a name\nscreen -S mysession\n\n# List all running screen sessions\nscreen\
+  \ -ls\n\n# Reattach to a running session\nscreen -r mysession\n\n# If only one screen running, you can\
+  \ just do:\nscreen -r\n\n# If the session is \"detached but not dead\" and you want to force reattach:\n\
+  screen -D -r mysession\n```\n\n**Screen Commands:**\n- `Ctrl+A` then `D`: Detach from current session\n\
+  - `Ctrl+A` then `C`: Create new window\n- `Ctrl+A` then `N`: Next window\n- `Ctrl+A` then `P`: Previous\
+  \ window\n- `Ctrl+A` then `K`: Kill current session\n\n## \U0001F6E0️ Usage\n\n### 1. DICOM to NIfTI\
+  \ Conversion\n\n#### Basic DICOM to NIfTI Conversion\n\n```python\nfrom src.dcm2nii import dicom2nifti\n\
+  \n# Convert a single DICOM series\ndicom2nifti(\"path/to/dicom/folder\", \"output/directory\", prefix=\"\
+  subject_001\")\n```\n\n#### Command Line Usage\n\n```bash\n# Convert a single DICOM series\npython src/dcm2nii.py\
+  \ /path/to/dicom/folder /output/directory --prefix subject_001\n\n# Batch process multiple subjects\n\
+  python dcm2nii_use_case.py /path/to/input/root /path/to/output/root\n```\n\n#### DICOM to NIfTI Input\
+  \ Structure\n\n```\ninput_root/\n├── subject_001/\n│   ├── IRM/          # MRI DICOM files\n│   ├──\
+  \ TEP/          # PET DICOM files\n│   └── TDM/          # CT DICOM files\n├── subject_002/\n│   ├──\
+  \ IRM/\n│   └── TEP/\n└── ...\n```\n\n#### DICOM to NIfTI Output Structure\n\n```\noutput_root/\n├──\
+  \ subject_001/\n│   ├── subject_001_IRM.nii.gz\n│   ├── subject_001_TEP.nii.gz\n│   └── subject_001_TDM.nii.gz\n\
+  ├── subject_002/\n│   ├── subject_002_IRM.nii.gz\n│   └── subject_002_TEP.nii.gz\n└── ...\n```\n\n###\
+  \ 2. IRM to nnUNet format Conversion\n\n#### Basic IRM to nnUNet input format conversion\n\n```python\n\
+  from src.irm2nnunet import extract_irm_to_nnunet_flat\n\n# Convert IRM files to nnUNet format\nextract_irm_to_nnunet_flat(\n\
+  \    subjects_dir=\"/path/to/subjects\",\n    nnunet_root=\"/path/to/nnunet\",\n    dataset_id=1,\n\
+  \    irm_suffix=\"_IRM.nii.gz\"\n)\n```\n\n#### Command Line Usage\n\n```bash\n# Convert IRM files to\
+  \ nnUNet format\npython irm2nnunet_use_case.py /path/to/subjects /path/to/nnunet --dataset-id 1\n```\n\
+  \n#### IRM to nnUNet Input structure\n\n```\nsubjects_dir/\n├── subject_001/\n│   └── subject_001_IRM.nii.gz\n\
+  ├── subject_002/\n│   └── subject_002_IRM.nii.gz\n└── ...\n```\n\n#### IRM to nnUNet Output structure\n\
+  \n```\nnnunet_root/\n└── nnunetv2/\n    ├── nnUNet_raw/\n    │   └── Dataset001/\n    │       ├── imagesTr/\n\
+  \    │       │   ├── subject_001_0000.nii.gz\n    │       │   └── subject_002_0000.nii.gz\n    │   \
+  \    ├── labelsTr/\n    │       └── imagesTs_pred3dfullres/\n    ├── nnUNet_preprocessed/\n    └── nnUNet_results/\n\
+  \        └── Dataset001/\n            └── nnUNetTrainer__nnUNetPlans__3d_fullres/\n                └──\
+  \ fold_0/\n```\n\n### 3. nnUNet Inference\n\n#### Prerequisites Setup\n\nBefore running nnUNet inference,\
+  \ you need to set up the environment and install nnUNet:\n\n```bash\n# 0. If not created already, make\
+  \ an environment and activate it\npython -m venv nnunet_env\nsource nnunet_env/bin/activate  # On Windows:\
+  \ nnunet_env\\Scripts\\activate\n\n# 1. Install nnUNet\npip install nnunetv2\n\n# 2. Set nnUNet folders\
+  \ as environment variables\nexport nnUNet_raw=~/nnUNet_raw\nexport nnUNet_preprocessed=~/nnUNet_preprocessed\n\
+  export nnUNet_results=~/nnUNet_results\n```\n\n#### Dataset Preparation\n\n```bash\n# 3. Make sure the\
+  \ dataset.json file exists and is pasted in the nnUNet_raw folder\n# The dataset.json should be in:\
+  \ ~/nnUNet_raw/Dataset001/dataset.json\n\n# 4. Make sure to have the pretrained model in the nnUNet_results\
+  \ folder \n# with the dataset.json, dataset_fingerprint.json and plans.json files\n# Structure should\
+  \ be: ~/nnUNet_results/Dataset001/nnUNetTrainer__nnUNetPlans__3d_fullres/fold_0/\n```\n\n#### Running\
+  \ Inference\n\n```bash\n# 5. Run Infer command\nnnUNetv2_predict \\\n    -d <DATASET_ID> \\\n    -i\
+  \ /path/to/imagesTs \\\n    -o /path/to/output \\\n    -c 3d_fullres \\\n    -f 0\n```\n\n**Parameters:**\n\
+  - `-d <DATASET_ID>`: Dataset ID (e.g., 1 for Dataset001)\n- `-i /path/to/imagesTs`: Path to the test\
+  \ images directory\n- `-o /path/to/output`: Path to the output directory for predictions\n- `-c 3d_fullres`:\
+  \ Configuration (3d_fullres for 3D full resolution)\n- `-f 0`: Fold number (0 for single fold)\n\n**Example:**\n\
+  ```bash\nnnUNetv2_predict \\\n    -d 1 \\\n    -i ~/nnUNet_raw/Dataset001/imagesTs \\\n    -o ~/predictions\
+  \ \\\n    -c 3d_fullres \\\n    -f 0\n```\n\n\n### nnUNet Inference Input Structure\n\n```\nimagesTs/\n\
+  ├── subject_001_0000.nii.gz\n├── subject_002_0000.nii.gz\n└── ...\n```\n\n### nnUNet Inference Output\
+  \ Structure\n\n```\npredictions/\n├── subject_001.nii.gz          # Segmentation mask\n├── subject_002.nii.gz\
+  \          # Segmentation mask\n└── ...\n```\n\n### 4. PCR Prediction\n\n#### Basic PCR Prediction\n\
+  \n```python\nfrom src.pcr_prediction import predict_pcr\n\n# Predict PCR from segmented images\nprediction\
+  \ = predict_pcr(\n    segmented_images_dir=\"/path/to/segmented/images\",\n    model_path=\"/path/to/trained/model.pkl\"\
+  \n)\n```\n\n#### Command Line Usage\n\n```bash\n# Predict PCR from segmented images\npython pcr_prediction_use_case.py\
+  \ /path/to/segmented/images /path/to/model /path/to/output\n```\n\n### PCR Prediction Input Structure\n\
+  \n```\nsegmented_images/\n├── subject_001/\n│   ├── original.nii.gz         # Original MRI image\n│\
+  \   ├── segmentation.nii.gz     # Tumor segmentation mask\n│   └── metadata.json           # Patient\
+  \ metadata\n├── subject_002/\n│   ├── original.nii.gz\n│   ├── segmentation.nii.gz\n│   └── metadata.json\n\
+  └── ...\n```### PCR Prediction Input Structure\n\n```\nsegmented_images/\n├── subject_001/\n│   ├──\
+  \ original.nii.gz         # Original MRI image\n│   ├── segmentation.nii.gz     # Tumor segmentation\
+  \ mask\n│   └── metadata.json           # Patient metadata\n├── subject_002/\n│   ├── original.nii.gz\n\
+  │   ├── segmentation.nii.gz\n│   └── metadata.json\n└── ...\n```\n\n### 5. Complete Pipeline\n\n####\
+  \ Running the Complete Pipeline\n\nThe complete pipeline processes DICOM images all the way to PCR prediction:\n\
+  \n```bash\n# Run complete pipeline from DICOM to PCR\npython complete_pipeline.py \\\n    --input-dicom\
+  \ /path/to/dicom/root \\\n    --output-root /path/to/output \\\n    --dataset-id 1 \\\n    --nnunet-model-path\
+  \ /path/to/nnunet/model \\\n    --pcr-model-path /path/to/pcr/model\n```\n\n#### Pipeline Steps\n\n\
+  1. **DICOM to NIfTI**: Convert DICOM files to NIfTI format\n2. **IRM to nnUNet**: Prepare MRI data for\
+  \ nnUNet segmentation\n3. **nnUNet Inference**: Perform tumor segmentation\n4. **PCR Prediction**: Predict\
+  \ pathological complete response\n5. **Results**: Generate comprehensive output with predictions and\
+  \ visualizations\n\n\n#### Complete Pipeline in Console\n\nHere's how to run the complete pipeline from\
+  \ DICOM to PCR prediction in the console:\n\n```bash\n# 1. Create and activate environment\npython3\
+  \ -m venv breast_cancer_env\nsource breast_cancer_env/bin/activate  # On Windows: .\\breast_cancer_env\\\
+  Scripts\\activate\n\n# 2. Install dependencies\npip install -r requirements.txt\npip install nnunetv2\n\
+  \n# 3. Set up nnUNet environment variables\nexport nnUNet_raw=~/nnUNet_raw\nexport nnUNet_preprocessed=~/nnUNet_preprocessed\n\
+  export nnUNet_results=~/nnUNet_results\n\n# 4. Run complete pipeline\npython complete_pipeline.py \\\
+  \n    --input-dicom /path/to/dicom/images \\\n    --output-root /path/to/results \\\n    --dataset-id\
+  \ 1 \\\n    --nnunet-model-path /path/to/nnunet/model \\\n    --pcr-model-path /path/to/pcr/model\n\
+  ```\n\n### Complete Pipeline Output Structure\n\n```\npipeline_output/\n├── intermediate_results/\n\
+  │   ├── nifti_conversions/      # DICOM to NIfTI outputs\n│   ├── nnunet_prepared/        # nnUNet format\
+  \ data\n│   └── segmentations/          # nnUNet inference results\n├── final_results/\n│   ├── pcr_predictions.csv\
+  \     # PCR predictions for all subjects\n│   ├── confidence_scores.csv   # Prediction confidence scores\n\
+  │   └── visualizations/         # Generated plots and images\n├── logs/\n│   ├── conversion.log    \
+  \      # Conversion process logs\n│   ├── inference.log           # nnUNet inference logs\n│   └── prediction.log\
+  \          # PCR prediction logs\n└── summary_report.html         # Comprehensive HTML report\n```\n\
+  \n## \U0001F9EA Testing\n\nTo test the conversion processes:\n\n1. Create a sample directory structure\
+  \ with DICOM files\n2. Run the conversion scripts\n3. Verify the output files\n\n```bash\n# Test DICOM\
+  \ to NIfTI conversion\npython dcm2nii_use_case.py ./test_data/input ./test_data/output\n\n# Test IRM\
+  \ to nnUNet conversion\npython irm2nnunet_use_case.py ./test_data/output ./test_data/nnunet --dataset-id\
+  \ 1\n\n# Test nnUNet inference\npython nnunet_inference_use_case.py 1 ./test_data/nnunet/imagesTs ./test_data/predictions\n\
+  \n# Test PCR prediction\npython pcr_prediction_use_case.py ./test_data/predictions ./test_data/pcr_model\
+  \ ./test_data/pcr_output\n\n# Test complete pipeline\npython complete_pipeline.py \\\n    --input-dicom\
+  \ ./test_data/input \\\n    --output-root ./test_data/pipeline_output \\\n    --dataset-id 1 \\\n  \
+  \  --nnunet-model-path ./test_data/nnunet_model \\\n    --pcr-model-path ./test_data/pcr_model\n```\n\
+  \n### Testing with Sample Data\n\n```bash\n#"

@@ -1,0 +1,73 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: safaabuzaid/brain-tumor-mri-classification-radiomics-svm
+url: https://github.com/safaabuzaid/brain-tumor-mri-classification-radiomics-svm
+platform: github
+description: ''
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-29T13:19:39Z'
+image_source: null
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Brain Tumor MRI Classification using Handcrafted Radiomic Features and SVM\n![Python](https://img.shields.io/badge/python-3.10+-blue)\n\
+  ![scikit-learn](https://img.shields.io/badge/scikit--learn-ML-orange)\n![OpenCV](https://img.shields.io/badge/OpenCV-Image%20Processing-red)\n\
+  ![Status](https://img.shields.io/badge/status-research--prototype-yellow)\n\n## Overview \n\nThis project\
+  \ presents a classical machine learning pipeline for multiclass brain tumor classification from MRI\
+  \ images using handcrafted radiomic features. The system extracts intensity, texture, local variation,\
+  \ and edge-based features and evaluates their contribution using a Support Vector Machine (SVM) classifier.\n\
+  The study focuses on **feature behavior analysis** and **ablation experiments** rather than only accuracy\
+  \ optimization.\n\n## Dataset\n\nMRI brain tumor dataset (from *Kaggle*)\n\nClasses:\n- Glioma\n- Meningioma\n\
+  - No Tumor\n- Pituitary\n  \n**Training images:** ~5,712\n**Testing images:** ~1,311\n\n## Pipeline\
+  \ Overview\n\n<img width=\"1376\" height=\"768\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/2a66931f-0b89-44d1-b401-a0b1d9204981\"\
+  \ />\n\nThe proposed system follows a classical machine learning pipeline for brain tumor classification\
+  \ from MRI images. The workflow is designed to transform raw MRI scans into discriminative feature representations,\
+  \ followed by supervised classification.\n\n```text\nMRI Image\n   ↓\nData Loading\n   ↓\nPreprocessing\n\
+  \   ├── Grayscale Conversion\n   ├── Image Resizing\n   ├── Contrast Enhancement (CLAHE - optional)\n\
+  \   ├── Noise Reduction (Gaussian Smoothing)\n   └── Intensity Normalization\n   ↓\nFeature Extraction\n\
+  \   ├── Intensity Features\n   ├── Texture Features (GLCM-based)\n   ├── Local Variation Features\n\
+  \   └── Edge Features\n   ↓\nFeature Vector Construction\n   (Concatenation of all feature groups into\
+  \ a single vector)\n   ↓\nFeature Scaling\n   (Standardization for SVM stability)\n   ↓\nClassification\n\
+  \   └── Support Vector Machine (SVM - RBF kernel)\n   ↓\nEvaluation\n   ├── Accuracy\n   ├── Precision\
+  \ / Recall / F1-score\n   └── Confusion Matrix\n```\n---\n\n## Preprocessing\n\nEach MRI image is processed\
+  \ using the following steps:\n\n- Grayscale conversion  \n- Image resizing to fixed resolution  \n-\
+  \ Contrast enhancement using CLAHE (optional experiment)  \n- Gaussian smoothing for noise reduction\
+  \  \n- Intensity normalization for feature stability  \n\nThese steps ensure consistency across samples\
+  \ and improve robustness of feature extraction.\n\n---\n\n## Feature Extraction\n\nFour categories of\
+  \ handcrafted features are extracted:\n\n### 1. Intensity Features\nStatistical descriptors of pixel\
+  \ intensity:\n- Mean\n- Standard deviation\n- Median\n- Minimum / Maximum\n- Skewness\n\n### 2. Texture\
+  \ Features (GLCM-based)\nCaptures spatial relationships between pixels:\n- Contrast\n- Energy\n- Homogeneity\n\
+  - Correlation\n\n### 3. Local Variation Features\nCaptures local intensity heterogeneity:\n- Local variance\n\
+  - Local entropy\n\n### 4. Edge Features\nRepresents structural boundaries:\n- Edge density (Canny)\n\
+  - Mean gradient magnitude (Sobel)\n\n---\n\n## Classification Model\n\n- Model: Support Vector Machine\
+  \ (SVM)\n- Kernel: Radial Basis Function (RBF)\n- Multi-class strategy: One-vs-Rest\n- Feature scaling\
+  \ applied prior to training\n\n---\n\n## Experimental Setup\n\nThree main experiments were conducted:\n\
+  \n- **Experiment 1 (Baseline):** Full feature set  \n- **Experiment 2:** Modified texture configuration\
+  \ + CLAHE  \n- **Experiment 3:** Feature ablation (removal of texture features)\n\n---\n\n## Results\n\
+  \n### Overall Performance\n\n| Experiment | Configuration | Accuracy |\n|------------|--------------|----------|\n\
+  | Exp 1 | Full feature set | **0.76** |\n| Exp 2 | CLAHE + modified texture | 0.72 |\n| Exp 3 | No texture\
+  \ features | 0.67 |\n\n---\n\n## Class-wise Observations\n\n| Class | Behavior |\n|------|----------|\n\
+  | Glioma | Frequently confused with meningioma |\n| Meningioma | Lowest recall across experiments |\n\
+  | No Tumor | Stable classification performance |\n| Pituitary | Highest separability |\n\n---\n\n##\
+  \ Evaluation Metrics\n\nThe model was evaluated using:\n\n- Accuracy  \n- Precision  \n- Recall  \n\
+  - F1-score  \n- Confusion Matrix  \n\n<img width=\"1920\" height=\"1080\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/aad232b1-16b4-4509-a7fb-6022e80ae70f\"\
+  \ />\n\n---\n\n## Key Findings\n\n- Texture features significantly contribute to classification performance\
+  \  \n- Excessive texture complexity can reduce model performance  \n- Meningioma and glioma exhibit\
+  \ feature overlap in handcrafted feature space  \n- Classical ML methods provide interpretable but limited\
+  \ representation power  \n\n---\n\n## Discussion Summary\n\nThe results demonstrate that handcrafted\
+  \ feature-based models can achieve reasonable performance in MRI classification tasks. However, they\
+  \ are limited in capturing subtle intra-class variations, particularly between similar tumor types such\
+  \ as meningioma and glioma. This suggests the need for more expressive feature learning methods.\n\n\
+  ---\n\n## Future Work\n\n- Deep learning-based classification (CNNs)  \n- Transfer learning (ResNet,\
+  \ EfficientNet)  \n- Explainability using Grad-CAM  \n- Tumor segmentation using U-Net  \n- Feature\
+  \ learning instead of manual extraction\n\n--- \n## How to Run \n\n### Run feature extraction\npython\
+  \ feature_extraction.py\n\n### Train model\npython model.py\n\n--- \n## Author \n\nSafaa Osman \nBiomedical\
+  \ Engineering | Medical Image Analysis | Machine Learning\n"

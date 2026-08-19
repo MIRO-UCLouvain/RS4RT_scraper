@@ -1,0 +1,46 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ferdymercury/RayTraceDicom
+url: https://github.com/ferdymercury/RayTraceDicom
+platform: github
+description: Sub-second pencil beam dose calculation on GPU for adaptive proton therapy
+license: GPL-3.0
+language: Cuda
+keywords: []
+stars: 10
+updated_at: '2026-04-23T09:17:08Z'
+image_source: https://raw.githubusercontent.com/ferdymercury/RayTraceDicom/HEAD/doc/watercube.png
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# RayTraceDicom\nSub-second pencil beam dose calculation on GPU for adaptive proton therapy\n\
+  \n![](doc/watercube.png)\n\nLEGAL NOTICE\n------------\nThe core of the code within this repository\
+  \ is based on the PhD project of Joakim da Silva, developed within the ENTERVISION Marie Curie Initial\
+  \ Training Network.\nThe core was later refactored and documented by Fernando Hueso-González.\n\nThe\
+  \ code is licensed under GPLv3. When (re)using this code, attribution to Joakim da Silva must be granted\
+  \ and relevant papers must be cited:\n- https://doi.org/10.1088/0031-9155/60/12/4777\n- https://doi.org/10.1016/j.jpdc.2015.07.003\n\
+  \nMore details:\n- https://doi.org/10.17863/CAM.16186\n\nREQUIREMENTS\n------------\n- CUDA, CUDA-TOOLKIT,\
+  \ CUDA-SAMPLES\n- GDCM\n- ITK (if custom build, then with `-DITK_USE_SYSTEM_GDCM=ON`, otherwise just\
+  \ `apt install libinsighttoolkit5-dev`)\n- `git clone https://github.com/ferdymercury/cmake-modules`\
+  \ into `/opt`\n- qhelpgenerator (`sudo apt install qhelpgenerator-qt5`)\n- CLI11 (`apt install libcli11-dev`)\n\
+  \nBUILDING\n--------\n- `mkdir build`\n- `cmake <path/to/src>/RayTraceDicom`, optionally with `-DITK_DIR=/path/to/build`\n\
+  - `make`\n\nEXAMPLE FILES\n-------------\nTo generate a dummy water phantom CT and RT plan, use:\n-\
+  \ `sudo pip3 install scipy pydicom`\n- `python3 extern/dicom-interface/rti/test/dicom/generate_water_cube.py\
+  \ --outdir /tmp/watercube/ --institution rbe --machine 1.1`\n\nRUNNING\n-------\n- `./src/RayTraceDicom\
+  \ --output_directory /tmp/watercube/ --ct_dir /tmp/watercube/ct/ --rtplan /tmp/watercube/rtplan.dcm\
+  \ --beams G000`\n\nNOTES\n-----\nYou might need for old Tesla C2070 commands such as:\n- Install patched\
+  \ nvidia-390 driver on Ubuntu 22: https://launchpad.net/%7Edtl131/+archive/ubuntu/nvidiaexp\n- Install\
+  \ gcc5 and cuda8: https://askubuntu.com/questions/1442001/cuda-8-and-gcc-5-on-ubuntu-22-04-for-tesla-c2070\n\
+  - Error with stncpy: https://stackoverflow.com/questions/76531467/nvcc-cuda8-gcc-5-3-no-longer-compiles-with-o1-on-ubuntu-22-04\n\
+  - Error with float128: https://askubuntu.com/questions/1442001/cuda-8-and-gcc-5-on-ubuntu-22-04-for-tesla-c2070\n\
+  - `cmake ../ -DCOMPILE_SM20=ON -DCOMPILE_SM35=OFF -DWATER_CUBE_TEST=ON -DCUDA_HOST_COMPILER=/opt/gcc5/gcc\
+  \ -DSEPARATE_COMPILATION=OFF -DCMAKE_CXX_COMPILER=/opt/gcc5/g++ -DCMAKE_C_COMPILER=/opt/gcc5/gcc -DCMAKE_CXX_STANDARD=11`\n\
+  - This might also be needed depending on the platform or CMake version: `export PATH=/opt/gcc5:$PATH`\n\
+  - Need to fine-tune QtCreator adding a new custom compiler /opt/cuda-8.0/bin/nvcc and edit .config/clangd/config.yaml\
+  \ file with\n```\nCompileFlags:\nAdd:\n  [\n    '--cuda-path=\"/opt/cuda-8.0/\"',\n    --cuda-gpu-arch=sm_20,\n\
+  \    '-L\"/opt/cuda-8.0/lib64/\"',\n    -lcudart,\n  ]\n```\n- See https://github.com/clangd/clangd/issues/858\
+  \ and https://github.com/clangd/clangd/issues/1815\n"

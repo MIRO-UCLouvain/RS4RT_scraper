@@ -1,0 +1,174 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: marina15rodriguez/photon-dose-calculation
+url: https://github.com/marina15rodriguez/photon-dose-calculation
+platform: github
+description: 'Photon pencil beam simulation dose calculation: fluence via inverse square law, dose via
+  convolution with a spherical kernel, homogeneous vs heterogeneous phantoms (mimicking muscle-lung change),
+  and comparison of pencil beam with Monte Carlo. '
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-03-29T17:54:07Z'
+image_source: null
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: '# Photon Dose Calculation — Pencil Beam Convolution
+
+
+  Photon dose calculation using the pencil beam convolution model, validated against Monte Carlo reference
+  data. Developed as part of the LGBIO2070 course at UCLouvain.
+
+
+  ## Overview
+
+
+  The dose at a point in the phantom is computed as a 2D convolution of the photon fluence with a pre-calculated
+  spherical pencil beam kernel:
+
+
+  ```
+
+  D(x, y, z) = ∫∫ Ψ(x'', y'', z) · p(x−x'', y−y'', z_rad) dx'' dy''
+
+  ```
+
+
+  For heterogeneous phantoms, the kernel is shifted to the radiological depth:
+
+
+  ```
+
+  z_rad(k) = Σ ρ(i) · Δz
+
+  ```
+
+
+  where ρ(i) is the local density and Δz the voxel thickness.
+
+
+  ## Scenarios
+
+
+  | Phantom | Field size | MC reference |
+
+  |---|---|---|
+
+  | Homogeneous (water) | 10 cm | `dose_10cm_water.dat` |
+
+  | Heterogeneous (lung: ρ=1/0.2/1) | 10 cm | `dose_10cm_lung.dat` |
+
+  | Homogeneous (water) | 2 cm | `dose_2cm_water.dat` |
+
+  | Heterogeneous (lung) | 2 cm | `dose_2cm.dat` |
+
+
+  ## Project Structure
+
+
+  ```
+
+  photon-dose-calculation/
+
+  ├── src/
+
+  │   ├── fluence.py        # Inverse square law fluence computation
+
+  │   ├── kernel.py         # Pencil beam kernel I/O and 3D interpolation
+
+  │   ├── dose.py           # Convolution-based dose for homo/hetero phantoms
+
+  │   ├── visualization.py  # Fluence and dose-depth plotting
+
+  │   └── main.py           # Full pipeline
+
+  ├── notebooks/
+
+  │   └── doselabfinalversion.ipynb  # Original lab notebook
+
+  ├── data/                 # Not tracked — see Data section
+
+  ├── results/              # Generated plots (not tracked)
+
+  ├── requirements.txt
+
+  └── README.md
+
+  ```
+
+
+  ## Data
+
+
+  | File | Description |
+
+  |------|-------------|
+
+  | `data/pencil_kernel.dat` | Pre-computed spherical pencil beam kernel (99³) |
+
+  | `data/dose_10cm_water.dat` | MC reference — water phantom, 10 cm field |
+
+  | `data/dose_10cm_lung.dat` | MC reference — lung phantom, 10 cm field |
+
+  | `data/dose_2cm_water.dat` | MC reference — water phantom, 2 cm field |
+
+  | `data/dose_2cm.dat` | MC reference — lung phantom, 2 cm field |
+
+
+  ## Installation
+
+
+  ```bash
+
+  git clone https://github.com/marina15rodriguez/photon-dose-calculation.git
+
+  cd photon-dose-calculation
+
+  pip install -r requirements.txt
+
+  ```
+
+
+  ## Usage
+
+
+  Place the data files in `data/`, then:
+
+
+  ```bash
+
+  python src/main.py
+
+  ```
+
+
+  Results are saved to `results/`.
+
+
+  ## Key Findings
+
+
+  - **Homogeneous phantom**: pencil beam and MC agree well for both field sizes — confirming the model''s
+  accuracy in uniform media.
+
+  - **Heterogeneous phantom (large field)**: small divergence at density boundaries; MC captures lateral
+  scatter more accurately.
+
+  - **Heterogeneous phantom (small field)**: large divergence after the first density change. Small fields
+  lack lateral charged-particle equilibrium, and pencil beam cannot model secondary electron transport
+  — MC is essential here.
+
+
+  ## Authors
+
+
+  Marina Rodríguez — LGBIO2070, UCLouvain
+
+  '

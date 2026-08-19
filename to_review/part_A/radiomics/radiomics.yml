@@ -1,0 +1,75 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: jyleepine7/Radiomics
+url: https://github.com/jyleepine7/Radiomics
+platform: github
+description: Radimoics code
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-04-02T03:46:22Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# NSCLC CT 3D ResNet Pipeline\n\n이 프로젝트는 현재 `unbiased CT + segmented mask`에서 종양 volume을\
+  \ 잘라낸 뒤, `MONAI 3D ResNet`으로 deep feature를 추출하는 이미지 중심 파이프라인입니다.\n\n지금 구현한 범위:\n- 환자별 `image_path`,\
+  \ `mask_path` manifest 읽기\n- CT HU windowing, 종양 bounding box crop, spacing-aware 3D resample, fixed-size\
+  \ volume resize\n- MONAI 3D ResNet backbone checkpoint 준비\n- 환자별 penultimate deep embedding 추출\n- `Radiomics_Clinical.xlsx`에서\
+  \ clinical/LIFEx sheet 직접 읽기\n- 12/36개월 OS/PFS endpoint 생성\n- clinical + LIFEx + deep feature를 합친 patient-level\
+  \ table 생성\n- nested CV 기반 endpoint 모델링\n\n현재 가정:\n- UNet 재현 대신, `3D cropped tumor volume -> MONAI ResNet\
+  \ embedding` 흐름으로 방향을 바꿨습니다.\n- deep feature는 기본적으로 `layer4` 이후 global average pooling 결과를 사용합니다.\n\
+  - `weights_path`가 없으면 backbone은 랜덤 초기화 상태입니다.\n- `weights_path`에 MedicalNet/Med3D 계열 checkpoint를 넣으면\
+  \ compatible tensor만 backbone에 로드합니다.\n- `resnet18` MedicalNet weight를 쓸 때는 `shortcut_type`을 `A`로 맞추는\
+  \ 게 중요합니다.\n- Clinical/LIFEx 부분은 원 논문의 survival ensemble을 완전히 그대로 복제한 것은 아니고, 현재 버전에서는 nested CV 위에\
+  \ `logistic regression + random forest + SVM + gradient boosting + MLP` 평균 앙상블로 근사했습니다.\n\n## 폴더 구조\n\
+  \n```text\nNew project/\n  config.example.json\n  data/\n    manifest.example.csv\n  scripts/\n    run_image_pipeline.py\n\
+  \  src/\n    nsclc_unet/\n      ...\n```\n\n## Manifest 형식\n\n`data/manifest.csv`\n\n```csv\npatient_id,image_path,mask_path\n\
+  L001,/absolute/path/to/L001_ct.nii.gz,/absolute/path/to/L001_mask.nii.gz\nL002,/absolute/path/to/L002_ct.nii.gz,/absolute/path/to/L002_mask.nii.gz\n\
+  ```\n\n지원 입력:\n- `.nii`\n- `.nii.gz`\n- `.npy`\n- `.npz`\n- patient slice directory of `.png` / `.jpg`\
+  \ / `.tif`\n- DICOM directory (`pydicom` 또는 `SimpleITK` 필요)\n\nmanifest 자동 생성:\n\n```bash\npython3 scripts/generate_manifest.py\
+  \ \\\n  --images-root /path/to/images \\\n  --masks-root /path/to/masks \\\n  --output data/manifest.csv\
+  \ \\\n  --image-suffix _ct \\\n  --mask-suffix _mask\n```\n\n예:\n- `/path/to/images/L001_ct.npy` + `/path/to/masks/L001_mask.npy`\n\
+  - `/path/to/images/L001_ct/` + `/path/to/masks/L001_mask/`\n\n## 사용법\n\n1. 의존성 설치\n\n```bash\npython3\
+  \ -m venv .venv\nsource .venv/bin/activate\npip install -r requirements.txt\n```\n\n2. `config.example.json`을\
+  \ 복사해서 실제 경로로 수정\n\n중요:\n- `model.weights_path`는 선택 사항입니다.\n- Med3D/MedicalNet checkpoint를 직접 구해 놓았으면\
+  \ 그 경로를 넣으세요.\n- 비워두면 랜덤 초기화 backbone으로 feature를 추출합니다.\n- `resnet18` MedicalNet weight를 연결할 때는 `shortcut_type`을\
+  \ `A`로 유지하세요.\n\n3. backbone checkpoint 준비\n\n```bash\npython3 scripts/run_image_pipeline.py train --config\
+  \ config.example.json\n```\n\n4. 환자별 deep feature 추출\n\n```bash\npython3 scripts/run_image_pipeline.py\
+  \ extract --config config.example.json\n```\n\n결과물:\n- `artifacts/resnet18_backbone.pt`\n- `artifacts/backbone_summary.json`\n\
+  - `artifacts/deep_features.csv`\n\n## Colab에서 5명만 빠르게 확인하기\n\nColab에서는 전체 실험보다 `5명 정도로 코드가 실제로 돌아가고\
+  \ 3D deep feature가 추출되는지`를 먼저 보는 게 안전합니다.\n\n1. 저장소와 의존성 설치\n\n```bash\ngit clone <YOUR_REPO_URL>\n\
+  cd \"New project\"\npip install -r requirements.txt\n```\n\n2. `manifest.csv` 준비\n\n```csv\npatient_id,image_path,mask_path\n\
+  L001,/content/data/L001_ct.nii.gz,/content/data/L001_mask.nii.gz\nL002,/content/data/L002_ct.nii.gz,/content/data/L002_mask.nii.gz\n\
+  ...\n```\n\n3. 5명 smoke test 실행\n\n```bash\npython3 scripts/run_colab_smoke_test.py \\\n  --manifest\
+  \ /content/data/manifest.csv \\\n  --output-dir /content/artifacts/colab_smoke_test \\\n  --max-patients\
+  \ 5\n```\n\n생성 파일:\n- `artifacts/colab_smoke_test/manifest_subset.csv`\n- `artifacts/colab_smoke_test/run_summary.json`\n\
+  - `artifacts/colab_smoke_test/resnet18_backbone.pt`\n- `artifacts/colab_smoke_test/deep_features.csv`\n\
+  \n## Colab에서 전체 파이프라인 한 번에 돌리기\n\nDrive에 아래 3개가 있다고 가정합니다.\n- `/content/drive/MyDrive/Radiomics_colab_data/data/manifest.colab.csv`\n\
+  - `/content/drive/MyDrive/Radiomics_colab_data/Radiomics_Clinical.xlsx`\n- `/content/drive/MyDrive/Radiomics_colab_data/Weights/resnet_18.pth`\n\
+  \n실행:\n\n```bash\npython3 scripts/run_colab_pipeline.py \\\n  --manifest /content/drive/MyDrive/Radiomics_colab_data/data/manifest.colab.csv\
+  \ \\\n  --xlsx-path /content/drive/MyDrive/Radiomics_colab_data/Radiomics_Clinical.xlsx \\\n  --weights-path\
+  \ /content/drive/MyDrive/Radiomics_colab_data/Weights/resnet_18.pth \\\n  --output-dir /content/drive/MyDrive/Radiomics_colab_data/output\n\
+  ```\n\n빠른 smoke test로 10명만 먼저 보려면:\n\n```bash\npython3 scripts/run_colab_pipeline.py \\\n  --manifest\
+  \ /content/drive/MyDrive/Radiomics_colab_data/data/manifest.colab.csv \\\n  --xlsx-path /content/drive/MyDrive/Radiomics_colab_data/Radiomics_Clinical.xlsx\
+  \ \\\n  --weights-path /content/drive/MyDrive/Radiomics_colab_data/Weights/resnet_18.pth \\\n  --output-dir\
+  \ /content/drive/MyDrive/Radiomics_colab_data/output_smoke \\\n  --max-patients 10 \\\n  --skip-roc\n\
+  ```\n\n이 스크립트가 하는 일:\n- generated config 작성\n- MedicalNet weight를 MONAI ResNet18 backbone에 로드\n- deep\
+  \ feature 추출\n- prepared dataset 생성\n- endpoint 모델 fitting\n- ROC PNG 저장\n\n## Excel 기반 tabular dataset\
+  \ 만들기\n\n현재 확인한 엑셀 파일:\n- `Radiomics_Clinical.xlsx`\n\npatient-level table 생성:\n\n```bash\npython3 scripts/run_image_pipeline.py\
+  \ prepare-tabular --config config.example.json\n```\n\n이 단계에서 생성되는 것:\n- `artifacts/prepared_dataset.csv`\n\
+  \n포함 내용:\n- clinical 변수\n- LIFEx radiomics 집계값\n- deep feature CSV가 있으면 자동 병합\n- 12/36개월 OS/PFS label과\
+  \ eligibility flag\n\n## Endpoint 모델 학습\n\n```bash\npython3 scripts/run_image_pipeline.py fit-endpoints\
+  \ --config config.example.json\n```\n\n결과물:\n- `artifacts/endpoint_metrics.json`\n- `artifacts/endpoint_predictions.csv`\n\
+  \nROC curve PNG 생성:\n\n```bash\npython3 scripts/run_image_pipeline.py plot-roc --config config.example.json\n\
+  ```\n\n결과물:\n- `artifacts/roc_curves/roc_label_os_12m.png`\n- `artifacts/roc_curves/roc_label_pfs_12m.png`\n\
+  - 기타 endpoint별 ROC PNG\n\n## 구현 메모\n\n- NIfTI는 내부적으로 `(z, y, x)` 축 순서로 맞춰서 처리합니다.\n- DICOM/NIfTI에서 spacing을\
+  \ 읽을 수 있으면 `target_spacing` 기준으로 먼저 resample한 뒤, 최종적으로 `target_depth x target_height x target_width`로\
+  \ resize합니다.\n- Radiomics 시트는 환자당 여러 행이 있을 수 있어, 현재는 numeric scalar feature만 골라 `mean/max/std` 집계가 가능하도록\
+  \ 만들었습니다. 기본값은 `mean + max`입니다.\n- OS/PFS horizon label은 censoring을 고려해서, horizon 이전에 censor되면 해당 endpoint\
+  \ 학습에서 제외합니다.\n"

@@ -1,0 +1,152 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: cyrilvoyant/LQL-Equiv-web
+url: https://github.com/cyrilvoyant/LQL-Equiv-web
+platform: github
+description: Biologically equivalent doses in radiotherapy (BED, EQD2, NTCP, TCP, radiation-induced cancer
+  risk) under the linear-quadratic-linear model. Python library and browser app; successor to the 2014
+  MATLAB LQ-Equiv. Research and education only.
+license: MIT
+language: Python
+keywords:
+- biologically-effective-dose
+- eqd2
+- linear-quadratic-model
+- medical-physics
+- ntcp
+- oncology
+- open-science
+- python
+- radiobiology
+- radiotherapy
+- reproducible-research
+- streamlit
+- tcp
+- webassembly
+stars: 0
+updated_at: '2026-08-17T13:48:14Z'
+image_source: null
+heuristic_total_score: 20
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 10 support term(s).
+readme_excerpt: "# LQL-Equiv\n\n[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21948623.svg)](https://doi.org/10.5281/zenodo.21948623)\n\
+  [![tests](https://github.com/cyrilvoyant/LQL-Equiv-web/actions/workflows/ci.yml/badge.svg)](https://github.com/cyrilvoyant/LQL-Equiv-web/actions/workflows/ci.yml)\n\
+  [![licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)\n\n**Biologically equivalent\
+  \ doses in radiotherapy, under the linear-quadratic-linear model.**\n\n### ▶ [Open the calculator](https://cyrilvoyant.github.io/LQL-Equiv-web/)\
+  \ — free, no installation, runs entirely in your browser\n\nA Python library and web application computing\
+  \ biologically effective dose (BED),\nequivalent dose in a reference fractionation (EQD2 and others),\
+  \ normal-tissue\ncomplication probability (NTCP), tumour control probability (TCP) and\nradiation-induced\
+  \ cancer risk, with corrections for incomplete inter-fraction\nrepair, accelerated proliferation and\
+  \ treatment protraction.\n\nThis is version 3.0, a complete reimplementation of the 2014 MATLAB application\n\
+  [`cyrilvoyant/LQ-Equiv`](https://github.com/cyrilvoyant/LQ-Equiv), compared\ncase by case against it\
+  \ over 4438 treatment schedules. Overall time is handled\ndifferently, which is the one change that\
+  \ moves a number — see\n[what changed since 2014](#what-changed-since-2014).\n\n> [!WARNING]\n> **For\
+  \ research and education only. Not intended for clinical use.**\n> This software is not a medical device.\
+  \ Stated as a list rather than as a\n> generality, its outputs must not be used to choose or modify\
+  \ a prescription,\n> to compute the compensation for a real interruption, to sum dose in a\n> reirradiation\
+  \ decision, to accept or reject a treatment plan, to support a\n> consent discussion, or to predict\
+  \ complication or control probability for an\n> individual patient.\n>\n> The complication and control\
+  \ probabilities deserve a separate warning. They are\n> point estimates on a single equivalent dose,\
+  \ computed from the 2014 parameter\n> library whose Lyman values fall in the range of the 1991 Emami/Burman\
+  \ fits and\n> predate QUANTEC. They carry no volume information, and they have never been\n> validated\
+  \ against clinical outcome. Read them as illustrations of a model's\n> shape, never as a risk for a\
+  \ patient.\n\n---\n\n## What it does\n\nGiven an organ at risk, a tumour site and a sequence of successive\
+  \ treatment\ncourses separated by gaps, it computes:\n\n| Quantity | Model |\n| --- | --- |\n| Biologically\
+  \ effective dose | Linear-quadratic with the linear tail of Astrahan above the transition dose |\n|\
+  \ Proliferation, target | Dale: nothing lost before the kick-off time `Tk` |\n| Proliferation, organ\
+  \ at risk | Van Dyk: a recovered dose from the first day, no kick-off time |\n| Overall time | Five\
+  \ days a week, weekends and missed sessions included, one calendar for both tissues |\n| Two fractions\
+  \ a day | Thames' incomplete-repair correction, six-hour interval |\n| Equivalent dose | Dose in the\
+  \ chosen reference fractionation giving the same BED |\n| Complication probability | Lyman probit, organs\
+  \ at risk only |\n| Tumour control probability | Logistic or Poisson sigmoid in γ50 — **new in 3.0**\
+  \ |\n| Radiation-induced cancer risk | Linear-exponential |\n\nThe shipped radiobiological library holds\
+  \ **34 organs at risk** and **20 tumour\nsites** — the 19 transcribed from the 2014 release, plus a\
+  \ standard tumour with\nproliferation switched off, which gives a reference case where equivalent dose\n\
+  depends on fractionation alone. Every value's provenance is recorded in\n[`docs/PARAMETERS.md`](docs/PARAMETERS.md).\n\
+  \n## Use it\n\n**In the browser, nothing to install** — the application runs entirely on your\nmachine,\
+  \ inside the page; no data is sent anywhere.\n\n**Locally:**\n\n```bash\npip install -e \".[app]\"\n\
+  streamlit run app/streamlit_app.py\n```\n\n**As a library:**\n\n```python\nfrom lqlequiv import Course,\
+  \ Prescription, compute, load_library\n\nlibrary = load_library()\nplan = Prescription(courses=(Course(dose_per_fraction=2.0,\
+  \ n_fractions=39),),\n                    reference_dose=2.0)\nresult = compute(library.organ(\"Rectum\"\
+  ), library.tumour_site(\"Prostate\"), plan)\n\nprint(result.eqd_oar_total)   # 78.0 Gy EQD2 to the rectum\n\
+  print(result.ntcp_percent)    # complication probability, proctitis\nprint(result.tcp_percent)     #\
+  \ tumour control probability\n```\n\nThe core package depends only on the Python standard library.\n\
+  \n## Validation\n\nThe 2014 GUIDE application was driven headless over **4 438 treatment\nschedules**\
+  \ — every organ-at-risk/tumour pair, a wide fractionation grid, gaps,\ntwo-fractions-a-day schedules\
+  \ and randomised multi-course plans — and its\noutputs captured as a golden dataset ([`tests/data/golden.jsonl`](tests/data/golden.jsonl),\n\
+  produced by [`tools/matlab/sweep.m`](tools/matlab/sweep.m)).\n\n| | |\n| --- | --- |\n| Values compared\
+  \ | 69 131 |\n| **Agreeing at MATLAB's output precision** | **69 125 (99.991 %)** |\n| Cases differing\
+  \ | 2 of 4 438 (0.05 %) |\n\nThe two differing cases are exact ties, where the true root falls precisely\n\
+  halfway between two points of the 2014 search grid and the original result is\nsettled by floating-point\
+  \ noise at the fifteenth decimal. The full analysis is\nin [`docs/COMPARISON-2014.md`](docs/COMPARISON-2014.md).\n\
+  \n**Two questions, checked apart.** Whether the calculation was transcribed\ncorrectly, and whether\
+  \ the transcribed calculation is right. The table above\nanswers the first: over the values the 2014\
+  \ search resolved rather than\ntruncating at its bound, the organ doses agree exactly and four target\
+  \ doses\ndiffer by 0.02 Gy. The port introduced nothing.\n\nThe second question needs checks that do\
+  \ not involve the 2014 code at all:\ncontinuity at the transition dose, `EQD = n·d` at the reference\
+  \ fraction size,\nadditivity across split courses, and the round trip — delivering the reported\ndose\
+  \ at the reference fraction size must reproduce the BED it replaced. Sixteen\nsuch checks are in `tests/test_analytic.py`.\
+  \ The round trip is what found the\ntime-handling difference below.\n\n`Options.legacy_2014()` returns\
+  \ the 2014 answer, for recomputing a result\npublished before 2026 and for the non-regression suite.\
+  \ Nothing else uses it.\n\nSeparately, the closed-form search that replaces the original exhaustive\
+  \ scan is\nproved equivalent to it: [`tools/verify_grid_equivalence.py`](tools/verify_grid_equivalence.py)\n\
+  replays all 20 001 grid points for every case and reports **0 disagreements**\nover 10 554 searches.\n\
+  \n```bash\npytest                 # unit tests and the golden non-regression suite\npytest -m slow \
+  \        # the grid-equivalence replay alone (needs numpy)\n```\n\n## What changed since 2014\n\nSoftware\
+  \ improves between releases, and the changes should be traced rather than\nassumed. All of the following\
+  \ are documented, and the previous behaviour stays\nreachable through `Options.legacy_2014()`:\n\n-\
+  \ **Overall time is now charged once instead of twice.** The 2014 code solved the\n  equivalence with\
+  \ time already accounted on both sides, then subtracted the\n  difference in span a second time. Handling\
+  \ time is not obvious and its\n  treatment was not wrong in direction, only about twice too large: for\
+  \ a rectum\n  receiving 20 × 3 Gy it reported 82.69 Gy where the schedule carries 75.25 Gy.\n  The effect\
+  \ is nil at 2 Gy per fraction, grows with the departure from it, and\n  is nil for the eight organs\
+  \ whose recovered dose is zero — the spinal cord\n  returns the same value in both versions at every\
+  \ fraction size.\n  **This is the only change that moves a number a department would read.**\n- **Tumour\
+  \ control probability was never computed.** The library held dose-response\n  parameters for eleven\
+  \ tumour sites that no code path used. They are γ50 and\n  TCD50 values, not Lyman parameters — which\
+  \ is probably why they went unused.\n- **Nine parameters were displayed differently from the values\
+  \ used** in the\n  computation, across seven tissues.\n- **The calendar model contradicts itself past\
+  \ 86 fractions**, where two\n  copies of the same weekend staircase diverge by up to a day.\n- **Complication\
+  \ probability was reported as 100 % for tissues with no Lyman\n  parameters**, through a division by\
+  \ zero. It is now reported as unavailable.\n\nWhat is *not* changed: the two tissues keep the two proliferation\
+  \ models the 2014\npaper gives them, Dale with a kick-off time for the target volume and Van Dyk\nwithout\
+  \ one for the organ at risk.\n\nSee [`docs/COMPARISON-2014.md`](docs/COMPARISON-2014.md) for the arithmetic,\
+  \ the\nround-trip criterion and the size of the difference across 7850 schedules.\n\n## Frequently asked\
+  \ questions\n\n**What is the linear-quadratic-linear model?**\nThe linear-quadratic model overestimates\
+  \ cell kill at high dose per fraction. The\nlinear-quadratic-linear model of Astrahan replaces the quadratic\
+  \ term by a\nstraight line above a transition dose, which makes it usable for the large\nfractions of\
+  \ stereotactic radiotherapy. In this library the transition dose is\ntwice the α/β ratio for every tissue.\n\
+  \n**What is EQD2, and how does it differ from BED?**\nBED is a model quantity with no direct clinical\
+  \ meaning; EQD2 is the dose which,\ndelivered in 2 Gy fractions, would produce the same biological effect\
+  \ as the\nschedule under consideration. EQD2 is what lets two schedules with different\nfraction sizes\
+  \ be compared. Any reference fraction size can be used here, not\nonly 2 Gy.\n\n**Which way does proliferation\
+  \ move the equivalent dose?**\nBoth ways, depending on whether the schedule runs longer or shorter than\
+  \ the\nreference schedule it is being matched against. Proliferation penalises *both*\nsides of the\
+  \ comparison, and the longer side loses more. Against the standard\ntumour, which proliferates at 0.66\
+  \ Gy/day past a kick-off time of 21 days:\n\n*A schedule prolonged by a treatment gap — 25 × 2 Gy, reference\
+  \ 2 Gy:*\n\n| Gap | Standard tumour | Proliferation switched off |\n| ---: | ---: | ---: |\n| 0 days\
+  \ | 50.00 Gy | 50.00 Gy |\n| 10 days | **37.48 Gy** | 50.00 Gy |\n| 30 days | 19.20 Gy | 50.00 Gy |\n\
+  \nHere proliferation lowers the equivalent dose, and a ten-day interruption costs\n12.5 Gy EQD2 — more\
+  \ than six 2 Gy fractions. With proliferation switched off a gap\ncosts nothing at all. Note the zero-gap\
+  \ row: both tumours give exactly 50 Gy even\nthough their BEDs differ (50.76 against 60.00), because\
+  \ the schedule *is* the\nreference schedule and the proliferation loss cancels on both sides.\n\n*A\
+  \ schedule shortened by hypofractionation — 20 × 3 Gy, reference 2 Gy:*\n\n| | BED | EQD2 | equivalent\
+  \ reference schedule |\n| --- | ---: | ---: | --- |\n| Standard tumour | 73.38 | **80.66** | 40.33 fractions,\
+  \ 56.5 days |\n| Proliferation switched off | 78.00 | 65.00 | 32.50 fractions, 45.5 days |\n\nHere it\
+  \ goes the other way: the 20-fraction schedule runs 28 days and loses\n0.66 × 7 ≈ 4.6 Gy, while the\
+  \ reference schedule matched to it runs 56.5 days and\nloses 0.66 × 35.5 ≈ 23 Gy — five times as much\
+  \ — so more reference dose is needed\nand the equivalent dose rises. This is the familiar result that\
+  \ short accelerated\nschedules are favoured in fast-proliferating tumours.\n\nIsolating this effect\
+  \ is what the added non-proliferating tumour is for.\n\n**Can this be used to treat a patient?**\nNo.\
+  \ It is for research and education only, it is not a medical device, and it\nmust not be used to plan,\
+  \ verify or modify a patient's treatment.\n\n**Is any data sent to a server?**\nNo computation happens\
+  \ on a server. The page embeds the model and fetches the\nversion-pinned stlite and Pyodide runtime\
+  \ from a public CDN on first load, then\nruns everything locally. The network sees that the page was\
+  \ visited and never\nwhat was entered into it.\n\n**How is it related to LQ-Equiv?**\n[`cyrilvoyant/LQ-Equiv`](https://github.com/cyrilvoyant/LQ-Equiv)\
+  \ is the 2014\nMATLAB application, distributed as a Windows executable requiring the MATLAB\nComponent\
+  \ Runtime. This repository is its successor: same models, same\nradiobiological library, reimplemented\
+  \ in Python.\n\n**Does it return the same numbers as LQ-Equiv?**\nFor the target volume, yes. For the\
+  \ organ at risk, no, and deliberately. The 2014\nsource reported `n_r · d_r − (T − T_r) "

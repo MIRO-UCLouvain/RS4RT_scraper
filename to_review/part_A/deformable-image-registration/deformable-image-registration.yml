@@ -1,0 +1,53 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Tokunaga-LAB-Group/deformable_image_registration
+url: https://github.com/Tokunaga-LAB-Group/deformable_image_registration
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-03-17T07:32:33Z'
+image_source: https://raw.githubusercontent.com/Tokunaga-LAB-Group/deformable_image_registration/HEAD/assets/Epoch_Image.gif
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Deformable Image Registration\n\nEMアルゴリズムに基づく非剛体画像レジストレーションの実装です。制御点（Control Points）を用いて浮動画像（Floating\
+  \ Image）を参照画像（Reference Image）に位置合わせします。\n\n![Deformable Image Registration Demo](assets/Epoch_Image.gif)\n\
+  \n## 概要\n\n本手法では、以下の処理を繰り返すことで画像の位置合わせを行います。\n\n1. **サンプリング** - 参照画像・浮動画像からピクセルをサンプリング\n2. **Alpha /\
+  \ Beta の計算** - 制御点の影響範囲を多変量正規分布で定義\n3. **EMアルゴリズム** - Tau（対応関係）、D1・D2 を計算し制御点を更新\n4. **Warping** - 更新された制御点に基づき浮動画像を変形\n\
+  \n## ファイル構成\n\n```\n.\n├── src/\n│   ├── main.py       # メインスクリプト（引数解析・レジストレーション処理）\n│   └── utils.py\
+  \      # ユーティリティ関数群\n├── dataset/\n│   ├── figure_1/\n│   │   ├── source.png    # 参照画像\n│   │   └──\
+  \ floating.png  # 浮動画像\n│   ├── figure_2/\n│   └── figure_3/\n├── main.sh           # 実行シェルスクリプト\n└──\
+  \ main.ipynb        # Jupyter Notebook\n```\n\n## 依存ライブラリ\n\n```\nnumpy\nPillow\nopencv-python\nmatplotlib\n\
+  scipy\nnatsort\n```\n\n## 使い方\n\n### シェルスクリプトで実行\n\n```bash\nbash main.sh\n```\n\n### コマンドラインで直接実行\n\
+  \n```bash\npython ./src/main.py \\\n  --save_path \"./Result\" \\\n  --ref_img_path \"./dataset/figure_1/source.png\"\
+  \ \\\n  --float_img_path \"./dataset/figure_1/floating.png\" \\\n  --resize 256 256 \\\n  --deploying_method\
+  \ mesh \\\n  --N_h_cp 15 \\\n  --N_w_cp 15 \\\n  --N_sample 2000 \\\n  --sampling_method random \\\n\
+  \  --lambda_A 120.0 \\\n  --lambda_B 120.0 \\\n  --lambda_T 30.0 \\\n  --Tau_length 40 \\\n  --lambda_D\
+  \ 1.0 \\\n  --epochs 10\n```\n\n## 引数\n\n### データ関係\n\n| 引数 | デフォルト | 説明 |\n|------|-----------|------|\n\
+  | `--save_path` | 必須 | 結果の保存先ディレクトリ |\n| `--ref_img_path` | 必須 | 参照画像のパス |\n| `--float_img_path` | 必須\
+  \ | 浮動画像のパス |\n| `--resize` | `256 256` | リサイズ後の画像サイズ（幅 高さ） |\n\n### 制御点関係\n\n| 引数 | デフォルト | 説明 |\n\
+  |------|-----------|------|\n| `--deploying_method` | `mesh` | 制御点の配置方法（`mesh` / `countours`） |\n| `--N_h_cp`\
+  \ | `10` | 縦方向の制御点数（mesh時） |\n| `--N_w_cp` | `10` | 横方向の制御点数（mesh時） |\n| `--sampling_CPs_length` | `2`\
+  \ | 輪郭サンプリング間隔（countours時） |\n\n### サンプリング関係\n\n| 引数 | デフォルト | 説明 |\n|------|-----------|------|\n|\
+  \ `--N_sample` | `100` | サンプリング数 |\n| `--sampling_method` | `random` | サンプリング方法（`random` / `brightness`\
+  \ / `gumbel`） |\n\n**サンプリング方法の詳細:**\n- `random` - 一様ランダムサンプリング\n- `brightness` - 輝度値に比例した重み付きサンプリング\n\
+  - `gumbel` - Gumbel分布を用いた高速重み付きサンプリング（参照・浮動画像の輝度の合計で重み付け）\n\n### レジストレーション関係\n\n| 引数 | デフォルト | 説明 |\n\
+  |------|-----------|------|\n| `--lambda_A` | `10.0` | Alpha（制御点→ピクセル影響範囲）の分散 |\n| `--lambda_B` | `10.0`\
+  \ | Beta（制御点間影響範囲）の分散 |\n| `--lambda_T` | `10.0` | Tau の分散 |\n| `--Tau_length` | `40.0` | Tau の近傍距離（L∞ノルム）\
+  \ |\n| `--lambda_D` | `10.0` | 正則化項の重み |\n| `--epochs` | `10` | 繰り返し回数 |\n\n### Beta Approach（特徴点マッチングによる適応的Beta）\n\
+  \n| 引数 | デフォルト | 説明 |\n|------|-----------|------|\n| `--B_approach_1` | `False` | Approach 1 を使用（A-KAZE特徴点の密度でBetaを調整）\
+  \ |\n| `--B_approach_2` | `False` | Approach 2 を使用（特徴量・空間分布の類似度でBetaを調整） |\n| `--B_radius` | `40.0`\
+  \ | Approach の探索半径 |\n| `--matching_threshold` | `0.75` | A-KAZEマッチングのLowe比率閾値 |\n| `--rho` | `0.5`\
+  \ | Approach 2 の空間分布項の重み |\n| `--approach_threshold` | `0.2` | Approach 2 の類似度閾値 |\n\n> `--B_approach_1`\
+  \ と `--B_approach_2` は同時に指定できません。\n\n## 出力\n\n指定した `--save_path` 以下に以下のディレクトリが生成されます。\n\n```\nResult/\n\
+  ├── Compare/\n│   ├── initial.jpg          # 初期状態の参照・浮動画像比較\n│   └── trained.jpg          # 最終結果の参照・Warped画像比較\n\
+  ├── Epoch_Image/\n│   └── float-epoch_001.jpg  # 各エポックのWarped画像\n├── Epoch_Compare/\n│   └── compare-epoch_001.jpg\
+  \  # 各エポックの制御点対応比較\n├── Epoch_Transit/\n│   └── transit-epoch_001.jpg  # 各エポックの制御点移動量可視化\n└── trained_param.npz\
+  \          # 学習済みパラメータ（X, ref_CPs, float_CPs, sigma_A）\n"

@@ -1,0 +1,112 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: PagetWU/Personalised-RIHT-risk-assessment-software
+url: https://github.com/PagetWU/Personalised-RIHT-risk-assessment-software
+platform: github
+description: The personalised RIHT risk assessment software was designed to support clinically usable
+  patient-level assessment from routine radiotherapy planning data.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-14T14:05:16Z'
+image_source: null
+heuristic_total_score: 21
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 11 support term(s).
+readme_excerpt: "# RIHT Single-Patient Demo Toolkit\n\nThis repository contains a lightweight research\
+  \ demo for patient-level radiation-induced hypothyroidism (RIHT) risk reporting after head-and-neck\
+  \ radiotherapy.\n\nThe toolkit reads one patient case, extracts thyroid image/dose features, runs a\
+  \ Cox RIHT risk model, reproduces comparison NTCP-style outputs, checks whether thyroid dose sparing\
+  \ may be anatomically feasible, and writes a self-contained HTML report.\n\nThis is a research demonstration\
+  \ and counterfactual audit tool. It is not a treatment planning system, not a clinical decision system,\
+  \ and not intended for automatic plan modification.\n\n## What Is Included\n\n```text\nriht_demo/\n\
+  \  Python package for case discovery, image/dose feature extraction,\n  Cox-model prediction, NTCP-style\
+  \ comparison, optimizability audit,\n  counterfactual dose audit, and HTML report generation.\n\nmodel_assets_parameters/\n\
+  \  Lightweight Cox model parameters used by the demo.\n\nautoseg/\n  Optional helper files for thyroid\
+  \ auto-segmentation when a local\n  nnU-Net environment and checkpoint are available.\n\nautoseg_model/\n\
+  \  Local model folder layout for the optional thyroid segmentation model.\n\nexamples/\n  Example command\
+  \ and a rendered HTML sample report.\n\nRIHT_demo_launcher.exe\n  Optional prebuilt Windows launcher.\n\
+  \nRIHT_demo_launcher.cs\n  Windows launcher source.\n\nbuild_launcher.ps1\n  Rebuilds the Windows launcher\
+  \ locally.\n```\n\n\n## Installation\n\nUse Python 3.10+ in a local virtual environment or conda environment.\n\
+  \n```powershell\ncd F:\\hypothyroidism_final_work\\work_newline_2026.5\\codings\\codings\\6_demo\\github_update\n\
+  python -m pip install -r requirements.txt\n```\n\nRequired packages are listed in `requirements.txt`:\n\
+  \n```text\nnumpy\npandas\nscipy\nSimpleITK\nmatplotlib\nPyRadiomics\n```\n\nIf you want to use automatic\
+  \ thyroid segmentation, install and configure nnU-Net separately, then download the model checkpoint\
+  \ as described below.\n\n## Model Assets and Auto-Segmentation Checkpoint\n\nThe RIHT Cox prediction\
+  \ model parameters and the optional nnU-Net thyroid auto-segmentation checkpoint are distributed as\
+  \ a separate model-asset package because the segmentation checkpoint is too large for normal GitHub\
+  \ tracking.\n\nDownload the complete model-asset package from Google Drive:\n\n```text\nhttps://drive.google.com/file/d/11w32m51_bM2XIsvkfD604FJQ0GFpoJRB/view?usp=drive_link\n\
+  \nAfter downloading, place `checkpoint_best.pth` in this folder layout:\n\n```text\nmodel_assets_parameters/\n\
+  \  full_qeh_model_coefficients.csv\n  full_qeh_scaler_parameters.csv\n  model_spec.json\n  qeh_breslow_baseline_hazard.csv\n\
+  \  qeh_scaled_feature_means.csv\n\nautoseg_model/\n  Dataset1102_ThyroidSegmentation/\n    nnUNetTrainer__nnUNetResEncUNetMPlans__3d_fullres/\n\
+  \      dataset.json\n      plans.json\n      fold_0/\n        checkpoint_best.pth\n\nIf the repository\
+  \ package does not include `dataset.json` or `plans.json`, keep them beside the checkpoint in the same\
+  \ layout when distributing the model package.\n\nThe demo can run without this checkpoint if you provide\
+  \ a thyroid mask manually with `--thyroid-mask-path` or place `Thyroid_mask.mha` / `thyroid_mask.mha`\
+  \ inside the case folder.\n\n## Input Case Folder\n\nEach patient case folder should contain:\n\n```text\n\
+  CT.mha\nRTdose.mha / DOSE.mha / dose.nii.gz\nThyroid_mask.mha or thyroid_mask.mha    optional but recommended\n\
+  GTV/CTV/PTV target masks                optional\n```\n\nSupported image formats:\n\n- `.mha`\n- `.nii`\n\
+  - `.nii.gz`\n\nTarget masks are optional. If target masks are present and their filenames contain `GTV`,\
+  \ `CTV`, or `PTV`, the demo will use them for target-adjacency and optimizability checks.\n\nIf no thyroid\
+  \ mask is found and automatic segmentation is not disabled, the CLI will try to call the configured\
+  \ nnU-Net thyroid segmentation pipeline.\n\n## Quick Start\n\nRun the demo from the repository root.\n\
+  \n```powershell\npython -m riht_demo.cli predict `\n  --case-dir \"D:\\case001\" `\n  --age 58 `\n \
+  \ --gender Male `\n  --n-stage 2 `\n  --asset-dir \".\\model_assets_parameters\" `\n  --ct-window-level\
+  \ 50 `\n  --ct-window-width 400 `\n  --hotspot-threshold-gy 40 `\n  --out-dir \"D:\\riht_outputs\\case001\"\
+  \n```\n\nImportant: pass `--asset-dir \".\\model_assets_parameters\"` unless you have renamed or copied\
+  \ the model assets to the package default path.\n\n## Run With A Provided Thyroid Mask\n\nIf the thyroid\
+  \ mask is not in the case folder, provide it explicitly:\n\n```powershell\npython -m riht_demo.cli predict\
+  \ `\n  --case-dir \"D:\\case001\" `\n  --thyroid-mask-path \"D:\\case001_masks\\thyroid_mask.mha\" `\n\
+  \  --age 58 `\n  --gender Male `\n  --n-stage 2 `\n  --asset-dir \".\\model_assets_parameters\" `\n\
+  \  --out-dir \"D:\\riht_outputs\\case001\"\n```\n\n## Run Without Auto-Segmentation\n\nUse this mode\
+  \ when you want the command to fail if no thyroid mask is available:\n\n```powershell\npython -m riht_demo.cli\
+  \ predict `\n  --case-dir \"D:\\case001\" `\n  --age 58 `\n  --n-stage 2 `\n  --asset-dir \".\\model_assets_parameters\"\
+  \ `\n  --no-auto-segment-thyroid `\n  --out-dir \"D:\\riht_outputs\\case001\"\n```\n\n## Run With nnU-Net\
+  \ Auto-Segmentation\n\nWhen the nnU-Net environment is configured locally and `checkpoint_best.pth`\
+  \ has been placed under `.\\autoseg_model`, run:\n\n```powershell\npython -m riht_demo.cli predict `\n\
+  \  --case-dir \"D:\\case001\" `\n  --age 58 `\n  --n-stage 2 `\n  --asset-dir \".\\model_assets_parameters\"\
+  \ `\n  --autoseg-model-folder \".\\autoseg_model\" `\n  --out-dir \"D:\\riht_outputs\\case001\"\n```\n\
+  \nUse `--force-auto-segment-thyroid` to run auto-segmentation even when a thyroid mask already exists.\n\
+  \nIf your package includes a custom segmentation PowerShell script, pass it with `--autoseg-script`.\
+  \ If not, configure your local nnU-Net command wrapper before using auto-segmentation.\n\n## Main CLI\
+  \ Arguments\n\n| Argument | Required | Description |\n|---|---:|---|\n| `--case-dir` | yes | Folder\
+  \ containing CT, dose, optional thyroid mask, and optional target masks. |\n| `--age` | yes | Patient\
+  \ age. |\n| `--n-stage` | yes | N-stage encoded as the model input value, usually 0-3. |\n| `--gender`\
+  \ | no | Display value in the report. Default: `Unknown`. |\n| `--asset-dir` | recommended | Model asset\
+  \ directory. Use `.\\model_assets_parameters` for this package. |\n| `--thyroid-mask-path` | no | Explicit\
+  \ thyroid mask path. |\n| `--no-auto-segment-thyroid` | no | Disable auto-segmentation if no thyroid\
+  \ mask exists. |\n| `--force-auto-segment-thyroid` | no | Run auto-segmentation even when a mask exists.\
+  \ |\n| `--autoseg-script` | no | Optional path to a local thyroid segmentation wrapper script. |\n|\
+  \ `--autoseg-model-folder` | no | Path to the local Dataset1102 nnU-Net model folder. |\n| `--dose-scale-to-cgy`\
+  \ | no | Dose scaling override. If omitted, Gy-like dose maps are multiplied by 100. |\n| `--ct-window-level`\
+  \ | no | CT window level for the report image. Default: 50. |\n| `--ct-window-width` | no | CT window\
+  \ width for the report image. Default: 400. |\n| `--hotspot-threshold-gy` | no | Thyroid hotspot threshold\
+  \ for contouring and counterfactual audit. Default: 40 Gy. |\n| `--out-dir` | yes | Output folder. |\n\
+  \n## Outputs\n\nThe output folder contains:\n\n| File | Description |\n|---|---|\n| `RIHT_demo_report.html`\
+  \ | Main self-contained HTML report. |\n| `prediction_summary.json` | Summary of inputs, model outputs,\
+  \ risk estimates, and generated files. |\n| `patient_features.csv` | Extracted model features and scaled\
+  \ feature values. |\n| `dvh_metrics.csv` | Thyroid DVH and dose summary metrics. |\n| `risk_curve.csv`\
+  \ | Cox-model risk curve over 1-9 years and all-period horizon. |\n| `target_adjacency_metrics.csv`\
+  \ | Target availability, adjacency, and hotspot overlap metrics. |\n| `dose_optimization_audit.csv`\
+  \ | Counterfactual thyroid-sparing audit table. |\n| `other_model_reproduction.csv` | Comparison NTCP-style\
+  \ model outputs. |\n| `thyroid_zoom.png` | CT/dose/thyroid visualization used by the HTML report. |\n\
+  \nA public-safe rendered example is available at:\n\n```text\nexamples/QEH_499_html_sample/RIHT_demo_report.html\n\
+  ```\n\n\n## Optional Windows Launcher\n\nThe repository includes a small Windows launcher:\n\n```text\n\
+  RIHT_demo_launcher.exe\n```\n\nTo rebuild it locally:\n\n```powershell\n.\\build_launcher.ps1\n```\n\
+  \nThe launcher is a convenience wrapper. The Python CLI is the canonical interface.\n\n## Smoke-Tested\
+  \ Cases\n\nThe local smoke tests are summarized in `TEST_RESULTS.md`.\n\nCompleted checks include:\n\
+  \n- `.mha` input with no target masks.\n- `.nii.gz` input consistency check.\n- A case with target masks\
+  \ and optimizability classification.\n\nNear-threshold cases can show small classification differences\
+  \ when image-derived thyroid volume or Dmean differs from the original tabular DVH values.\n\n## Notes\
+  \ For Public Distribution\n\nBefore publishing:\n\n1. Confirm that no patient CT, dose, mask, or PHI\
+  \ files are included.\n2. Keep the nnU-Net checkpoint outside normal Git history; provide the Baidu\
+  \ Cloud link and extraction code in the checkpoint section above.\n3. Prefer relative example paths\
+  \ in documentation.\n4. Keep `model_assets_parameters/` with the demo if the prediction command is expected\
+  \ to run out of the box.\n5. Confirm the downloaded checkpoint lands at `autoseg_model/Dataset1102_ThyroidSegmentation/nnUNetTrainer__nnUNetResEncUNetMPlans__3d_fullres/fold_0/checkpoint_best.pth`.\n\
+  \n## Disclaimer\n\nThis software is provided for research demonstration, reproducibility, and counterfactual\
+  \ audit. It is not a certified medical device, not a radiotherapy planning optimizer, and not a substitute\
+  \ for clinician review.\n"

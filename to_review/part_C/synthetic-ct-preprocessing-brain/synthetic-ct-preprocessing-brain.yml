@@ -1,0 +1,81 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: gfscarpelli/synthetic-ct-preprocessing-brain
+url: https://github.com/gfscarpelli/synthetic-ct-preprocessing-brain
+platform: github
+description: Preprocessing pipeline for synthetic CT generation from brain MRI — Bachelor's experimental
+  thesis
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-03-11T16:55:58Z'
+image_source: null
+heuristic_total_score: 26
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 5 support term(s).
+readme_excerpt: "# Preprocessing of an Open-Source Dataset for Synthetic CT Generation from Brain MRI\n\
+  \n**Bachelor's Thesis in Computer and Biomedical Engineering**  \nUniversità degli Studi \"Magna Græcia\"\
+  \ di Catanzaro — Academic Year 2024/2025  \n**Author:** Giusy Francesca Scarpelli  \n**Supervisor:**\
+  \ Prof. Paolo Zaffino  \n\n---\n\n## Overview\n\nThis repository accompanies my Bachelor's thesis and\
+  \ documents the preprocessing pipeline, experimental results, and outcome visualizations from a study\
+  \ on **synthetic CT (sCT) generation from brain MRI** using deep learning.\n\nThe goal of the project\
+  \ was to investigate how the quality of segmentation mask preprocessing influences the performance of\
+  \ a deep learning model trained to generate synthetic CT images from T1-weighted MRI scans, in the context\
+  \ of MRI-only radiotherapy planning.\n\n\U0001F4C4 **Full thesis available on Zenodo: https://doi.org/10.5281/zenodo.18941244**\n\
+  \n---\n\n## Background\n\nIn modern radiotherapy, CT and MRI are used in a complementary fashion: CT\
+  \ provides electron density maps for dose calculation, while MRI offers superior soft-tissue contrast\
+  \ for target delineation. Acquiring both modalities introduces workflow complexity, additional radiation\
+  \ exposure, and registration uncertainties.\n\nSynthetic CT (sCT) images — generated from MRI using\
+  \ deep learning algorithms — represent a promising solution to enable MRI-only radiotherapy workflows,\
+  \ reducing the reliance on conventional CT acquisitions.\n\n---\n\n## Dataset\n\nThis work used a subset\
+  \ of the **SynthRAD2023** open-source dataset:\n\n- **Source:** [SynthRAD2023 Grand Challenge](https://doi.org/10.1002/mp.16529)\
+  \ (Thummerer et al., 2023)\n- **License:** Creative Commons CC-BY-NC 4.0\n- **Task:** Task 1 — MRI to\
+  \ CT conversion, brain district\n- **Subset used:** 33 patients from Centre A (training set), T1-weighted\
+  \ MRI without contrast\n\nImages were pre-registered (MRI on CT), resampled to 1×1×1 mm³ isotropic resolution,\
+  \ and stored in NIfTI format (.nii.gz).\n\n---\n\n## Methods\n\n### 1. Segmentation Mask Preprocessing\
+  \ (3D Slicer)\n\nThe original body contour masks provided with the dataset presented inaccuracies in\
+  \ several patients. Since evaluation metrics (MAE and bias) are computed exclusively within the mask,\
+  \ precise contour definition is critical.\n\nMasks were refined for all 33 patients using the **Foreground\
+  \ Masking (BRAINS)** module in [3D Slicer](https://www.slicer.org/), by iteratively adjusting four parameters:\n\
+  \n| Parameter | Description |\n|---|---|\n| Otsu Percentile Threshold | Controls sensitivity of automatic\
+  \ thresholding |\n| Threshold Correction Factor | Multiplicative factor to adjust Otsu threshold (range:\
+  \ 0.8–1.2) |\n| Closing Size | Morphological closing element size (mm) |\n| ROIAuto Dilate Size | Final\
+  \ dilation of the mask to preserve outer contours |\n\nTotal preprocessing time: ~10 hours across all\
+  \ 33 patients.\n\n### 2. Deep Learning Model\n\nThe sCT generation model is based on the **multiplanar\
+  \ U-Net architecture** described in:\n\n> Spadea et al. (2019). *Deep Convolution Neural Network (DCNN)\
+  \ Multiplane Approach to Synthetic CT Generation from MR Images — Application in Brain Proton Therapy.*\
+  \ International Journal of Radiation Oncology Biology Physics, 105(3), 495–503. https://doi.org/10.1016/j.ijrobp.2019.06.2535\n\
+  \nThe training and inference scripts were provided by the research group and are not included in this\
+  \ repository.\n\n**Key training details:**\n- Framework: PyTorch + NumPy + SimpleITK\n- GPU training\
+  \ (~26–28 hours per cycle)\n- 17 training iterations (leave-2-out cross-validation)\n- 20 checkpoints\
+  \ saved per cycle → 20 sCT generated per patient (660 total)\n\n### 3. Evaluation Metrics\n\nPerformance\
+  \ was evaluated using voxel-wise metrics computed inside the body mask:\n\n- **MAE (Mean Absolute Error)**\
+  \ — average absolute deviation in Hounsfield Units (HU)\n- **Bias** — signed mean error (positive =\
+  \ underestimation, negative = overestimation)\n\n---\n\n## Results\n\n### Quantitative Results\n\nAcross\
+  \ all 660 generated sCT images:\n\n| Metric | Value |\n|---|---|\n| Mean MAE | 96.05 ± 11.67 HU |\n\
+  | MAE range | 69.78 – 132.06 HU |\n| Mean Bias | 2.51 ± 17.60 HU |\n| Bias range | -49.95 – +44.23 HU\
+  \ |\n\nBest performing patient: **1BA222** (MAE = 69.78 HU)  \nMost challenging patient: **1BA131**\
+  \ (MAE = 132.06 HU)\n\n### Visual Results\n\nSample comparisons between reference CT and generated sCT\
+  \ across axial, coronal, and sagittal planes are available in the [`results/sample/`](results/sample/)\
+  \ folder.\n\n---\n\n## Repository Structure\n\n```\n├── README.md\n├── results/\n│   ├── figures/  \
+  \          # MAE and bias distribution plots, Python script for MAE/bias visualization\n│   ├── data/\
+  \               # Raw data tables\n│   └── sample/             # Visual CT vs sCT comparisons (selected\
+  \ patients)\n\n```\n\n---\n\n## Tools & Libraries\n\n| Tool | Purpose |\n|---|---|\n| [3D Slicer](https://www.slicer.org/)\
+  \ | Segmentation mask refinement |\n| [PyTorch](https://pytorch.org/) | Deep learning framework |\n\
+  | [SimpleITK](https://simpleitk.org/) | Medical image I/O and processing |\n| [NumPy](https://numpy.org/)\
+  \ | Numerical computation |\n| Python (matplotlib) | Results visualization |\n\n---\n\n## Citation\n\
+  \nIf you use or reference this work, please cite the thesis:\n\n> Scarpelli, G.F. (2025). *Preprocessing\
+  \ di un dataset open source per la generazione di TC sintetiche* [Bachelor's thesis, Università degli\
+  \ Studi \"Magna Græcia\" di Catanzaro]. Zenodo. *[https://doi.org/10.5281/zenodo.18941244]*\n\n---\n\
+  \n## Acknowledgements\n\nThis work was supervised by **Prof. Paolo Zaffino** and supported by **Ing.\
+  \ Lorena Romeo**, whose guidance was essential throughout the project. The deep learning framework was\
+  \ developed by Spadea et al. and graciously made available for this study.\n\n---\n\n## License\n\n\
+  The content of this repository (figures, analysis scripts, documentation) is released under the [MIT\
+  \ License](LICENSE).  \nThe thesis PDF is released under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).\
+  \  \nThe SynthRAD2023 dataset is subject to its own [CC-BY-NC 4.0 license](https://creativecommons.org/licenses/by-nc/4.0/).\n"

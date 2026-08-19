@@ -1,0 +1,73 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: marcosagsf/radiotherapy-risk-fuzzy
+url: https://github.com/marcosagsf/radiotherapy-risk-fuzzy
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-26T21:40:53Z'
+image_source: null
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Fuzzy Logic Risk Assessment for Radiotherapy (D3–D5)\n\nPython scripts implementing\
+  \ **Dimensionings D3, D4, and D5** of the prospective risk assessment methodology described in:\n\n\
+  > Martins, C. H. Q., Filho, M. A. G. S., Lima, A. M. M., Silva, A. X., & Silva, L. P. (2026).  \n> *Methodology\
+  \ for Risk Calculation in Radiotherapy Techniques using Uncertainty Quantification through Entropy Measurement\
+  \ and Fuzzy Logic.*  \n> Nuclear Technology (Taylor & Francis). Manuscript NT25-441251850929.\n\nThe\
+  \ methodology uses **Shannon entropy** to quantify barrier unavailability uncertainty and **TSK (Takagi–Sugeno–Kang)\
+  \ Fuzzy Logic** to aggregate those uncertainties into a final **Prospective Risk Tendency Indicator\
+  \ (PRTI)**.\n\n---\n\n## Repository structure\n\n```\nradiotherapy-risk-fuzzy/\n├── D3_stage_uncertainty.py\
+  \      # D3: uncertainty per functional stage\n├── D4_total_uncertainty.py      # D4: total UHR and\
+  \ UTR\n├── D5_risk_indicator.py         # D5: final PRTI\n├── requirements.txt\n└── examples/\n    └──\
+  \ VMAT_prostate_cancer_case_study.txt   # complete worked example\n```\n\n---\n\n## Requirements\n\n\
+  - Python 3.8 or later\n- [simpful](https://github.com/aresio/simpful) — TSK fuzzy inference library\n\
+  \nInstall all dependencies:\n\n```bash\npip install setuptools==80.9.0\npip install simpful\n```\n\n\
+  ---\n\n## How to run\n\n### Overview of the workflow\n\n```\nD2 outputs (Uefs, %)\n      │\n      ▼\n\
+  D3_stage_uncertainty.py   ← run 6 times (FzSH, FzPH, FzTH, FzST, FzPT, FzTT)\n      │  UHRs, UHRp, UHRt,\
+  \ UTRs, UTRp, UTRt\n      ▼\nD4_total_uncertainty.py   ← run 2 times (FzUHR, FzUTR)\n      │  UHR (%),\
+  \ UTR (%)\n      ▼\nD5_risk_indicator.py      ← run once\n      │\n      ▼\n    PRTI (%)\n```\n\n---\n\
+  \n### D3 — Stage uncertainty\n\nRun once per fuzzy system (6 runs total):\n\n| Run | Fuzzy system |\
+  \ Stage       | Reliability  |\n|-----|-------------|-------------|--------------|\n| 1   | FzSH   \
+  \     | Simulation  | Human        |\n| 2   | FzPH        | Planning    | Human        |\n| 3   | FzTH\
+  \        | Treatment   | Human        |\n| 4   | FzST        | Simulation  | Technological|\n| 5   |\
+  \ FzPT        | Planning    | Technological|\n| 6   | FzTT        | Treatment   | Technological|\n\n\
+  Each run prompts for the **three Uefs values (%)** corresponding to the FR, DB, and MSv barrier functions\
+  \ of that stage/reliability combination. These values come from the D2 Excel workbook.\n\n```bash\n\
+  python D3_stage_uncertainty.py\n```\n\n---\n\n### D4 — Total uncertainty\n\nRun twice (once for UHR,\
+  \ once for UTR):\n\n```bash\npython D4_total_uncertainty.py\n```\n\nEnter the three D3 outputs in the\
+  \ order: **Planning → Treatment → Simulation**.\n\n---\n\n### D5 — Prospective Risk Tendency Indicator\n\
+  \nRun once with the two D4 outputs:\n\n```bash\npython D5_risk_indicator.py\n```\n\n---\n\n## Fuzzy\
+  \ logic specification\n\n### D3 and D4 — Membership functions\n\n| Variable | Term | Function      |\
+  \ Parameters        |\n|----------|------|---------------|-------------------|\n| Uph, Uth, Ush | low\
+  \  | Triangular   | a=0, b=0, c=80    |\n| Uph, Uth, Ush | high | Trapezoidal  | a=0, b=80, c=100, d=100\
+  \ |\n\nUniverse of discourse: [0, 100] for all variables.\n\n### D3 and D4 — Consequent functions (TSK)\n\
+  \n| Output | Function |\n|--------|----------|\n| PRB1 | (3·Uph + Uth + 0.5·Ush) / 4.5 |\n| PRB2 | PRB1\
+  \ + 1 |\n| PRB3 | PRB1 + 2 |\n| PRB4 | PRB1 + 3 |\n| PRB5 | PRB1 + 4 |\n| PRB6 | PRB1 + 5 |\n| PRB7\
+  \ | PRB1 + 6 |\n| PRB8 | 100 (crisp) |\n\n### D3 and D4 — Rule base (8 rules)\n\n| Rule | Uph  | Uth\
+  \  | Ush  | Output |\n|------|------|------|------|--------|\n| RL1  | low  | low  | low  | PRB1   |\n\
+  | RL2  | low  | low  | high | PRB2   |\n| RL3  | low  | high | low  | PRB3   |\n| RL4  | low  | high\
+  \ | high | PRB4   |\n| RL5  | high | low  | low  | PRB5   |\n| RL6  | high | low  | high | PRB6   |\n\
+  | RL7  | high | high | low  | PRB7   |\n| RL8  | high OR high OR high | — | — | PRB8 |\n\nLogical operator:\
+  \ AND (min T-norm) / OR (max S-norm). Inference: Sugeno weighted average.\n\n### D5 — Membership functions\n\
+  \n| Variable | Term     | Function   | Parameters         |\n|----------|----------|------------|--------------------|\n\
+  | Uch      | Uch_Low  | Triangular | a=0, b=0,   c=100  |\n| Uch      | Uch_High | Triangular | a=0,\
+  \ b=100, c=100  |\n| Ume      | Ume_Low  | Triangular | a=0, b=0,   c=100  |\n| Ume      | Ume_High\
+  \ | Triangular | a=0, b=100, c=100  |\n\n### D5 — Consequent functions and rules\n\n| Rule | Uch   \
+  \   | Ume      | Output                      |\n|------|----------|----------|-----------------------------|\n\
+  | RL1  | Uch_Low  | Ume_Low  | (2·Uch + Ume) / 3           |\n| RL2  | Uch_Low  | Ume_High | (2·Uch\
+  \ + Ume) / 3 + 5      |\n| RL3  | Uch_High | Ume_Low  | (2·Uch + Ume) / 3 + 10     |\n| RL4  | Uch_High\
+  \ | Ume_High | 100 (crisp)                 |\n\n---\n\n## Worked example\n\nThe `examples/` folder contains\
+  \ the complete VMAT prostate cancer case study (Section IV.D of the article), with all inputs and expected\
+  \ outputs for each script.\n\n**Summary result:** UHR = 62.2 %, UTR = 51.5 % → **PRTI = 74.6 %**\n\n\
+  ---\n\n## Data availability\n\nThe D1 and D2 calculations (Shannon entropy and stage effectiveness)\
+  \ are implemented in an Excel workbook available from the corresponding author upon request (Carlos\
+  \ Henrique Quintanilha Martins, carlosquintanilha@pos.id.uff.br).\n\n---\n\n## License\n\nThis code\
+  \ is provided for scientific reproducibility purposes in association with the article cited above.\n"

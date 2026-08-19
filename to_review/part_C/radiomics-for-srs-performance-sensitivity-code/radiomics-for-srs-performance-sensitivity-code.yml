@@ -1,0 +1,84 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: baines-imaging-research-laboratory/radiomics-for-srs-performance-sensitivity-code
+url: https://github.com/baines-imaging-research-laboratory/radiomics-for-srs-performance-sensitivity-code
+platform: github
+description: 'Open-source code associated with the results presented in the manuscript "Brain Metastasis
+  Stereotactic Radiosurgery Outcome Prediction using MRI Radiomics: Performance Sensitivity to Primary
+  Cancer, Metastasis Volume and Scanner Type"'
+license: null
+language: MATLAB
+keywords: []
+stars: 3
+updated_at: '2025-01-17T05:46:32Z'
+image_source: null
+heuristic_total_score: 19
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 5 support term(s).
+readme_excerpt: "# radiomics-for-srs-performance-sensitivity-code\nOpen-source code associated with the\
+  \ results presented in the manuscript \"Brain Metastasis Stereotactic Radiosurgery Outcome Prediction\
+  \ using MRI Radiomics: Performance Sensitivity to Primary Cancer, Metastasis Volume and Scanner Type\"\
+  \n\n## Code Description\nThe experiments and analysis described in the manuscript were performed in\
+  \ a number of discrete steps. Each step is contained with a separate folder within this repository.\
+  \ The \"main.m\" file within each folder contains the code performed, with any other reference code\
+  \ contained within the \"Code\" sub-folder. \"codepaths.txt\" and \"datapaths.txt\" contain references\
+  \ to the code and data used by each \"main.m\". \"Experiment.m\" contains a class allowing for completely\
+  \ reproducible execution of the \"main.m\" code, including random number generation regardless of a\
+  \ single processor or multi-processor (local or distributed) computation environment. To run each \"\
+  main.m\", the current directory should be set to the folder containing the \"main.m\" file in question,\
+  \ and then \"Experiment.Run()\" should be executed. \"settings.mat\" contains setting for the Experiment\
+  \ class that can be adjusted without impacting the computation results (e.g. single vs. multi-processor\
+  \ execution).\n\n## Experiment Manifest\nBelow is a brief description of each experiment/analysis step\
+  \ in the code repository:\n\n### Sample Selection\n**SS-001:** Applies the exclusion criteria to remove\
+  \ punctate brain metastases\n\n### Image Pre-Processing\n**IMGPP-102:** Takes the original MRI image\
+  \ and produces a cropped image volume around the centre of each brain metastasis\n\n**IMGPP-103:** Builds\
+  \ on IMGPP-102 by interpolating to 0.5x0.5x0.5 mm^3 resolution\n\n**IMGPP-124:** Builds on IMGPP-103\
+  \ by applying the Z-score intensity normalization\n\n### Region-of-interest Pre-Processing\n**ROIPP-102:**\
+  \ Takes the original regions-of-interest on the MRI and produces a cropped region-of-interest volume\
+  \ around the centre of each brain metastasis \n\n**ROIPP-105:** Builds on ROIPP-102 by interpolating\
+  \ to 0.5x0.5x0.5 mm^3 resolution\n\n### Image Volume Handler\n**IVH-307:** Links imaging and region-of-interest\
+  \ data from IMGPP-124 and ROIPP-105 together for each brain metastasis, along with giving each a sample\
+  \ ID\n\n### Feature Values\n**FV-500-000:** MRI acquisition parameters for each sample\n\n**FV-500-104:**\
+  \ Clinical features for each sample\n\n**FV-500-400:** Brain metastasis volume for each sample\n\n\n\
+  **FV-705-000:** Extraction of radiomic features by calling PyRadiomics via Matlab\n\n**FV-705-001:**\
+  \ Creation of Matlab feature values object from FV-705-000 for 1st order features\n\n**FV-705-002:**\
+  \ Creation of Matlab feature values object from FV-705-000 for shape features\n\n**FV-705-005:** Creation\
+  \ of Matlab feature values object from FV-705-000 for GLCM features\n\n**FV-705-006:** Creation of Matlab\
+  \ feature values object from FV-705-000 for GLRLM features\n\n**FV-705-007:** Creation of Matlab feature\
+  \ values object from FV-705-000 for GLDM features\n\n**FV-705-008:** Creation of Matlab feature values\
+  \ object from FV-705-000 for GLSZM features\n\n**FV-705-009:** Creation of Matlab feature values object\
+  \ from FV-705-000 for NGTDM features\n\n### Labels\n**LBL-201:** Ground-truth post-SRS progression labels\
+  \ for each brain metastasis\n\n### Model\n**MDL-100:** Random forest model as described in the manuscript\n\
+  \n### Feature Selector\n**FS-100:** Inter-feature correlation feature filter as described in the manuscript\n\
+  \n### Hyper-Parameter Optimizer\n**HPO-100:** Bayesian hyper-parameter optimizer as described in the\
+  \ manuscript\n\n### Objective Function\n**OFN-100:** Out-of-bag AUC hyper-parameter optimizer objective\
+  \ function as described in the manuscript\n\n### Machine Learning Experiments\n**EXP-100-400-200:**\
+  \ Bootstrapped machine learning experiment using only clinical features\n\n**EXP-100-400-101:** Bootstrapped\
+  \ machine learning experiment using only radiomic features\n\n**EXP-100-400-202:** Bootstrapped machine\
+  \ learning experiment using clinical and radiomic features\n\n\n**EXP-100-701-101:** Bootstrapped machine\
+  \ learning experiment removing all volume correlated features at a cut-off of 0.85\n\n**EXP-100-701-102:**\
+  \ Bootstrapped machine learning experiment removing all volume correlated features at a cut-off of 0.70\n\
+  \n**EXP-100-701-103:** Bootstrapped machine learning experiment removing all volume correlated features\
+  \ at a cut-off of 0.55\n\n**EXP-100-701-104:** Bootstrapped machine learning experiment removing all\
+  \ volume correlated features at a cut-off of 0.40\n\n**EXP-100-701-105:** Bootstrapped machine learning\
+  \ experiment removing all volume correlated features at a cut-off of 0.25\n\n\n**EXP-100-601-101:**\
+  \ Bootstrapped machine learning experiment using only data from the Vision & Expert MR scanners\n\n\
+  **EXP-100-601-102:** Bootstrapped machine learning experiment using only data from the Vision & Avanto\
+  \ MR scanners (only sagittal acquisitions)\n\n**EXP-100-601-103:** Bootstrapped machine learning experiment\
+  \ using only data from the Expert & Avanto MR scanners (only sagittal acquisitions)\n\n**EXP-100-601-104:**\
+  \ Bootstrapped machine learning experiment using only data from the Vision & Avanto MR scanners (axial\
+  \ and sagittal acquisitions)\n\n**EXP-100-601-105:** Bootstrapped machine learning experiment using\
+  \ only data from the Expert & Avanto MR scanners (axial and sagittal acquisitions)\n\n\n### Analysis\
+  \ & Figure Creation\n**AYS-001-006-005:** Computation of volume correlation coefficient and p-values\
+  \ for each radiomic feature\n\n**AYS-001-007-122:** Calculation of error metrics across primary cancer\
+  \ site groups\n\n**AYS-001-007-126:** Calculation of error metrics across brain metastasis volume groups\n\
+  \n\n**AYS-002-001-105-BW:** Creation of Figure 1 to compare of ROCs for using different feature types\n\
+  \n**AYS-002-001-107:** Creation of Table 3 to compare error metrics across primary cancer site groups\n\
+  \n**AYS-002-001-113:** Creation of Figure 2 to compare error metrics across brain metastasis volume\
+  \ groups and correlation cut-off values\n\n**AYS-002-001-115:** Creation of figure and data for supplementary\
+  \ material on feature importance\n\n**AYS-002-001-110-BW:** Creation of Figure 3 to compare ROCs for\
+  \ different MR scanner pairs (axial and sagittal acquisitions)"

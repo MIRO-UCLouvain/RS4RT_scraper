@@ -1,0 +1,141 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: AustralianCancerDataNetwork/PDCP
+url: https://github.com/AustralianCancerDataNetwork/PDCP
+platform: github
+description: PDCP is a tool used to collect and process patients radiotherapy imaging data from the Orthanc
+  research PACs via its REST API.
+license: null
+language: Python
+keywords:
+- etl
+- radiotherapy
+stars: 5
+updated_at: '2026-07-14T13:55:46Z'
+image_source: null
+heuristic_total_score: 20
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 10 support term(s).
+readme_excerpt: "Welcome to PDCP\\'s documentation!\n=================================\n\n\n\nOverview\
+  \ (version 0.0.1)\n========================\n\nPatient Data Collection and Processing (PDCP) is a tool\
+  \ used to collect and process patients radiotherapy imaging data from\nthe Orthanc research PACs via\
+  \ its REST API.\n\nOrthanc provides a simple and standalone DICOM server (PACS). It\nsupports the DICOM\
+  \ and DICOMweb protocols. It was used in the\nAusCAT network to save patients anonymized radiotherapy\
+  \ data\nexported from the Hospital PACS.\n\nPDCP is a python module that consists of multiple classes\
+  \ used to\nprepare patients records. Object oriented programming and inheritance\nwere followed to make\
+  \ the code reusable and to extend certain functions.\nThe **patientImaging** class is the main module\
+  \ and it contains a set of\nfunctions used to collect, validate, and track the data preparation\nprocess.\n\
+  \nOther classes that inherit from **patientImaging** were created to\nhandle different cancer sites\
+  \ and projects:\n\n-   **patientImagingCRDP**: a class that inherits the patientImaging\n    class,\
+  \ used to collect and process cancer patients data from the\n    AUScat data centers, where there is\
+  \ a need to link 4 patient\n    modalities. (C: stands for CT, R: stands for RTSTRUCTS, D: stands\n\
+  \    for RTDOSE, P: stands for the RTPLAN)\n-   **patientImagingCRD**: a class that inherits the patientImaging\n\
+  \    class, used to collect and process cancer patients radiotherapy data\n    where the RTPLAN cannot\
+  \ be obtained\n-   **patientImagingCR**: a class that inherits the patientImaging\n    class, used to\
+  \ collect and process a patients data where there is a\n    need to link the CT with the RTSTRUCT only\
+  \ (segmentation task).\n\nOther classes/functions were implemented to facilitate the data\npreparation\
+  \ task:\n\n-   **ReadPatientImagingData**: used to load the patient\\'s processed\n    data into a python\
+  \ dictionary {\\'CT\\':,\\'masks\\':,etc}.\n-   **ROIP** : a class used to generate the central slices\
+  \ patient\\'s\n    organs at risk (OARs) and target volumes (TV)\n-   **DVH** : a class used to generate\
+  \ the dosimetry features for the\n    patients.\n\nSeveral python packages were utilized to collect\
+  \ the data and to process\nthe images:\n\n-   **requests**: a python built-in module used to retrieve\
+  \ required\n    files from an orthanc server (targets the orthanc server rest API)\n-   **pyorthanc**:\
+  \ a python library that wraps the Orthanc REST API and\n    facilitates the manipulation of data with\
+  \ several utilities. It was\n    used in this script to identify patient related files. It was\n   \
+  \ initially used to retrieve data through some fuctions\n    (get\\_instance\\_file(), get\\_instance\\\
+  _simplified\\_tags()), however\n    it was noticed that it was slow compared to python built-in modules.\n\
+  -   **concurrent.futures** : a python built-in module used to apply\n    threading and multiprocessing.\n\
+  -   **pydicom**: a python library used to handle dicom imaging tasks.\n    i.e the orthanc server returns\
+  \ the files as a bytes array. pydicom\n    functions were used to convert such arrays to pydicom FileDatasets\n\
+  \    before saving into the patient\\'s directory.\n-   **simpleITK**: is a simplified, open-source\
+  \ interface to the Insight\n    Segmentation and Registration Toolkit. It was used to handle\n    resampling\
+  \ tasks for the dose grid.\n-   **numpy**: used to save radiotherapy data into 3d arrays.\n-   **pandas**:\
+  \ a python library used with tabular data, dataframes were\n    used to save the images summaries in\
+  \ this script\n-   **json**: used to save patient notes while collecting and processing\n    the records\n\
+  -   **hdf5stogare**: used to save and load matlab files that contains\n    the patient\\'s related data\
+  \ (not used).\n\nWhat can PDCP do?\n=================\n\nPDCP facilitates the data collection and preparation\
+  \ for using imaging\nradiotherapy data. PDCP can:\n\n-   Query, retrieve, and validate patient imaging\
+  \ summaries from an\n    Orthanc PACS.\n-   Analyse associations in patient studies (linking required\n\
+  \    modalities)\n-   Retrieve patient imaging data into a local directory.\n-   Prepare the records\
+  \ for use in various research questions (dosimetry\n    analyses, contouring, image standardization)\n\
+  -   Track the patients data collection process and idenfity reasons\n    behind excluding patients data.\n\
+  \t\nData Collection Example (Public Data)\n=======================================\n\nhttps://zenodo.org/record/5847536\n\
+  \nDocumentation\n================\n\nLinked Software Paper:\n\nHaidar, A.; Aly, F.; Holloway, L. PDCP:\
+  \ A Set of Tools for Extracting, Transforming, and Loading Radiotherapy Data from the Orthanc Research\
+  \ PACS. Software 2022, 1, 215-222. https://doi.org/10.3390/software1020009\n\nCode Documentation:\n\n\
+  https://australiancancerdatanetwork.github.io/PDCP/html/index.html\n\n\nNext Steps\n==========\n\n-\
+  \   Patients data are currently retrieved via the http protocol. We aim\n    to utilize the WebDav,\
+  \ which is an extended protocol that allows\n    remote web content authoring operations, in future\
+  \ versions to be\n    able to use dicom tags and indexed images from Orthanc directly.\n    Within WebDav,\
+  \ data can be viewed by patients, studies, or uids,\n    which will help in managing DICOM data at the\
+  \ centres.\n-   We aim to utilize the Orthanc plugins such as **serve-folders** to\n    be able to track\
+  \ patient notes from webpages.\n-   At this stage, patients with multiple studies will require manual\n\
+  \    review for selecting the right study. We aim to automate this\n    process.\n\nSelecting Modalities\
+  \ in a Patient Study\n=======================================\n\nThe current linkage is conducted without\
+  \ retrieving patients data from\nthe Orthanc server. Before retrieving data, the patients will be\n\
+  verified. Further details about verification can be found in documentation associated with the repo.\n\
+  \nSelecting a Patient Study\n=========================\n\n-   A study is selected if it contains the\
+  \ required modalities added by\n    the user.\n-   A study will be discarded if the selected CT series\
+  \ contains a large\n    number of instances\n-   A study will be discarded if the study has the required\
+  \ RTSTRUCT,\n    with the RTSTRUCT not containing any of the required keywords (i.e.\n    study with\
+  \ RTSTRUCT with contour names PATIENT, ISO) will not be\n    used.\n-   A study will be discarded if\
+  \ it contains multiple CTs with multiple\n    associations, will be discarded and will require review.\n\
+  -   A study will be discarded if it contains a keyword that should not\n    be found in its study name\
+  \ (e.g. a breast cohort is being collected\n    while the study name shows \\'head and neck\\').\n\n\
+  Example Data Collection\n=======================\n\nThe example below shows the steps followed to prepare\
+  \ a cohort of 10\npatients.\n\nThis example has been conducted with **patientImagingCRDP** for a breast\n\
+  cohort, where a linkage between CT\\--\\> RTSTRUCT \\--\\> RTPLAN \\--\\>\nRTDOSE is targeted.\n\nStep\
+  \ 1: Setup Configuration File\n--------------------------------\n\nFor each data collection and preparation\
+  \ task, a configuration file is\nrequired. The first step is to create the configuration in a json file:\n\
+  \nHere is a brief overview of the required keys:\n\n-   **required\\_modalities\\_for\\_patient**: a\
+  \ list of the required\n    modalities \\[\\'CT\\',\\'RTSTRUCT\\',\\'RTPLAN\\',\\'RTDOSE\\'\\]\n-  \
+  \ **study\\_desc\\_should\\_not\\_contain**: a list of keywords the\n    patient study should not contain.\n\
+  -   **study\\_desc\\_may\\_contain**: a list of keywords a patient study\n    might contain\n-   **possibilities**:\
+  \ a list of keywords, where one of them at least\n    should be found in the RTSTRUCT contours\n-  \
+  \ **imagesummaries**: a directory to host the patient instances dicom\n    summaries tags found in the\
+  \ targeted Orthanc server.\n-   **patientnotesdir**: a directory to host the patient notes\n-   **datadictionary**:\
+  \ a directory to host the patients records.\n-   **quarantine**: Patients might have a rescan through\
+  \ the course of\n    treatment. Other patients might have multiple courses of treatment.\n    Quarantine\
+  \ is used to host patients with multiple studies.\n-   **link\\_to\\_ids**: a csv file that contains\
+  \ the patient ids and its\n    corresponding indexed orthanc ids.\n-   **ipport**: ip and port of the\
+  \ Orthanc server.\n-   **username**: username of an account in the Orthanc server\n-   **password**:\
+  \ password of an account in the Orthanc server. Leave\n    empty if not needed.\n-   **CONNECTIONS**:\
+  \ the number of connections to be used when targeting\n    the server.\n-   **TIMEOUT**: total number\
+  \ of seconds to wait when sending the\n    request to the server.\n\nStep 2: Prepare directories\n---------------------------\n\
+  \nCreate a directory to host the patients data and notes. This directory\nshould include:\n\n-   **ids**\
+  \ : a directory used to save a .csv file that will contain the\n    patient ids and its corresponding\
+  \ Orthanc ids (*links\\_to\\_ids* in\n    the config file).\n-   **imagesummaries**: a directory used\
+  \ to save csv files that contain\n    summaries of patient\\'s imaging data in the targeted orthanc\
+  \ server\n-   **patientnotes**: a directory that will be used to save json objects\n    that contain\
+  \ each patient data collection and preparation notes\n-   **data**: will be used to save patient data.\
+  \ For each patient, a new\n    directory will be created.\n-   **quarantine**: will be used to save\
+  \ patient quarantine data. Each\n    study will be treated as the only study associated with the patient.\n\
+  \    Hence, once a study is selected it will be manually moved into the\n    data directory.\n\nStep\
+  \ 3: Retrieve Orthanc Ids\n----------------------------\n\nThe third step is to retrieve patients assoicated\
+  \ ids from the Orthanc\nserver. The Orthanc server will create a specific id for each patient.\nThese\
+  \ values are currently saved in an SQLite database (by default) with\noptions to utilize other servers\
+  \ as plugins (Postgress).\n\nAfter running this script, each row in the generated .csv file will\nrepresent\
+  \ the patient identifier and its corresponding Orthanc\nidentifier, which is used by the Orthanc server\
+  \ to index patient\\'s\nstudies.\n\nThe script is currently used to get all the patients ids from the\
+  \ remote\nserver.\n\n```\nfrom PDCP import patientImaging\ncodesconfig='codesconfig_test.json'\npatientImaging.collect_pids_orthanc(codesconfig)\n\
+  ```\nThe csv file will be similar to :\n\n\n```\nids,orthanc_ids\n1,b589720b-b3e2d6bb-e8ad034c-f3443ebd-5d155c67\n\
+  2,236b7e77-7dd097d0-8e78dcac-98aca88b-1d214fd1\n3,8ab22a5c-1c79ed07-229b7721-3d92e770-c7fcdf0e\n4,74686685-bb06152e-9525ef4c-f5f53674-fc880224\n\
+  5,c8e45dnf-bf3b1367-85aa9baa-1017d2a0-1789c6d4\n```\n\nwith ids representing the patient ids and orthac\\\
+  _ids representing the\npatient orthanc id.\n\nStep 4: Prepare Patients Images Summaries\n-----------------------------------------\n\
+  \nThe fourth step is to collect a summary of the available data for each\npatient in the Orthanc server.\
+  \ Various dicom tags are required to handle\nthe linkage between modalities and to prepare the patient\
+  \ sudy. These\ntags are retrieved for each patient instance and added as a row to the\nassociated csv\
+  \ file. For each patient, a dataframe is expected to be\ngenerated. Three possible cases are axpected\
+  \ when collecting patients\nimages summaries:\n\n1.  **pid\\_SUCCESS.csv** : This indicates that the\
+  \ patient images\n    summary (dataframe) was successfully prepared .\n2.  **pid\\_IMAGINGDATANOTFOUND.csv**\
+  \ : This indicates that the patient\n    images summary (dataframe) cannot be generated because patients\
+  \ data\n    related to data collection task were not found.\n3.  **pid\\_ERROR.csv** : This indicates\
+  \ that the patient images summary\n    was collected with errors. In most cases, this error occurs because\n\
+  \    the server failed to handle a high number of requests at the same\n    time. This can be fixed\
+  \ by repeating the execution or by lowering\n    the number of threads to target the server.\n\n\nWhen\
+  \ running this script, the image summaries will be added to\n**imagesummaries**. Here is a result of\
+  \ running a cohort of 10 patients\nwith patientImagingCRDP\n```\nimport os,math,time,sys\nsys.path.insert(0,\
+  \ os.path.abspath('../..'))\nsys.path.insert(0, "

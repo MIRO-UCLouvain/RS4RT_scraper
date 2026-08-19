@@ -1,0 +1,56 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: justbeingdk/AutomatedBrainTumorRadiomics
+url: https://github.com/justbeingdk/AutomatedBrainTumorRadiomics
+platform: github
+description: NeuroQuant - an Automated Quantitative Brain Tumor Report generation with the help of PyRadiomics.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-25T10:03:41Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "# 'NeuroQuant'\n# Automated Radiomics-Based Brain Tumor Reporting System\n\nThis project\
+  \ is a report-generation pipeline for brain MRI cases where a tumor\nsegmentation mask is already available\
+  \ from an external source. It extracts\nquantitative radiomics features from the provided mask, computes\
+  \ descriptive\nmeasurements, and exports patient-friendly and clinical reports.\n\nThe system does not\
+  \ detect tumors, create segmentations, classify tumor type,\npredict grade, predict malignancy, or generate\
+  \ a medical diagnosis. Every report\nstates that all observations are derived from a supplied segmentation\
+  \ mask.\n\nThe clinical report is organized for rapid review:\n\n- First-page executive summary with\
+  \ volume, largest diameter, morphology, texture, location availability, and quality status.\n- Detailed\
+  \ quantitative measurements and richer descriptive radiomics interpretation.\n- Basic image and supplied-mask\
+  \ quality-control indicators.\n- Final technical provenance and processing metadata appendix.\n\n##\
+  \ Workflow\n\n```text\nMRI image\n  -> validation\n  -> mask validation\n  -> tumor region extraction\n\
+  \  -> PyRadiomics feature extraction\n  -> tumor measurement computation\n  -> rule-based interpretation\n\
+  \  -> report generation\n  -> PDF / DOCX / JSON / FHIR-style JSON / PNG overlay export\n```\n\n## Project\
+  \ Layout\n\n```text\nconfig/\n  settings.yaml\n  pyradiomics_params.yaml\nradiomics_pipeline/\n  core/\n\
+  \  io/\n  imaging/\n  features/\n  interpretation/\n  reporting/\n  export/\n  pipeline.py\nexamples/\n\
+  \  sample_run.py\noutputs/\ndocs/\n  ARCHITECTURE.md\n  HOW_TO_RUN.md\n  CLINICAL_LIMITATIONS.md\ntests/\n\
+  ```\n\n## Install\n\n```powershell\ncd \"C:\\Users\\dkhur\\OneDrive\\Documents\\New project\\automated_radiomics_brain_tumor_reporting_system\"\
+  \npython -m venv .venv\n.\\.venv\\Scripts\\Activate.ps1\npip install -e \".[dev]\"\n```\n\nPyRadiomics\
+  \ and SimpleITK are required for production NIfTI processing.\n\n## Run The Example\n\nThe sample script\
+  \ can generate a synthetic MRI-like volume and a synthetic\nprovided mask for demonstration reports:\n\
+  \n```powershell\npython examples\\sample_run.py\n```\n\nFor a real NIfTI image and binary mask:\n\n\
+  ```powershell\npython examples\\sample_run.py `\n  --image path\\to\\mri.nii.gz `\n  --mask path\\to\\\
+  mask.nii.gz `\n  --use-pyradiomics `\n  --anatomical-location \"Right frontal lobe\" `\n  --location-source\
+  \ \"Registered atlas\"\n```\n\nGenerated outputs are written under `outputs/sample_case/`.\n\n## BraTS-Style\
+  \ Masks\n\nBraTS masks commonly use `0` for background and `1`, `2`, and `4` for tumor\nsubregions.\
+  \ The default configuration accepts those supplied labels and combines\nthem into one binary whole-tumor\
+  \ reporting mask:\n\n```yaml\npipeline:\n  mask_labels: [1, 2, 4]\n  radiomics_mask_label: 1\n```\n\n\
+  This is only a relabeling step for reporting and PyRadiomics compatibility. It\ndoes not perform tumor\
+  \ segmentation or classification.\n\n## Quality And Location Boundaries\n\nThe report includes basic\
+  \ checks such as connected-component count, mask\nboundary contact, slice continuity, mask occupancy,\
+  \ and image dynamic range.\nThese indicators do not establish segmentation accuracy. Segmentation confidence\n\
+  and model calibration are explicitly reported as unavailable because this system\ndoes not run a segmentation\
+  \ model.\n\nLobe-level anatomical location is shown only when supplied by a radiologist,\nregistered\
+  \ atlas workflow, or another qualified external source. Otherwise, the\nreport states that anatomical\
+  \ location is unavailable.\n\n## Safety Boundary\n\nThis system is intended for academic research, demonstrations,\
+  \ and\nnon-diagnostic clinical workflow prototyping. It must not be used as a medical\ndevice or for\
+  \ diagnosis or treatment planning without institutional validation,\nqualified clinical review, governance\
+  \ approval, risk management, and regulatory\nclearance where required.\n"

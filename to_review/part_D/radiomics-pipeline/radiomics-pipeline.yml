@@ -1,0 +1,70 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: FelyipeVieira/radiomics-pipeline
+url: https://github.com/FelyipeVieira/radiomics-pipeline
+platform: github
+description: Radiomics feature extraction and preprocessing pipeline for CT images.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-17T20:13:13Z'
+image_source: https://raw.githubusercontent.com/FelyipeVieira/radiomics-pipeline/HEAD/assets/correlation-heatmap-placeholder.svg
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 3 support term(s).
+readme_excerpt: "# radiomics-pipeline\n\n[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)\n\
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)\n\n## Overview\n\n`radiomics-pipeline`\
+  \ is a typed, modular toolkit for reproducible medical-image\npreprocessing, ROI management, IBSI-oriented\
+  \ PyRadiomics feature extraction,\ncohort reporting, visualization, and classical machine learning.\
+  \ It keeps image\ngeometry intact and separates domain services so deep-learning components can be\n\
+  added without rewriting ingestion or reporting.\n\n> Research software notice: this project is not a\
+  \ certified medical device and\n> must not be used as the sole basis for clinical decisions.\n\n## Features\n\
+  \n- DICOM series, NIfTI, PNG, and TIFF input through one API.\n- Normalization, histogram matching,\
+  \ resampling, rigid registration, denoising,\n  N4 correction, cropping, CT windowing, and CLAHE.\n\
+  - Binary-mask validation, morphology, connected components, and ROI operations.\n- First-order, shape,\
+  \ GLCM, GLRLM, GLSZM, GLDM, NGTDM, and wavelet features.\n- CSV, Excel, JSON, HTML reports, summaries,\
+  \ and correlation matrices.\n- Histograms, heatmaps, boxplots, distributions, PCA, t-SNE, and UMAP.\n\
+  - Random Forest, SVM, logistic regression, XGBoost, LightGBM, stratified CV,\n  grid search, feature\
+  \ importance, SHAP, and LIME.\n- Strict typing, CLI batch workflow, unit tests, and extensible clean\
+  \ modules.\n\n## Project Structure\n\n```text\nradiomics-pipeline/\n├── docs/                  # Architecture\
+  \ and usage documentation\n├── assets/                # Documentation media placeholders\n├── notebooks/\
+  \             # Reproducible research examples\n├── scripts/               # Example configuration and\
+  \ manifests\n├── tests/                 # Automated tests\n└── src/radiomics_pipeline/\n    ├── io/\
+  \                # DICOM/NIfTI/raster ingestion\n    ├── preprocessing/     # Spatial and intensity\
+  \ transforms\n    ├── segmentation/      # Masks and ROI operations\n    ├── radiomics/         # PyRadiomics\
+  \ extraction\n    ├── feature_selection/ # Variance/correlation/univariate selection\n    ├── machine_learning/\
+  \  # Models, validation, explainability\n    ├── visualization/     # Static and interactive plots\n\
+  \    ├── reports/           # CSV/Excel/JSON/HTML exports\n    └── pipeline.py        # Workflow orchestration\n\
+  ```\n\n## Installation\n\nPython 3.12 and a virtual environment are recommended.\n\n```bash\npython\
+  \ -m venv .venv\n# Windows: .venv\\Scripts\\activate\n# Linux/macOS: source .venv/bin/activate\npython\
+  \ -m pip install --upgrade pip\npip install -e \".[ml,dev,docs]\"\n```\n\nPyRadiomics availability for\
+  \ Python 3.12 can depend on platform build tooling.\nUse a compatible wheel or conda environment if\
+  \ a source build is unavailable.\n\n## Usage\n\nCreate a manifest:\n\n```csv\nsample_id,image,mask\n\
+  case-001,data/case-001/image.nii.gz,data/case-001/mask.nii.gz\n```\n\nRun the complete workflow:\n\n\
+  ```bash\nradiomics-pipeline scripts/example_manifest.csv --spacing 1 1 1 --normalize --output outputs\n\
+  ```\n\nPython API:\n\n```python\nfrom pathlib import Path\nfrom radiomics_pipeline import PipelineConfig,\
+  \ RadiomicsPipeline\n\npipeline = RadiomicsPipeline(\n    PipelineConfig(spacing=(1.0, 1.0, 1.0), output_directory=Path(\"\
+  outputs\"))\n)\nreport = pipeline.run_manifest(\"scripts/example_manifest.csv\")\nprint(report.summary())\n\
+  ```\n\n## Pipeline Diagram\n\n```mermaid\nflowchart LR\n    A[\"DICOM / NIfTI / PNG / TIFF\"] --> B[\"\
+  Validated image loading\"]\n    B --> C[\"Preprocessing\"]\n    C --> D[\"Binary mask and ROI validation\"\
+  ]\n    D --> E[\"PyRadiomics feature extraction\"]\n    E --> F[\"Feature selection\"]\n    F --> G[\"\
+  Machine learning\"]\n    E --> H[\"Reports and visualization\"]\n    G --> H\n    I[\"Future deep-learning\
+  \ adapters\"] -.-> D\n    I -.-> F\n```\n\n## Supported Formats\n\n| Format | Input | Typical use |\n\
+  |---|---:|---|\n| DICOM | Yes | Clinical series and individual instances |\n| NIfTI (`.nii`, `.nii.gz`)\
+  \ | Yes | Research volumes and masks |\n| PNG | Yes | 2D images and masks |\n| TIFF | Yes | 2D/high-bit-depth\
+  \ images and masks |\n\n## Examples\n\nSee `docs/usage.md`, `scripts/example_manifest.csv`, and the\
+  \ API docstrings.\nNotebooks should use de-identified or synthetic data only.\n\n## Screenshots\n\n\
+  ![Example radiomics feature correlation heatmap](assets/correlation-heatmap-placeholder.svg)\n\n## Documentation\n\
+  \n```bash\nmkdocs serve\n```\n\nArchitecture, reproducibility, API, and contribution guidance are under\n\
+  [`docs/`](docs/index.md).\n\n## Citation\n\nUse the metadata in [`CITATION.cff`](CITATION.cff). GitHub\
+  \ can generate the\nappropriate citation format from this file.\n\n## License\n\nReleased under the\
+  \ [MIT License](LICENSE).\n\n## Contributing\n\nRead [`CONTRIBUTING.md`](CONTRIBUTING.md), add tests\
+  \ for behavior changes, and\nrun `ruff check .`, `mypy src`, and `pytest` before submitting a pull request.\n\
+  \n## Future Work\n\n- MONAI/PyTorch deep-learning segmentation and representation-learning adapters.\n\
+  - DICOM SEG and RTSTRUCT interoperability.\n- Distributed cohort extraction and experiment tracking.\n\
+  - Container images, workflow provenance, and additional IBSI validation datasets.\n"

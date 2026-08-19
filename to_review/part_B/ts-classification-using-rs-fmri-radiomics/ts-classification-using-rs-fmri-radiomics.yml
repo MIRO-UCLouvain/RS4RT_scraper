@@ -1,0 +1,97 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: muribarros/TS_Classification_Using_rs-fMRI_Radiomics
+url: https://github.com/muribarros/TS_Classification_Using_rs-fMRI_Radiomics
+platform: github
+description: ''
+license: null
+language: null
+keywords: []
+stars: 0
+updated_at: '2026-06-21T13:31:41Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Pediatric Tourette Syndrome Classification Using rs-fMRI Radiomics of the CSTC Circuit:\
+  \ A Genetic Algorithm-Guided Approach\n\n[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)\n\
+  [![scikit-learn](https://img.shields.io/badge/scikit--learn-1.4+-F7931E?logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)\n\
+  [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)\n\
+  [![Paper Status](https://img.shields.io/badge/Paper-Under_Review-blue)](#)\n[![FAPESP](https://img.shields.io/badge/Funded_by-FAPESP_2025%2F00214--8-yellow)](#)\n\
+  [![Made with Love](https://img.shields.io/badge/Made%20with❤️-by%20Murilo%20C.%20de%20Barros-red)](#)\n\
+  \n**Murilo C. de Barros · Kaue T. N. Duarte · Chia-Jui Hsu · Wang-Tso Lee · Marco A. G. de Carvalho**\n\
+  \n---\n\n## Overview\n\nThis repository contains the **scripts** and **resources** used in our paper:\n\
+  \n> **\"Pediatric Tourette Syndrome Classification Using rs-fMRI Radiomics of the CSTC Circuit: A Genetic\
+  \ Algorithm-Guided Approach\"**\n\nOur work proposes an integrated computational framework for automated\
+  \ classification of **Tourette's Syndrome (TS)** in pediatric populations, focusing on the **Cortico-Striatal-Thalamic-Cortical\
+  \ (CSTC)** circuit. The pipeline combines:\n\n- \U0001F9E0 **Spectral Analysis** — BOLD time-series\
+  \ converted to static 3D ALFF maps via Fast Fourier Transform (FFT)\n- \U0001F52C **Functional Radiomics**\
+  \ — 3D Grey-Level Co-occurrence Matrix (GLCM) texture features extracted per CSTC region\n- \U0001F9EC\
+  \ **Evolutionary Feature Selection** — Block-constrained Genetic Algorithm (GA) operating at the anatomical\
+  \ region level\n- \U0001F916 **Supervised Classification** — Naive Bayes, SVM (Linear/RBF), and Multilayer\
+  \ Perceptron architectures\n\nThe proposed framework achieved a peak diagnostic accuracy of **78.00%**\
+  \ using a 3-layer MLP with only **4 anatomical structures** (96 radiomic features), consistently highlighting\
+  \ left-hemisphere structures as the most discriminative biomarkers.\n\n---\n\n## Directory Structure\n\
+  \n```\n.\n├── scripts/\n│   ├── preprocessing/\n│   │   └── motion_correction.py       # 4D rigid-body\
+  \ realignment via FLIRT (FSL)\n│   ├── alff/\n│   │   └── compute_alff.py            # FFT-based ALFF\
+  \ map generation\n│   ├── radiomics/\n│   │   └── glcm_extraction.py         # 3D GLCM texture feature\
+  \ extraction per ROI\n│   ├── ga/\n│   │   └── genetic_algorithm.py       # Block-constrained Genetic\
+  \ Algorithm for ROI selection\n│   └── classification/\n│       └── train_classifiers.py       # Naive\
+  \ Bayes, SVM, MLP training with 5-Fold CV\n├── data/\n│   └── README_data.md                 # Instructions\
+  \ for dataset access (NTU Hospital)\n├── results/\n│   └── selected_rois_per_model.csv    # GA-selected\
+  \ ROIs and accuracy per classifier\n└── README.md\n```\n\n---\n\n## \U0001F9E9 Pipeline Overview\n\n\
+  The framework is structured into **6 sequential phases**:\n\n| Step | Phase | Description |\n|------|-------|-------------|\n\
+  | 1 | **Dataset Organization** | rs-fMRI data split into TS (n=34) and Healthy Controls (n=34) |\n|\
+  \ 2 | **4D Spatial Preprocessing** | Intra-functional rigid-body motion correction (FLIRT, 6 dof) |\n\
+  | 3 | **Fourier Spectral Analysis** | FFT → ALFF maps (0.01–0.08 Hz neurophysiological band) |\n| 4\
+  \ | **Feature Extraction (GLCM)** | 24 3D radiomic descriptors per CSTC region (d=1, 4 orientations)\
+  \ |\n| 5 | **Genetic Algorithm Selection** | Block-based GA over 17 ROIs × 24 features (100 generations,\
+  \ pop=50) |\n| 6 | **Classification** | QuantileTransformer normalization + supervised ML classifiers\
+  \ |\n\n---\n\n## \U0001F9E0 CSTC Regions of Interest (17 ROIs)\n\nThe genetic algorithm operates over\
+  \ the following anatomical structures of the CSTC circuit:\n\n| Region | Hemisphere |\n|--------|------------|\n\
+  | Caudate Nucleus | Left / Right |\n| Thalamus Proper | Left / Right |\n| Putamen | Left / Right |\n\
+  | Accumbens Area | Left / Right |\n| Ventral Diencephalon (Ventral DC) | Left / Right |\n| Medial Orbitofrontal\
+  \ Cortex (mOFC) | Left / Right |\n| Superior Parietal Cortex | Left / Right |\n| Inferior Parietal Cortex\
+  \ | Left / Right |\n| Lateral Orbitofrontal Cortex (LOFC) | Left only |\n\n---\n\n## \U0001F4CA Results\n\
+  \nClassification performance across all models using 5-Fold Stratified Cross-Validation:\n\n| Model\
+  \ | Selected ROIs | # ROIs | # Features | Accuracy |\n|-------|---------------|--------|------------|----------|\n\
+  | Naive Bayes | Caudate (L,R), Lat. OFC (L), Sup. Parietal (L,R) | 5 | 120 | 71.21% |\n| SVM (Linear)\
+  \ | Accumbens (L), Lat. OFC (L), Thalamus (L,R), Ventral DC (R) | 5 | 120 | 72.73% |\n| SVM (RBF) |\
+  \ Accumbens (L), Caudate (L,R), Lat. OFC (L) | 4 | 96 | 72.73% |\n| **MLP (3 layers)** | **Accumbens\
+  \ (L), Caudate (L,R), Thalamus (L)** | **4** | **96** | **78.00%** |\n| MLP (4 layers) | Accumbens (L),\
+  \ Lat. OFC (L), Med. OFC (R), Caudate (R), Ventral DC (L,R) | 6 | 144 | 71.21% |\n| MLP (5 layers) |\
+  \ Accumbens (L), Med. OFC (L), Putamen (L), Ventral DC (R) | 4 | 96 | 72.73% |\n\n**Most selected structures\
+  \ across all models:**\n\n| Structure | Times Selected (out of 6) |\n|-----------|--------------------------|\n\
+  | Left Nucleus Accumbens | 5 |\n| Left Caudate Nucleus | 4 |\n| Left Thalamus Proper | 4 |\n\n---\n\n\
+  ## \U0001F680 Usage\n\n### Dependencies\n\n```bash\npip install numpy scipy scikit-learn nibabel nilearn\
+  \ pandas\n```\n\nFSL must be installed and available in your PATH for the preprocessing step (`FLIRT`).\n\
+  \n### Running the Pipeline\n\n```bash\n# Step 1 – Motion correction\npython scripts/preprocessing/motion_correction.py\
+  \ --input /path/to/4D_fmri.nii.gz --output /path/to/output/\n\n# Step 2 – Compute ALFF maps\npython\
+  \ scripts/alff/compute_alff.py --input /path/to/realigned.nii.gz --tr 2.0 --output /path/to/alff_map.nii.gz\n\
+  \n# Step 3 – Extract GLCM features\npython scripts/radiomics/glcm_extraction.py --alff /path/to/alff_map.nii.gz\
+  \ --atlas /path/to/cstc_atlas.nii.gz --output /path/to/features.csv\n\n# Step 4 – Run Genetic Algorithm\n\
+  python scripts/ga/genetic_algorithm.py --features /path/to/features.csv --labels /path/to/labels.csv\
+  \ --output /path/to/selected_rois/\n\n# Step 5 – Train classifiers\npython scripts/classification/train_classifiers.py\
+  \ --features /path/to/selected_features.csv --labels /path/to/labels.csv\n```\n\n---\n\n## \U0001F4C1\
+  \ Dataset\n\nThe rs-fMRI dataset used in this study was obtained through an institutional partnership\
+  \ with the **National Taiwan University Hospital** (NTUH), Taipei, Taiwan. It comprises **68 pediatric\
+  \ subjects** (ages 6–14):\n\n- **34 Tourette's Syndrome** patients\n- **34 Healthy Controls**\n- Acquisition:\
+  \ 3T Siemens TrioTim, TR=2.0s, TE=26ms, 34 axial slices, 180 volumes\n\n> ⚠️ The dataset is not publicly\
+  \ distributed. Please refer to `data/README_data.md` for institutional access information.\n\n---\n\n\
+  ## License\n\nThis project is licensed under the MIT License — you're free to use, modify, and distribute\
+  \ with attribution.\n\n---\n\n## Citation\n\nThe citation will be updated once this paper is published.\
+  \ Our citation template is:\n\n```bibtex\n@article{deBarros2026TSradiomics,\n  title     = {Pediatric\
+  \ Tourette Syndrome Classification Using rs-fMRI Radiomics of the CSTC Circuit: A Genetic Algorithm-Guided\
+  \ Approach},\n  author    = {Murilo Costa de Barros and Kau{\\^e} Tartarotti Nepomuceno Duarte and Chia-Jui\
+  \ Hsu and Wang-Tso Lee and Marco Antonio Garcia de Carvalho},\n  journal   = {Journal of LaTeX Class\
+  \ Files},\n  year      = {2026},\n  volume    = {NA},\n  pages     = {NA},\n  doi       = {NA}\n}\n\
+  ```\n\n---\n\n## Acknowledgments\n\nThis study was financed in part by the **São Paulo Research Foundation\
+  \ (FAPESP)**, Brazil – Process Number **2025/00214-8**; and partially supported by the **Coordenação\
+  \ de Aperfeiçoamento de Pessoal de Nível Superior – Brasil (CAPES)** – Finance Code 001.\n\nWe thank\
+  \ the Department of Pediatric Neurology, National Taiwan University, Taipei, Taiwan, for providing the\
+  \ neuroimaging data used in this work.\n"

@@ -1,0 +1,49 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Eliot-P/PRBIO
+url: https://github.com/Eliot-P/PRBIO
+platform: github
+description: Probabilistic and radiobiological optimization in proton therapy (OpenTPS plug-in)
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 0
+updated_at: '2024-10-29T13:53:11Z'
+image_source: https://raw.githubusercontent.com/Eliot-P/PRBIO/HEAD/PRBIO_logo_full.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+readme_excerpt: "![PRBIO](PRBIO_logo_full.png)\n\n# Probabilistic and RadioBIOlogical optimizations for\
+  \ proton therapy\n\n## What is PRBIO\n\nPRBIO in an OpenTPS library for probabilistic and radiobiological\
+  \ optimizations\nin proton therapy. \n\\\nMore information about OpenTPS can be found at www.opentps.org.\n\
+  \nPRBIO has been developed by Eliot Peeters and Romain Schyns in the context of their master thesis\
+  \ \nin Biomedical Engineering at UCLouvain. Supervisors are Prof. John Lee and Prof. Edmond Sterpin.\n\
+  \nFinal manuscript *\"Exploring the computational and clinical added-value of probabilistic optimization\
+  \ in proton therapy\"*\ncan be found [here](https://dial.uclouvain.be/memoire/ucl/en/object/thesis%3A48785).\n\
+  \n**Authors provide the code as is and no warranty is given. This is work is solely for research purposes\
+  \ and should not be\nused for clinical purposes.**\n\n## How to use PRBIO\n\nPRBIO is an extension of\
+  \ OpenTPS. To use PRBIO, you need to have OpenTPS installed on your machine.\\\nThe optimization framework\
+  \ is based on the OpenTPS optimization framework.\\\n\nTo optimize a plan with PRBIO, you will need\
+  \ to create a plan through OpenTPS and then use the PRBIO optimizers.\n\n\n```python\n# Do not forget\
+  \ the subsequent imports of OpenTPS not detailed here\n\nimport PRBIO\nfrom PRBIO import RadiobiologicalPlanOptimizer\n\
+  from PRBIO import ProbabilisticPlanOptimizer\nfrom PRBIO import BiologicalObjectiveList\n\n# Probabilistic\
+  \ optimization\n\nplan.planDesign.objectives = ObjectivesList()\nplan.planDesign.objectives.setTarget(target.name,\
+  \ prescription)\n\nplan.planDesign.objectives.addFidObjective(target,FidObjective.Metrics.DMAX, 72,\
+  \ 10)\nplan.planDesign.objectives.addFidObjective(target,FidObjective.Metrics.DMIN, 68, 30)\n\nplan.planDesign.objectives.addFidObjective(spinalcord,FidObjective.Metrics.DMAX,\
+  \ 15,4 )\nplan.planDesign.objectives.addFidObjective(parotid_r,FidObjective.Metrics.DMAX, 25, 1)\nplan.planDesign.objectives.addFidObjective(parotid_l,FidObjective.Metrics.DMAX,\
+  \ 25, 1)\nplan.planDesign.objectives.addFidObjective(smg_l,FidObjective.Metrics.DMAX, 25, 1)\nplan.planDesign.objectives.addFidObjective(smg_r,FidObjective.Metrics.DMAX,\
+  \ 25, 1)\nplan.planDesign.objectives.addFidObjective(pharConsMid,FidObjective.Metrics.DMAX, 20, 5)\n\
+  plan.planDesign.objectives.addFidObjective(body,FidObjective.Metrics.DMAX, 30, 1)\n\n\nsolver = ProbabilisticOptimizer(\
+  \ CTD=ctd,plan= plan)\n\n# Radiobiological optimization\nplan.planDesign.objectives = BiologicalObjectiveList()\n\
+  plan.planDesign.objectives.setTarget(target.name, prescription)\n\nplan.planDesign.objectives.addBiologicalObjective(target,10,\
+  \ 1*alpha, eta, beta=alpha/10)\nplan.planDesign.objectives.addBiologicalObjective(parotid_r, 1, 1*alpha,\
+  \ eta, beta=alpha/3)\nplan.planDesign.objectives.addBiologicalObjective(parotid_l, 1, 1*alpha, eta,\
+  \ beta=alpha/3)\nplan.planDesign.objectives.addBiologicalObjective(smg_l, 1, 1*alpha, eta, beta=alpha/3)\n\
+  plan.planDesign.objectives.addBiologicalObjective(smg_r, 3, 1*alpha, eta, beta=alpha/3)\nplan.planDesign.objectives.addBiologicalObjective(pharConsMid,\
+  \ 10, 1*alpha, eta, beta=alpha/3)\n\nsolver = RadiobiologicalPlanOptimizer(plan, ctd,initial_weights=None,\
+  \ gamma=gamma, Nfractions=Nfrac)\n````\n\n## Contacts \n> **[Eliot Peeters](https://www.linkedin.com/in/eliot-peeters-a48b03257/)**\
+  \ *(UCLouvain/IREC/MIRO)* : eliot.peeters@uclouvain.be \\\n> **[Romain Schyns](https://www.linkedin.com/in/romain-schyns-290b04257/)**\
+  \ *(UCLouvain/IREC/MIRO)* : romain.schyns@uclouvain.be  \n\n\n"

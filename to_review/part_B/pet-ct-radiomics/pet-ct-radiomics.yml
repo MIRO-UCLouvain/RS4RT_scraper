@@ -1,0 +1,86 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: sjyang9/PET-CT-radiomics_
+url: https://github.com/sjyang9/PET-CT-radiomics_
+platform: github
+description: ''
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-16T03:48:13Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# PET/CT Radiomics Analysis Code\n\nVersion 1.2.0\n\nThis repository implements a reproducible\
+  \ analysis of paired threshold- and gradient-segmentation PET radiomic features for binary classification\
+  \ of benign and malignant pulmonary nodules. The analysis uses one chronological hierarchy, from preprocessing-scope\
+  \ audit through prespecified models, imbalance-method comparison, expanded seed sensitivity, end-to-end\
+  \ nested model selection, feature agreement, and feature-reduction sensitivity.\n\n## Analysis sequence\n\
+  \n### Stage 00. Preprocessing-scope audit\n\nA repeated split experiment measures how standardization\
+  \ and SMOTE scope affect performance estimates. Every test set contains original cases only. The valid\
+  \ reference arm fits all preprocessing steps using training data only.\n\n### Stage 01. Prespecified\
+  \ five-model analysis\n\nThe five classifier families retained from the initial analysis are evaluated\
+  \ with repeated stratified five-fold cross-validation using five repeats:\n\n- L2 logistic regression\n\
+  - radial-basis-function support vector machine\n- random forest\n- LightGBM\n- XGBoost\n\nStandardization,\
+  \ oversampling, model fitting, and prediction are isolated within each training/held-out split.\n\n\
+  ### Stage 02. Class-imbalance strategy comparison\n\nThe five classifier families are crossed with five\
+  \ imbalance strategies:\n\n- SMOTE\n- Borderline-SMOTE\n- random oversampling\n- class weighting\n-\
+  \ no resampling\n\nAll strategies are evaluated on identical repeated cross-validation partitions. The\
+  \ XGBoost class-weight implementation derives symmetric inverse-frequency sample weights from the current\
+  \ training fold.\n\n### Stage 03. Expanded model and random-seed sensitivity\n\nTwenty-seven prespecified\
+  \ configurations are evaluated for both segmentation datasets across random seeds 0-19. Each segmentation-model-seed\
+  \ run produces one complete case-level out-of-fold prediction set for all 118 cases. The dummy-prior\
+  \ configuration is retained only as a baseline and is excluded from performance ranking.\n\n### Stage\
+  \ 04. End-to-end repeated nested cross-validation\n\nAll analytical choices are restricted to each outer-training\
+  \ partition.\n\nFor every outer fold:\n\n1. all 27 candidate configurations are screened using the same\
+  \ internal validation partitions and a fixed 10-feature training-only representation;\n2. the highest-ranked\
+  \ candidates are shortlisted;\n3. shortlisted candidates are compared on the same repeated inner-validation\
+  \ partitions;\n4. feature count (5, 10, or 20), imbalance configuration, and model-specific hyperparameters\
+  \ are selected;\n5. a decision cutoff is selected from separate training-only out-of-fold predictions;\n\
+  6. the outer-test fold is evaluated once after all choices are complete.\n\nThe outer evaluation uses\
+  \ five folds repeated ten times. Threshold and gradient datasets use identical outer splits. Candidate\
+  \ estimator seeds are deterministic and model-specific, while validation partitions are shared within\
+  \ each outer fold.\n\nNested checkpoints use a signed configuration record containing the software version,\
+  \ feature-matrix hashes, case IDs, labels, candidate registry, and validation settings. Each completed\
+  \ outer fold is written through an atomic commit ledger. Resume mode accepts only fully committed folds\
+  \ with a matching signature.\n\n### Stage 05. Cross-segmentation feature agreement\n\nPaired threshold-\
+  \ and gradient-derived feature values are compared using Spearman correlation, Pearson correlation,\
+  \ ICC(2,1), and Bland-Altman statistics. These measures quantify agreement between segmentation methods\
+  \ and are distinct from reader-specific reproducibility.\n\n### Stage 06. Feature-reduction sensitivity\n\
+  \nThree training-contained representations are compared:\n\n- all 83 features;\n- correlation pruning\
+  \ followed by non-zero L1-logistic coefficients, capped at eight features;\n- principal component analysis\
+  \ retaining 95% of variance.\n\nThe sparse selector never fills the feature set with zero-coefficient\
+  \ variables. Regularization is relaxed across a predefined sequence only when a stronger setting produces\
+  \ no non-zero coefficient.\n\n## Model-configuration safeguards\n\n- L2 logistic regression is constructed\
+  \ without an active `l1_ratio`.\n- L1 logistic regression explicitly uses L1 regularization.\n- Elastic-net\
+  \ logistic regression explicitly uses elastic-net regularization and its specified `l1_ratio`.\n- Runtime\
+  \ parameter translation supports both the earlier scikit-learn penalty API and the newer ratio-only\
+  \ API.\n- Calibrated linear SVM adapts its calibration-fold count to the minority-class count available\
+  \ in the current training partition.\n- LightGBM receives stable synthetic feature names during both\
+  \ fitting and prediction.\n- Fold-level probability variation is recorded so constant-output configurations\
+  \ can be identified.\n- Warnings are captured in stage-specific CSV files instead of being silently\
+  \ discarded.\n\n## Input files\n\nThe two CSV files must contain identical `case_id`, `Label`, and feature\
+  \ definitions.\n\n- `Label = 0`: benign\n- `Label = 1`: malignant\n\nDefault cohort assertions:\n\n\
+  - 118 cases\n- 83 features\n- 11 benign lesions\n- 107 malignant lesions\n\nPatient data are not distributed\
+  \ with this repository.\n\n## Installation\n\nInstall the required Python packages:\n\n```bat\npython\
+  \ -m pip install -r requirements.txt\n```\n\n## Full Windows execution\n\nUse a new output directory\
+  \ for this software version.\n\n```bat\npython run_pipeline.py ^\n  --threshold \"data\\ready_threshold_118.csv\"\
+  \ ^\n  --gradient \"data\\ready_gradient_118.csv\" ^\n  --out \"results\\petct_analysis_final_v1_2_0\"\
+  \ ^\n  --id-col case_id ^\n  --stages all ^\n  --expanded-seeds 0-19 ^\n  --nested-shortlist-size 3\
+  \ ^\n  --resume ^\n  --figures summary ^\n  --n-jobs 1\n```\n\nThe `--resume` option initializes a signed\
+  \ checkpoint on the first execution and resumes only matching committed nested folds after interruption.\n\
+  \n## Nested stage only\n\n```bat\npython run_pipeline.py ^\n  --threshold \"data\\ready_threshold_118.csv\"\
+  \ ^\n  --gradient \"data\\ready_gradient_118.csv\" ^\n  --out \"results\\petct_analysis_final_v1_2_0\"\
+  \ ^\n  --id-col case_id ^\n  --stages nested ^\n  --nested-shortlist-size 3 ^\n  --resume ^\n  --figures\
+  \ summary ^\n  --n-jobs 1\n```\n\n## Output directories\n\n- `00_workflow_audit`\n- `01_core_models`\n\
+  - `02_imbalance_methods`\n- `03_expanded_models`\n- `04_nested_validation`\n- `05_feature_agreement`\n\
+  - `06_feature_reduction`\n\nThe root output directory also contains the paired-input audit, model registry,\
+  \ immutable run history, consolidated analysis summary, and SHA-256 output manifest.\n\n## Quick software\
+  \ check\n\nA reduced integration run is available through `--quick-test`. Quick-test outputs are software\
+  \ checks and are not scientific performance estimates.\n"

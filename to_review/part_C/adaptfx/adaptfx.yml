@@ -1,0 +1,127 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: openAFT/adaptfx
+url: https://github.com/openAFT/adaptfx
+platform: github
+description: Reinforcement Learning based Adaptive Fractionation Package for MR guided Radiotherapy
+license: MIT
+language: Python
+keywords: []
+stars: 3
+updated_at: '2025-09-03T17:04:56Z'
+image_source: null
+heuristic_total_score: 27
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 7 support term(s).
+readme_excerpt: "# The `adaptfx` package\n\n## Content\n\n1. [About](#about)  \n2. [Installation](#installation)\
+  \  \n3. [Package Structure](#package-structure)  \n4. [Describtion](#description)  \n    1. [2D Algorithms](#the-2d-algorithms)\n\
+  \    2. [3D Algorithms](#the-3d-algorithms)\n    3. [GUI](#gui)\n    4. [Probability Updating](#probability-updating)\n\
+  \    5. [Additional Data](#additional-data)\n5. [Extended Function](#extended-functionality)\n6. [Troubleshooting](#troubleshooting)\n\
+  \n---\n\n## About\n\n`adaptfx` is a python package to calculate adaptive fractionation schemes. Using\
+  \ magnetic resonance (MR) guidance in radiotherapy, treatment plans can be adapted daily to a patient's\
+  \ geometry, thereby exploiting inter-fractional motion of tumors and organs at risk (OAR). This can\
+  \ improve OAR sparing or tumor coverage, compared to standard fractionation schemes, which simply apply\
+  \ a predefined dose every time.\n\n\nFor this adaptive approach a reinforcement learning algorithm based\
+  \ on dynamic programming was initially developed by Pérez Haas et al. [[1]](#1). The package is actively\
+  \ maintained and frequently extended as part of our ongoing research on the topic\n\n\n## Installation\n\
+  \nIt is recommended to create a virtual environment using the `venv` module:\n\n```\n$ python3.10 -m\
+  \ venv adaptfx_env\n```\n\nactivate the virtual environment\n```\n$ cd adaptfx_env\n$ source bin/activate\n\
+  ```\n\nTo install the `adaptfx` package, use either of the methods below.\n\n### Method 1: pip\n\n```\n\
+  $ pip install adaptfx\n```\n\n### Method 2: install from source\n\n```\n$ git clone https://github.com/openAFT/adaptfx.git\n\
+  $ cd adaptfx\n$ pip3 install .\n```\n\nthe command line tool (CLI) is then available and can be used\
+  \ via\n\n```\n$ aft [options] <instructions_file>\n```\n\nfor more information on the usage of the CLI,\
+  \ read the [manual](MANUAL.md).\n\nThe user can also decide to use the scripts from `reinforce` in their\
+  \ python scripts e.g.\n\n```python\nimport adapatfx as afx\nplan_output = afx.multiple('oar', keys)\n\
+  ```\n\n`adaptfx` also provides a GUI. However, it depends on `Tkinter`. It often comes installed, but\
+  \ if not you can find the relevant installation instructions [here](https://tkdocs.com/tutorial/install.html).\
+  \ E.g. in python and on Ubuntu, you would install it via\n\n```\n$ sudo apt install python3-tk\n```\n\
+  \n## Package Structure\n\nThe package is organized under the `src` folder. All relevant scripts that\
+  \ calculate the fractionation schemes are packed as functions in either `reinforce.py` or `reinforce_old.py`.\
+  \ Where `reinforce.py` holds the newest functions supporting more features and faster calculation. Older\
+  \ functions are also integrated with the CLI, but need to be updated.\n\n```\nadaptfx\n├── src/adaptfx\n\
+  │  ├── aft_propmt.py\n│  ├── aft_utils.py\n│  ├── aft.py\n│  ├── constants.py\n│  ├── maths.py\n│  ├──\
+  \ planning.py\n│  ├── radiobiology.py\n│  ├── reinforce_old.py\n│  ├── reinforce.py\n│  └── visualiser.py\n\
+  └── work\n```\n\n## Description\n\n### The 2D algorithms\n\nThe function `max_tumor_bed_old` globally\
+  \ tracks OAR BED to satisfy constraints on the dose to the normal tissue, while attempting to maximize\
+  \ the BED delivered to the tumor.\n\n`min_oar_bed` and `min_oar_bed_old`, on the other hand, track tumor\
+  \ BED to achieve the tumor dose target and in doing so it minimizes the cumulative OAR BED.\n\nSince\
+  \ the state spaces for these two algorithms are essentially two-dimensional, they are the faster algorithm.\
+  \ But they may overshoot w.r.t. the dose delivered to the tumor/OAR, since only one of the structure's\
+  \ BED can be tracked, one has to decide whether reaching the prescribed tumor dose or staying below\
+  \ the maximum OAR BED is more relevant.\n\nGenerally the OAR tracking is better suited for patients\
+  \ with anatomies where the OAR and tumor are close to each other and the prescribed dose may not be\
+  \ reached. When the OAR and tumor are farther apart, tracking the tumor BED and minimizing OAR BED can\
+  \ lead to reduced toxicity while achieving the same treatment goals.\n\n`frac_min` defines the function\
+  \ to track OAR BED and minimize the number of fractions in cases where there appears an exceptionally\
+  \ low sparing factor during the course of a treatment.\n\n### The 3D algorithms\n\nThe 3D algorithms\
+  \ in function `min_oar_max_tumor_old` track OAR BED and tumor BED simultaneously. In this version a\
+  \ prescribed tumor dose must be provided alongside an OAR BED constraint. The algorithm then tries smartly\
+  \ optimizes for a low OAR BED _and_ high tumor BED at the same time, while never compromising OAR constraints\
+  \ and always preferring to reduce normal tissue dose when achieving the treatment objectives.\n\nThe\
+  \ algorithms are based on an inverse-gamma prior distribution. To set up this distribution a dataset\
+  \ is needed with prior patient data (sparing factors) from the same population.\n\nThere is a function\
+  \ to calculate the hyperparameters of the inverse-gamma distribution. But there is also the option to\
+  \ use a fixed probability distribution for the sparing factors. In this case, the probability distribution\
+  \ must be provided with a mean and a standard deviation, and it is not updated as more information is\
+  \ available. To check out how the hyperparameters influence the prior distribution, the `Inverse_gamma_distribution_preview.py`\
+  \ file has been included that allows direct modelling of the distribution.\n\n### GUI\n\nA last addition\
+  \ is made with graphical user interfaces that facilitate the use of the interpolation algorithms. There\
+  \ are two interfaces that can be run. In these interfaces all variables can be given to compute an adaptive\
+  \ fractionation plan for a patient. \n\n> :warning: Note:\\\n> The interfaces are not optimized, and\
+  \ thus it is not recommended using them to further develop extensions.\n\n### Reducing Number of Fractions\n\
+  \nFor the 2D algorithms there exist the possibility to reduce number of fractions. A constant $c$ can\
+  \ be chosen which introduces a reward (or rather a cost) linear to the number of fractions used to finish\
+  \ the treatment. The cost is added to the immediate reward returned by the environment in the current\
+  \ fraction. There exist a simulative model helping to estimate what the constant $c$ should be chosen\
+  \ in order for the treatment to finish on some target number of fractions $n_{\\text{targ}}$. The function\
+  \ can be found [here](src/adaptfx/radiobiology.py) in `c_calc`.\n\n### Probability Updating\n\nThe DP\
+  \ algorithm relies on a description of the environment to compute an optimal policy, in this case the\
+  \ probability distribution of the sparing factor $P(\\delta)$, which we assume to be a Gaussian distribution\
+  \ truncated at $0$, with patient-specific parameters for mean and standard deviation. At the start of\
+  \ a treatment, only two sparing factors are available for that patient, from the planning scan and the\
+  \ first fraction. In each fraction, an additional sparing factor is measured, which can be used to calculate\
+  \ updated estimates $\\mu_t$ and $\\sigma_t$ for mean and standard deviation, respectively.\n\n####\
+  \ No Updating\n\nIn case where the probability is not updated the parameters $\\mu_t$ and $\\sigma_t$\
+  \ of the normal distribution can be fixed.\n\n#### Maximum a posteriori estimation\n\nIn each fraction\
+  \ $t$, a maximum likelihood estimator of the mean of the sparing factor distribution and an estimator\
+  \ for the standard deviation (following a chi-squared distribution) is used. Both estimators are used\
+  \ to constitute the updated normal distribution in fraction $t$.\n\nHowever, the standard deviation\
+  \ may be severely under- or overestimated if calculated from only two samples at the very beginning\
+  \ of the treatment. Therefore, we assume a population based prior for the standard deviation and compute\
+  \ the maximum a posterior estimator of $\\sigma_t$ via Bayesian inference. As the sparing factors are\
+  \ assumed to follow a normal distribution with unknown variance, a gamma distribution is chosen as prior\
+  \ to estimate the standard deviation $\\sigma$.\n\n#### Posterior predicitve distribution\n\nApart from\
+  \ using a gamma prior for the standard deviation, a full Bayesian approach can be employed with an inverse-gamm\
+  \ distribution as a conjugate prior for the variance. The resulting posterior predictive distribution\
+  \ is a student t-distribution. With this approach instead of using the gamma prior to estimate, the\
+  \ probability distribution is estimated from an updated t-distribution. The results are slightly different\
+  \ compared to the maximum a posteriori estimation.\n\n### Additional Data\n\nThe two additional folders\
+  \ (`DVH_figures`, `Patientdata_paper`) contain the DVH data and figures of the 10 patients that were\
+  \ included in the paper.\n\n## Extended Functionality\n\nThe algorithms allow to choose some extra parameters\
+  \ to specify extra constraints. The suggested parameters are specified for a 5 fraction SBRT plan where\
+  \ there are not constraints on the maximum or minimum dose:\n\n- Chose the amount of fractions. Instead\
+  \ of just calculating for the case of a 5-fractions SBRT treatment, the amount of fractions can be chosen\
+  \ freely (e.g. 30 fractions)\n- Fix a minimum and maximum dose: Limits the action space by forcing a\
+  \ minimum and maximum dose for each fraction. (e.g. 4-16 Gy)\n- Calculate optimal fraction size by tracking\
+  \ tumor BED: The 2D GUI has an additional extension, where one can optimize the optimal dose based on\
+  \ the prescribed tumor dose. (E.g., the clinician prescribes a tumor BED of 72 Gy. The program will\
+  \ try to minimize the OAR BED while aiming at the 72 Gy BED prescribed dose.)\n\n## Troubleshooting\n\
+  \n### No module named `_ctypes` on install\n\n**Problem:** on Linux distributions it happens that the\
+  \ `pip install .` command fails with the message:\n\n```\nTraceback (most recent call last):\n   File\
+  \ \"<stdin>\", line 1, in <module>\n   File \"/usr/local/lib/python3.10/some/module\", line 10, in <module>\n\
+  \   import ctypes\n   File \"/usr/local/lib/python3.10/ctypes/__init__.py\", line 7, in <module>\n \
+  \     from _ctypes import Union, Structure, Array\nImportError: No module named '_ctypes'\n```\n\n**Solution:**\
+  \ with the specific package manager of the Linux distribution install `libffi-dev` development tool.\
+  \ E.g. in Fedora Linux and derivatives install this tool\n\n```\n$ sudo dnf install libffi-devel\n```\n\
+  \nOn Ubuntu:\n```\n$ sudo apt install libffi-dev\n```\n\n### No GUI backend for `matplotlib`\n\n**Problem:**\
+  \ on Linux or MacOS it could be that once `aft` is run the plots are not shown and there is an error\
+  \ message:\n\n\n```\nCollecting tkinter\n  Could not find a version that satisfies the requirement tkinter\
+  \ (from versions: )\nNo matching distribution found for tkinter\n```\n\n**Solution:** on Fedora Linux\
+  \ and derivative distributions one could solve this by either installing python tkinter\n\n```\n$ sudo\
+  \ dnf install python3-tkinter\n```\n\non Ubuntu\n\n```\n$ sudo apt-get install python3-tk\n```\n\n**Solution:**\
+  \ on MacOS and Linux one could instead use `pip` to install `pyqt`\n\n```\n$ pip install pyqt5\n```\n\
+  \n\n## References\n\n<a id=\"1\">[1]</a>\nYoel Samuel Pérez Haas et al.;\n**Adaptive fractionation at\
+  \ the MR-linac**, *Physics in Medicine & Biology*, Jan. 2023, doi: https://doi.org/10.1088/1361-6560/acafd4"

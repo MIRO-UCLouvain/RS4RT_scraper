@@ -1,0 +1,85 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: sanmolali/Glioma-Subtypes-Classification-using-Radiomics-and-RadioGenomics
+url: https://github.com/sanmolali/Glioma-Subtypes-Classification-using-Radiomics-and-RadioGenomics
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2025-02-24T17:33:59Z'
+image_source: null
+heuristic_total_score: 19
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Project Overview\n\nThis project is divided into 2 parts\n  - 1st part aims to classify\
+  \ glioma subtypes using data from The Cancer Genome Atlas (TCGA). The primary objectives include:\n\
+  - Developing machine learning models to predict glioma subtypes based on metadata and processed gene\
+  \ expression data.\n- Conducting survival analysis to assess the impact of biomarkers on patient survival.\n\
+  - The 2nd part of the project aims to predict the genetic profile of the most severe form of brain cancer,\
+  \ i.e. glioblastoma.\n    - for this purpose, data is sourced from RSNA and MICCAI, (link:  [RSNA-MICCAI\
+  \ Brain Tumor Radiogenomic Classification](https://www.kaggle.com/competitions/rsna-miccai-brain-tumor-radiogenomic-classification/data?select=train_labels.csv).)\
+  \ the focus is to detect the presence of a key biomarker MGMT promoter methylation.\n  - Implementing\
+  \ a CNN-based classification model to identify key biomarkers of glioblastoma. \n\n# Directory Structure\n\
+  \nThis project follows two distinct approaches for biomarker identification:\n\n### 1. Glioblastoma\
+  \ genetic profile using CNN:\n- Utilizes EfficientNet, a pre-trained CNN model, to identify biomarkers\
+  \ using medical images.\n- \n#### glioblastoma MRI :\n  ![glioblastoma](https://github.com/user-attachments/assets/335f986e-a559-43b9-be9a-d17d936853d6)\n\
+  \n  \n  ### CNN architecture:\n    \n  ![EfficientNet-Architecture](https://github.com/user-attachments/assets/1643fa61-a89b-421a-b1a9-c9c48dda1c55)\n\
+  \n- Image modalities considered:\n  - **Flair**\n  - **T1w**\n  - **T1wCE**\n  - **T2w**\n\n#### Modalities:\n\
+  \n![Screenshot from 2025-02-23 04-38-46](https://github.com/user-attachments/assets/311c0315-49fe-44a5-86da-91103e104c63)\n\
+  \n### 2. Pyradiomics-Based subtypes classification of glioma:\n- Leverages radiomic features extracted\
+  \ using the `gdc-client` tool.\n- **Directory Breakdown:**\n  - `Pyradimics-classification/scr/`: Contains\
+  \ scripts and Jupyter notebooks for preprocessing, model training, evaluation, and deployment.\n  -\
+  \ `model_evaluation.ipynb`: Notebook for model evaluation, including data preprocessing, training, performance\
+  \ analysis, and feature importance visualization.\n  - `preprocess_data_labels.ipynb`: Notebook for\
+  \ preparing and labeling data.\n  - `streamlit_app.py`: Python script for deploying the trained model\
+  \ via Streamlit.\n  - `get_data.sh`: Shell script to download TCGA data using the `gdc-client` tool.\n\
+  \  - `survival_analysis.ipynb`: Notebook for survival analysis using Cox Proportional Hazards models\
+  \ to assess the impact of biomarkers on patient survival.\n  \n### 3. Model Storage and Processed Data\n\
+  - `models/`: Contains saved pre-trained models and scalers.\n  - `scaler.pkl`: Pre-processing scaler\
+  \ for data normalization.\n  - `xgb_model.pkl`: Pre-trained XGBoost classification model.\n- `processed/`:\
+  \ Stores cleaned datasets for training and testing.\n  - `data.csv`: Processed gene expression data.\n\
+  \  - `glioma_labels.csv`: Corresponding labels for glioma classification.\n- `metadata/`: Contains metadata\
+  \ related to TCGA samples.\n  - `clinical.tsv`: Clinical metadata.\n  - `gdc_sample_sheet.tsv`: Sample\
+  \ details from GDC.\n  \n### 4. Root Directory Files\n- `gdc_manifest.txt`: Manifest file listing TCGA\
+  \ dataset files.\n\n# Model Training and Evaluation\n\n### Data Preprocessing\n- Loads gene expression\
+  \ data and glioma labels.\n- Removes genes with no variance across samples.\n- Handles missing values\
+  \ and normalizes data before transposing it for model input.\n- Ensures class balance by analyzing label\
+  \ distributions.\n\n### Data Visualizations\n`PCA of Scaled Gene Expression Data on Unselected Features`\n\
+  \n\n\n![image](https://github.com/user-attachments/assets/f153cf21-146d-45fb-b3eb-c5cd919e57da)\n\n\n\
+  \n`UMAP of Gene Expression Data with Unselected Features`\n\n\n\n![image](https://github.com/user-attachments/assets/1b196890-3f18-43e2-9b1a-53e06f9e3e24)\n\
+  \n\n\n`PCA of Scaled Gene Expression Data with Selected Features`\n\n\n\n![image](https://github.com/user-attachments/assets/912a6c7d-3e7b-455f-85eb-337ba1c0177a)\n\
+  \n\n\nUMAP of Gene Expression Data with Selected Features\n\n\n\n![image](https://github.com/user-attachments/assets/253571ff-c0a6-4c01-a086-19369e93d6ac)\n\
+  \n\n### Machine Learning Models\n- **Logistic Regression**: Used as a baseline for comparison.\n\n \
+  \  ` Confusion Matrix Results:`\n\n\n    ![image](https://github.com/user-attachments/assets/5c2df6d2-d3f2-448d-a17f-8f6b47f3a8c5)\n\
+  \n\n- **Random Forest**: Trained to classify glioma subtypes and analyze feature importance.\n    Feature\
+  \ Importance Chart of Random Forest\n\n\n\n    ![image](https://github.com/user-attachments/assets/afd91275-47a4-40e5-bd74-e07607e29198)\n\
+  \n\n   `Confusion Matrix Results:`\n\n\n\n  ![image](https://github.com/user-attachments/assets/a837c282-3b60-496a-92f2-b03f38471672)\n\
+  \n  \n- **XGBoost Classifier**: Outperforms Random Forest slightly but struggles to distinguish between\
+  \ \"Oligodendroglioma\" and \"Astrocytoma.\"\n   Feature Importance Chart of XGBoost\n\n\n\n   ![image](https://github.com/user-attachments/assets/779e8e17-44d6-4cee-a753-02203eb4d684)\n\
+  \n\n\n\n  `Confusion Matrix Results:`\n\n\n\n  ![image](https://github.com/user-attachments/assets/66ae91af-a55d-4510-8da5-72639db25e14)\n\
+  \n\n\n- Model evaluation includes:\n  - 5-fold cross-validation\n  - Metrics: F1-score, Accuracy, AUC-ROC,\
+  \ and Confusion Matrices\n\n### Model Storage\n- The trained **XGBoost model** and **scaler** are saved\
+  \ as `.pkl` files for future use.\n\n# Survival Analysis\n- Conducted using the `survival_analysis.ipynb`\
+  \ notebook.\n- **Cox Proportional Hazards Model** assesses how biomarkers influence survival rates.\n\
+  - Identifies significant biomarkers correlated with prolonged or reduced survival.\n- Addresses multicollinearity\
+  \ using correlation matrices to refine the feature set.\n\n# Setup Instructions\n\n### 1. Install Dependencies\n\
+  Use the provided `environment.yml` file to set up a Conda environment with all required dependencies:\n\
+  ```bash\nconda env create -f scr/environment.yml\nconda activate JupyterLab\n```\n\n### 2. Download\
+  \ Data\nRun the `get_data.sh` script to fetch data from GDC:\n```bash\nbash Pyradimics-classification/scr/get_data.sh\n\
+  ```\n\n### 3. Data Preprocessing\nExecute the `preprocess_data_labels.ipynb` notebook to clean raw gene\
+  \ expression data and generate classification labels.\n\n### 4. Model Training & Evaluation\nTrain and\
+  \ evaluate models using the `model_evaluation.ipynb` notebook.\n\n### 5. Survival Analysis\nAnalyze\
+  \ survival-related biomarkers using the `survival_analysis.ipynb` notebook and clinical data.\n\n# Usage\n\
+  \n### 1. Data Preprocessing\nUse `preprocess_data_labels.ipynb` to clean and prepare the dataset.\n\n\
+  ### 2. Model Evaluation\nThe `model_evaluation.ipynb` notebook provides performance metrics for classification\
+  \ models.\n\n### 3. Survival Analysis\nThe `survival_analysis.ipynb` notebook helps investigate the\
+  \ relationship between biomarkers and patient survival outcomes.\n\n\n# Front End for Classification\
+  \ using Radiomics features\n\n![image](https://github.com/user-attachments/assets/1bb62590-e7fd-42a6-adf2-109d988b0ffa)\n\
+  \n\n"

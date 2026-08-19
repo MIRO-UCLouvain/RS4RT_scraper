@@ -1,0 +1,67 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: yuanxe2004/radiomics-lymphedema
+url: https://github.com/yuanxe2004/radiomics-lymphedema
+platform: github
+description: Radiomics and morphological analysis framework for lower-limb lymphedema staging using CE-MRL
+  imaging.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-24T05:32:59Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# radiomics-lymphedema\n\nRadiomics and morphology modeling pipeline for lower-limb lymphedema\
+  \ staging.\n\nThis release provides the main open-source workflow used after feature-table construction:\
+  \ tabular Excel loading, train/validation/internal-test/external-test splitting, feature selection,\
+  \ model selection, final model evaluation, plotting, wrong-case analysis, and model package export.\n\
+  \n## Scope of This Repository\n\nIncluded:\n\n- main modeling code for development, internal testing,\
+  \ and independent external testing\n- model packaging for later independent inference\n- PyRadiomics\
+  \ configuration and an example feature-extraction script for already converted and segmented NIfTI images\n\
+  - plotting and interpretability outputs including ROC, calibration, DCA, SHAP, feature-distribution\
+  \ plots, and wrong-case analysis\n\nNot included:\n\n- DICOM-to-NIfTI conversion\n- VOI segmentation\
+  \ or manual segmentation review\n- full image preprocessing pipeline before the NIfTI feature-extraction\
+  \ stage\n- repeated nested cross-validation; nested CV was used as supplementary robustness analysis\
+  \ and is not included in the main release\n\nProspective testing in the manuscript was performed by\
+  \ applying the exported locked model packages to an independent prospective feature table. The main\
+  \ release focuses on the development, internal-test, and external-test workflow; prospective inference\
+  \ can be reproduced by loading the exported model packages and applying the same selected feature columns\
+  \ to a prospective table.\n\n## Installation\n\n```bash\ngit clone https://github.com/yuanxe2004/radiomics-lymphedema.git\n\
+  cd radiomics-lymphedema\npython -m venv .venv\n.venv\\Scripts\activate\npip install -e .\n```\n\nInstall\
+  \ the feature-extraction dependencies when using the PyRadiomics example:\n\n```bash\npip install -e\
+  \ \".[radiomics]\"\n```\n\nThe manuscript environment used `scikit-learn==1.7.2`, `PyRadiomics==3.0.1`,\
+  \ and `SimpleITK==2.5.2`.\n\n## Usage\n\nRun from the repository root:\n\n```bash\npython -m radiomics_project\
+  \ --input-excel path\to\features.xlsx --output-dir outputs\n```\n\nSet cohort labels according to your\
+  \ Excel file:\n\n```bash\npython -m radiomics_project ^\n  --input-excel path\to\features.xlsx ^\n \
+  \ --output-dir outputs ^\n  --development-cohort-label development ^\n  --external-test-cohort-label\
+  \ external\n```\n\nEquivalent environment variables:\n\n```bash\nset RADIOMICS_INPUT_EXCEL=path\to\f\
+  eatures.xlsx\nset RADIOMICS_OUTPUT_DIR=outputs\nset RADIOMICS_DEVELOPMENT_COHORT_LABEL=development\n\
+  set RADIOMICS_EXTERNAL_TEST_COHORT_LABEL=external\npython -m radiomics_project\n```\n\n## Input Table\n\
+  \nThe Excel file should contain:\n\n- a stage/label column configured by `LABEL_COL` (default: `标签`)\n\
+  - a patient/case ID column configured by `ID_COL` (default: `序号`)\n- a side column configured by `SIDE_COL`\
+  \ (default: `肢体`)\n- a cohort/center split column configured by `CENTER_COL` (default: `对应中心`)\n- radiomics\
+  \ feature columns\n- morphology feature columns listed in `MORPH_FEATURES`\n\nThe values in `CENTER_COL`\
+  \ are user-defined cohort labels. Map all model-development centers to the development label and the\
+  \ independent external test cohort to the external-test label. For example, if your manuscript data\
+  \ use centers 1-3 for development and center 4 for external testing, create or recode a cohort column\
+  \ so centers 1-3 share one value such as `development`, and center 4 has a value such as `external`.\n\
+  \n## Feature Extraction\n\nThe main modeling pipeline starts from an Excel feature table. For radiomics\
+  \ feature extraction from preprocessed NIfTI images and masks, see:\n\n- `configs/pyradiomics.yaml`\n\
+  - `scripts/extract_radiomics_features.py`\n- `docs/feature_extraction.md`\n\nThe provided configuration\
+  \ matches the manuscript feature-extraction settings: PyRadiomics 3.0.1, SimpleITK 2.5.2, fixed bin\
+  \ width 25, pre-resampled 1 x 1 x 1 mm NIfTI images, 3D extraction, Original/Wavelet/LoG image types,\
+  \ first-order and texture feature classes, and no radiomics shape features.\n\n## Outputs\n\nThe output\
+  \ directory contains:\n\n- an Excel workbook with metrics, wrong cases, split samples, cross-validation\
+  \ summaries, selected features, and all-case predictions\n- ROC, calibration, DCA, SHAP, top-feature\
+  \ distribution, and wrong-case figures\n- serialized model packages and manifest files for locked-model\
+  \ inference\n\nConfidence intervals are computed with 1000 bootstrap iterations. When `ID_COL` is available,\
+  \ bootstrap resampling is performed at the patient/case cluster level and then expanded to limb-level\
+  \ rows.\n\n## Privacy\n\nPatient data, images, spreadsheets, generated outputs, and serialized models\
+  \ are intentionally ignored by Git. Do not commit private clinical data or derived patient-level artifacts.\n"

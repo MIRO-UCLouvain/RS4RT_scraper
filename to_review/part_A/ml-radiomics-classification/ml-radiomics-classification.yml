@@ -1,0 +1,193 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: AlexandreReber/ml_radiomics_classification
+url: https://github.com/AlexandreReber/ml_radiomics_classification
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-20T18:23:41Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: '# Radiomics-Based Brain Tumor Classification
+
+
+  A complete, end-to-end machine learning pipeline built with scikit-learn to classify brain tumor grades
+  from radiomic features extracted from MRI scans. The project covers the full supervised learning workflow:
+  data cleaning, preprocessing, model comparison via cross-validation, hyperparameter tuning, held-out
+  test evaluation, and model persistence.
+
+
+  This notebook was adapted from a tutorial session I co-led on practical machine learning with tabular
+  data.
+
+
+  ## Overview
+
+
+  The task is to predict tumor grade — High-Grade Glioma (HGG) or Low-Grade Glioma (LGG) — from a set
+  of radiomic features (quantitative descriptors of tumor shape, intensity, and texture computed from
+  MRI images). The dataset used is a processed version of [BraTS-2020-Openradiomics](https://openradiomics.org/?page_id=1087),
+  containing 369 patients and over 1,700 radiomic features per sample.
+
+
+  While the domain is medical imaging, the pipeline itself is a general-purpose template for any structured/tabular
+  classification problem: mixed categorical and numerical features, class imbalance, and a modest number
+  of samples relative to the feature count.
+
+
+  ## Pipeline
+
+
+  1. **Data preparation** — Load the dataset, inspect missing values, drop the single incomplete row,
+  and set aside a stratified 20% test split (never touched until final evaluation).
+
+  2. **Preprocessing** — Encode the target with `LabelEncoder`, one-hot encode categorical inputs, and
+  standardize numerical inputs, all combined into a single `ColumnTransformer` / `Pipeline`.
+
+  3. **Model comparison** — Cross-validate nine classifiers (Logistic Regression, Decision Tree, Random
+  Forest, AdaBoost, Linear SVM, RBF SVM, Neural Network, k-NN, Naive Bayes) using 5-fold cross-validation
+  and balanced accuracy, comparing default vs. lightly regularized hyperparameters to diagnose overfitting.
+
+  4. **Hyperparameter tuning** — Run a randomized search (150 iterations, 5-fold CV) over `learning_rate`
+  and `n_estimators` for the selected AdaBoost model.
+
+  5. **Final evaluation** — Score the tuned model once on the untouched test set.
+
+  6. **Persistence** — Export the fitted preprocessing pipeline, label encoder, and model together with
+  `joblib` for later reuse.
+
+
+  ## Results
+
+
+  | Metric | Value |
+
+  |---|---|
+
+  | Model | AdaBoost (tuned) |
+
+  | Cross-validated balanced accuracy | 0.867 ± 0.065 |
+
+  | Test balanced accuracy | 0.825 |
+
+  | Test accuracy | 0.92 |
+
+
+  Classification report on the held-out test set (74 patients):
+
+
+  | Class | Precision | Recall | F1-score | Support |
+
+  |---|---|---|---|---|
+
+  | HGG | 0.92 | 0.98 | 0.95 | 59 |
+
+  | LGG | 0.91 | 0.67 | 0.77 | 15 |
+
+
+  Balanced accuracy (rather than plain accuracy) was used throughout for model selection, since the dataset
+  is imbalanced (roughly 80% HGG / 20% LGG). Regularized models generalized noticeably better than their
+  default-parameter counterparts, with a visibly smaller gap between training and validation scores.
+
+
+  ## Repository Structure
+
+
+  ```
+
+  .
+
+  ├── ml_radiomics_classification.ipynb   # Full pipeline: EDA, preprocessing, model selection, tuning,
+  evaluation
+
+  ├── data/                                # Radiomics feature dataset (CSV)
+
+  ├── model.joblib                         # Serialized preprocessing pipeline + trained model
+
+  └── requirements.txt                     # Python dependencies
+
+  ```
+
+
+  ## Getting Started
+
+
+  **Requirements:** Python 3.10+, pip
+
+
+  ```bash
+
+  git clone add_url
+
+  cd radiomics_classification
+
+  pip install -r requirements.txt
+
+  jupyter notebook ml_radiomics_classification.ipynb
+
+  ```
+
+
+  The notebook runs top to bottom and regenerates `model.joblib`. To reuse the trained pipeline directly:
+
+
+  ```python
+
+  import joblib
+
+
+  bundle = joblib.load("model.joblib")
+
+  pipeline = bundle["artifacts"]["pipeline"]
+
+  label_encoder = bundle["artifacts"]["label_encoder"]
+
+
+  predictions = pipeline.predict(new_data)
+
+  labels = label_encoder.inverse_transform(predictions)
+
+  ```
+
+
+  ## Key Techniques Demonstrated
+
+
+  - Stratified train/test splitting to preserve class balance
+
+  - `ColumnTransformer` for unified categorical/numerical preprocessing
+
+  - Cross-validated model comparison with explicit overfitting diagnostics (train vs. validation gap)
+
+  - Randomized hyperparameter search (`RandomizedSearchCV`)
+
+  - Balanced accuracy for imbalanced classification
+
+  - Reproducible model persistence with `joblib`, including environment metadata
+
+
+  ## Possible Extensions
+
+
+  - Feature selection to reduce the ~1,700-feature space and mitigate overfitting risk
+
+  - AutoML comparison (e.g. PyCaret) as a baseline against the manual model search
+
+  - SHAP or permutation importance for model interpretability
+
+
+  ## Data Source
+
+
+  Dataset derived from the BraTS-2020-Openradiomics collection. See the associated [publication](https://doi.org/10.1186/s12880-025-01855-2)
+  for details on cohort composition and feature extraction methodology.'

@@ -1,0 +1,139 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: meryemebellahsaouia-alt/CURATOR
+url: https://github.com/meryemebellahsaouia-alt/CURATOR
+platform: github
+description: An auditable Python pipeline that converts DICOM-RT data into AI-ready NIfTI volumes, featuring
+  built-in geometric validation and dosimetric QA for reproducible deep learning.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-18T18:26:26Z'
+image_source: https://raw.githubusercontent.com/meryemebellahsaouia-alt/CURATOR/HEAD/CURATOR_icon.png
+heuristic_total_score: 31
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 9 support term(s).
+readme_excerpt: "<p align=\"center\"><img src=\"CURATOR_icon.png\" alt=\"CURATOR icon\" width=\"96\"/></p>\n\
+  \n# CURATOR: A DICOM RT Viewer (PyQt6 + VTK)\n\nA research-oriented desktop interface for radiotherapy\
+  \ DICOM review and analysis:\n- 2D axial CT + RTDOSE overlay + RTSTRUCT contours\n- 3D CT volume + structure\
+  \ surfaces + RTPLAN machine playback\n- Dose-Volume Histogram (DVH) plotting and export\n- Dataset integrity\
+  \ checks for CT -> RTSTRUCT -> RTPLAN -> RTDOSE chains\n\nThis application is designed for reproducible\
+  \ visualization workflows in medical imaging / radiotherapy research environments.\n\n<img src=\".github/assets/axial_viewer.png\"\
+  \ alt=\"CURATOR Axial Viewer: CT with dose color-wash and structure contours\" width=\"700\"/>\n\n##\
+  \ Table of Contents\n\n- [1. Key Features](#1-key-features)\n- [2. Architecture](#2-architecture)\n\
+  - [3. Requirements](#3-requirements)\n- [4. Run](#4-run)\n- [5. Batch / Headless Dataset Curation](#5-batch--headless-dataset-curation)\n\
+  - [6. Interactive Selection, Menus and Controls](#6-interactive-selection-menus-and-controls)\n- [7.\
+  \ Advanced Configuration](#7-advanced-configuration)\n- [8. Typical Workflow](#8-typical-workflow)\n\
+  - [9. Data Expectations](#9-data-expectations)\n- [10. Performance Notes](#10-performance-notes)\n-\
+  \ [11. Validation / Quality Controls](#11-validation--quality-controls)\n- [12. Troubleshooting](#12-troubleshooting)\n\
+  - [13. Limitations](#13-limitations)\n- [14. Citation](#14-citation)\n\n## 1. Key Features\n\n- Structured\
+  \ DICOM discovery and linkage (`CT`, `RTSTRUCT`, `RTPLAN`, `RTDOSE`)\n- Interactive 2D axial navigation\
+  \ with CT window/level presets (`Auto`, `Soft Tissue`, `Lung`, `Bone`)\n- Dose thresholding with Gy\
+  \ / % prescription display modes\n- 3D machine animation across beams and control points\n- Dynamic-beam\
+  \ focused machine controls (setup beams filtered where applicable)\n- Multi-ROI DVH plotting with interactive\
+  \ hover annotations\n- Export:\n  - DVH curves (`CSV`)\n  - DVH plot (`PNG`)\n  - DVH statistics table\
+  \ (`CSV`)\n  - 3D screenshot (`PNG`)\n  - Resampled CT / dose / masks (`NIfTI`)\n- Integrated diagnostics\
+  \ panel (in-app logging stream)\n\n## 2. Architecture\n\nThe codebase follows an MVC-style separation:\n\
+  \n- `model.py`: DICOM loading, resampling, structure parsing, masks, DVH math\n- `view.py`: Qt UI composition,\
+  \ signal surface, widget state updates\n- `controller.py`: orchestration, signal wiring, interaction\
+  \ logic, exports\n- `vtk_controller.py`: 2D VTK scene and slice interactor logic\n- `vtk_controller_3d.py`:\
+  \ 3D VTK scene and machine geometry playback\n- `dicom_organizer.py`: folder scanning and treatment-chain\
+  \ linkage\n- `widgets.py`: dialogs and custom plotting widgets\n- `styles.py`: centralized dark/light\
+  \ visual system\n- `config.py`: configurable constants for visualization and behavior\n\nRepository\
+  \ layout (all core modules sit at the repository root):\n\n```\nCURATOR/\n├── main.py\n├── model.py\n\
+  ├── view.py\n├── controller.py\n├── vtk_controller.py\n├── vtk_controller_3d.py\n├── dicom_organizer.py\n\
+  ├── widgets.py\n├── styles.py\n├── config.py\n├── requirements.txt\n├── LICENSE\n├── README.md\n├──\
+  \ CURATOR_icon.png\n└── tools/\n    └── headless_dataset_curation.py\n```\n\n## 3. Requirements\n\n\
+  Python `3.8+` is recommended.\n\nInstall dependencies from the repository root (where `requirements.txt`\
+  \ exists):\n\n```bash\npip install -r requirements.txt\n```\n\nMain libraries:\n- `PyQt6`\n- `vtk`\n\
+  - `SimpleITK`\n- `pydicom`\n- `numpy`\n- `matplotlib`\n- `scikit-image`\n\n## 4. Run\n\nFrom the repository\
+  \ root:\n\n```bash\npython main.py\n```\n\n## 5. Batch / Headless Dataset Curation\n\nFor cohort-scale\
+  \ processing, `headless_dataset_curation.py` runs the same underlying `DICOMDataModel` pipeline without\
+  \ the GUI, on every patient folder found under a root directory.\n\n```bash\npython tools/headless_dataset_curation.py\
+  \ \\\n  --raw-data-root \"/path/to/Raw_DICOM_Database\" \\\n  --output-root \"/path/to/Curated_NIfTI_Dataset\"\
+  \ \\\n  --spacing 1,1,1 --shape 128,128,64 \\\n  --structures PTV Rectum Bladder Femur_L Femur_R\n```\n\
+  \n### Arguments\n\n| Flag | Default | Description |\n|---|---|---|\n| `--raw-data-root` | *required*\
+  \ | Folder containing one subfolder per patient. |\n| `--output-root` | *required* | Destination for\
+  \ exported NIfTI files and reports. |\n| `--spacing` | `1,1,1` | Target voxel spacing in mm, as `x,y,z`.\
+  \ |\n| `--shape` | `128,128,64` | Target array shape in voxels, as `x,y,z`. |\n| `--structures` | `PTV\
+  \ Rectum Bladder Femur_L Femur_R` | ROI name patterns to export as masks. Matching is case-insensitive\
+  \ and alphanumeric-normalized (`Femur_L`, `femur l`, and `LFemur` all match), with a small built-in\
+  \ alias table also matching `Bladder`↔`Vesica`/`UrinaryBladder`, `Rectum`↔`Rectal`, `Femur_L`/`Femur_R`↔`FemoralHead\
+  \ L`/`R`, and `PTV`↔`PTVBoost`/`PTVHigh`/`PTVLow`. |\n| `--include-root` | off | Also treat `--raw-data-root`\
+  \ itself as a single patient folder (for single-case runs). |\n| `--log-level` | `INFO` | `DEBUG` /\
+  \ `INFO` / `WARNING` / `ERROR`. |\n\n### Per-Patient Handling\n\nEach immediate subfolder of `--raw-data-root`\
+  \ is treated as one patient:\n\n- All complete CT → RTSTRUCT → RTPLAN → RTDOSE chains in the folder\
+  \ are enumerated. A folder with zero complete chains is rejected (`REJECTED_INTEGRITY`) without stopping\
+  \ the rest of the batch.\n- If more than one complete chain exists (a re-plan, a duplicated export,\
+  \ a separate QA plan), one is selected **deterministically** — never arbitrarily, and without prompting\
+  \ — by ranking candidates on RTDOSE summation type (`PLAN` > `BEAM` > `FRACTION` > `MULTI_PLAN` > `BRACHY`\
+  \ > `CONTROL_POINT`), then breaking ties on CT/RTSTRUCT/RTPLAN/RTDOSE identifiers. The same chain is\
+  \ selected on every run. This is the headless counterpart to the interactive chain-selection dialog\
+  \ described in [Section 6](#6-interactive-selection-menus-and-controls) — no dialog is shown, but the\
+  \ result is reproducible.\n- The selected chain is loaded and exported: resampled CT (`{ID}_CT.nii.gz`),\
+  \ resampled dose (`{ID}_Dose.nii.gz`), and one mask per matched structure (`{ID}_Mask_{name}.nii.gz`),\
+  \ into `{output-root}/{ID}/`.\n- Requested structure patterns with no match in a given case are logged\
+  \ as a warning and listed per-case in the manifest — this does **not** fail the case.\n- If export fails\
+  \ partway, any partial CT/dose files for that case are deleted rather than left inconsistent, and the\
+  \ case is marked `ERROR_EXPORT`.\n\n### Outputs\n\nWritten to `--output-root`:\n\n- **`curation_log.txt`**\
+  \ — full timestamped run log.\n- **`dataset_manifest.csv`** — one row per patient: `Status` (`SUCCESS`\
+  \ / `REJECTED_INTEGRITY` / `ERROR_LOAD` / `ERROR_EXPORT`), `Reason`, `ChainCandidates` (complete chains\
+  \ found before selection), the selected chain's identifiers, matched vs. missing requested structures,\
+  \ and the output folder.\n- **`curation_summary.csv`** — aggregate counts (`Total`, `Success`, `Fail_Integrity`,\
+  \ `Fail_Load`, `Fail_Export`) plus the run's spacing/shape/structure settings, suitable for citing directly\
+  \ in a methods section.\n\nExit code is `0` if every patient produced a successful export, `1` if any\
+  \ were rejected or errored — suitable for CI/scripted use.\n\n## 6. Interactive Selection, Menus and\
+  \ Controls\n\nThis section documents the interactive controls available during a normal (non-headless)\
+  \ session.\n\n### Interactive Chain Selection\n\nWhen `File → Open Patient Folder` finds more than one\
+  \ complete CT → RTSTRUCT → RTPLAN → RTDOSE chain in the selected folder, a selection dialog lists every\
+  \ candidate chain in a browsable tree, with dose summation type and dataset identifiers shown per row\
+  \ so you can choose which one to load. Selection here is manual: unlike the [headless tool](#5-batch--headless-dataset-curation),\
+  \ which automatically ranks candidates by `PLAN` > `BEAM` > `FRACTION` > `MULTI_PLAN` > `BRACHY` > `CONTROL_POINT`,\
+  \ the interactive dialog does not pre-select or default to any candidate. The summation type is shown\
+  \ per row precisely so you can apply that same ranking by eye if you want your interactive choice to\
+  \ match what the headless tool would select — but the tree itself leaves the decision entirely to you.\n\
+  \n### File Menu\n\n<img src=\".github/assets/file_menu.PNG\" alt=\"File menu: Open Patient Folder, Resample\
+  \ & Export CT, Resample & Export Dose, Resample & Export Mask(s)\" width=\"260\"/>\n\n- **Open Patient\
+  \ Folder** — starts dataset discovery and, if needed, the chain-selection dialog described above.\n\
+  - **Resample & Export CT** / **Resample & Export Dose** / **Resample & Export Mask(s)** — three separate\
+  \ top-level File-menu items (not a submenu); each opens the **Resample & Export Options** dialog below,\
+  \ letting you set a target voxel spacing and/or output shape before writing a NIfTI file.\n\n<img src=\"\
+  .github/assets/resample_export_dialog.png.PNG\" alt=\"Resample and Export Options dialog with spacing\
+  \ and shape fields\" width=\"360\"/>\n\nLeaving **New Shape (voxels)** at `0, 0, 0` exports at the resampled\
+  \ spacing without cropping or padding to a fixed array size.\n\n### View Menu\n\n<img src=\".github/assets/view_menu.PNG\"\
+  \ alt=\"View menu: 3D View Screenshot, Dark Mode, High Contrast, Colorblind-safe Structure Colors, UI\
+  \ Scale, Clear Diagnostics\" width=\"260\"/>\n\n- **3D View Screenshot** — saves the current 3D render\
+  \ as a PNG.\n- **Dark Mode / High Contrast / Colorblind-safe Structure Colors** — display presets; colorblind-safe\
+  \ mode remaps structure colors to a palette distinguishable under common color-vision deficiencies.\n\
+  - **UI Scale** — a manual 100% / 110% / 125% font-size preference for the interface, not automatic DPI\
+  \ detection; useful for improving readability on high-DPI displays.\n- **Clear Diagnostics** — clears\
+  \ the log stream shown in the Diagnostics tab.\n\n## 7. Advanced Configuration\n\nStructure contours\
+  \ are rasterized into 3D masks using a `legacy` (NumPy/scikit-image)\nbackend by default. An alternate\
+  \ `vtk` backend is also available and can be selected\nwithout changing code:\n\n```bash\n# Windows\n\
+  set DICOM_MASK_BACKEND=vtk\npython main.py\n\n# macOS / Linux\nDICOM_MASK_BACKEND=vtk python main.py\n\
+  ```\n\nAn invalid value falls back to `legacy` with a logged warning. This setting affects\nDVH/CI calculation,\
+  \ mask export, body-based dose masking, and 3D structure surfaces —\nall of which are built from the\
+  \ voxelized mask. It does not affect the 2D contour\noutlines in the Axial Viewer, which are drawn directly\
+  \ from the RTSTRUCT contour\npoints rather than from the mask.\n\n## 8. Typical Workflow\n\n1. `File\
+  \ → Open Patient Folder`\n2. Review the compatibility summary dialog\n3. If multiple chains were found,\
+  \ resolve the [interactive chain-selection dialog](#6-interactive-selection-menus-and-controls); otherwise\
+  \ the single complete chain loads automatically\n4. Inspect each tab:\n\n**Axial Viewer** — CT, dose\
+  \ color-wash, and structure contours, with 2D slice navigation and CT preset controls.\n\n<img src=\"\
+  .github/assets/axial_viewer.png\" alt=\"Axial Viewer tab showing dose overlay and structure contours\"\
+  \ width=\"650\"/>\n\n**3D Viewer** — structure surfaces and beam/machine geometry, with playback across\
+  \ beams and control points.\n\n<img src=\".github/assets/3d_viewer.png\" alt=\"3D Viewer tab showing\
+  \ beam geometry and structure surfaces\" width=\"650\"/>\n\n<img src=\".github/assets/machine_playback.gif\"\
+  \ alt=\"Animated machine playback across control points in the 3D Viewer\" width=\"650\"/>\n\n**DVH\
+  \ Analysis** — multi-ROI dose-volume histograms with per-structure statistics (min/mean/max dose, D95,\
+  \ V20, V30, HI, CI) and CSV/PNG export.\n\n<img src=\".github/assets/dvh_analysis.png\" alt=\"DVH Analysis\
+  \ tab showing dose-volume histograms and statistics table\" width=\"650\"/>\n\n**Diagnostics** — in-app\
+  \ log stream for load and processing steps, useful for QA and troubleshooting.\n\n<img src=\".github/assets/diagnostics.png\"\
+  \ alt=\"Diagnostics tab showing the run log\" width=\"650\"/>\n\n5. Export required outputs via `File\
+  \ → Resample & Export CT / Dose / Mask(s)`, or the DVH tab's **Export Data / Plot / Stats** buttons.\n\
+  \n## 9. Data Expectations\n\nThe interface expects a linkable chain:\n\n`CT Series -> RTSTRUCT -> RTPLAN\
+  \ -> RTDOSE`\n\nIf multiple chains exist, selection is explicit through the dialog describ"

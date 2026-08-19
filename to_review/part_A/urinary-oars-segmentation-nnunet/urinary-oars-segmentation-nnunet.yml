@@ -1,0 +1,122 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: LTSI-IMPACT/urinary-OARs-segmentation-nnUNet
+url: https://github.com/LTSI-IMPACT/urinary-OARs-segmentation-nnUNet
+platform: github
+description: This repository hosts the code, trained models, and scripts for a deep learning method based
+  on nnU-Net, designed for automatic segmentation of urinary organs at risk (OARs) and pelvic structures
+  on multicentric prostate MRI. This repository accompanies an ongoing, under-review study and does not
+  yet correspond to a final, published article.
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-01-20T19:48:38Z'
+image_source: https://raw.githubusercontent.com/LTSI-IMPACT/urinary-OARs-segmentation-nnUNet/HEAD/documents/figs/Screenshot1.jpg
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 6 support term(s).
+readme_excerpt: "# urinary-OARs-segmentation-nnUNet\n\n## Overview\nThis repository hosts the code, trained\
+  \ models, and scripts for a deep learning method based on nnU-Net, designed for automatic segmentation\
+  \ of urinary organs at risk (OARs) and pelvic structures on multicentric prostate MRI. The method targets\
+  \ key structures such as the intraprostatic urethra, bladder trigone, bladder neck, bulbous urethra,\
+  \ ureters, bladder, rectum, and prostate for prostate cancer radiotherapy planning.\n\nThe model is\
+  \ trained and validated on datasets from multiple centers including MR-linac devices (Unity®, Elekta\
+  \ and MRIdian®, Viewray) and the public [PROSTATEx](https://www.cancerimagingarchive.net/collection/prostatex/)\
+  \ database (Siemens MAGNETOM Trio and Skyra MR scanners). Evaluation metrics include Dice Similarity\
+  \ Coefficient (DSC), Hausdorff Distance (HD95), and Surface Distance (SD).\n\nThis repository accompanies\
+  \ an ongoing, under-review study on automatic segmentation of urinary organs at risk for prostate cancer\
+  \ radiotherapy and does not yet correspond to a final, published article.\n\nThe accompanying model\
+  \ weights for this repository can be downloaded here at: [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.17749267-blue)](https://doi.org/10.5281/zenodo.17749267)\n\
+  \ \n## Built on nnU-Net\nThis project builds upon the powerful and self-configuring [nnU-Net](https://github.com/MIC-DKFZ/nnUNet)\
+  \ framework for medical image segmentation. We implemented a customized 3D full-resolution nnU-Net configuration\
+  \ optimized for segmenting small urinary structures while maintaining anatomical context for larger\
+  \ pelvic organs.\n\n## Data and Labels\n\n- Multicentric MRI datasets:\n  - MR-linac images from Unity®\
+  \ and MRIdian®\n  - [PROSTATEx](https://www.cancerimagingarchive.net/collection/prostatex/)x public\
+  \ dataset from Siemens\n- Imaging modality: T2-weighted MRI\n\nThe labels are derived from manual contours.\
+  \ In some cases, there are overlaps between contours, particularly for labels 8 (bulbous urethra) and\
+  \ 9 (membranous urethra). Therefore, a preprocessing step is required to convert the contours from RTstruct\
+  \ format to NIfTI files before using the segmented images in the CNN. After the segmentation results\
+  \ are obtained, a postprocessing step is necessary to reconstruct the bulbous urethra and membranous\
+  \ urethra structures.\n\n- Label set:\n  - 0: background\n  - 1: bladder\n  - 2: prostate\n  - 3: intraprostaticurethra\n\
+  \  - 4: rectum\n  - 5: ureters\n  - 6: bladderneck\n  - 7: bladdertrigone\n  - 8: 8: bulbousurethra\
+  \ (This region is the part of bulbous urethra that does not include membranous urethra)\n  - 9: membranousurethra\
+  \ (This region is the part of membranous urethra that does not include bulbous urethra)\n  - 10: internecktrigone\
+  \ (This region is where bulbous urethra and membranous urethra overlap)\n  \n![Diagramme](documents/figs/Screenshot1.jpg)\n\
+  \n## Repository Structure\n\n```\n/documents/\n/trainers/               \\# Custom nnU-Net trainer scripts\n\
+  /nnUNetPlans/            \\# Custom nnU-Net plans JSON files\n/scripts/\n/prepare_data/           \\\
+  # Scripts for data conversion and dataset organization\n/training/               \\# Custom nnU-Net\
+  \ trainer scripts\n/inference/              \\# Scripts for inference and RTStruct conversion\n```\n\
+  \n## Installation and Requirements\n\n- Python 3.9+\n- PyTorch with CUDA support\n- nnU-Net version\
+  \ 2 (Please follow the official nnU-Net repository for detailed and up-to-date installation instructions:\
+  \ https://github.com/MIC-DKFZ/nnUNet)\n- SimpleITK, nibabel, medpy, pydicom, rt-utils\n  \n## Data Preparation\n\
+  \n- Follow nnU-Net dataset folder conventions:\n\n```\n\nDataset072_Prostate/\nimagesTr/\nlabelsTr/\n\
+  imagesTs/ (optional)\ndataset.json\n\n```\n\n- RTstruct contours to NIfTI masks:\n\nConvert RTstruc\
+  \ contours to NIfTI masks using [dcm2niix](https://github.com/rordenlab/dcm2niix?tab=readme-ov-file).\n\
+  To prepare the dataset, the RTstruc DICOM must be converted to NIfTI format. This can be done using\
+  \ the [dcm2niix](https://github.com/rordenlab/dcm2niix?tab=readme-ov-file) tool. Below is an example\
+  \ command:\n```\n\ndcm2niix.exe -o \"C:\\output_folder\" -f \"%p_%s\" -z y \"C:\\input_folder\"\n\n\
+  ```\nWe used a Python script that leverages the [dcm2niix Python library](https://pypi.org/project/dcm2niix/)\
+  \ to convert RTstruct files into NIfTI format. Below is an example script:\n\n```\n\npython prepare_data/script_dcmrtstruct2nii.py\
+  \ \n\n```\n\nThe previous routine generates a folder containing individual segmentation masks in NIfTI\
+  \ format. The script merge_masks.py consolidates these masks into a single NIfTI segmentation file,\
+  \ assigning the appropriate labels as described earlier.\nTo ensure accurate representation of overlapping\
+  \ regions, the original bulbous urethra and membranous urethra masks are split into three distinct masks:\n\
+  \n- bulbousurethra: the portion of the bulbous urethra excluding the membranous urethra.\n- membranousurethra:\
+  \ the portion of the membranous urethra excluding the bulbous urethra.\n- internecktrigone: a new mask\
+  \ representing the overlapping region between the bulbous urethra and membranous urethra.\n\n```\n\n\
+  python prepare_data/merge_masks.py \n\n```\n\n- Harmonize multi-center data via resampling, N4 bias\
+  \ correction, anisotropic filtering, histogram matching, etc. (see scripts prepare_data/harmonize_data.py)\n\
+  \n```\n\npython prepare_data/harmonize_data.py \n\n```\n\n## Training\n\n- Plan and preprocess data:\n\
+  \n```\n\nnnUNetv2_plan_and_preprocess -d 072 -c 3d_fullres --verify_dataset_integrity\n\n```\n\n\n-\
+  \ Train 5-fold cross-validation models (example for fold 0):\n\n```\nCUDA_VISIBLE_DEVICES=0 nnUNet_compile=T\
+  \ nnUNet_n_proc_DA=8 nnUNetv2_train -tr nnUNetTrainer_1000epochs -p nnUNetPlans --npz -num_gpus 0 072\
+  \ 3d_fullres_my_plan 0\n```\n\n- Repeat for folds 1 to 4 on available GPUs.\n\n- Training parameters:\n\
+  \  - Patch size and batch size optimized for small structure segmentation\n  - Loss: combination of\
+  \ Dice and Cross-Entropy (optionally boundary loss)\n  - Extensive data augmentation applied\n\nWe have\
+  \ prepared scripts that automate training on two GPUs and enable fine-tuning from existing checkpoints\
+  \ instead of starting from scratch. These scripts are available in the /prepare_data folder.\n\n## Inference\n\
+  \nAutomatically determine the best configuration\nOnce the desired configurations were trained (full\
+  \ cross-validation) you can tell nnU-Net to automatically identify the best combination for you:\n\n\
+  ```\n\nnnUNetv2_find_best_configuration 072 -c 3d_fullres -tr nnUNetTrainer_1000epochs \n\n```\n\n-\
+  \ Run inference on test data:\n\n```\n\nCUDA_VISIBLE_DEVICES=0  nnUNet_n_proc_DA=2 nnUNetv2_predict\
+  \ -d Dataset072_Prostate -i /path/to/imagesTs/ -o /path/to/output -f 0 1 2 3 4 -tr nnUNetTrainer_1000epochs\
+  \ -c 3d_fullres -p nnUNetPlans\n\n```\n## Postprocessing\n\n- Once inference is completed, run postprocessing\
+  \ like this:\n\n```\nnnUNetv2_apply_postprocessing -i OUTPUT_FOLDER -o OUTPUT_FOLDER_PP -pp_pkl_file\
+  \ /scratch/nnUNet_results/Dataset072_Prostate/nnUNetTrainer_1000epochs__nnUNetPlans__3d_fullres_my_plan/crossval_results_folds_0_1_2_3_4/postprocessing.pkl\
+  \ -np 8 -plans_json /scratch/nnUNet_results/Dataset072_Prostate/nnUNetTrainer_1000epochs__nnUNetPlans__3d_fullres_my_plan/crossval_results_folds_0_1_2_3_4/plans.json\n\
+  \n```\n\n- We therefore decided to implement a post-processing strategy previously validated by our\
+  \ team, which enables interpolation of the urethral segments along their centerline.\n\n```\n\npython\
+  \ inference/center_line_urethra_v1.py \n\n```\n\n## Evaluation\n\nThe scripts used for evaluation are\
+  \ located in the evaluation folder.\n\n- Metrics included:\n  - Dice Similarity Coefficient\n  - 95th\
+  \ percentile Hausdorff Distance (HD95) measured with MedPy\n  - Mean Surface Distance\n  - Volumetric\
+  \ overlap error\n  - Relative volume difference\n\nExample command:\n```\n\npython evaluation/calculs_metriques_prostatex.py\
+  \ \n\n```\n\n## Pre-trained Models\n\n- Pre-trained model weights can be downloaded here at:   [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.17749267-blue)](https://doi.org/10.5281/zenodo.17749267).\n\
+  - Place weights in:\n\n```\n\n\\$NNUNET_RESULTS/Dataset072_Prostate/nnUNetTrainer_1000epochs__nnUNetPlans__3d_fullres_my_plan/fold_all/\n\
+  \n```\n\n- Optional: Convert predicted NIfTI masks to DICOM RTStruct for radiotherapy systems:\n\n```\n\
+  \npython inference/convert_prediction_to_rtstruct.py --input /path/to/output --dicom_series /path/to/reference_dicom\
+  \ --output /path/to/rtstruct/\n\n```\n\n## How to Reproduce\n\n1. Prepare and convert datasets\n2. Run\
+  \ planning and preprocessing\n3. Train model folds\n4. Run inference with ensemble\n5. Run interpolation\
+  \ of the urethral segments along their centerline\n6. Evaluate quantitative metrics\n\n<div style=\"\
+  background-color:#ffdddd; border-left:6px solid #f44336; padding:10px;\">\n<strong>⚠️ Warning:</strong>\
+  \  \nPlease make sure to check all folder and subfolder paths in the scripts.  \nYou must adapt these\
+  \ paths according to your own environment before running any code.\n</div>\n\n\n## How to cite\n\nThis\
+  \ work has been published.  If you use this code or models in your research, please cite:\n\n```\n\n\
+  @article{LeGuévelou2025nnuNet,\ntitle={Geometric evaluation of a deep learning method for segmentation\
+  \ of urinary OARs on magnetic resonance imaging for prostate cancer radiotherapy},\nauthor={J Le Guévelou,\
+  \ M Castro, B Texier, A Barateau, R-A Martin, C Lafond, I Bessières, J-C Nunes, R De Crevoisier, O Acosta},\n\
+  journal={Clinical and Translational Radiation Oncology},\nyear={2026}\nvolume={56}\nISSN 2405-6308,\n\
+  https://doi.org/10.1016/j.ctro.2025.101091.\n(https://www.sciencedirect.com/science/article/pii/S2405630825001831)\n\
+  }\n\n```\n\nPlease also cite the original nnU-Net paper:\n\n```\n\n@article{Isensee2021nnuNet,\ntitle={nnU-Net:\
+  \ Self-adapting Framework for U-Net-based Medical Image Segmentation},\nauthor={Isensee et al.},\njournal={Nature\
+  \ Methods},\nyear={2021}\n}\n\n```\n\n## Limitations and Use\n\n- Intended for research use on multicentric\
+  \ prostate MRI for radiotherapy planning.\n- Validated on specific MRI systems and acquisition protocols.\n\
+  - Manual expert review mandatory before clinical application.\n- Performance outside the training data\
+  \ domain (different MRI systems, protocols, pathologies) is not guaranteed.\n\n## License\n\nThis project\
+  \ is licensed under the MIT License. It incorporates code from nnU-Net, which is licensed under Apache\
+  \ 2.0. Both licenses apply and must be respected. See LICENSE file for details.\n\n## Contributing\n\
+  \nContributions, bug reports, and feature requests are welcome. Please open an issue or pull request.\n\
+  \nContact: miguel.castro@univ-rennes.fr\n```\n"

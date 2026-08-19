@@ -1,0 +1,138 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: alabamagan/mri_radiomics_toolkit
+url: https://github.com/alabamagan/mri_radiomics_toolkit
+platform: github
+description: This project aims to increase the reproducibility of feature selection for discrimination
+  of NPC and benign hyperplasia
+license: MIT
+language: Python
+keywords: []
+stars: 3
+updated_at: '2026-07-27T17:50:46Z'
+image_source: https://raw.githubusercontent.com/alabamagan/mri_radiomics_toolkit/HEAD/img/Stability.png
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Index\n\n[TOC]\n\n# Briefing\n\n```mermaid\nerDiagram\n\tcontroller ||--o| FeatureExtractor:\
+  \ creates\n\tcontroller ||--o| FeatureSelector: creates\n\tcontroller ||--o| ModelBuilder: creates\n\
+  ```\n\nThis repo is a python toolkit written to run radiomics analysis in a pipeline. This includes\
+  \ radiomic feature extraction, selection, then model building on the selected features. The code in\
+  \ written in a way such that the pipeline is controlled by the a `controller` instance. This instance\
+  \ can be created from scratch following the specification of 1) PyRadiomics extraction setting and 2)\
+  \ controller initialization settings.  These instance have save/load function such that once trained,\
+  \ they can be loaded by others to perform inference.\n\nIn addition, this repo introduces a feature\
+  \ selection technique combing boosting and bagging together with RENT, a previously proposed technique\
+  \ to improve feature stability. (Figure 1)\n\n![Stability of feature selection improved](./img/Stability.png)\n\
+  \n# Installation\n\n### Clone repo\n\n```\ngit clone --recursive https://github.com/alabamagan/mri_radiomics_toolkit\n\
+  ```\n\n### Install mnts\n\n```bash\ncd mri_radiomics_toolkits/ThirdParty/mnts\npip install .\ncd -\n\
+  ```\n\n### Install the forked RENT\n\n```bash\ncd mri_radiomics_toolkit/ThirdPartyRENT\npip install\
+  \ .\ncd -\n```\n\n### Finally, Install this package\n\n```sh\ncd ../..\npip install .\n```\n\n# Usage\n\
+  \n## Feature extractor\n\n### Functionalities\n\n* Extract features according to the PyRadiomics setting\n\
+  * Allow special extraction pipeline such as extract the features slice-by-slice, or from various class\
+  \ of labels\n* Save/Load states\n* Write extracted features into formatted excel\n* Allow augmentation\
+  \ of data before feature extraction\n\n### Usage (API)\n\n```python\nfrom mri_radiomics_toolkit import\
+  \ *\n\np_im = Path(\"data/image\")\np_seg = Path(\"data/segmentation\")\np_param = Path(\"pyrad_setting.yml\"\
+  )\nid_globber = \"^[0-9]+\" # glob the unique ID from the image file name \n\nfe = FeatureExtractor(id_globber=id_globber,\
+  \ \n                      idlist=['100', '101', '102']) # only perform on these three cases\ndf = fe.extract_features(p_im,\
+  \ p_seg, param_file=p_param)\nfe.save_features(\"saveout.xlsx\") # write results here, columns are the\
+  \ cases\nfe.save(\"extractor_state.fe\") # for using this directly during inference\n```\n\n### Usage\
+  \ (Console)\n\nAn entry point for the script `scripts/run_pyradiomics.py` can be accessed through the\
+  \ command `mradtk-extract-features`\n\n```bash\nusage: mradtk-extract-features [-h] [-i IMG_DIR] [-s\
+  \ SEG_DIR] [-p PARAM_FILE] [-f WITH_NORM] [-g ID_GLOBBER] [-o OUTPUT] [-v--verbose] [--id-list ID_LIST]\
+  \ [--keep-log]\n\noptional arguments:\n  -h, --help            show this help message and exit\n  -i\
+  \ IMG_DIR, --img-dir IMG_DIR\n                        Directory to image files.\n  -s SEG_DIR, --seg-dir\
+  \ SEG_DIR\n                        Directory to segmentation files.\n  -p PARAM_FILE, --param-file PARAM_FILE\n\
+  \                        Path to the pyradiomics settings.\n  -f WITH_NORM, --with-norm WITH_NORM\n\
+  \                        If specified path to a normalization state-dir, extract_feature_with_norm will\
+  \ be called.\n  -g ID_GLOBBER, --id-globber ID_GLOBBER\n                        Regex ID globber for\
+  \ pairing images and segmentation.\n  -o OUTPUT, --output OUTPUT\n                        Where to output\
+  \ the computed features as excel.\n  -v--verbose           Verbosity option.\n  --id-list ID_LIST  \
+  \   If specificied pass this to feature extractor.\n  --keep-log            If true, the log file is\
+  \ saved to \"pyradiomics.log\"\n/home/lwong/Toolkits/Anaconda/envs/radiomics/lib/python3.8/site-packages/outdated/utils.py:14:\
+  \ OutdatedCheckFailedWarning: Failed to check for latest version of package.\n```\n\n#### `IMG_DIR`\n\
+  \nDirectory where the target nifty images are. All the files with a suffix `.nii.gz` will be scanned\
+  \ and included. You can specify `ID_GLOBBER` and `ID_LIST` to fine tune this behavior.\n\n#### `SEG_DIR`\n\
+  \nDirectory where the segmentations are. Also needs to be `.nii.gz` files. The program will automatically\
+  \ tries to compute the overlap between the images and the segmentation based on the `ID_GLOBBER` result.\
+  \ Only the intersection will be processed (i.e., IDs that exists in both the image directory and the\
+  \ segmentation directory)\n\n#### `ID_GLOBBER`\n\nThis packages uses an ID globbed from each file name\
+  \ to pair the images and segmentation. This option is a regex pattern that will allow you to glob the\
+  \ ID from the file name excluding the suffix \".nii.gz\". For example, if you have files named `001_T1w.nii.gz`\
+  \ and `001_seg.nii.gz`, you can pair up these tow file by specifying the globber regex as something\
+  \ like `\"^\\d+\"`.\n\n#### `ID_LIST`\n\nIf you don't want to run all the images within `IMG_DIR`, you\
+  \ can use this option to specify the data to load. Currently there are two methods to set this option.\
+  \ First, explicity definition with comma separated string, e.g., `--id-list \"001,002,003\"`. The program\
+  \ will then only extract the features from the data with ID globbed as one `001`, `002`, and `003`.\n\
+  \n#### `KEEP_LOG`\n\nThis program uses the logger from `mntk` for logging. This could be annoying for\
+  \ some as if it breaks the logging system. By default, it creats a temp log file to hold all the outputs,\
+  \ but this temp file will be destroyed together with the main process. Use this option to prevent it.\n\
+  \n## Feature Selector\n\nThis package includes a feature selection method modified on top of the RENT\
+  \ algorithm, incorporating the combination of boosting and bagging, called BB-RENT. \n\n```mermaid\n\
+  graph LR\n  A[(Radiomics<br>Features)] --> B[\"Variance<br>Threshold<br>T = .8(1-.8)\"]\n  B --> C[\"\
+  T-test thres<br>(bool class)\"]\n  C --> |\"p < 0.05\"|D[\"ICC thres<br>(Two segments)\"]\n  D --> |ICC\
+  \ > 0.9 & p < 0.05|E([BB-RENT])\n```\n\n### Functionalities\n\n* Select features from excel of extracted\
+  \ features\n* Automatically ignore 'diagnostics' column\n* Uses BB-RENT\n* Save/Load states\n* Allow\
+  \ hyperparms tunning based on criteria_threshold and other settings\n\n### Usage\n\n```python\nfrom\
+  \ mri_radiomics_toolkit import *\nimport pandas as pd\n\np_feat_a = Path('samples_feat_1st.xlsx')\n\
+  p_feat_b = Path('samples_feat_2nd.xlsx')\np_gt = Path('sample_datasheet.csv')\n\n# For feature selection,\
+  \ rows needs to be cases and columns are the features\nfeatures_a = pd.read_excel(str(p_feat_a), index_col=[0,\
+  \ 1, 2]).T\nfeatures_b = pd.read_excel(str(p_feat_b), index_col=[0, 1, 2]).T\ngt = pd.read_csv(str(p_gt),\
+  \ index_col=0)\n\n# make sure the input feature and the ground-truth datasheet has the same batch of\
+  \ cases\ncases = set(features_a.index) & set(gt.index)\ngt = gt.loc[cases]\t# need this to keep the\
+  \ order of rows aligned with features\n\n# Create feature selector\nfs = FeatureSelector(n_trials=20,\
+  \ boot_runs=5,\n                     criteria_threshold=[0.1, 0.1, 0.1],\n                     thres_percentage=0.2,\n\
+  \                     boosting=True) # Use default criteria, test with boosting\nfeats = fs.fit(features_a,\
+  \ gt)\t# This could take hours\nselected_features = fs.selected_features # also stored in this attribute\n\
+  \n# Save for inferences\nfs.save(\"features_selected.fs\")\n\n# use this function to get the features\
+  \ after loading\nfs.load(\"features_selected.fs\")\nfs.predict(features_a.T)\n```\n\n### Notes\n\nCurrently,\
+  \ multi-class feature selection is not officially supported. However, many implementation of multi-class\
+  \ classifier are based on training multiple binary classifiers. For example, there's One-Vs-Rest strategy\
+  \ supported by `sklearn`. Once features were selected, you can build the model with this `sklearn` adaptor\
+  \ accordingly.\n\n## Model building\n\nBy default, this package build classifier models by grid search\
+  \ strategy with cross validation. \n\n# DataFrame convention\n\nIn this packages, the features data\
+  \ frame are generally configured with rows being each unique feature and columns being the data points\
+  \ (patients). The index typically has three levels `{1: 'Pre-processing', 2: 'FeatureGroup', 3: 'Feature_Name')`.\
+  \ The index is generally `pd.MultiIndex`, but sometimes, its converted to single level index `pd.Index`\
+  \ by maping `'_'.join` because some of the scipy/sklearn operations dislike MultiIndex.\n\n## Convention\
+  \ for most internal operations\n\nFor most part of the package, the `pd.DataFrame` input should have\
+  \ features as rows and subjects as columns.\n\n### Examples\n\n```\n+----------------+---------------+----------------------------------+-----------+-----------+-----------+\n\
+  | Pre-processing | Feature_Group |           Feature_Name           | Patient 1 | Patient 2 | Patient\
+  \ 3 |\n+================+===============+==================================+===========+===========+===========+\n\
+  |    original    |     shape     | Elongation                       | 0.736071  | 0.583376  | 0.842203\
+  \  |\n+                +               +----------------------------------+-----------+-----------+-----------+\n\
+  |                |               | Maximum2DDiameterSlice           | 38.69644  | 40.13999  | 42.83211\
+  \  |\n+                +               +----------------------------------+-----------+-----------+-----------+\n\
+  |                |               | Maximum3DDiameter                | 39.47085  | 53.00941  | 44.86157\
+  \  |\n+                +---------------+----------------------------------+-----------+-----------+-----------+\n\
+  |                |   firstorder  | 10Percentile                     | 80        | 84        | 131  \
+  \     |\n+                +               +----------------------------------+-----------+-----------+-----------+\n\
+  |                |               | 90Percentile                     | 167       | 198       | 221  \
+  \     |\n+                +               +----------------------------------+-----------+-----------+-----------+\n\
+  |                |               | Mean                             | 125.0034  | 141.5715  | 177.9713\
+  \  |\n+                +               +----------------------------------+-----------+-----------+-----------+\n\
+  |                |               | Median                           | 126       | 143       | 182  \
+  \     |\n+                +---------------+----------------------------------+-----------+-----------+-----------+\n\
+  |                |      glcm     | Autocorrelation                  | 32.9823   | 42.24437  | 60.84951\
+  \  |\n+                +               +----------------------------------+-----------+-----------+-----------+\n\
+  |                |               | ClusterProminence                | 201.2033  | 370.5453  | 213.6482\
+  \  |\n+                +               +----------------------------------+-----------+-----------+-----------+\n\
+  |                |               | ClusterShade                     | 3.085583  | -2.73874  | -7.56395\
+  \  |\n+                +---------------+----------------------------------+-----------+-----------+-----------+\n\
+  |                |     glrlm     | GrayLevelNonUniformity           | 3828.433  | 5173.855  | 6484.706\
+  \  |\n+                +               +----------------------------------+-----------+-----------+-----------+\n\
+  |                |               | RunVariance                      | 5.13809   | 2.925426  | 5.239695\
+  \  |\n+                +               +----------------------------------+-----------+-----------+-----------+\n\
+  |                |               | ShortRunEmphasis                 | 0.574203  | 0.629602  | 0.545728\
+  \  |\n+                +               +----------------------------------+-----------+-----------+-----------+\n\
+  |                |               | ShortRunHighGrayLevelEmphasis    | 18.43039  | 25.55685  | 32.46986\
+  \  |\n+                +               +----------------------------------+-----------+-----------+-----------+\n\
+  |                |               | ShortRunLowGrayLevelEmphasis     | 0.03399   | 0.030848  | 0.012844\
+  \  |\n+----------------+---------------+----------------------------------+-----------+-----------+-----------+\n\
+  ```\n\n## Convention in fit()\n\nRegardless, the `fit()` function implemented in this package usually\
+  \ follows `scipy` and `sklearn` convention, where rows are data points and columns are features. This\
+  \ might be confusing for many, but you only"

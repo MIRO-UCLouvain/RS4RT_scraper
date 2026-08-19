@@ -1,0 +1,49 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Emnass/Radiotherapy-QA-Interface
+url: https://github.com/Emnass/Radiotherapy-QA-Interface
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-07T11:57:32Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# TRS-398 Pro v2.2 — Rectifications cliniques\n\nVersion corrigée du logiciel **TRS-398\
+  \ Pro** intégrant les rectifications de\nsûreté physique et de testabilité demandées.\n\n## Nouveautés\
+  \ v2.2 (vs v2.1)\n\n### \U0001F534 Correctness physique\n1. **`k_pol` correct** — utilise désormais\
+  \ la **polarité de référence**\n   (`s.polarite_ref`, sélectionnable dans l'UI) au dénominateur, conformément\n\
+  \   au TRS-398 §4.4.5. Les chambres NACP-02 / Roos mesurées en polarité négative\n   sont désormais\
+  \ correctement gérées.\n2. **`k_s` méthode 2-tensions** — lève désormais une exception explicite si\n\
+  \   `V₁/V₂ ∉ [2, 5]` (au lieu de retourner silencieusement 1.000) et interpole\n   les coefficients\
+  \ (a₀, a₁, a₂) du Tab. 9 entre les rapports tabulés.\n3. **Validation de la qualité du faisceau** —\
+  \ TPR₂₀,₁₀ ∈ [0.50, 0.84],\n   R₅₀ ∈ [1, 8] cm (plates) ou ≥ 4 cm (cylindriques). L'utilisateur reçoit\n\
+  \   un avertissement et doit confirmer pour autoriser l'extrapolation.\n4. **Cohérence k_elec / N_D,w**\
+  \ — détection automatique du **double\n   comptage** : si N_D,w est en Gy/nC et k_elec ≠ 1.000, un avertissement\n\
+  \   bloquant s'affiche.\n5. **Humidité TRS-398** — k_TP ne corrige pas l'humidité (conforme au\n   protocole),\
+  \ mais un avertissement est émis si HR ∉ [20 %, 80 %].\n\n### \U0001F7E0 Architecture\n6. **Nouveau\
+  \ module `trs398_physics.py`** — tous les calculs sont extraits\n   de l'UI Tkinter et **testables sans\
+  \ display**.\n7. **Tests unitaires `tests/test_physics.py`** — **41 tests** couvrent :\n   - cas de\
+  \ référence (conditions standard → tous les k = 1.000)\n   - bornes de validité TRS-398\n   - cas pathologiques\
+  \ (V₁ < V₂, M nul, V₁/V₂ hors plage…)\n   - polarité de référence positive ET négative\n   - exemple\
+  \ complet 6 MV (chaîne dose).\n8. **Persistance des chambres versionnée** — le JSON contient\n   `schema_version`\
+  \ et chaque entrée est validée (type ∈ {cylindrique,\n   plate}, monotonie, k_Q ∈ [0.5, 1.2]) avant\
+  \ chargement/écriture.\n\n### \U0001F7E2 UX\n9. **Sélecteur \"Polarité de référence\"** ajouté dans\
+  \ l'onglet *Faisceau & Chambre*.\n10. **Avertissements TRS-398 agrégés** dans une boîte de dialogue\
+  \ après\n    `_compute_factors` et `_calc_dose` (codes machine + message lisible).\n\n## Lancement\n\
+  \n```bash\npython trs398_app.py\n```\n\n## Tests\n\n```bash\npython -m pip install pytest\npython -m\
+  \ pytest tests/ -v\n```\n\nRésultat attendu : **41 passed**.\n\n## Fichiers\n- `trs398_physics.py` —\
+  \ **nouveau** : calculs purs, testables, indépendants de Tk\n- `trs398_app.py`     — UI Tkinter (modifiée\
+  \ pour utiliser `trs398_physics`)\n- `trs398_data.py`    — base k_Q (inchangée)\n- `tests/test_physics.py`\
+  \ — 41 tests unitaires\n\n## Reste à faire (non implémenté ici, voir liste complète)\n- Export PDF natif\
+  \ (ReportLab)\n- Historique SQLite + carte de contrôle SPC ±2 % / ±3 %\n- Comparaison avec session précédente\n\
+  - Import CSV depuis PV d'étalonnage\n- Mode multi-énergies en une seule campagne\n- Signature électronique\
+  \ horodatée\n- Internationalisation (gettext)\n"

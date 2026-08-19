@@ -1,0 +1,55 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: MIPT-Oulu/automated-rt-qa
+url: https://github.com/MIPT-Oulu/automated-rt-qa
+platform: github
+description: Automated quality assurance pipeline for radiation therapy
+license: MIT
+language: Python
+keywords: []
+stars: 3
+updated_at: '2026-06-02T13:13:13Z'
+image_source: null
+heuristic_total_score: 23
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 6 support term(s).
+readme_excerpt: "# Automated quality control for radiation therapy \r\n\r\n(c) Santeri Rytky, Oulu University\
+  \ Hospital, 2024\r\n\r\n[![DOI](https://zenodo.org/badge/807553791.svg)](https://doi.org/10.5281/zenodo.20510489)\r\
+  \n\r\n## Background\r\nMultiple quality assurance tests are done periodically at radiation therapy clinics.\
+  \ \r\nThe analysis of the measurements is often time-consuming and subject to errors from manual processing.\r\
+  \nThis repository acts as a framework that automatically analyses images from a given data folder.\r\
+  \nThe main dependencies are the Pylinac package for calculating the analyses \r\nand the Watchdog package\
+  \ for monitoring the data folder.\r\n\r\n## Requirements\r\nThere are small modifications to the Pylinac\
+  \ 3.22 package that should be done.\r\nThese are likely fixed in future updates.\r\n\r\nFix for reading\
+  \ multiple CT series ([Github issue](https://github.com/jrkerns/pylinac/issues/494))\r\n\r\n### Installation\r\
+  \n- [Anaconda installation](https://docs.anaconda.com/anaconda/install/) \r\n```\r\ngit clone https://github.com/MIPT-Oulu/automated-rt-qa.git\r\
+  \ncd automated-rt-qa\r\n```\r\nEither create a conda environment for running the code\r\n```\r\nconda\
+  \ create --name rt-env --file requirements.txt\r\n```\r\nor install the packages using pip\r\n```\r\n\
+  pip install -r requirements.txt\r\n```\r\n\r\nPopulate the input arguments from `main.py` and `main_offline.py`.\
+  \ \r\nIf you need to map a network drive for the data folder, include a `share.txt` file.\r\nThe file\
+  \ should include the drive letter, shared path, username and password. Example:\r\n```\r\nZ:\r\n\\\\\
+  network\\drive\r\nuser\r\npwd\r\n```\r\n\r\n## Usage\r\nThe automated analysis is started using `main.py`.\r\
+  \nThis could be automated for example with task scheduler in Windows systems.\r\nOther option is to\
+  \ run the analysis using `main_offline.py`, which runs the analysis pipeline once.\r\n\r\n## Features\r\
+  \n\r\n### Automated QA pipeline\r\nThe code lists the files of listed data types (default: .dcm, .tif,\
+  \ .tiff) in the folder, and \r\nruns the analysis for each measurement date (Series date) and Patient\
+  \ ID (test patient).\r\nThe code detects the available test types and runs all the different measurements\
+  \ found.\r\nThe results are saved either as a pdf report and/or a row in an Excel file.\r\n\r\n### Available\
+  \ tests\r\n- VMAT (T2/T3)\r\n- Catphan analysis\r\n- ACR phantom analysis (for MRI)\r\n- Winston-Lutz\r\
+  \n\r\n### Logging\r\nDifferent events during the analysis pipeline are logged in the repository root.\r\
+  \n\r\n## Assumptions\r\nThe pipeline is tested for Varian Truebeam and Halcyon accelerators.\r\n\r\n\
+  ### VMAT (T2/T3) analysis\r\nThe pipeline assumes that T2 images have RT label `MV_243`. \r\nIn T3 tests\
+  \ the label is `MV_32` or `MV_190`.\r\nOpen beam images have the 5000, 2500 (Curve label) DICOM tag.\r\
+  \n\r\nFor Halcyon, the T2 test is split into two separate tests. \r\nThe Halcyon dose-rate test is detected\
+  \ from a lower exposure (less than 100 MU).\r\nHalcyon tests are conducted with custom regions of interest\
+  \ (`constants.py`).\r\n\r\n### Catphan analysis\r\nThe DICOM modality attribute is `CT`.\r\nCBCT images\
+  \ have either `RT Plan Storage` or `RT Plan or RT Ion Plan or Radiation Set to be verified` identifier.\r\
+  \nDiagnostic CT images are detected based on `CT Image Storage` identifier.\r\nPhantom is oriented head\
+  \ first supine (HFS). If feet first supine is planned, the code inverts the stack Z-axis.\r\n\r\n###\
+  \ ACR analysis\r\nCurrently only passed for MR images. The modality should be `MR`.\r\n\r\n### Winston-Lutz\
+  \ analysis\r\nModality should be `RTIMAGE`. The test is tried for images that are not labeled as other\
+  \ test types.\r\n\r\n## License\r\nThis software is distributed under the MIT License.\r\n"

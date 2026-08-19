@@ -1,0 +1,112 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: QIAN11258/tcia_rider_lung_ct_radiomics_stability_public_release
+url: https://github.com/QIAN11258/tcia_rider_lung_ct_radiomics_stability_public_release
+platform: github
+description: ''
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-21T09:43:38Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Auditable CT DICOM SEG and Radiomics Workflows on TCIA\n\nThis repository contains\
+  \ code and non-identifying derived outputs for five related analyses of public lung CT data:\n\n1. **CT\
+  \ reconstruction settings are identifiable from lung cancer radiomics: a patient-independent RIDER-LUNG-CT\
+  \ analysis**\n2. **Reconstruction Setting-Dependent Stability of CT Radiomics Features in Non-Small\
+  \ Cell Lung Cancer: A Public TCIA RIDER-LUNG-CT Study**\n3. **Cross-Collection Validation of an Auditable\
+  \ DICOM SEG-to-Radiomics Workflow in Public Lung CT Data**\n4. **Segmentation algorithm choice outweighs\
+  \ repeated execution in CT radiomics**\n5. **Repeat-only validation overestimates CT radiomic reliability\
+  \ across segmentation algorithms**\n\nThe first analysis uses reconstruction setting as a patient-independent\
+  \ negative-control target and evaluates whether reconstruction changes patient ranking and hypothetical\
+  \ top-quartile feature strata. The third analysis is a Technical Note focused on denominator preservation,\
+  \ source geometry, mask-placement validation, and DICOM SEG interoperability. Public data reuse is not\
+  \ treated as the contribution; the contribution is the auditable workflow and its observed failure handling.\n\
+  \n## Reconstruction Fingerprint Analysis\n\n- 350 source-geometry-valid image-mask pairs from 32 patients\n\
+  - 185 patient-setting median rows; 29 patients with all six settings\n- 100/107 original PyRadiomics\
+  \ features associated with reconstruction after FDR correction\n- Six-setting leave-one-patient-out\
+  \ balanced accuracy: 0.755 (95% CI, 0.689-0.819)\n- Reconstruction-kernel balanced accuracy: 0.962 (95%\
+  \ CI, 0.919-0.995)\n- Six-setting non-shape balanced accuracy: 0.667 (95% CI, 0.583-0.751)\n- 74/107\
+  \ features with minimum cross-setting patient-ranking rho below 0.75\n- 82/107 features with maximum\
+  \ top-quartile reclassification above 20%\n\nThis is a technical-confounding analysis, not a clinical\
+  \ diagnostic or prognostic model. The top-quartile analysis is a hypothetical sensitivity operation,\
+  \ not a validated clinical threshold.\n\n## Technical Note Evidence\n\n### Primary RIDER Cohort\n\n\
+  - 81,482 files after excluding operating-system metadata\n- 81,480 files with a `.dcm` extension\n-\
+  \ 81,105 CT DICOM files in 561 series\n- 375 readable DICOM SEG objects\n- 374 exact referenced-series\
+  \ matches and 1 ambiguous exclusion\n- 23 nonuniform source-spacing exclusions and 1 technical conversion\
+  \ failure\n- 350 successful conversions with exact pydicom-seg agreement\n- 350 successful PyRadiomics\
+  \ extractions with 107 original features each\n\n### External QIN-LungCT-Seg Validation\n\n- 409/409\
+  \ manifest series present: 31 CT series and 378 SEG objects\n- 90 RIDER-overlap SEG objects excluded\
+  \ from external validation\n- 108 phantom SEG objects retained as a separate technical stratum\n- 180\
+  \ clinical SEG objects from 20 non-overlapping QIN LUNG CT and LIDC-IDRI patients\n- 180/180 successful\
+  \ conversions and exact physical-position decoder matches\n- pydicom-seg interoperability: 126 pass,\
+  \ 51 failed, and 3 discrepant\n- 54 LIDC-IDRI SEG objects with declared z-spacing inconsistent with\
+  \ per-frame physical positions\n- 180/180 successful PyRadiomics extractions with 107 original features\
+  \ each\n\nThe 180 external SEG objects are repeated algorithm outputs linked to 20 patients and are\
+  \ not 180 independent biological samples.\n\n## Algorithm Choice Versus Repeat Execution\n\n- Balanced\
+  \ lesion-paired design: 20 clinical and 12 phantom lesions\n- Three source-labeled segmentation algorithms\
+  \ and three runs per algorithm\n- 180 clinical and 108 phantom masks; 107 original PyRadiomics features\
+  \ per mask\n- Clinical median algorithm variance fraction: 0.818 (lesion-bootstrap 95% CI, 0.796–0.839)\n\
+  - Phantom median algorithm variance fraction: 0.958 (95% CI, 0.954–0.961)\n- Algorithm-dominant features:\
+  \ 85/107 clinically and 105/107 in the phantom; no run-dominant features\n\nThe inferential unit is\
+  \ the lesion, not the individual mask. The phantom cohort is a separate technical stress-test, not an\
+  \ external clinical validation cohort. The analysis does not assess contour accuracy or clinical biomarker\
+  \ validity.\n\n## Repeat-only Reliability Validation\n\n- Clinical feature-median repeat-only ICC: 0.983;\
+  \ cross-algorithm ICC: 0.898\n- At ICC >= 0.75, 18/107 features passed repeat-only testing but failed\
+  \ cross-algorithm testing; 9 retained this classification in at least 80% and 3 in at least 95% of lesion-bootstrap\
+  \ resamples\n- At ICC >= 0.90, the corresponding counts were 42/107, 21, and 11\n- No leave-one-algorithm-out\
+  \ comparison eliminated threshold discordance (9-25 features at 0.75; 33-43 at 0.90)\n- Phantom-to-clinical\
+  \ rank transfer was metric-dependent: Spearman rho was 0.646 for repeat-only ICC, 0.499 for cross-algorithm\
+  \ ICC, 0.299 for the reliability gap, and 0.135 for the prespecified algorithm-component share\n- Direct\
+  \ phantom screening of clinical cross-algorithm reliability had 38.2%-39.2% sensitivity and Cohen kappa\
+  \ of 0.10-0.24 across the evaluated ICC thresholds\n\nThese estimates are cohort-, algorithm-, and threshold-dependent.\
+  \ They support adding cross-algorithm perturbations to radiomics robustness validation; they do not\
+  \ identify an inaccurate segmentation algorithm or establish clinical biomarker validity.\n\n## Data\
+  \ Availability\n\nThe source CT images and DICOM SEG objects are publicly available from The Cancer\
+  \ Imaging Archive:\n\n- Data From RIDER Lung CT (Version 2): https://doi.org/10.7937/K9/TCIA.2015.U1X8A5NR\n\
+  - QIN-LungCT-Seg (Version 3): https://doi.org/10.7937/K9/TCIA.2015.1BUVFJR7\n\nThis repository does\
+  \ not redistribute source DICOM, DICOM SEG, derived NIfTI images, or masks.\n\n## Reproducibility Files\n\
+  \nPrimary workflow public tables:\n\n- `outputs/tables/workflow_public/ct_series_metadata_public.csv`\n\
+  - `outputs/tables/workflow_public/seg_metadata_public.csv`\n- `outputs/tables/workflow_public/ct_seg_match_table_public.csv`\n\
+  - `outputs/tables/workflow_public/full_seg_conversion_status_public.csv`\n- `outputs/tables/workflow_public/independent_seg_validation_public.csv`\n\
+  - `outputs/tables/workflow_public/full_pyradiomics_extraction_status_public.csv`\n- `outputs/tables/workflow_public/patient_overlay_audit_public.csv`\n\
+  - `outputs/tables/workflow_public/workflow_public_table_manifest.csv`\n\nExternal validation public\
+  \ tables and reports:\n\n- `outputs/tables/external_validation/`\n- `outputs/reports/external_validation/external_validation_report.md`\n\
+  - `outputs/reports/external_validation/external_validation_summary.json`\n\nTechnical Note figures and\
+  \ source data:\n\n- `outputs/figures/workflow_technical_note/`\n\nReconstruction fingerprint figures\
+  \ and source data:\n\n- `outputs/ejr_revision/figures/`\n- `outputs/ejr_revision/tables/`\n\nAlgorithm-versus-repeat\
+  \ analysis matrix, tables, reports, and figures:\n\n- `outputs/algorithm_vs_repeat_variance/`\n\nRepeat-only\
+  \ reliability analysis, reviewer-requested sensitivity tables, validation reports, and figures:\n\n\
+  - `outputs/repeat_only_reliability/`\n\nKey validation code:\n\n- `scripts/seg_conversion_validation.py`\n\
+  - `scripts/24_validate_seg_conversion_independent.py`\n- `scripts/qin_external_validation.py`\n- `scripts/25_run_qin_external_validation.py`\n\
+  - `scripts/28_ejr_reconstruction_fingerprint.py`\n- `scripts/29_ejr_study_flow.py`\n- `scripts/34_algorithm_vs_repeat_variance.py`\n\
+  - `scripts/35_ere_study_flow.py`\n- `scripts/40_repeat_only_reliability.py`\n- `scripts/41_repeat_only_reliability_figures.py`\n\
+  - `scripts/44_reviewer_requested_sensitivity_analyses.py`\n\n## Methods Summary\n\nThe workflow requires\
+  \ exact ReferencedSeriesInstanceUID matching, audits source slice coordinates at a 0.01 mm numerical\
+  \ tolerance, excludes nonuniform source series without interpolation, checks image-mask size/spacing/origin/direction,\
+  \ and requires exact voxel-wise agreement with a designated separate decoder before radiomics extraction.\n\
+  \nRadiomics extraction used PyRadiomics 3.0.1 with `scripts/pyradiomics_params.yaml`. Only Original\
+  \ image features were extracted. The fixed settings included bin width 25, label 1, mask correction\
+  \ enabled, no intensity normalization, no explicit PyRadiomics resampling target, and Original image\
+  \ type only.\n\n## Re-running Tests\n\nCreate a Python environment and install the requirements:\n\n\
+  ```bash\npython3 -m venv .venv\nsource .venv/bin/activate\npip install -r requirements.txt\npython -m\
+  \ unittest discover -s tests -v\n```\n\nThe full conversion and extraction workflow requires locally\
+  \ downloaded TCIA data. The regression tests do not require redistribution of those source files.\n\n\
+  The algorithm-versus-repeat statistics and figures can be regenerated directly from the public derived\
+  \ matrix:\n\n```bash\npython scripts/34_algorithm_vs_repeat_variance.py \\\n  --analysis-input outputs/algorithm_vs_repeat_variance/tables/radiomics_algorithm_run_long.csv\n\
+  python scripts/35_ere_study_flow.py\n```\n\nThe repeat-only reliability results, feature-level bootstrap\
+  \ classifications, complete phantom-clinical correlations, algorithm-exclusion analyses, and revised\
+  \ figures can be regenerated from the same public matrix:\n\n```bash\npython scripts/40_repeat_only_reliability.py\n\
+  python scripts/44_reviewer_requested_sensitivity_analyses.py\npython scripts/41_repeat_only_reliability_figures.py\n\
+  ```\n\n## Public Release Boundary\n\nExcluded from this repository:\n\n- TCIA source DICOM and DICOM\
+  \ SEG files\n- derived NIfTI image and mask files\n- local virtual environments and absolute filesystem\
+  \ paths\n- submission letters, title pages, and private contact metadata\n\n## Citation\n\nIf using\
+  \ this repository, cite the associated manuscript when available and cite both TCIA source datasets\
+  \ by their persistent DOI.\n"

@@ -1,0 +1,53 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: davidpadron76/ESAPI_HN_ShulmanMethod
+url: https://github.com/davidpadron76/ESAPI_HN_ShulmanMethod
+platform: github
+description: ESAPI automation of the Shulman method for H&N SIB VMAT planning — dynamic detection of 1–3
+  PTV dose levels
+license: MIT
+language: C#
+keywords: []
+stars: 0
+updated_at: '2026-07-31T23:28:49Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "# \U0001F3AF ESAPI HN Shulman Method\n\nAutomatización del **Método Shulman** para planificación\
+  \ VMAT/RapidArc de\ncasos de cabeza y cuello con técnica SIB (Simultaneous Integrated Boost),\npara\
+  \ Varian Eclipse / Halcyon.\n\n## \U0001F4D6 Contexto\n\nEste repositorio reconstruye y mejora un script\
+  \ clínico previo\n(`HN_70-63-56.esapi.dll`) cuyo código fuente se perdió sin respaldo. La\nreconstrucción\
+  \ se basó en:\n\n- El manual de usuario del script original (comportamiento documentado).\n- La guía\
+  \ \"Método Shulman para la planificación de VMAT\" (principios de\n  caída de dosis y estructuras de\
+  \ optimización).\n\n### Cambio de diseño respecto al script original\n\nEl script original exigía crear\
+  \ `PTV_Medio` y/o `PTV_Bajo` **vacíos**\ncuando el caso no los usaba, porque el código original hacía\
+  \ lookups sin\nverificar existencia. En esta versión, la detección de niveles de PTV\nactivos es dinámica:\
+  \ si una estructura no existe o no tiene contorno\n(`Structure.IsEmpty == true`), simplemente se excluye\
+  \ — no hace falta\npre-crearla.\n\n## \U0001F9E9 Módulos\n\n| Archivo | Función |\n|---|---|\n| `src/StructureGenerator.cs`\
+  \ | Crea `zPTV_<nivel>_EVAL`, `zPTV_<nivel>_Opti`, `PTV_SUMA` y `z<OAR>_OPT` para 1, 2 o 3 niveles de\
+  \ PTV, sin requerir estructuras vacías. |\n| `src/PlanQualityIndices.cs` | Evaluación post-optimización:\
+  \ índices de conformidad (RTOG, Paddick), homogeneidad (ICRU-83), gradiente, y factor MUR. Adaptado\
+  \ de `volumen.cs`. |\n\n## \U0001F517 Dependencia externa: anillos de contención\n\nLa generación de\
+  \ anillos **no está incluida aquí**. Se delega al\nrepositorio hermano, ya desarrollado y probado:\n\
+  \n\U0001F449 [ESAPI_OptimizationRings](https://github.com/davidpadron76/ESAPI_OptimizationRings)\n\n\
+  Flujo sugerido: ejecutar `StructureGenerator.cs` primero (genera\n`PTV_SUMA`), luego usar `PTV_SUMA`\
+  \ como entrada de\n`ESAPI_OptimizationRings` para generar `zRing1`/`zRing2` con recorte\nautomático\
+  \ de intersección con OARs.\n\n## \U0001F5FA️ Roadmap (no incluido todavía)\n\n- [ ] Creación automática\
+  \ de puntos de referencia (`refPTV_Alto`, etc.)\n- [ ] Creación de curso, plan y arcos en Halcyon (geometría\
+  \ de campos)\n- [ ] Asignación automática de objetivos de optimización (equivalente a la\n      tabla\
+  \ de la sección 4.4 del manual original), generalizada a N\n      niveles de PTV usando la misma lista\
+  \ dinámica de `StructureGenerator.cs`\n- [ ] Corrección del NTO / configuración automática\n\n## ⚠️\
+  \ Puntos a verificar antes de uso clínico\n\n- Firmas exactas de `Structure.Margin()`, `SegmentVolume.And()/.Or()/.Sub()`,\n\
+  \  `StructureSet.AddStructure()` — confirmadas contra `Anillos.cs` del autor,\n  pero deben validarse\
+  \ en el entorno de destino (versión de ESAPI/Eclipse).\n- El cálculo de UM totales en `PlanQualityIndices.cs`\
+  \ conserva una nota del\n  autor original (\"REVISAR, NO ESTA SUMANDO LAS UM DE LOS CAMPOS\") que no\n\
+  \  se pudo verificar ni corregir sin acceso al entorno clínico real.\n- Validar cada estructura generada\
+  \ contra un caso de prueba conocido antes\n  de usar en planificación real.\n\n## \U0001F4C4 Licencia\n\
+  \nMIT — ver [LICENSE](LICENSE).\n\n## ⚠️ Descargo clínico\n\nSolo para fines de investigación y educación.\
+  \ Es responsabilidad exclusiva\ndel físico médico o dosimetrista clínico verificar y validar todas las\n\
+  estructuras y objetivos generados antes de su uso en tratamiento de\npacientes.\n"

@@ -1,0 +1,146 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Kiragroh/ClearPlan-OpenSource
+url: https://github.com/Kiragroh/ClearPlan-OpenSource
+platform: github
+description: Open-source framework for automated radiotherapy plan review with PQM evaluation, DVH visualization,
+  and failure-mode logging.
+license: MIT
+language: C#
+keywords:
+- clearplan
+- dvh
+- esapi
+- medical-physics
+- quality-assurance
+- radiation-therapy
+stars: 6
+updated_at: '2026-08-13T07:05:37Z'
+image_source: null
+heuristic_total_score: 36
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 3 particle-therapy term(s).
+- Matched 10 support term(s).
+readme_excerpt: "# ClearPlan\n\nClearPlan is an open-source .NET Framework 4.8/ESAPI framework for read-only\
+  \ radiotherapy plan review. It combines plan quality metric (PQM) evaluation, the existing PlanCheck\
+  \ surface, dose-volume histogram visualization, structured reporting, failure-mode logging, and a PlanFieldNamer-compatible\
+  \ field-name preview.\n\nThe public package is an institution-neutral baseline. Clinical constraint\
+  \ sets, paths, identifiers, and acceptance criteria remain local and require independent commissioning.\n\
+  \n> **Independent project:** ClearPlan is maintained independently and is not an official publication\
+  \ of any employer, healthcare provider, university, or software vendor. It is supplied without warranty\
+  \ and is not a certified medical device. See [DISCLAIMER.md](DISCLAIMER.md).\n\n## What is included\n\
+  \n- `ClearPlan.Core`: ESAPI-independent constraint, settings, alias, table-selection, and field-naming\
+  \ logic\n- `ClearPlan.Presentation`: vendor-neutral shared WPF review workspace and DVH presentation\n\
+  - RefDB JSON and Excel XLSX adapters that populate one normalized internal catalog\n- automatic RefDB-first\
+  \ loading with a visible Excel fallback\n- deterministic alias and left/right laterality handling\n\
+  - plan-context table selection with explicit confirmation for ambiguous results\n- a read-only, plan-aware\
+  \ field preview with separate ID/name status and explicit angle-table-UZ/GUZ ordering\n- a Clinical\
+  \ Blueprint interface with one integrated plan/PQM/PlanCheck/field/DVH review surface, a direct PDF\
+  \ report action, and complete detail/settings pages\n- a standalone vendor-free simulator with seven\
+  \ checked-in deterministic synthetic scenarios, wide DVH review, watermarked reports, and reproducible\
+  \ captures\n- a versioned neutral review-snapshot contract shared by the simulator and the read-only\
+  \ Eclipse host\n- an illustrative, unvalidated RayStation snapshot adapter that withholds clinical pass/fail\
+  \ classifications unless semantic equivalence has been commissioned\n- an editable settings page for\
+  \ source and operational paths\n- a public workbook containing three example tables, 19 constraints,\
+  \ and seven structures\n- 125 C# executable tests, 20 RayStation example tests, simulator smoke tests,\
+  \ and release validation tools\n\nThe open-source starter PlanCheck contains general examples. A clinical\
+  \ deployment can preserve its own complete `ErrorCalculator.cs`; the supplied deployment tooling explicitly\
+  \ excludes that file from replacement.\n\n## Quick start: patient-free simulator\n\nThe simulator does\
+  \ not require Eclipse, ESAPI, a patient, or proprietary TPS\nassemblies. Build and start the integrated\
+  \ publication scenario:\n\n```powershell\npowershell -NoProfile -ExecutionPolicy Bypass -File tools\\\
+  build-and-test.ps1 `\n  -Configuration Release -Platform x64\nartifacts\\simulator\\Release\\ClearPlan.Simulator.exe\
+  \ --scenario mixed-review\n```\n\nThe other scenario IDs are `baseline-pass`, `target-underdose`,\n\
+  `oar-overdose`, `metadata-plancheck`, `field-and-mapping`, and\n`optional-path-fallback`. Every simulator\
+  \ window, capture, and report is marked\n`SYNTHETIC DEMONSTRATION — NOT FOR CLINICAL USE`.\n\nRun the\
+  \ complete deterministic UI/report smoke test with:\n\n```powershell\npowershell -NoProfile -ExecutionPolicy\
+  \ Bypass -File tools\\test-simulator.ps1\n```\n\n## Quick start: Eclipse/ESAPI mode\n\nThis is a separate\
+  \ local build mode. The public release does not redistribute\nlicensed Varian assemblies or a preconfigured\
+  \ clinical ruleset.\n\n1. Add institution-approved copies of `VMS.TPS.Common.Model.API.dll` and\n  \
+  \ `VMS.TPS.Common.Model.Types.dll` to `ClearPlan-DLLs`.\n2. Build the Eclipse workstation output:\n\n\
+  \   ```powershell\n   powershell -NoProfile -ExecutionPolicy Bypass -File tools\\build-and-test.ps1\
+  \ `\n     -Configuration Debug -Platform x64\n   ```\n\n3. Open `built\\settings.ini` or use the `Einstellungen`\
+  \ page to edit paths.\n4. Select a source mode, enter source and output paths, and choose\n   `Quelle\
+  \ testen`. Non-path options remain in `built\\settings.json`.\n5. Save only after the catalog has validated\
+  \ successfully.\n6. Start `built\\ClearPlan.Runner.exe` or load the built plugin in an\n   ESAPI-capable\
+  \ environment.\n\nEvery file-system path is stored in `settings.ini`. Relative paths are resolved from\
+  \ the directory containing the active settings files, normally `built`. Absolute local or UNC paths\
+  \ are supported for clinical use. If an optional log, report, export, or state path is temporarily unavailable,\
+  \ ClearPlan uses a local directory under `built` instead of terminating the clinical UI.\n\n## Constraint\
+  \ source modes\n\n`constraintSource.mode` supports:\n\n- `Automatic`: load RefDB when it is configured,\
+  \ readable, and valid; otherwise load Excel and show the fallback\n- `RefDb`: load only RefDB JSON;\
+  \ a bad or missing path is a blocking error\n- `Excel`: load only the Excel workbook; a bad or missing\
+  \ path is a blocking error\n\nRelevant non-path option:\n\n```json\n{\n  \"constraintSource\": {\n \
+  \   \"mode\": \"Automatic\",\n    \"includeInactiveTables\": false\n  }\n}\n```\n\nThe `[Paths]` section\
+  \ in `settings.ini` contains RefDB, Excel, templates, logs, reports, exports, state, auxiliary files,\
+  \ and optional clinical support paths. The settings page exposes all of them together with the non-path\
+  \ options and privacy switches. `Quelle testen` validates paths and catalog content without replacing\
+  \ the active catalog. `Speichern` validates first and writes both settings files atomically. `Neu laden`\
+  \ reloads settings and source status.\n\n## Public Excel schema\n\nThe workbook `ClearPlan.Script\\\
+  Distribution\\ConstraintTemplates\\ClearPlan_DefaultConstraints.xlsx` has three sheets:\n\n- `Structures`:\
+  \ canonical structure identity, code, DICOM type, laterality, aliases, and active status\n- `Tables`:\
+  \ table identity, display name, plan/PlanSum compatibility, fraction and dose ranges, site/regime hints,\
+  \ and active status\n- `Constraints`: relationship to table and structure, PQM objective, comparator,\
+  \ numeric value, unit, goal, variation, and active status\n\nKeep identifiers unique and relationships\
+  \ explicit. The validator rejects missing headers, duplicate identifiers, broken table/structure references,\
+  \ and invalid objective values. Do not merge cells or add presentation-only rows inside the data ranges.\n\
+  \nValidate the public workbook with:\n\n```powershell\npython tools\\validate-constraint-workbook.py\n\
+  ```\n\n## Migrating legacy CSV files\n\nCSV files are no longer active runtime defaults. To migrate\
+  \ an existing set:\n\n```powershell\npython tools\\convert-constraint-csvs-to-xlsx.py `\n  --input-directory\
+  \ <legacy-csv-folder> `\n  --output <constraints.xlsx>\n```\n\nThen verify record-level equivalence:\n\
+  \n```powershell\npython tools\\verify-constraint-migration.py `\n  --input-directory <legacy-csv-folder>\
+  \ `\n  --workbook <constraints.xlsx>\n```\n\nReview all generated identifiers, table metadata, units,\
+  \ aliases, and laterality before clinical use. Retain the original files as rollback evidence until\
+  \ commissioning is complete.\n\n## Adding aliases safely\n\n- Prefer one canonical structure identifier\
+  \ per concept.\n- Enter aliases in the source data, not in application code.\n- Encode laterality explicitly\
+  \ for paired organs.\n- Do not make one unqualified alias resolve to both left and right structures.\n\
+  - Treat ambiguity as a validation/review item instead of relying on row order.\n- Add or update core\
+  \ tests when introducing a new matching rule.\n\n## Field-name preview\n\nThe field-name page compares\
+  \ existing field IDs and names with read-only expected values but never modifies the plan. A valid current\
+  \ field prefix is preserved; otherwise the leading alphanumeric part of the plan ID is used. For example,\
+  \ plan `7GA_HI9-15_20` expects `7GA01`, `7GA02`, and so on. Name examples from the test suite:\n\n-\
+  \ static gantry 90.2° → `90`\n- clockwise arc 179° to 181° → `179-181 UZ`\n- counter-clockwise arc 181°\
+  \ to 179° → `181-179 GUZ`\n- clockwise arc with couch 30° → `179-181 T30 UZ`\n- duplicate clockwise\
+  \ arcs → `179-181 UZa`, `179-181 UZb`\n\nThe adapter contains no plan-modification, beam-renaming, setup-field,\
+  \ apply, or save calls.\n\n## Integrated review surface\n\n`Gesamtansicht` shows the available plans,\
+  \ the complete PQM result list with the resolved structure visible in every row, PlanCheck findings,\
+  \ separate field-ID/name conformance, and the DVH in one vertically scrollable review. The focused pages\
+  \ remain available for PQM reassignment, reporting options, reference-point details, the full field\
+  \ comparison, DVH controls, and settings. DVH selections are shared through view-model state; overall\
+  \ and detail plots use separate synchronized OxyPlot models.\n\n## Essentials runner presentation\n\n\
+  The desktop executable continues to use `EsapiEssentials.PluginRunner` for patient/plan opening and\
+  \ the ESAPI lifecycle. Runner-only WPF resources give that existing window the Clinical Blueprint appearance.\
+  \ ClearPlan does not replace or reflect into the Essentials data model or commands; presentation failure\
+  \ is non-blocking and leaves the original runner usable.\n\n## Illustrative RayStation adapter\n\n`examples\\\
+  raystation\\clearplan_review_snapshot.py` demonstrates how a second\nscripting-capable TPS can populate\
+  \ the neutral snapshot boundary without\nwriting to a treatment plan. It is intentionally conservative:\
+  \ unsupported\nsemantics remain `not-evaluated`, output must be an explicit local path, and\nthe example\
+  \ is not runtime-validated or clinically commissioned in RayStation.\nSee `examples\\raystation\\README.md`\
+  \ and run its 20 tests with:\n\n```powershell\npython -m unittest discover -s examples\\raystation\\\
+  tests -v\n```\n\n## Privacy defaults\n\nThe public settings avoid direct patient and user identifiers\
+  \ in automatic logs and generated filenames. If a clinic enables direct identifiers, it must do so under\
+  \ local governance. Figures, bug reports, example workbooks, and pull requests must remain patient-free.\n\
+  \n## Repository layout\n\n- `ClearPlan.Core`: source-independent logic\n- `ClearPlan.Core.Tests`: executable\
+  \ tests\n- `ClearPlan.Presentation`: shared snapshot-backed WPF presentation\n- `ClearPlan.Script`:\
+  \ ESAPI plugin, Clinical Blueprint UI, PlanCheck, and adapters\n- `ClearPlan.Reporting`: report data\
+  \ structures\n- `ClearPlan.Reporting.MigraDoc`: PDF rendering\n- `ClearPlan.Runner`: desktop launcher\n\
+  - `paper`: technical note and reproducible public-safe figures\n- `tools`: build, migration, release,\
+  \ PlanCheck guard, and deployment utilities\n\nDistribution files are maintained in `ClearPlan.Script\\\
+  Distribution` and copied to `built` during compilation.\n\n## Validation\n\nRun the full local pipeline:\n\
+  \n```powershell\npowershell -NoProfile -ExecutionPolicy Bypass -File tools\\build-and-test.ps1\n```\n\
+  \nIt builds the requested `Debug|Release` x64 configuration, runs 125 C# tests\nand the 20 Python adapter\
+  \ tests, checks a Python-produced snapshot against the\nC# contract validator, validates the workbook,\
+  \ scans the source and Office XML\nfor private tokens, checks the shared workspace and network fallback\n\
+  contracts, and verifies the read-only field and adapter boundaries.\n\nFor a clean vendor-free checkout,\
+  \ build and package only the public simulator\nand its tests:\n\n```powershell\npowershell -NoProfile\
+  \ -ExecutionPolicy Bypass -File tools\\build-public-release.ps1\n```\n\nThis public workflow also creates\
+  \ the ZIP twice and requires byte-identical\nSHA-256 hashes. See `docs\\reproducibility.md`.\n\nIndividual\
+  \ guards:\n\n```powershell\npowershell -NoProfile -ExecutionPolicy Bypass -File tools\\validate-public-release.ps1\n\
+  powershell -NoProfile -ExecutionPolicy Bypass -File tools\\validate-ui-distinctiveness.ps1\npowershell\
+  \ -NoProfile -ExecutionPolicy Bypass -File tools\\validate-readonly-field-preview.ps1\n```\n\nThese\
+  \ checks are implementation safeguards, not a substitute for clinical commissioning.\n\n## Community\
+  \ and publication\n\n- Use GitHub Issues for anonymized bugs, onboarding problems, and feature requests.\n\
+  - See `CONTRIBUTING.md` before changing sources, aliases, PlanCheck, or ESAPI adapters.\n- The reproducible\
+  \ technical note is in `paper\\ClearPlan_ZMP_short_communication.md`.\n- A proposed,"

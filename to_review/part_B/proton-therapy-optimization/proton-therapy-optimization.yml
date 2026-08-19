@@ -1,0 +1,205 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: marina15rodriguez/proton-therapy-optimization
+url: https://github.com/marina15rodriguez/proton-therapy-optimization
+platform: github
+description: Optimization of a proton therapy treatment plan
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-03-29T14:49:56Z'
+image_source: null
+heuristic_total_score: 30
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 particle-therapy term(s).
+- Matched 12 support term(s).
+readme_excerpt: '# Proton Therapy Treatment Plan Optimization
+
+
+  Implementation of an Intensity Modulated Proton Therapy (IMPT) treatment planning optimization pipeline,
+  developed as part of the LGBIO2070 course at UCLouvain.
+
+
+  ## Overview
+
+
+  This project implements a complete treatment planning workflow for proton therapy:
+
+
+  1. **DICOM data loading** — CT scan import, Hounsfield Unit conversion, multi-planar visualization
+
+  2. **Organ segmentation** — overlay of RTSTRUCTs (CTV, Heart, Lungs, Liver, Spinal Canal) on CT
+
+  3. **Beamlet visualization** — display of pre-computed beamlet dose distributions from Monte Carlo simulation
+
+  4. **Treatment plan optimization** — gradient descent minimization of a weighted dose-volume cost function
+
+  5. **Plan evaluation** — DVH curves, dose statistics (D98, D2), phase comparison (0% vs 50% breathing)
+
+  6. **Radiobiological models** — TCP (Poisson and Logistic) and NTCP (LKB and Poisson) models
+
+
+  ## Project Structure
+
+
+  ```
+
+  proton-therapy-optimization/
+
+  ├── src/
+
+  │   ├── dicom_utils.py   # DICOM loading and CT visualization
+
+  │   ├── optimization.py  # Cost functions and gradient descent
+
+  │   ├── evaluation.py    # DVH, TCP, NTCP, dose statistics
+
+  │   └── main.py          # Full pipeline entry point
+
+  ├── notebooks/
+
+  │   └── lab3_proton_therapy.ipynb  # Original lab notebook
+
+  ├── data/                # Not tracked — see Data section below
+
+  ├── results/             # Generated plots (not tracked)
+
+  ├── requirements.txt
+
+  └── README.md
+
+  ```
+
+
+  ## Data
+
+
+  The data files required to run this project are not included in this repository. They were provided
+  as part of the LGBIO2070 course (UCLouvain) and include:
+
+
+  | File | Description |
+
+  |------|-------------|
+
+  | `data/CT_phase_0.npy` | CT scan at 0% respiratory phase |
+
+  | `data/CT_phase_5.npy` | CT scan at 50% respiratory phase |
+
+  | `data/Beamlets_phase_0.npy` | Beamlet dose matrix (0% phase) |
+
+  | `data/Beamlets_phase_5.npy` | Beamlet dose matrix (50% phase) |
+
+  | `data/RTSTRUCT_dict_phase_0.npz` | Organ segmentation masks (0% phase) |
+
+  | `data/RTSTRUCT_dict_phase_5.npz` | Organ segmentation masks (50% phase) |
+
+
+  Place these files in the `data/` folder before running.
+
+
+  ## Installation
+
+
+  ```bash
+
+  git clone https://github.com/marina15rodriguez/proton-therapy-optimization.git
+
+  cd proton-therapy-optimization
+
+  pip install -r requirements.txt
+
+  ```
+
+
+  ## Usage
+
+
+  Run the full pipeline:
+
+
+  ```bash
+
+  python src/main.py
+
+  ```
+
+
+  Results (DVH plots, TCP/NTCP curves, step size comparison) are saved to `results/`.
+
+
+  Alternatively, explore the original notebook:
+
+
+  ```bash
+
+  jupyter notebook notebooks/lab3_proton_therapy.ipynb
+
+  ```
+
+
+  ## Methods
+
+
+  ### Optimization Problem
+
+
+  The treatment plan is formulated as:
+
+
+  ```
+
+  minimize  Σ_j w_j f_j(D)
+
+  subject to  D = B · x,  x ≥ 0
+
+  ```
+
+
+  Where `B` is the beamlet matrix (N voxels × m beamlets), `x` are the beamlet weights, and `f_j` are
+  dose-volume objective functions.
+
+
+  ### Cost Functions
+
+
+  Three constraint types are implemented:
+
+  - **max**: penalizes doses exceeding a threshold (overdose)
+
+  - **min**: penalizes doses below a threshold (underdose)
+
+  - **mean_max**: penalizes mean dose exceeding a threshold
+
+
+  ### Dose Constraints
+
+
+  | Structure | Constraint | Threshold |
+
+  |-----------|-----------|-----------|
+
+  | CTV | max dose | 60 Gy |
+
+  | CTV | min dose | 50.4 Gy |
+
+  | Heart | mean max | 26 Gy |
+
+  | Lungs | mean max | 7 Gy |
+
+  | Liver | mean max | 32 Gy |
+
+  | Spinal canal | max | 20 Gy |
+
+
+  ## Authors
+
+
+  Marina Rodríguez, Xinyao Li — LGBIO2070, UCLouvain
+
+  '

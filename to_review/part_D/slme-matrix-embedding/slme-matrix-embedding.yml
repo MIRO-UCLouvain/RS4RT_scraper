@@ -1,0 +1,120 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Radiotherapy-Optimization/SLME-matrix-embedding
+url: https://github.com/Radiotherapy-Optimization/SLME-matrix-embedding
+platform: github
+description: 'Sparse-plus-low-rank matrix embedding (SLME): fast, parameter-free trust-region algorithms
+  (R-Trust / R3-Trust) for compressing large dense matrices, with applications in cancer radiotherapy
+  optimization'
+license: NOASSERTION
+language: MATLAB
+keywords: []
+stars: 0
+updated_at: '2026-08-07T19:56:22Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "Reference MATLAB implementation of the **R-Trust / R3-Trust** algorithms from:\n\n> M.\
+  \ Tefagh, G. Jhanwar, and M. Zarepisheh,\n> *\"Sparse plus low-rank matrix embedding with applications\
+  \ in cancer radiotherapy optimization.\"*\n\n**License:** Apache License 2.0 with the [Commons Clause](https://commonsclause.com/)\
+  \ — free for **non-commercial, academic** use (see [`LICENSE`](LICENSE)).\n\n---\n\n## Overview\n\n\
+  Given a large dense matrix `A` (m × n), **SLME** builds a computationally efficient surrogate\n\n```\n\
+  A ≈ S + H*W\n```\n\nwhere `S` is **sparse**, and `H` (m × r) and `W` (r × n) form a **low-rank** factor\
+  \ with `r ≪ min(m, n)`. The point of the surrogate is speed: a matrix–vector product\n\n```\nA*x  ≈\
+  \  S*x + H*(W*x)\n```\n\ncosts `nnz(S) + r*(m+n)` operations instead of the `m*n` operations of a dense\
+  \ `A*x`.\n\nUnlike Robust PCA and related **recovery** models, SLME does **not** try to recover interpretable\
+  \ latent components. It seeks the best accuracy-vs-cost trade-off, formulated as a bi-objective, nonconvex\
+  \ problem that trades approximation error `‖A − (S + H*W)‖_F²` against representation cost `η·(m+n)·rank(L)\
+  \ + ‖S‖₀`. The proposed trust-region algorithms approximate the entire **Pareto frontier** of this trade-off\
+  \ in a single, parameter-free run.\n\nThe motivating application is cancer radiotherapy treatment planning,\
+  \ where a large dense *dose-influence matrix* is the main computational bottleneck. SLME also works\
+  \ well as a matrix-recovery method on synthetic sparse-plus-low-rank data (see `SLME_Synthetic.m`).\n\
+  \n---\n\n## The algorithms\n\n| Algorithm | File | Description |\n|-----------|------|-------------|\n\
+  | **R-Trust**  | [`R_Trust.m`](R_Trust.m)  | Exact recursive trust-region baseline. Each iteration compares\
+  \ one exact rank-1 SVD update against the exact sparse update and keeps whichever removes more residual\
+  \ energy. |\n| **R2-Trust** | — | General framework (in the paper) that allows *approximate* sparse/low-rank\
+  \ projection subroutines with a rectification step. |\n| **R3-Trust** | [`R3_Trust.m`](R3_Trust.m) |\
+  \ Fast, scalable instantiation of R2-Trust using **randomized SVD** and a **sampled quantile threshold**,\
+  \ plus batched low-rank updates. Recommended for large matrices. |\n\nBoth `R_Trust` and `R3_Trust`\
+  \ are **parameter-free**: a single run returns the whole error-vs-cost surface. `R3_Trust`'s `batch_size`\
+  \ (default `10`) trades speed for granularity, like a step size — it does not need tuning to produce\
+  \ the surface.\n\n---\n\n## Requirements\n\n- **MATLAB** (developed and tested on **R2023a**). No additional\
+  \ toolboxes are required for the core R-Trust / R3-Trust algorithms.\n- An internet connection **only**\
+  \ if you want to reproduce the radiotherapy experiment, which downloads patient data from the [PortPy](https://huggingface.co/datasets/PortPy-Project/PortPy_Dataset)\
+  \ dataset on Hugging Face.\n\n---\n\n## Quick start\n\nDecompose any dense matrix:\n\n```matlab\n% Build\
+  \ a sparse-plus-low-rank test matrix  A = S + H*W\nm = 2000; n = 500; r = 20;                      \
+  \ % dimensions and rank of the low-rank part\nHtrue = randn(m, r);  Wtrue = randn(r, n);       % random\
+  \ low-rank factors (Htrue*Wtrue is rank r)\ndensity = 0.05;                                  % fraction\
+  \ of nonzero entries in the sparse part\nStrue = (rand(m, n) < density) .* (20*rand(m, n) - 10);   %\
+  \ random sparse matrix, entries in [-10, 10]\nA = Strue + Htrue*Wtrue;                          % the\
+  \ dense matrix to embed\n\nout = R3_Trust(A);               % single, parameter-free run\n\n% Final\
+  \ embedding  A ≈ H*W + S\n% (the recovered factors need not match Strue/Htrue/Wtrue — SLME targets the\n\
+  %  accuracy-vs-cost trade-off, not recovery of the underlying components)\nH = out(end).H;         \
+  \         % m × r  (low-rank left factor)\nW = out(end).W;                  % r × n  (low-rank right\
+  \ factor, orthonormal rows)\nS = out(end).S;                  % m × n  sparse matrix\n\n% Fast matrix-vector\
+  \ product\nx  = randn(size(A,2), 1);\nAx = S*x + H*(W*x);              % ~ nnz(S) + r*(m+n) flops, vs\
+  \ m*n for A*x\n```\n\nEach entry of the returned struct array `out` is one point on the accuracy-vs-cost\
+  \ surface:\n\n| Field | Meaning |\n|-------|---------|\n| `out(k).relative_error` | `‖A − (H*W + S)‖_F\
+  \ / ‖A‖_F` at iteration `k` |\n| `out(k).relative_NNZ`   | `(nnz(S) + (m+n)*rank) / (m*n)` — the relative\
+  \ storage/flop cost |\n| `out(k).time`           | cumulative wall-clock time |\n| `out(end).H/.W/.S`\
+  \      | the finalized factors |\n\nCommon options (pass as a struct):\n\n```matlab\nopts = struct('relative_error_bound',\
+  \ 0.01, ...  % stop at 1% relative error\n              'batch_size',           10,   ...  % R3-Trust\
+  \ only\n              'verbose',              1);\nout  = R3_Trust(A, opts);\n```\n\nPlot the full trade-off\
+  \ surface:\n\n```matlab\nplot_pareto({out}, {'R3-Trust'}, 'YScale', 'log');\n```\n\nUse `R_Trust` in\
+  \ place of `R3_Trust` when you want the exact reference behavior on smaller matrices.\n\n---\n\n## Reproducing\
+  \ the paper experiments\n\n### 1. Radiotherapy (matrix embedding vs. matrix recovery)\n\n```matlab\n\
+  SLME_Radiotherapy\n```\n\nAt the top of the script, set the `patient_id` and `beam_ids`. If the corresponding\n\
+  `data/<patient_id>.mat` file is not present, the script calls\n[`Radiotherapy_Data_Gen.m`](Radiotherapy_Data_Gen.m)\
+  \ to download the beams from the\nPortPy Hugging Face dataset and assemble the dose-influence matrix\
+  \ automatically\n(this can take a while and a fair amount of disk on the first run).\n\nAs of August\
+  \ 2026 the PortPy dataset provides roughly 200 lung cases\n(`Lung_Patient_1 … Lung_Patient_202`) and\
+  \ about 100 prostate cases\n(`Prostate_Patient_1 … Prostate_Patient_99`), plus a lung phantom\n(`Lung_Phantom_Patient_1`);\
+  \ see the\n[dataset page](https://huggingface.co/datasets/PortPy-Project/PortPy_Dataset) for the\ncurrent\
+  \ list.\n\nThe script compares R-Trust / R3-Trust against the recovery baselines (GoDec, VB, ADMM)\n\
+  and against sparse-only and low-rank-only approximations, and displays the Pareto plots.\n\n### 2. Synthetic\
+  \ sparse-plus-low-rank recovery\n\n```matlab\nSLME_Synthetic\n```\n\nGenerates synthetic `A = L + S\
+  \ + E` instances following the protocol of Zhou et al. (2014)\nand compares R3-Trust with GoDec, VB,\
+  \ and ADMM across sparsity and noise regimes.\n\n\n---\n\n## Repository contents\n\n| File | Purpose\
+  \ |\n|------|---------|\n| `R_Trust.m` | Exact R-Trust algorithm |\n| `R3_Trust.m` | Randomized R3-Trust\
+  \ algorithm (recommended) |\n| `SLME_Radiotherapy.m` | Radiotherapy experiment driver |\n| `SLME_Synthetic.m`\
+  \ | Synthetic-recovery experiment driver |\n| `Radiotherapy_Data_Gen.m` | Builds a dose-influence matrix\
+  \ from the PortPy dataset |\n| `plot_pareto.m` | Accuracy-vs-cost / accuracy-vs-time plotting |\n| `sparse_only_pareto.m`,\
+  \ `lowrank_only_pareto.m` | Sparse-only and low-rank-only baselines |\n| `GoDec.m` | GoDec baseline\
+  \ (Zhou & Tao, ICML 2011) |\n| `VBRPCA.m` | Variational Bayesian RPCA baseline (Babacan et al., 2012)\
+  \ |\n| `ADMM_PCP.m`, `ADMM_SPCP.m` | ADMM baselines (based on Boyd et al.) |\n| `denoise_decomposition.m`\
+  \ | Numerical-rank / round-off cleanup helper |\n| `LICENSE` | Apache 2.0 with Commons Clause |\n\n\
+  The baseline solvers (`GoDec`, `VBRPCA`, the `ADMM_*` files) are adapted from their original\nauthors'\
+  \ implementations and retain their own attributions; they are included so the paper's\ncomparisons can\
+  \ be reproduced.\n\n---\n\n## Citation\n\nIf you use this code, please cite:\n\n```bibtex\n@article{tefagh2026slme,\n\
+  \  title   = {Sparse plus low-rank matrix embedding with applications in cancer radiotherapy optimization},\n\
+  \  author  = {Tefagh, Mojtaba and Jhanwar, Gourav and Zarepisheh, Masoud},\n  year    = {2026},\n  note\
+  \    = {Preprint; bibliographic details will be updated upon publication.}\n}\n```\n\n---\n\n## References\n\
+  \nThe baseline solvers and datasets included here are due to their original authors:\n\n- **GoDec**\
+  \ — T. Zhou and D. Tao, \"GoDec: Randomized low-rank & sparse matrix decomposition in noisy case,\"\
+  \ in *Proc. 28th International Conference on Machine Learning (ICML)*, 2011.\n- **Variational Bayesian\
+  \ RPCA (VB)** — S. D. Babacan, M. Luessi, R. Molina, and A. K. Katsaggelos, \"Sparse Bayesian methods\
+  \ for low-rank matrix estimation,\" *IEEE Transactions on Signal Processing*, vol. 60, no. 8, pp. 3964–3977,\
+  \ 2012.\n- **ADMM** — S. Boyd, N. Parikh, E. Chu, B. Peleato, and J. Eckstein, \"Distributed optimization\
+  \ and statistical learning via the alternating direction method of multipliers,\" *Foundations and Trends\
+  \ in Machine Learning*, vol. 3, no. 1, pp. 1–122, 2011. The matrix-decomposition solver is adapted from\
+  \ N. Parikh and S. Boyd, \"Proximal algorithms,\" *Foundations and Trends in Optimization*, vol. 1,\
+  \ no. 3, pp. 127–239, 2014.\n- **Stable Principal Component Pursuit** (the model solved by `ADMM_SPCP.m`)\
+  \ — Z. Zhou, X. Li, J. Wright, E. Candès, and Y. Ma, \"Stable principal component pursuit,\" in *Proc.\
+  \ IEEE International Symposium on Information Theory (ISIT)*, 2010.\n- **Robust PCA / Principal Component\
+  \ Pursuit** — E. J. Candès, X. Li, Y. Ma, and J. Wright, \"Robust principal component analysis?,\" *Journal\
+  \ of the ACM*, vol. 58, no. 3, pp. 1–37, 2011.\n- **Synthetic-data protocol** — X. Zhou, C. Yang, H.\
+  \ Zhao, and W. Yu, \"Low-rank modeling and its applications in image analysis,\" *ACM Computing Surveys*,\
+  \ vol. 47, no. 2, article 36, 2014.\n- **PortPy dataset** — PortPy: an open-source platform for cancer\
+  \ radiotherapy treatment planning. Project: <https://github.com/PortPy-Project/PortPy>; dataset: <https://huggingface.co/datasets/PortPy-Project/PortPy_Dataset>.\n\
+  \n---\n\n## License\n\nLicensed under the **Apache License 2.0 with the Commons Clause** — you may use,\
+  \ modify, and\nredistribute this software for non-commercial, academic purposes, but you may not *sell*\
+  \ it.\nSee [`LICENSE`](LICENSE) for the full terms.\n\n---\n\n## Authors\n\n- **Mojtaba Tefagh** — University\
+  \ of Edinburgh (Email: `m.tefagh@ed.ac.uk`)\n- **Gourav Jhanwar** — Memorial Sloan Kettering Cancer\
+  \ Center (Email: `JhanwarG@mskcc.org`)\n- **Masoud Zarepisheh** — Memorial Sloan Kettering Cancer Center\
+  \ (Email: `zarepism@mskcc.org`)\n"

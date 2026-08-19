@@ -1,0 +1,115 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: MerimJ/GBM-Radiomics-AI
+url: https://github.com/MerimJ/GBM-Radiomics-AI
+platform: github
+description: AI-driven MRI radiomics pipeline for glioblastoma survival prediction - peritumoral ring
+  analysis, SHAP explainability, PyRadiomics · scikit-learn · XGBoost
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-28T10:59:59Z'
+image_source: https://raw.githubusercontent.com/MerimJ/GBM-Radiomics-AI/HEAD/results/figures/qc/001_t0_qc.png
+heuristic_total_score: 19
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 5 support term(s).
+readme_excerpt: "# \U0001F9E0 AI-Driven MRI Radiomics for Glioblastoma\n\n**Quantitative Features Beyond\
+  \ Visible Segmentation - Outcome Prediction & Explainable AI**\n\n![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python)\n\
+  ![PyRadiomics](https://img.shields.io/badge/PyRadiomics-3.0.1-orange)\n![SHAP](https://img.shields.io/badge/XAI-SHAP-purple)\n\
+  ![License](https://img.shields.io/badge/License-MIT-green)\n![Dataset](https://img.shields.io/badge/Dataset-TCIA%20CFB--GBM-lightblue)\n\
+  \n> · Not a clinically validated tool · Raw patient data not included\n\n---\n\n## What This Project\
+  \ Does\n\nGlioblastoma (GBM) is the most aggressive primary brain tumour. Standard clinical imaging\
+  \ measures only the *visible* contrast-enhancing tumour. But GBM infiltrates **2–3 cm beyond the visible\
+  \ boundary** - and that tissue contains hidden prognostic signals.\n\nThis pipeline asks: **can quantitative\
+  \ radiomic features from the tissue surrounding the tumour predict survival better than visible tumour\
+  \ measurements alone?**\n\n**Answer: Yes - adding peritumoral ring features improves AUC by +19% over\
+  \ tumour-only.**\n\n---\n\n## Key Results\n\n| Cohort | Experiment | Best Model | AUC | 95% CI |\n|--------|-----------|-----------|-----|--------|\n\
+  | 261 patients (TSV) | Volume Only (baseline) | SVM-RBF | 0.627 | 0.562–0.692 |\n| 261 patients (TSV)\
+  \ | **Intratumoral Radiomics** | **LogReg ElasticNet** | **0.710** | **0.648–0.767** |\n| 79 patients\
+  \ (NIfTI) | T1Gd Tumor Only | RandomForest | 0.562 | 0.437–0.688 |\n| 79 patients (NIfTI) | **Tumor\
+  \ + Ring 5mm** | **LogReg L1** | **0.670** | **0.545–0.794** |\n\n### Peritumoral Region Discriminative\
+  \ Power\n\n| Region | Mean AUC | Best Single Feature AUC |\n|--------|----------|------------------------|\n\
+  | \U0001F7E2 T1Gd Ring 5mm | **0.598** | **0.714** |\n| \U0001F535 T1Gd Ring 10mm | **0.591** | 0.696\
+  \ |\n| \U0001F7E0 FLAIR Tumor | 0.571 | 0.646 |\n| \U0001F534 T1Gd Tumor | 0.556 | 0.639 |\n\n> **T1Gd\
+  \ peritumoral rings outperform intratumoral features** - consistent with GBM biology: vascular permeability\
+  \ changes in the peritumoral zone reflect infiltrating tumour cells invisible to clinical assessment.\n\
+  \n---\n\n## Pipeline Overview\n\n```\nDownload NIfTI (TCIA)\n        ↓\nCreate Peritumoral Rings (5mm,\
+  \ 10mm morphological dilation)\n        ↓\nExtract PyRadiomics Features (6 regions × 56 features = 336/patient)\n\
+  \        ↓\nTrain ML Models (LogReg · SVM · RandomForest · XGBoost)\n        ↓\n5-fold Stratified CV\
+  \ + Bootstrap 95% CI\n        ↓\nSHAP Explainability (TreeExplainer / KernelExplainer)\n        ↓\n\
+  Region Discriminative Power Analysis\n```\n\n---\n\n## Sample Figures\n\n### MRI Regions - Patient Examples\n\
+  *Left→Right: T1Gd (raw) | T1Gd + GTV mask | FLAIR + GTV mask | T1Gd + Ring 5mm (blue)*\n\n![Patient\
+  \ 001](results/figures/qc/001_t0_qc.png)\n![Patient 005](results/figures/qc/005_t0_qc.png)\n![Patient\
+  \ 010](results/figures/qc/010_t0_qc.png)\n\n> **Key observation:** Panel 3 (FLAIR + GTV) shows the bright\
+  \ FLAIR signal extending far beyond the red GTV contour. This is the infiltration zone captured by the\
+  \ peritumoral rings (Panel 4, blue). This tissue is routinely ignored in clinical assessment - but our\
+  \ analysis shows it contains the highest discriminative signal.\n\n---\n\n### ROC Curves - 261-Patient\
+  \ Cohort\n*Intratumoral radiomics (AUC=0.710) clearly outperforms volume-only baseline (AUC=0.627)*\n\
+  \n![ROC curves](results/figures/roc_curves.png)\n\n---\n\n### Peritumoral Comparison - 79 Patients\n\
+  *Adding Ring 5mm features: AUC 0.562 → 0.670 (+19%)*\n\n![ROC peritumoral](results/figures/roc_peritumoral.png)\n\
+  \n---\n\n### Region Discriminative Power\n*T1Gd rings rank above intratumoral features in per-feature\
+  \ discriminative AUC*\n\n![Region divergence](results/figures/region_divergence.png)\n\n---\n\n### SHAP\
+  \ Explainability - Feature Attribution\n*Top features by mean absolute SHAP value, coloured by region\
+  \ of origin*\n\n![SHAP bar](results/figures/shap_bar.png)\n\n---\n\n### Top Discriminating Features\
+  \ - Violin Plots\n*Long vs Short survivors. Blue=Long, Red=Short. AUC and p-value shown per feature.*\n\
+  \n![Violin plots](results/figures/top_features_violin.png)\n\n---\n\n## AI Components\n\nThis project\
+  \ integrates three complementary layers of artificial intelligence:\n\n**I. Supervised Machine Learning**\
+  \ - Four classifiers (Logistic Regression, SVM, Random Forest, XGBoost) are trained to predict patient\
+  \ survival class directly from radiomic imaging features. Automated feature selection (ANOVA F-score,\
+  \ SelectKBest) identifies the most discriminating features without manual intervention.\n\n**II. Explainable\
+  \ Artificial Intelligence (XAI)** - SHAP (SHapley Additive exPlanations) decomposes each model prediction\
+  \ into individual feature contributions using cooperative game theory. This produces per-patient, per-feature\
+  \ attribution maps that allow biological interpretation of model decisions - addressing the \"black\
+  \ box\" problem inherent to complex ML models.\n\n**III. Deep Learning (optional)** - A 3D Residual\
+  \ Neural Network (ResNet) extracts 128-dimensional embeddings directly from volumetric MRI patches,\
+  \ learning spatial features without manual feature engineering. Implemented in `src/train_deep_embeddings.py`;\
+  \ requires an NVIDIA GPU (≥48 GB VRAM).\n\n| Layer | Method | Purpose |\n|-------|--------|---------|\n\
+  | I | LogReg · SVM · RF · XGBoost | Survival outcome prediction |\n| I | SelectKBest (ANOVA F-score)\
+  \ | Automated feature selection |\n| II | SHAP TreeExplainer / KernelExplainer | Model interpretability\
+  \ and biological insight |\n| III | 3D ResNet (optional) | End-to-end deep feature learning from MRI\
+  \ |\n\n---\n\n## What Are Peritumoral Rings?\n\n```\n                    ┌─────────────────────┐\n \
+  \                   │     Ring 10mm       │  ← 5–10mm from GTV\n                    │   ┌─────────────┐\
+  \   │     (outer microenvironment)\n                    │   │  Ring 5mm   │   │  ← 0–5mm from GTV\n\
+  \                    │   │  ┌───────┐  │   │     (infiltration zone)\n                    │   │  │ \
+  \ GTV  │  │   │  ← Gross Tumour Volume\n                    │   │  │(tumor)│  │   │     (visible on\
+  \ T1Gd)\n                    │   │  └───────┘  │   │\n                    │   └─────────────┘   │\n\
+  \                    └─────────────────────┘\n```\n\nCreated by **morphological dilation** of the GTV\
+  \ mask using SimpleITK. Ring 5mm = dilation(5mm) − GTV. Ring 10mm = dilation(10mm) − dilation(5mm).\n\
+  \n---\n\n## Quick Start\n\n```bash\n# 1. Setup environment\nconda env create -f environment.yml\nconda\
+  \ activate cfb-gbm-radiomics\n\n# 2. Download NIfTI patients from TCIA into data/raw/cfb_gbm/\n\n# 3.\
+  \ Create peritumoral rings\npython src/create_regions_nifti.py --input data/raw/cfb_gbm --output data/processed/regions\n\
+  \n# 4. Extract features (~30 sec/patient at 3mm resampling)\npython src/extract_radiomics_nifti.py \\\
+  \n    --input data/raw/cfb_gbm \\\n    --regions data/processed/regions \\\n    --output data/features/radiomics_Npatients.csv\n\
+  \n# 5. Build labeled ML dataset\npython src/build_ml_dataset_nifti.py\n\n# 6. Train peritumoral comparison\n\
+  python src/train_peritumoral_comparison.py\n\n# 7. Analyze features\npython src/analyze_peritumoral_features.py\n\
+  \n# 8. SHAP explainability (uses 261-patient TSV cohort)\npython src/explain_models.py\n```\n\nSee [GUIDE.md](GUIDE.md)\
+  \ for full documentation, figure explanations, and FAQ.\n\n---\n\n## Repository Structure\n\n```\ncfb-gbm-ai-radiomics/\n\
+  ├── config/\n│   ├── config.yaml                     # Project settings\n│   └── pyradiomics_params.yaml\
+  \         # IBSI-compliant extraction settings\n├── src/\n│   ├── create_regions_nifti.py         #\
+  \ Peritumoral ring creation ★\n│   ├── extract_radiomics_nifti.py      # PyRadiomics feature extraction\
+  \ ★\n│   ├── build_ml_dataset_nifti.py       # Dataset builder\n│   ├── train_ml_models.py         \
+  \     # ML training (261-patient cohort)\n│   ├── train_peritumoral_comparison.py # Core comparison\
+  \ experiment ★\n│   ├── analyze_peritumoral_features.py # Feature visualisation ★\n│   ├── explain_models.py\
+  \               # SHAP XAI\n│   └── train_deep_embeddings.py        # Optional 3D ResNet (GPU)\n├──\
+  \ results/\n│   ├── figures/                        # All output plots (included)\n│   │   ├── qc/ \
+  \                        # Per-patient QC figures\n│   │   ├── roc_curves.png\n│   │   ├── roc_peritumoral.png\n\
+  │   │   ├── shap_summary.png\n│   │   ├── shap_bar.png\n│   │   ├── region_divergence.png\n│   │   └──\
+  \ top_features_violin.png\n│   └── tables/                         # CSV result tables\n├── report/seminar_report.md\
+  \            # Full scientific report\n├── presentation/\n│   ├── slides.html                     #\
+  \ 18-slide HTML presentation\n│   └── poster.html                     # Scientific poster\n├── GUIDE.md\
+  \                            # Complete documentation\n└── environment.yml\n```\n\n★ = novel components\
+  \ (peritumoral analysis)\n\n---\n\n## Dataset\n\n**Collection:** CFB-GBM - The Cancer Imaging Archive\
+  \ (TCIA)  \n**Access:** Free, public - https://www.cancerimagingarchive.net/collection/cfb-gbm/\n\n\
+  ⚠️ Raw MRI files are **not** included in this repository. Download from TCIA.\n\n**Required citation:**\n\
+  > Clark K et al. The Cancer Imaging Archive (TCIA): Maintaining and Operating a Public Information Repository.\
+  \ J Digit Imaging. 2013;26(6):1045-57.\n\n---\n\n## Limitations\n\n- n=79 for peritumoral analysis -\
+  \ wide confidence intervals, no external validation\n- RTSTRUCT masks are radiotherapy targets, not\
+  \ pathology-confirmed\n- Single cohort - results may not generalise to other institutions\n- **Not a\
+  \ clinical tool** - educational/research prototype only\n\n---\n\n## License\n\nMIT License - see [LICENSE](LICENSE)\n\
+  \n---\n\n*Built with: PyRadiomics · SimpleITK · scikit-learn · XGBoost · SHAP · matplotlib · Python\
+  \ 3.11*\n"

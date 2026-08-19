@@ -1,0 +1,154 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Dr-Anoushka-Tomar/Project-Phoenix-PDAC-XAI
+url: https://github.com/Dr-Anoushka-Tomar/Project-Phoenix-PDAC-XAI
+platform: github
+description: A leakage-free ML pipeline for early pancreatic cancer detection from CT scans — combining
+  handcrafted radiomics (PyRadiomics, ComBat) with volumetric deep learning (3D ResNet-10, MONAI) and
+  explainable AI (SHAP, Grad-CAM).
+license: Apache-2.0
+language: Jupyter Notebook
+keywords:
+- combat
+- computated-tomography
+- ct
+- deep-learning
+- explainable-ai
+- grad-cam
+- leakage-detection
+- medical-imaging
+- monai
+- pancreatic-cancer
+- pdac
+- pyradiomics
+- radiomics
+- resnet-10
+- shap
+- xgboost
+stars: 0
+updated_at: '2026-03-26T15:45:41Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "# Project_Pheonix_PC_XAI_2025\n# PDAC Classification Pipeline — Multi-Modal CT-Based\
+  \ Detection of Pancreatic Ductal Adenocarcinoma\n\nThis repository contains a full end-to-end pipeline\
+  \ for binary classification of **Pancreatic Ductal Adenocarcinoma (PDAC)** from CT scans, using a combination\
+  \ of radiomics feature extraction, 3D deep learning (MONAI ResNet), and ensemble fusion classifiers.\
+  \ The pipeline is implemented across seven Google Colab notebooks, each handling a distinct stage of\
+  \ the workflow.\n\n---\n\n## Table of Contents\n\n1. [Overview](#overview)\n2. [Dataset](#dataset)\n\
+  3. [Pipeline Summary](#pipeline-summary)\n4. [Notebooks](#notebooks)\n   - [1. DICOM Download and Preprocessing](#1-dicom-download-and-preprocessing)\n\
+  \   - [2. DICOM to NPY Conversion](#2-dicom-to-npy-conversion)\n   - [3. Segmentation Mask Generation](#3-segmentation-mask-generation)\n\
+  \   - [4. Baseline 3D CNN Model](#4-baseline-3d-cnn-model)\n   - [5. 3D ResNet with Segmentation Masks](#5-3d-resnet-with-segmentation-masks)\n\
+  \   - [6. Grad-CAM Visualisation](#6-grad-cam-visualisation)\n   - [7. XGBoost / LR Fusion Pipeline](#7-xgboost--lr-fusion-pipeline)\n\
+  5. [Dependencies](#dependencies)\n6. [Project Structure](#project-structure)\n7. [Output Artefacts](#output-artefacts)\n\
+  \n---\n\n## Overview\n\nThe goal of this project is to classify CT scan volumes as either PDAC-positive\
+  \ (case) or healthy control, using a multi-stage hybrid approach:\n\n- **Radiomics**: Hand-crafted texture,\
+  \ shape, and intensity features extracted via PyRadiomics from segmented regions of interest.\n- **3D\
+  \ Deep Learning**: A 3D ResNet-10 backbone (MONAI) trained on dual-channel inputs (CT image + segmentation\
+  \ mask).\n- **Ensemble Fusion**: Probability outputs from both streams are combined via average fusion\
+  \ and stacked meta-learners (XGBoost, Random Forest, Logistic Regression).\n- **Explainability**: Grad-CAM\
+  \ heatmaps are generated to visualise which regions of the CT scan drive model predictions.\n\n---\n\
+  \n## Dataset\n\nThe pipeline uses two publicly available collections from [The Cancer Imaging Archive\
+  \ (TCIA)](https://www.cancerimagingarchive.net/):\n\n| Collection | Label | Modality |\n|---|---|---|\n\
+  | **CPTAC-PDA** | Case (1) — PDAC positive | CT + RTSTRUCT segmentations |\n| **Pancreas-CT** | Control\
+  \ (0) — Healthy pancreas | CT + NIfTI segmentation labels |\n\nData is downloaded using TCIA manifest\
+  \ files via the `tcia_utils` / `nbia` Python library, and stored in Google Drive.\n\n---\n\n## Pipeline\
+  \ Summary\n\n```\nTCIA DICOM Download\n        ↓\nDICOM → NPY Conversion (HU windowing, isotropic resampling,\
+  \ 3D volume + 2D slices)\n        ↓\nSegmentation Mask Generation (RTSTRUCT → 3D binary mask; NIfTI\
+  \ → numpy mask)\n        ↓\n ┌──────────────────────┬────────────────────────────────┐\n │   Radiomics\
+  \ Branch   │      Deep Learning Branch      │\n │  PyRadiomics features│  3D ResNet-10 (MONAI)     \
+  \     │\n │  per ROI (RTSTRUCT / │  Input: [CT image, mask] 2-ch  │\n │  NIfTI masks)        │  OOF\
+  \ mid-layer feature extract │\n └──────────┬───────────┴───────────┬────────────────────┘\n        \
+  \    │                       │\n            └──────────┬────────────┘\n              NeuroHarmonize\
+  \ (ComBat scanner harmonisation)\n                        ↓\n       Ensemble Fusion (XGBoost / RF /\
+  \ LR)\n       + Stacked Meta-Learner (Logistic Regression)\n                        ↓\n            \
+  \  ROC / AUC / SHAP / Calibration\n```\n\n---\n\n## Notebooks\n\n### 1. DICOM Download and Preprocessing\n\
+  **File:** `DICOM_download_and_preprocessing_from_scratch.ipynb`\n\nThis notebook handles data acquisition\
+  \ and initial metadata management.\n\n**What it does:**\n- Mounts Google Drive and installs required\
+  \ libraries (`tcia_utils`, `mirp`, `altair`, `simpleDicomViewer`).\n- Downloads DICOM image series from\
+  \ TCIA using manifest `.tcia` files for three collections: `CPTAC-PDA` (cancer), `CPTAC-PDA Negative\
+  \ Assessments`, and `Pancreas-CT` (healthy controls).\n- Downloads the corresponding RTSTRUCT tumour\
+  \ annotation files for CPTAC-PDA.\n- Extracts patient-level metadata (patient list, study details, series\
+  \ reports) via `nbia` API calls and saves them as CSV files.\n- Visualises annotation metadata — scatter\
+  \ plots of `StructureSetLabel` by patient and ROI volumes by patient/timepoint using Altair.\n- Merges\
+  \ CPTAC-PDA and Pancreas-CT metadata CSVs, filters to CT-only rows, and adds a `case_control_status`\
+  \ column (1 = case, 0 = control).\n- Adds `DICOM_folder_path` columns for downstream volume loading.\n\
+  - Merges segmentation metadata from two sources (`RTSTRUCT` series metadata + annotation report CSV)\
+  \ and saves a combined segmentation manifest.\n- Uncompresses NIfTI `.nii.gz` label files for the Pancreas-CT\
+  \ collection.\n- Runs a basic radiomics pipeline using `PyRadiomics` and `SimpleITK`, including RTSTRUCT-to-mask\
+  \ rasterisation, CT series loading, and per-ROI feature extraction with a checkpoint/resume mechanism.\n\
+  \n**Key outputs:**\n- `CPTAC_PDA_merged.csv` — merged case/control CT metadata\n- `merged_seg_with_paths.csv`\
+  \ — segmentation file paths linked to subjects\n- `radiomics_features.csv` — extracted radiomics features\
+  \ per ROI\n\n---\n\n### 2. DICOM to NPY Conversion\n**File:** `DICOM_to_NPY_conversion.ipynb`\n\nConverts\
+  \ raw DICOM CT series into normalised, isotropically-resampled 3D NumPy volumes ready for deep learning.\n\
+  \n**What it does:**\n- Reads the merged metadata CSV and iterates over each subject's `DICOM_folder_path`.\n\
+  - Loads and sorts DICOM slices using `pydicom`, ordered by `ImagePositionPatient` z-coordinate, `SliceLocation`,\
+  \ or `InstanceNumber`.\n- Applies Rescale Slope and Intercept to convert pixel values to Hounsfield\
+  \ Units (HU).\n- Determines voxel spacing from `PixelSpacing` and `SliceThickness` DICOM tags (falling\
+  \ back to median z-diff if needed).\n- Resamples each volume to **1.0 × 1.0 × 1.0 mm isotropic spacing**\
+  \ using `scipy.ndimage.zoom` with trilinear interpolation (order=1).\n- Applies HU windowing: clips\
+  \ to `[−160, 240]` HU and normalises to `[0, 1]`.\n- Saves the full 3D volume as a single `.npy` file\
+  \ and also saves individual 2D axial slices as separate `.npy` files per subject.\n- Implements **resumability**:\
+  \ skips already-processed subjects and saves a progress CSV after each subject.\n- Processes 223 subjects\
+  \ in the run shown, taking approximately 3 hours 38 minutes on CPU.\n\n**Key configuration:**\n```\n\
+  TARGET_SPACING = [1.0, 1.0, 1.0] mm\nHU_WINDOW = [−160, 240]\nResampling order = 1 (trilinear)\n```\n\
+  \n**Key outputs:**\n- `output_3d_volumes/<subject_id>.npy` — one 3D float32 volume per subject\n- `output_2d_slices/<subject_id>/slice_NNN.npy`\
+  \ — per-slice 2D arrays\n- Updated CSV with `path_image_3d_npy` and `path_slices_dir_npy` columns\n\n\
+  ---\n\n### 3. Segmentation Mask Generation\n**File:** `Segmentation_masks_generation.ipynb`\n\nConverts\
+  \ RTSTRUCT DICOM files and NIfTI label files into 3D binary NumPy mask arrays aligned to the CT volumes.\n\
+  \n**What it does:**\n- Reads `merged_seg_with_paths.csv` and filters rows where `Annotation Type ==\
+  \ \"Segmentation\"`.\n- For **NIfTI** inputs: loads via `nibabel`, thresholds float arrays at > 0, and\
+  \ returns a uint8 binary mask.\n- For **RTSTRUCT** inputs:\n  - Resolves the RTSTRUCT `.dcm` file (either\
+  \ direct path or by scanning a folder for `Modality == RTSTRUCT`).\n  - Loads the referenced CT DICOM\
+  \ series and sorts slices by `ImagePositionPatient` z.\n  - Rasterises contour polygons from `ROIContourSequence`\
+  \ into a 3D binary mask by mapping patient (x, y, z) coordinates to pixel indices using the CT's `ImagePositionPatient`,\
+  \ `ImageOrientationPatient`, and `PixelSpacing` DICOM tags, then using `skimage.draw.polygon`.\n  -\
+  \ Matches each contour's median z-coordinate to the nearest CT slice (within a 1.0 mm tolerance).\n\
+  - Implements a **search utility** to locate a DICOM series folder by `SeriesInstanceUID`, scanning base\
+  \ directories with both fast name-match and full DICOM-header fallback.\n- **Resumable**: updates and\
+  \ saves the CSV after each successfully generated mask. Rows with errors are skipped and can be retried.\n\
+  - Masks are saved as `.npy` files and the `mask_path` column is populated in the CSV.\n\n**Key outputs:**\n\
+  - `segmentation_masks/<subject_id>_<series_id>.npy` — 3D binary uint8 mask arrays\n- Updated `merged_seg_with_paths.csv`\
+  \ with `mask_path` column\n\n---\n\n### 4. Baseline 3D CNN Model\n**File:** `Baseline_model_final.ipynb`\n\
+  \nA TensorFlow/Keras-based 3D CNN trained as a baseline classifier, with optional dual-channel (CT +\
+  \ mask) input and Grad-CAM visualisation.\n\n**What it does:**\n\n**Training:**\n- Reads the merged\
+  \ CSV and dynamically determines whether segmentation masks are available; sets `CHANNELS = 2` (image\
+  \ + mask) if masks are found on disk, otherwise `CHANNELS = 1`.\n- Resizes volumes to `128 × 128 × 128`\
+  \ using scipy zoom (order=1 for image, order=0 for mask), then normalises image to `[0, 1]`.\n- Applies\
+  \ stratified 70/15/15 train/val/test split.\n- Builds a small 3D CNN: three Conv3D–BatchNorm–MaxPool3D\
+  \ blocks (16→32→64 filters), GlobalAveragePooling3D, Dense(128) + Dropout(0.4), sigmoid output.\n- Trains\
+  \ with `binary_crossentropy`, `Adam`, balanced class weights, and callbacks for model checkpointing\
+  \ (best val AUC), ReduceLROnPlateau, EarlyStopping (patience=8), and a custom `HistorySaver` that appends\
+  \ epoch metrics to a CSV after every epoch.\n- Supports **resume from checkpoint**: reads the saved\
+  \ model and history CSV to continue training from the last completed epoch.\n- Saves final model as\
+  \ `.keras`, test predictions, and training history plot (Loss + AUC vs Epoch).\n\n**Grad-CAM:**\n- Two\
+  \ versions are implemented. The first loads a single-channel model and generates Grad-CAM using `GradientTape`\
+  \ on the last Conv3D layer; the second handles the dual-channel model with both CT and mask channels.\n\
+  - Upsamples the 3D heatmap back to the original volume resolution, overlays it on 6 axial slices, and\
+  \ saves the result as a PNG.\n\n**Key outputs:**\n- `best_model.keras` / `final_trained_model.keras`\n\
+  - `roc_curve.png`, `training_history_plot.png`\n- `test_predictions.csv`\n- `gradcam_visuals/gradcam_<subject>.png`\n\
+  \n---\n\n### 5. 3D ResNet with Segmentation Masks\n**File:** `3D_ResNet.ipynb`\n\nA PyTorch/MONAI-based\
+  \ 3D ResNet-10 classifier that takes dual-channel (CT + mask) input, trained CPU-safely with checkpointing\
+  \ and early stopping.\n\n**What it does:**\n\n**Dataset:**\n- Loads image `.npy` and mask `.npy` for\
+  \ each subject. If a mask is unavailable, a zero-tensor is used as the mask channel.\n- Clips CT to\
+  \ `[−1000, 1000]` HU, scales to `[0, 1]`, and resizes to `64 × 128 × 128` (D × H × W) using `scipy.ndimage.zoom`.\n\
+  - Constructs a 2-channel tensor `[image, mask]` of shape `(2, D, H, W)`.\n- Training augmentations:\
+  \ joint random 90° rotations and depth-axis flips on image and mask, random multiplicative/additive\
+  \ intensity scaling, and small Gaussian noise injection.\n\n**Model:**\n- MONAI `resnet10` with `n_input_channels=2`\
+  \ and `num_classes=1`.\n- All backbone convolutional layers are **frozen**; only the final fully-connected\
+  \ head is trained, making this viable on CPU.\n- Loss: `BCEWithLogitsLoss` with class-frequency-based\
+  \ positive weight.\n- Optimiser: `AdamW` (lr=1e-4, weight_decay=1e-5).\n- 70/15/15 stratified split;\
+  \ trains for up to 50 epochs with patience=10 early stopping on validation AUC.\n- Checkpoint saved\
+  \ every epoch; best model saved on AUC improvement.\n\n**Evaluation and plots:**\n- Computes test AUC,\
+  \ saves loss curve, validation AUC curve, ROC curve, and confusion matrix as PNG files.\n\n**Grad-CAM\
+  \ (within the same notebook):**\n- Loads the best saved checkpoint back into MONAI ResNet-10.\n- Hooks\
+  \ the last `Conv3d` layer to capture activations and gradients.\n- For each randomly selected sample,\
+  \ generates a 3D Grad-CAM heatmap (global-average-pooled gradient weighting), saves a 3-panel figure:\
+  \ CT mid-axial slice, segmentation mask, and CT with Grad-CAM overlay.\n\n**Key outputs:**\n- `checkpoint_cpu_masks.pth`,\
+  \ `best_model_cpu_masks.pth`\n- `loss_curve.png`, `val_auc_curve.png`, `roc_curve.png`, `confusion_matrix.png`\n\
+  - `gradcam_outputs/<subject>_gradcam.png`\n\n---\n\n### 6. Grad-CAM Visualisation (ResNet — Improved)\n\
+  **Fil"

@@ -1,0 +1,89 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: amboussetta/RadioTherapy
+url: https://github.com/amboussetta/RadioTherapy
+platform: github
+description: Tools and methods for RT structure and dose files
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2024-04-02T13:28:14Z'
+image_source: null
+heuristic_total_score: 19
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 5 support term(s).
+readme_excerpt: "# Dose prediction models for radiotherapy\n\n## Introduction\nWe present in this project\
+  \ a simple methodology to predict dose-volume histogram of a patient given its RT Structure file (RS).\
+  \ \nIn main.py, we construct a dataset from RS and RT Dose (RD) files containing a set of geometric\
+  \ features and different markers of the dose-volume histogram (V5, V10, V15, etc.)\nusing our set of\
+  \ functions in the modules geometric_utils.py and RT_utils.py. Finally, we train and test different\
+  \ machine learning (ML) models and compare their performance\nusing adequate metrics.\n\n## Installation\n\
+  Best way to test or collaborate on the project is to:\n1. Create a fork into your own github repo\n\
+  2. Clone the forked repo into your local machine\n3. Experiment with your local copy\n4. Add, Commit\
+  \ and Push any useful modifications \n5. (Optional) Initiate a pull request if you wish to contribute\
+  \ directly to this repository\n\n\nThe following modifications for a quick hands-on all happen in the\
+  \ main.py file\n\n#### Changing directory paths\nPaths should be modifed according to your file organization.\
+  \ First, modify the path to your patients folder:\n```python\ndirectory = \"/Users/kobr0v/Documents/Cleverlytics/CFJ\
+  \ Radio/Patient files 3\"\n```\n#### Restructuring the columns of the databases\nYou can add features\
+  \ in existing databases, or add new databases in what follows:\n```python\n#Create database dataframes\n\
+  Excel_database_dig = pd.DataFrame(columns=['Vol dig', 'Vol PTV46', 'Overlap Vol', 'OV/Vdig', 'Centroid\
+  \ distance', 'Borders distance', 'Distance to ves', 'Distance to rec','V5', 'V15', 'V30', 'V45', 'V45_plan\
+  \ 1', 'V45_plan2', 'Dmoy'])\nExcel_database_rec = pd.DataFrame(columns=['Vol rec', 'Vol PTV76', 'Overlap\
+  \ Vol', 'OV/Vrec', 'Distance', 'V5', 'V15', 'V30', 'V45', 'V60 %', 'V70 %', 'Dmoy', 'Dmax'])\nExcel_database_ves\
+  \ = pd.DataFrame(columns=['Vol ves', 'Vol PTV76', 'Overlap Vol', 'OV/Vves', 'Distance', 'V5', 'V15',\
+  \ 'V30', 'V45', 'V60 %', 'V70 %', 'Dmoy', 'Dmax'])\n```\n\n#### PTV definition method\nThe planning\
+  \ target volume (PTV) can be directly defined as the union of multiple structures inside the variable\
+  \ PTV, \nor it can be constructed from a predefined PTV structure in the RS file. In this case, we use\
+  \ the variavle PTV_constructed. \n```python\n# Definition of PTV\n        PTV_constructed = ['PTV46x',\
+  \ 'PTV76x']\n        \n        # Please define the list of structures for analysis. Put at the end of\
+  \ the 'ListOfStructures' list:\n        # + 'PTV_constructed' to construct the global ptv using the\
+  \ union of structures inside PTV_constructed list\n        # + 'PTV46x' to ask the user to type the\
+  \ equivalent name of the global ptv46\n        # + 'PTV76x' to ask the user to type the equivalent name\
+  \ of the global ptv76\n        # + 'PTV' to automatically select the equivalent nomenclature from the\
+  \ PTV list  \n        # Please define PTV global equivalent nomenclatures\n        PTV = ['Z-PTV GLOBAL',\
+  \ 'ZPTV46 TOT', 'Z PTV GLOBAL', 'Z TEST PTV 46', 'PTVT', 'ZPTV 46 TOT', 'PTV_TOT46', 'PTV 46', 'PTV\
+  \ T' ]\n```\n\nNote that when nomenclature does not match with the one in the RS file, the user is asked\
+  \ to identify the equivalent nomenclature \nfrom a predefined list. For instance, 'Dig' may be written\
+  \ as 'dig' or 'CavDigestive'. \n\n#### Choosing the list of structures to analyze and put in the global\
+  \ database\nIn the variable ListOfStrutures, we list all the structures (organ names) to be analyzed\
+  \ by the program.\nIt is important to let 'PTV' or 'PTV_Constructed' at the very end of the list.\n\
+  ```python\n ListOfStructures = ['dig', 'vessie', 'Rectum', 'PTV46x', 'PTV76x']\n```\n\n#### Nomenclature\
+  \ equivalance\nIf you already have a list of nomenclature equivalence for PTV46 and PTV 76 in an Excel\
+  \ file, you can read them into\nlistptv46 and listptv76 variables. If other nomenclature mismatches\
+  \ appear on runtime, the user will be asked to correct the names via the console.\n```python\n#Select\
+  \ the excel file containing nomenclature equivalence\n        listptv46 = pd.read_excel('nomenclature.xlsx',\
+  \ sheet_name='PTV46')\n        listptv76 = pd.read_excel('nomenclature.xlsx', sheet_name='PTV76') #\
+  \ can also index sheet by name or fetch all sheets\n        mylist46 = listptv46['PTV46'].tolist() \n\
+  \        mylist76 = listptv76['PTV76'].tolist()\n        #structure_equivalents = {'PTV46x': ['Z-PTV\
+  \ GLOBAL','z- PTV GLOBAL', 'PTV_TOT46','PTV46 TOTAL', 'Z-PTV46 GLOBAL', 'PTV46T', 'PTVT', 'PTV46 HDV',\
+  \ 'PTV 46','PTV 46 T' , 'z PTV46','z_PTV46','zPTV46T','z_PTV45','PTV46 HDV', 'PTV46 HDVnew', 'ZPTV 46\
+  \ TOT', 'PTV T', 'PTVt', 'Z TEST PTV 46', 'Z PTV GLOBAL', 'Z PTV TOTAL'], 'PTV76x': ['PTV P 76', 'PTV76',\
+  \ 'z PTV76 opt', 'PTV 74']}\n        structure_equivalents = {'PTV46x': mylist46, 'PTV76x': mylist76}\n\
+  ```\n\n#### Writing results to the Excel database:\nThe following code writes all the dataframes in\
+  \ one single Excel file called 'large_database.xlsx'.\n```python\nwith pd.ExcelWriter('large_database.xlsx')\
+  \ as writer:  \n    Excel_database_dig.to_excel(writer, sheet_name=\"dig\")\n    Excel_database_rec.to_excel(writer,\
+  \ sheet_name=\"rectum\")\n    Excel_database_ves.to_excel(writer, sheet_name=\"vessie\")\n```\n\n##\
+  \ ML models to predict DV histograms\nIn the notebook Model_compare.ipynb, we prepare a train and test\
+  \ datasets using the above database 'large_database.xlsx', \nand we compare the performance of several\
+  \ ML models.\n\n#### Defining train and test datasets\nIn this code, we identify the columns corresponding\
+  \ to each dataset. Please change them according to your database:\n```python\nfile=\"large_database.xlsx\"\
+  \ndatabase = pd.read_excel(file, usecols=[1,2,3,4,5,11, 9, 12])\nX = pd.read_excel(file, usecols=[1,2,3,4,5])\n\
+  y = pd.read_excel(file, usecols=[9,11,12])\ny1= pd.read_excel(file, usecols=[9])\ny2= pd.read_excel(file,\
+  \ usecols=[12])\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, shuffle=True,\
+  \ random_state=20)\ny1_train=y_train.iloc[:,0]\ny2_train=y_train.iloc[:,2]\ny1_test=y_test.iloc[:,0]\n\
+  y2_test=y_test.iloc[:,2]\n```\n\n#### Creating a ML model\nYou can create your own ML model by preparing\
+  \ a set of additional features, then creating a pipeline that executes multiple transformation and algorithms.\n\
+  ```python\n# create feature union\nfeatures = []\nfeatures.append(('pca', PCA(n_components=3)))\nfeatures.append(('select_best',\
+  \ SelectKBest(k=3)))\nfeature_union = FeatureUnion(features)\n# create pipeline\nestimators = []\nestimators.append(('standardize',\
+  \ StandardScaler()))\nestimators.append(('feature_union', feature_union))\nestimators.append(('linear_regression',\
+  \ LinearRegression()))\nPCR = Pipeline(estimators)\nkfold = KFold(n_splits=3)\nPCR_results1 = cross_val_score(PCR,\
+  \ X, y1, cv=kfold, scoring=RMSE)\nPCR_results2 = cross_val_score(PCR, X, y2, cv=kfold, scoring=RMSE)\n\
+  ```\n\n#### Comparing ML models\nIn the following code, you can add many ML models to the comparison:\n\
+  ```python\nmodels = []\nmodels.append(('LR', LinearRegression()))\nmodels.append(('XGB', xg.XGBRegressor()))\n\
+  models.append(('MLP', MLPRegressor()))\n```\n\n## Conclusion\nPlease reach out to amine.boussetta@outlook.com\
+  \ for any feedback.\n"

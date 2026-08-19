@@ -1,0 +1,92 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: sobri3195/PneumoShield
+url: https://github.com/sobri3195/PneumoShield
+platform: github
+description: Prediksi Pneumonitis Radiasi pada Kanker Paru Menggunakan CT Radiomics dan Parameter Dose-Volume
+license: null
+language: JavaScript
+keywords: []
+stars: 0
+updated_at: '2026-04-02T08:08:09Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# PneumoShield\n\n> **PneumoShield** adalah prototipe aplikasi prediksi risiko **pneumonitis\
+  \ grade ≥2** pasca radioterapi toraks pada pasien **NSCLC**, menggabungkan pendekatan **AI (Radiomics\
+  \ + klinis + DVH)** dan baseline **DVH-only**.\n\n![Status](https://img.shields.io/badge/status-prototype-orange)\
+  \ ![Backend](https://img.shields.io/badge/backend-FastAPI-009688) ![Frontend](https://img.shields.io/badge/frontend-React%20%2B%20Vite-61DAFB)\
+  \ ![License](https://img.shields.io/badge/license-Research-informational)\n\n---\n\n## \U0001F4CC Ringkasan\n\
+  \nAplikasi ini terdiri dari:\n- **Backend FastAPI** untuk scoring risiko dan simulasi skenario.\n- **Frontend\
+  \ React** untuk input parameter klinis, visualisasi hasil prediksi, serta simulasi perubahan parameter.\n\
+  \nModel menghasilkan:\n- Risiko dari **AI model** (`risk_ai_model`).\n- Risiko dari **DVH-only model**\
+  \ (`risk_dvh_only`).\n- Selisih keduanya (`delta_risk`) untuk membantu interpretasi dampak fitur klinis/radiomics.\n\
+  \n> ⚠️ **Catatan penting:** ini adalah **prototype riset/edukasi**, bukan perangkat keputusan klinis\
+  \ final.\n\n---\n\n## \U0001F9E0 Analisis Codebase (Detail & Mendalam)\n\n## 1) Arsitektur Proyek\n\n\
+  ```text\nPneumoShield/\n├── backend/\n│   ├── app/main.py\n│   └── requirements.txt\n├── frontend/\n\
+  │   ├── src/App.jsx\n│   ├── src/main.jsx\n│   ├── src/styles.css\n│   ├── index.html\n│   ├── package.json\n\
+  │   └── vite.config.js\n└── README.md\n```\n\n### Alur data end-to-end\n1. User mengisi form di frontend.\n\
+  2. Frontend mengirim payload JSON ke endpoint backend (`/predict` atau `/simulate`).\n3. Backend memvalidasi\
+  \ input via Pydantic, menghitung skor risiko, lalu mengembalikan JSON terstruktur.\n4. Frontend menampilkan\
+  \ hasil prediksi, faktor pendorong, rencana follow-up, dan tabel skenario.\n\n---\n\n## 2) Backend:\
+  \ FastAPI + Pydantic\n\nFile utama: `backend/app/main.py`\n\n### a. Validasi input yang ketat\nBackend\
+  \ mendefinisikan `PredictionRequest` dengan batasan numerik (`ge`, `le`) dan pilihan stadium (`Literal[\"\
+  I\", \"II\", \"III\", \"IV\"]`).\nIni memastikan input berada pada rentang realistis sebelum diproses\
+  \ model.\n\n### b. Endpoint API\n- `GET /health`: health check sederhana (`{\"status\":\"ok\"}`).\n\
+  - `POST /predict`: prediksi satu kasus.\n- `POST /simulate`: simulasi beberapa skenario (maks. 5) dibandingkan\
+  \ baseline.\n\n### c. Inti logika model\nModel menggunakan pendekatan **logit + sigmoid**:\n- `dvh_logit`:\
+  \ berbasis `v20` dan `mld`.\n- `ai_logit`: menambahkan `radiomics_score`, `smoking_pack_years`, `copd`,\
+  \ `baseline_fev1`, `age`, dan `stage`.\n\nRisiko akhir:\n- `risk_dvh = sigmoid(dvh_logit)`\n- `risk_ai\
+  \ = sigmoid(ai_logit)`\n- `delta = risk_ai - risk_dvh`\n\n### d. Stratifikasi dan interpretabilitas\n\
+  - `classify_risk()` memetakan skor ke kategori: **Rendah/Sedang/Tinggi**.\n- `build_key_drivers()` menghasilkan\
+  \ penjelasan faktor yang paling berkontribusi.\n- `build_follow_up_plan()` memberi rencana monitoring\
+  \ sesuai level risiko.\n- `confidence_score()` memberi skor kepercayaan sederhana berbasis penalty rule.\n\
+  \n### e. Simulasi klinis cepat\nEndpoint `/simulate` menjalankan prediksi untuk baseline + skenario,\
+  \ lalu menghitung:\n- `risk_ai_model` per skenario,\n- `delta_from_base`,\n- `risk_category`.\n\nIni\
+  \ berguna untuk *what-if analysis* saat mempertimbangkan optimasi rencana RT.\n\n---\n\n## 3) Frontend:\
+  \ React + Vite\n\nFile utama: `frontend/src/App.jsx`\n\n### a. Fitur utama UI\n- Form input parameter\
+  \ klinis/DVH/radiomics.\n- Validasi rentang nilai sisi klien (`validationWarnings`).\n- Tombol aksi:\n\
+  \  - **Muat input terakhir** dari `localStorage`.\n  - **Simulasi 3 skenario** otomatis.\n  - **Ekspor\
+  \ hasil JSON**.\n- Panel hasil prediksi dan simulasi.\n- Navigasi bawah untuk mobile (`Input`, `Prediksi`,\
+  \ `Simulasi`).\n\n### b. Integrasi API\nFrontend memanggil:\n- `POST /predict` untuk prediksi utama.\n\
+  - `POST /simulate` untuk pembandingan skenario.\n\nError handling ditampilkan langsung ke user (`setError`).\n\
+  \n### c. UX dan visual\nFile `frontend/src/styles.css` memberikan:\n- layout responsif,\n- card hasil,\n\
+  - progress/risk bar,\n- warning dan empty-state,\n- mobile bottom navigation.\n\n---\n\n## ⚙️ Fitur\
+  \ & Fungsi Utama\n\n- ✅ Prediksi risiko pneumonitis grade ≥2 berbasis AI.\n- ✅ Perbandingan dengan model\
+  \ DVH-only.\n- ✅ Delta risiko untuk menilai tambahan nilai AI.\n- ✅ Kategori risiko (Rendah/Sedang/Tinggi).\n\
+  - ✅ Faktor pendorong utama (explainability sederhana).\n- ✅ Rencana follow-up berdasarkan stratifikasi\
+  \ risiko.\n- ✅ Simulasi multi-skenario (what-if).\n- ✅ Penyimpanan input terakhir di browser.\n- ✅ Ekspor\
+  \ laporan JSON.\n- ✅ UI responsif desktop/mobile.\n\n---\n\n## \U0001F50C Spesifikasi API\n\n### 1)\
+  \ `GET /health`\nCek status API.\n\n**Response:**\n```json\n{ \"status\": \"ok\" }\n```\n\n### 2) `POST\
+  \ /predict`\nPrediksi satu kasus.\n\n**Request body (contoh):**\n```json\n{\n  \"age\": 62,\n  \"smoking_pack_years\"\
+  : 30,\n  \"copd\": false,\n  \"baseline_fev1\": 78,\n  \"v20\": 28,\n  \"mld\": 16,\n  \"radiomics_score\"\
+  : 0.9,\n  \"stage\": \"III\"\n}\n```\n\n**Response ringkas (contoh):**\n```json\n{\n  \"model_name\"\
+  : \"PneumoShield v0.2 (enhanced prototype)\",\n  \"risk_ai_model\": 0.31,\n  \"risk_dvh_only\": 0.25,\n\
+  \  \"delta_risk\": 0.06,\n  \"high_risk_flag\": false,\n  \"risk_category\": \"Sedang\",\n  \"confidence_score\"\
+  : 0.89,\n  \"key_drivers\": [\"...\"],\n  \"follow_up_plan\": [\"...\"],\n  \"recommendation\": \"...\"\
+  \n}\n```\n\n### 3) `POST /simulate`\nMembandingkan baseline terhadap beberapa skenario.\n\n**Request\
+  \ body (struktur):**\n```json\n{\n  \"base_case\": { \"...\": \"same as predict payload\" },\n  \"scenarios\"\
+  : [\n    { \"...\": \"scenario 1\" },\n    { \"...\": \"scenario 2\" }\n  ]\n}\n```\n\n---\n\n## \U0001F680\
+  \ Cara Menjalankan Proyek\n\n## Prasyarat\n- Python 3.10+\n- Node.js 18+\n- npm\n\n### A. Jalankan Backend\n\
+  ```bash\ncd backend\npython -m venv .venv\nsource .venv/bin/activate\npip install -r requirements.txt\n\
+  uvicorn app.main:app --reload --port 8000\n```\n\nBackend aktif di: `http://127.0.0.1:8000`\n\n### B.\
+  \ Jalankan Frontend\n```bash\ncd frontend\nnpm install\nnpm run dev -- --host 0.0.0.0 --port 5173\n\
+  ```\n\nFrontend aktif di: `http://localhost:5173`\n\n---\n\n## \U0001F9EA Saran Pengembangan Lanjutan\n\
+  \n- Integrasi database untuk audit trail prediksi.\n- Logging observability (request/latency/error metrics).\n\
+  - Unit test dan integration test (backend + frontend).\n- Kalibrasi model dan validasi eksternal multicenter.\n\
+  - Role-based access & autentikasi untuk deployment klinis.\n- Export PDF laporan klinis terstruktur.\n\
+  \n---\n\n## \U0001F464 Author\n\n**Lettu Kes dr. Muhammad Sobri Maulana, S.Kom, CEH, OSCP, OSCE**\n\n\
+  - GitHub: https://github.com/sobri3195\n- Email: muhammadsobrimaulana31@gmail.com\n- Website: https://muhammadsobrimaulana.netlify.app\n\
+  \n### Social & Community\n- YouTube: https://www.youtube.com/@muhammadsobrimaulana6013\n- Telegram:\
+  \ https://t.me/winlin_exploit\n- TikTok: https://www.tiktok.com/@dr.sobri\n- Grup WhatsApp: https://chat.whatsapp.com/B8nwRZOBMo64GjTwdXV8Bl\n\
+  \n### Support & Donation\n- Lynk.id: https://lynk.id/muhsobrimaulana\n- Trakteer: https://trakteer.id/g9mkave5gauns962u07t\n\
+  - Gumroad: https://maulanasobri.gumroad.com/\n- KaryaKarsa: https://karyakarsa.com/muhammadsobrimaulana\n\
+  - Nyawer: https://nyawer.co/MuhammadSobriMaulana\n- Sevalla Page: https://muhammad-sobri-maulana-kvr6a.sevalla.page/\n\
+  - Toko Online Sobri: https://pegasus-shop.netlify.app\n\n---\n\n## ⚠️ Disclaimer\n\nKonten dan model\
+  \ dalam repositori ini disediakan untuk tujuan edukasi, penelitian, dan eksplorasi teknis.\nBukan pengganti\
+  \ pertimbangan klinis profesional, pedoman institusi, atau keputusan medis berbasis evaluasi dokter\
+  \ yang berwenang.\n"

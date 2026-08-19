@@ -1,0 +1,94 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: pabolimor99/tfg-radiomics-pipeline
+url: https://github.com/pabolimor99/tfg-radiomics-pipeline
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-22T12:26:25Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# TFG Radiomics\n\nRepositorio para procesamiento longitudinal de imagen mádica, extraccion\
+  \ de\nradiomics, seleccion de variables robustas y entrenamiento de modelos\nsupervisados sobre cambios\
+  \ longitudinales.\n\n## Estructura\n\n`src/` contiene la logica reutilizable del proyecto. `scripts/`\
+  \ contiene solo\nwrappers de ejecucion que llaman a funciones de `src/`.\n\n```text\n.\n|-- data/  \
+  \               # datos brutos/reorganizados\n|-- outputs/\n|   |-- indexing/         # indices y validacion\
+  \ tabular\n|   |-- pairs/            # pares longitudinales\n|   |-- features/         # features derivadas\n\
+  |   |-- review/           # etiquetas/revision manual\n|   `-- models/           # modelos y busquedas\n\
+  |-- figures/              # figuras de resultados\n|-- scripts/\n|   |-- data/             # comandos\
+  \ de preparacion de data/raw\n|   |-- features/         # comandos de preparacion de features\n|   |--\
+  \ models/           # comandos de entrenamiento final\n|   |-- optuna/           # comandos de busqueda\
+  \ Optuna\n|   `-- reporting/        # comandos de resumen y figuras\n|-- src/\n|   |-- data/\n|   |--\
+  \ preprocessing/\n|   |-- radiomics/\n|   |-- features/\n|   |-- modeling/\n|   |-- reporting/\n|  \
+  \ `-- review/\n|-- requirements.txt\n`-- README.md\n```\n\n## Pipeline\n\n### 1. Indexado y validacion\n\
+  \n- `src/data/prepare_raw.py`: reconstruye `data/raw` desde `data/base`.\n- `src/data/ingest/`: reorganizacion\
+  \ fisica del dataset en `data/raw`.\n- `src/data/indexing/indexer.py`: genera el indice inicial.\n-\
+  \ `src/data/indexing/validator.py`: valida pares imagen-mascara.\n\nArtefactos principales:\n\n- `outputs/indexing/index.csv`\n\
+  - `outputs/indexing/validated_index.csv`\n- `outputs/indexing/invalid_pairs.csv`\n\n### 2. Pares longitudinales\n\
+  \n- `src/preprocessing/build_longitudinal_pairs.py`\n\nArtefacto principal:\n\n- `outputs/pairs/longitudinal_pairs.csv`\n\
+  \n### 3. Radiomics\n\n- `src/radiomics/extract_features.py`: extrae radiomicas.\n- `src/radiomics/icc.py`:\
+  \ calcula estabilidad/ICC.\n\nArtefactos principales:\n\n- `outputs/features/longitudinal_features_long.csv`\n\
+  - `outputs/features/icc_results.csv`\n- `outputs/features/icc_perturbed_features.csv`\n\nLos CSV de\
+  \ `outputs/features/` se mantienen en el repositorio porque son\ncostosos de recalcular.\n\n### 4. Features\
+  \ de modelado\n\nLogica:\n\n- `src/features/prepare_features_uid.py`\n- `src/features/prepare_delta_features.py`\n\
+  - `src/features/prepare_modeling_features.py`\n\nComando:\n\n- `scripts/features/prepare_modeling_features.py`\n\
+  \nArtefactos principales:\n\n- `outputs/features/features_uid.csv`\n- `outputs/features/delta_features_uid.csv`\n\
+  \n### 5. Modelado\n\nEl criterio por defecto del proyecto es `balanced_accuracy`.\n\nLogica:\n\n- `src/modeling/train.py`\n\
+  - `src/modeling/feature_selection.py`\n- `src/modeling/models/lda.py`\n- `src/modeling/models/mlp.py`\n\
+  - `src/modeling/models/random_forest.py`\n- `src/modeling/models/lgbm.py`\n- `src/modeling/models/xgboost.py`\n\
+  \nComandos:\n\n- `scripts/models/train_lda.py`\n- `scripts/models/train_mlp.py`\n- `scripts/models/train_random_forest.py`\n\
+  - `scripts/models/train_lgbm.py`\n- `scripts/models/train_xgboost.py`\n\nSalidas principales:\n\n- `outputs/models/<modelo>/<timestamp>/model.joblib`\n\
+  - `outputs/models/<modelo>/<timestamp>/metrics.json`\n- `outputs/models/<modelo>/<timestamp>/test_predictions.csv`\n\
+  \n### 6. Optuna\n\nLa rama oficial de busqueda es BACC.\n\nLogica:\n\n```text\nsrc/modeling/optuna/\n\
+  |-- train.py\n|-- config.py\n|-- search_spaces/\n|   |-- lda.py\n|   |-- mlp.py\n|   |-- random_forest.py\n\
+  |   |-- lgbm.py\n|   `-- xgboost.py\n`-- bacc/\n    |-- lda.py\n    |-- mlp.py\n    |-- random_forest.py\n\
+  \    |-- lgbm.py\n    `-- xgboost.py\n```\n\nComandos:\n\n```powershell\npython -m scripts.optuna.bacc.lda\n\
+  python -m scripts.optuna.bacc.mlp\npython -m scripts.optuna.bacc.random_forest\npython -m scripts.optuna.bacc.lgbm\n\
+  python -m scripts.optuna.bacc.xgboost\n```\n\n### 7. Reporting\n\nLogica:\n\n- `src/reporting/summarize_optuna_bacc.py`\n\
+  - `src/reporting/plot_final_model_results.py`\n- `src/reporting/plot_feature_robustness_discrimination.py`\n\
+  \nComandos:\n\n```powershell\npython -m scripts.reporting.summarize_optuna_bacc\npython -m scripts.reporting.plot_final_model_results\n\
+  python -m scripts.reporting.plot_feature_robustness_discrimination\n```\n\n## Ejecucion manual\n\n###\
+  \ Preparacion del entorno\n\n```powershell\npy -3.11 -m venv .venv\nSet-ExecutionPolicy -Scope Process\
+  \ -ExecutionPolicy RemoteSigned\n.\\.venv\\Scripts\\Activate.ps1\npython -m pip install --upgrade pip\
+  \ setuptools wheel\n```\n\nSi se van a usar los CSV ya calculados de `outputs/features/`, basta con\n\
+  instalar las dependencias de modelado:\n\n```powershell\npython -m pip install -r requirements-modeling.txt\n\
+  ```\n\n### Dependencias radiomicas\n\nPara recalcular radiomicas desde imagenes hace falta instalar\
+  \ tambien\n`pyradiomics` y `SimpleITK`.\n\nEn Windows, `pyradiomics` puede requerir Microsoft C++ Build\
+  \ Tools. Si aparece\nun error como `Microsoft Visual C++ 14.0 or greater is required`, instalar las\n\
+  Build Tools desde PowerShell como administrador:\n\n```powershell\nwinget install --id Microsoft.VisualStudio.2022.BuildTools\
+  \ -e --source winget --override \"--wait --passive --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended\"\
+  \n```\n\nDespues de la instalacion, cerrar PowerShell, abrir una nueva terminal, activar\nla venv otra\
+  \ vez y ejecutar:\n\n```powershell\nSet-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned\n\
+  .\\.venv\\Scripts\\Activate.ps1\npython -m pip install --upgrade pip setuptools wheel\npython -m pip\
+  \ install numpy==1.26.4\npython -m pip install -r requirements-radiomics.txt --no-build-isolation\n\
+  ```\n\nEs importante instalar o actualizar `wheel` antes de instalar `pyradiomics`;\nsi no, puede aparecer\
+  \ el error `invalid command 'bdist_wheel'`.\n\nComprobacion rapida:\n\n```powershell\npython -c \"import\
+  \ numpy, radiomics, SimpleITK, sklearn; print('OK')\"\n```\n\nNo usar `python -m pip install -r requirements.txt`\
+  \ para resolver el entorno en\nWindows si se va a compilar `pyradiomics`; usar los ficheros separados\n\
+  `requirements-modeling.txt` y `requirements-radiomics.txt`.\n\n### Workers en extraccion radiomics\n\
+  \nLa extraccion de caracteristicas radiomicas puede paralelizarse con la variable\nde entorno `RADIOMICS_WORKERS`.\
+  \ Por defecto el script usa un valor conservador,\ncomo maximo 2 workers:\n\n```python\nDEFAULT_WORKERS\
+  \ = max(1, min(2, (os.cpu_count() or 4) - 1))\n```\n\nPara aumentar el paralelismo en PowerShell:\n\n\
+  ```powershell\n$env:RADIOMICS_WORKERS = \"4\"\npython -m src.radiomics.extract_features\n```\n\nPara\
+  \ usar otro valor:\n\n```powershell\n$env:RADIOMICS_WORKERS = \"6\"\npython -m src.radiomics.extract_features\n\
+  ```\n\nSe recomienda empezar con 4 workers y subir progresivamente. La extraccion\nradiomics puede consumir\
+  \ bastante memoria, por lo que un numero alto de workers\npuede saturar la RAM antes que mejorar el\
+  \ tiempo de ejecucion.\n\nPara volver al comportamiento por defecto en la misma terminal:\n\n```powershell\n\
+  Remove-Item Env:RADIOMICS_WORKERS\n```\n\nPreparar `data/raw` desde `data/base/inputsTr` y `data/base/targetsTr`:\n\
+  \n```powershell\npython -m scripts.data.prepare_raw\n```\n\nSi `data/raw` ya existe y se quiere reconstruir\
+  \ desde cero:\n\n```powershell\npython -m scripts.data.prepare_raw --clean\n```\n\nPreparar features\
+  \ de modelado:\n\n```powershell\npython -m scripts.features.prepare_modeling_features\n```\n\nEntrenar\
+  \ modelos finales:\n\n```powershell\npython -m scripts.models.train_lda\npython -m scripts.models.train_mlp\n\
+  python -m scripts.models.train_random_forest\npython -m scripts.models.train_lgbm\npython -m scripts.models.train_xgboost\n\
+  ```\n\n## Representaciones\n\nEl proyecto trabaja con dos vistas:\n\n- `long`: pares y radiomicas por\
+  \ timepoint.\n- `pairwise`: matriz por par longitudinal.\n\nLa vista `pairwise` se deriva desde\n`outputs/features/longitudinal_features_long.csv`,\
+  \ sin reextraer radiomics."
