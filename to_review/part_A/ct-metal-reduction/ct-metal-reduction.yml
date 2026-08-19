@@ -1,0 +1,66 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: KAIST-VCLAB/ct-metal-reduction
+url: https://github.com/KAIST-VCLAB/ct-metal-reduction
+platform: github
+description: '[EG2026] Splat-based Metal Artifact Reduction in Cone-Beam CT via Polychromatic Modeling'
+license: MIT
+language: Python
+keywords: []
+stars: 2
+updated_at: '2026-06-08T10:57:19Z'
+image_source: null
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# Splat-based Metal Artifact Reduction in Cone-Beam CT via Polychromatic Modeling\r\n\
+  Cone-beam computed tomography (CBCT) enables volumetric reconstruction from X-ray projections, but suffers\
+  \ from severe artifacts--especially beam hardening--when imaging materials with high attenuation such\
+  \ as metals. These artifacts arise from the polychromatic nature of X-rays and are not properly addressed\
+  \ by conventional monochromatic reconstruction algorithms. While recent neural representation-based\
+  \ methods offer improved reconstruction quality, they are computationally expensive and often impractical\
+  \ for deployment. We propose a novel physics-inspired, self-calibrating metal artifact reduction method\
+  \ that efficiently reconstructs 3D CBCT volumes while correcting beam hardening artifacts. Our method\
+  \ integrates a polychromatic X-ray projection model, material-dependent attenuation profiles, and system\
+  \ response modeling into a Gaussian Splatting framework. Unlike prior work, we eliminate the need for\
+  \ manual metal masks or strong prior assumptions, and we optimize both reconstruction parameters and\
+  \ X-ray spectral characteristics jointly during training. We further introduce a high-fidelity synthetic\
+  \ CBCT dataset generation pipeline validated on Monte-Carlo x-ray simulation toolbox and release new\
+  \ datasets with severe metal-induced artifacts to support the community. This is the first splat-based\
+  \ method for reducing beam hardening in CBCT. Extensive experiments on both synthetic and real-world\
+  \ datasets demonstrate that our method outperforms state-of-the-art approaches in artifact suppression\
+  \ and reconstruction accuracy.\r\n\r\n### [Project page](https://vclab.kaist.ac.kr/eg2026/index.html)\
+  \ | [Paper](https://vclab.kaist.ac.kr/eg2026/paper1170_CRC.pdf) | [Supplemental](https://vclab.kaist.ac.kr/eg2026/paper1170_CRC_MM1.pdf)\r\
+  \n[Kiseok Choi](https://sites.google.com/view/kiseokchoi), \r\n[Inchul Kim](https://inchul-kim.github.io/),\
+  \ \r\n[Jaemin Cho](http://vclab.kaist.ac.kr/jmcho/index.html), \r\n[Hyeongjun Cho](http://vclab.kaist.ac.kr/hjcho/index.html),\
+  \ \r\n[Min H. Kim](http://vclab.kaist.ac.kr/minhkim/index.html)\r\n\r\nThis repository is organized\
+  \ around the execution pipeline defined in `.vscode/launch.json`.\r\n\r\n- `initialize_pcd.py`: Initializes\
+  \ the Gaussian point cloud\r\n- `train.py`: Runs CBCT reconstruction with metal artifact reduction\r\
+  \n\r\n## Tested Environment\r\n```\r\nCPU: Intel Xeon 4214R @ 2.4Ghz\r\nGPU: NVIDIA A6000 48GB\r\nRAM:\
+  \ 256GB\r\nOS: Ubuntu 22.04\r\nDocker: 24.0.2\r\nCUDA: 13.1 (Driver: 590.48.01)\r\n```\r\n\r\n## Setup\r\
+  \nEnsure that your system supports CUDA and Docker. Then clone this repository and move into the project\
+  \ directory.\r\n```\r\ngit clone https://github.com/KAIST-VCLAB/ct-metal-reduction.git\r\ncd ct-metal-reduction\r\
+  \n```\r\n\r\nBuild the Docker image using Dockerfile. This process may take several minutes.\r\n```\r\
+  \ndocker build -t r2gs_bhc:cuda118 .\r\n```\r\nLaunch the Docker container. Modify the options below\
+  \ according to your environment.\r\n```\r\ndocker run -it --gpus all \\\r\n  --name r2gs_bhc \\\r\n\
+  \  -v /mnt/datassd/kschoi/data:/workspace/data \\\r\n  -p 20000:20000 \\\r\n  r2gs_bhc:cuda118\r\n```\r\
+  \n\r\n## Data Preparation\r\nDownload one of the datasets from [link](https://drive.google.com/drive/folders/1l4noH0qe3abyq17l8Ex3BiDFcygj9hLs?usp=drive_link)\
+  \ and extract it to your preferred directory.\r\n\r\n## Gaussian Initialization\r\nRun the following\
+  \ command to initialize the Gaussian representation.<br>\r\n($SCENE_PATH can be ``real_walnut`` or something).\r\
+  \n```\r\npython initialize_pcd.py --data $SCENE_PATH\r\n```\r\nThis step can be skipped if the dataset\
+  \ directory already contains initialized Gaussians (e.g., ``init_$SCENE_PATH.npy``).\r\n\r\n## Reconstruction\r\
+  \nModify ``source_path`` in ``./config/default.yaml`` and start reconstruction using:\r\n```\r\npython\
+  \ train.py --config $CONFIG_FILE_PATH\r\n```\r\nAfter optimization completes (20,000 iterations; approximately\
+  \ 18 minutes on the tested hardware), the reconstructed volume will be saved to:\r\n```\r\n./output/$CONFIG_FILE_NAME_MM-DD-hh-mm-ss/point_cloud/iteration_20000/vol_center.npy\r\
+  \n```\r\n\r\n## Citation\r\n```\t\r\n@Article{Choi:EG:2026,\r\n  author  = {Choi, Kiseok and Kim, Inchul\
+  \ and Cho, Jaemin and Cho, Hyeongjun and Kim, Min H.},\r\n  title   = {Splat-based Metal Artifact Reduction\
+  \ in Cone-Beam CT\r\n             via Polychromatic Modeling},\r\n  journal = {Computer Graphics Forum\
+  \ (Proc. EUROGRAPHICS 2026)},\r\n  year    = {2026},\r\n  volume  = {45},\r\n  number  = {2},\r\n  pages\
+  \   = {}\r\n}\r\n```\r\n\r\n## License\r\n\r\nThis project is released under the MIT License.\r\n\r\n\
+  This code is built upon and contains modifications of the [R2-Gaussian](https://github.com/ruyi-zha/r2_gaussian)\
+  \ project, which is also distributed under the MIT License. We gratefully acknowledge the authors for\
+  \ making their code publicly available.\r\n\r\nSee the LICENSE file for details.\r\n"

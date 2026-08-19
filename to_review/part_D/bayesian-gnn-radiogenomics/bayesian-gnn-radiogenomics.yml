@@ -1,0 +1,77 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hozziii/Bayesian-GNN-Radiogenomics
+url: https://github.com/hozziii/Bayesian-GNN-Radiogenomics
+platform: github
+description: MRI–genomics heterogeneous graph study for exploratory IDH mutation prediction
+license: MIT
+language: null
+keywords:
+- graph-neural-networks
+- medical-ai
+- multimodal-learning
+- pytorch-geometric
+- radiogenomics
+stars: 0
+updated_at: '2026-08-06T03:27:21Z'
+image_source: https://raw.githubusercontent.com/hozziii/Bayesian-GNN-Radiogenomics/HEAD/figures/architecture.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# Bayesian GNN for MRI–Genomics Integration\n\n![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)\n\
+  ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square&logo=pytorch&logoColor=white)\n\
+  ![PyG](https://img.shields.io/badge/PyTorch_Geometric-3C2179?style=flat-square)\n![Status](https://img.shields.io/badge/status-exploratory_research-6B7280?style=flat-square)\n\
+  \nAn exploratory radiogenomics study for predicting **IDH mutation status in\nglioma** by integrating\
+  \ multi-modal brain MRI and somatic mutation profiles with\na heterogeneous graph neural network.\n\n\
+  MRI 영상 표현과 체세포 변이 정보를 이종 그래프로 통합해 교종의 IDH 변이\n상태를 탐색적으로 예측한 의료 AI 연구 포트폴리오입니다.\n\nThis public repository\
+  \ is intentionally documentation-first. Research code,\npatient-level data, learned weights, and raw\
+  \ prediction tables are kept private.\n\n![MRI–genomics heterogeneous graph architecture](figures/architecture.png)\n\
+  \n## At a glance\n\n| Item | Description |\n| --- | --- |\n| Task | Exploratory binary prediction of\
+  \ IDH mutation status |\n| Cohort | 59 matched imaging–genomics subjects |\n| Inputs | T1, T1ce, T2,\
+  \ FLAIR MRI and 104 non-target mutation features |\n| Model | Heterogeneous graph neural network with\
+  \ typed relations |\n| Evaluation | Stratified 5-fold cross-validation with multi-seed ablations |\n\
+  | Public scope | Methodology, architecture, aggregate results, and limitations |\n\n## Work documented\
+  \ in this portfolio\n\n- Constructed the matched imaging–genomics study design and target-leakage\n\
+  \  exclusions.\n- Designed patient, tumor-region, and gene node types with anatomical, genomic,\n  and\
+  \ cross-modal relations.\n- Compared directional message passing, gene encodings, attention mechanisms,\n\
+  \  and residual MRI relations.\n- Applied fold-specific preprocessing and multi-seed cross-validation\
+  \ for the\n  principal ablations.\n- Summarized aggregate performance and limitations without exposing\n\
+  \  patient-level data.\n\n## Research question\n\nCan an anatomy-aware graph represent interactions\
+  \ between tumor regions and\nsomatic mutations more effectively than direct multimodal feature\nconcatenation?\n\
+  \nThe model organizes the problem into:\n\n- **Patient nodes** for subject-level context\n- **Tumor-region\
+  \ nodes** for core, edema, and enhancing tumor\n- **Gene nodes** for 104 non-target somatic mutation\
+  \ features\n- **Typed relations** for anatomical, genomic, and cross-modal interactions\n\nMRI representations\
+  \ use T1, T1ce, T2, and FLAIR modalities. The target is the\nbinary `IDH_label`; IDH-related and clinical\
+  \ target columns are excluded from\nthe input features.\n\n## Study design\n\n- 59 matched imaging-genomics\
+  \ subjects\n- Stratified 5-fold cross-validation\n- Multi-seed evaluation for the principal ablations\n\
+  - Fold-specific standardization and dimensionality reduction\n- Class-balanced training objectives\n\
+  - Comparisons across directional fusion, gene encoding, attention, and\n  residual-relation variants\n\
+  \n## Selected exploratory results\n\n![Selected exploratory cross-validation results](figures/results.png)\n\
+  \n| Configuration | Mean ROC-AUC | Evaluation |\n| --- | ---: | --- |\n| Learned 32-d gene embedding\
+  \ + mutation rate | **0.912 ± 0.196** | 10 seeds × 5 folds |\n| Gene-conditioned region summary fusion\
+  \ | 0.884 | 10 seeds × 5 folds |\n| MRI→gene directional exchange | 0.882 | 3 seeds × 5 folds |\n| Learnable\
+  \ residual MRI edges | 0.852 | 10 seeds × 5 folds |\n\nThe comparison suggests that learned gene representations\
+  \ and directional\nMRI-to-gene information flow may be useful hypotheses for multimodal graph\ndesign.\
+  \ Because the cohort is small and fold-level variance is substantial,\nthese results are not estimates\
+  \ of clinical deployment performance.\n\n## Experiment families\n\n| Experiment | Purpose |\n| --- |\
+  \ --- |\n| Regional cross-modal HGT | Represent tumor regions and genes as typed nodes |\n| Directional\
+  \ message passing | Compare MRI→gene, gene→MRI, bidirectional, and no exchange |\n| Gene representation\
+  \ ablation | Compare one-hot and learned gene embeddings |\n| Mutation-rate ablation | Test cohort mutation\
+  \ rate as a gene-node feature |\n| Gene-conditioned attention | Learn genomic-context-dependent regional\
+  \ weighting |\n| Residual MRI relations | Compare learned and fixed residual regional edges |\n| Raw\
+  \ MRI / MedicalNet | Explore 3D CNN, regional, patch, and supervoxel encoders |\n| Pathway-conditioned\
+  \ HGT | Route mutations through exploratory pathway groups |\n\n## Data\n\nThe study uses locally prepared\
+  \ matched imaging-genomics tables derived from\nbrain MRI and somatic mutation sources. Source and derived\
+  \ subject-level data\nare not redistributed due to access conditions, licensing, and research-data\n\
+  privacy considerations.\n\n## Limitations\n\n- The matched cohort contains only 59 subjects.\n- External\
+  \ validation has not yet been performed.\n- Raw-MRI variants remain computational research prototypes.\n\
+  - The exploratory pathway mapping requires validation against a cited pathway\n  database before publication.\n\
+  - Aggregate results require reproduction in an independent clean environment.\n\n## Repository contents\n\
+  \n```text\n.\n├── README.md\n├── figures/\n│   ├── architecture.png\n│   └── results.png\n├── LICENSE\n\
+  └── .gitignore\n```\n\n## Availability\n\nAdditional implementation details can be discussed for academic\
+  \ collaboration.\nNo code or data in this project should be used for clinical decision-making.\n\n##\
+  \ License\n\nThe public documentation is released under the [MIT License](LICENSE). Dataset\nlicenses\
+  \ and third-party model licenses are not covered by this repository.\n"

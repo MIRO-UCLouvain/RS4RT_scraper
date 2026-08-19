@@ -1,0 +1,77 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: AnshulPatil29/TBV-segmentation
+url: https://github.com/AnshulPatil29/TBV-segmentation
+platform: github
+description: '    A deep learning model to automate tumor bed segmentation in post-operative breast cancer
+  CT scans for radiotherapy planning.'
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 1
+updated_at: '2025-09-16T17:58:03Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 4 support term(s).
+readme_excerpt: "# Automated Delineation of Breast Tumor Bed Volumes Using a U-Net Model\n\nThis repository\
+  \ contains the official code for the feasibility study on deep learning-based automated delineation\
+  \ of breast tumor bed volumes (TBV) for post-operative radiotherapy planning. The project is detailed\
+  \ in the paper: *\"Deep Learning-Based Automated Delineation of Breast Tumor Bed Volumes for Post-Operative\
+  \ Radiotherapy Planning Post Breast-Conservation Surgery: A Feasibility Study\"*.\n\n---\n\n## Abstract\n\
+  \nAccurate delineation of the tumor bed volume is crucial for effective radiotherapy in breast cancer\
+  \ patients following breast-conserving surgery. Manual contouring is time-consuming, labor-intensive,\
+  \ and subject to significant inter-observer variability. This project explores the automation of this\
+  \ process using a deep learning-based **U-Net model**. The model was trained and evaluated on postoperative\
+  \ CT scans from 20 patients, demonstrating the potential of AI-driven segmentation to enhance radiotherapy\
+  \ planning by providing faster, more consistent, and highly accurate tumor delineation.\n\n---\n\n##\
+  \ Model Architecture\n\nThe core of this project is a **2D U-Net architecture**, tailored for biomedical\
+  \ image segmentation.\n\n-   **Encoder:** Captures contextual features through a series of convolutional\
+  \ blocks (3x3 Conv, BatchNorm, ReLU, Dropout) and max-pooling layers.\n-   **Bottleneck:** A deep layer\
+  \ that captures the most abstract, high-level features of the tumor bed.\n-   **Decoder:** Symmetrically\
+  \ reconstructs the segmentation map using transposed convolutions and skip connections, which restore\
+  \ fine-grained spatial details lost during encoding.\n-   **Loss Function:** A weighted combination\
+  \ of **Binary Cross-Entropy (BCE)**, **Dice Loss**, and **Focal Loss** was used to handle the severe\
+  \ class imbalance inherent in medical scans (where most slices do not contain the tumor bed).\n\n---\n\
+  \n## Repository Structure\n\nThis repository contains the Jupyter Notebooks used for the end-to-end\
+  \ pipeline.\n\n-   **`EDA.ipynb`**: Exploratory Data Analysis. This notebook covers loading, preprocessing,\
+  \ and verifying the slice count.\n-   **`TBVModel.ipynb`**: Model Training. This notebook details the\
+  \ complete workflow for training the U-Net model, including data preparation, defining the model architecture,\
+  \ setting up the loss function and optimizer, and executing the training loop with validation and early\
+  \ stopping.\n-   **`TBV_apply.ipynb`**: Inference and Application. A practical notebook demonstrating\
+  \ how to load the trained model and apply it to a new, unseen CT scan to generate a predicted tumor\
+  \ bed contour, create a new RTSTRUCT file, and evaluate performance metrics (DSC and HD95).\n-   **`.gitignore`**:\
+  \ Ensures that the large dataset folder (`extracted_folder`) and other temporary files are not committed\
+  \ to the repository.\n-   **`README.md`**: You are here!\n\n---\n\n## Setup and Usage\n\nFollow these\
+  \ steps to replicate the environment and run the project.\n\n### 1. Prerequisites\n- Python 3.8+\n-\
+  \ PyTorch\n- An environment with CUDA is highly recommended for model training.\n\n### 2. Installation\n\
+  \nFirst, clone the repository:\n```bash\ngit clone https://github.com/AnshulPatil29/TBV-segmentation/tree/main\n\
+  cd TBV-segmentation\n```\n\nIt is recommended to create a virtual environment:\n```bash\npython -m venv\
+  \ venv\nsource venv/bin/activate  # On Windows, use `venv\\Scripts\\activate`\n```\n\nInstall the required\
+  \ libraries from `requirements.txt`:\n```bash\npip install -r requirements.txt\n```\n\n*(Note: If you\
+  \ do not have a `requirements.txt` file, you can create one with the content below and save it in your\
+  \ repository's root directory.)*\n\n<details>\n<summary>Click to see content for requirements.txt</summary>\n\
+  \n```\nnumpy\npydicom\nrt-utils\nmatplotlib\ntorch\nscikit-image\nscipy\nopencv-python-headless\nipython\n\
+  ```\n</details>\n\n### 3. Data Structure\n\nThis repository **does not** include the dataset due to\
+  \ its size and patient privacy. You must organize your data in the following structure at the root of\
+  \ the project:\n\n```\nNanavati-Project/\n├── EDA.ipynb\n├── TBVModel.ipynb\n├── TBV_apply.ipynb\n├──\
+  \ TBVmodel.pth         # Trained model weights will be saved here\n├── .gitignore\n├── README.md\n└──\
+  \ extracted_folder/    <-- This folder is required but ignored by Git\n    ├── patient_scan_01/\n  \
+  \  │   ├── CT001.dcm\n    │   ├── ...\n    │   └── RS.dcm       # Ground Truth RTSTRUCT file\n    ├──\
+  \ patient_scan_02/\n    │   └── ...\n    └── patient_scan_XX/\n```\n\n### 4. Running the Notebooks\n\
+  \nExecute the notebooks in the following order:\n\n1.  **`EDA.ipynb`**: Run this first to ensure your\
+  \ data is loaded correctly and to visualize the scans.\n2.  **`TBVModel.ipynb`**: Run all cells to train\
+  \ the model from scratch. Upon completion, a `TBVmodel.pth` file containing the best model weights will\
+  \ be saved.\n3.  **`TBV_apply.ipynb`**: Before running, **update the `SCAN_FOLDER_PATH` variable** in\
+  \ the final cell to point to a specific scan folder you wish to test. Run this notebook to see the model\
+  \ in action on a single scan.\n\n---\n\n## Citation\n\nIf you use this code or find our work helpful\
+  \ in your research, please consider citing our paper.\n\n*(A full citation will be added here once the\
+  \ paper is published in a journal or conference proceedings.)*\n\n---\n\n## Acknowledgments\n\nThis\
+  \ work was a collaboration between **SVKM's NMIMS University, Mukesh Patel School of Technology, Management\
+  \ and Engineering, Mumbai, India** and **Nanavati Max Super Speciality Hospital, Mumbai, India**.\n\n\
+  **Authors:** Rutuja Jadhav, Dr. Kaustav Talapatra, Dr. Unmesh Mukherjee, Dr. Ami Munshi, Dr. Manoj Sankhe,\
+  \ Saket Sultania, Mann Agarwal, Samridhi Raj Sinha, Anshul Patil, Vedashree Shetye, Richa Singh, Mr.\
+  \ Suhas Rai, Mr. Anand Parab, Dr. Garvit Chitkara, Dr. Deepak Patkar.\n"

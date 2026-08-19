@@ -1,0 +1,104 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Gibion/multimodal-mammography-xai
+url: https://github.com/Gibion/multimodal-mammography-xai
+platform: github
+description: Explainable multimodal fusion of CNN and radiomics features for mammographic breast cancer
+  detection.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-11T20:34:05Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "# Multimodal Mammography XAI\n\nAn explainable multimodal breast-cancer classification\
+  \ project using the **CBIS-DDSM** mammography dataset.\n\nThe project is being developed for the University\
+  \ of London CM3070 Final Project. The planned system combines:\n\n- a convolutional neural network (CNN)\
+  \ branch for full mammograms;\n- radiomics features extracted from annotated lesions;\n- multimodal\
+  \ fusion of CNN and radiomics features; and\n- explainable AI methods such as Grad-CAM, Grad-CAM++,\
+  \ and Integrated Gradients.\n\nThe current implementation has completed the main **CBIS-DDSM data preparation,\
+  \ path resolution, DICOM conversion, quality assurance, deduplication, and patient-disjoint dataset\
+  \ splitting** stages.\n\n## Current status\n\nThe CBIS-DDSM download was first verified using `metadata.csv`.\n\
+  \n| Processing stage | Result |\n|---|---:|\n| Metadata records | 6,775 |\n| Valid metadata directories\
+  \ | 6,775 / 6,775 |\n| DICOM files discovered | 10,239 |\n| Case-description rows | 3,568 |\n| Full\
+  \ mammograms resolved | 3,568 / 3,568 |\n| Cropped images resolved | 3,568 / 3,568 |\n| ROI masks resolved\
+  \ | 3,248 / 3,568 |\n| Ambiguous final matches | 0 |\n| Reversed crop/ROI CSV references corrected |\
+  \ 1 |\n| Unique full mammograms | 3,103 |\n| Unique participants | 1,566 |\n| Benign full mammograms\
+  \ | 1,728 |\n| Malignant full mammograms | 1,375 |\n\nThe 320 unavailable ROI masks are all from the\
+  \ calcification test subset.\n\nQuality assurance confirmed that all converted full mammograms and cropped\
+  \ images were valid and that all 3,248 available ROI masks contained foreground pixels.\n\n## Patient-disjoint\
+  \ split\n\nThe original CBIS-DDSM mass and calcification train/test files are individually patient-disjoint,\
+  \ but combining them introduces cross-task participant overlap:\n\n- `calc_train` vs `calc_test`: 0\
+  \ participants\n- `mass_train` vs `mass_test`: 0 participants\n- `calc_train` vs `mass_test`: 18 participants\n\
+  - `mass_train` vs `calc_test`: 13 participants\n\nA new patient-disjoint split was therefore created\
+  \ for the combined full-mammogram experiment.\n\n| Split | Participants | Images | Benign | Malignant\
+  \ |\n|---|---:|---:|---:|---:|\n| Train | 1,096 | 2,193 | 1,215 | 978 |\n| Validation | 235 | 456 |\
+  \ 255 | 201 |\n| Test | 235 | 454 | 258 | 196 |\n| **Total** | **1,566** | **3,103** | **1,728** | **1,375**\
+  \ |\n\nThere is zero participant overlap between the three new splits.\n\n## Recommended repository\
+  \ structure\n\n```text\nmultimodal-mammography-xai/\n├── README.md\n├── LICENSE\n├── requirements.txt\n\
+  ├── .gitignore\n│\n├── data/\n│   ├── raw/                    # not tracked by Git\n│   │   └── cbis_ddsm/\n\
+  │   ├── interim/                # generated manifests / intermediate files\n│   └── processed/     \
+  \         # converted images; normally not tracked\n│       └── cbis_ddsm/\n│           ├── full_mammograms/\n\
+  │           ├── cropped/\n│           ├── roi_masks/\n│           └── manifests/\n│\n├── src/\n│   ├──\
+  \ preprocessing/\n│   │   ├── checking_paths.py\n│   │   ├── find_dicom_files.py\n│   │   ├── inspect_one_case.py\n\
+  │   │   ├── classify_dicom_images.py\n│   │   ├── resolve_cbisd_paths.py\n│   │   ├── resolve_cbisd_paths_v2.py\n\
+  │   │   ├── convert_cbisd_images.py\n│   │   ├── qa_processed_images.py\n│   │   ├── build_full_image_manifest.py\n\
+  │   │   └── create_patient_disjoint_split.py\n│   │\n│   ├── models/\n│   ├── radiomics/\n│   ├── fusion/\n\
+  │   ├── xai/\n│   └── utils/\n│\n├── notebooks/\n│   ├── exploration/\n│   ├── modelling/\n│   └── evaluation/\n\
+  │\n├── models/                     # saved checkpoints; usually ignored\n├── results/\n│   ├── figures/\n\
+  │   ├── metrics/\n│   └── xai/\n│\n├── tests/\n└── docs/\n    └── report/\n```\n\nThe directory names\
+  \ under `src/` contain reusable Python code. Notebooks are intended for exploration, experiments, and\
+  \ presentation rather than the main data pipeline.\n\n## Data\n\nThe raw dataset is **not included in\
+  \ this GitHub repository** because CBIS-DDSM is large and is distributed separately.\n\nDownload CBIS-DDSM\
+  \ from The Cancer Imaging Archive (TCIA), then place the downloaded collection under:\n\n```text\ndata/raw/cbis_ddsm/\n\
+  ```\n\nDo not commit the TCIA downloader, downloaded ZIP files, DICOM data, converted mammograms, virtual\
+  \ environments, or trained model weights to Git.\n\n## Main preprocessing pipeline\n\nThe preprocessing\
+  \ work currently follows this sequence:\n\n```text\nmetadata.csv\n    ↓\nverify local paths\n    ↓\n\
+  discover DICOM files\n    ↓\ninspect and classify DICOM image roles\n    ↓\nresolve CBIS-DDSM CSV paths\
+  \ using Study/Series UIDs\n    ↓\ncorrect crop/ROI role inconsistencies\n    ↓\nconvert DICOM images\n\
+  \    ↓\nquality assurance\n    ↓\ndeduplicate full mammograms\n    ↓\ncreate image-level labels\n  \
+  \  ↓\ncreate patient-disjoint train/validation/test split\n```\n\n### Important CBIS-DDSM path issue\n\
+  \nThe case-description CSV paths do not directly match the physical filenames in the downloaded data.\
+  \ The local download contains UUID-style DICOM filenames and numerical directory names.\n\nThe resolver\
+  \ therefore uses DICOM metadata, especially:\n\n- `StudyInstanceUID`\n- `SeriesInstanceUID`\n- `SeriesDescription`\n\
+  - image role\n\nrather than relying on the original `000000.dcm` filenames.\n\nOne calcification training\
+  \ record (`P_00474`) was found to have crop and ROI references reversed. The final resolver uses the\
+  \ actual DICOM image role to resolve this safely.\n\n## Key manifests\n\nThe main generated manifests\
+  \ are:\n\n```text\ndata/processed/cbis_ddsm/manifests/\n├── cbis_ddsm_processed_manifest.csv\n├── cbis_ddsm_qa_manifest.csv\n\
+  ├── cbis_ddsm_full_image_manifest.csv\n└── cbis_ddsm_full_image_manifest_split.csv\n```\n\n`cbis_ddsm_full_image_manifest_split.csv`\
+  \ is the current main manifest for the combined full-mammogram classification experiment.\n\n## Environment\
+  \ setup\n\nPython 3.12 is recommended. The tested machine-learning environment\nuses TensorFlow 2.16.2\
+  \ and NumPy 1.26.4.\n\nCreate and activate a virtual environment:\n\n```bash\npython3.12 -m venv .venv\n\
+  source .venv/bin/activate\n```\n\nInstall the dependencies:\n\n```bash\npip install -r requirements.txt\n\
+  ```\n\nMain packages currently used include:\n\n```text\npandas\nnumpy\npydicom\nPillow\ntqdm\nscikit-learn\n\
+  pylibjpeg\npylibjpeg-libjpeg\npylibjpeg-openjpeg\ntensorflow\n```\n\nThe exact versions should be pinned\
+  \ in `requirements.txt` before final submission.\n\n## Running the preprocessing scripts\n\nRun scripts\
+  \ from the repository root so that relative paths are consistent.\n\nExample:\n\n```bash\npython src/preprocessing/checking_paths.py\n\
+  python src/preprocessing/find_dicom_files.py\npython src/preprocessing/classify_dicom_images.py\npython\
+  \ src/preprocessing/resolve_cbisd_paths_v2.py\npython src/preprocessing/convert_cbisd_images.py\npython\
+  \ src/preprocessing/qa_processed_images.py\npython src/preprocessing/build_full_image_manifest.py\n\
+  python src/preprocessing/create_patient_disjoint_split.py\n```\n\nThe older `resolve_cbisd_paths.py`\
+  \ is retained for development history, but `resolve_cbisd_paths_v2.py` is the current resolver.\n\n\
+  ## Planned next stages\n\nThe next stages are:\n\n1. full-mammogram background removal;\n2. left/right\
+  \ orientation normalisation;\n3. aspect-ratio-preserving resizing;\n4. CNN baseline training;\n5. radiomics\
+  \ feature extraction;\n6. multimodal fusion;\n7. Grad-CAM, Grad-CAM++, and Integrated Gradients;\n8.\
+  \ quantitative XAI comparison with ROI masks; and\n9. final model evaluation.\n\n## Reproducibility\n\
+  \nTo keep the project reproducible:\n\n- raw DICOM data is never modified;\n- derived images are written\
+  \ to `data/processed/`;\n- all important preprocessing decisions are recorded in CSV manifests;\n- full-mammogram\
+  \ duplicates are removed at the source-DICOM level;\n- the combined classification experiment uses a\
+  \ patient-disjoint split; and\n- random seeds should be fixed for all training and splitting scripts.\n\
+  \n## Notes on GitHub storage\n\nThis repository should contain **code, configuration files, documentation,\
+  \ small manifests, and selected result figures**.\n\nLarge files should not be committed directly. In\
+  \ particular, exclude:\n\n- raw CBIS-DDSM data;\n- converted full mammograms;\n- converted cropped images;\n\
+  - ROI mask image folders;\n- TCIA download archives;\n- `.venv/` or `venv/`;\n- model checkpoints;\n\
+  - TensorBoard logs;\n- cache files.\n\nIf selected model checkpoints are later needed for release, use\
+  \ Git LFS or a separate release artifact.\n\n## License and dataset attribution\n\nThe source code in\
+  \ this repository is covered by the repository `LICENSE`.\n\nCBIS-DDSM is a separate third-party dataset\
+  \ and remains subject to its own terms and attribution requirements. The dataset itself is not redistributed\
+  \ in this repository.\n"

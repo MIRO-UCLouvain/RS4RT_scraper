@@ -1,0 +1,74 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hardik0001/ct-reconstruction-gpu
+url: https://github.com/hardik0001/ct-reconstruction-gpu
+platform: github
+description: GPU-accelerated cone-beam CT reconstruction using the FDK algorithm with OpenCL, featuring
+  CPU and multiple GPU pipelines (buffer, image, full-GPU, and local-memory tiled) with MSE-based validation
+  and performance benchmarking.
+license: null
+language: C++
+keywords: []
+stars: 2
+updated_at: '2026-04-14T10:48:32Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# CT Volume Reconstruction – GPU Lab Project\n**Course:** Lab Course – High Performance\
+  \ Computing with Graphic Cards (GPU LAB)  \n**Semester:** WS 25/26  \n**Topic:** CT Volume Reconstruction\
+  \ (Cone-Beam FDK – Full GPU Acceleration)  \n**Team:** Prasoon, Samar, Hardik\n\n---\n\n## Project Overview\n\
+  \nThis project implements 3D Cone-Beam CT reconstruction using the **FDK algorithm** on the GPU.\n\n\
+  The program reconstructs a 3D volume from 2D projection images by:\n1. Applying a cone-beam weighting\
+  \ and ramp filter to each projection\n2. Back-projecting all filtered projections into 3D space\n\n\
+  Four complete pipelines are benchmarked:\n\n| Pipeline | Ramp Filter | Backprojection | Description\
+  \ |\n|---|---|---|---|\n| CPU | CPU | CPU | Full FDK reference, matches Python output |\n| GPU-Buffer\
+  \ | CPU | GPU (global buffer) | Basic GPU acceleration |\n| GPU-Image | CPU | GPU (image2d_t) | Hardware\
+  \ interpolation via texture cache |\n| **GPU-Full** | **GPU** | **GPU** | **Full FDK on GPU – highest\
+  \ parallelisation** |\n\n---\n\n## Project Structure\n\n```\nProject_GPU_lab/\n├── CMakeLists.txt\n\
+  ├── include/\n│   └── reconstruction.hpp          # All function declarations\n├── src/\n│   ├── main.cpp\
+  \                    # Entry point, benchmarks, HDF5 output\n│   ├── fdk_filter.cpp              # Shared\
+  \ FDK pre-filter (CPU, used by all paths)\n│   ├── cpu_reconstruction.cpp      # Full FDK on CPU (reference)\n\
+  │   ├── gpu_reconstruction_buffer.cpp      # GPU backprojection (buffer)\n│   ├── gpu_reconstruction_image.cpp\
+  \       # GPU backprojection (image2d)\n│   ├── gpu_reconstruction_buffer_full.cpp # Full FDK on GPU\
+  \ (ramp+backproject)\n│   └── mse.cpp                     # MSE validation\n└── kernels/\n    ├── backprojection_buffer.cl\
+  \    # Voxel-driven backprojection (buffer)\n    ├── backprojection_image.cl     # Voxel-driven backprojection\
+  \ (image2d)\n    ├── ramp_filter_gpu.cl          # GPU ramp filter (1 work-item = 1 detector row)\n\
+  \    └── cone_weight.cl              # Standalone cone weight kernel (utility)\n```\n\n---\n\n## FDK\
+  \ Pipeline\n\nThe FDK (Feldkamp-Davis-Kress) algorithm for cone-beam CT:\n\n```\nRaw projections\n \
+  \    │\n     ▼\n[1] Scale by 1/voxelSize\n     │\n     ▼\n[2] Cone weighting per pixel:  w = SDD / sqrt(SDD²\
+  \ + a² + b²)\n     │\n     ▼\n[3] Ramp filter (Ram-Lak) per detector row:  FFT → ×ramp → IFFT\n    \
+  \ │\n     ▼\n[4] Backprojection for each projection angle θ:\n      For each voxel (x,y,z):\n      \
+  \  t = y·cos(θ) - x·sin(θ)\n        U = SOD + y·sin(θ) + x·cos(θ)\n        u_proj = SDD·t/U       (detector\
+  \ u)\n        v_proj = SDD·z/U       (detector v)\n        accumulate: filtered_proj(u,v) × SOD²/U²\n\
+  \     │\n     ▼\n[5] Final scale:  × π / num_projections\n     │\n     ▼\nReconstructed 3D volume\n\
+  ```\n\n---\n\n## GPU Parallelisation Strategy\n\n### Backprojection kernel (all GPU paths)\n```\n1 OpenCL\
+  \ work-item = 1 voxel (x, y, z)\nTotal work-items = NX × NX × NY = 128 × 128 × 128 = 2,097,152\n```\n\
+  Each work-item independently computes the contribution from one projection angle to one voxel. No synchronisation\
+  \ needed — each GID owns its volume element.\n\n### Ramp filter kernel (GPU-Full path only)\n```\n1\
+  \ OpenCL work-item = 1 detector row (one v-slice of one projection)\nTotal work-items = P × H = 360\
+  \ × 128 = 46,080\n```\nEach work-item processes one full detector row: cone weighting + 1D DFT (W=128\
+  \ points) + ramp multiply + 1D IDFT. All rows processed in parallel.\n\n### Buffer vs Image comparison\n\
+  | Aspect | Buffer | Image (image2d_t) |\n|---|---|---|\n| Interpolation | Manual bilinear (kernel code)\
+  \ | Hardware (texture unit) |\n| Memory | Global memory | Texture cache |\n| Typical speedup | Good\
+  \ | Often faster due to cache |\n\n---\n\n## Requirements\n\n- Linux (GPU Lab machines)\n- C++17 or\
+  \ later\n- CMake ≥ 3.10\n- OpenCL 1.2+\n- HDF5 with C++ bindings (`libhdf5-dev`)\n\nCheck GPU:\n```bash\n\
+  lspci | grep VGA\nclinfo\n```\n\nCheck CPU:\n```bash\ngrep \"model name\" /proc/cpuinfo\n```\n\n---\n\
+  \n## Building\n\n```bash\nmkdir build\ncd build\ncmake ..\nmake\n```\n\nExecutable: `build/ct_recon`\n\
+  \n---\n\n## Running\n\nRun from the **project root** directory (so kernel paths resolve correctly):\n\
+  \n```bash\n./build/ct_recon\n```\n\nExpected console output:\n- Hardware info (Computer, CPU, GPU)\n\
+  - Timing for all 4 pipelines\n- MSE validation (CPU vs each GPU pipeline)\n- Speedup table\n\n---\n\n\
+  ## Input Data\n\nDefault path (GPU Lab machines):\n```\n/lgrp/edu-2025-2-gpulab/Data/proj_shepplogan128.hdf5\n\
+  ```\n\nTo use a different file, edit the `path` variable in `src/main.cpp`.\n\n---\n\n## Output\n\n\
+  After execution, `reconstructed_volume.hdf5` is created in the working directory with four datasets:\n\
+  \n| Dataset name | Contents |\n|---|---|\n| `Reconstruction_CPU` | Full FDK on CPU |\n| `Reconstruction_GPU_Buffer`\
+  \ | GPU backprojection (buffer) |\n| `Reconstruction_GPU_Image` | GPU backprojection (image2d) |\n|\
+  \ `Reconstruction_GPU_Full` | Full FDK on GPU |\n\n---\n\n## Validation\n\nMSE is computed between the\
+  \ CPU reference and each GPU result.  \nExpected: MSE < 1e-4 for all GPU pipelines, indicating numerically\
+  \ correct results.\n\n---\n\n## Troubleshooting\n\n| Problem | Command |\n|---|---|\n| No OpenCL device\
+  \ | `clinfo` |\n| HDF5 not found | `sudo apt install libhdf5-dev` |\n| Kernel file not found | Run from\
+  \ project root, not from `build/` |\n"

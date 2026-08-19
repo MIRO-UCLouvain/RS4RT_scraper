@@ -1,0 +1,53 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ToFec/RadiomicsMM
+url: https://github.com/ToFec/RadiomicsMM
+platform: github
+description: MR based local failure estimation of brain metastases in malignant melanoma
+license: MIT
+language: R
+keywords: []
+stars: 0
+updated_at: '2026-04-09T09:22:21Z'
+image_source: null
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 4 support term(s).
+readme_excerpt: "# Analysis of clinical, dosimetric and radiomic features for predicting local failure\
+  \ after stereotactic radiotherapy of brain metastases in malignant melanoma\n\nThis repository contains\
+  \ code, models and radiomic features used for the paper \"Analysis of clinical, dosimetric and radiomic\
+  \ features for predicting local failure after stereotactic radiotherapy of brain metastases in malignant\
+  \ melanoma\". The preprint version of the paper is available here: https://arxiv.org/abs/2405.20825.\
+  \ The final article was published in *Radiation Oncology*:\n\n*Wielenberg, N.E., Sachpazidis, I., Blanck,\
+  \ O. et al. Prediction of local failure after stereotactic radiotherapy in melanoma brain metastases\
+  \ using ensemble learning on clinical, dosimetric, and radiomic data. Radiat Oncol (2026). https://doi.org/10.1186/s13014-026-02825-w*\n\
+  \nThe nnUnet model for the segmentation of malignant melanoma metastases on T1, which was used in the\
+  \ paper to identify segmentation method dependent features is published separately and available on\
+  \ zenodo: https://zenodo.org/doi/10.5281/zenodo.11402124\n\nCode was tested with R v4.1.2\n\nIf you\
+  \ use code, models or data please cite https://zenodo.org/doi/10.5281/zenodo.11402124 and/or https://arxiv.org/abs/2405.20825\n\
+  \n---\n\nIn this project we tried to estimate the risk of local recurrence after radiotherapy of malignant\
+  \ melanoma brain metastases using MR images and corresponding image features. The radiomic features\
+  \ were computed using pyradiomics v3.0.1. The config-file is called \"radiomicsSetting.yaml\" and is\
+  \ part of this repository.\n\nFour different types of models were created: \n- clinical models\n- dosimetric\
+  \ models\n- radiomic features models\n- combined models (using clinical, dosimetric and radiomic features)\n\
+  \nThe models are available in their respective folders. Each folder contains models built with a nested\
+  \ cross validation scheme (which were used to identify relevant features) and a final model built with\
+  \ the entire dataset.\n\nThe data folder contains the radiomic features used in this work. Note that\
+  \ all other features (clinical and dosimetric) were set to zero for privacy reasons. \n\n---\nTo apply\
+  \ the feature elimination routines described in the paper and to build new models you can run the **RunModelTrainingWithCV.R**\
+  \ script. The script takes three arguments. The first one specifies the output folder, the second one\
+  \ defines the parameters to use (clinic, dose, radiomics, combined) and the last one is used to enable\
+  \ or disable the nested cross validation routine. To build a new model based on dose features without\
+  \ nested cross validation you run the following:\n\n``./RunModelTrainingWithCV.R ./DoseModels/resultsFinalModel/\
+  \ dose false``\n\nAs soon as feature elimination and training has finished you can run the two analysation\
+  \ scripts: \n\n```\n./EvaluateModelsOfCV.R ./DoseModels/resultsFinalModel/\n\n./EvaluateHrOfCvModels.R\
+  \ ./DoseModels/resultsFinalModel/\n```\n\n**EvaluateHrOfCvModels.R** creates a featureInfo.txt file\
+  \ which contains the names of all the features that are used in the generated models with the corresponding\
+  \ hazard ratios and the number of folds the respective feature was used in a model.\n\n**EvaluateModelsOfCV.R**\
+  \ creates a info.txt file with information about the models created during training, accuracies in the\
+  \ inner- and outer-loops of the nested cross validation, features with corresponding hazard rations\
+  \ etc. \n\n---\nIf you have any questions about the code, models or data please drop me a line. \n\n\
+  \n"

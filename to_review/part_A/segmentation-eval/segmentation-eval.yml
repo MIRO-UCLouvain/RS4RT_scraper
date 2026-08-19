@@ -1,0 +1,152 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: rmsandu/segmentation-eval
+url: https://github.com/rmsandu/segmentation-eval
+platform: github
+description: Extract and evaluate radiomics for liver cancer tumors from DICOM segmentation masks. Using
+  SimpleITK, PyRadiomics and PyDicom.
+license: NOASSERTION
+language: Python
+keywords:
+- ablation
+- data-preparation
+- dicom
+- euclidean-distances
+- liver-cancer
+- liver-segmentation
+- liver-tumor
+- metrics
+- pydicom
+- pyradiomics
+- radiomics-extraction
+- radiomics-feature-extraction
+- segmentation
+- segmentation-eval
+- segmentation-masks
+- simpleitk
+- tumor
+stars: 30
+updated_at: '2026-08-19T13:57:20Z'
+image_source: https://user-images.githubusercontent.com/20581812/77424220-048a8200-6dd1-11ea-82fc-e9803232a7b5.png
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# Radiomics Extraction and Evaluation from Binary 3D (DICOM) Segmentation Masks\n\nThe\
+  \ segmentations used in this project represent a pair of the type tumor - ablation for liver cancer\
+  \ tumors.  The ablation can be replaced with another type of segmentation, such as a predicted tumor\
+  \ segmentation (using a separate algorithm). \n\nThe evaluation metrics include:\n-  Euclidean Distances\
+  \ between two objects from [A linear time algorithm for computing exact Euclidean distance transforms\
+  \ of binary images in arbitrary dimensions](https://ieeexplore.ieee.org/abstract/document/1177156).\
+  \ \n- [Volume Metrics](https://itk.org/SimpleITKDoxygen/html/classitk_1_1simple_1_1LabelOverlapMeasuresImageFilter.html)\
+  \ (Total Volume in ml, Dice, Jaccard score, Volume Similarity, Volume Overlap Error,Residual Volume)\n\
+  - Maximum Inscribed Ellipsoid and Minimum Enclosing Ellipsoid Volumes \n- [PyRadiomics](https://pyradiomics.readthedocs.io/en/latest/)\
+  \ Features (Axis Lenghts, Intensity Values, Elongation, Sphericity, Mesh Volume) -- optional, see [Requirements](#requirements)\n\
+  ![image](https://user-images.githubusercontent.com/20581812/77424220-048a8200-6dd1-11ea-82fc-e9803232a7b5.png)\n\
+  \n## Requirements\n\nPython 3.11+.\n\n```\npip install -r requirements.txt\n```\n\ninstalls everything\
+  \ needed for resampling, distance metrics, and volume metrics\n(the default pipeline path, `calculate_radiomics=False`).\n\
+  \n[PyRadiomics](https://github.com/Radiomics/pyradiomics) shape/intensity feature\nextraction (`RadiomicsMetrics`,\
+  \ `calculate_radiomics=True`,\n`D_compile_population_radiomics.py`, `E_radiomics_stats.py`) is a **separate,\n\
+  optional** dependency -- see `requirements-radiomics.txt` for why, and how to\ninstall it into its own\
+  \ environment.\n\nOther libraries used directly: [SimpleITK](https://github.com/SimpleITK/SimpleITK),\n\
+  [PyDicom](https://github.com/pydicom/pydicom), [CVXPY](https://www.cvxpy.org/)\n(inner/outer ellipsoid\
+  \ fitting).\n\n## Quickstart\n\nTry the pipeline end-to-end on synthetic data, no real DICOM/patient\
+  \ data needed:\n\n```\npip install -r requirements-dev.txt\npython scripts/create_test_cases.py    \
+  \       # writes synthetic tumor/ablation NIfTI volumes to data/\n```\n\nthen, in Python:\n\n```python\n\
+  import nibabel as nib\nimport SimpleITK as sitk\nfrom C_mainDistanceVolumeMetrics import main_distance_volume_metrics\n\
+  \ndef load_as_sitk(path):\n    arr = nib.load(path).get_fdata()\n    return sitk.GetImageFromArray(arr.transpose(2,\
+  \ 1, 0).astype(\"uint8\"))\n\ntumor = load_as_sitk(\"data/T01/perfect_overlap/T01_Lperfect_overlap_Tumor.nii.gz\"\
+  )\nablation = load_as_sitk(\"data/T01/perfect_overlap/T01_Lperfect_overlap_Ablation.nii.gz\")\n\nmain_distance_volume_metrics(\n\
+  \    patient_id=\"T01\", source_ct_ablation=None, source_ct_tumor=None,\n    ablation_segmentation_resampled=ablation,\
+  \ tumor_segmentation_resampled=tumor,\n    lesion_id=\"perfect_overlap\", ablation_date=\"20260101\"\
+  , dir_plots=\".\",\n    calculate_volume_metrics=True, calculate_radiomics=False,\n)\n```\n\nThis writes\
+  \ an Excel file with Dice=1.0 for the `perfect_overlap` case,\nconfirming the install works.\n\n## Testing\
+  \ and linting\n\n```\npytest            # unit tests against synthetic segmentations with known-correct\
+  \ answers\nruff check .      # linting\n```\n\n## Main Functions and Operations Performed\n1. `A_read_files_info.py`\
+  \ (optional)\n    - `DicomReader.py`\n2. `B_ResampleSegmentations.py`\n3. `C_mainDistanceVolumeMetrics.py`\n\
+  \    - `VolumeMetrics.py`\n    - `DistanceMetrics.py`\n    - `scripts/ellipsoid_inner_outer.py`\n  \
+  \  - `scripts/plot_ablation_margin_hist.py`\n4. `D_compile_population_radiomics.py ` (optional)\n  \
+  \  - if batch processing (for multiple segmentations) have been enabled this script will compile all\
+  \ the features from the outpt CSV files into one single file.\n5. `E_radiomics_stats.py` (optional)\n\
+  \    - various plots and statistics for the features that have been previously extracted\n\n## Usage\n\
+  The scripts are called (internally) in alphabetical order using the folllowing logic:  \n\n    Read\
+  \ Images --> Resample --> Extract Distance Metrics  --> Extract Volume Metrics --> Plot Distance Metrics\
+  \ --> Output Metrics to Xlsx file in Tabular format\n \n ![image](https://user-images.githubusercontent.com/20581812/77426347-99db4580-6dd4-11ea-9606-aac92efd3045.png)\n\
+  \n\n`PyRadiomics` automatically checks if the source CT image and the derived mask have the same dimensions.\
+  \ If not, resampling is performed in the background.\nThis function only operates with the path to the\
+  \ patient folder that can have all source CT image, segmentation masks, other files, all in one folder.\
+  \ It does that by creating a dictionary of paths based on the metadata information that was encoded\
+  \ in the [**ReferencedImageSequenceTag**](https://dicom.innolitics.com/ciods/basic-structured-display/structured-display-image-box/00720422/00081140)\
+  \ and [**SourceImageSequence**](https://dicom.innolitics.com/ciods/rt-beams-treatment-record/general-reference/00082112).\
+  \ I have previously encoded the mapping information (which is also an anonymization pipeline) in the\
+  \ [DICOM-Anonymization-Segmentation-Mapping](https://github.com/raluca-san/DAMS)\n## Input\n    ap =\
+  \ argparse.ArgumentParser()\n    ap.add_argument(\"-i\", \"--rootdir\", required=False, help=\"path\
+  \ to the patient folder to be processed\")\n    ap.add_argument(\"-o\", \"--plots_dir\", required=True,\
+  \ help=\"path to the output images\")\n    ap.add_argument(\"-b\", \"--input_batch_proc\", required=False,\
+  \ help=\"input csv file for batch processing\")\n    args = vars(ap.parse_args())\nThe main function\
+  \ where to run the program from is `A_read_files_info.py`.\nThe function can either work with a single\
+  \ patient image folder by calling the function like:\n\n`python A_read_files_info.py --i \"/path/to/patient_folder\"\
+  \ --o \"/path/to/output\"`  \n\nFor **Batch Processing** option the input is an Excel (.xlsx) file with\
+  \ the following headers:  \n| Patient_ID    | Ablation_IR_Date |   Nr_Lesions | Patient_Dir_Paths  \
+  \      |\n| ------------- | ---------------- | ------------ | ------------------------ | \n| C001  \
+  \        | 20160103         |    2         | ['/path/to/Pat_C001']    |    \n| C002          | 20181108\
+  \         |    1         | ['/path/to/Pat_C002']    |    \n\n\nThe algorithm starts by iterating through\
+  \ all the patient folders provided in the column \"Patient_Dir_Paths\". Of course it's not absolutely\
+  \ necessarry to use the data structured in the way I did. Moreover, the `A_read_files_info.py` can be\
+  \ skipped altogether, especially when you know the mapping between your **Source (original) CT image\
+  \ -> Segmentation1 -> Segmentation2**. In this specific case my Segmentation1 is called \"tumor_segmentation\"\
+  \ and Segmentation2 is called \"ablation_segmentation\", which are 2 separate structures/tissue within\
+  \ my organ of interest (that's the liver). If you already know the file mapping between your images\
+  \ (i.e. which image is related to which image, aka more explicit, from which CT source image comes each\
+  \ segmentation) you can move the next steps which are `B_ResampleSegmentations.py` and `C_mainDistanceVolumeMetrics.py`.\n\
+  \n## Resampling (Resizing)\nIn my case resampling was necessary because not only my 2 segmentation masks\
+  \ had different sizes [x, y, z] , but they also had different spacings in-between the slices. If your\
+  \ images differ only in size then you can use the `SimpleITK Paste Image` function. However, if the\
+  \ spacing differs, resampling is necesarry otherwise we cannot compare the 2 images using the Distance\
+  \ and Volume metrics.  \n\nThe file that does the resampling and resizing job is `B_ResampleSegmentations.py`.\
+  \ First the images need to be read and loaded using the `SimpleITK` Python library. My segmentations\
+  \ and CT images were saved in multiple DICOM slices (images) in a DICOM folder. The script `DicomReader.py`\
+  \ reads all the DICOM slices of an image/segmentation and returns a single variable which is an object\
+  \ in SimpleITK format. The segmentation masks are resampled in the same dimensions and spacing (however\
+  \ still anisotropic) before calling the `DistanceMetrics.py` and `VolumeMetrics.py`.  \n\nThis resampling\
+  \ script can be called like:  \n   ` import SimpleITK as sitk`  \n   ` import DicomReader as Reader`\
+  \  \n   ` tumor_segmentation_sitk, tumor_sitk_reader = Reader.read_dcm_series(tumor_path, True)`  \n\
+  \   ` ablation_segmentation_sitk, ablation_sitk_reader = Reader.read_dcm_series(ablation_path, True)`\
+  \  \n   ` resizer = ResizeSegmentation(ablation_segmentation_sitk, tumor_segmentation_sitk) # object\
+  \ instantiation`  \n   ` tumor_segmentation_resampled = resizer.resample_segmentation()  # SimpleITK\
+  \ image object`  \n   \n     \nThe actual resampling operation is performed using the `SimpleITK ResampleImageFilter`\
+  \ and `NearestNeighbour Interpolation` such that no new segmentation mask labels are generated. \n\n\
+  ## Segmentation Evaluation Metrics\nThe segmentation Evaluation Metrics are called from the script `C_mainDistanceVolumeMetrics.py`\
+  \ which calls:\n* `DistanceMetrics.py`\n* `VolumeMetrics.py`\n* `RadiomicsMetrics` - features extracted\
+  \ using the Python library `PyRadiomics`. You can find a list of all the featuers that can be computed\
+  \ using this PyRadiomics [here](https://pyradiomics.readthedocs.io/en/latest/features.html). I used\
+  \ only the volumes, sphericity, intensity and axis values.\nThe same as for **Resampling**, both these\
+  \ scripts take as input arguments SimpleITK image objects. They can be called for example like:  \n\n\
+  \ `surface_distance_metrics = DistanceMetrics(ablation_segmentation, tumor_segmentation_resampled)`\
+  \  \n `ablation_radiomics_metrics = RadiomicsMetrics(source_ct_ablation, ablation_segmentation)`  \n\
+  \ `evaloverlap = VolumeMetrics()`   \n  `evaloverlap.set_image_object(ablation_segmentation, tumor_segmentation_resampled)`\
+  \  \n\n## Inner and Outer Ellipsoidal Approximations\n![image](https://user-images.githubusercontent.com/20581812/82670129-dd1f2c80-9c3c-11ea-8fcb-f37ce93d959f.png)\
+  \  \n\nThe inner (green) and outer (orange) ellipsoidal approximations of a segmented object (blue)\
+  \ are calculated using convex optimization according to \"S. P. Boyd and L. Vandenberghe, Convex optimization.\
+  \ Cambridge, UK ; New York: Cambridge University Press, 2004.\" Their implementation in [CVXPY](https://www.cvxpy.org/)\
+  \ was employed to compute the ellipsoids. The outer volume was computed using SVD and the inner volume\
+  \ was computed as the `sqrt(det(B)) * Ball(0,1)`.\n\n \n## Output\nThe output is a Excel (.xlsx) file\
+  \ in tabular format that returns radiomics (feature values) per patient and per lesion.\nAditionally\
+  \ a histogram that describes the Euclidean distances between the tumor and ablation (my 2 segmentations\
+  \ files) are generated. The script for plotting the histogram uses the Surface Euclidean Distances extracted\
+  \ using SimpleITK using [the Maurer et. al algorithm](https://itk.org/SimpleITKDoxygen/html/classitk_1_1simple_1_1SignedMaurerDistanceMapImageFilter.html)\
+  \ is in `scripts/plot_ablation_margin_hist.py`.\nTo compute the histogram the following steps are followed\
+  \ for the Maurer et. al algorithm:\n1. compute the contour surface of the object (face+edge+vertex connectivity\
+  \ : fullyConnected=True, face connectivity only : fullyConnected=False (default mode)\n2. convert from\
+  \ SimpleITK format to Numpy Array Img\n3. remove the zeros from the contour of the object, NOT from\
+  \ the distance map\n4. compute the number of 1's pixels in the contour\n5. instantiate the Signed Mauerer\
+  \ Distance map for the object (negative numbers also)\n6. Multiply the binary surface segmentations\
+  \ with the distance maps. The resulting distance maps contain non-zero values only on the surface (they\
+  \ can also contain zero on the surface)  \n\n\n![histogram_example](https://user-images.githubusercontent.com/20581812/76539679-610ca980-6481-11ea-9462-646d5620b559.png)\n\
+  \nInner and Outer Ellipsoids Fitted around a segmentation (orange points).  \n\n![inner outer ellipsoid\
+  \ 2](https://user-images.githubusercontent.com/20581812/82572967-712dbd00-9b85-11ea-8397-7ef00c3220bd.png)\n\
+  \n \n\n#### Patient Data Structure for my case\nThe patient data consists of files and folder has the\
+  \ following folder structure and o"

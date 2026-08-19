@@ -1,0 +1,138 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: brianmanderson/DicomRtNiftiConverterGUI
+url: https://github.com/brianmanderson/DicomRtNiftiConverterGUI
+platform: github
+description: ''
+license: MIT
+language: C#
+keywords:
+- ucsd-catalog
+stars: 3
+updated_at: '2026-08-04T08:11:37Z'
+image_source: null
+heuristic_total_score: 24
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 7 support term(s).
+readme_excerpt: "# DicomRtNiftiConverterGUI\n\nA cross-platform C# **.NET 8** toolkit that converts DICOM\
+  \ radiotherapy data - CT/MR/PT images, RT Structures, and RT Dose - to NIfTI (`.nii.gz`) format, and\
+  \ performs the reverse (mask -> RTSTRUCT, NIfTI -> DICOM image series). It ships as an **Avalonia desktop\
+  \ GUI** (`DicomRtNifti.App`) and a **headless CLI** (`DicomRtNifti.Cli`) that share one core conversion\
+  \ library (`DicomRtNifti.Core`), and runs on Windows, Linux, and macOS.\n\nThe rasterization core handles\
+  \ the five clinically-used DICOM `ContourGeometricType` values - `CLOSED_PLANAR`, `OPEN_PLANAR`, `OPEN_NONPLANAR`,\
+  \ `CLOSED_NONPLANAR`, `POINT` - and exposes both forward (RTSTRUCT -> mask) and reverse (mask -> RTSTRUCT)\
+  \ directions through a headless CLI. The rare `CLOSED_PLANAR_XOR` type tag (DICOM 2020 supplement) is\
+  \ deliberately not implemented because clinical RTSTRUCTs encode hollow shapes via the multi-contour\
+  \ even-odd convention instead.\n\nMethodology borrows from [Dicom_RT_and_Images_to_Mask](https://github.com/brianmanderson/Dicom_RT_and_Images_to_Mask)\
+  \ (DicomRTTool); this implementation extends coverage beyond `CLOSED_PLANAR`-only and adds the reverse\
+  \ direction.\n\n## Start here\n\n**[`examples/Guide.md`](examples/Guide.md)** is a worked, runnable\
+  \ example of the whole toolkit: it\ntakes a public cohort with CT, structures **and dose** from raw\
+  \ DICOM to an analysis-ready NIfTI\ndataset, converts the masks back into a DICOM structure set, measures\
+  \ what the round trip cost,\nand verifies the rasterizer against closed-form geometry.\n\nIt needs no\
+  \ .NET install — the notebook downloads a self-contained build. If you are evaluating\nthis tool, start\
+  \ there rather than here.\n\n## GUI mode\n\nLaunch the GUI with `dotnet run --project src/DicomRtNifti.App`\
+  \ (or run the published `DicomRtNifti.App` executable). It opens a launcher with two buttons:\n\n- **DICOM\
+  \ -> NIfTI** - opens the forward window (scan a DICOM archive, export selected patients/series to `image.nii.gz`,\
+  \ per-ROI masks under `masks/`, and RT-DOSE volumes under `doses/{SeriesDescription}.nii.gz`).\n- **NIfTI\
+  \ -> DICOM** - opens the reverse window (batch-convert folders of `image.nii.gz` / `masks/` / `doses/`\
+  \ back into DICOM image series, RT-STRUCT, and RT-DOSE). Its **Run Server** button turns the same window\
+  \ into a drop-folder watcher for inference-service pipelines. Both mask -> RT-DOSE and watch mode are\
+  \ **GUI-only**; see the reverse-mode note below.\n\nEach directional window has a **Help** button (top\
+  \ right) with the full workflow walkthrough, every control documented, output details, and example folder\
+  \ layouts. The same material is readable outside the app in [`examples/GUI_WALKTHROUGH.md`](examples/GUI_WALKTHROUGH.md),\
+  \ which also maps every control to its CLI flag. The CLI below is the alternative when scripting batch\
+  \ / benchmark runs.\n\n## Features\n\n- Recursive DICOM folder scanning with automatic Patient/Study/Series\
+  \ grouping\n- CT/MR/PT image series export to `image.nii.gz` via SimpleITK (with optional resampling\
+  \ to a fixed voxel spacing)\n- RT Struct contour rasterization to per-ROI binary mask `.nii.gz` files,\
+  \ supporting the five clinically-used `ContourGeometricType` values: `CLOSED_PLANAR`, `OPEN_PLANAR`,\
+  \ `OPEN_NONPLANAR`, `CLOSED_NONPLANAR`, `POINT`. Hollow shapes are handled via the multi-contour `CLOSED_PLANAR`\
+  \ convention with even-odd XOR fill, the dominant clinical encoding; the explicit `CLOSED_PLANAR_XOR`\
+  \ type tag is not dispatched separately\n- Reverse direction: mask -> RTSTRUCT writer (`RtStructWriterService`)\
+  \ and NIfTI volume -> DICOM image series (`NiftiImageWriterService`)\n- RT Dose export to `doses/{SeriesDescription}.nii.gz`\
+  \ (one file per dose, filename sanitized) with DoseGridScaling applied\n- Optional per-series `metadata.json`\
+  \ sidecar (DICOM -> NIfTI): a tabbed **Images / Structures / Dose** picker selects DICOM attributes\
+  \ and computed values (voxel size, image dimensions, ROI names, max dose, ...), written as a sectioned,\
+  \ friendly-name-keyed JSON\n- ROI Association editor for mapping canonical names to DICOM structure\
+  \ aliases\n- Configurable settings with JSON persistence\n- **Headless CLI** for batch and benchmark\
+  \ integration (see Headless mode below)\n- **Per-ROI parallelization** (`Parallel.ForEach`) in the rasterizer\
+  \ and NIfTI writer for 2-7x speedup on multi-ROI RTSTRUCTs\n\n## Headless mode\n\nFor batch use and\
+  \ benchmark integration, the `DicomRtNifti.Cli` executable runs\nthe same conversion services as the\
+  \ GUI, with no desktop required. Run the\npublished binary directly, or during development via\n`dotnet\
+  \ run --project src/DicomRtNifti.Cli -- <args>`. (A leading `--headless`\nflag is accepted but optional.)\n\
+  \n```\n# Forward: RTSTRUCT + image series -> per-ROI binary masks\n#   --include-image (optional) also\
+  \ writes image.nii.gz; --rtdose (optional) writes doses/<desc>.nii.gz\nDicomRtNifti.Cli --forward --rtstruct\
+  \ PATH --image-folder PATH --output-folder PATH \\\n    [--include-image] [--rtdose PATH]\n\n# Reverse\
+  \ with reference DICOM: per-ROI masks -> RTSTRUCT\nDicomRtNifti.Cli --reverse --image-folder PATH --masks-folder\
+  \ PATH --output PATH\n\n# Reverse, NIfTI-only (no reference DICOM): synthesizes the DICOM image series\n\
+  # from image.nii.gz + metadata.json so the RT-STRUCT can reference it.\n#   --image-nifti         (optional,\
+  \ default <masks-folder>/image.nii.gz)\n#   --metadata            (optional, default <masks-folder>/metadata.json;\n\
+  #                          auto-generated with anonymous defaults on first run)\n#   --output-image-folder\
+  \ (optional, persist the generated DICOM image series)\nDicomRtNifti.Cli --reverse --masks-folder PATH\
+  \ --output PATH \\\n    [--image-nifti PATH] [--metadata PATH] [--output-image-folder PATH]\n\n# --masks-folder\
+  \ is the folder that DIRECTLY contains the per-ROI *.nii.gz files\n# and is read top-level only. On\
+  \ a case folder exported by the forward direction\n# that is <case>/masks, not <case>. Unlike the GUI's\
+  \ NIfTI -> DICOM window,\n# --reverse handles exactly one job: it accepts neither a case folder nor\
+  \ a\n# parent of many. Loop over --reverse to batch.\n\n# Image-forward: DICOM image series -> NIfTI\
+  \ image volume (no RTSTRUCT needed)\nDicomRtNifti.Cli --image-forward --image-folder PATH --output PATH.nii.gz\
+  \ \\\n    [--target-spacing X,Y,Z]\n\n# Image-reverse: NIfTI image volume -> DICOM image series\n# \
+  \  --modality default 'auto' infers CT/MR/PT from the NIfTI's pixel values\nDicomRtNifti.Cli --image-reverse\
+  \ --nifti-image PATH --output-folder PATH \\\n    [--modality CT|MR|PT|auto]\n\n# Version + SimpleITK\
+  \ native-load probe\nDicomRtNifti.Cli --version\n```\n\n- **Exit codes** - `0` on success, `1` on conversion\
+  \ failure (with stack trace on stderr), `2` on missing or invalid arguments (usage printed on stderr).\n\
+  - **Stdout** - a `# rt_mask_validation <mode>` header line followed by the machine-readable results:\
+  \ forward writes one TSV row per ROI (`<ROIName>\\t<Volume_cc>\\t<mask_path>`); the reverse/image modes\
+  \ write the output path(s). The header is the mode name as run, so the NIfTI-only reverse path emits\
+  \ `# rt_mask_validation reverse (nifti-only)` - match the prefix, not the whole line.\n- **Stderr**\
+  \ - human-readable progress and error messages.\n\n> **Read the mask path from stdout; do not rebuild\
+  \ it from the ROI name.** Mask file names are\n> sanitized for Windows, and sanitizing is many-to-one\
+  \ - `PTV:1`, `PTV*1` and `PTV?1` all reduce to\n> `PTV_1`. So the mask file name is **not** simply the\
+  \ sanitized ROI name: an ROI whose name is\n> already a valid file name keeps it verbatim, while one\
+  \ that had to be sanitized is written as\n> `<sanitized>_<8 hex of SHA256 of the exact ROI name>` -\
+  \ `PTV:1` becomes `PTV_1_d6bdcf84.nii.gz`\n> and `PTV*1` becomes `PTV_1_896dd648.nii.gz`, each of them\
+  \ whether or not the other is in the\n> same run. A line naming the substitution goes to stderr.\n>\n\
+  > Because that mapping is a pure function of the single ROI name, the stdout rows, the cohort JSON\n\
+  > `file` fields and the manifest agree with each other *and* across runs: a later run with a\n> different\
+  \ `--associations` / `--only-associated-rois` selection cannot move an ROI onto another\n> file name.\
+  \ Output folders are still never pruned, so masks written by an earlier, wider\n> selection stay behind;\
+  \ each run lists the pre-existing mask files it did not write on stderr and\n> leaves them untouched\
+  \ - delete them yourself if this run's manifest is meant to describe the\n> whole folder.\n\nThe CLI\
+  \ reuses the same services the GUI uses. See [src/DicomRtNifti.Cli/HeadlessRunner.cs](src/DicomRtNifti.Cli/HeadlessRunner.cs)\
+  \ (run `--help` for the full option list).\n\n**No DICOM handy?** No test data is committed, but the\
+  \ conformance package generates a complete\nsynthetic CT + RTSTRUCT, which makes the fastest end-to-end\
+  \ smoke test of a fresh build:\n\n```\npip install \"git+https://github.com/brianmanderson/RTMaskConformanceTest\"\
+  \nrtmask-conformance generate ./fixture --n-quadrature 2\n\nDicomRtNifti.Cli --forward \\\n    --rtstruct\
+  \ ./fixture/rtstruct/primitives_planar.dcm \\\n    --image-folder ./fixture/refct \\\n    --output-folder\
+  \ ./predictions\n```\n\nThat writes one `.nii.gz` per primitive into `./predictions`. To score them\
+  \ against the analytic\nground truth exactly as the CI accuracy gate does — Dice, HD95, mean surface\
+  \ distance and volume\nerror, with this repository's documented per-primitive thresholds:\n\n```\nrtmask-conformance\
+  \ verify --predictions ./predictions \\\n    --groundtruth ./fixture/groundtruth --config ./conformance.yaml\n\
+  ```\n\nThe gate itself lives in\n[`.github/workflows/conformance-crossplatform.yml`](.github/workflows/conformance-crossplatform.yml),\n\
+  which runs the same three commands on Windows, Linux and macOS against a SHA-pinned revision of\nthe\
+  \ fixture generator. The paths above match it exactly, which does mean `fixture/` and\n`predictions/`\
+  \ land in whatever directory you run from and are *not* gitignored — they are scratch,\nregenerated\
+  \ in seconds, so delete them rather than keep them.\n\n> **Note on the forward mode's output layout.**\
+  \ `--forward` writes masks **flat** into\n> `--output-folder`, not into a `masks/` subfolder — it is\
+  \ the single-series mode the conformance\n> harness drives, and that contract is deliberately frozen.\
+  \ The hierarchical\n> `<patient>/<study>/<series>/{image.nii.gz,masks/,doses/}` layout described under\n\
+  > [Output structure](#output-structure-forward-dicom---nifti) is what the GUI and the cohort\n> modes\
+  \ below produce.\n\n**What the single-series modes expect of `--image-folder`.** These modes take one\
+  \ explicitly\nnamed series, so they do no scanning: they read files matching `*.dcm` **in that folder\
+  \ only**,\nnot in subfolders. Slices with another extension (or none, as some archives ship them) are\
+  \ not\nseen, and the run stops with `No image (.dcm) slices in <folder>`. RT-STRUCT / RT-DOSE / RT-PLAN\n\
+  files sitting beside the slices are fine — they are filtered out by modality. If your archive is\nnested,\
+  \ or its files are extensionless, use the [cohort modes](#cohort-mode) below: those scan\nrecursively\
+  \ and read every file regardless of extension.\n\n**Non-uniform slice spacing is warned about, not corrected.**\
+  \ A series reconstructed with mixed\ngaps — 3 mm through the target, 6 mm elsewhere — has no single\
+  \ through-plane spacing, and a NIfTI\ncarries only one per axis. `--forward`, `--image-forward`, both\
+  \ cohort modes and the GUI print a\n`WARNING: series <UID> has non-uniform slice spacing` line on stderr\
+  \ naming the gap range, the\nflattened spacing that will be written, and the worst-case factor by which\
+  \ a volume computed from\nthe output is wrong. It fires only when that factor exceeds 1.05x, so two-decimal\
+  \ rounding on a\n0.625 mm reconstruction does not trip it. **The geometry is not changed, and `--output-spacing`\n\
+  does not rescue it** — resampling from an already-flattened grid cannot recover the true slice\npositions.\
+  \ Resample the source series onto a uniform grid before converting if the geometry\nmatters. `--cohort-scan`\
+  \ reports the same fact structurally, as `slice_spacing_uniform` plus the\nobserved gaps, which is the\
+  \ cheapest way to find these seri"

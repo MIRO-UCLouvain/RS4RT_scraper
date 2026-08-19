@@ -1,0 +1,82 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: dvpalomino/radiomics-crew
+url: https://github.com/dvpalomino/radiomics-crew
+platform: github
+description: 'RadiomicsCrew: multi-agent literature review and methodology panel'
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-20T12:57:08Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# RadiomicsCrew\n\n**Sistemas multiagente para metodología en radiómica.** Dos crews\
+  \ construidas con [crewAI](https://github.com/crewAIInc/crewAI): una revisa la literatura leyendo la\
+  \ sección de métodos, la otra simula un panel de expertos que delibera una decisión metodológica y deja\
+  \ constancia del desacuerdo.\n\n![python](https://img.shields.io/badge/python-3.10–3.13-blue) ![license](https://img.shields.io/badge/license-MIT-green)\n\
+  \n---\n\n## Para qué sirve\n\nLa radiómica arrastra un problema de reproducibilidad conocido: los estudios\
+  \ rara vez declaran cómo discretizan, normalizan o armonizan sus características, y revisarlo a mano\
+  \ —artículo por artículo, sección de métodos por sección de métodos— es lento. Estas dos crews atacan\
+  \ esa fricción.\n\n**`review`** — Revisión de evidencia. Busca en PubMed y Europe PMC, filtra con criterios\
+  \ explícitos y audita la metodología de cada artículo contra un checklist de reporte tipo IBSI, leyendo\
+  \ los métodos y no solo el resumen. Produce una tabla de evidencia y una síntesis organizada por decisión\
+  \ metodológica, no artículo por artículo.\n\n**`panel`** — Panel de expertos. Cinco roles (radiólogo,\
+  \ metodólogo IBSI, bioestadístico, ingeniero de ML, asesor regulatorio) debaten una decisión —por ejemplo,\
+  \ *fixed bin size* frente a *fixed bin number*— coordinados por un chair que preserva el desacuerdo\
+  \ en lugar de promediarlo. Produce un registro de decisión metodológica (estilo ADR).\n\nNo resuelve\
+  \ la falta de armonización —eso es un problema de fondo del campo— pero hace ese desorden metodológico\
+  \ rápido de auditar. Ejemplos reales de salida en [`docs/example_output.md`](docs/example_output.md)\
+  \ (review) y [`docs/example_output_panel.md`](docs/example_output_panel.md) (panel).\n\n## Instalación\n\
+  \nRequiere Python 3.10–3.13 (crewAI limita a `<3.14`; en Windows, 3.12 es lo más seguro).\n\n```bash\n\
+  git clone https://github.com/USER/radiomics-crew.git\ncd radiomics-crew\npython -m venv .venv && source\
+  \ .venv/bin/activate    # Windows: py -3.12 -m venv .venv; .\\.venv\\Scripts\\Activate.ps1\npip install\
+  \ -e \".[dev]\"\ncp .env.example .env      # añade tu clave; .env está gitignorado\npytest -q      \
+  \           # verifica la instalación sin gastar un token\n```\n\nConfigura el `.env` con tu proveedor.\
+  \ Con Anthropic:\n\n```bash\nANTHROPIC_API_KEY=sk-ant-...\nRC_MODEL=anthropic/claude-haiku-4-5-20251001\
+  \   # los cuatro workers\nRC_MANAGER_MODEL=anthropic/claude-sonnet-5     # el chair del panel\nRC_TEMPERATURE=off\
+  \                             # algunos modelos rechazan temperature\nNCBI_EMAIL=tu@correo.org     \
+  \                   # opcional, sube el límite de PubMed\n```\n\nCualquier proveedor soportado por LiteLLM\
+  \ funciona (OpenAI, Gemini, Ollama local): instala el extra correspondiente y ajusta el nombre del modelo.\
+  \ Ver `.env.example`.\n\n## Uso\n\n**Revisión bibliográfica:**\n\n```bash\npython -m radiomics_crew\
+  \ review \\\n  --question \"How sensitive are CT radiomic texture features to fixed bin size versus\
+  \ fixed bin number discretisation?\" \\\n  --min-year 2019\n```\n\n**Panel de expertos, desde un preset:**\n\
+  \n```bash\npython -m radiomics_crew panel --preset fbn_vs_fbs_ct\n```\n\n**Panel con tu propia pregunta:**\n\
+  \n```bash\npython -m radiomics_crew panel \\\n  --question \"Are DL-generated masks acceptable as the\
+  \ ROI source for a radiomic signature?\" \\\n  --context \"nnU-Net mean Dice 0.87, 10% of cases below\
+  \ 0.6\" \\\n  --option \"fully automatic\" --option \"automatic + review of every case\" \\\n  --option\
+  \ \"review triggered by a quality score\" \\\n  --tumour-site pancreatic --modality CT\n```\n\nLas salidas\
+  \ caen en `outputs/` como JSON (para diffear) y Markdown (para leer). Presets disponibles en [`examples/presets.yaml`](examples/presets.yaml);\
+  \ más preguntas de ejemplo en [`examples/questions.md`](examples/questions.md).\n\nEmpieza por `review`:\
+  \ es más barato y más rápido que `panel`. El `panel` es jerárquico y consume bastante más — revisa el\
+  \ `token_usage` que se imprime al terminar.\n\n## Cómo leer las salidas\n\nEn el **review**, mira primero\
+  \ si la tabla de evidencia tiene PMIDs reales (compruébalos en PubMed) antes que la síntesis. La columna\
+  \ de preprocesado revela si el agente leyó los métodos o se quedó en el abstract; muchos `not verifiable\
+  \ from abstract` suelen ser el muro del paywall, no un fallo.\n\nEn el **panel**, ve directo a `points_of_disagreement`.\
+  \ Si está poblado, el registro captura tensión real —que es su valor—. Un consenso demasiado limpio\
+  \ suele significar que los agentes no se presionaron lo suficiente.\n\n## Limitaciones\n\n- El cribado\
+  \ no es de grado revisión-sistemática (sin doble cribado independiente, sin PRISMA, sin instrumento\
+  \ formal de riesgo de sesgo). Es un primer paso rápido y auditable que apunta a los artículos correctos;\
+  \ no los sustituye.\n- La valoración a texto completo solo alcanza open access; los artículos de pago\
+  \ se marcan como no verificables en lugar de adivinarlos.\n- El panel *simula* experiencia, no la tiene.\
+  \ El registro es un punto de partida estructurado para una reunión real, no una opinión clínica ni regulatoria.\
+  \ Nada aquí es un producto sanitario.\n- La indexación de PubMed va con retraso; el trabajo muy reciente\
+  \ se recupera de menos.\n\n## Tests\n\n```bash\npytest -q          # sin red, sin clave\nruff check\
+  \ src tests\n```\n\nLa batería fija los componentes deterministas y varios fallos que llegaron a producirse\
+  \ en runs reales: reparación de JSON truncado, coerción de tipos que un LLM escribe mal, que `temperature`\
+  \ no se envíe a modelos que la rechazan, y que ningún esquema anidado llegue al proveedor.\n\n## Estructura\n\
+  \n```\nconfig/          agents.yaml + tasks.yaml por crew — los prompts, versionados\nknowledge/   \
+  \    el checklist de reporte tipo IBSI\nsrc/radiomics_crew/\n  crews/         review (secuencial), panel\
+  \ (jerárquico)\n  tools/         PubMed, Europe PMC, checker IBSI, capa HTTP con caché\n  schemas.py\
+  \     contratos pydantic de cada salida\n  parsing.py     validación en proceso (no vía el esquema del\
+  \ proveedor)\nexamples/        presets y preguntas de ejemplo\n```\n\n## Créditos\n\nPatrones de diseño\
+  \ de agentes del curso [*Multi AI Agent Systems with crewAI*](https://www.deeplearning.ai/courses/multi-ai-agent-systems-with-crewai)\
+  \ (DeepLearning.AI / crewAI). La capa de dominio —el checklist, los esquemas, los roles del panel, los\
+  \ modos de fallo que conviene vigilar— es propia.\n\nMIT. No es un producto sanitario. No es consejo\
+  \ clínico.\n"

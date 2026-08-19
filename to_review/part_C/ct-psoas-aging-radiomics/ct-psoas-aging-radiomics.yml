@@ -1,0 +1,73 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: MerimJ/CT-Psoas-Aging-Radiomics
+url: https://github.com/MerimJ/CT-Psoas-Aging-Radiomics
+platform: github
+description: Quantitative CT radiomics pipeline for normative analysis of psoas muscle aging, including
+  attenuation, volume, and bilateral symmetry, as a baseline for sarcopenia and disease-aware muscle biomarkers.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-10T10:58:56Z'
+image_source: https://raw.githubusercontent.com/MerimJ/CT-Psoas-Aging-Radiomics/HEAD/figures/training_curves.png
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# \U0001FA7B Psoas Muscle Segmentation with a 3D Residual U-Net\n\n> Automated segmentation\
+  \ of the **psoas muscle** from CT scans (NIfTI) using a 3D\n> Residual U-Net with instance normalization\
+  \ and deep supervision.\n\n![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)\n\
+  ![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-ee4c2c?logo=pytorch&logoColor=white)\n![Best\
+  \ Dice](https://img.shields.io/badge/Best%20Val%20Dice-0.8821-brightgreen)\n![License](https://img.shields.io/badge/License-MIT-yellow)\n\
+  \n---\n\n## \U0001F4CA Results\n\n| Metric | Value |\n|--------|-------|\n| \U0001F3C6 **Best validation\
+  \ Dice** | **0.8821** (epoch 20) |\n| \U0001F9E0 Model | ResUNet3D, `base_channels=24` |\n| \U0001F522\
+  \ Parameters | 370,881 |\n| \U0001F5C2️ Dataset | 56 patients (44 train / 12 val) |\n| ⚖️ Class imbalance\
+  \ | ~52 : 1 (background : psoas) |\n\nThe validation Dice rose steadily from **0.56 → 0.8821** over\
+  \ 20 epochs, while\ntraining and validation loss converged closely (no major overfitting):\n\n![Training\
+  \ curves](figures/training_curves.png)\n\n> ℹ️ **Scope note:** 0.8821 is the *validation* Dice recorded\
+  \ during training\n> (`models/training_history_enhanced.json`). Independent held-out test evaluation\n\
+  > and cross-validation are listed as future work in `docs/TECHNICAL_REPORT.md`.\n\n---\n\n## \U0001F52C\
+  \ Dataset & mask analysis\n\nBefore training, every mask was scored for quality (coverage, compactness,\
+  \ shape\nregularity, slice coverage) to pick the best training data and class weights — see\n`src/analyze_masks_for_training.py`:\n\
+  \n![Mask analysis](results/mask_analysis_plots.png)\n\n---\n\n## \U0001F9E0 Architecture\n\n`ResUNet3D`\
+  \ (see `src/model_enhanced.py`):\n\n- **Input:** 96×96×96 single-channel CT patch (normalized to `[0,\
+  \ 1]` from `[-1000, 1000]` HU)\n- **Encoder:** 4 residual `ConvBlock` stages with `MaxPool3d` — channels\
+  \ 24 → 48 → 96 → 192\n- **Bottleneck:** 384 channels\n- **Decoder:** trilinear `Upsample` + residual\
+  \ `ConvBlock`, with skip connections\n- **Deep supervision:** auxiliary 1×1 conv heads at two decoder\
+  \ scales\n- **Normalization:** `InstanceNorm3d` (stable with small batch sizes)\n\n---\n\n## \U0001F4C1\
+  \ Repository layout\n\n```\n.\n├── src/                              # Model, data, loss, and inference\
+  \ code\n│   ├── model_enhanced.py             # ConvBlock, ResUNet3D (architecture)\n│   ├── losses_enhanced.py\
+  \            # Dice, Focal, DiceBCE, DiceFocal losses\n│   ├── weighted_loss.py              # Class-weighted\
+  \ losses (139:1)\n│   ├── monai_losses.py               # Tversky / DiceFocal / Combined variants\n\
+  │   ├── dataset_enhanced.py           # Resampling + patch sampling + augmentation\n│   ├── balanced_dataset.py\
+  \           # 50/50 positive/negative slice dataset\n│   ├── inference_enhanced.py         # Sliding-window\
+  \ predictor + post-processing\n│   └── analyze_masks_for_training.py # Mask-quality analysis + plots\n\
+  ├── models/\n│   ├── unet_model_enhanced.pth       # Trained weights (best val Dice 0.8821)\n│   └──\
+  \ training_history_enhanced.json# Per-epoch loss and Dice\n├── figures/\n│   └── training_curves.png\
+  \           # Dice & loss curves (this run)\n├── results/\n│   ├── mask_analysis.csv             # Per-mask\
+  \ quality metrics\n│   └── mask_analysis_plots.png       # Summary visualizations\n├── docs/\n│   ├──\
+  \ TECHNICAL_REPORT.md           # Architecture and implementation details\n│   └── ACADEMIC_SUMMARY.md\
+  \           # Methodology and analysis\n├── requirements.txt\n└── README.md\n```\n\n---\n\n## \U0001F680\
+  \ Usage\n\n### Install\n```bash\npip install -r requirements.txt\n```\n\n### \U0001F50D Inference on\
+  \ a CT volume\n```python\nimport sys\nsys.path.insert(0, \"src\")   # modules import each other as flat\
+  \ modules\nfrom inference_enhanced import EnhancedPredictor\n\npredictor = EnhancedPredictor(\"models/unet_model_enhanced.pth\"\
+  )\npred, prob, ct_nii, mask_aligned, dice = predictor.predict_volume_aligned(\n    ct_path=\"path/to/ct.nii\"\
+  ,\n    mask_path=\"path/to/ground_truth.nii\",  # optional; enables Dice reporting\n    threshold=0.5,\n\
+  \    post_process=True,\n)\n```\n\n### \U0001F4C8 Analyze mask quality\n```bash\npython src/analyze_masks_for_training.py\n\
+  ```\n\n---\n\n## ⚖️ Handling severe class imbalance\n\nThe psoas occupies under 2% of the volume, so\
+  \ the pipeline uses three strategies:\n\n- \U0001F3AF **Balanced sampling** — patches drawn ~50–80%\
+  \ positive so the model sees enough\n  foreground (`dataset_enhanced.py`, `balanced_dataset.py`).\n\
+  - \U0001F3CB️ **Weighted / Tversky losses** — pixel-weighted BCE/Dice and false-positive-penalizing\n\
+  \  Tversky losses (`weighted_loss.py`, `monai_losses.py`).\n- \U0001F9F9 **Post-processing** — keep\
+  \ the two largest connected components and constrain them to\n  the spine region to suppress false positives\
+  \ (`inference_enhanced.py`).\n\n---\n\n## \U0001F9FE Provenance of the source code\n\nThe `.py` files\
+  \ in `src/` were **reconstructed from the project's compiled Python 3.11\nbytecode** (the original sources\
+  \ were lost). The reconstruction is verified: `ResUNet3D`\nloads `models/unet_model_enhanced.pth` with\
+  \ **0 missing / 0 unexpected** parameters, and\nall modules import and run. Comments and exact formatting\
+  \ are approximate; the logic is\nfaithful to the compiled model.\n\n---\n\n## \U0001F4DC License\n\n\
+  Released under the **MIT License** (see `LICENSE`). Change this if your course or\ninstitution requires\
+  \ a different license.\n"

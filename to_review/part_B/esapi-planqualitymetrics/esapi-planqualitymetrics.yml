@@ -1,0 +1,60 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: davidpadron76/ESAPI_PlanQualityMetrics
+url: https://github.com/davidpadron76/ESAPI_PlanQualityMetrics
+platform: github
+description: Automated calculation of Conformity, Homogeneity, and Gradient indices for VMAT/IMRT plans.
+license: MIT
+language: C#
+keywords: []
+stars: 6
+updated_at: '2026-07-24T03:59:29Z'
+image_source: null
+heuristic_total_score: 40
+heuristic_reasons:
+- Matched 5 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 13 support term(s).
+readme_excerpt: "# \U0001F4CA ESAPI Plan Quality Metrics\n\n## \U0001F4D6 Overview\nThe **ESAPI Plan Quality\
+  \ Metrics** tool is an open-source automation script developed for the Varian Eclipse Treatment Planning\
+  \ System (TPS), focused on stereotactic (SRS/SBRT) plan QA.\n\nEvaluating conformity, gradient falloff,\
+  \ and homogeneity manually involves reading Dose-Volume Histograms (DVH) and cross-checking several\
+  \ published index formulas by hand. This manual process is time-consuming and prone to transcription\
+  \ errors. This script automates the extraction and calculation of these dosimetric indices directly\
+  \ from the Eclipse calculation engine, providing a fast, objective, and standardized QA report for any\
+  \ active plan.\n\n## ✨ Key Features\n* **Automated DVH Analysis:** Instantly extracts dose and volume\
+  \ metrics directly from the Eclipse calculation engine, eliminating manual curve interpolation.\n* **Standard\
+  \ Stereotactic Indices:** Calculates the metrics most commonly required for SRS/SBRT plan QA:\n  * **Conformity\
+  \ Index — Paddick (CI):** `(TV_PIV)² / (TV × PIV)`.\n  * **Conformity Index — RTOG / PITV:** `PIV /\
+  \ TV`.\n  * **Gradient Index (GI):** `V50% / V100%` of the body.\n  * **Homogeneity Index (HI, ICRU\
+  \ 83):** `(D2% − D98%) / D50%` of the PTV.\n  * **MUR (Monitor Unit Ratio):** total delivered MU per\
+  \ cGy of dose per fraction.\n  * Supporting raw values: Rx dose, PTV volume, V100%/V50% (body), PTV\
+  \ coverage, and D2%/D50%/D98%/Dmax.\n* **Organized QA Report:** Results are grouped into clear sections\
+  \ (Prescription, Volumes & Coverage, PTV Dose, Plan Quality Indices, Delivery Complexity) in the on-screen\
+  \ report, with a matching layout when copied to the clipboard for Excel.\n* **Clinical Efficiency:**\
+  \ Reduces plan evaluation time from several minutes of manual inspection to a few seconds of computational\
+  \ processing.\n\n## \U0001F4BB System Requirements\n* **Eclipse TPS:** Built and tested against ESAPI\
+  \ v18.0 (Varian RTM 18.0). To target a different Eclipse/ESAPI version, update the `HintPath` references\
+  \ in `RadiocirugiaQA.csproj` to point to your clinic's `VMS.TPS.Common.Model.API.dll` / `VMS.TPS.Common.Model.Types.dll`.\n\
+  * **.NET Framework:** 4.8 (see `TargetFrameworkVersion` in the `.csproj`); adjust to match your clinic's\
+  \ ESAPI version if needed.\n\n## \U0001F6E0️ Installation & Compilation\nDepending on the specific UI\
+  \ components used in this project, it is highly recommended to compile it into a `.dll` library rather\
+  \ than running it as a standalone `.cs` file.\n\n1. Clone or download this repository to your local\
+  \ machine.\n2. Open the solution file (`.sln`) using **Visual Studio**.\n3. In `RadiocirugiaQA.csproj`,\
+  \ confirm the `HintPath` of the `VMS.TPS.Common.Model.API` / `VMS.TPS.Common.Model.Types` references\
+  \ points to your clinic's installed ESAPI DLLs; adjust the path if your Eclipse/Varian RTM version or\
+  \ install location differs.\n4. Build the solution (`Ctrl + Shift + B` or `Build > Build Solution`).\n\
+  5. Locate the compiled `.dll` file inside the `bin\\Debug` or `bin\\Release` folder.\n6. In Eclipse,\
+  \ open the Script Runner, navigate to the folder containing your compiled `.dll`, and execute it.\n\n\
+  ## \U0001F680 How to Use\n1. Open a Patient and calculate a Treatment Plan in Eclipse.\n2. Ensure the\
+  \ plan is selected as the active context and has a structure set with a **PTV** (or a designated Target\
+  \ Volume) and a **BODY/External** structure.\n3. Run the compiled Plan Quality Metrics `.dll`.\n4. Review\
+  \ the grouped QA report on your screen, and optionally click **Copy to Clipboard** to paste the results\
+  \ into Excel for documentation.\n\n## \U0001F4C4 License\nThis project is licensed under the MIT License\
+  \ - see the [LICENSE](LICENSE) file for details.\n\n## ⚠️ Clinical Disclaimer\n**For Research and Educational\
+  \ Purposes Only.** This software is provided \"as is\", without warranty of any kind. It is the sole\
+  \ responsibility of the clinical user (Medical Physicist, Dosimetrist, or Radiation Oncologist) to strictly\
+  \ verify and validate all extracted metrics and dosimetric data against the native TPS DVH before making\
+  \ any clinical decisions or approving a patient's treatment plan.\n"

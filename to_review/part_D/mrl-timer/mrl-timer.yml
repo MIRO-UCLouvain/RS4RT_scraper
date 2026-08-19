@@ -1,0 +1,61 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: fbrewster/mrl-timer
+url: https://github.com/fbrewster/mrl-timer
+platform: github
+description: Simple webapp for timing online adaptive MR-Linac workflows
+license: GPL-3.0
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-04-30T12:12:08Z'
+image_source: https://raw.githubusercontent.com/fbrewster/mrl-timer/HEAD/MRL_Timings_Screenshot.png
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 3 support term(s).
+readme_excerpt: "MRL Timer\n=========\nThis app is a simple webapp built on [NiceGUI](https://nicegui.io/)\
+  \ for timing MR-Linac workflows.\nIt collects some basic demographic data on the patient as well as\
+  \ some information on the treatment session that might influence timings.\n\nThe app is intended for:\n\
+  - Identification and quantification of efficiency improvements.\n- Auditing of fraction times.\n- Reseach\
+  \ on the effects of various parameters on workflow efficiency.\n## Usage\n![Screenshot](MRL_Timings_Screenshot.png)\n\
+  The app is inteded to be used during treatment fractions at the follwing stages:\n1. **START** - patient\
+  \ enters room.\n2. **IMAGING** - image acquisition begins.\n3. **CONTOURING** - match is complete and\
+  \ cntour review and editing begins.\n4. **PLANNING** - contours are finished and plan adaptation begins.\n\
+  5. **CHECKING** - plan optimisation is complete and plan QA/verification image review begins.\n6. **BEAM\
+  \ ON** - plan is approved and delivery begins.\n7. **BEAM OFF** - delivery completes.\n\nDemographics\
+  \ information can be entered at any point.\nThe gas timer can be used to time an additional step but\
+  \ is not recorded. For example, time since carbogen gas supply started.\nWhen the record button is pressed,\
+  \ the data is dumped to a csv file and the timer is reset.\n\n## Widget Details\n\n### Demographic/Details\
+  \ Verfication\n#### Patient ID\nThe patient ID is validated against a regular expression. By default,\
+  \ 9 numeric characters.\n#### Fraction Number\nMust be a whole number and greater than 0.\n#### Site\n\
+  Selectable drop-down and searchable from available options.\n#### Contourer\nSelectable drop-down and\
+  \ searchable from available options.\n#### Comments\nThe any comments box has no limits on length and\
+  \ new lines are preserved in the csv file. This will cause the file to appear strangely if viewed in\
+  \ a text editor that can’t interpret the quotes.\n\n### Timer\nThe main timer is built on NiceGUI’s\
+  \ [timer](https://nicegui.io/documentation/timer) object. On pressing the **START** button, the start\
+  \ time is logged from the system clock.\nThe timer then updates the timer label at 1s intervals with\
+  \ the difference in time between the system clock and the start time.\nEach intermediate button logs\
+  \ the current system clock time. The **BEAM OFF** button deactivates the timer and logs the time stamp.\n\
+  All recorded times are based on the timestamps, the elapsed time is for user purposes only.\n\n## Configuration\n\
+  There are some configuration options that are editable only via the app server-side storage.\nNiceGUI\
+  \ uses a JSON file to keep storage between server restarts. This file can be edited manually by stopped\
+  \ the server, editing and restarting.\n\n### Drop-down Options\nBoth the site and contourer dropdowns\
+  \ are configured to accept new values. These can be added by typing and pressing enter.\nThe app is\
+  \ built to use server-side storage for dropdown options.\nWhen adding a new value, the event is handled\
+  \ by a custom handler that adds the new value to storage as well as the dropdown object itself. For\
+  \ the contouers, the value is also forced to uppercase \nItems can be removed via the admin menu. Any\
+  \ changes to options need to emit the `settings_update` event to reset the dropdown options from storage.\n\
+  \n### Patient ID Regex\nThe regex used to verify the validity of the patient ID (intended to be the\
+  \ MRN).\n\n## CSV Path\nThe path to the csv file where data will be recorded.\n\n## Development Notes\n\
+  ### Recording Variables\nData recording has been designed flexibly to allow for changes in future versions.\
+  \ To be recorded in the csv file there are 2 requirements to be met:\n1.\tVariable has an entry in client-side\
+  \ storage dict, `app.storage.client`.\n2.\tThe key in the storage dict exactly matches a header in the\
+  \ csv file.\n\nThe recording is designed to ignore missing data in both directions; keys in the storage\
+  \ not in the csv won’t be written and headers in the csv not in storage will be left blank.\nNo formatting\
+  \ is done on record, the csv writer converts using `str()`.\n\n### Multiple Session Behaviour\nTimers\
+  \ and variable are all run and stored client-side, meaning multiple sessions can run independently of\
+  \ each other. This also means that the data is lost if the tab is accidentally closed.\n"

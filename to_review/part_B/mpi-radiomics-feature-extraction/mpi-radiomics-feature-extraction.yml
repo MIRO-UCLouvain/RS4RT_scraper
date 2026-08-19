@@ -1,0 +1,83 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: AmirGhaffari96/mpi-radiomics-feature-extraction
+url: https://github.com/AmirGhaffari96/mpi-radiomics-feature-extraction
+platform: github
+description: Reproducible PyRadiomics feature extraction for reconstructed MPI scans and ROI masks
+license: MIT
+language: Python
+keywords:
+- feature-extraction
+- medical-imaging
+- nrrd
+- pyradiomics
+- radiomics
+stars: 0
+updated_at: '2026-07-31T23:20:34Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# MPI Radiomics Feature Extraction\n\nA reproducible command-line workflow for extracting\
+  \ radiomics features from reconstructed MPI\nscan volumes and matching region-of-interest masks. It\
+  \ wraps\n[PyRadiomics v3.1.0 source](https://pyradiomics.readthedocs.io/en/stable/) and exports analysis-ready\
+  \ Excel\nor CSV tables.\n\n> **Research use only.** This software is not a medical device and has not\
+  \ been validated for\n> diagnosis, prognosis, treatment selection, or other clinical decisions. De-identify\
+  \ data and\n> obtain the required ethics, privacy, and institutional approvals.\n\n“MPI” can refer to\
+  \ different imaging workflows across fields. This code is modality-agnostic: it\nrequires a reconstructed\
+  \ scalar image and a spatially aligned label mask. The investigator remains\nresponsible for validating\
+  \ acquisition-, reconstruction-, tracer-, and modality-specific behavior.\n\n## What it extracts\n\n\
+  The default run uses the original image, mask label 1, 3D calculation, 64 gray-level bins, and all\n\
+  standard PyRadiomics feature families:\n\n- first-order intensity statistics;\n- 3D shape;\n- GLCM,\
+  \ GLRLM, GLSZM, GLDM, and NGTDM texture features.\n\nThe default matches the supplied legacy script.\
+  \ A custom PyRadiomics YAML file can fully control\nimage types, preprocessing, discretization, and\
+  \ enabled features. Mathematical definitions and\nrepresentative formulas are in [docs/RADIOMICS_FORMULAS.md](docs/RADIOMICS_FORMULAS.md).\n\
+  \n## Input layout\n\nPlace paired NRRD files in one directory. The identifier may be numeric or text:\n\
+  \n```text\nPooled_Data/\n├── 001.nrrd\n├── 001.seg.nrrd\n├── patient-A.nrrd\n└── patient-A.seg.nrrd\n\
+  ```\n\nThe image and mask must share a physical coordinate system. By default, label value 1 defines\
+  \ the\nROI. Patient data and common medical-image formats are excluded by `.gitignore`.\n\n## Installation\n\
+  \nUse Python 3.9–3.11; Python 3.10 is used in continuous integration. The project pins the immutable\n\
+  upstream commit corresponding to PyRadiomics v3.1.0 because its PyPI archive contains inconsistent\n\
+  version metadata that modern `pip` rejects.\n\n```bash\ngit clone https://github.com/AmirGhaffari96/mpi-radiomics-feature-extraction.git\n\
+  cd mpi-radiomics-feature-extraction\npython3.10 -m venv .venv\nsource .venv/bin/activate        # Windows:\
+  \ .venv\\Scripts\\activate\npython -m pip install --upgrade pip\npython -m pip install -e .\n```\n\n\
+  ## Quick start\n\n```bash\nmpi-radiomics \\\n  --input-dir Pooled_Data \\\n  --output MPI_Radiomics_Features.xlsx\
+  \ \\\n  --workers 8\n```\n\nThe backward-friendly script entry point is also available:\n\n```bash\n\
+  python extract_radiomics.py --input-dir Pooled_Data --output results.csv\n```\n\nUseful options:\n\n\
+  ```bash\n# Use fixed bin width instead of the 64-bin default\nmpi-radiomics --input-dir Pooled_Data\
+  \ --output results.xlsx --bin-width 5\n\n# Use a complete PyRadiomics parameter file\nmpi-radiomics\
+  \ --input-dir Pooled_Data --output results.xlsx --params config/example.yaml\n\n# Extract a different\
+  \ mask label and tolerate partial cohort failures\nmpi-radiomics --input-dir Pooled_Data --output results.xlsx\
+  \ --label 2 --allow-partial\n\n# See all options\nmpi-radiomics --help\n```\n\n## Outputs and failure\
+  \ behavior\n\nFor `results.xlsx`, the tool creates:\n\n- `results.xlsx` with `Radiomics` and `Failures`\
+  \ sheets;\n- `results.log` with per-case progress;\n- `results.run.json` with paths, parameters, counts,\
+  \ worker number, and runtime.\n\nFor CSV output, failures are written to `results_failures.csv`. Missing\
+  \ masks and extraction errors\ndo not stop the remaining cases. The final exit status is nonzero if\
+  \ any case failed unless\n`--allow-partial` is supplied, which makes this behavior visible in automated\
+  \ pipelines.\n\n## Choosing discretization\n\nThe inherited default is `binCount: 64`. Fixed bin count\
+  \ normalizes each ROI's range into the same\nnumber of bins but changes effective bin width between\
+  \ cases. A fixed `binWidth` retains a common\nintensity step and is often preferable when intensities\
+  \ are quantitative and comparable. This is a\nstudy-design decision: select one approach *before* analysis\
+  \ and do not mix them within a model.\n\nPyRadiomics aligns fixed-width bins to zero and uses\n\n$$X_{b,k}=\\\
+  left\\lfloor\\frac{X_{gl,k}}{w}\\right\\rfloor-\n\\left\\lfloor\\frac{\\min(X_{gl})}{w}\\right\\rfloor+1,$$\n\
+  \nwhere $X_{gl,k}$ is a voxel intensity and $w$ is bin width. See the formula note for definitions\n\
+  and links to the authoritative implementation.\n\n## Reproducible MPI workflow\n\n1. Reconstruct and\
+  \ quality-control scans using a locked protocol.\n2. Export quantitative volumes with correct spacing,\
+  \ origin, direction, and units.\n3. Create ROI masks in the same physical coordinate system.\n4. Define\
+  \ resampling, normalization, discretization, and feature settings prospectively.\n5. Run extraction\
+  \ and retain the parameter file, `.run.json`, software version, and logs.\n6. Assess segmentation and\
+  \ test-retest stability, then control multiplicity and data leakage.\n7. Validate models on an independent\
+  \ cohort before drawing clinical conclusions.\n\nGeometry correction can reconcile very small header\
+  \ discrepancies; it is not a substitute for\nchecking registration. Shape features are meaningful only\
+  \ when physical voxel metadata are valid.\n\n## Development\n\n```bash\npython -m pip install -e \"\
+  .[dev]\"\nruff check .\npytest -q\n```\n\nContributions are described in [CONTRIBUTING.md](CONTRIBUTING.md).\
+  \ Please never open an issue or\ncommit containing protected health information.\n\n## Citation and\
+  \ standards\n\nIf you use the extracted features in research, cite PyRadiomics and report its version\
+  \ and full\nparameterization. The formula note links the PyRadiomics documentation and the Image Biomarker\n\
+  Standardisation Initiative (IBSI). A suitable software citation is:\n\n> van Griethuysen JJM, et al.\
+  \ Computational Radiomics System to Decode the Radiographic Phenotype.\n> *Cancer Research*. 2017;77(21):e104-e107.\
+  \ doi:10.1158/0008-5472.CAN-17-0339.\n\n## License\n\nMIT. See [LICENSE](LICENSE).\n"

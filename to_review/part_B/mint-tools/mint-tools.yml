@@ -1,0 +1,64 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: jielinwei/mint-tools
+url: https://github.com/jielinwei/mint-tools
+platform: github
+description: Audit-only radiotherapy DICOM tooling for MINT planning CT and RT object review
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-07-26T12:25:07Z'
+image_source: null
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 6 support term(s).
+readme_excerpt: "# MINT Tools\n\nPython tools for audit-only inspection of radiotherapy DICOM datasets,\
+  \ with emphasis on planning CT selection and RT object linkage.\n\n## Scope\n\n- Recursively scan a\
+  \ source directory\n- Detect DICOM with `pydicom`\n- Classify CT / RTDOSE / RTPLAN / RTSTRUCT / MR /\
+  \ other\n- Build patient-study-series-frame linkage tables\n- Identify candidate linked radiotherapy\
+  \ cases\n- Analyze folder naming patterns for planning CT selection\n- Export CSV summaries for manual\
+  \ review\n\nOut of scope:\n\n- Segmentation\n- Dose resampling\n- Radiomics extraction\n- Any modification\
+  \ of raw source data\n\nDICOM conversion is intentionally excluded from the audit stage. After manual\
+  \ planning CT resolution, `scripts/export_planning_ct_nifti.py` can export the confirmed CT series to\
+  \ NIfTI without modifying raw DICOM files.\n\n## Repository layout\n\n- `scripts/audit_mint_rt_dicom.py`:\
+  \ base RT DICOM audit\n- `scripts/analyze_mint_folder_patterns.py`: planning-CT pattern analysis\n-\
+  \ `scripts/rank_planning_ct_candidates.py`: candidate ranking logic\n- `scripts/export_planning_ct_nifti.py`:\
+  \ export resolved planning CT DICOM series to NIfTI\n- `config.example.yaml`: example configuration\n\
+  - `requirements.txt`: Python dependencies\n- `run_audit_windows.ps1`: Windows PowerShell entrypoint\n\
+  - `run_audit_windows.bat`: Windows batch entrypoint\n\nGenerated directories such as `outputs/`, `logs/`,\
+  \ and `__pycache__/` are intentionally excluded from git.\n\n## Installation\n\n```bash\npython -m venv\
+  \ .venv\nsource .venv/bin/activate\npip install -r requirements.txt\n```\n\nOn Windows PowerShell:\n\
+  \n```powershell\npython -m venv .venv\n.venv\\Scripts\\Activate.ps1\npip install -r requirements.txt\n\
+  ```\n\n## Configuration\n\nCopy `config.example.yaml` to `config.yaml` and edit the paths for your environment.\n\
+  \nRaw data rule:\n\n- treat raw data as read-only\n- do not modify, move, delete, or copy raw data\n\
+  \n## Usage\n\nBase audit dry-run:\n\n```bash\npython scripts/audit_mint_rt_dicom.py --source-dir \"\
+  /path/to/raw_data\" --output-dir . --dry-run\n```\n\nBase audit full run:\n\n```bash\npython scripts/audit_mint_rt_dicom.py\
+  \ --source-dir \"/path/to/raw_data\" --output-dir . --overwrite\n```\n\nFolder-pattern dry-run:\n\n\
+  ```bash\npython scripts/analyze_mint_folder_patterns.py --source-dir \"/path/to/raw_data\" --output-dir\
+  \ outputs --dry-run\n```\n\nFolder-pattern full run:\n\n```bash\npython scripts/analyze_mint_folder_patterns.py\
+  \ --source-dir \"/path/to/raw_data\" --output-dir outputs\n```\n\nExport resolved planning CT to NIfTI:\n\
+  \n```bash\npython scripts/export_planning_ct_nifti.py \\\n  --source-dir \"/path/to/raw_data\" \\\n\
+  \  --resolved-csv \"outputs/mint_manual_review_final_planning_ct_resolved.csv\" \\\n  --output-dir \"\
+  outputs/planningCT\" \\\n  --dry-run\n\npython scripts/export_planning_ct_nifti.py \\\n  --source-dir\
+  \ \"/path/to/raw_data\" \\\n  --resolved-csv \"outputs/mint_manual_review_final_planning_ct_resolved.csv\"\
+  \ \\\n  --output-dir \"outputs/planningCT\"\n```\n\nThe exporter writes one file per unique planning\
+  \ CT using the name pattern `patientID_YYYYMMDD_planningCT.nii.gz`. When `final_ct_series_uid` is available,\
+  \ it aggregates all CT DICOM files with the same SeriesInstanceUID across the full patient folder, because\
+  \ some MINT CT series are split across multiple source folders.\n\nKnowledge-table filter:\n\n```bash\n\
+  python scripts/audit_mint_rt_dicom.py --source-dir \"/path/to/raw_data\" --output-dir . --dry-run --knowledge-xlsx\
+  \ \"/path/to/folder_structure3_categeried2026_RT_RT232_matched2.xlsx\" --knowledge-sheet \"RT243-3012-final\"\
+  \npython scripts/analyze_mint_folder_patterns.py --source-dir \"/path/to/raw_data\" --output-dir outputs\
+  \ --dry-run --knowledge-xlsx \"/path/to/folder_structure3_categeried2026_RT_RT232_matched2.xlsx\" --knowledge-sheet\
+  \ \"RT243-3012-final\"\n```\n\nThe filter keeps only files under source folders matching an `ID` and\
+  \ `Date` pair in the selected Excel sheet. The expected source-folder pattern is `<ID>/<Date>/...`,\
+  \ where `Date` is the second-level examination folder, for example `20130710-RTLUNG_MAMMA-CUR-BST`.\n\
+  \nOptional controls:\n\n- `--max-patients N`\n- `--overwrite`\n\n## Main outputs\n\n- `outputs/mint_dicom_inventory.csv`\n\
+  - `outputs/mint_patient_summary.csv`\n- `outputs/mint_rt_case_summary.csv`\n- `outputs/mint_rt_linkage_qc.csv`\n\
+  - `outputs/mint_rt_exclusion_candidates.csv`\n- `outputs/mint_folder_pattern_inventory.csv`\n- `outputs/mint_ct_candidate_ranking.csv`\n\
+  - `outputs/mint_folder_pattern_summary.csv`\n- `outputs/mint_planning_ct_selection_qc.csv`\n- `outputs/mint_multiple_rt_course_cases.csv`\n\
+  - `outputs/mint_manual_review_cases.csv`\n- `outputs/planningCT/*_planningCT.nii.gz`\n- `outputs/planningCT/planningCT_export_qc.csv`\n\
+  - `logs/audit_mint_rt_dicom.log`\n"

@@ -1,0 +1,88 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Mac7777777/Two-Stage-Delta-Radiomics-Framework-Integrating-Clinical-Variables-for-Survival-Prediction-in-HGG
+url: https://github.com/Mac7777777/Two-Stage-Delta-Radiomics-Framework-Integrating-Clinical-Variables-for-Survival-Prediction-in-HGG
+platform: github
+description: ''
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-25T07:23:53Z'
+image_source: https://raw.githubusercontent.com/Mac7777777/Two-Stage-Delta-Radiomics-Framework-Integrating-Clinical-Variables-for-Survival-Prediction-in-HGG/HEAD/pipeline.png
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 3 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# Two-Stage Delta Radiomics Framework Integrating Clinical Variables for Survival Prediction\
+  \ in High-Grade Glioma\n\nThis repository contains our longitudinal MRI radiomics framework for survival\
+  \ prediction in high-grade glioma (HGG). The code is designed to combine paired MRI features from two\
+  \ treatment time points with clinical variables, and then build an integrated prognostic model for overall\
+  \ survival analysis.\n\nThe framework follows a two-stage idea:\n\n1. extract radiomics features from\
+  \ pre-RT and mid-RT MRI, compute delta radiomics, and generate Rad-scores;\n2. combine these Rad-scores\
+  \ with key clinical variables to build the final prognostic model.\n\n## What This Framework Does\n\n\
+  - loads and preprocesses clinical survival data\n- extracts radiomics features from CE-T1WI and T2 MRI\n\
+  - computes delta radiomics as `mid-RT - pre-RT`\n- performs stable feature selection with Cox screening,\
+  \ correlation filtering, and repeated ElasticNet\n- generates Stage 1 Rad-scores\n- builds a Stage 2\
+  \ prognostic model\n- evaluates performance with C-index, time-dependent ROC, and Kaplan-Meier analysis\n\
+  \nIn the current setup, the final integrated model uses:\n\n- clinical variables: `age`, `Resection`,\
+  \ `GBM`, `IDH`\n- radiomics signatures: `Radscore_pre-RT`, `Radscore_mid-RT`, `Radscore_delta`\n\n##\
+  \ Overview of the Framework\n\n![Pipeline of the proposed framework](pipeline.png)\n\n*Figure: Overview\
+  \ of the two-stage delta radiomics framework for survival prediction in HGG.*\n\n## Overall Principle\n\
+  \nThe main idea of this framework is to use longitudinal MRI rather than a single time point alone.\n\
+  \n- `pre-RT` features describe the imaging pattern before radiotherapy\n- `mid-RT` features describe\
+  \ the imaging pattern during treatment\n- `delta` features describe how the tumor-related imaging pattern\
+  \ changes over time\n\nThese three sources of information are first summarized into Rad-scores, and\
+  \ then integrated with clinical features to estimate survival risk.\n\n## Workflow\n\nThe pipeline is\
+  \ organized into these steps:\n\n1. load the clinical CSV and parse survival labels into `time` and\
+  \ `event`\n2. extract radiomics features for `start` and `mid` MRI\n3. compute delta radiomics features\n\
+  4. select stable prognostic features\n5. generate Rad-scores\n6. train the final prognostic model\n\
+  7. evaluate survival discrimination and risk stratification\n\nIn this framework:\n\n- `start` corresponds\
+  \ to `pre-RT`\n- `mid` corresponds to `mid-RT`\n\n## Repository Structure\n\n```text\n.\n|-- configs/\
+  \         # Configuration files\n|-- data/            # Local clinical tables and MRI data\n|-- models/\
+  \          # Saved model files\n|-- notebooks/       # Jupyter notebook tutorial\n|-- results/     \
+  \    # Exported figures and CSV outputs\n|-- scripts/         # Python entry scripts\n|-- src/     \
+  \        # Core source code\n|-- environment.yaml\n|-- requirements.txt\n`-- README.md\n```\n\nMain\
+  \ code modules:\n\n- `src/feature_extraction/`: radiomics extraction and delta feature construction\n\
+  - `src/feature_selection/`: feature screening and stability selection\n- `src/stage1_radscore_prediction/`:\
+  \ Rad-score generation\n- `src/stage2_prognostic_model/`: final prognostic modeling\n- `src/survival_analysis/`:\
+  \ ROC, KM, and related survival evaluation\n\n## Expected Data Layout\n\nThe framework expects two kinds\
+  \ of input: a clinical CSV and a patient-wise MRI directory.\n\n> [!IMPORTANT]\n> Before running the\
+  \ framework, make sure both your clinical CSV and your MRI directory are prepared and that their names\
+  \ match the settings used in the configuration.\n\n### Clinical CSV\n\nThe clinical table is usually\
+  \ placed under:\n\n```text\nyour_csv_path/\n```\n\nTypical columns include:\n\n- `id`\n- `sex`\n- `age`\n\
+  - `IDH`\n- `Resection`\n- `GBM`\n- `os`\n- `split`\n\nThe `os` column supports both observed events\
+  \ and right-censored values:\n\n- `X`: event occurred at time `X`\n- `>X`: censored at follow-up time\
+  \ `X`\n\nFor example:\n\n- `12` means the event occurred at month 12\n- `>12` means the patient was\
+  \ still event-free at month 12\n\nThe `os` column is then converted into:\n\n- `time`\n- `event`\n\n\
+  > [!NOTE]\n> The `os` field supports both standard values such as `12` and censored values such as `>12`,\
+  \ because the framework parses both formats automatically.\n\n### MRI directory\n\nThe image dataset\
+  \ is usually organized like this:\n\n```text\nyour_img_path/your_dataset_name/\n`-- <patient_id>/\n\
+  \    |-- start/\n    |   |-- T1C.nii.gz\n    |   |-- ROI_T1C.nii\n    |   |-- T2.nii.gz\n    |   `--\
+  \ ROI_T2.nii\n    `-- mid/\n        |-- T1C.nii.gz\n        |-- ROI_T1C.nii\n        |-- T2.nii.gz\n\
+  \        `-- ROI_T2.nii\n```\n\n## Installation\n\nRecommended:\n\n```bash\nconda env create -f environment.yaml\n\
+  conda activate your_env_name\n```\n\nOr:\n\n```bash\npip install -r requirements.txt\n```\n\nIf you\
+  \ want to run the notebook, make sure the environment includes `ipykernel`.\n\n> [!TIP]\n> If you mainly\
+  \ work in Jupyter or VS Code notebooks, installing the environment from `environment.yaml` is the easiest\
+  \ way to make sure the kernel works correctly.\n\n## How To Run\n\nIf you prefer Python scripts, use:\n\
+  \n```bash\npython scripts/main_pipeline.py\n```\n\nIf you prefer Jupyter, use:\n\n```text\nnotebooks/tutorials.ipynb\n\
+  ```\n\n> [!IMPORTANT]\n> Before running, update the dataset-related settings so they match your own\
+  \ local files.\n\nBefore running, update the dataset-related settings so they match your own local files:\n\
+  \n- `task_csv_filename`\n- `image_dataset_dirname`\n\nThese can be configured in:\n\n- `configs/task_cfgs.yaml`\n\
+  - `scripts/main_pipeline.py`\n- `notebooks/tutorials.ipynb`\n\n> [!NOTE]\n> If these names do not match\
+  \ your actual local files and folders, the framework will not be able to find the data.\n\n## Outputs\n\
+  \nThe framework can generate:\n\n- radiomics feature tables\n- Rad-score tables\n- trained model files\n\
+  - TD-ROC figures\n- Kaplan-Meier plots\n- summary CSV files\n\nBy default, outputs are mainly saved\
+  \ under:\n\n- `results/csvs/`\n- `results/figures/`\n- `models/`\n\nIf you specify custom output directories\
+  \ in the configuration or in the script arguments, the generated files will be saved to those user-defined\
+  \ locations instead.\n\n> [!TIP]\n> The paths above are only the default output locations. If you already\
+  \ changed them in the configuration or script, your results will be written to those custom directories\
+  \ instead.\n\n## Notes\n\n- Raw patient data are not included in this repository.\n- Clinical tables\
+  \ and MRI data should be de-identified before use.\n- Full radiomics extraction and model training may\
+  \ take time depending on dataset size.\n\n> [!WARNING]\n> Do not upload raw patient data, original DICOM\
+  \ files, or other identifiable clinical information to the repository.\n\n## Tutorial\n\nFor a step-by-step\
+  \ explanation of the code and the framework logic, see:\n\n- [`notebooks/tutorials.ipynb`](notebooks/tutorials.ipynb)\n"

@@ -1,0 +1,203 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: nittinnm22-sudo/breast-tumor-segmentation-radiomics-engine
+url: https://github.com/nittinnm22-sudo/breast-tumor-segmentation-radiomics-engine
+platform: github
+description: PET/CT breast tumor segmentation, metabolic metrics, radiomics, AMFIS, and QC image generation.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-19T14:39:53Z'
+image_source: null
+heuristic_total_score: 20
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: '# Breast Tumor Segmentation and Radiomics Engine
+
+
+  **Turning PET/CT into explainable breast tumor intelligence.**
+
+
+  This project is a Python PET/CT workflow for breast tumor segmentation, metabolic metrics, shape radiomics,
+  PyRadiomics feature extraction, and visual quality-control outputs.
+
+
+  It supports NIfTI input, separate PET/CT DICOM ZIPs, and combined PET/CT DICOM ZIPs through a Tkinter
+  GUI.
+
+
+  ## Key Features
+
+
+  - PET SUVbw conversion from DICOM metadata
+
+  - CT-guided breast-region localization
+
+  - TotalSegmentator-assisted anatomical masking
+
+  - axillary and internal mammary exclusion logic
+
+  - random-walker tumor segmentation
+
+  - metabolic metrics: SUVmax, SUVmean, MTV, TLG, gETU
+
+  - shape metrics: volume, surface area, sphericity, asphericity, Dmax, 3D Feret Dmax
+
+  - AMFIS metric with core/rim separation and hotspot eccentricity
+
+  - QC images for segmentation, SUVmax, Dmax, AMFIS, asphericity, and hotspot localization
+
+  - optional PET/CT PyRadiomics extraction with IBSI-aligned settings
+
+
+  ## AMFIS
+
+
+  AMFIS combines tumor shape, metabolic core-rim heterogeneity, and hotspot eccentricity:
+
+
+  $$
+
+  AMFIS = ASP \times \frac{SUVmean_{core}}{SUVmean_{rim}} \times \frac{D_{hotspot-centroid}}{D_{max}}
+
+  $$
+
+
+  where:
+
+
+  - `ASP` is tumor asphericity
+
+  - `SUVmean_core` is the mean SUV in the morphologically eroded tumor core
+
+  - `SUVmean_rim` is the mean SUV in the peripheral rim
+
+  - `D_hotspot-centroid` is the 3D distance between the metabolic hotspot and tumor centroid
+
+  - `D_max` is the 3D Feret maximum diameter
+
+
+  ## Files
+
+
+  - `Breast_ASP_GUI.py` - Tkinter graphical interface
+
+  - `Breast_ASP.py` - segmentation pipeline and primary metric workflow
+
+  - `advanced_metrics.py` - advanced metabolic, shape, Dmax, AMFIS, and mesh metrics
+
+  - `Mask_QC.py` - quality-control image generation
+
+  - `radiomics_ibsi.py` - PET/CT PyRadiomics extraction
+
+  - `totalseg_safe_breast.py` - TotalSegmentator wrapper with safer fallback behavior
+
+
+  ## Installation
+
+
+  Python 3.10 or newer is recommended.
+
+
+  ```bash
+
+  pip install -r requirements.txt
+
+  ```
+
+
+  TotalSegmentator may require PyTorch and model weights. GPU acceleration is optional but strongly recommended
+  for full PET/CT studies.
+
+
+  ## Troubleshooting
+
+
+  If the PyRadiomics button shows:
+
+
+  ```text
+
+  ModuleNotFoundError: No module named ''radiomics''
+
+  ```
+
+
+  install PyRadiomics into the same Python environment used to launch the GUI:
+
+
+  ```bash
+
+  python -m pip install pyradiomics
+
+  ```
+
+
+  On the Windows conda environment used during development, the command was:
+
+
+  ```bat
+
+  C:\Users\nitin\miniconda3\envs\petct-gui\python.exe -m pip install pyradiomics
+
+  ```
+
+
+  Note: the package is installed as `pyradiomics`, but imported in Python as `radiomics`.
+
+
+  ## Run
+
+
+  ```bash
+
+  python Breast_ASP_GUI.py
+
+  ```
+
+
+  On Windows, you can also run:
+
+
+  ```bat
+
+  run_gui.bat
+
+  ```
+
+
+  ## Use of OpenAI Codex
+
+
+  OpenAI Codex was used as the development assistant for this project. It helped translate the breast
+  PET/CT radiomics concept into working Python code, debug segmentation behavior, improve the GUI, and
+  prepare the project for a public hackathon submission.
+
+
+  Codex supported implementation tasks such as combined PET/CT DICOM ZIP input, AMFIS metric calculation,
+  QC image generation, random-walker segmentation fixes, README preparation, and safe GitHub packaging
+  without patient imaging data.
+
+
+  ## Data Safety
+
+
+  This repository intentionally does **not** include patient DICOM files, PET/CT ZIPs, NIfTI outputs,
+  QC screenshots, metrics exports, or derived meshes.
+
+
+  Before sharing any output publicly, verify that all medical imaging data and screenshots are fully anonymized.
+
+
+  ## Disclaimer
+
+
+  This is a research and hackathon project. It is not a medical device and should not be used for clinical
+  decision-making without validation, regulatory review, and appropriate clinical oversight.
+
+  '

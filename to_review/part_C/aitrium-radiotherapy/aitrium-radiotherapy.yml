@@ -1,0 +1,96 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: NewLeaf-ai/aitrium-radiotherapy
+url: https://github.com/NewLeaf-ai/aitrium-radiotherapy
+platform: github
+description: ''
+license: null
+language: Rust
+keywords: []
+stars: 0
+updated_at: '2026-06-17T01:53:21Z'
+image_source: null
+heuristic_total_score: 27
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 8 support term(s).
+readme_excerpt: "# Aitrium Radiotherapy (Proof of Concept)\n\n`aitrium-radiotherapy` is a local MCP server\
+  \ for radiotherapy DICOM analysis.\n\nIt exposes seven tools:\n- `rt_inspect`\n- `rt_dvh`\n- `rt_dvh_metrics`\n\
+  - `rt_anonymize_metadata`\n- `rt_anonymize_template_get`\n- `rt_anonymize_template_update`\n- `rt_anonymize_template_reset`\n\
+  \n## Important Safety Notice\n\n- This software is a proof of concept.\n- This software is not a medical\
+  \ device.\n- This software is not for clinical diagnosis, treatment planning, or patient-care decisions.\n\
+  - Use anonymized/de-identified datasets only.\n- Any outputs must be independently validated by qualified\
+  \ clinical professionals.\n\n## Purpose\n\nThe goal is to provide deterministic local analysis that\
+  \ can be used by:\n- AI agent workflows (MCP clients such as Codex or Claude)\n- direct local CLI/script\
+  \ workflows (no Codex/Claude required)\n\nCore DVH computation is powered by the standalone [`aitrium-dvh`](https://github.com/NewLeaf-ai/aitrium-dvh)\
+  \ crate.\n\n## PII and Data Handling\n\nWhat this project does to reduce PII risk:\n- Analysis runs\
+  \ locally in the `aitrium-radiotherapy-server` process.\n- Tool execution does not require cloud APIs\
+  \ for DVH/inspection computation.\n- Recommended workflow is de-identified DICOM only.\n\nImportant\
+  \ warning for cloud-hosted agent platforms (for example, Codex/Claude cloud sessions):\n- MCP tool arguments\
+  \ and tool results may be processed by the model provider platform.\n- If paths, metadata, or outputs\
+  \ contain identifiers, those identifiers may leave your local machine through the agent workflow.\n\n\
+  Recommended controls:\n- Use anonymized/de-identified datasets only.\n- Avoid patient identifiers in\
+  \ file/directory names.\n- Review provider retention/logging settings before use.\n- For sensitive workflows,\
+  \ use local/offline agent deployments.\n\n## Installation\n\n### macOS/Linux (GitHub Release)\n\n```bash\n\
+  curl -fsSL https://github.com/NewLeaf-ai/aitrium-radiotherapy/releases/latest/download/install.sh |\
+  \ bash\n```\n\n### macOS/Linux (Public GCS Distribution)\n\n```bash\ncurl -fsSL \"https://storage.googleapis.com/<bucket>/aitrium-radiotherapy-vX.Y.Z/install.sh\"\
+  \ | \\\n  bash -s -- --release-base-url \"https://storage.googleapis.com/<bucket>/aitrium-radiotherapy-vX.Y.Z\"\
+  \n```\n\n### Windows PowerShell\n\n```powershell\nirm https://github.com/NewLeaf-ai/aitrium-radiotherapy/releases/latest/download/install.ps1\
+  \ | iex\n```\n\nCommon installer flags:\n- `--version <semver|latest>`\n- `--channel stable|beta`\n\
+  - `--agent codex|claude|both|none`\n- `--no-skill`\n- `--no-mcp`\n- `--bin-dir <path>`\n- `--release-base-url\
+  \ <url>`\n- `--manifest-url <url>`\n\n## Verify Installation\n\n```bash\naitrium-radiotherapy-server\
+  \ --version\naitrium-radiotherapy-server self-test --json\n```\n\n## Updating Existing Installations\n\
+  \nRe-running the installer is the supported update path. It is idempotent and replaces the installed\
+  \ runtime binary.\n\n### Update to latest stable\n\n```bash\ncurl -fsSL https://github.com/NewLeaf-ai/aitrium-radiotherapy/releases/latest/download/install.sh\
+  \ | bash\n```\n\n### Update from public GCS release\n\n```bash\nBASE=\"https://storage.googleapis.com/<bucket>/aitrium-radiotherapy-vX.Y.Z\"\
+  \ncurl -fsSL \"$BASE/install.sh\" | bash -s -- --release-base-url \"$BASE\"\n```\n\n### Pin a specific\
+  \ version (recommended for reproducibility)\n\n```bash\ncurl -fsSL https://github.com/NewLeaf-ai/aitrium-radiotherapy/releases/latest/download/install.sh\
+  \ | \\\n  bash -s -- --version 0.1.2\n```\n\n## Replace a Prior Test Installation\n\nIf you previously\
+  \ registered a test server name (for example `aitrium-radiotherapy-test`):\n\n1. Remove old test MCP\
+  \ registrations:\n```bash\ncodex mcp remove aitrium-radiotherapy-test || true\nclaude mcp remove aitrium-radiotherapy-test\
+  \ -s user || true\n```\n\n2. Reinstall current release to your intended bin path:\n```bash\ncurl -fsSL\
+  \ https://github.com/NewLeaf-ai/aitrium-radiotherapy/releases/latest/download/install.sh | \\\n  bash\
+  \ -s -- --agent both --bin-dir \"$HOME/.local/bin\"\n```\n\n3. Verify active MCP registrations:\n```bash\n\
+  codex mcp get aitrium-radiotherapy --json\nclaude mcp get aitrium-radiotherapy -s user\n```\n\n## Use\
+  \ Case A: Agent Workflow (MCP)\n\nUse this path when you want Codex/Claude to call tools automatically.\n\
+  \nManual registration (if you skipped installer auto-registration):\n\n```bash\ncodex mcp add aitrium-radiotherapy\
+  \ -- \"$HOME/.local/bin/aitrium-radiotherapy-server\"\nclaude mcp add --scope user aitrium-radiotherapy\
+  \ \"$HOME/.local/bin/aitrium-radiotherapy-server\"\n```\n\nVerify registration:\n\n```bash\ncodex mcp\
+  \ get aitrium-radiotherapy --json\nclaude mcp get aitrium-radiotherapy -s user\n```\n\nThen ask your\
+  \ agent to call:\n- `rt_inspect` for dataset discovery\n- `rt_dvh_metrics` for compact rule-oriented\
+  \ metrics\n- `rt_dvh` when full DVH curves are needed\n- `rt_anonymize_metadata` for policy-driven metadata\
+  \ de-identification\n- `rt_anonymize_template_get` to inspect effective runtime template policy\n- `rt_anonymize_template_update`\
+  \ to persist template changes to a single editable copy\n- `rt_anonymize_template_reset` to remove custom\
+  \ copy and return to built-in fallback\n\n## Use Case B: Direct Local CLI Workflow (No Codex/Claude)\n\
+  \nUse this path when you cannot or do not want to use cloud agents.\n\n### 1) Inspect a DICOM directory\n\
+  \n```bash\naitrium-radiotherapy-server inspect --path /path/to/dicom_dir\n```\n\n### 2) Compute DVH\
+  \ output\n\n```bash\naitrium-radiotherapy-server dvh \\\n  --rtstruct /path/to/RTSTRUCT.dcm \\\n  --rtdose\
+  \ /path/to/RTDOSE.dcm \\\n  --structure PTV_60 \\\n  --structure Heart\n```\n\n### 3) Compute targeted\
+  \ metrics\n\n```bash\naitrium-radiotherapy-server dvh-metrics \\\n  --rtstruct /path/to/RTSTRUCT.dcm\
+  \ \\\n  --rtdose /path/to/RTDOSE.dcm \\\n  --metric 'd95=dav:95' \\\n  --metric 'v20=vad:20:percent'\
+  \ \\\n  --metric 'mean=stat:mean_gy'\n```\n\nAlternative metrics input forms:\n- `--metrics-json '<json-array>'`\n\
+  - `--metrics-file /path/to/metrics.json`\n\nAll command outputs are JSON.\n\n### 4) Metadata anonymization\
+  \ (dry-run or write)\n\n```bash\naitrium-radiotherapy-server anonymize-metadata \\\n  --source /path/to/source\
+  \ \\\n  --template aitrium_default\n```\n\n```bash\naitrium-radiotherapy-server anonymize-metadata \\\
+  \n  --source /path/to/source \\\n  --output /path/to/anonymized-copy \\\n  --template strict_phi_safe\
+  \ \\\n  --write\n```\n\nWrite mode emits DICOM files as `MODALITY.SOPInstanceUID.dcm` using anonymized\
+  \ SOP Instance UIDs.\n\n## Practical Use Cases\n\n- Local DICOM triage: inspect structures, plans, and\
+  \ dose objects in a dataset.\n- Agent-assisted RTQA prototyping: compute DVH metrics for rule evaluation\
+  \ workflows.\n- Batch research analysis: run repeatable metric extraction across anonymized RT datasets.\n\
+  - Policy-driven metadata sanitization: create copy-on-write anonymized datasets with audit-style reports.\n\
+  \n## Tool Summary\n\n- `rt_inspect`: scan DICOM RT study metadata from a folder path.\n- `rt_dvh`: compute\
+  \ DVH outputs from explicit `RTSTRUCT` + `RTDOSE` paths.\n- `rt_dvh_metrics`: compute compact metrics\
+  \ (for example `D@V`, `V@D`, selected stats).\n- `rt_anonymize_metadata`: policy-based DICOM metadata\
+  \ anonymization (no pixel transformations).\n- `rt_anonymize_template_get`: read effective runtime template\
+  \ alias (`aitrium_template`).\n- `rt_anonymize_template_update`: persist runtime template edits (single\
+  \ custom copy).\n- `rt_anonymize_template_reset`: delete runtime custom copy and use built-in fallback.\n\
+  \nCanonical schemas are in `schemas/`.\n\nSee [`docs/ANONYMIZATION.md`](docs/ANONYMIZATION.md) for policy\
+  \ details and templates.\nTemplate options include `strict_phi_safe`, `research_balanced`, `minimal_explicit`,\
+  \ `aitrium_default`, and runtime alias `aitrium_template`.\n\n## Coming Soon\n\n- Local-agent setup\
+  \ guides (fully local MCP + local model workflows).\n- Local privacy hardening checklist for regulated\
+  \ environments.\n- Reference integrations for local-first agent runtimes.\n\n## Development\n\n```bash\n\
+  cargo check\ncargo test\n```\n\nLocal refresh helper:\n\n```bash\n./scripts/dev-refresh.sh\n```\n\n\
+  ## License\n\nMIT\n"

@@ -1,0 +1,107 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ChrisDean15/Depth-Parameterised-Proton-SDE
+url: https://github.com/ChrisDean15/Depth-Parameterised-Proton-SDE
+platform: github
+description: Adaptation of the code found in https://github.com/JereKoskela/proton-beam-sde. The code
+  simulates the path of a proton in proton beam therapy using a time-changed SDE model.
+license: GPL-3.0
+language: C++
+keywords: []
+stars: 0
+updated_at: '2025-12-12T17:47:19Z'
+image_source: null
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 5 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# Depth-Parameterised-Proton-beam-SDE\nThis repository houses an adaptation of the simulator\
+  \ found [here](https://github.com/JereKoskela/proton-beam-sde). The cited code simulates an SDE to describe\
+  \ the path of a proton in proton beam therapy parameterised by the proton's track length. This adaptatation\
+  \ applies a time change to describe the path of the proton parameterised by the proton's depth, where\
+  \ the proton's depth is given by v0·x with v0 the initial direction of the proton and x its current\
+  \ position. It is under active development and **not fit for standalone use**.\n\nThe following information\
+  \ is taken from the [track length parameterisation](https://github.com/JereKoskela/proton-beam-sde),\
+  \ but we also state it here for ease of use.\n\n# Installation\n\nIn Unix-like environments, simply\
+  \ call `make` in the project root. You will need:\n\n- the g++ compiler (tested on version 13.2.0),\n\
+  - the [GNU Scientific Library](https://www.gnu.org/software/gsl/) (tested on version 2.7.1),\n- the\
+  \ [libconfig](https://hyperrealm.github.io/libconfig/) package (tested on version 1.5).\n\n# Usage\n\
+  \nSimulation and output parameters are specified in the config file `sim.cfg`. In particular, you can\n\
+  modify:\n- the number of protons to simulate,\n- the radius of the nozzle from which protons are emitted,\n\
+  - the Gaussian distribution of the initial position of the protons, conditioned to lie in the nozzle,\n\
+  - the Gaussian distribution of the initial energy of the protons,\n- the change points between materials,\n\
+  - the index of the material in each gap between change points, based on the ordering in Materials/materials.txt,\n\
+  - the simulator time-step,\n- the energy at which a proton is absorbed and its path ends,\n- the side\
+  \ length of output voxelation,\n- the path to which a sparse 3d grid of dose deposition is stored.\n\
+  \nAfter compilation, run the simulation by calling `./simulate sim.cfg` at the project root.\nYou can\
+  \ also replace the `sim.cfg` argument with the path to any other appropriate config file.\n**Warning**:\
+  \ The default number of protons in `sim.cfg` is set to one million, and voxel sizes and time\nsteps\
+  \ are also set to a moderate resolution. As a result, the simulation can take 1-2 minutes.\n\n# Post-processing\n\
+  \n## Python scripts\n\nDefault output paths are specified into the `Output` folder, which contains the\
+  \ Python scripts for output\nvisualisation. To use it you will need:\n\n- [Python 3](https://www.python.org/)\
+  \ (tested on version 3.12.3), as well as the following Python modules:\n- numpy (tested on version 1.26.4),\n\
+  - matplotlib (tested on version 3.10.0),\n- itk (tested on version 5.4.4),\n- pymedphys (tested on version\
+  \ 0.40.0),\n- scipy (tested on version 1.14.1)\n\nAll the necessary functions are written in `SDE_vs_G4.py`,\
+  \ whereas the execution scripts to produce the relevant figures \nis written in `SDE_vs_G4_executionScript.py`\
+  \ (if the Geant4 files are available) or `SDE_plots.py` (for exclusively\nplotting SDE output). The\
+  \ scripts include integrated and central-axis depth-dose 1D curves, 2D dose distributions, \nlateral\
+  \ profiles, gamma analysis plots, pass rate calculations and proton range calculations. Simply modify\
+  \ the variables \ndefined at the start of the script according to what you need to plot. More detailed\
+  \ information is found in the comments\nof each script.\n\n## Geant4 output generation\n\nGeant4 is\
+  \ used as reference to assess the accuracy of the SDE. The source code to generate the outputs that\
+  \ are used for \ncomparison are found in the `Geant4-dose-and-secondaries` folder, which has its own\
+  \ README file with a detailed explanation\nof the model and how to run the simulations.\n\n# Nuclear\
+  \ cross sections\n\nThe `Splines` folder contains splines fitted to nuclear cross section data for argon,\
+  \ calcium, carbon, fluorine, hydrogen, nitrogen and oxygen.\nWhen available, the `ENDF/B-VIII.1` nuclear\
+  \ library was used. Otherwise the `JEFF-4.0` library was used. This is sufficient for running simulations\n\
+  in mediums consisting of air, bone and water. The `Splines` folder also contains three python scripts\
+  \ that are able to generate additional cross sections for input into the code.\n\n- Elastic scattering\
+  \ cross sections for hydrogen can be generated using the script `Elastic_cross_section_generator_hydrogen.py`.\
+  \ The input should be a text file called `Hydrogen_elastic_data.txt` contained within the Splines folder\
+  \ which is in the ENDF format with LAW=5 and LTP=1. The output file is named `hydrogen_el_ruth_cross_sec.txt`\
+  \ which must not be changed so it can be read into the main proton beam code. (Due to heavy recursive\
+  \ calculations this script may take on the order of 10 hours to run.)\n- Elastic scattering cross sections\
+  \ for other elements can be generated using the script `Elastic_cross_section_generator.py` The input\
+  \ should be two text files called `Element_cs_el.txt` and `Element_ang_el.txt`. Both files must be contained\
+  \ within the Splines folder and Element is the name of the desired element (the variable Element within\
+  \ the python script must also be replaced with the element's name and all lower case must be used).\
+  \ Both files must be in the ENDF format with LAW=5 and LTP=1, where `Element_cs_el.txt` and `Element_ang_el.txt`\
+  \ correspond to File 3 and File 6 in this format respectively. Furthermore, within the script the variables\
+  \ Z_targ and A_targ must be set equal to the target's charge and mass number respectively. The output\
+  \ file is named `Element_el_ruth_cross_sec.txt` which must not be changed so it can be read into the\
+  \ main proton beam code.\n- Inelastic proton-nucleus scattering cross sections can be generated using\
+  \ the script `Non_elastic_cross_section_generator.py`. The input should be two text files called `Element_cs_ne.txt`\
+  \ and `Element_enang_ne.txt`. Both files must be contained within the Splines folder and Element is\
+  \ the name of the desired element (the variable Element within the python script must also be replaced\
+  \ with the element's name and all lower case must be used). Both files must be in the ENDF format using\
+  \ the Kalbach-Mann systematics representation, where `Element_cs_ne.txt` and `Element_enang_ne.txt`\
+  \ correspond to File 3 and File 6 in this format respectively. The output files are named `Element_ne_rate.txt`\
+  \ and `Element_ne_energyangle_cdf.txt` which must not be changed so they can be read into the main proton\
+  \ beam code.\n\nIn the case of elastic scattering, the cross section is decomposed into several components\
+  \ which may not all be non-negative. Thus, due to error in the nuclear data, it is possible for the\
+  \ outgoing scattering cdf to be non-monotonically increasing. The python scripts resolve this issue\
+  \ by taking the running supremum of the proposed non-monotonic cdf. When this is required, the code\
+  \ will flag an error to inform the user that this has occured, along with the difference between the\
+  \ non-monotonic cdf and its running supremum.\n\nFor those unfamiliar with nuclear data libraries, we\
+  \ give a small tutorial which will allow a user to add additional elements to the proton beam. First\
+  \ navigate to the website `https://www-nds.iaea.org/exfor/endf.htm` where the required nuclear data\
+  \ is housed. \n- For elastic scattering cross sections one should fill in Target: Chemical symbol-Mass\
+  \ number (e.g. O-16 for oxygen 16) Reaction: P,EL, Quantity: SIG for the `Element_cs_el.txt` file and\
+  \ DA/DE for the `Element_ang_el.txt` file. If available, the associated file from the `ENDF/B-VIII.1`\
+  \ nuclear library should be downloaded, otherwise use the `JEFF-4.0` instead.\n- For inelastic proton-nucleus\
+  \ scattering cross sections, one should take identical steps except for replacing Reaction: P,EL with\
+  \ Reaction: P,X. Moreover, Quantity: SIG should be used to obtain the `Element_cs_ne.txt` file and DA/DE\
+  \ for `Element_enang_ne.txt` file.\n\n# Materials\n\nThe interface for specifying materials is via the\
+  \ text files in the `Materials` folder.\n\n- The `atoms.txt` file lists all the atoms needed for all\
+  \ desired materials. Each row specifies an atom name as\nwell as its atomic number and mass.\n- The\
+  \ `materials.txt` lists names of all desired materials. Each material name must be accompanied by a\
+  \ corresponding\n`name.txt` file.\n- Each `name.txt` file lists three pieces of information. The first\
+  \ two rows contain the material density in `g / cm^3`\nand mean excitation energy in `eV`. Rows from\
+  \ the third specify the chemical composition of the material. Each of these\nrows consists of an atom\
+  \ ID and the corresponding fraction by mass of that atom in the material. The numerical IDs refer\n\
+  to the rows of `atoms.txt`, counting from zero.\n\nFor example, if the rows of `atoms.txt` are:\n\n\
+  hydrogen 1 1\\\nnitrogen 7 14\\\noxygen 8 16\n\nthen the stoichiometric rows of water are specified\
+  \ as\n\n0 0.111\\\n2 0.889\n\nbecause water is approximately 1/9 hydrogen and 8/9 oxygen by mass.\n"

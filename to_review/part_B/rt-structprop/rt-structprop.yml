@@ -1,0 +1,58 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: dowlingjad/RT-structProp
+url: https://github.com/dowlingjad/RT-structProp
+platform: github
+description: Propagates radiotherapy structure contours (RT-struct) from a CT to an MRI volume using a
+  DICOM Spatial Registration (REG) file. Outputs binary masks as NIfTI files and, optionally, a DICOM
+  RT-struct linked to the MRI series.
+license: null
+language: HTML
+keywords: []
+stars: 1
+updated_at: '2026-07-07T14:33:13Z'
+image_source: null
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 5 support term(s).
+readme_excerpt: "# RT-struct Propagation: CT to MRI\n\nPropagates radiotherapy structure contours (RT-struct)\
+  \ from a CT to an MRI volume using a DICOM Spatial Registration (REG) file. Outputs binary masks as\
+  \ NIfTI files and, optionally, a DICOM RT-struct linked to the MRI series.\n\n## Background\n\nTreatment\
+  \ planning RT-structs are typically drawn on CT. When MRI is acquired and registered to the CT, the\
+  \ structures are usually contoured in the CT space. This pipeline:\n\n1. Reads the rigid registration\
+  \ matrix from the DICOM REG file (maps MRI patient coordinates to CT patient coordinates)\n2. Rasterises\
+  \ each RT-struct contour onto the CT voxel grid\n3. Resamples each binary mask into MRI space using\
+  \ the inverse transform and nearest-neighbour interpolation\n4. Writes outputs as NIfTI (.nii.gz) and\
+  \ optionally as a DICOM RT-struct linked to the MRI series\n\n## Requirements\n\nPython 3.10 or later.\
+  \ Install dependencies into a virtual environment:\n\n```bash\npython -m venv .venv\nsource .venv/bin/activate\n\
+  pip install -r requirements.txt\n```\n\nDependencies (see `requirements.txt`):\n\n- pydicom\n- SimpleITK\n\
+  - numpy\n- Pillow\n- nibabel\n- rt-utils (required only for `--save_rtstruct`)\n\n## Input files\n\n\
+  | Input | Description |\n|-------|-------------|\n| CT directory | Folder containing all CT DICOM slices\
+  \ |\n| RTSTRUCT directory | Folder containing the single RTSTRUCT .dcm file |\n| REG directory | Folder\
+  \ containing the single REG .dcm file (DICOM Spatial Registration) |\n| MRI directory | Folder containing\
+  \ all MRI DICOM slices |\n\nThe `--rtstruct_dir` and `--reg_dir` folders must each contain exactly one\
+  \ `.dcm` file; the script locates it automatically.\n\n## Usage\n\nRun with the default paths hard-coded\
+  \ in the script:\n\n```bash\npython propagate_rtstruct_to_mri.py\n```\n\nSpecify all input folders explicitly:\n\
+  \n```bash\npython propagate_rtstruct_to_mri.py \\\n    --ct_dir       /data/CT/1.3.6.1... \\\n    --rtstruct_dir\
+  \ /data/CT/1.3.6.1...rtstruct \\\n    --reg_dir      /data/CT/1.3.6.1...reg \\\n    --mri_dir      /data/MRI/1.3.6.1...\
+  \ \\\n    --output       /data/output\n```\n\nExtract only specific structures:\n\n```bash\npython propagate_rtstruct_to_mri.py\
+  \ --structures BLADDER RECTUM CTVLD\n```\n\nAlso write a DICOM RT-struct linked to the MRI series:\n\
+  \n```bash\npython propagate_rtstruct_to_mri.py --save_rtstruct\n```\n\n## Command-line options\n\n|\
+  \ Option | Default | Description |\n|--------|---------|-------------|\n| `--ct_dir` | hard-coded |\
+  \ Directory containing CT DICOM slices |\n| `--rtstruct_dir` | hard-coded | Directory containing the\
+  \ RTSTRUCT .dcm file |\n| `--reg_dir` | hard-coded | Directory containing the REG .dcm file |\n| `--mri_dir`\
+  \ | hard-coded | Directory containing MRI DICOM slices |\n| `--output` | `./output` | Output directory\
+  \ |\n| `--structures` | all | One or more structure names to extract |\n| `--save_rtstruct` | off |\
+  \ Write a DICOM RTSTRUCT linked to the MRI series |\n\n## Outputs\n\nAll outputs are written to the\
+  \ directory specified by `--output`.\n\n| File | Description |\n|------|-------------|\n| `CT.nii.gz`\
+  \ | CT volume |\n| `MRI.nii.gz` | MRI volume |\n| `mask_<StructureName>.nii.gz` | Binary mask for each\
+  \ structure in MRI space |\n| `RTSTRUCT_MRI.dcm` | DICOM RT-struct linked to the MRI series (if `--save_rtstruct`)\
+  \ |\n\n## Notes\n\n- The pipeline expects a rigid (not deformable) DICOM Spatial Registration object.\
+  \ The script reads the non-identity matrix from the `RegistrationSequence` in the REG file.\n- The MRI\
+  \ field of view is typically smaller than the CT. Structures that extend outside the MRI FOV are clipped;\
+  \ voxels outside the MRI volume are set to zero.\n- Degenerate contours with fewer than 3 points (e.g.\
+  \ single-point gas annotations) are silently skipped.\n- Structure display colours from the original\
+  \ CT RT-struct are preserved in the DICOM output.\n"

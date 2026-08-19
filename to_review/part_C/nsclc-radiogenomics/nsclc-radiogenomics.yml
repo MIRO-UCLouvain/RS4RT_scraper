@@ -1,0 +1,81 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ImamDad/NSCLC-Radiogenomics
+url: https://github.com/ImamDad/NSCLC-Radiogenomics
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-11T07:01:29Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+readme_excerpt: "# MS-HGNN: Multi-Scale Hierarchical Graph Neural Network for NSCLC Prognosis\n\n[![Python\
+  \ 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)\n[![PyTorch\
+  \ 1.12+](https://img.shields.io/badge/pytorch-1.12+-red.svg)](https://pytorch.org/)\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n\
+  \n## \U0001F4CB Overview\n\nMS-HGNN is a novel deep learning framework for simultaneous survival prediction\
+  \ and recurrence classification in Non-Small Cell Lung Cancer (NSCLC). The model integrates multimodal\
+  \ data (CT, PET, clinical, genomic) through a three-level hierarchical fusion architecture with biologically-informed\
+  \ meta-paths and semantic attention.\n\n### Key Features\n\n- **Multi-modal Integration**: Seamless\
+  \ fusion of CT imaging, PET imaging, clinical variables, and genomic data\n- **Biologically-Informed\
+  \ Graph Construction**: Domain-specific meta-paths encoding NSCLC biology\n- **Semantic Attention**:\
+  \ Learnable pathway importance with biological interpretability\n- **Uncertainty Quantification**: Monte\
+  \ Carlo dropout for confidence estimation\n- **Multi-Task Learning**: Joint optimization of survival\
+  \ and recurrence prediction\n- **Model Compression**: Pruning and quantization for clinical deployment\n\
+  \n### Performance Highlights\n\n- **C-index**: 0.85 (95% CI: 0.82-0.88) for survival prediction\n- **AUC**:\
+  \ 0.89 (95% CI: 0.86-0.92) for recurrence classification\n- **Hazard Ratio**: 4.15 (95% CI: 3.12-5.52)\
+  \ for high vs. low risk\n- **External Validation**: C-index 0.81 on TCGA-LUAD\n\n## \U0001F4E6 Installation\n\
+  \n### Prerequisites\n\n- Python 3.9 or higher\n- CUDA-capable GPU (recommended, but CPU mode is supported)\n\
+  - 16GB+ RAM\n\n### Installation Steps\n\n```bash\n# Clone the repository\ngit clone https://github.com/ImamDad/NSCLC-Radiogenomics.git\n\
+  cd NSCLC-Radiogenomics\n\n# Create virtual environment\npython -m venv venv\nsource venv/bin/activate\
+  \  # On Windows: venv\\Scripts\\activate\n\n# Install dependencies\npip install -r requirements.txt\n\
+  \n# Install the package in development mode\npip install -e .\n\n\n**Data Directory Structure**\ndata/\n\
+  ├── raw/\n│   ├── tcia_nsclc/\n│   │   ├── ct/\n│   │   ├── pet/\n│   │   ├── clinical/\n│   │   └──\
+  \ genomic/\n│   └── tcga_luad/\n│       ├── ct/\n│       ├── pet/\n│       ├── clinical/\n│       └──\
+  \ genomic/\n├── processed/\n│   ├── tcia_nsclc_processed.h5\n│   ├── tcga_luad_processed.h5\n│   └──\
+  \ features/\n└── splits/\n    ├── train_indices.npy\n    ├── val_indices.npy\n    └── test_indices.npy\n\
+  \n**Preprocessing**\n# Download data (requires TCIA API access)\npython scripts/download_data.py --dataset\
+  \ tcia_nsclc\n\n# Preprocess data\npython scripts/preprocess_data.py --config configs/config.yaml\n\n\
+  **Training**\n# Train with default configuration\npython scripts/train_model.py --config configs/config.yaml\n\
+  \n# Train with specific GPU\npython scripts/train_model.py --config configs/config.yaml --gpu 0\n\n\
+  # Resume training from checkpoint\npython scripts/train_model.py --config configs/config.yaml --resume\
+  \ checkpoints/latest.pth\n\n\U0001F4C8 Evaluation\nRun Evaluation\nbash\n# Evaluate trained model\n\
+  python scripts/evaluate_model.py --checkpoint checkpoints/best_model.pth\n\n# Run baseline comparison\n\
+  python experiments/baseline_comparison.py\n\n# Run ablation study\npython experiments/ablation_study.py\n\
+  \n# Run compression study\npython experiments/compression_study.py\nGenerate Figures\nbash\n# Generate\
+  \ all paper figures\npython experiments/generate_figures.py\n\U0001F4CA Results\nThe model's performance\
+  \ across different configurations:\n\nConfiguration\tC-index (95% CI)\tAUC (95% CI)\nFull Multimodal\t\
+  0.85 (0.82-0.88)\t0.89 (0.86-0.92)\nCT Only\t0.78 (0.74-0.82)\t0.82 (0.79-0.85)\nPET Only\t0.80 (0.76-0.84)\t\
+  0.84 (0.81-0.87)\nClinical Only\t0.77 (0.73-0.81)\t0.80 (0.76-0.84)\nGenomic Only\t0.81 (0.77-0.85)\t\
+  0.85 (0.82-0.88)\n\U0001F4C1 Project Structure\ntext\nNSCLC-Radiogenomics/\n├── configs/           \
+  \      # Configuration files\n├── data/                    # Data directory\n├── src/              \
+  \       # Source code\n│   ├── data/               # Data loading and preprocessing\n│   ├── models/\
+  \             # Model architectures\n│   ├── training/           # Training loop and utilities\n│  \
+  \ ├── evaluation/         # Evaluation metrics and visualization\n│   └── utils/              # Utility\
+  \ functions\n├── experiments/            # Experiment scripts\n├── notebooks/              # Jupyter\
+  \ notebooks\n├── scripts/                # Command-line scripts\n├── tests/                  # Unit\
+  \ tests\n└── figures/                # Generated figures\n\U0001F52C Reproducibility\nTo reproduce the\
+  \ paper's results:\n\nSet up environment as described above\n\nDownload and preprocess data\n\nRun baseline\
+  \ comparison:\n\nbash\npython experiments/baseline_comparison.py\nRun ablation study:\n\nbash\npython\
+  \ experiments/ablation_study.py\nGenerate all figures:\n\nbash\npython experiments/generate_figures.py\n\
+  All experiments use fixed random seeds (0, 42, 123, 456, 789) for reproducibility.\n\n\U0001F91D Contributing\n\
+  We welcome contributions! Please see our Contributing Guidelines for details.\n\n\U0001F4DD Citation\n\
+  If you use this code in your research, please cite:\n\nbibtex\n@article{dad2026mshgnn,\n  title={MS-HGNN:\
+  \ Interpretable Multi-Scale Hierarchical Graph Neural Network for Multimodal Survival and Recurrence\
+  \ Prediction in Non-Small Cell Lung Cancer},\n  author={Dad, Imam and He, Jianfeng},\n  journal={Journal\
+  \ of Medical Imaging},\n  year={2026}\n}\n\U0001F4C4 License\nThis project is licensed under the MIT\
+  \ License - see the LICENSE file for details.\n\n\U0001F64F Acknowledgments\nNational Natural Science\
+  \ Foundation of China (Grant No. 82160347)\n\nKunming University of Science and Technology\n\nChinese\
+  \ Government Scholarship Council (CSC)\n\n\U0001F4E7 Contact\nImam Dad: GitHub\n\nDr. Jianfeng He: jfenghe@kust.edu.cn\n\
+  \ntext\n\n---\n\n### 2. requirements.txt\n\n```txt\n# Core dependencies\ntorch>=1.12.0\ntorch-geometric>=2.2.0\n\
+  torch-scatter>=2.1.0\ntorch-sparse>=0.6.16\ntorch-cluster>=1.6.1\nnumpy>=1.21.0\nscipy>=1.9.0\npandas>=1.4.0\n\
+  scikit-learn>=1.1.0\nmatplotlib>=3.5.0\nseaborn>=0.11.0\npyyaml>=6.0\nh5py>=3.7.0\ntqdm>=4.64.0\nwandb>=0.13.0\n\
+  optuna>=3.0.0\n\n# Optional but recommended for full functionality\npytorch-ignite>=0.4.10\nlifelines>=0.27.0\n\
+  statsmodels>=0.13.0\ndgl>=1.0.0  # For graph operations\nplotly>=5.10.0  # For interactive plots\nnetworkx>=2.8.0\
+  \  # For graph visualization\n\n"

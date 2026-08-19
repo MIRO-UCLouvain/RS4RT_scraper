@@ -1,0 +1,70 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: mariyamiteva/mvvae-radiomics-repo
+url: https://github.com/mariyamiteva/mvvae-radiomics-repo
+platform: github
+description: Multi-view β-VAE pipeline for MGMT methylation prediction in glioblastoma using MRI radiomics
+  (T1Gd + FLAIR).
+license: null
+language: Python
+keywords:
+- radiomics-glioblastoma-vae-multi-view-learning-mri
+stars: 0
+updated_at: '2026-03-19T15:10:09Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Multi-View VAE for MGMT Methylation Prediction from MRI Radiomics\n\nRepository-ready\
+  \ implementation of a multi-view learning approach for predicting MGMT promoter methylation status in\
+  \ glioblastoma using radiomic features from T1Gd and FLAIR MRI.\n\nThis project refactors an experimental\
+  \ workflow into a clean, modular, and reproducible pipeline.\n\n---\n\n## Overview\n\nThe repository\
+  \ implements a hybrid pipeline combining:\n- classical machine learning baselines\n- multi-view representation\
+  \ learning via β-VAE\n- downstream classification on learned latent embeddings\n\nThe goal is to evaluate\
+  \ whether multi-view latent representations improve predictive performance over early-fusion baselines.\n\
+  \n---\n\n## Repository Scope\n\nThis repository contains a cleaned and modularized implementation of\
+  \ the methodology.\n\nExploratory notebooks used during experimentation are intentionally excluded in\
+  \ order to:\n- improve reproducibility\n- reduce noise in the codebase\n- focus on the core training\
+  \ pipeline\n\n---\n\n## Repository Structure\n\n```text\nmvvae-radiomics-repo/\n├── config/\n│   └──\
+  \ example_config.json\n├── scripts/\n│   └── run_experiment.py\n├── src/\n│   └── radiomics_mgmt/\n\
+  │       ├── __init__.py\n│       ├── config.py\n│       ├── data.py\n│       ├── features.py\n│    \
+  \   ├── models.py\n│       ├── plots.py\n│       └── training.py\n├── requirements.txt\n└── README.md\n\
+  ```\n\n---\n\n## Methodology\n\n### Task\n\nPredict MGMT promoter methylation status using radiomic\
+  \ features extracted from glioblastoma MRI.\n\n---\n\n### Data Processing\n\nThe pipeline assumes three\
+  \ input sources:\n1. Radiomic features from T1Gd (necrotic core)\n2. Radiomic features from FLAIR (necrotic\
+  \ core)\n3. Clinical metadata with MGMT labels\n\nProcessing steps:\n\n- align datasets by subject identifier\n\
+  - filter modality-complete patients with valid labels\n- retain numeric radiomic features only\n- drop\
+  \ empty columns\n- impute missing values using column median\n- apply modality-specific normalization\
+  \ using training statistics\n\n---\n\n### Classical Baselines\n\nEarly-fusion is applied by concatenating\
+  \ T1Gd and FLAIR features.\n\n#### Baseline Random Forest\n- `n_estimators=100`\n- `class_weight='balanced'`\n\
+  \n#### Tuned Random Forest\nGrid search over:\n- `n_estimators`: 100, 200, 400\n- `max_depth`: None,\
+  \ 10, 20\n- `min_samples_split`: 2, 5, 10\n- `min_samples_leaf`: 1, 2, 4\n- `max_features`: sqrt, log2,\
+  \ None\n\n---\n\n### Multi-View β-VAE\n\nThe model learns a joint latent representation from two complementary\
+  \ modalities:\n\n- separate encoder per modality (T1Gd, FLAIR)\n- architecture: 128 → 64 → latent (dim=6)\n\
+  - Gaussian latent space with reparameterization\n- separate decoder per modality\n- dropout: 0.1\n-\
+  \ L2 regularization: 1e-4\n\nLoss function:\n\n- reconstruction loss (T1Gd)\n- reconstruction loss (FLAIR)\n\
+  - KL divergence weighted by β = 0.3\n\n---\n\n### Latent Fusion\n\nAfter training, the latent means\
+  \ are concatenated:\n\nz_fused = [mu_T1Gd, mu_FLAIR]\n\nResulting in a 12-dimensional representation.\n\
+  \n---\n\n### Classification on Latent Space\n\nA Random Forest classifier is trained on the fused latent\
+  \ space:\n\n- `n_estimators`: 200, 400, 600\n- `max_depth`: None, 10, 20\n- `min_samples_split`: 2,\
+  \ 5\n- `min_samples_leaf`: 1, 2\n- `max_features`: sqrt, log2\n- `class_weight`: None, balanced\n\n\
+  ---\n\n## Outputs\n\nThe pipeline generates:\n\n- `results.csv`\n- `classification_reports.json`\n-\
+  \ `vae_history.csv`\n- `z_train.npy`\n- `z_test.npy`\n- `latent_pred_proba.npy`\n- `config.json`\n\n\
+  ---\n\n## How to Run\n\n```bash\npython -m venv .venv\nsource .venv/bin/activate\npip install -r requirements.txt\n\
+  \npython scripts/run_experiment.py \\\n  --t1-path data/raw/Radiomic_Features_CaPTk_automaticsegm_T1GD_NC.csv\
+  \ \\\n  --flair-path data/raw/Radiomic_Features_CaPTk_automaticsegm_FLAIR_NC.csv \\\n  --clinical-path\
+  \ data/raw/UPENN-GBM_clinical_info_v2.1.csv \\\n  --output-dir artifacts\n```\n\nOr via config:\n\n\
+  ```bash\npython scripts/run_experiment.py --config config/example_config.json\n```\n\n---\n\n## Design\
+  \ Considerations\n\n- modality-specific preprocessing to preserve signal characteristics\n- separation\
+  \ of representation learning and classification stages\n- controlled latent dimensionality for interpretability\n\
+  - reproducible pipeline with explicit configuration\n\n---\n\n## Limitations\n\n- relies on precomputed\
+  \ radiomics (no raw image pipeline)\n- single split evaluation (no cross-validation by default)\n- not\
+  \ optimized for clinical deployment\n\n---\n\n## Future Work\n\n- cross-validation and robustness analysis\n\
+  - integration with raw imaging pipelines (MONAI)\n- model calibration and uncertainty estimation\n-\
+  \ interpretability analysis in latent space\n- deployment-ready packaging\n\n---\n\n## Summary\n\nThis\
+  \ repository demonstrates a structured approach to multi-view learning in medical imaging, combining\
+  \ classical ML and deep generative models within a reproducible experimental pipeline.\n"

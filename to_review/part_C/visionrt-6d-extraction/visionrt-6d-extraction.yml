@@ -1,0 +1,181 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Kiragroh/visionrt-6d-extraction
+url: https://github.com/Kiragroh/visionrt-6d-extraction
+platform: github
+description: Minimal research example for extracting identity-free 6D time series from synthetic VisionRT/AlignRT
+  ARTX archives
+license: MIT
+language: Python
+keywords:
+- 6d-motion
+- alignrt
+- artx
+- radiotherapy
+- sgrt
+- visionrt
+stars: 0
+updated_at: '2026-08-08T11:19:09Z'
+image_source: https://raw.githubusercontent.com/Kiragroh/visionrt-6d-extraction/HEAD/docs/images/synthetic-gui-example.png
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: '# VisionRT 6D Extraction Example
+
+
+  This repository is a small, research-oriented example for extracting timestamped six-degree-of-freedom
+  (6D) monitoring samples from VisionRT/AlignRT `.artx` exports. It validates the ZIP container, reads
+  only paired treatment-session NRBF payloads, and writes identity-free CSV and JSON outputs.
+
+
+  VisionRT 6D monitoring data can be linked with treatment data from an oncology record-and-verify (R&V)
+  system to create a combined view such as the example shown below. This brings information from both
+  source databases together in a coherent, meaningfully navigable interface instead of requiring users
+  to inspect each database separately. The displayed archive, motion traces, treatment context, labels,
+  dates, and machine names are synthetic, and the inset has been de-identified. The GUI and R&V integration
+  are illustrative and are not part of this repository. Do not use this software for clinical decisions.
+
+
+  ![Synthetic GUI example with a CBCT interval before three treatment fields](docs/images/synthetic-gui-example.png)
+
+
+  The screenshot shows one synthetic monitoring session: a blue CBCT interval before three orange treatment-field
+  windows, with translation in millimetres and rotation in degrees. The de-identified VisionRT inset shows
+  all seven 6D/magnitude indicators beside the surface/ROI view. See the [complete figure legend](docs/images/synthetic-gui-example.md).
+
+
+  ## How to cite
+
+
+  **If you use this code, adapt the extraction workflow, or base an analysis on it, please cite this software
+  using [`CITATION.cff`](CITATION.cff) or GitHub''s “Cite this repository” function.**
+
+
+  The citation metadata identifies the exact software version. No DOI is claimed for this release.
+
+
+  ## Install
+
+
+  Python 3.11 or newer is required.
+
+
+  ```bash
+
+  git clone https://github.com/Kiragroh/visionrt-6d-extraction.git
+
+  cd visionrt-6d-extraction
+
+  python -m venv .venv
+
+  python -m pip install -e ".[test]"
+
+  ```
+
+
+  ## Quick start
+
+
+  Extract the included synthetic archive:
+
+
+  ```bash
+
+  visionrt-6d examples/synthetic-demo.artx --output output
+
+  ```
+
+
+  The same command can be run without installing the console entry point:
+
+
+  ```bash
+
+  python -m visionrt_6d examples/synthetic-demo.artx --output output
+
+  ```
+
+
+  Three files are written atomically:
+
+
+  - `samples_6d.csv`: one row per timestamped sample, with raw and vendor-smoothed 6D values;
+
+  - `sessions.json`: per-session sample counts, time bounds, and quality findings;
+
+  - `archive_inventory.json`: non-identifying content categories and byte counts. It also records `patient_identity_read:
+  false`.
+
+
+  The included archive is deterministic and contains six synthetic samples. Regenerate it with:
+
+
+  ```bash
+
+  python tools/make_synthetic_artx.py examples/synthetic-demo.artx
+
+  ```
+
+
+  ## What the extractor reads
+
+
+  An `.artx` file is treated as a ZIP container whose session payloads use the .NET NRBF/BinaryFormatter
+  representation. The implementation pairs `ArchiveTreatmentSessionData_<n>` with `ArchiveTreatmentSessionByteData_<n>`,
+  but it decodes only the corresponding session byte payload. Patient identity, plan, RT structure, surface,
+  ROI, and image members are not opened by this public example.
+
+
+  Real archives can be much larger than the resulting CSV because they may also contain surface geometry,
+  ROI/structure objects, screenshots or other contextual objects. The CSV is small because it keeps only
+  timestamped scalar 6D samples. See [ARTX contents and scope](docs/artx-contents.md) for the deliberate
+  reduction and what is not exported.
+
+
+  ## Interpretation boundaries
+
+
+  - `lat`, `lng`, and `vrt` are translational axes expected in millimetres for the tested export form.
+
+  - `pitch`, `roll`, and `yaw` are rotational axes expected in degrees for the tested export form.
+
+  - `smoothed_*` values are stored by the vendor payload. They are not recomputed by this package and
+  are never substituted for raw values.
+
+  - A numeric zero remains `0.0`. Missing or invalid values become `null` internally and empty CSV cells;
+  they are not converted to zero.
+
+  - Negative relative times can be valid when an analysis chooses a reference instant after earlier acquisition.
+  This extractor exports source timestamps and does not invent a relative zero.
+
+  - Axis directions and historical smoothed-value signs can depend on export version and local system
+  convention. The extractor preserves decoded vendor values exactly and performs no hidden sign correction.
+
+
+  Review the [data dictionary](docs/data-dictionary.md) before analysis. Validate units, axes, time basis,
+  sign conventions, and session boundaries against your own export version and an independent reference.
+
+
+  ## Privacy and safety
+
+
+  Real `.artx` archives can contain personal and clinical information. Never upload a real archive, extracted
+  patient data, screenshot, or identifying filename to a public issue. The parser applies entry-count
+  and uncompressed-size limits and does not unpack ZIP members to disk, but untrusted archives should
+  still be processed in an isolated research environment.
+
+
+  This project is not affiliated with or endorsed by Vision RT Limited. It is an interoperability research
+  example, not a medical device, treatment-control component, or clinically validated analysis. See [`SECURITY.md`](SECURITY.md).
+
+
+  ## License and third-party code
+
+
+  Project code is released under the [MIT License](LICENSE). The vendored `python-nrbf` parser remains
+  under its upstream MIT license; see [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md).
+
+  '

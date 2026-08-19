@@ -1,0 +1,59 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: contouraid/dosemetrics
+url: https://github.com/contouraid/dosemetrics
+platform: github
+description: Measuring radiotherapy doses - plotting visualizations
+license: NOASSERTION
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-08-17T05:14:39Z'
+image_source: null
+heuristic_total_score: 36
+heuristic_reasons:
+- Matched 5 strong particle-therapy term(s) in metadata/content.
+- Matched 11 support term(s).
+readme_excerpt: "# DoseMetrics\n\n[![Python Version](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://python.org)\n\
+  [![PyPI version](https://badge.fury.io/py/dosemetrics.svg)](https://badge.fury.io/py/dosemetrics)\n\
+  [![Tests](https://github.com/contouraid/dosemetrics/actions/workflows/tests.yml/badge.svg)](https://github.com/contouraid/dosemetrics/actions/workflows/tests.yml)\n\
+  [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://contouraid.github.io/dosemetrics/)\n\
+  [![License](https://img.shields.io/badge/license-CC%20BY--SA--NC%204.0-green.svg)](LICENSE)\n\nDoseMetrics\
+  \ 0.4.0 is a Python library for radiotherapy dose analysis. It provides typed containers for dose distributions\
+  \ and structures, NIfTI and DICOM-RT I/O, DVH and plan-quality metrics, dose and geometry comparisons,\
+  \ gamma analysis, batch utilities, and publication-ready Matplotlib plots.\n\n## Installation\n\n```bash\n\
+  pip install dosemetrics\n```\n\nFor local development:\n\n```bash\ngit clone https://github.com/contouraid/dosemetrics.git\n\
+  cd dosemetrics\nmake setup\n```\n\n## Quick start\n\nThe current API keeps dose data, structure geometry,\
+  \ and metric computation separate:\n\n```python\nfrom dosemetrics.metrics import conformity, dvh, homogeneity\n\
+  from dosemetrics.utils import load_example_study, plot_subject_dvhs\n\ndose, structures = load_example_study(\"\
+  test_subject\")\nptv = structures[\"PTV\"]\n\ndose_bins, volume_percent = dvh.compute_dvh(dose, ptv,\
+  \ verbose=True)\nstats = dvh.compute_dose_statistics(dose, ptv, verbose=True)\nci = conformity.compute_paddick_conformity_index(dose,\
+  \ ptv, prescription_dose=60.0)\nhi = homogeneity.compute_homogeneity_index(dose, ptv)\nfig, ax = plot_subject_dvhs(dose,\
+  \ structures)\n\nprint(f\"Paddick CI: {ci:.3f}; HI: {hi:.3f}\")\n```\n\nA NIfTI patient folder places\
+  \ `Dose.nii.gz` and one binary mask per structure in the same directory. `load_structure_set()` loads\
+  \ only geometry; load the dose independently with `Dose.from_nifti()`.\n\n## Comparing plans\n\nAll\
+  \ reference-based functions accept `reference` first and `evaluated` second:\n\n```python\nfrom dosemetrics\
+  \ import Dose\nfrom dosemetrics.metrics import compare_ptv_dose, dose_comparison, gamma\n\nreference\
+  \ = Dose.from_nifti(\"reference.nii.gz\")\nevaluated = Dose.from_nifti(\"evaluated.nii.gz\")\n\nmae_gy\
+  \ = dose_compare_mae(reference, evaluated)\ngamma_map = gamma.compare_gamma_index(reference, evaluated)\n\
+  gamma_pass = gamma.compute_gamma_passing_rate(gamma_map)\nptv_dose_distance = compare_ptv_dose(reference,\
+  \ evaluated, ptv)\n```\n\n## Public package layout\n\n- `dosemetrics`: `Dose`, structure classes, `StructureSet`,\
+  \ and high-level loaders\n- `dosemetrics.io`: unified NIfTI/DICOM loading plus format-specific modules\n\
+  - `dosemetrics.metrics`: domain modules such as `dvh`, `conformity`, `homogeneity`, `geometric`, `gamma`,\
+  \ and `dose_comparison`, plus direct named `compare_*` functions\n- `dosemetrics.utils`: plotting, compliance,\
+  \ batch processing, and cohort analysis\n\nReference-free metrics remain grouped in domain modules.\
+  \ Named clinical plan comparisons are imported directly from `dosemetrics.metrics`.\n\n## Command line\n\
+  \n```bash\ndosemetrics --version\ndosemetrics dvh Dose.nii.gz patient_folder -o dvh.csv\ndosemetrics\
+  \ statistics Dose.nii.gz patient_folder -o statistics.csv\ndosemetrics conformity Dose.nii.gz PTV.nii.gz\
+  \ --prescription 60\ndosemetrics gamma reference.nii.gz evaluated.nii.gz --dose-criteria 3 --distance-criteria\
+  \ 3\n```\n\nRun `dosemetrics --help` or `dosemetrics <command> --help` for all options.\n\n## Development\n\
+  \n```bash\nmake test\nmake docs\nmake app\n```\n\nThe documentation notebooks use the public `contouraid/dosemetrics-data`\
+  \ dataset and are exercised by `tests/test_documentation.py`.\n\n## Documentation and demo\n\n- [Documentation](https://contouraid.github.io/dosemetrics/)\n\
+  - [Interactive demo](https://huggingface.co/spaces/contouraid/dosemetrics)\n- [Issue tracker](https://github.com/contouraid/dosemetrics/issues)\n\
+  \n## Citation\n\n```bibtex\n@software{dosemetrics2026,\n  author = {Kamath, Amith},\n  title = {DoseMetrics:\
+  \ A Python Library for Radiotherapy Dose Analysis},\n  url = {https://github.com/contouraid/dosemetrics},\n\
+  \  version = {0.4.0},\n  year = {2026}\n}\n```\n\n## License\n\nLicensed under the Creative Commons\
+  \ Attribution-ShareAlike-NonCommercial 4.0 International License. See [LICENSE](LICENSE). Commercial\
+  \ use requires explicit written permission from the copyright holder.\n"

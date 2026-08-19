@@ -1,0 +1,70 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: BrandonWilliams-ML/lung-nodule-segmentation
+url: https://github.com/BrandonWilliams-ML/lung-nodule-segmentation
+platform: github
+description: End-to-end 3D deep learning pipeline for pulmonary nodule segmentation and radiomic feature
+  extraction using the LIDC-IDRI dataset from The Cancer Imaging Archive.
+license: null
+language: Python
+keywords:
+- 3d-unet
+- ct-scan
+- deep-learning
+- dicom
+- image-segmentation
+- medical-imaging
+- monai
+- nifti
+- pytorch
+- radiomics
+stars: 1
+updated_at: '2026-05-19T06:07:45Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# \U0001FAC1 3D Volumetric Lung Nodule Segmentation\n\n[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)\n\
+  [![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org/get-started/locally/)\n\
+  [![MONAI](https://img.shields.io/badge/MONAI-Medical_AI-882B94)](https://monai.io/)\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n\
+  \nAn end-to-end medical imaging pipeline designed to automate the detection and analysis of pulmonary\
+  \ nodules in 3D Computed Tomography (CT) scans. This system bridges the gap between deep learning segmentation\
+  \ and clinical **Radiomics**, providing both localized masks and quantifiable biological markers.\n\n\
+  ---\n\n## \U0001F52C Scientific & Engineering Design\n\nThis pipeline handles high-stakes medical data\
+  \ complexity through a rigorous multi-stage architecture:\n\n### 1. Hounsfield Unit (HU) Normalization\n\
+  Raw DICOM values are rescaled using slope/intercept metadata and windowed to `[-1000, 400] HU`. This\
+  \ isolates lung tissue and ensures consistent density features across heterogeneous CT scanner hardware.\n\
+  \n### 2. Volumetric 3D U-Net\nUnlike standard 2D CNNs, this architecture utilizes **3D Convolutions**\
+  \ to capture the spherical morphology of nodules across the Z-axis (depth). This spatial awareness significantly\
+  \ reduces false positives inherent in slice-by-slice analysis.\n\n\n\n### 3. Stochastic 3D Patching\n\
+  To manage the massive memory footprint of 3D CT volumes, I implemented a custom `LungDataset` that performs\
+  \ random `64x64x64` patch extraction. This allows the model to train on high-resolution local features\
+  \ without exceeding GPU VRAM.\n\n### 4. Radiomic Feature Extraction\nPost-segmentation, the pipeline\
+  \ uses **PyRadiomics** to extract Shape, Texture (GLCM), and Intensity features. This transforms \"\
+  black box\" masks into structured datasets for downstream malignancy prediction.\n\n---\n\n## \U0001F6E0\
+  \ Tech Stack\n\n| Component | Technology | Role |\n| :--- | :--- | :--- |\n| **Deep Learning** | PyTorch\
+  \ + MONAI | 3D U-Net implementation and Dice loss. |\n| **Image Processing** | SimpleITK / Nibabel |\
+  \ Handling NIfTI/DICOM volumetric formats. |\n| **Radiomics** | PyRadiomics | Clinical feature extraction\
+  \ (GLCM, GLRLM). |\n| **Optimization** | Dice Similarity Coefficient | Loss function optimized for extreme\
+  \ class imbalance. |\n| **Management** | Conda + Bash | Reproducible environment and setup scripts.\
+  \ |\n\n---\n\n## \U0001F680 Key Engineering Achievements\n\n* **Robust Preprocessing Pipeline:** Handles\
+  \ the transition from raw medical metadata to normalized NIfTI files, including slice sorting by spatial\
+  \ position and pixel-array rescaling.\n* **High-Precision Evaluation:** Leveraged the **Dice Similarity\
+  \ Coefficient (DSC)**. In medical segmentation, where the target may occupy $< 0.1\\%$ of the volume,\
+  \ DSC provides a more representative performance metric than standard accuracy.\n* **Edge-Case Mitigation:**\
+  \ Implemented smooth factors in metric calculations to prevent division-by-zero errors during training\
+  \ on \"empty\" patches, ensuring stable gradient descent.\n\n---\n\n## \U0001F3C1 Getting Started\n\n\
+  ### 1. Initialize Environment\n```bash\n# Clone the repo and run setup\ngit clone [https://github.com/your-username/lung-nodule-segmentation.git](https://github.com/your-username/lung-nodule-segmentation.git)\n\
+  cd lung-nodule-segmentation\nbash setup.sh\n```\n### 2. Pipeline Execution\n\n1. Preprocess: Place LIDC-IDRI\
+  \ data in data/ and run:\n   ```bash\n   python preprocess.py\n   \n2. Train:\n   ```bash\n   python\
+  \ train.py\n   \n4. Extract Features:\n   ```bash\n   python radiomics.py\n   \n---\n\n## \U0001F4CA\
+  \ Results\n\n| Metric | Value |\n|--------|-------|\n| Dice Score | ~0.78 (example) |\n   \n---\n\n\
+  ## \U0001F4C9 Future Clinical Roadmap\n\n* **[ ] Attention U-Net:** Implement Attention Gates to focus\
+  \ the model on small, sub-centimeter nodules.\n* **[ ] Malignancy Classifier:** Use extracted Radiomics\
+  \ features to train a Random Forest classifier.\n* **[ ] 3D Slicer Plugin:** Integrate the model directly\
+  \ into clinical viewing software.\n\n> **Disclaimer:** This tool is for research purposes only and is\
+  \ not cleared for clinical diagnosis.\n"

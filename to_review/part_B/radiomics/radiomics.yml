@@ -1,0 +1,70 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: snhwang/radiomics
+url: https://github.com/snhwang/radiomics
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-12-24T17:33:57Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Radiomics Medical Image Analysis Platform\n\nA professional, user-friendly interface\
+  \ for extracting and analyzing radiomics features from medical images using PyRadiomics.\n\n## Features\n\
+  \n- **Intuitive Web Interface**: Clean, modern Streamlit-based UI for easy interaction\n- **Comprehensive\
+  \ Feature Extraction**: Support for all PyRadiomics feature classes\n- **Interactive Visualization**:\
+  \ Real-time image viewing with segmentation overlay\n- **Batch Processing**: Process multiple image-mask\
+  \ pairs efficiently\n- **Multiple Export Formats**: Export results to CSV, Excel, or JSON\n- **Preprocessing\
+  \ Pipeline**: Built-in normalization, resampling, and filtering\n\n## Quick Start\n\n### Installation\n\
+  \n```bash\n# Clone the repository\ngit clone https://github.com/your-repo/radiomics.git\ncd radiomics\n\
+  \n# Create virtual environment (recommended)\npython -m venv venv\nsource venv/bin/activate  # On Windows:\
+  \ venv\\Scripts\\activate\n\n# Install dependencies\npip install -r requirements.txt\n```\n\n### Running\
+  \ the Application\n\n```bash\nstreamlit run app.py\n```\n\nThe application will open in your default\
+  \ browser at `http://localhost:8501`\n\n## Supported Image Formats\n\n| Format | Extension | Description\
+  \ |\n|--------|-----------|-------------|\n| NIfTI | .nii, .nii.gz | Neuroimaging Informatics Technology\
+  \ Initiative |\n| NRRD | .nrrd | Nearly Raw Raster Data |\n| MetaImage | .mha, .mhd | ITK MetaImage\
+  \ format |\n| DICOM | .dcm | Digital Imaging and Communications in Medicine |\n\n## Feature Classes\n\
+  \n### First Order Statistics\nDescribes the distribution of voxel intensities:\n- Mean, Median, Range,\
+  \ Variance\n- Skewness, Kurtosis\n- Energy, Entropy\n\n### Shape Features\nDescribes 3D geometry of\
+  \ the ROI:\n- Volume, Surface Area\n- Sphericity, Compactness\n- Elongation, Flatness\n\n### Texture\
+  \ Features\n\n| Feature Class | Description |\n|--------------|-------------|\n| **GLCM** | Gray Level\
+  \ Co-occurrence Matrix |\n| **GLRLM** | Gray Level Run Length Matrix |\n| **GLSZM** | Gray Level Size\
+  \ Zone Matrix |\n| **GLDM** | Gray Level Dependence Matrix |\n| **NGTDM** | Neighbouring Gray Tone Difference\
+  \ Matrix |\n\n### Image Filters\n- **Wavelet Transform**: Multi-resolution decomposition\n- **Laplacian\
+  \ of Gaussian (LoG)**: Edge enhancement at multiple scales\n\n## Programmatic Usage\n\n```python\nfrom\
+  \ src.extractor import RadiomicsExtractor, ExtractionConfig\nimport SimpleITK as sitk\n\n# Load image\
+  \ and mask\nimage = sitk.ReadImage(\"path/to/image.nii.gz\")\nmask = sitk.ReadImage(\"path/to/mask.nii.gz\"\
+  )\n\n# Configure extraction\nconfig = ExtractionConfig(\n    normalize=True,\n    bin_width=25,\n  \
+  \  enable_first_order=True,\n    enable_shape=True,\n    enable_glcm=True,\n    enable_wavelet=False,\n\
+  )\n\n# Extract features\nextractor = RadiomicsExtractor(config)\nfeatures = extractor.extract_features(image,\
+  \ mask)\n\n# Export results\nfrom src.export import ResultsExporter\nResultsExporter.to_csv(features,\
+  \ \"radiomics_features.csv\")\n```\n\n## Project Structure\n\n```\nradiomics/\n├── app.py          \
+  \          # Main Streamlit application\n├── requirements.txt          # Python dependencies\n├── README.md\
+  \                 # This file\n├── src/\n│   ├── __init__.py\n│   ├── extractor.py          # Feature\
+  \ extraction engine\n│   ├── visualization.py      # Plotting and visualization\n│   ├── preprocessing.py\
+  \      # Image preprocessing\n│   ├── segmentation.py       # Segmentation utilities\n│   └── export.py\
+  \             # Results export\n├── config/\n│   └── default_params.yaml   # Default extraction parameters\n\
+  ├── examples/\n│   └── sample_workflow.py    # Example usage script\n└── assets/\n    └── style.css\
+  \             # Custom styling\n```\n\n## Workflow\n\n1. **Upload**: Load medical image and segmentation\
+  \ mask\n2. **Visualize**: Review images with interactive slice viewer\n3. **Configure**: Select feature\
+  \ classes and preprocessing options\n4. **Extract**: Run radiomics feature extraction\n5. **Analyze**:\
+  \ Explore features through visualizations\n6. **Export**: Download results in preferred format\n\n##\
+  \ Configuration Options\n\n### Extraction Settings\n\n| Parameter | Description | Default |\n|-----------|-------------|---------|\n\
+  | `normalize` | Normalize image intensities | True |\n| `bin_width` | Bin width for discretization |\
+  \ 25 |\n| `force_2d` | Force 2D extraction | False |\n| `label` | Label value in mask | 1 |\n\n### Preprocessing\
+  \ Options\n\n| Parameter | Description | Default |\n|-----------|-------------|---------|\n| `resample`\
+  \ | Resample to isotropic spacing | False |\n| `smoothing` | Apply Gaussian smoothing | False |\n| `bias_correction`\
+  \ | N4 bias field correction | False |\n| `windowing` | CT window/level | None |\n\n## Dependencies\n\
+  \n- Python 3.8+\n- PyRadiomics >= 3.0.1\n- SimpleITK >= 2.3.0\n- Streamlit >= 1.28.0\n- NumPy, Pandas,\
+  \ Plotly\n- See `requirements.txt` for complete list\n\n## References\n\n- [PyRadiomics Documentation](https://pyradiomics.readthedocs.io/)\n\
+  - [Image Biomarker Standardisation Initiative (IBSI)](https://theibsi.github.io/)\n- [SimpleITK Documentation](https://simpleitk.readthedocs.io/)\n\
+  \n## License\n\nThis project is provided for educational and research purposes.\n\n## Contributing\n\
+  \nContributions are welcome! Please feel free to submit issues or pull requests.\n"

@@ -1,0 +1,77 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: yzh18352575228-cmyk/brain-tumor-radiomics-stability
+url: https://github.com/yzh18352575228-cmyk/brain-tumor-radiomics-stability
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-06-21T06:14:02Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 3 support term(s).
+readme_excerpt: "# ROI Deformation Stability in Brain Tumor Radiomics\n\n**Automated versus manual segmentation:\
+  \ how does boundary uncertainty affect radiomics-based GBM/LGG classification?**\n\n[![Python](https://img.shields.io/badge/Python-3.10-blue)]()\n\
+  \n---\n\n## Overview\n\nThis repository contains the complete experimental pipeline for a radiomics\
+  \ stability study comparing two segmentation paradigms:\n\n| Route | Paradigm | Deformation | Conditions\
+  \ |\n|-------|----------|-------------|------------|\n| **A** | nnU-Net auto-segmentation | Probability-space\
+  \ perturbation | 4 (Original + 3 levels) |\n| **B** | GlistrBoost manual segmentation | Gradient-adaptive\
+  \ geometric deformation | 13 (Manual + 4 methods × 3 severities) |\n\n**Key finding**: Classification\
+  \ models are highly robust to probability-based boundary perturbations (Route A AUC drops only 0.007).\
+  \ However, different *types* of geometric errors affect classification unequally — elastic deformation\
+  \ degrades performance most, while local dropout has negligible impact (Route B AUC range: 0.917–0.949).\n\
+  \n---\n\n## Project Structure\n\n```\nROI/\n├── README.md                          ← This file\n├──\
+  \ requirements.txt                   ← Python dependencies\n├── ROUTE_A_SUMMARY.md                 ←\
+  \ Route A pipeline documentation\n├── ROUTE_B_SUMMARY.md                 ← Route B pipeline documentation\n\
+  ├── ROUTE_B_PLAN.md                    ← Route B detailed execution plan\n├── VISUAL_STYLE.md      \
+  \              ← Figure style conventions (v1.2)\n├── CLAUDE.md                          ← Developer\
+  \ reference\n│\n├── perturbation/                      ← ROI deformation algorithms\n│   ├── perturb_nnunet_probabilities.py\
+  \   Route A: probability perturbation\n│   ├── roi_deformation_algorithms.py     Route B: 4 geometric\
+  \ methods\n│   └── batch_deform_manual.py            Route B: batch wrapper\n│\n├── classification/\
+  \                    ← Feature extraction + ML\n│   ├── ML_METHODS.md                     ML pipeline\
+  \ documentation\n│   ├── Feature_Extraction_nnunet_origin.py     Route A: Original FE\n│   ├── Feature_Extraction_nnunet_ROI.py\
+  \        Route A: Perturbed FE\n│   ├── Feature_Combination_nnunet_ROI.py       Route A: WT+TC+ET merge\n\
+  │   ├── ML_nnunet_ROI_3fold.py                  Route A: 3-fold CV\n│   ├── Feature_Extraction_Manual_ROI.py\
+  \        Route B: Manual FE (argparse)\n│   ├── Feature_Combination_Manual_ROI.py       Route B: Label/ROI\
+  \ split\n│   └── ML_Manual_ROI_3fold.py                  Route B: 3-fold CV\n│\n├── outputs/       \
+  \                    ← All experimental outputs\n│   ├── deformed_masks/                   Route B:\
+  \ 2,385 deformation masks\n│   ├── perturbed_masks/                  Route A: perturbation masks\n│\
+  \   ├── features/                        Feature CSVs (42 files)\n│   ├── results/                 \
+  \        ML metrics + PROBS + DeLong\n│   └── visualization/                   All figures + generation\
+  \ scripts\n│\n└── nnunetv2/                          ← Data storage only (not in repo)\n    └── SRTP_DATA/\
+  \                        TCGA-GBM(97) + TCGA-LGG(62) MRI\n```\n\n---\n\n## Quick Start\n\n### 1. Install\
+  \ dependencies\n\n```bash\npip install -r requirements.txt\n```\n\n### 2. Route A: Probability Perturbation\n\
+  \n```bash\n# Generate perturbed masks\npython perturbation/perturb_nnunet_probabilities.py \\\n  --input-dir\
+  \ nnunetv2/SRTP_DATA/nnUNet_TCGA_infer/predictions_5fold_prob/ \\\n  --output-dir outputs/perturbed_masks/mild/\
+  \ \\\n  --alpha 1.0 --beta-sd 0.20 --smooth-mm 2 --num-variants 20\n\n# Extract features\npython classification/Feature_Extraction_nnunet_ROI.py\
+  \ \\\n  --level mild --roi whole_tumor --max-workers 4\n\n# Merge + Classify\npython classification/Feature_Combination_nnunet_ROI.py\n\
+  python classification/ML_nnunet_ROI_3fold.py\n```\n\n### 3. Route B: Geometric Deformation\n\n```bash\n\
+  # Generate deformation masks (one severity at a time)\npython perturbation/batch_deform_manual.py --severity\
+  \ mild --max-workers 2\npython perturbation/batch_deform_manual.py --severity moderate --max-workers\
+  \ 2\npython perturbation/batch_deform_manual.py --severity severe --max-workers 2\n\n# Extract features\
+  \ (parallel over methods)\npython classification/Feature_Extraction_Manual_ROI.py \\\n  --mask-root-dir\
+  \ outputs/deformed_masks/mild/elastic \\\n  --mask-mode direct --output-prefix features_deformed_elastic_mild\
+  \ \\\n  --roi-mode both --max-workers 2\n\n# Split ROI/Label columns\npython classification/Feature_Combination_Manual_ROI.py\
+  \ \\\n  --input-dir outputs/features/manual --output-dir outputs/features/manual\n\n# Run 3-fold CV\
+  \ ML\npython classification/ML_Manual_ROI_3fold.py\n```\n\n---\n\n## Deformation Methods (Route B)\n\
+  \n| Method | Mechanism | Clinical Scenario |\n|--------|-----------|-------------------|\n| **Elastic**\
+  \ | Gaussian random displacement field | Inter-observer shape variation |\n| **Expand** | Adaptive distance\
+  \ transform outward | \"Draw bigger to be safe\" |\n| **Contract** | Adaptive distance transform inward\
+  \ | Conservative delineation |\n| **Dropout** | Probability-weighted region removal | Missed satellite\
+  \ lesions |\n\nAll methods use **FLAIR gradient-adaptive weighting**: deformation concentrates at fuzzy\
+  \ boundaries (low gradient), spares sharp boundaries (high gradient).\n\n---\n\n## Results Summary\n\
+  \n### Classification Performance (3-fold CV AUC)\n\n| | Route A | Route B |\n|---|---|---|\n| **Baseline**\
+  \ | 0.9394 (nnU-Net) | 0.9480 (Manual) |\n| **Severity span** | 0.9320–0.9394 (Δ=0.007) | 0.9172–0.9490\
+  \ (Δ=0.032) |\n| **Most sensitive** | Mild (AUC 0.9325) | Elastic (AUC 0.9172) |\n| **Most robust**\
+  \ | Severe (AUC 0.9335) | Dropout (AUC 0.9490) |\n\n### DSC Gradient\n\n| Severity | Route A WT | Route\
+  \ B WT |\n|----------|-----------|-----------|\n| Mild | 0.9888 | 0.9681 |\n| Moderate | 0.9822 | 0.9346\
+  \ |\n| Severe | 0.9778 | 0.8979 |\n\n---\n\n## Citation\n\nIf you use this code, please cite:\n\n```\n\
+  Yang, Z. et al. \"Gradient-Adaptive Geometric Deformation for \nRadiomics Robustness Assessment in Brain\
+  \ Tumor Classification.\" \n(2026)\n```\n\n---\n\n## License\n\nMIT License.\n"

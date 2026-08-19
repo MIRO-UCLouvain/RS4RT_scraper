@@ -1,0 +1,49 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: DoseRAD2026/matrad-vmat-example
+url: https://github.com/DoseRAD2026/matrad-vmat-example
+platform: github
+description: A VMAT planning example using matRad for DoseRAD2026
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-25T12:11:25Z'
+image_source: null
+heuristic_total_score: 27
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 3 particle-therapy term(s).
+- Matched 7 support term(s).
+readme_excerpt: "# matrad-vmat-example\n\nVMAT treatment planning pipeline for thorax patients (`1TH*`):\
+  \ DICOM → matRad MAT → VMAT optimization (FMO → Sequencing → DAO).\n\n---\n\n## Requirements\n\n- Python\
+  \ 3.8+ (standard library only — no pip packages required)\n- MATLAB R2021a\n- matRad (see [Setup](#setup)\
+  \ below)\n\n---\n\n## Setup\n\n**1. Clone with submodule**\n\n```bash\ngit clone --recurse-submodules\
+  \ https://github.com/DoseRAD2026/matrad-vmat-example\n```\n\nOr if already cloned:\n\n```bash\ngit submodule\
+  \ update --init\n```\n\n**2. Configure MATLAB path**\n\nBoth scripts hardcode the MATLAB binary path.\
+  \ Edit if yours differs:\n\n```python\n# script/01_dicom2mat.py and script/02_vmat_optimization.py\n\
+  MATLAB_BIN = \"/usr/local/MATLAB/link/R2021a/matlab\"\n```\n\n**3. Place DICOM input data**\n\n```\n\
+  data/input/<patient_id>/    ← CT + RTSTRUCT .dcm files\n```\n\n---\n\n## Structure\n\n```\nmatrad-vmat-example/\n\
+  ├── data/\n│   ├── input/<patient_id>/       # CT + RTSTRUCT DICOM files\n│   └── output/<patient_id>/\
+  \      # all outputs (generated)\n├── matRad-dev_VMAT_merge/        # matRad submodule (pinned commit)\n\
+  └── script/\n    ├── 01_dicom2mat.py\n    └── 02_vmat_optimization.py\n```\n\n---\n\n## Usage\n\n```bash\n\
+  # Step 1 — DICOM → MAT\npython script/01_dicom2mat.py                   # all patients\npython script/01_dicom2mat.py\
+  \ 1THB002           # single patient\n\n# Step 2 — VMAT optimization\npython script/02_vmat_optimization.py\
+  \           # all patients\npython script/02_vmat_optimization.py 1THB002   # single patient\npython\
+  \ script/02_vmat_optimization.py 1THB002 --force-recalc-dij   # skip dij cache\npython script/02_vmat_optimization.py\
+  \ 1THB002 -c pln.json          # custom plan params\n```\n\n---\n\n## Outputs\n\nWritten to `data/output/<patient_id>/`:\n\
+  \n| File | Content |\n|------|---------|\n| `<id>.mat` | matRad `ct` + `cst` structs |\n| `<id>_stf_dij_cache.mat`\
+  \ | Beam geometry + dose influence matrix (cached) |\n| `<id>_dose.mha` | Optimized dose cube, per-fraction\
+  \ (single precision) |\n| `<id>_dvh_report.txt` | DVH metrics + constraint PASS/FAIL |\n| `<id>_dvh.png`\
+  \ | DVH plot |\n| `<id>_optimization.png` | FMO + DAO convergence curves |\n\n> The stf/dij calculation\
+  \ is slow and cached automatically. Re-runs reuse the cache unless parameters change or `--force-recalc-dij`\
+  \ is passed.\n\n---\n\n## Planning Protocol\n\n**Prescription:** 70 Gy / 35 fx (2 Gy/fx), full 360°\
+  \ VMAT arc.\n\n| Parameter | Value |\n|-----------|-------|\n| Gantry angle spacing | 2° (181 control\
+  \ points) |\n| Bixel size | 5 mm |\n| Dose grid | 5 mm |\n| Sequencer | Siochi, 7 levels |\n| Optimizer\
+  \ | IPOPT |\n\n| OAR | Constraint |\n|-----|-----------|\n| Spinal cord | Dmax < 50.5 Gy |\n| Lung |\
+  \ V60Gy < 33%, V5Gy < 33% |\n| Oesophagus | Dmax < 73.5 Gy, V60Gy < 15.3%, Dmean < 30.6 Gy |\n| Brachial\
+  \ plexus | Dmax < 66 Gy |\n\nA ring structure (PTV+5 mm to PTV+12 mm) is added to control dose fall-off.\
+  \ PTV is selected automatically by priority: `PTVOPT` > `PTV` > `PTV_UNION` > `PTV1` > `PTV_HAUPTPLAN`.\n"

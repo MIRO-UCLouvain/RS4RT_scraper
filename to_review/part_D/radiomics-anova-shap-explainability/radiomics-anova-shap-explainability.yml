@@ -1,0 +1,79 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: S-Nazem/radiomics-anova-shap-explainability
+url: https://github.com/S-Nazem/radiomics-anova-shap-explainability
+platform: github
+description: Code and workflows for radiomic feature analysis and model interpretability across photoacoustic
+  and CT imaging, including feature extraction, sensitivity testing, ML classification, and SHAP analysis.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-03-03T19:17:19Z'
+image_source: https://raw.githubusercontent.com/S-Nazem/radiomics-anova-shap-explainability/HEAD/plots/ANOVA_plots/ANOVA_full.png
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Radiomic Feature Sensitivity and Classification in Photoacoustic Imaging and CT (MPhil\
+  \ Project)\n\nThis repository contains the complete code, data pipeline, analysis notebooks, and final\
+  \ report for my MPhil project on Machine Learning and Feature Selection of Imaging-Based Biomarkers\
+  \ for Tumour Classification. The project was split across the two imaging modalities:\n\n- **Section\
+  \ A:** Reproduction of Escudero Sánchez et al. using full factorial + marginal ANOVA, feature selection,\
+  \ machine learning, and SHAP interpretability on photoacoustic imaging of breast cancer PDXs.\n- **Section\
+  \ B:** Extension study applying the same radiomics pipeline to the LIDC-IDRI CT dataset for lung nodule\
+  \ classification.\n\n---\n\n# \U0001F4C4 Read the Full Report\n\n**[Click here to view the PDF](Final_Report.pdf)**\n\
+  \n---\n\n## Key Results\n\n**Section A:** PAI Radiomics Study\n\n1. Sensitivity Analysis (ANOVA)\n\n\
+  Full-factorial ANOVA revealed key radiomic features sensitive to the model type and not to confounding\
+  \ factors (ie: FO Skewness, FO Kurtosis).\n\n<p align=\"center\"> <img src=\"plots/ANOVA_plots/ANOVA_full.png\"\
+  \ width=\"700\"/> </p>\n\n2. SHAP Analysis\n\nSHAP values identified FO 10th percentile, FO 90th Percentile\
+  \ (RMS), FO Skewness, FO Variance, and GLCM Imc2 as the most impactful features for the RF classifier.\n\
+  \n<p align=\"center\"> <img src=\"plots/SHAP_plots/shap_beeswarm.png\" width=\"700\"/> </p>\n\n\n**Section\
+  \ B:** LIDC-IRDI Extension Study\n\n1. Classifier Performance Plot (RFE vs Boruta) for both original\
+  \ and resampled sets.\n\n<p align=\"center\"> <img src=\"plots_extension/ML_plots/combined_rfe_boruta_smote_shaded.png\"\
+  \ width=\"700\"/> </p>\n\n2. SHAP Analysis\n\nSHAP analysis identified GLSZM Gray Level Non uniformity\
+  \ and its normalised counterpart as the most impactful features. Very little overlap between the PAI\
+  \ study and this, as could be expected from completely different imaging modalities and tumour biology.\n\
+  \n<p align=\"center\"> <img src=\"plots_extension/shap_plots/shap_bar_full.png\" width=\"700\"/> </p>\n\
+  \n3. SHAP Consistency Box plots\n\nSHAP analysis repeated over 1000 independent seeds unanimously showed\
+  \ GLSZM Gray Level Non Unifomity as the most influential feature.\n\n<p align=\"center\"> <img src=\"\
+  plots_extension/shap_plots/shap_rank_stability_horizontal_nosmote.png\" width=\"700\"/> </p>\n\n\n--\n\
+  \n## Project Structure\n\n```bash\nsn665/\n│\n├── data/                         # Radiomic CSVs and\
+  \ metadata\n│   ├── LIDC_Extension/csv           # Includes csvs for EXTENSION.ipynb\n│   ├── Photoacoustic_Study/csv\
+  \      # includes csvs for ANOVA and MODEL_PERFORMANCE.ipynb\n│\n├── Finalised Notebooks/          #\
+  \ Final cleaned Jupyter notebooks\n│   ├── ANOVA.ipynb               # Section A: ANOVA Sensitivity\
+  \ analysis\n│   ├── MODEL_PERFORMANCE.ipynb   # Section A: Model Discrimination (ML + SHAP)\n│   ├──\
+  \ EXTENSION.ipynb           # Section B: LIDC-IDRI Extension\n│\n├── Development Notebooks/        #\
+  \ Early exploratory notebooks (included for context)\n│\n├── MATLAB scripts (ANOVA)/       # MATLAB\
+  \ scripts used for ANOVA csv creation -> plots\n│\n├── src/                          # Custom Python\
+  \ modules (importable functions)\n│   ├── Extension.py              # Code used for the LIDC-IRDI extension\n\
+  │   ├── feature_selection.py      # Feature selection function\n│   ├── ML.py                     #\
+  \ ML training\n│   ├── PAI.py                    # SHAP, ML, and ANOVA utils for Section A \n│   └──\
+  \ plotting.py               # Plotting functions for section A\n│\n├── plots/                      \
+  \  # Figures from Section A (PAI)\n│   ├── ANOVA_plots/\n│   ├── Distributions_plots/\n│   ├── SHAP_plots/\n\
+  │   └── misc/\n│\n├── plots_extension/              # Figures from Section B (LIDC-IDRI extension)\n\
+  │   ├── feature_selection_plots/\n│   ├── ML_plots/\n│   ├── shap_plots/\n│   └── misc/\n│\n├── Instructions.md\
+  \               \n├── requirements.txt              # Python environment dependencies\n├── Executive_Summary.pdf\
+  \         # Executive Summary of full paper (<1000 words)\n├── Final_Report.pdf              # Full\
+  \ MPhil data analysis report paper (<7000 words)\n├── README.md                     # This file\n└──\
+  \ .gitignore                    # Files and folders to ignore in Git\n\n\n\n```\n\n--\n\n\n## Environment\
+  \ Setup\n\nRecommended: Python 3.9+\n\nInstall required packages using:\n\n```bash\npip install -r requirements.txt\n\
+  ```\n\nMain dependencies include:\n\n- pandas, numpy, scikit-learn, imblearn, shap, xgboost\n- pydicom,\
+  \ SimpleITK, pyradiomics\n- matplotlib, seaborn, tqdm\n\n--\n\n\n## Reproducibility Instructions\n\n\
+  Section A — Photoacoustic (Escudero Sanchez reproduction)\n- ANOVA.ipynb → ANOVA sensitivity analysis\n\
+  - MODEL_PERFORMANCE.ipynb → IQR variability plots, feature selection, ML and SHAP\n\n\nSection B — LIDC\
+  \ Extension (CT dataset)\n- EXTENSION.ipynb → Feature selection (RFE/Boruta), ML classification, SHAP\
+  \ explanations, SHAP boxplots\n\n--\n\n## Notes\n\n- The MATLAB scripts compute full-factorial ANOVA\
+  \ statistics (η²).\n- DICOM files used for LIDC radiomics were referenced in data/LIDC_Extension/, but\
+  \ not pushed due to size.\n- data/Photoacoustic_Study/csv contain all required radiomic CSVs for Part\
+  \ A.\n- data/LIDC_Extension/csv includes the csvs for Part B.\n- data/LIDC_Extension/volume_results.pkl\
+  \ (used in EXTENSION.ipynb) is not pushed due to large size (>2GB).\n- To reproduce the results, run\
+  \ the volume creation block in the notebook.\n- When prompted Compute new volumes? [Y/n], type Y to\
+  \ generate the file.\n- All core functions (radiomic loading, feature selection, ML, SHAP, plotting)\
+  \ are implemented in the src/ folder.\n\n--\n\n\n## Use of Generative Tools \n\n- I used Github's Copilot\
+  \ to help me automatically finish off code blocks and also to quickly docstring my functions in src/.\n\
+  \n- I used LLMs (eg. ChatGPT) to help me create professional looking plots and occasionally to help\
+  \ me debug errors when i implemented something incorrectly, (eg. in Dev_notebooks)."

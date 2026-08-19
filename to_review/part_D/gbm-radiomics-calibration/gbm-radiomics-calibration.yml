@@ -1,0 +1,109 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hudengfenglai/gbm-radiomics-calibration
+url: https://github.com/hudengfenglai/gbm-radiomics-calibration
+platform: github
+description: ''
+license: BSD-3-Clause
+language: Python
+keywords: []
+stars: 3
+updated_at: '2026-06-15T00:20:48Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# 胶质母细胞瘤 MGMT 预测与生存分析放射组学项目总览\n\n本项目当前已经不只是最初论文对应的 MGMT 主线代码，而是一个包含以下 4 条研究工作流的完整工程：\n\
+  \n1. 原始 MGMT 主线  \n2. MGMT 对比模型扩展  \n3. 独立 survival analysis 分支  \n4. 基于 unified cohort 的 rebalanced\
+  \ split 重训分支\n\n项目核心目标是基于 UCSF 与 UPENN 的多模态 MRI 放射组学特征，完成：\n\n- MGMT promoter methylation 二分类预测\n- overall\
+  \ survival 生存建模\n- 模型解释与可视化\n- train/test 平衡性改造与重训比较\n\n## 1. 项目当前包含什么\n\n这套仓库目前覆盖了从 radiomics 特征提取到建模、解释、统计检验和重平衡重训的完整流程，主要包括：\n\
+  \n- MRI radiomics 特征提取与可用性统计\n- UCSF / UPENN 临床表和标签并表\n- patient-aware train/test split\n- train-only\
+  \ 特征过滤、相关性控制与 top-k 选择\n- MGMT 分类模型训练、校准、阈值选择、SHAP 和 DCA\n- survival Cox 建模、risk stratification、Kaplan-Meier\
+  \ 和 PH 检验\n- 多模型公平比较\n- rebalanced split 搜索、统一 cohort 重训与结果汇总\n\n## 2. 当前数据范围\n\n当前仓库里默认对应的有效数据范围是：\n\
+  \n- 初始 radiomics 队列：`UCSF 349 + UPENN 262 = 611`\n- MGMT 已知标签样本：`610`\n- survival 有效样本：`610`\n- unified\
+  \ rebalanced split 实际交集病人：`609`\n\n之所以 rebalanced 不是 `610`，而是 `609`，原因是：\n\n- MGMT 可用病人与 survival 可用病人不是完全同一批\n\
+  - MGMT-only：`UPENN-GBM-00424`\n- survival-only：`UCSF-PDGM-0272`\n- unified rebalanced split 用的是两条线都可用的交集，所以最终是\
+  \ `609`\n\n## 3. 目录结构\n\n项目根目录下最重要的内容是：\n\n- [code](./code)  \n  所有 Python 脚本\n- [derivatives](./derivatives)\
+  \  \n  绝大多数 MGMT 输出、图和汇总文件\n- [MGMT_USAGE_zh.md](./MGMT_USAGE_zh.md)  \n  原始 MGMT 主线中文说明\n- [SURVIVAL_USAGE_zh.md](./SURVIVAL_USAGE_zh.md)\
+  \  \n  survival 分支中文说明\n- [README_COMPARE_MODELS_zh.md](./README_COMPARE_MODELS_zh.md)  \n  MGMT 对比模型扩展说明\n\
+  - [README_REBALANCED_zh.md](./README_REBALANCED_zh.md)  \n  unified rebalanced split 与重训说明\n\n另外要注意：\n\
+  \n- survival 的一部分结果历史上写在工作区根目录的 [derivatives](</g:/PKG - UPENN-GBM-NIfTI2/derivatives>)\n- rebalanced\
+  \ 结果已经在项目内镜像汇总到 [derivatives/rebalanced_results__4x](./derivatives/rebalanced_results__4x)\n\n## 4.\
+  \ 项目主线地图\n\n### 4.1 数据提取与并表\n\n最前面的公共步骤是：\n\n- `code/pipeline_extract_catalogue__1.py`  \n  radiomics\
+  \ 特征提取\n- `code/collect_dataset__2.py`  \n  构建 MGMT 母表\n- `code/collect_dataset_survival__2b.py`  \n\
+  \  构建 survival 母表\n\n核心母表文件：\n\n- [derivatives/radiomics_features_with_mgmt.csv](./derivatives/radiomics_features_with_mgmt.csv)\n\
+  - [radiomics_features_with_survival.csv](</g:/PKG - UPENN-GBM-NIfTI2/derivatives/radiomics_features_with_survival.csv>)\n\
+  \n### 4.2 原始 MGMT 主线\n\n原始 MGMT 主线的脚本顺序是：\n\n1. `code/collect_dataset__2.py`\n2. `code/rank_and_split__4.py`\n\
+  3. `code/logreg__5a.py`\n4. `code/logreg__5aL1.py`\n5. `code/lightGBM__5b.py`\n6. `code/lightGBM__5bL1.py`\n\
+  7. `code/stats__3.py`\n\n核心 split 文件：\n\n- [derivatives/traincv_set__4.xlsx](./derivatives/traincv_set__4.xlsx)\n\
+  - [derivatives/test_set__4.xlsx](./derivatives/test_set__4.xlsx)\n- [derivatives/traincv_set__4_topk.xlsx](./derivatives/traincv_set__4_topk.xlsx)\n\
+  - [derivatives/test_set__4_topk.xlsx](./derivatives/test_set__4_topk.xlsx)\n\n这条线是最接近原论文 MGMT 主模型的基础版本。\n\
+  \n### 4.3 MGMT 对比模型扩展\n\n在原始 MGMT 主线基础上，项目又扩展了多种公平对照模型：\n\n- `code/linearSVM__5c.py`\n- `code/xgboost__5d.py`\n\
+  - `code/extraTrees__5e.py`\n- `code/rbfSVM__5f.py`\n- `code/randomForest__5g.py`\n- `code/model_compare_utils__5y.py`\n\
+  - `code/compare_models__5z.py`\n\n这部分当前已经包含：\n\n- Logistic\n- Logistic-L1 variant\n- LightGBM\n- LightGBM-L1\
+  \ variant\n- Linear SVM\n- XGBoost\n- ExtraTrees\n- RBF-SVM\n- RandomForest\n\n对应的汇总表：\n\n- [derivatives/model_comparison__5z.csv](./derivatives/model_comparison__5z.csv)\n\
+  - [derivatives/model_comparison_rebalanced__5z.csv](./derivatives/model_comparison_rebalanced__5z.csv)\n\
+  \n### 4.4 Survival 分支\n\nsurvival 分支和 MGMT 主线独立，不会改动原 MGMT 主流程。\n\n核心脚本：\n\n- `code/collect_dataset_survival__2b.py`\n\
+  - `code/rank_and_split_survival__4b.py`\n- `code/cox_models_survival__5b.py`\n- `code/cox_models_survival_l1__5c.py`\n\
+  - `code/compare_survival_l1_vs_enet__5c.py`\n- `code/stats_survival__6b.py`\n\n核心 split 文件：\n\n- [traincv_survival__4b.xlsx](</g:/PKG\
+  \ - UPENN-GBM-NIfTI2/derivatives/traincv_survival__4b.xlsx>)\n- [test_survival__4b.xlsx](</g:/PKG -\
+  \ UPENN-GBM-NIfTI2/derivatives/test_survival__4b.xlsx>)\n- [traincv_survival_topk__4b.xlsx](</g:/PKG\
+  \ - UPENN-GBM-NIfTI2/derivatives/traincv_survival_topk__4b.xlsx>)\n- [test_survival_topk__4b.xlsx](</g:/PKG\
+  \ - UPENN-GBM-NIfTI2/derivatives/test_survival_topk__4b.xlsx>)\n\n核心比较结果：\n\n- [survival_model_comparison__5c.csv](</g:/PKG\
+  \ - UPENN-GBM-NIfTI2/derivatives/survival_model_comparison__5c.csv>)\n\n### 4.5 Rebalanced unified split\
+  \ 分支\n\n这是当前项目后续分析里最重要的增强版分支。它做的事情不是重跑 radiomics，而是：\n\n- 在 patient level 上构建 MGMT + survival 的共同可用\
+  \ cohort\n- 用 `Event + MGMT` 做联合分层\n- 搜索 `1..1000` 个随机种子\n- 对候选 split 做基线同质性检验\n- 选出更平衡的 `85% train\
+  \ / 15% test`\n- 在这个新 split 上重训 MGMT 和 survival 下游模型\n\n核心脚本：\n\n- `code/build_rebalanced_split__4x.py`\n\
+  - `code/check_rebalanced_split_quality__7x.py`\n- `code/run_mgmt_models_rebalanced__4x.py`\n- `code/run_survival_models_rebalanced__4x.py`\n\
+  \nrebalanced 核心 split 文件：\n\n- [derivatives/traincv_set__4_rebalanced.xlsx](./derivatives/traincv_set__4_rebalanced.xlsx)\n\
+  - [derivatives/test_set__4_rebalanced.xlsx](./derivatives/test_set__4_rebalanced.xlsx)\n- [derivatives/traincv_set__4_topk_rebalanced.xlsx](./derivatives/traincv_set__4_topk_rebalanced.xlsx)\n\
+  - [derivatives/test_set__4_topk_rebalanced.xlsx](./derivatives/test_set__4_topk_rebalanced.xlsx)\n-\
+  \ [traincv_survival__4b_rebalanced.xlsx](</g:/PKG - UPENN-GBM-NIfTI2/derivatives/traincv_survival__4b_rebalanced.xlsx>)\n\
+  - [test_survival__4b_rebalanced.xlsx](</g:/PKG - UPENN-GBM-NIfTI2/derivatives/test_survival__4b_rebalanced.xlsx>)\n\
+  \nrebalanced 汇总目录：\n\n- [derivatives/rebalanced_results__4x](./derivatives/rebalanced_results__4x)\n\
+  \n## 5. 可视化与解释模块\n\n项目除了模型训练，还包含完整的图形输出流程：\n\n- `code/create_corr_plots__8.py`  \n  原始 MGMT 相关性 Figure\
+  \ 1–4\n- `code/create_corr_plots_warm__8a.py`  \n  暖色版本\n- `code/create_corr_plots_papercolors__8a.py`\
+  \  \n  接近原论文色系版本\n- `code/create_corr_plots_survival__8b.py`  \n  survival 版本相关性图\n- `code/analyze_feature_consistency__5w.py`\
+  \  \n  特征稳定性/重叠分析\n\nMGMT 解释相关：\n\n- Logistic / LightGBM / ExtraTrees / RandomForest 等模型目录中的 SHAP 输出\n\
+  - calibration、ROC、confusion matrix、feature importance、DCA 等图\n\nSurvival 解释相关：\n\n- risk score 表\n-\
+  \ Kaplan-Meier 图\n- Cox 系数 summary\n- ElasticNet vs L1 比较表\n\n## 6. 当前保存结果的快速结论\n\n下面是当前仓库里已经保存的、比较重要的一组结果摘要。\n\
+  \n### 6.1 Rebalanced split 质量\n\n来自 [build_rebalanced_split__4x_report.txt](</g:/PKG - UPENN-GBM-NIfTI2/derivatives/build_rebalanced_split__4x_report.txt>)：\n\
+  \n- unified patient rows：`609`\n- selected random_state：`555`\n- train/test：`517 / 92`\n- test censored\
+  \ count：`24`\n- `p(MGMT)=0.9295`\n- `p(Event)=0.9342`\n- `p(dataset)=0.7439`\n- `p(Age)=0.9140`\n- `p(Time)=0.3402`\n\
+  \n这说明当前 unified rebalanced split 在 MGMT、Event、center 和主要基线变量上整体平衡性较好。\n\n### 6.2 Rebalanced MGMT 模型\n\
+  \n来自 [derivatives/model_comparison_rebalanced__5z.csv](./derivatives/model_comparison_rebalanced__5z.csv)：\n\
+  \n- `extraTrees__5e`：`test_auc = 0.6165`\n- `xgboost__5d`：`test_auc = 0.6165`\n- `randomForest__5g_rebalanced`：`test_auc\
+  \ = 0.6053`\n- `lightGBM__5bL1`：`test_auc = 0.5804`\n\n当前 rebalanced MGMT 分支里，按 AUC 看：\n\n- ExtraTrees\
+  \ 和 XGBoost 并列第一\n- RandomForest 作为标准 bagging baseline 紧随其后\n- 整体性能比旧 split 更保守，但比较口径更公平\n\n### 6.3\
+  \ Survival 模型比较\n\n来自 [survival_model_comparison__5c.csv](</g:/PKG - UPENN-GBM-NIfTI2/derivatives/survival_model_comparison__5c.csv>)：\n\
+  \n- `Clinical Cox`：`test_cindex = 0.6639`\n- `Radiomics Cox-ElasticNet`：`test_cindex = 0.6036`\n- `Radiomics\
+  \ Cox-L1`：`test_cindex = 0.6328`\n- `Clinico-radiomic Cox-ElasticNet`：`test_cindex = 0.6538`\n- `Clinico-radiomic\
+  \ Cox-L1`：`test_cindex = 0.6969`\n\n当前 survival 结果里，表现最好的模型是：\n\n- `Clinico-radiomic Cox-L1`\n\n它同时还具有更强稀疏性：\n\
+  \n- 只保留 `19` 个非零特征\n\n## 7. 推荐阅读顺序\n\n如果你第一次接手这个项目，建议按下面顺序看：\n\n1. 当前这份 [README.md](./README.md)  \n\
+  \   先建立全局地图\n2. [MGMT_USAGE_zh.md](./MGMT_USAGE_zh.md)  \n   看原始 MGMT 主线\n3. [SURVIVAL_USAGE_zh.md](./SURVIVAL_USAGE_zh.md)\
+  \  \n   看 survival 独立分支\n4. [README_COMPARE_MODELS_zh.md](./README_COMPARE_MODELS_zh.md)  \n   看 MGMT\
+  \ 对比模型扩展\n5. [README_REBALANCED_zh.md](./README_REBALANCED_zh.md)  \n   看 unified rebalanced split 与重训\n\
+  \n## 8. 推荐运行顺序\n\n### 8.1 原始 MGMT 主线\n\n```bash\npython code/collect_dataset__2.py\npython code/rank_and_split__4.py\n\
+  python code/logreg__5a.py\npython code/logreg__5aL1.py\npython code/lightGBM__5b.py\npython code/lightGBM__5bL1.py\n\
+  python code/stats__3.py\n```\n\n### 8.2 Survival 分支\n\n```bash\npython code/collect_dataset_survival__2b.py\n\
+  python code/rank_and_split_survival__4b.py\npython code/cox_models_survival__5b.py\npython code/cox_models_survival_l1__5c.py\n\
+  python code/compare_survival_l1_vs_enet__5c.py\npython code/stats_survival__6b.py\n```\n\n### 8.3 Rebalanced\
+  \ unified split 分支\n\n```bash\npython code/build_rebalanced_split__4x.py\npython code/check_rebalanced_split_quality__7x.py\n\
+  python code/run_mgmt_models_rebalanced__4x.py\npython code/run_survival_models_rebalanced__4x.py\npython\
+  \ code/randomForest__5g.py\npython code/compare_models__5z.py\npython code/compare_survival_l1_vs_enet__5c.py\n\
+  ```\n\n## 9. 环境依赖\n\n推荐 Python `3.10+`。\n\n最常用依赖包括：\n\n- `numpy`\n- `pandas`\n- `scipy`\n- `scikit-learn`\n\
+  - `matplotlib`\n- `openpyxl`\n- `lifelines`\n- `SimpleITK`\n- `nibabel`\n- `pyradiomics`\n\nsurvival\
+  \ 的部分时间依赖指标如果要完整输出，还建议安装：\n\n- `scikit-survival`\n\n可参考：\n\n```bash\npip install numpy pandas scipy\
+  \ scikit-learn matplotlib openpyxl lifelines\npip install SimpleITK nibabel pyradiomics\npip install\
+  \ scikit-survival\n```\n\n## 10. 使用注意事项\n\n- MRI 原始影像不在仓库中，当前仓库主要保存代码、母表和派生结果\n- 一些脚本的输入输出路径有历史遗留，项目内\
+  \ `derivatives/` 和工作区根目录 `derivatives/` 都在使用\n- rebalanced 分支当前是最推荐用于公平比较的版本\n- `lightGBM__5bL1` 和某些\
+  \ tuned / Optuna 脚本耗时明显更长\n- 不同子分支之间不要混用 split 文件，尤其注意原始 split 和 `_rebalanced` split 的区别\n\n## 11. 引用与归属\n\
+  \n原始 MGMT 主线对应论文：\n\n> Rafail C. Christodoulou, Georgios Vamvouras, Rafael Pitsillos,  \n> Elena E.\
+  \ Solomou, Michalis F. Georgiou.  \n> **Explainable, modality-adaptive radiomics for MGMT methylation\
+  \ prediction in high-grade glioma: a decision-curve analysis study**.  \n> *Frontiers in Oncology*,\
+  \ 2026.  \n> DOI: `10.3389/fonc.2025.1731258`\n\n代码许可见：\n\n- [LICENCE.txt](./LICENCE.txt)\n\n作者与归属说明见：\n\
+  \n- [AUTHORS.md](./AUTHORS.md)\n"

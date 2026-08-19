@@ -1,0 +1,113 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: jiff3/SpectraShift
+url: https://github.com/jiff3/SpectraShift
+platform: github
+description: Physics-first benchmark for motion-induced dual-energy CT material-decomposition error
+license: MIT
+language: Python
+keywords:
+- computed-tomography
+- dual-energy-ct
+- material-decomposition
+- medical-imaging
+- physics-simulation
+stars: 1
+updated_at: '2026-08-16T17:52:55Z'
+image_source: https://raw.githubusercontent.com/jiff3/SpectraShift/HEAD/figures/phantom_ground_truth.png
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+readme_excerpt: "# SpectraShift — Motion-Induced Error in Dual-Energy CT Material Decomposition\n\nDual-energy\
+  \ reconstruction assumes that measurements acquired with different spectra describe sufficiently consistent\
+  \ anatomy. SpectraShift studies what happens when that assumption fails using a physics-first CT simulation\
+  \ with known material ground truth.\n\nSpectraShift is a compact, CPU-oriented educational/research\
+  \ simulation. It uses synthetic 2D phantoms, energy-dependent x-ray attenuation, polychromatic photon\
+  \ formation, Poisson noise, filtered backprojection, calibrated image-domain material decomposition,\
+  \ and controlled inter-energy motion. It is not a validated clinical scanner model.\n\n## Research question\n\
+  \nHow much quantitative iodine, hydroxyapatite (HAp), and elemental-calcium error is introduced when\
+  \ sequential low- and high-energy acquisitions observe slightly different anatomy, and how is that sensitivity\
+  \ related to spectral and material-basis conditioning?\n\n## Why this matters\n\nMaterial decomposition\
+  \ combines measurements whose spectral responses are often nearly collinear. Small spatial inconsistency\
+  \ can therefore be interpreted as a material change rather than motion. A controlled simulation provides\
+  \ exact geometry, concentration, and calcium-mass truth, allowing mismatch error to be separated from\
+  \ ordinary quantum noise and partial-volume effects.\n\n## Pipeline\n\n```text\nxraydb material attenuation\
+  \ + educational tungsten spectra\n                         ↓\nsupersampled water / iodinated-water /\
+  \ HAp-in-water phantom\n                         ↓\nknown low/high cardiac-like displacement\n     \
+  \                    ↓\nbasis path lengths in cm (parallel-beam Radon transform)\n                 \
+  \        ↓\npolychromatic Beer–Lambert counts → Poisson noise → log sinograms\n                    \
+  \     ↓\nramp-filter FBP in cm⁻¹ → noiseless insert calibration\n                         ↓\nnonnegative,\
+  \ volume-constrained three-material decomposition\n                         ↓\nconcentration, calcium\
+  \ mass, cross-talk, CNR, residual, and conditioning\n```\n\n## Main experiment\n\nThe default motion\
+  \ sweep evaluates inter-energy delays of 0, 10, 25, 50, 75, and 100 ms. A 60 bpm sinusoidal model uses\
+  \ 1.5 mm x amplitude and 0.5 mm y amplitude, with the reference phase chosen for nonzero x velocity.\
+  \ The low-energy anatomy is the evaluation reference; the high-energy anatomy is displaced by the configured\
+  \ delay.\n\nTwo small companion studies separate important confounders:\n\n- photon counts of 20,000,\
+  \ 100,000, and 500,000 photons/ray at 0/50/100 ms;\n- HAp inclusion diameters of 0.5, 1.0, and 2.0 mm\
+  \ at 0/50/100 ms.\n\nThe spectral study evaluates six selected kVp/filter pairs with matched anatomy\
+  \ and a fixed 75 ms mismatch. It recalibrates the basis matrix for each pair and records spectral overlap,\
+  \ mean energies, singular values, condition number, response angle, and decomposition error.\n\n## Representative\
+  \ results\n\nAll values below come from the committed CSV/JSON outputs generated with seed 2026.\n\n\
+  ![Synthetic three-basis vessel phantom](figures/phantom_ground_truth.png)\n\nThe supersampled reference\
+  \ phantom contains a 12 mm iodinated vessel and two 2 mm HAp inclusions. For the 1 mm slice, the analytical\
+  \ ground truth is 0.624 mg iodine, 1.262 mg HAp, and 0.504 mg elemental calcium.\n\n![Motion-induced\
+  \ decomposition results](figures/motion_quantification.png)\n\nAt 100 ms, the physical low/high displacement\
+  \ was 0.887 mm. HAp-to-iodine cross-talk increased from 9.78% at 0 ms to 54.26%, and RMS decomposition\
+  \ residual increased from 0.02234 to 0.02706 cm⁻¹. Iodine RMSE was non-monotonic (0.720 mg/mL at 0 ms\
+  \ and 0.710 mg/mL at 100 ms).\n\nWhole-support calcium error decreased from +372.7% to +287.5% as motion\
+  \ increased. This surprising direction is retained rather than corrected: the absolute estimate is dominated\
+  \ by diffuse positive HAp produced by the nonnegative estimator under poor conditioning. Motion changes\
+  \ projection onto the feasible response triangle, reducing some diffuse HAp while increasing localized\
+  \ reciprocal cross-talk and residual.\n\n![Spectral conditioning results](figures/spectral_conditioning.png)\n\
+  \nMatched-anatomy condition numbers ranged from 41.15 for 90/140 kVp with 0.4 mm Sn to 8773.69 for 80/120\
+  \ kVp with 0.2 mm Sn. The latter had spectral overlap 0.498 but a response-vector angle of only 0.013°,\
+  \ showing that spectral overlap alone is not a substitute for calibrated basis conditioning. Under 75\
+  \ ms mismatch, its HAp-to-iodine cross-talk reached 59.79%.\n\nThe 0.5 mm inclusions contained only\
+  \ 0.0274 mg true calcium and had +7644.9% error at 0 ms, compared with +372.7% for 2.0 mm inclusions.\
+  \ At 0 ms, 20,000 photons/ray increased calcium error to +605.4%; the 500,000-photon result was not\
+  \ strictly monotonic because beam-hardening/calibration bias and the constrained estimator remained\
+  \ dominant.\n\nDetailed definitions and interpretation are in [the technical note](docs/technical_note.md).\n\
+  \n## Physics and model summary\n\n- Energies are in keV; the isolated xraydb adapter converts them to\
+  \ eV.\n- Mass attenuation is in cm²/g and linear attenuation in cm⁻¹.\n- Geometry is in mm; Radon sums\
+  \ are multiplied by pixel spacing in cm.\n- Concentration uses 1 mg/mL = 0.001 g/cm³.\n- Slice mass\
+  \ uses pixel area × slice thickness with 1000 mm³ = 1 mL.\n- HAp attenuation and calcium fraction are\
+  \ derived from `Ca5(PO4)3OH` stoichiometry.\n- Default spectra are an 80 kVp beam with 2.5 mm Al and\
+  \ a 140 kVp beam with 2.5 mm Al + 0.4 mm Sn.\n- Default images are 256×256 at 0.5 mm spacing with 360\
+  \ projection views and 1 keV spectral sampling.\n- Decomposition support is estimated from reconstructed\
+  \ attenuation; ground-truth masks are used only for evaluation metrics.\n\n## Reproduction\n\nPython\
+  \ 3.11 or newer is required. From the repository root:\n\n```bash\npython -m venv .venv\n# Windows:\
+  \ .venv\\Scripts\\activate\n# macOS/Linux: source .venv/bin/activate\npython -m pip install -e \".[test]\"\
+  \npython -m pytest\npython -m spectrashift.cli reproduce --quick\n```\n\nQuick mode uses 96×96 images\
+  \ and 90 views for the motion/spectral sweeps and writes them under ignored `results/quick/` and `figures/quick/`\
+  \ directories. It still regenerates the default reference and baseline figures.\n\nThe baseline configuration\
+  \ uses matched 0 ms anatomy. Controlled mismatch is introduced only by the motion and spectral experiments.\n\
+  \nRegenerate the canonical experiment outputs with:\n\n```bash\npython -m spectrashift.cli reproduce\n\
+  ```\n\nIndividual entry points are also available:\n\n```bash\npython experiments/plot_spectral_physics.py\n\
+  python experiments/plot_phantom_ground_truth.py\npython experiments/run_baseline_reconstruction.py\n\
+  python experiments/run_material_decomposition_baseline.py\npython -m spectrashift.cli motion-sweep --config\
+  \ configs/motion_sweep.yaml --run --overwrite\npython -m spectrashift.cli spectral-sweep --config configs/spectral_sweep.yaml\
+  \ --run --overwrite\n```\n\nResolved YAML configurations and runtime package versions are saved beside\
+  \ results. Randomness uses explicitly passed `numpy.random.Generator` instances. Sweep seeds are stable\
+  \ functions of the global seed and experimental condition; corresponding streams are reused across comparisons\
+  \ as a common-random-numbers design.\n\n## Repository structure\n\n```text\nsrc/spectrashift/   reusable\
+  \ physics, reconstruction, decomposition, metrics, sweeps\nconfigs/            validated baseline, motion,\
+  \ and spectral experiment settings\nexperiments/        thin standalone experiment entry points\ntests/\
+  \              unit, invariant, numerical, and reduced integration tests\nfigures/            canonical\
+  \ generated figures\nresults/            canonical scalar tables, calibration, config, and provenance\n\
+  docs/               research-style technical note\n```\n\n## Limitations\n\n- Physics-motivated educational\
+  \ tungsten spectra, not measured scanner spectra.\n- 2D parallel-beam geometry; no cone beam, helical\
+  \ sampling, or through-plane motion.\n- No scatter, electronic detector noise, detector response, pile-up,\
+  \ focal-spot blur, bow-tie variation, or vendor corrections.\n- Global sinusoidal rigid translation\
+  \ rather than deformable cardiac motion.\n- Image-domain decomposition with homogeneous-insert effective\
+  \ coefficients.\n- Additive water/iodine/HAp basis assumptions neglect solution displacement and chemistry.\n\
+  - No clinically validated material-detection threshold; nonnegative whole-body integration can accumulate\
+  \ positive bias.\n- No claim of clinical, diagnostic, or commercial-scanner validation.\n\n## Tests\n\
+  \n```bash\npython -m pytest\n```\n\nThe suite checks unit conversions, xraydb keV/eV handling, attenuation\
+  \ positivity, filtration, spectral validity, Radon path-length scaling, Beer–Lambert monotonicity, Poisson\
+  \ statistics, reconstruction scaling, fraction conservation, motion geometry, analytical HAp/calcium\
+  \ mass, pure-basis recovery, virtual non-contrast, conditioning diagnostics, deterministic sweeps, CSV\
+  \ safety, and reduced end-to-end runs. GitHub Actions runs the suite and the quick reproduction smoke\
+  \ test on Python 3.11.\n\n## License\n\nMIT; see [LICENSE](LICENSE).\n"

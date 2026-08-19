@@ -1,0 +1,187 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: marina15rodriguez/proton-beam-delivery
+url: https://github.com/marina15rodriguez/proton-beam-delivery
+platform: github
+description: 'Proton therapy simulation (beam production, beam transport, and pencil beam scanning delivery
+  with interplay effect mitigation due to breathing of patient). Mitigation of breathing motion (both
+  parallel and orthogonal) was analyzed with several strategies such as gating and repainting. '
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-03-29T18:18:25Z'
+image_source: null
+heuristic_total_score: 18
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 4 particle-therapy term(s).
+readme_excerpt: '# Proton Beam Delivery Simulation
+
+
+  End-to-end proton therapy simulation covering beam production, beam transport, and pencil beam scanning
+  delivery with interplay effect mitigation. Developed as part of the LGBIO2070 course at UCLouvain.
+
+
+  ## Overview
+
+
+  The project is structured in three parts:
+
+
+  ### 1. Beam Production (Cyclotron)
+
+  Relativistic calculation of key isochronous cyclotron parameters for 200 MeV protons:
+
+  - Lorentz factor γ and proton velocity
+
+  - Cyclotron frequency (f_c ≈ 30 MHz) and high-voltage frequency
+
+  - Magnetic field at injection and extraction (1.88 T → 2.29 T)
+
+  - High-voltage amplitude (~1.85 kV)
+
+
+  ### 2. Beam Transport (Quadrupole Beamline)
+
+  Optimization of a 7 m beamline with 4 quadrupole magnets (two doublets) using 4×4 transfer matrices:
+
+  - Constraints: σ_out ≤ 3 mm, 3σ < 25 mm throughout, d ≥ 0
+
+  - Doublet configuration: focus–defocus–focus–defocus in x
+
+  - Scipy trust-constr optimizer with beam symmetry weighting
+
+
+  ### 3. Beam Delivery (Pencil Beam Scanning)
+
+  Pencil beam scanning of a 60 mm square target with a 34×34 grid, 2 mm spacing, 2 mm σ:
+
+
+  | Scenario | Coverage |
+
+  |---|---|
+
+  | Motionless | 100% |
+
+  | Parallel motion (interplay) | 63.8% |
+
+  | Orthogonal motion (interplay) | 90.2% |
+
+  | Parallel + repainting (10×) | 88.4% |
+
+  | Parallel + gating (5% window) | 97.4% |
+
+  | Parallel + gating (10%) + repainting | **95.1%** ✓ |
+
+  | Orthogonal + gating (10%) + repainting | **95.0%** ✓ |
+
+
+  Coverage objective: ≥ 95% of target pixels receive ≥ 90% of prescribed dose (1 Gy).
+
+
+  ## Project Structure
+
+
+  ```
+
+  proton-beam-delivery/
+
+  ├── src/
+
+  │   ├── cyclotron.py   # Cyclotron parameter calculations
+
+  │   ├── beamline.py    # Transfer matrices, beamline optimization
+
+  │   ├── delivery.py    # PBS dose, motion, repainting, gating
+
+  │   └── main.py        # Full pipeline
+
+  ├── notebooks/
+
+  │   └── labfinalversion.ipynb  # Original lab notebook
+
+  ├── reports/
+
+  │   └── PTproject2.pdf         # Full lab report
+
+  ├── results/                   # Generated plots (not tracked)
+
+  ├── requirements.txt
+
+  └── README.md
+
+  ```
+
+
+  ## Installation
+
+
+  ```bash
+
+  git clone https://github.com/marina15rodriguez/proton-beam-delivery.git
+
+  cd proton-beam-delivery
+
+  pip install -r requirements.txt
+
+  ```
+
+
+  ## Usage
+
+
+  ```bash
+
+  python src/main.py
+
+  ```
+
+
+  Results are saved to `results/`.
+
+
+  ## Physics
+
+
+  ### Transfer Matrix (drift + thin-lens quadrupole)
+
+  ```
+
+  V_out = M_drift(d4) · M_quad(f4) · ... · M_quad(f1) · M_drift(d0) · V_in
+
+  ```
+
+
+  ### Pencil Beam Dose
+
+  Each pencil beam deposits dose as a 2D Gaussian:
+
+  ```
+
+  D(x,y) = exp(-x²/2σ²) · exp(-y²/2σ²)
+
+  ```
+
+  Normalized so that the average dose in the static target = 1 Gy.
+
+
+  ### Triangle Wave Motion
+
+  ```
+
+  x(t) = A · (1 - 4|((t mod T)/T) - 0.5|)
+
+  ```
+
+  Amplitude A = 10 mm, period T = 4 s.
+
+
+  ## Authors
+
+
+  Marina Rodríguez, Xinyao Li — LGBIO2070, UCLouvain
+
+  '

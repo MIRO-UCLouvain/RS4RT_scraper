@@ -1,0 +1,141 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Kiragroh/DICOM-RT-Station
+url: https://github.com/Kiragroh/DICOM-RT-Station
+platform: github
+description: A comprehensive DICOM RT (Radiation Therapy) plan management application with graphical user
+  interface. This software enables receiving, organizing, and selectively forwarding DICOM RT plans to
+  various DICOM nodes with automated rule-based forwarding capabilities.
+license: null
+language: Python
+keywords: []
+stars: 8
+updated_at: '2026-08-17T05:13:32Z'
+image_source: https://raw.githubusercontent.com/Kiragroh/DICOM-RT-Station/HEAD/assets/banner.png
+heuristic_total_score: 28
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 7 support term(s).
+readme_excerpt: "![Banner](assets/banner.png)\n# DICOM RT Station\nA comprehensive DICOM RT (Radiation\
+  \ Therapy) plan management application with graphical user interface. This software enables receiving,\
+  \ organizing, and selectively forwarding DICOM RT plans to various DICOM nodes with automated rule-based\
+  \ forwarding capabilities.\n\n> **Independent project:** This is a personal open-source project, not\
+  \ an\n> official publication, product, approval, or support service of any employer,\n> healthcare provider,\
+  \ university, or vendor. Shipped AE titles and addresses\n> are non-routable synthetic examples. The\
+  \ software is provided without\n> warranty and requires local security review, validation, and governance.\n\
+  \n![Screenshot Placeholder](assets/main-interface.png)\n*Main interface showing received plans and forwarding\
+  \ options*\n\n## Use Cases\n\n- Hospitals/clinics that routinely send DICOM-RT datasets (CT, RS, RP,\
+  \ RD) and want to forward to multiple destinations (TPS, archive, QA, research) in one flow.\n- Control\
+  \ which plans to forward when a source system sends too many or in the wrong order (e.g., Ethos scheduled\
+  \ and adaptive plans). Use label filters like \"ADP\" to forward only adaptive plans.\n- Normalize routing\
+  \ behavior across mixed vendors by matching on Source AE and plan label substrings.\n- Batch-import\
+  \ historical studies from a folder and auto-forward to downstream systems.\n- Reduce manual overhead\
+  \ while keeping full visibility via logs and progress indicators.\n\n## Features\n\n### Core Functionality\n\
+  - **DICOM Network Receiver**: Receives DICOM files over the network and automatically organizes them\
+  \ into patient/plan folders\n- **Plan Management**: Displays all received plans in an organized tree\
+  \ view with patient information\n- **Selective Forwarding**: Send selected plans to configurable DICOM\
+  \ nodes\n- **Multi-Target Support**: Send plans to multiple destinations simultaneously\n- **Import\
+  \ Folder Processing**: Process DICOM files from local folders\n\n### Advanced Features\n- **Automated\
+  \ Rule-Based Forwarding**: Configure rules to automatically forward plans based on source AE title and\
+  \ plan name patterns\n- **Dual Forwarding Modes**:\n  - **Network Receive Mode**: Automatic forwarding\
+  \ when plans are received via DICOM network\n  - **Import Folder Mode**: Automatic forwarding when processing\
+  \ local import folders\n- **Pixel Data Preservation**: Maintains complete pixel data for RTDOSE, CT,\
+  \ and other imaging modalities\n- **Multi-Plan Operations**: Send multiple plans in batch operations\n\
+  - **Comprehensive Logging**: Detailed logging with configurable verbosity levels\n\n## Installation\n\
+  \n### Prerequisites\n\n- **Python 3.7+** (recommended: Python 3.11)\n- **pip** (Python package manager)\n\
+  - **Windows/Linux/macOS** (tested primarily on Windows)\n\n### Quick Start\n\n1. **Clone the repository**:\n\
+  ```bash\ngit clone https://github.com/yourusername/dicom-rt-station.git\ncd dicom-rt-station\n```\n\n\
+  2. **Install dependencies**:\n```bash\npip install -r requirements.txt\n```\n\n3. **Configure settings.ini**:\n\
+  - Ensure that all paths specified in settings.ini are valid on your system. For example, the folder\
+  \ D:\\received_plans will be created automatically if it doesn’t exist — but the drive D:\\ itself must\
+  \ already exist.\n\n\n4. **Run the application**:\n```bash\npython main.py\n```\n\nThe application will\
+  \ automatically create default configuration files on first run.\n\n## Configuration\n\n### Settings\
+  \ Configuration (`settings.ini`)\n\nThe main configuration is managed through `settings.ini`, which\
+  \ is automatically created on first startup. You can edit settings through the GUI (**File > Settings**)\
+  \ or directly edit the file.\n\n![Screenshot Placeholder](assets/settings-dialog.png)\n*Settings dialog\
+  \ for configuring DICOM nodes and application behavior*\n\n#### Key Settings Sections:\n\n**[General]**\n\
+  ```ini\nwatch_folder = d:\\received_plans          # Where received plans are stored\nimport_folder\
+  \ = d:\\import                  # Folder for manual import processing\nclear_import_folder_after_import\
+  \ = True   # Auto-delete import folder after processing\n```\n\n**[Receiver]**\n```ini\nae_title = DICOM-RT-STATION\
+  \              # Your application's AE title\nport = 11112                             # Port for receiving\
+  \ DICOM connections\n```\n\n**[Logging]**\n```ini\nverbose_info_logging = True              # Enable\
+  \ detailed status logging\n```\n\n**[Node1], [Node2], [Node3]** - Configure up to 3 or more target DICOM\
+  \ nodes:\n```ini\n[Node1]\nname = EXAMPLE_QA\nenabled = True\nae_title = EXAMPLE_QA\nip = 192.0.2.20\n\
+  port = 104\ncalled_ae_title = EXAMPLE_QA\ncalling_ae_title = DICOM-RT-STATION\n```\n\n### Forwarding\
+  \ Rules Configuration (`rules.ini`)\n\nConfigure automated forwarding rules through the **Rules** dialog\
+  \ accessible from the main menu.\n\n![Screenshot Placeholder](assets/rules-dialog.png)\n*Rules dialog\
+  \ for configuring automatic forwarding rules*\n\n#### Rule Types:\n\n1. **Network Receive Rules**: Forward\
+  \ plans received via DICOM network\n   - **Source AE**: Match a specific sending AE title (e.g., `EXAMPLE_RESEARCH`)\n\
+  \   - **Plan Label Match**: Forward only plans containing specific text (e.g., \"ADP\")\n   - **Target\
+  \ Nodes**: Destination nodes for forwarding\n\n2. **Import Folder Rule**: Forward all plans processed\
+  \ via import folder\n   - **Source AE**: Set to \"IMPORT_FOLDER\" (automatic)\n   - **Plan Label Match**:\
+  \ Leave empty to forward all plans\n   - **Target Nodes**: Destination nodes for forwarding\n\n####\
+  \ Example Rules:\n```ini\n[Rule1]\nname = Ethos ADP Plans\nenabled = True\nsource_ae = EXAMPLE_RESEARCH\n\
+  target_nodes = EXAMPLE_QA\nplan_label_match = ADP\n\n[Rule2]\nname = Import Folder Rule\nenabled = True\n\
+  source_ae = IMPORT_FOLDER\ntarget_nodes = EXAMPLE_QA\nplan_label_match =\n```\n\nNote: `plan_label_match`\
+  \ uses substring matching. If left empty, all plans matching the rule's source AE will be forwarded.\n\
+  \n## Usage\n\n### Starting the Application\n\n1. **Launch the application**:\n```bash\npython main.py\n\
+  ```\n\n2. **Start DICOM Receiver** (if receiving network data):\n   - Click **\"DICOM-Empfänger starten\"\
+  ** button\n   - Status will show \"Empfänger läuft\" when active\n\n### Receiving DICOM Plans\n\n**Network\
+  \ Reception:** Plans received via DICOM are organized by patient and shown in the tree view. If rules\
+  \ are enabled, matching plans are forwarded automatically.\n\n**Import Folder Processing:** Place DICOM\
+  \ files in the configured folder and click **\"Import Ordner verarbeiten\"**. Files are organized; optional\
+  \ auto‑cleanup can clear the folder after processing.\n\n### Manual Plan Forwarding\n\n1. **Select Plans**:\
+  \ Check the boxes next to plans you want to send\n2. **Select Target Nodes**: Enable checkboxes for\
+  \ destination nodes (Node1, Node2, Node3)\n3. **Send Plans**: Click **\"Senden\"** button\n4. **Monitor\
+  \ Progress**: Watch the status bar for sending progress\n\n### Viewing Plan Details\n\n- **Plan Information**:\
+  \ Click on any plan to view details in the right panel\n- **File Contents**: See all DICOM files included\
+  \ in each plan (RTPLAN, RTDOSE, RTSTRUCT, CT)\n- **Patient Data**: View patient ID, name, and plan metadata\n\
+  \n## Advanced Features\n\n### Automated Forwarding Workflows\n\n**Scenario 1: Network Receive with Selective\
+  \ Forwarding**\n- Configure rule: Source AE = `EXAMPLE_RESEARCH`, Plan Label = `ADP`\n- When plans containing\
+  \ `ADP` are received from that example source, they are automatically sent to the configured nodes\n\
+  - Other plans are received but not forwarded\n\n**Scenario 2: Import Folder with Universal Forwarding**\n\
+  - Configure IMPORT_FOLDER rule with empty plan label match\n- All plans processed via import folder\
+  \ are automatically forwarded\n- Useful for batch processing of archived plans\n\n### Logging and Monitoring\n\
+  \n**Log Files**: Located in `logs/` directory with timestamp-based filenames\n\n**Log Levels**:\n- **INFO**:\
+  \ General operation status\n- **DEBUG**: Detailed technical information\n- **ERROR**: Error conditions\
+  \ and failures\n\n**Key Log Events**:\n- Plan reception and organization\n- Forwarding rule evaluation\n\
+  - Sending operations and results\n- File operations and pixel data preservation\n\n## Troubleshooting\n\
+  \n### Common Issues\n\n**Plans not forwarding automatically:**\n- Check that forwarding rules are enabled\
+  \ in `rules.ini`\n- Verify source AE title matches exactly\n- Check plan label matching criteria\n-\
+  \ Review logs for rule evaluation details\n\n**DICOM sending failures:**\n- Verify target node configuration\
+  \ (IP, port, AE titles)\n- Check network connectivity\n- Ensure target node is accepting connections\n\
+  - Review DICOM association logs\n\n**Import folder not processing:**\n- Verify import folder path in\
+  \ settings\n- Check file permissions\n- Ensure DICOM files are valid\n- Review processing logs for errors\n\
+  \n### Log Analysis\n\nEnable verbose logging in `settings.ini`:\n```ini\n[Logging]\nverbose_info_logging\
+  \ = True\n```\n\nKey log patterns to look for:\n- `\"Prüfe Weiterleitungsregeln\"` - Rule evaluation\n\
+  - `\"Plan X erfolgreich an Y weitergeleitet\"` - Successful forwarding\n- `\"RTDOSE copied\"` - Pixel\
+  \ data preservation\n- `\"Association Released\"` - DICOM network operations\n\n## File Structure\n\n\
+  ```\ndicom-rt-station/\n├── main.py                    # Main application entry point\n├── dicom_processor.py\
+  \         # Core DICOM processing logic\n├── rules_manager.py           # Forwarding rules management\n\
+  ├── settings_manager.py        # Configuration management\n├── settings_dialog.py         # Settings\
+  \ GUI\n├── rules_dialog.py           # Rules configuration GUI\n├── requirements.txt          # Python\
+  \ dependencies\n├── settings.ini              # Main configuration (auto-created)\n├── rules.ini   \
+  \              # Forwarding rules (auto-created)\n├── logs/                     # Application logs\n\
+  ├── received_plans/           # Organized received plans can be changed in settings.ini\n└── import/\
+  \                   # Import folder for processing can be changed in settings.ini\n```\n\n## Roadmap\
+  \ (Planning)\n\n- **Plan Metrics Database**: Lightweight SQLite service that stores key DICOM‑RT metrics\
+  \ per plan/patient for search and QA.\n  - Patient/Plan identifiers, Source AE, timestamps\n  - RTPLAN:\
+  \ beams, energies, MUs, fractions, prescription\n  - RTDOSE: dose grid info, statistics (min/mean/max),\
+  \ DVH pre‑computations for key structures\n  - RTSTRUCT: structure set summary (names, counts)\n  -\
+  \ Indexing for fast lookups and rule analytics\n- **Metrics UI & API**: In‑app table and REST API to\
+  \ filter/export plans based on metrics (e.g., “all ADP plans with max dose > X”).\n- **Enhanced Rules\
+  \ Actions**: Optional actions per rule: rename/normalize plan labels, archive to PACS, anonymize, compress/ZIP,\
+  \ tag in DB.\n- **Unlimited Target Nodes**: GUI for managing an arbitrary number of DICOM nodes (beyond\
+  \ Node1‑3) with grouping and priorities.\n- **Queue & Retry Engine**: Persistent job queue with backoff,\
+  \ per‑node rate limits, and resumable sends.\n- **Audit & Reporting**: End‑to‑end audit trail, per‑rule\
+  \ success rates, monthly export (CSV/JSON), and log viewer.\n- **Advanced Imports**: ZIP import, recursive\
+  \ folder watch with include/exclude filters, checksum deduplication.\n- **Auto‑Cleanup Policies**: Time/size‑based\
+  \ retention for received_plans and logs with safe guardrails.\n- **Plugin Hooks**: Pre/post‑processing\
+  \ hooks for custom scripts (e.g., structure renaming, private tag handling).\n\n## Contributing\n\n\
+  1. Fork the repository\n2. Create a feature branch (`git checkout -b feature/amazing-feature`)\n3. Commit\
+  \ your changes (`git commit -m 'Add amazing feature'`)\n4. Push to the branch (`git push origin feature/amazing-feature`)\n\
+  5. Open a Pull Request\n\n## License\n\nThis project is licensed under the MIT License - see the [LICENSE](LICENSE)\
+  \ file for details.\n\n## Support\n\nFor issues, questions, or contributions:\n- **GitHub Issues**:\
+  \ [Report bugs or request features](https://github.com/yourusername/dicom-rt-station/issues)\n- **Logs**:\
+  \ Enable verbose logging for troubleshooting\n\n---\n\n**DICOM RT Station** - Professional DICOM RT\
+  \ plan management made simple.\n"

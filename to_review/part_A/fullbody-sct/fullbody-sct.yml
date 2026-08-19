@@ -1,0 +1,90 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: NicSchuler/fullbody-sCT
+url: https://github.com/NicSchuler/fullbody-sCT
+platform: github
+description: Research framework for full-body synthetic CT (sCT) generation from MR images.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 1
+updated_at: '2026-06-09T08:14:27Z'
+image_source: https://raw.githubusercontent.com/NicSchuler/fullbody-sCT/HEAD/resources/Title-Slide.png
+heuristic_total_score: 20
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 5 support term(s).
+readme_excerpt: "# fullbody-sCT\n\nA research framework for **fullbody synthetic CT (sCT) generation from\
+  \ MRI**, investigating how modeling choices and data processing decisions affect image quality. The\
+  \ codebase supports end-to-end experiments from raw data ingestion through training, inference, and\
+  \ evaluation.\n\n![Title Slide](resources/Title-Slide.png)\n\n## Research Objectives, Experiments &\
+  \ Pipeline Overview\n\nThree controlled experiments were conducted:\n\n| # | Question | Approach |\n\
+  |---|----------|----------|\n| 1 | How do **region-specific models** compare to a **single fullbody\
+  \ model**? | Train and evaluate models on anatomical subsets (Brain, Head & Neck, Thorax, Abdomen, Pelvis)\
+  \ vs. combined fullbody data |\n| 2 | How does **MR input normalization** affect sCT quality? | Compare\
+  \ four normalization strategies: baseline (min-max), per-file p99, Nyul histogram, and n-peaks |\n|\
+  \ 3 | How do **alternative architectures** compare? | Benchmark pix2pix, to a SwinV2-UNet and ResNet\
+  \ generator |\n\n![Experiments Overview](resources/Experiments%20Overview.jpg)\n\n## Repository Structure\n\
+  \n```\nfullbody-sCT/\n├── pipeline/               # End-to-end pipeline orchestration + usage examples\n\
+  ├── preprocessing/          # Data conversion, resampling, normalization, slice creation\n├── postprocessing/\
+  \         # Volume reconstruction and intensity mapping\n├── training/               # pix2pix, CycleGAN,\
+  \ and Swin V2 UNet training\n├── training_cut/           # CUT (Contrastive Unpaired Translation) training\n\
+  ├── analysis/               # Notebooks and scripts for analysis, plots, results tables\n├── synthrad_submission/\
+  \    # Docker containerization for SynthRAD 2025 submission\n└── environment.yml         # Conda environment\
+  \ for the full pipeline\n```\n\n## Pipeline\n\nThe full pipeline is orchestrated by `pipeline/run_pipeline.py`\
+  \ via sequentially numbered steps:\n\n| Step(s) | Stage | Description |\n|---------|-------|-------------|\n\
+  | 10 | Convert | MHA → NIfTI format conversion |\n| 12 | Body masks | Extract body masks from CT |\n\
+  | 13 | Segmentation | Multi-organ segmentation via TotalSegmentator |\n| 20 | Resampling | Standardize\
+  \ voxel spacing across patients |\n| 21 | Split | Create train / val / test manifests |\n| 22 | Resample\
+  \ masks | Align segmentation masks to resampled space |\n| 30 | Normalization | Apply selected normalization\
+  \ (baseline / p99 / Nyul / n-peaks) |\n| 40 | Slices | Convert 3D volumes to 2D axial slices |\n| 50\
+  \ | Materialize | Write train/val/test folder structure to disk |\n| 60 | Pix2pix pairing | Concatenate\
+  \ MR and CT slices into paired A\\|B images |\n| 70 | Body region subsets | Create per-region (AB /\
+  \ HN / TH / …) dataset subsets |\n| 80 | Training | Train selected GAN model |\n| 90 | Inference | Run\
+  \ inference on test slices |\n| 100 | Reconstruction | Reconstruct 3D sCT volumes from 2D predictions\
+  \ |\n| 110 | Metrics | Compute per-volume MAE, RMSE, SSIM |\n| 130–150 | DVH evaluation | Organ dose\
+  \ metrics for radiotherapy evaluation |\n\nNote on reproducibility: hyperparameters in the code have\
+  \ been set to the optimal values and the applied train/validation/test split can be found in `preprocessing/preprocessing_synthrad/splits_manifest.csv`.\n\
+  \n## Folder Details\n\n### `pipeline/`\nContains `run_pipeline.py`, the single entry point for running\
+  \ any combination of pipeline steps. Configuration is passed via CLI flags (normalization method, GAN\
+  \ architecture, epochs, batch size, body region filter). Folder also contains examples of configurations\
+  \ for different experiments.\n\n### `preprocessing/`\nNumbered scripts (`10`–`70`) implementing each\
+  \ preprocessing step. A complete usage guide is at `preprocessing/preprocessing_synthrad/USAGE_GUIDE.md`.\n\
+  \n**Normalization methods:**\n- `31` — Baseline min-max normalization\n- `32` — Per-file 99th-percentile\
+  \ normalization\n- `33` — Nyul histogram normalization\n- `34` — N-peaks intensity normalization (with\
+  \ LIC variants)\n\nSome preprocessing code was based on [medical-physics-usz/synthetic_CT_generation](https://github.com/medical-physics-usz/synthetic_CT_generation)\
+  \ and [medical-physics-usz/NPeaks](https://github.com/medical-physics-usz/NPeaks).\n\n### `training/`\n\
+  PyTorch training code adapted from [junyanz/pytorch-CycleGAN-and-pix2pix](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix).\n\
+  \n- `train.py` — Main training loop with DDP support; selects model via `--model` flag (`pix2pix` /\
+  \ `cycle_gan`)\n- `train_pure_swinv2.py` — Training for the Swin V2 UNet generator without GAN setting\
+  \ (pure L1 loss)\n- `test_synth.py` / `inference_synth.py` — Inference scripts used in the pipeline\n\
+  - `models/` — Model implementations (pix2pix, CycleGAN, Swin V2 UNet, networks)\n- `dvh_eval/` — Pipeline\
+  \ for DVH-based dose evaluation (incl. transform NIfTI to DICOM)\n\n### `training_cut/`\nSeparate implementation\
+  \ of the **CUT** (Contrastive Unpaired Translation) architecture, memory-efficient for unpaired MR→CT\
+  \ translation. Adapted from [taesungp/contrastive-unpaired-translation](https://github.com/taesungp/contrastive-unpaired-translation).\n\
+  \n### `postprocessing/`\n- `81sct_volume_reconstructor.py` — Reconstruct 3D sCT volumes from 2D test\
+  \ slices, restoring original patient dimensions\n- `82resampled_to_original.py` — Reverse resampling\
+  \ to original patient space\n- `110compute_volume_metrics.py` — Per-volume MAE, RMSE, SSIM computation\n\
+  \n### `analysis/`\nJupyter notebooks and scripts used for additional analysis, plotting, and results\
+  \ tables. Includes intensity distribution analysis, resampling option comparisons, and per-experiment\
+  \ result aggregation.\n\n### `synthrad_submission/`\nDocker container wrapping the trained model for\
+  \ submission to the [SynthRAD 2025 Grand Challenge](https://synthrad2025.grand-challenge.org/). See\
+  \ `synthrad_submission/README.md` for build and submission instructions.\n\n## Environment\n\nA single\
+  \ Conda environment covers the full pipeline:\n\n```bash\nconda env create -f environment.yml\nconda\
+  \ activate <env-name>\n```\n\nFor the `synthrad_submission` Docker container, see `synthrad_submission/requirements.txt`.\n\
+  \n## Quick Start\n\nPreliminary: Download data from [SynthRAD 2025](https://zenodo.org/records/15373853)\
+  \ and [SynthRAD 2023](https://synthrad2023.grand-challenge.org/) (needs login creation) and store into\
+  \ `<data-root>`.  \n\n```bash\n# Run the full pipeline (example: pix2pix, baseline normalization, abdomen\
+  \ region)\npython run_pipeline.py \\\n  --synthrad-data-root <data-root> \\\n  --subfolder-name <name>\
+  \ \\\n  --body-part-filter AB \\\n  --preprocessing-method 31baseline \\\n  --method pix2pix \\\n  --epochs\
+  \ 50 \\\n  --batch-size 1 \\\n  --start 10\n```\n\nSee `preprocessing/preprocessing_synthrad/USAGE_GUIDE.md`\
+  \ for detailed per-step instructions.\n\n## Report and Citation\n\nProject report: [Fullbody Synthetic\
+  \ CT Generation using Deep Learning Methods](https://www.ifi.uzh.ch/dam/jcr:1699c926-9967-486f-a7f0-c7217409d523/Fullbody%20sCT%20-%20Frei,%20Schuler,%20Th%C3%BCr%20-%20Master%20Project%20Report.pdf)\
+  \ or under `/resources` in this repository.\n\n\n```bibtex\n@mastersthesis{thuer_frei_schuler2026master_project,\n\
+  \  author  = {Thür, Flavian Roland and Frei, Mike Jason and Schuler, Nicolas Yann},\n  title   = {Fullbody\
+  \ Synthetic CT Generation using Deep Learning Methods},\n  editor  = {G{\\\"u}nther, Manuel and Lapaeva,\
+  \ Mariia and Tanadini-Lang, Stephanie and Dal Bello, Riccardo},\n  faculty = {Faculty of Business, Economics\
+  \ and Informatics},\n  school  = {University of Zurich},\n  type    = {Master's Project},\n  year  \
+  \  = {2026}\n}\n```"

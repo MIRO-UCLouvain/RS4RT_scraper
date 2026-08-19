@@ -1,0 +1,159 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: LuisParedesOcampo/SlicerRadReirradiation
+url: https://github.com/LuisParedesOcampo/SlicerRadReirradiation
+platform: github
+description: '3D Slicer extension for Radiotherapy clinical re-irradiation analysis. It features : image
+  registration of  RT CT scans ,  Reirradiation BED/EQD2 calculations and interactive native DVH metrics
+  directly within the Slicer GUI.'
+license: MIT
+language: Python
+keywords:
+- 3d-slicer-extension
+- 3dslicer
+- brachytherapy
+- dosimetry
+- image-processing
+- imrt
+- medical
+- medical-image-processing
+- oncology
+- python
+- radiation-oncology
+- radiation-therapy
+- radiotherapy
+- radiotherapy-treatment-planning
+- re-irradiation
+- reirradiation
+- retreatment
+- sbrt
+- srs
+- vmat
+stars: 6
+updated_at: '2026-07-30T20:09:03Z'
+image_source: https://img.youtube.com/vi/xFspmJT0Wr8/maxresdefault.jpg
+heuristic_total_score: 83
+heuristic_reasons:
+- Matched 11 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+- Matched 24 support term(s).
+readme_excerpt: "# RadReirradiation \U0001F9EC\n\n### Radiotherapy Re-irradiation Analysis and Biological\
+  \ Dose Summation in 3D Slicer\n\n**RadReirradiation** utilizes the **Linear-Quadratic (LQ)** model to\
+  \ perform voxel-by-voxel calculations of Biologically Effective Dose (BED) and EQD2 (Equivalent Dose\
+  \ in 2 Gy fractions), enabling precise evaluation of the accumulated dose in critical structures and\
+  \ tumor volumes (DVH).\n\n<img width=\"1919\" height=\"701\" alt=\"image\" src=\"https://github.com/user-attachments/assets/8ca2476f-8099-419e-a42c-a3b2d6cb43af\"\
+  \ />\n\n## \U0001F680 What's New in Version 2.0 (Clinical Workflow Update)\n\n### 1. Automated TPS DICOM\
+  \ Export (Eclipse Ready)\n* **Seamless Export:** Export your accumulated EQD2 dose directly back to\
+  \ commercial TPS environments (like Varian Eclipse). The algorithm automatically traces the original\
+  \ DICOM metadata, generates a \"shadow\" RTPLAN, and bundles the original RTSTRUCT to ensure 100% compatibility\
+  \ upon import, bypassing standard TPS dose-lock restrictions.\n\n### 2. Native Clinical PDF Reporting\n\
+  * **One-Click Documentation:** Generate comprehensive, print-ready PDF clinical reports directly within\
+  \ Slicer. The report automatically extracts patient metadata (Name, ID) from the DICOM hierarchy and\
+  \ logs all registration parameters, biological roles, temporal recovery factors, and cumulative dosimetric\
+  \ metrics (DMax, DMean) for legal and clinical traceability.\n\n### 3. Smart DICOM Fraction Auto-Detection\n\
+  * **Silent Metadata Tracking:** The module now utilizes advanced hierarchical attribute tracking to\
+  \ automatically locate the source `RTPLAN` of any selected `RTDOSE`. It silently extracts and populates\
+  \ the exact number of planned fractions, eliminating manual entry and reducing human error. \n\n###\
+  \ 4. Structure-Specific Biological Roles & Dual Alpha/Beta (α/β)\n* **Interactive Roles Table:** A new\
+  \ Biological Configuration panel allows users to dynamically assign 'Tumor' or 'OAR' (Organ At Risk)\
+  \ roles to each visible structure.\n* **Simultaneous Dual α/β Calculation:** Compute EQD2/BED using\
+  \ two distinct α/β ratios simultaneously in a single run, eliminating repetitive workflows when evaluating\
+  \ both tumor control and late tissue toxicity.\n\n### 5. Advanced Manual Registration & Smart Algorithm\
+  \ Bypass\n* **Full 6-DOF Manual Control:** Precise translational (X, Y, Z) and rotational (Pitch, Roll,\
+  \ Yaw) sliders for perfect manual image alignment, equipped with a smart memory cache to ensure smooth\
+  \ rotations without origin-shift artifacts.\n\n## Features \U0001F680\n* **Smart UI & Automation:**\
+  \ The module intelligently auto-selects aligned volumes and retrieves fraction data directly from the\
+  \ DICOM database.\n* **Absolute & Relative DVH:** Toggle between Relative Volume (%) and Absolute Volume\
+  \ (cc) directly on the generated Dose-Volume Histogram.\n* **Image Registration Wrapper:** Automated\
+  \ Rigid, Affine and Deformable (B-Spline) registration workflows using the BRAINSFit engine.\n* **Auto-Resampling\
+  \ Dose Engine:** Automatically resamples the moving dose grid to perfectly match the reference geometry,\
+  \ preventing matrix dimension errors.\n* **Time-Corrected Radiobiology:** Full support for standard\
+  \ LQ model (BED and EQD2) with temporal recovery factors (0 to 6+ months) for accurate reirradiation\
+  \ assessment.\n* **Voxel-by-Voxel Processing:** Operates directly on DICOM RTDOSE arrays using NumPy\
+  \ for high-performance biological conversion.\n* **\"Eclipse-Style\" Dose Wash:** Custom dynamic color\
+  \ map transition (Dark Blue to Red) with a 2 Gy threshold and 40% opacity.\n* **Clinical Safety First:**\
+  \ Automated UI resets and dynamic control locking ensure data integrity if configuration parameters\
+  \ are changed post-calculation.\n* **Dosimetric Analysis:** Metrics table (Dmax, Dmean) synchronized\
+  \ with structure visibility.\n*  **DVH Generation:** Generation of interactive DVH curves within the\
+  \ Slicer.\n* **Hybrid Image Registration:** Choose between fully automatic Rigid/Deformable registration\
+  \ (powered by BRAINSFit) or highly precise Manual Alignment with 6 Degrees of Freedom (Translational\
+  \ & Rotational).\n\n## \U0001F4DA Scientific Foundation and References\nThe development of RadReirradiation\
+  \ is based on international standards for reporting and accumulating biological doses.\n\n### Reference\
+  \ Publication (RadReirradiation)\n* **Status:** In Preparation. \n* *Note:* Once the specific scientific\
+  \ article for this tool is published, this section will be updated with a direct link to PubMed/the\
+  \ corresponding Journal.\n\n### Background Literature and Consensus\nThis module formally implements\
+  \ the concepts discussed in the following key publications:\n1. **ReCOG Consensus (2024):** *Reirradiation\
+  \ Collaborative Group (ReCOG) consensus on\nstandards for dose evaluation and reporting in patients\
+  \ with\nmultiple courses of radiation therapy:*. [https://pubmed.ncbi.nlm.nih.gov/41643699/]\n2. **Nieder\
+  \ et al. (2017/2018):** Second re-irradiation: a narrative review of the available clinical data. [https://pubmed.ncbi.nlm.nih.gov/29187033/]\n\
+  3. **Nieder et al. (2017/2018):** Repeat reirradiation of the spinal cord: multi-national expert treatment\n\
+  recommendations*. [https://doi.org/10.1007/s00066-018-1266-6]\n\n## \U0001F4BB Installation\n\n### Option\
+  \ 1 — 3D Slicer Extensions Manager (Recommended)\n\nRadReirradiation is officially available in the\
+  \ \n3D Slicer Extensions Manager.\n\n1. Open **3D Slicer 5.10** or **Slicer Preview**\n2. Go to **Extensions\
+  \ Manager** (top menu or Edit → \n   Extensions Manager)\n3. Search for: `RadReirradiation`\n4. Click\
+  \ **Install**\n5. Restart 3D Slicer\n\n> ⚠️ **Requirement:** [SlicerRT](https://slicerrt.github.io)\
+  \ \n> must be installed before RadReirradiation. \n> It provides full DICOM-RT file support (RT Dose,\
+  \ \n> RT Structure Set, RT Plan).\n\n---\n\n### Option 2 — Manual Installation (Development)\n\nIf you\
+  \ want to test the latest development version \ndirectly from this repository:\n\n1. Clone or download\
+  \ this repository\n2. Open 3D Slicer\n3. Go to **Edit → Application Settings → Modules**\n4. Under **Additional\
+  \ module paths**, click **Add**\n5. Select the folder containing `RadReirradiation.py`\n6. Click **OK**\
+  \ and restart 3D Slicer\n\n---\n\n> \U0001F4A1 **Tip:** Option 1 is recommended for clinical use. \n\
+  > Option 2 is intended for developers and contributors \n> who want to test new features before an official\
+  \ release.\n\n## \U0001F4F9 Video Tutorial\n\nA complete step-by-step tutorial is available on YouTube,\
+  \ \ncovering the full reirradiation analysis workflow:\n\n- Installation and DICOM RT data preparation\n\
+  - Image registration (Rigid, Affine & Deformable)\n- Auto-Center tool for CBCT field-of-view correction\n\
+  - EQD2/BED biological dose accumulation (α/β = 3 and 10 Gy)\n- DVH analysis and dosimetric metrics (Dmax,\
+  \ Dmean)\n\n[![RadReirradiation Tutorial](https://img.youtube.com/vi/xFspmJT0Wr8/maxresdefault.jpg)](https://www.youtube.com/watch?v=xFspmJT0Wr8)\n\
+  \n> \U0001F4A1 **Tip:** You can switch between α/β = 3 Gy (OARs) and \n> α/β = 10 Gy (tumor) without\
+  \ repeating the image \n> registration — just change the parameter and click Calculate.\n\n## Step-by-step\
+  \ tutorial \U0001F6E0️\n\n\n**1. Data Preparation: From TPS to 3D Slicer**\n\nTo perform an accurate\
+  \ re-irradiation analysis, you must export two complete datasets (in the same folder) from your Treatment\
+  \ Planning System (TPS): the Previous (1) Treatment and the Current/Planned Treatment (2).\n\n<img width=\"\
+  679\" height=\"266\" alt=\"0\" src=\"https://github.com/user-attachments/assets/4493ec9f-dac8-485c-b845-ac161f34d67d\"\
+  \ />\n\nExport Requirements (from your TPS):\n* CT Images (CT)\n* RT Doses (RD)\n* RT Structure Sets\
+  \ (RS)\n* Optional but recommended: RT Plans (RP)\n\n<img width=\"1182\" height=\"581\" alt=\"1\" src=\"\
+  https://github.com/user-attachments/assets/4051c8e3-1dba-4cd6-8d44-8b48f292e470\" />\n\nSuccesfull exportation\
+  \ of the previous treatmet, repeat the same steps for the current/planned treatmet\n\n<img width=\"\
+  1187\" height=\"577\" alt=\"2\" src=\"https://github.com/user-attachments/assets/35867a76-7435-4e8c-b387-591fc5b4e4d0\"\
+  \ />\n\n\n**Importing into 3D Slicer:**\n\nEnsure you have the SlicerRT extension installed. It is a\
+  \ mandatory requirement to read and process Radiotherapy DICOM files. Drag and drop your exported DICOM\
+  \ folders into the 3D Slicer application or use the native DICOM Browser and click on Examine button.\n\
+  \n<img width=\"1202\" height=\"772\" alt=\"3\" src=\"https://github.com/user-attachments/assets/c8e57085-13bf-4b7d-af89-d7e2dae9fa4e\"\
+  \ />\n\nOnce the DICOM files are loaded only check the TAC, RD and RS of the previous and current treatmets,\
+  \ click on Load button. RP is optional; it is not used in this version but will be used in future developments.\
+  \ \n<img width=\"1915\" height=\"1006\" alt=\"LOAD DATA\" src=\"https://github.com/user-attachments/assets/f5d0f31f-3503-4d56-af19-47d86d661bb8\"\
+  \ />\n \nCrucial Steps: When the DICOM import window appears, ensure the \"eye\" icon next to your RT\
+  \ Structures is toggled ON (visible). If this icon is closed, the structures will not be loaded into\
+  \ the scene and the DVH cannot be evaluated.\n\nData Organization Tip:\nSince TPS exports often generate\
+  \ generic names (In this example, the RTDOSE files in both treatmets have the same name), it is highly\
+  \ recommended to rename your loaded volumes immediately (e.g., rename them to CT_Previous, CT_Current,\
+  \ Dose_Previous, Dose_Current). This will prevent confusion when assigning volumes in the RadReirradiation\
+  \ module.\n<img width=\"1881\" height=\"984\" alt=\"6\" src=\"https://github.com/user-attachments/assets/fe9bea1a-5ed5-43a5-8bde-c243d972ddac\"\
+  \ />\n<img width=\"1130\" height=\"285\" alt=\"7\" src=\"https://github.com/user-attachments/assets/58de03d2-7cf9-46bb-9243-8ed392857d68\"\
+  \ />\n\n\n**2. Launching RadReirradiation**\n\nOnce your DICOM data is properly imported and organized\
+  \ in 3D Slicer, it is time to load it into the extension to coregister the previous treatment with the\
+  \ current patient anatomy.\n\nLaunching the Module:\n\n* Open the module dropdown menu (usually displaying\
+  \ \"Welcome to Slicer\").\n* Navigate to Radiotherapy and select RadReirradiation.\n\n<img width=\"\
+  1170\" height=\"981\" alt=\"8\" src=\"https://github.com/user-attachments/assets/d06ce3f6-5496-48ed-8806-f3d7d5e557d9\"\
+  \ />\n\n\n**RadReirradiation**  has 4 important modules, which are:\n\n1. Data selection and image registration\
+  \ with Dose resample.\n2. Structures visualization and Biolgical Role (important for the DVH analysis).\n\
+  3. Reirradiation calculation settings.\n4. Metrics an DVH results.\n     \n<img width=\"1221\" height=\"\
+  907\" alt=\"10\" src=\"https://github.com/user-attachments/assets/66350799-ce81-48d3-8620-94167a546602\"\
+  \ />\n\n\n**Assigning Volumes:**\n\nIn the Data Selection panel, carefully assign your loaded volumes\
+  \ to their corresponding roles:\n* Moving CT / Previous CT: The historical anatomy that needs to be\
+  \ registered.\n* RTDOSE Previous treatment.\n* Fixed CT / Current /planned CT: The anatomy where the\
+  \ final dose summation will be evaluated.\n* RTDOSE Current/planned Treatment.\n\n<img width=\"523\"\
+  \ height=\"249\" alt=\"9\" src=\"https://github.com/user-attachments/assets/3bc186c4-953e-4961-8806-9d16133841b0\"\
+  \ />\n\n**Pre-Alignment and Image Registration with Dose resample:**\n\nBefore computing any biological\
+  \ dose, both CTs must be spatially aligned. Click the \"Auto-Center CTs\" button. This will automatically\
+  \ match the mathematical centers of both image sets, providing an excellent starting point.\nAt this\
+  \ point, it is recommended to hide the structures to better visualize the Pre-Aligment and image Registration\
+  \ results. To do this, use module 2 (Structures visualization), select the RS CURRENT file, and press\
+  \ the \"Hide all structures\" button.\n\n<img width=\"1920\" height=\"1007\" alt=\"11\" src=\"https://github.com/user-attachments/assets/a1a32f96-e860-47de-9c8b-e2b062f028e5\"\
+  \ />\n\nUse the manual sliders to fine-tune the alignment if the patient setups were significantly different,\
+  \ this will be the starting point for the image registration and Dose resample algorithm.\n\n<img width=\"\
+  1770\" height=\"890\" alt=\"12\" src=\"https://github.com/user-attachments/assets/d36b17ae-6067-4cf9-8669-29d6164cf2a7\"\
+  \ />\n\n **Registration Options & Processing Time:**\n\n Press the button Auto-Registration and Dose\
+  \ resample, this uses the"

@@ -1,0 +1,146 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: CaineWind/MedAxis
+url: https://github.com/CaineWind/MedAxis
+platform: github
+description: High-performance medical imaging rendering & segmentation platform — Python Qt + VTK/ITK/CGAL/OpenCASCADE
+  hybrid, native C++ compute engine, 95 algorithms, radiomics, MCP & AI integration
+license: Apache-2.0
+language: Python
+keywords:
+- cgal
+- dicom
+- image-processing
+- itk
+- mcp
+- medical-imaging
+- mpr
+- pyside6
+- radiomics
+- segmentation
+- visualization
+- vtk
+stars: 3
+updated_at: '2026-08-11T01:50:46Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "# \U0001FA7B MedAxis — Medical Imaging Rendering & Segmentation Platform\n\n[![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org)\n\
+  [![PySide6](https://img.shields.io/badge/UI-PySide6-41CD52?logo=qt&logoColor=white)](https://doc.qt.io/qtforpython/)\n\
+  [![VTK](https://img.shields.io/badge/VTK-9.6-006F8E)](https://vtk.org)\n[![ITK](https://img.shields.io/badge/ITK-5.4-0071BC)](https://itk.org)\n\
+  [![CGAL](https://img.shields.io/badge/CGAL-6.0-4B0082)](https://www.cgal.org)\n[![License](https://img.shields.io/badge/License-Apache--2.0-blue)](LICENSE)\n\
+  \nA high-performance medical imaging workstation built with **Python Qt, VTK C++, ITK C++, OpenCASCADE\
+  \ and CGAL** — 40% Python orchestration + 60% C++ compute, exactly as the design blueprint specifies.\n\
+  \n> \U0001F9E0 **Core principle:** Python is the *commander*, C++ is the *soldier*. Every performance-sensitive\
+  \ algorithm executes in the compiled native layer; Python only handles UI, orchestration, MCP protocol\
+  \ and plugins.\n\n---\n\n## ✨ Highlights\n\n| | |\n|---|---|\n| \U0001F5C2️ **I/O** | DICOM (folder/batch),\
+  \ NIfTI, NRRD, MetaImage, RAW, `.medaxis` project archives |\n| \U0001F9ED **Rendering** | Axial / coronal\
+  \ / sagittal slices, MPR (oblique reslice), CPR (curved reformation), 3D volume rendering, label overlays,\
+  \ scale bar & ROI annotations |\n| \U0001F52C **Algorithms** | **95 registered algorithms** — filtering,\
+  \ morphology, thresholding, segmentation, reconstruction, registration, arithmetic, enhancement, radiomics\
+  \ |\n| ⚡ **Native compute** | **53 algorithms run in C++/ITK** (zero-copy numpy ↔ ITK bridge); e.g.\
+  \ Gaussian on 64³: **2.4 ms native vs 9.9 s** via the Python binding |\n| \U0001F9EE **Radiomics** |\
+  \ **114 features** — first-order, GLCM(30), GLRLM(15), GLSZM(15), GLDM(14), NGTDM(5), shape 2D/3D —\
+  \ computed in C++ |\n| \U0001FA78 **Vascular tools** | Vessel centerline extraction (3D thinning + Dijkstra)\
+  \ and **stent view** (circular unwrap with MIP) driving the CPR view |\n| \U0001F916 **MCP & AI** |\
+  \ Built-in MCP server (stdio/SSE, JSON-RPC, permissions, audit) with 12 tools incl. `run_algorithm`\
+  \ and `run_script`; external AI service clients (REST + TotalSegmentator adapter) |\n| \U0001F4DC **Scripting**\
+  \ | Mimics-style console, script editor, action recorder, 3-level sandbox, hook system, template library\
+  \ |\n| \U0001F9E9 **Plugins** | `.py` / `.pyd` plugin discovery with automatic MCP tool exposure; AI\
+  \ Model Zoo + downloader |\n| \U0001F4BE **Workflow** | Label editing (8 tools + undo/redo + boolean\
+  \ ops), exports: NIfTI / NRRD / DICOM / DICOM-SEG / **RTSTRUCT** / STL / OBJ / PLY / **3MF** / PNG /\
+  \ PDF, comparison view, cine playback + MP4 recording, autosave |\n\n---\n\n## \U0001F680 Quick Start\n\
+  \n```bash\n# 1. Install uv (https://docs.astral.sh/uv/)\nwinget install astral-sh.uv\n\n# 2. Create\
+  \ the environment (Python 3.12 + all dependencies + dev tools)\nuv sync\n\n# 3. Run\nuv run medaxis\n\
+  ```\n\n> \U0001F4CC `.python-version` pins Python 3.12; `uv.lock` locks every dependency.\n> Native\
+  \ extension DLL search paths are read from `native.cpp_prefix` in\n> `~/.medaxis/config.yaml` (or the\
+  \ `MEDAXIS_CPP_PREFIX` env var) — see\n> [Native Build](#-native-build-windows).\n\n### ✅ Verify the\
+  \ installation\n\n```bash\nuv run pytest -q                      # 10 tests\nuv run ruff check app core\
+  \ geometry io medaxis_io mcp plugins processing rendering scripts ui tests\nuv run python -c \"from\
+  \ core.native_extensions import NativeExtensionRegistry; print(NativeExtensionRegistry().status())\"\
+  \n# → all five medaxis_* modules should report available=True\n```\n\n---\n\n## \U0001F527 Native Build\
+  \ (Windows)\n\nThe five pybind11 extension modules are deployed to `medaxis/_native/`:\n\n| Module |\
+  \ Source | Purpose |\n|---|---|---|\n| `medaxis_bridge` | `native/bridge` | Zero-copy numpy ↔ vtkImageData\
+  \ ↔ itkImage bridge |\n| `medaxis_itk` | `native/itk_ext` | ITK filters: filtering, morphology, segmentation,\
+  \ registration (7 dispatch entry points) |\n| `medaxis_cgal` | `native/cgal_ext` | Mesh reconstruction\
+  \ / processing / curvature (CGAL 6) |\n| `medaxis_occ` | `native/occ_ext` | Curve sampling / Frenet\
+  \ frames / arc length (OpenCASCADE 7.8) |\n| `medaxis_radiomics` | `native/radiomics_ext` | First-order\
+  \ + GLCM/GLRLM/GLSZM/GLDM/NGTDM texture features (C++) |\n\n### \U0001F4E6 Dependencies (conda-forge\
+  \ + one source build)\n\nC++ dependencies come from a micromamba/conda-forge environment; **ITK must\
+  \ be built from source** (conda-forge's `itk` ships no C++ dev files):\n\n```bash\n# 1. micromamba +\
+  \ C++ deps (vtk 9.6.2 / cgal 6.0.1 / occt 7.8.1 / eigen / boost)\n#    ⚠️ vtk needs --no-deps: conda's\
+  \ qt6-main contains >260-char paths that\n#       micromamba cannot extract (see build-deps/extract_longpath_pkgs.py)\n\
+  micromamba create -n medaxis-cpp -c conda-forge cgal eigen boost-cpp gmp mpfr occt=7.8 -y\nmicromamba\
+  \ install -n medaxis-cpp --no-deps -y vtk=9.6.2 vtk-base=9.6.2\nmicromamba install -n medaxis-cpp -c\
+  \ conda-forge -y expat liblzma-devel tbb-devel ffmpeg\n\n# 2. ITK 5.4.7 source build\ngit clone --depth\
+  \ 1 --branch v5.4.7 https://github.com/InsightSoftwareConsortium/ITK.git build-deps/ITK-5.4.7\ncmake\
+  \ -S build-deps/ITK-5.4.7 -B build-deps/itk-build -G \"Visual Studio 18 2026\" -A x64 ^\n  -DCMAKE_CONFIGURATION_TYPES=Release\
+  \ -DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF ^\n  -DITK_BUILD_DEFAULT_MODULES=OFF ^\n  -DModule_ITKCommon=ON\
+  \ -DModule_ITKImageFilterBase=ON -DModule_ITKImageIntensity=ON ^\n  -DModule_ITKImageGradient=ON -DModule_ITKImageGrid=ON\
+  \ -DModule_ITKThresholding=ON ^\n  -DModule_ITKStatistics=ON -DModule_ITKRegionGrowing=ON -DModule_ITKWatersheds=ON\
+  \ ^\n  -DModule_ITKLevelSets=ON -DModule_ITKMathematicalMorphology=ON ^\n  -DModule_ITKBinaryMathematicalMorphology=ON\
+  \ -DModule_ITKConnectedComponents=ON ^\n  -DModule_ITKDistanceMap=ON -DModule_ITKRegistrationCommon=ON\
+  \ -DModule_ITKSmoothing=ON ^\n  -DModule_ITKAnisotropicSmoothing=ON ^\n  -DModule_ITKDenoising=ON -DModule_ITKClassifiers=ON\
+  \ -DModule_ITKDisplacementField=ON ^\n  -DModule_ITKPDEDeformableRegistration=ON -DModule_ITKRegistrationMethodsv4=ON\
+  \ ^\n  -DModule_ITKOptimizers=ON -DModule_ITKOptimizersv4=ON ^\n  -DCMAKE_INSTALL_PREFIX=D:/1AProject/MedAxis/build-deps/itk-install\n\
+  cmake --build build-deps/itk-build --config Release --parallel 8\ncmake --install build-deps/itk-build\
+  \ --config Release\n\n# 3. Record the C++ prefixes (uv run python):\n#    from utils.config import AppConfig;\
+  \ c = AppConfig.instance()\n#    c.set('native', 'cpp_prefix', r'<mamba env>;<itk-install>'); c.save()\n\
+  ```\n\n### \U0001F6E0️ Compile the native modules\n\n```bash\nuv pip install pybind11   # CMake configs\
+  \ (already in the dev group)\ncmake -S . -B build-native -G \"Visual Studio 18 2026\" -A x64 ^\n  -DMEDAXIS_BUILD_NATIVE=ON\
+  \ ^\n  \"-DCMAKE_PREFIX_PATH=<micromamba env>;<micromamba env>/Library;<itk-install>\" ^\n  \"-DPython_EXECUTABLE=<repo>/.venv/Scripts/python.exe\"\
+  \ ^\n  -DPYBIND11_FINDPYTHON=ON ^\n  \"-Dpybind11_DIR=<repo>/.venv/Lib/site-packages/pybind11/share/cmake/pybind11\"\
+  \ncmake --build build-native --config Release --parallel 8\n\n# Deploy the .pyd files to medaxis/_native/\
+  \ (auto-added to sys.path)\ncopy build-native\\native\\bridge\\Release\\medaxis_bridge.pyd        medaxis\\\
+  _native\\\ncopy build-native\\native\\itk_ext\\Release\\medaxis_itk.pyd          medaxis\\_native\\\n\
+  copy build-native\\native\\cgal_ext\\Release\\medaxis_cgal.pyd        medaxis\\_native\\\ncopy build-native\\\
+  native\\occ_ext\\Release\\medaxis_occ.pyd          medaxis\\_native\\\ncopy build-native\\native\\radiomics_ext\\\
+  Release\\medaxis_radiomics.pyd medaxis\\_native\\\n```\n\n> ⚠️ **Version alignment:** the Python side\
+  \ is pinned to `vtk==9.6.2` and\n> `itk==5.4.7` (in `pyproject.toml`) to match the C++ layer — mixing\
+  \ versions\n> would load two VTK/ITK ABIs into one process.\n> \U0001F4A1 **Long paths:** some conda\
+  \ packages contain >260-char paths that break\n> micromamba's extractor; use `build-deps/extract_longpath_pkgs.py`\
+  \ to unpack\n> them manually into the package cache.\n\n---\n\n## \U0001F3D7️ Architecture\n\n```\n\
+  ┌────────────────────────── Python (orchestration) ──────────────────────────┐\n│  app/        application\
+  \ controller, workspace, autosave                    │\n│  ui/         Qt widgets: slice/mpr/cpr/volume\
+  \ views, panels, label editor   │\n│  io/         DICOM / NIfTI / NRRD / RAW readers, DICOM writers,\
+  \ exports     │\n│  core/       VolumeData / LabelData / MeshData models, project archives     │\n│\
+  \  processing/ AlgorithmRegistry (95 algorithms) + native dispatch            │\n│  mcp/        MCP\
+  \ server: JSON-RPC, stdio/SSE, 12 tools, audit               │\n│  scripts/    console, editor, recorder,\
+  \ sandbox, hooks, templates           │\n│  plugins/    plugin manager, model zoo, AI service clients\
+  \                  │\n│  geometry/   centerline, stent view, CGAL/OCC wrappers                     \
+  \ │\n└──────────────────────────────┬──────────────────────────────────────────────┘\n             \
+  \                  │ pybind11 (zero-copy numpy)\n┌────────────────────────── C++ (compute) ────────────────────────────────────┐\n\
+  │  native/bridge        numpy ↔ vtkImageData ↔ itkImage                       │\n│  native/itk_ext \
+  \      filtering · morphology · segmentation · registration  │\n│  native/cgal_ext      mesh reconstruction\
+  \ · processing · curvature          │\n│  native/occ_ext       curve sampling · Frenet frames      \
+  \                  │\n│  native/radiomics_ext first-order + 5 texture families                     \
+  \ │\n│  native/vtk_ext       custom VTK filters (reslice / CPR)                    │\n└──────────────────────────────────────────────────────────────────────────────┘\n\
+  ```\n\n### \U0001F4E6 Algorithm execution model\n\nEvery algorithm registered in `AlgorithmRegistry`\
+  \ is **dispatched to the\ncompiled backend first** (`processing/native_backend.py`); the Python\nimplementation\
+  \ only runs as a fallback for algorithms without a native twin.\n\n```\nmedaxis.algorithms.threshold(vol,\
+  \ lower=50, upper=300)\n        │\n        ▼\nAlgorithmRegistry.run ──► medaxis_itk.threshold_3d (C++/ITK)\
+  \ ◄── 53 algorithms\n        │                        ▲\n        └──► Python fallback ────┘   (thinning,\
+  \ NL-means, …)\n```\n\n---\n\n## \U0001F9EA Testing\n\n```bash\nuv run pytest -q                   \
+  \       # unit + regression tests\nuv run python build-deps/native_ops_smoke.py   # 47-op native smoke\
+  \ test\nuv run python build-deps/e2e_test.py           # load → segment → filter → render\nuv run python\
+  \ build-deps/views_e2e.py          # 4-view + overlay rendering\nuv run python build-deps/mpr_cpr_e2e.py\
+  \        # MPR/CPR + centerline\nuv run python build-deps/scripts_e2e.py        # sandbox/console/recorder/hooks\n\
+  ```\n\n---\n\n## \U0001F5FA️ Roadmap status\n\nAll blueprint phases (0–8) are implemented at the core\
+  \ level:\n\n| Phase | Status |\n|---|---|\n| 0 · Native build & bindings | ✅ Complete (Windows, MSVC\
+  \ + conda-forge + ITK source) |\n| 1 · Application foundation | ✅ Complete (uv toolchain, Qt shell,\
+  \ CI) |\n| 2 · I/O & data model | ✅ Complete |\n| 3 · Rendering engine | ✅ Complete (slice/MPR/CPR/volume,\
+  \ annotations, desktop-verified) |\n| 4 · Processing catalog | ✅ Complete (95 algorithms, 53 native)\
+  \ |\n| 5 · MCP & AI | ✅ Complete (12 tools, AI clients, verified E2E) |\n| 5b · Scripting | ✅ Complete\
+  \ (console/editor/recorder/sandbox/hooks) |\n| 6 · Geometry & advanced viz | ✅ Complete (centerline,\
+  \ stent view, CPR) |\n| 7 · Plugins & ecosystem | ✅ Complete (py/pyd plugins, MCP auto-exposure, model\
+  \ zoo) |\n| 8 · Persistence & workflow | ✅ Complete (archives, exports, RTSTRUCT/3MF, comparison, cine)\
+  \ |\n\n> \U0001F4CB Full details: [`docs/implementation_status.md`](docs/implementation_status.md)\n\
+  > and the design blueprint [`docs/design_plan.html`](docs/design_plan.html).\n\n---\n\n## ⚙️ Configuration\n\
+  \n| Item | Location |\n|---|---|\n| \U0001F39B️ Config | `~/.medaxis/config.yaml` |\n| \U0001F4DC Logs\
+  \ | `~/.medaxis/logs/` |\n| \U0001F4BE Autosave | `~/.medaxis/autosave/` |\n| \U0001F4E6 Script library\
+  \ | `~/.medaxis/scripts/` |\n| \U0001F916 Model cache | `~/.medaxis/models/` |\n| \U0001F9E9 Plugins\
+  \ | `~/.medaxis/plugins/` |\n\n---\n\n## \U0001F4C4 License\n\nApache-2.0 — see [LICENSE](LICENSE).\n"

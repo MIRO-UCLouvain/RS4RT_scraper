@@ -1,0 +1,138 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: cosmicquilt/segmentation-radiomics
+url: https://github.com/cosmicquilt/segmentation-radiomics
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-06T20:04:26Z'
+image_source: https://raw.githubusercontent.com/cosmicquilt/segmentation-radiomics/HEAD/docs/figures/parenchyma_floor_recovery.png
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# cancer-imaging radiomics: feature reproducibility + outcome correlation\n\n**why this\
+  \ matters for quantitative imaging.** a radiomic feature is only a biomarker\nif it does two things:\
+  \ track the clinical outcome, *and* stay stable under the upstream\nvariability that produced it. a\
+  \ feature that swings whenever the segmentation boundary\nmoves by a voxel is noise dressed up as a\
+  \ number, no matter how well it correlates. so\nthis project measures both halves: which features actually\
+  \ associate with the label, and\nwhich of those survive a perturbation of the segmentation.\n\n```\n\
+  \                                    -> feature reproducibility   (ICC / CCC under +/-1 voxel mask perturbation)\n\
+  segmentation -> feature extraction -|                                                  (which features\
+  \ are trustworthy)\n (dice / iou)   (shape, intensity)  -> outcome correlation       (per-feature pearson\
+  \ r, auc)\n                                                       qc throughout (flag failures, never\
+  \ silently average)\n```\n\n**this is the downstream half of a two-project pipeline.**\n[project 1](../01-mri-reconstruction/)\
+  \ characterized one upstream source of radiomic\nfeature instability, the image *reconstruction* (it\
+  \ found that the model winning SSIM\nwas not the model preserving biomarkers). this project characterizes\
+  \ the other upstream\nsource, the *segmentation*, with the **same ICC / CCC machinery**. project 1 asks\
+  \ how\nreconstruction perturbs features, this asks how segmentation does. together they recover\na *trustworthy\
+  \ image* and then turn it into *trustworthy numbers*.\n\n## recent additions\n\nactively hardened against\
+  \ the statistical blind spots a radiomics reviewer hunts for:\n\n- **real 4-radiologist inter-observer\
+  \ reproducibility** on **796 nodules / 280 patients** (311\n  drawn by all four), the gold-standard\
+  \ design, alongside the synthetic +/-1 voxel proxy.\n- a **repeatability coefficient**, reported as\
+  \ a **scale-invariant fold-change** (`ratio_rc`),\n  turning the inter-observer icc into an absolute\
+  \ progression threshold. the raw %rc looks like\n  ~17% (diameter) vs ~70% (volume), but that gap is\
+  \ mostly a units artifact (diameter is\n  volume^(1/3), the same measurement), so the fold-change is\
+  \ the honest, unit-free number.\n- a **glcm texture family** (10 haralick, fixed 25 hu bins) plus a\
+  \ cohort-size sweep that settles\n  whether its reproducibility is real signal or just underpowered.\n\
+  - **clustering-honest inference** for the multiple-nodules-per-patient problem: a patient-clustered\n\
+  \  bootstrap ci, a cluster-robust logistic regression, and a random-intercept glmm (all agree).\n- **combat**\
+  \ scanner-batch harmonization (empirical bayes) across 6 dicom-manufacturer batches,\n  cutting median\
+  \ batch-variance-explained 0.038 -> 0.001.\n- a **volume-residualized partial correlation** that asks\
+  \ whether any feature predicts malignancy\n  *beyond* lesion size (none reproducibly does, on this size-driven\
+  \ label).\n\n## what runs today vs the build plan\n\nthe pipeline runs **end-to-end right now** two\
+  \ ways: on synthetic lung-ct-like volumes\n(numpy, no download, no gpu) **and on real lidc-idri** ct\
+  \ with radiologist masks and\nmalignancy ratings (needs pylidc + a tcia subset, see the colab notebook).\
+  \ the learned\nsegmenter is the main piece still to swap in:\n\n| stage | runs today (baseline) | production\
+  \ upgrade |\n|-------|----------------------|--------------------|\n| segmentation | hu threshold +\
+  \ largest component | **monai / nnu-net** 3d u-net, dice loss (`segmentation/model.py`) |\n| features\
+  \ | radiomics-lite (shape + first-order + **glcm texture**, numpy, fixed 25 hu bin width) | **pyradiomics**\
+  \ remaining families (glrlm/glszm/ngtdm), ibsi-validated |\n| reproducibility | icc(2,1) under +/-1\
+  \ voxel erode/dilate **and across lidc's 4 radiologist masks** (real inter-observer), raw + parenchyma-floored\
+  \ | stochastic contour perturbation, texture-family icc |\n| confound checks | spearman vs roi volume\
+  \ (size-proxy flag), nodules-per-patient | small-nodule icc stratification, combat cross-batch harmonization\
+  \ |\n| correlation + clustering | pearson r + auc + **patient-cluster bootstrap, cluster-robust logit,\
+  \ random-intercept glmm** | multi-center validation of the clustering models |\n| harmonization | **combat**\
+  \ across scanner batches (empirical bayes) | nested-combat for simultaneous batch effects |\n| qc |\
+  \ empty / leakage / fragmentation checks | same |\n\n**what's done vs left.** the lidc-idri path now\
+  \ runs end-to-end (loader `data/lidc.py`,\n`configs/lidc.yaml`): real consensus masks, the radiologist\
+  \ malignancy rating as the label,\nthe 4-radiologist inter-observer reproducibility, and a **glcm texture\
+  \ family** (fixed 25 hu\nbin width), all in the real-data results below. **still on the build plan:**\
+  \ (1) train the\nmonai u-net to replace the threshold baseline (dice 0.47 on real ct is weak by design);\
+  \ (2) the\nremaining **pyradiomics** families (glrlm/glszm/ngtdm) on a texturally *diverse* cohort\n\
+  (part-solid / ground-glass nodules, not just the solid ones here), since the cohort-size sweep\nshowed\
+  \ ~half the glcm features are structurally low-variance on this set rather than underpowered;\n(3) validate\
+  \ the malignancy\ncorrelation on lidc's ~157-case **pathology-confirmed** subset, not just the subjective\
+  \ rating.\nthe within-patient clustering is now handled (patient-clustered bootstrap ci + cluster-robust\n\
+  logit + random-intercept glmm), and **combat** scanner-batch harmonization is in, so a genuine\nmulti-center\
+  \ cohort to stress both, plus nested-combat for simultaneous batch effects, a stochastic\ncontour perturbation,\
+  \ and small-nodule icc stratification round out the list. then stop, no\nradiogenomics (scope creep).\n\
+  see `scripts/download_data.md`.\n\n## quickstart\n\n```bash\n# core check, numpy only, no download,\
+  \ ~2s\npython scripts/smoke_test.py\n\n# install (python 3.10/3.11 recommended)\npip install -r requirements.txt\
+  \ && pip install -e .\n\n# full synthetic pipeline end-to-end\npython -m seg_radiomics.cli run --config\
+  \ configs/default.yaml\n```\n\ncolab: open [`notebooks/colab_segmentation_radiomics.ipynb`](notebooks/colab_segmentation_radiomics.ipynb).\n\
+  it runs the synthetic pipeline immediately, a gpu runtime (t4/l4/a100) is recommended\nonce you add\
+  \ the monai segmenter.\n\n## results, part 1: synthetic phantom (the method, illustrated)\n\nreproduce\
+  \ both tables with `python -m seg_radiomics.cli run --config configs/default.yaml`\n(numpy only, no\
+  \ download, ~3s). the synthetic label was built to depend on nodule size +\ndensity, so the analysis\
+  \ has a real signal to recover. **the numbers are synthetic, the\nmethodology is the point.**\n\n**segmentation:**\
+  \ dice ~1.0, high *by construction* (the synthetic nodule is cleanly\nthreshold-separable from \"lung\"\
+  ). it proves the metric/segmenter plumbing, **not**\nclinical difficulty. real lung ct is where dice\
+  \ becomes meaningful and the learned u-net\nearns its keep.\n\n**1. feature reproducibility under +/-1\
+  \ voxel segmentation perturbation.** each mask is\neroded and dilated by one voxel (an inter-observer-boundary\
+  \ proxy), features are\nre-extracted from all three masks, and each feature gets an icc(2,1) across\
+  \ the three\nsegmentations (two-way random, absolute agreement, the form that generalizes to unseen\n\
+  raters; lin's ccc is reported alongside as a cross-check). raw, the features split sharply:\n\n| feature\
+  \ | family | ICC | reproducible? |\n|---|---|---|---|\n| firstorder_90Percentile | first-order | 0.98\
+  \ | yes |\n| firstorder_Maximum | first-order | 0.95 | yes |\n| shape_SurfaceArea | shape | 0.89 | yes\
+  \ |\n| shape_EquivalentDiameter | shape | 0.86 | yes |\n| shape_VoxelVolume | shape | 0.82 | borderline\
+  \ |\n| firstorder_Energy | first-order | 0.005 | **no** |\n| firstorder_Mean / Entropy / StdDev / Minimum\
+  \ | first-order | ~0.00 | **no** |\n\nthe mechanism is real and lung-ct-specific: a +1 voxel dilation\
+  \ leaks into -800 hu lung\nair, which dominates the sum/mean-based first-order features (energy squares\
+  \ every voxel,\nso one rim of -800 hu air swamps it) but barely touches the *upper* percentiles (90th,\n\
+  max, anchored by the dense core) or the shape features.\n\n**2. the leakage is fixable, not intrinsic.**\
+  \ the instability above is a\nsegmentation-contamination artifact, so rerunning the exact same analysis\
+  \ after a -300 hu\nfloor (standard lung-ct parenchyma exclusion: drop every voxel below -300 hu inside\
+  \ the\nmask, removing the air a dilation leaked into) recovers it almost completely:\n\n| family | median\
+  \ ICC raw | median ICC floored | % ICC > 0.85 (raw -> floored) |\n|---|---|---|---|\n| all 22 | 0.01\
+  \ | 0.90 | 18% -> 73% |\n| shape | 0.84 | 0.94 | 50% -> 100% |\n| first-order | 0.01 | 0.97 | 25% ->\
+  \ 88% |\n| texture (glcm) | 0.00 | 0.85 | 0% -> 50% |\n\nevery collapsed first-order feature comes back\
+  \ above 0.85 (energy 0.005 -> 0.95, mean\n0.03 -> 1.00; stddev recovers to 0.85 but is flagged low-signal,\
+  \ see the caveat below). the\n**10 glcm texture features collapse the same way** (raw icc ~0, since\
+  \ the leaked -800 hu air\ndominates the co-occurrence matrix) and recover too, but less completely (median\
+  \ 0.85, only\nhalf clear the line) which previews their greater fragility on real readers in part 2.\
+  \ this is\nthe actionable half: the pipeline doesn't just flag unstable features, it shows a one-line\n\
+  preprocessing fix that restores them (the floor is `features.hu_floor` in the config).\n\n![raw vs floored\
+  \ ICC for all 22 features: the first-order and glcm texture features that collapsed under the raw +/-1\
+  \ voxel perturbation (open circles near zero) recover above the 0.85 good-reliability line once a -300\
+  \ HU floor excludes the leaked air (filled circles), while the already-robust upper-percentile and shape\
+  \ features barely move](docs/figures/parenchyma_floor_recovery.png)\n\n*regenerate with `python scripts/make_figures.py`\
+  \ (numpy + matplotlib, ~3s, fixed seed).*\n\n**3. feature vs label correlation, and the volume confound.**\
+  \ per-feature association with\nthe synthetic malignancy-like label, plus each feature's spearman correlation\
+  \ with roi\nvolume (a feature that is \"predictive\" only because it restates lesion size is not a\n\
+  biomarker):\n\n| feature | pearson r | auc | spearman w/ volume |\n|---|---|---|---|\n| shape_EquivalentDiameter\
+  \ | +0.77 | 0.93 | +1.00 (definitional) |\n| shape_SurfaceArea | +0.75 | 0.93 | +1.00 (definitional)\
+  \ |\n| shape_Sphericity | -0.73 | 0.10 | -0.98 (definitional) |\n| firstorder_Energy | +0.72 | **0.99**\
+  \ | **+0.83 (size proxy)** |\n\nshape features correlate with volume *by construction*, so the flag\
+  \ only bites for\nintensity features, and exactly one trips it: firstorder_Energy.\n\n**the three analyses\
+  \ together are the whole point.** firstorder_Energy is the single best\nlabel separator (auc 0.99),\
+  \ and it fails for two independent reasons the correlation table\nalone would never surface: its predictivity\
+  \ is largely a size proxy (spearman 0.83 with\nvolume), and its raw reproducibility is the worst of\
+  \ any feature (icc 0.005) until the\nparenchyma floor rescues it. a feature has to clear all three bars\
+  \ (associated, not a mere\nsize proxy, reproducible) to be a real biomarker, which is exactly the upstream->downstream\n\
+  stability question project 1 asked of reconstruction, asked here of segmentation.\n\n**honest about\
+  \ the proxy.** the +/-1 voxel erode/dilate is a deterministic stand-in for\nstochastic inter-observer\
+  \ variability, so the shape-feature ICCs partly reflect grid\ngeometry (a uniform dilation changes volume\
+  \ by a fixed function) rather than reader\ndisagreement. the real measurement is lidc's four independent\
+  \ radiologist contours per\nnodule, which the same icc(2,1) code consumes directly (see part 2 below,\
+  \ where the\nradiologists turn out to agree *far* more than this proxy). icc is reported per feature,\
+  \ not\nas a single family average, because the families are bimodal (the first-order split above\nwould\
+  \ otherwise vanish into a meaningless \"moderate\" mean).\n\nstddev and several glcm features are flagged\
+  \ **low-signal** (the asterisks in the figure):\nevery synthetic nodule is built with the same internal\
+  \ noise, so these features barely vary\nacross the co"

@@ -1,0 +1,57 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: topasmc/dicom-interface
+url: https://github.com/topasmc/dicom-interface
+platform: github
+description: DICOM RT Interface for TOPAS
+license: MIT
+language: C++
+keywords: []
+stars: 28
+updated_at: '2026-06-29T03:37:02Z'
+image_source: null
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 particle-therapy term(s).
+- Matched 6 support term(s).
+readme_excerpt: "## DICOM RT-Ion interface for MC simulation \n***\n\n<!-- \ntitle: \"Note: DICOM interface\
+  \ for MC simulation\"\nauthor: Jungwook Shin\ndate: July 1, 2019\n-->\n\n> *<span style=\"color:red\"\
+  >Current version is BETA as of Aug14, 2019</span>*\n\nDICOM RT-Ion interface, shortly **RTI**, is a\
+  \ library to convert treatment planning information in DICOM format into Monte Carlo components on-the-fly\
+  \ such as geometries and beam source. The **RTI** allows integration of DICOM-RT Ion interface within\
+  \ a MC engine to provide more reliable and consistent performance than with a script-based processing\
+  \ to interpret DICOM information.\nFor the Monte Carlo simulation, [TOPAS extensions](https://topas.readthedocs.io/en/latest/extension-docs/intro.html#)\
+  \ of geometry and particle source to connect **RTI** are provided.\n\nDICOM-RT objects utilized in this\
+  \ interface are\n- Ion Plan (**RTIP**)\n- Ion Beams Treatment Record (**RTIBTR**) \n- CT image \n- RT-Dose\n\
+  > note: RT Plan is not supported (2019. July 22).\n\nBeamline geometries, gantry and patient coordinate\
+  \ systems, and fluence map are determined from RTIP and/or RTIBTR.  CT image and Dose are used only\
+  \ for patient dose calculations.\n\n## Getting started\n\n### Requirements\n\n- **[GDCM](http://gdcm.sourceforge.net)**\
+  \ tested versions are 2.4, 2.6.8, and 3.0.\n\n (GDCM version 3.0 works with RTI if you compile TOPAS\
+  \ 3.9 from source instead of using the binary package.)\n\n### Monte Carlo \n\n- **[TOPAS](http://www.topasmc.org)**\
+  \ are tested for versions 3.1, 3.2, 3.5, 3.7, and 3.9\n\n### Tested operating systems\n  - Mac OS X\n\
+  \    - 10.14.5, clang++ (LLVM version 10.0.1, /usr/bin/c++) \n    - 12.6.2,  clang++ (LLVM version 14.0.0,\
+  \ /usr/bin/c++) with topas 3.9\n    - cmake version 3.24\n  - Linux\n    - Red Hat Enterprise Linux\
+  \ Server release 6.7 g++ (4.9.0)\n    - Ubuntu 12.0 with gcc 11\n    - Ubuntu 19.10\n    - Ubuntu 22.04\
+  \ (gcc 11.3)\n  \n### Installation\n\nAs **RTI** is a header only library, copy or download the files\
+  \ to somewhere in your system.\n```bash\n$ cd /<your_sw_path>/\n$ git clone https://github.com/topasmc/dicom-interface\
+  \ rti.git\n```\n\nIf you are compiling dicom-interface with topas releases ( not from source), you need\
+  \ to use same headers of gdcm that topas used.\n```bash\n$ cd /<your_sw_path>/rti.git\n$ tar -zxf gdcm-2.6.include.tar.gz\n\
+  $ ls gdcm-2.6\n```\n\nThen, go to the directory where your topas is installed. \n\n```bash\n$ cd /<your_topas_path>/\n\
+  ```\n\nAdd two lines in CMakeList.txt (in TOPAS) as following:\n```cmake\ninclude_directories (\n  \
+  \  ${CMAKE_BINARY_DIR}\n    ${CMAKE_BINARY_DIR}/extensions\n    ${PROJECT_SOURCE_DIR}/Geant4Headers\n\
+  \    ${PROJECT_SOURCE_DIR}/include\n    /<your_sw_path>/rti.git/\n    /<your_sw_path>/rti.git/gdcm-2.6\n\
+  )\n```\n\n```bash\n$ cmake -DTOPAS_EXTENSIONS_DIR=/<your_sw_path>/rti.git/rti/topas/rtion .\n$ make\
+  \ -j4\n```\n\nYou can also modify the CMakeLists.txt to just contain TOPAS_EXTENSIONS_INCLUDE_DIR and\
+  \ instead do (for example):\n\n```bash\n$ cmake -DTOPAS_EXTENSIONS_INCLUDE_DIR=/<your_sw_path>/dicom-interface/\
+  \ -DTOPAS_EXTENSIONS_DIR=/<your_sw_path>/dicom-interface/rti/topas/rtion .\n$ make -j4\n```\n\n### Run\
+  \ a test\n\n```bash\n$ cd /your_sw_path/rti.git/topas/tutorial/\n$ topas beam_view.txt\n```\n\nFor more\
+  \ detail, please see this project's wiki page [https://github.com/topasmc/dicom-interface/wiki](https://github.com/topasmc/dicom-interface/wiki).\n\
+  \n## Authors\n\n- **Shin, Jungwook**: main developments and documentations. \n- **Hueso-Gonzalez, Fernando**:\
+  \ documentations and discussion\n- **Edmunds, David**: GPU (cuda) implementation\n- **Kooy, Hanne, M.**\
+  \ : Advisor\n- **Paganetti, Harald** : Advisor\n- **Clasie, Benjamin M.** : Advisor\n  \n## Acknowledgements\n\
+  \nThis project is initiated by Massachusetts General Hospital and continuously supported by a NIH grant,\
+  \ TOPAS project (U24).\n\n## How to cite\n\nPlease cite this paper: https://doi.org/10.1016/j.ejmp.2020.04.018\n\
+  \n## License (TBD):\n\nThis project is licensed under - see the LICENSE.md file for details.\n"

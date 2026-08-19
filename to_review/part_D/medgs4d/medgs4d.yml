@@ -1,0 +1,138 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: mozo64/medgs4d
+url: https://github.com/mozo64/medgs4d
+platform: github
+description: Experimental 4D medical Gaussian Splatting pipeline for dynamic CT data.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-08-06T08:22:59Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "# MedGS4D Technical Guide\n\nMedGS4D builds a phase-conditioned deformation model on\
+  \ top of a frozen canonical MedGS reconstruction of 4D-CT data. The repository supports three connected\
+  \ workflows:\n\n1. **Image reconstruction:** prepare respiratory CT volumes, train a static canonical\
+  \ MedGS model, train a dynamic deformation MLP, and evaluate reconstructed slices across respiratory\
+  \ phases.\n2. **Reference geometry:** convert phase-specific RTSTRUCT contours into voxel masks and\
+  \ watertight meshes used as geometric ground truth.\n3. **Gaussian-to-mesh baseline:** map MedGS latent\
+  \ coordinates to DICOM patient coordinates, transfer learned Gaussian motion to a fixed-topology canonical\
+  \ tumor mesh, and evaluate predicted meshes against phase-specific RTSTRUCT references.\n\nAll workflows\
+  \ use the same DICOM study, respiratory phase convention, and patient-coordinate geometry. RTSTRUCT\
+  \ meshes remain deterministic reference artifacts. Predicted meshes are obtained by deforming the phase-0\
+  \ reference mesh with a training-free, robust interpolation of the learned MedGS4D Gaussian motion.\n\
+  \nThe upstream MedGS repository remains external and is passed explicitly with `--medgs-repo`.\n\n##\
+  \ 1. Current scope\n\nThe repository currently provides:\n\n- discovery and extraction of 4D-Lung DICOM\
+  \ series,\n- inspection of studies, respiratory phases, CT series, and RTSTRUCT objects,\n- reusable\
+  \ raw and denoised HU volumes,\n- canonical MedGS training, resume, evaluation, and history tracking,\n\
+  - phase-conditioned MedGS4D training with full or phase-holdout splits,\n- checkpoint comparison, error\
+  \ maps, and deformation diagnostics,\n- RTSTRUCT inventory and ROI geometry inspection,\n- batch construction\
+  \ of reference masks and watertight meshes for all respiratory phases,\n- validated MedGS latent-to-DICOM\
+  \ coordinate transforms,\n- Gaussian-neighborhood analysis around a canonical tumor mesh,\n- robust\
+  \ transfer of Gaussian displacement to fixed-topology mesh vertices,\n- Dice, IoU, surface-distance,\
+  \ HD95, centroid, volume, watertightness, and degeneracy evaluation,\n- compact saved predictions and\
+  \ phase-comparison PNGs,\n- notebook inspection of RTSTRUCT geometry, Gaussian alignment, image reconstruction,\
+  \ and Gaussian-to-mesh results.\n\nCurrent limitations:\n\n- the Gaussian-to-mesh transfer is heuristic\
+  \ and has no geometry-supervised training,\n- nearby Gaussians are selected geometrically, not semantically\
+  \ as tumor Gaussians,\n- the worked result covers one patient and one study,\n- direct transfer improves\
+  \ centroid tracking but does not yet recover reliable tumor shape or volume,\n- independently generated\
+  \ RTSTRUCT reference meshes do not have vertex correspondence across phases.\n\n## 2. Repository structure\n\
+  \n```text\nmedgs4d/\n├── medgs4d/\n│   ├── canonical.py\n│   ├── config.py\n│   ├── data.py\n│   ├──\
+  \ deformation.py\n│   ├── diagnostics.py\n│   ├── evaluation.py\n│   ├── gaussian_geometry.py\n│   ├──\
+  \ mesh_series.py\n│   ├── mesh_transfer.py\n│   ├── mesh_validation.py\n│   ├── meshes.py\n│   ├── reporting.py\n\
+  │   ├── results.py\n│   ├── rtstruct.py\n│   ├── runs.py\n│   ├── splits.py\n│   ├── training.py\n│\
+  \   └── visualization.py\n├── scripts/\n│   ├── data.py\n│   ├── train_canonical.py\n│   ├── evaluate_canonical.py\n\
+  │   ├── train_medgs4d.py\n│   ├── evaluate_medgs4d.py\n│   ├── evaluate_checkpoints.py\n│   ├── diagnose_deformation.py\n\
+  │   ├── export_error_maps.py\n│   ├── inspect_gaussian_geometry.py\n│   ├── predict_mesh_from_gaussians.py\n\
+  │   ├── rtstruct_mesh.py\n│   ├── visualize_medgs4d.py\n│   └── run_patient117_20001024_medgs4d.sh\n\
+  ├── notebooks/\n│   ├── 04_validate_rtstruct_mesh.ipynb\n│   └── results_browser.ipynb\n├── tests/\n\
+  │   ├── test_gaussian_geometry.py\n│   ├── test_mesh_series.py\n│   ├── test_mesh_transfer.py\n│   ├──\
+  \ test_rtstruct_mesh.py\n│   ├── test_rtstruct_roi_inspection.py\n│   └── other unit and integration\
+  \ tests\n├── pyproject.toml\n└── README.md\n```\n\nThe Python package contains reusable logic. The scripts\
+  \ are intentionally thin CLI entry points. Notebook code loads prepared artifacts rather than reimplementing\
+  \ DICOM parsing, rasterization, training, coordinate mapping, mesh transfer, or evaluation.\n\n## 3.\
+  \ Environment and installation\n\n**What:** install the local package in editable mode and expose the\
+  \ required GPU.\n\n**Why:** scripts and notebooks must import the same working tree, while upstream\
+  \ MedGS remains a separate repository.\n\nExample WORF setup:\n\n```bash\ncd /home/jovyan/shared/mtm_medgs_stack/repo/medgs4d\n\
+  \nPYTHON=/home/jovyan/shared/mtm_medgs_stack/envs/medgs-worf/bin/python\nMEDGS_REPO=/home/jovyan/shared/mtm_medgs_stack/repo/MedGS\n\
+  \n$PYTHON -m pip install -e .\n\nexport CUDA_VISIBLE_DEVICES=1\nexport PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True\n\
+  ```\n\n`CUDA_VISIBLE_DEVICES=1` exposes the second physical GPU as logical `cuda:0` inside PyTorch.\
+  \ CLI commands still use `--device cuda`.\n\nBasic checks:\n\n```bash\n$PYTHON -m compileall -q medgs4d\
+  \ scripts tests\n$PYTHON -m pytest -q -m \"not worf\"\n```\n\nInspect any command before running it:\n\
+  \n```bash\n$PYTHON scripts/data.py --help\n$PYTHON scripts/train_medgs4d.py --help\n$PYTHON scripts/rtstruct_mesh.py\
+  \ --help\n$PYTHON scripts/inspect_gaussian_geometry.py --help\n$PYTHON scripts/predict_mesh_from_gaussians.py\
+  \ --help\n```\n\n## 4. Worked study and shared paths\n\nThe examples below use the annotated 4D-Lung\
+  \ study processed during development:\n\n```bash\nREPO=/home/jovyan/shared/mtm_medgs_stack/repo/medgs4d\n\
+  PYTHON=/home/jovyan/shared/mtm_medgs_stack/envs/medgs-worf/bin/python\nMEDGS_REPO=/home/jovyan/shared/mtm_medgs_stack/repo/MedGS\n\
+  \nARCHIVES_DIR=/home/jovyan/shared/mtm_medgs_stack/data/tcia_4d_lung/raw/series_zips\nDICOM_DIR=/home/jovyan/shared/mtm_medgs_stack/data/tcia_4d_lung/raw/dicom_by_series\n\
+  PREPARED_ROOT=/home/jovyan/shared/mtm_medgs_stack/data/tcia_4d_lung/prepared\nCANONICAL_ROOT=/home/jovyan/shared/mtm_medgs_stack/results/canonical\n\
+  DYNAMIC_ROOT=/home/jovyan/shared/mtm_medgs_stack/results/medgs4d\n\nPATIENT_ID=117_HM10395\nSTUDY_UID=1.3.6.1.4.1.14519.5.2.1.6834.5010.378204929111417980831212264180\n\
+  STUDY_NAME=patient117_20001024_annotated\nSTUDY_DIR=\"$PREPARED_ROOT/$STUDY_NAME\"\n```\n\nThe study\
+  \ contains ten respiratory CT phases and ten phase-specific RTSTRUCT objects. The CT reconstruction\
+  \ workflow uses the prepared study directory; the RTSTRUCT mesh workflow reads the original DICOM geometry\
+  \ and writes its artifacts under the same study root.\n\n## 5. Data discovery and preparation\n\n###\
+  \ 5.1 List available patients\n\n**What:** summarize patients present in the source archives or already\
+  \ extracted DICOM tree.\n\n**Why:** confirm the patient identifier and available archive count before\
+  \ extraction.\n\n```bash\n$PYTHON scripts/data.py list-patients \\\n  --archives-dir \"$ARCHIVES_DIR\"\
+  \n```\n\nAlready extracted patients:\n\n```bash\n$PYTHON scripts/data.py list-patients \\\n  --dicom-dir\
+  \ \"$DICOM_DIR\"\n```\n\n### 5.2 Extract one patient\n\n**What:** unpack every series archive belonging\
+  \ to one patient into a stable directory per `SeriesInstanceUID`.\n\n**Why:** later study inspection\
+  \ and DICOM loading operate on extracted files, not directly on ZIP archives.\n\n```bash\n$PYTHON scripts/data.py\
+  \ extract \\\n  --archives-dir \"$ARCHIVES_DIR\" \\\n  --dicom-dir \"$DICOM_DIR\" \\\n  --patient-id\
+  \ \"$PATIENT_ID\" \\\n  --workers 4 \\\n  --log logs/patient117_extraction.csv\n```\n\nOutput layout:\n\
+  \n```text\n<DICOM_DIR>/\n└── 117_HM10395/\n    └── <SeriesInstanceUID>/\n        ├── DICOM files\n \
+  \       └── .unpack_complete.json\n```\n\n`.unpack_complete.json` records source and completion metadata.\
+  \ Repeated extraction skips complete series unless `--force` is used.\n\n### 5.3 List studies, series,\
+  \ and RTSTRUCT objects\n\n**What:** inspect the patient hierarchy without yet choosing training targets.\n\
+  \n**Why:** one patient may contain several studies, non-respiratory series, RTSTRUCT objects, and studies\
+  \ with different phase or slice coverage.\n\nList studies:\n\n```bash\n$PYTHON scripts/data.py list-studies\
+  \ \\\n  --dicom-dir \"$DICOM_DIR\" \\\n  --patient-id \"$PATIENT_ID\"\n```\n\nList every series in the\
+  \ selected study:\n\n```bash\n$PYTHON scripts/data.py list-series \\\n  --dicom-dir \"$DICOM_DIR\" \\\
+  \n  --patient-id \"$PATIENT_ID\" \\\n  --study-uid \"$STUDY_UID\"\n```\n\nOptional modality filter:\n\
+  \n```bash\n$PYTHON scripts/data.py list-series \\\n  --dicom-dir \"$DICOM_DIR\" \\\n  --patient-id \"\
+  $PATIENT_ID\" \\\n  --study-uid \"$STUDY_UID\" \\\n  --modality CT\n```\n\nList RTSTRUCT objects and\
+  \ their referenced CT series:\n\n```bash\n$PYTHON scripts/data.py list-rtstructs \\\n  --dicom-dir \"\
+  $DICOM_DIR\" \\\n  --patient-id \"$PATIENT_ID\" \\\n  --referenced-study-uid \"$STUDY_UID\"\n```\n\n\
+  ### 5.4 Inspect respiratory CT geometry\n\n**What:** resolve respiratory phases and report CT dimensions,\
+  \ slice counts, coordinates, and spacing.\n\n**Why:** phase volumes must have compatible geometry before\
+  \ they are prepared, trained, or compared.\n\n```bash\n$PYTHON scripts/data.py inspect \\\n  --dicom-dir\
+  \ \"$DICOM_DIR\" \\\n  --patient-id \"$PATIENT_ID\" \\\n  --study-uid \"$STUDY_UID\"\n```\n\nFor the\
+  \ worked study, confirm ten CT phases `0, 10, ..., 90`, compatible in-plane dimensions, and regular\
+  \ slice spacing.\n\n### 5.5 Prepare reusable 4D-CT volumes\n\n**What:** reconstruct each respiratory\
+  \ CT series as a NumPy HU volume and optionally produce a denoised copy.\n\n**Why:** training and evaluation\
+  \ should not repeatedly parse thousands of DICOM files or reconstruct slice geometry.\n\nThe worked\
+  \ training run uses a somewhat stronger Gaussian filter than the package default:\n\n```bash\n$PYTHON\
+  \ scripts/data.py prepare \\\n  --dicom-dir \"$DICOM_DIR\" \\\n  --prepared-root \"$PREPARED_ROOT\"\
+  \ \\\n  --patient-id \"$PATIENT_ID\" \\\n  --study-uid \"$STUDY_UID\" \\\n  --study-name \"$STUDY_NAME\"\
+  \ \\\n  --hu-window -1000 400 \\\n  --denoise-sigma 0.35 0.70 0.70\n```\n\nPrepared study layout:\n\n\
+  ```text\n<PREPARED_ROOT>/patient117_20001024_annotated/\n├── manifest.json\n├── phase_summary.csv\n\
+  ├── phase_slice_manifest.csv\n└── volumes/\n    ├── raw/\n    │   ├── phase_00.npy\n    │   ├── phase_10.npy\n\
+  \    │   └── ...\n    └── denoised/\n        ├── phase_00.npy\n        ├── phase_10.npy\n        └──\
+  \ ...\n```\n\n| Artifact | Meaning |\n|---|---|\n| `manifest.json` | Prepared-study contract: patient\
+  \ and study identifiers, phases, volume shape, HU window, denoising sigma, and paths. |\n| `phase_summary.csv`\
+  \ | One row per phase with dimensions, slice count, coordinate range, spacing, and volume paths. |\n\
+  | `phase_slice_manifest.csv` | One row per phase and slice with source DICOM path, index, coordinate,\
+  \ and geometry metadata. |\n| `volumes/raw/phase_*.npy` | Reconstructed `float32` CT volumes in Hounsfield\
+  \ units. |\n| `volumes/denoised/phase_*.npy` | The same HU volumes after the configured 3-D Gaussian\
+  \ filter. |\n\nThe HU window controls conversion to image intensities. The NumPy CT volumes retain HU\
+  \ values.\n\n```bash\ncat \"$STUDY_DIR/manifest.json\"\nhead \"$STUDY_DIR/phase_summary.csv\"\nhead\
+  \ \"$STUDY_DIR/phase_slice_manifest.csv\"\n```\n\n## 6. Canonical MedGS reconstruction\n\n### 6.1 Train\
+  \ the canonical model\n\n**What:** convert one selected respiratory phase into the upstream MedGS image\
+  \ layout and optimize a static Gaussian representation.\n\n**Why:** MedGS4D deforms a frozen canonical\
+  \ representation; it does not learn the canonical Gaussian cloud from scratch.\n\nWorked configuration:\n\
+  \n```bash\nCANONICAL_PHASE=0\nCANONICAL_ITERATIONS=15000\nCANONICAL_RUN_NAME=phase00_denoised_iter15000\n\
+  CANONICAL_RUN=\"$CANONICAL_ROOT/$STUDY_NAME/$CANONICAL_RUN_NAME\"\n\n$PYTHON scripts/train_canonical.py\
+  \ \\\n  --data-dir \"$STUDY_DIR\" \\\n  --medgs-repo \"$MEDGS_REPO\" \\\n  --output-root \"$CANONICAL_ROOT\"\
+  \ \\\n  --run-name \"$CANONICAL_RUN_NAME\" \\\n  --canonical-phase \"$CANONICAL_PHASE\" \\\n  --representation\
+  \ denoised \\\n  --iterations \"$CANONICAL_ITERATIONS\" \\\n  --poly-degree 2 \\\n  --batch-size 3 \\\
+  \n  --camera mirror \\\n  --log-every 100\n```\n\nThe script:\n\n1. converts the selected HU volume\
+  \ into the upstream MedGS image dataset,\n2. launches upstream training,\n3. stores restartable canonical\
+  \ checkpoints,\n4. performs full-slice canonical evaluation,\n5. updates evaluation history and PDF\
+  \ plots.\n\nCanonical run layout:\n\n```text\n<CANONICAL_ROOT>/patient117_20001024_annotated/phase00_denoised_iter15000/\n\
+  ├"

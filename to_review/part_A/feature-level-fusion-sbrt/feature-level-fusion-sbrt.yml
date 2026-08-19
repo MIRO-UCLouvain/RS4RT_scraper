@@ -1,0 +1,130 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: albuca09/Feature_Level_Fusion_SBrT
+url: https://github.com/albuca09/Feature_Level_Fusion_SBrT
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-05-03T16:35:16Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "\n# Fusão de Sensores para Detecção e Classificação de Drones\n\nEste projeto explora\
+  \ o **Drone Detection Dataset** e implementa pipelines para preparação de dados, geração de anotações\
+  \ no formato YOLO, extração de atributos de imagem/áudio e avaliação de classificadores com fusão de\
+  \ sensores.\n\nOs sensores considerados são:\n\n- **IR**: vídeo infravermelho;\n- **V**: vídeo visível;\n\
+  - **AUDIO**: sinais de áudio.\n\nAs classes globais usadas na etapa multiclasse são:\n\n```text\nAIRPLANE\n\
+  BACKGROUND\nBIRD\nDRONE\nHELICOPTER\n```\n\n---\n\n## 1. Objetivo\n\nO notebook `FUSAO.ipynb` tem quatro\
+  \ objetivos principais:\n\n1. Explorar a estrutura do dataset compactado em `.zip`;\n2. Organizar e\
+  \ resumir os arquivos por classe, modalidade e amostra;\n3. Converter anotações de vídeo para o formato\
+  \ YOLO;\n4. Avaliar métodos de fusão de sensores para classificação binária e multiclasse.\n\n---\n\n\
+  ## 2. Estrutura geral do pipeline\n\nO fluxo implementado no notebook é:\n\n```text\nDrone-detection-dataset-master.zip\n\
+  \        |\n        v\nExploração do ZIP e geração de manifestos\n        |\n        v\nLeitura de arquivos\
+  \ .mat, .xlsx e scripts MATLAB\n        |\n        v\nPreparação dos dados de detecção YOLO\n      \
+  \  |\n        v\nExtração de features IR, V e AUDIO\n        |\n        v\nClassificação binária DRONE\
+  \ vs NON-DRONE\n        |\n        v\nClassificação multiclasse com fusão de sensores\n```\n\n---\n\n\
+  ## 3. Configuração de caminhos\n\nAntes de executar o notebook, ajuste os caminhos conforme o ambiente\
+  \ local.\n\nExemplos usados no notebook:\n\n```python\nZIP_PATH = Path(r\"C:\\Users\\Luis\\Downloads\\\
+  Drone-detection-dataset-master.zip\")\n\nDATA_ROOT = Path(\n    r\"C:\\Users\\Luis\\Downloads\\DroneDetectionDataset\\\
+  Drone-detection-dataset-master\\Data\"\n)\n\nDETECT_ROOT = Path(\n    r\"C:\\Users\\Luis\\Downloads\\\
+  exploracao_drone_dataset\\detector_training_data\"\n)\n\nFEATURE_ROOT = Path(\n    r\"C:\\Users\\Luis\\\
+  Downloads\\exploracao_drone_dataset\\fusion_3sensors_baseline\"\n)\n```\n\n---\n\n## 4. Dependências\n\
+  \nO notebook usa Python 3 e as seguintes bibliotecas principais:\n\n```text\nnumpy\npandas\nscikit-learn\n\
+  matplotlib\nPillow\nlibrosa\nsoundfile\nscipy\nopenpyxl\n```\n\nModelos opcionais:\n\n```text\nxgboost\n\
+  lightgbm\ncatboost\n```\n\nInstalação sugerida:\n\n```bash\npip install numpy pandas scikit-learn matplotlib\
+  \ pillow librosa soundfile scipy openpyxl\n```\n\nPara usar os modelos opcionais:\n\n```bash\npip install\
+  \ xgboost lightgbm catboost\n```\n\n---\n\n## 5. Exploração do dataset\n\nA primeira etapa lê o arquivo\
+  \ `.zip` sem extraí-lo completamente e gera uma visão geral dos arquivos internos.\n\nSaídas principais:\n\
+  \n```text\nexploracao_drone_dataset/\n├── arquivos_no_zip.csv\n├── pastas_no_zip.csv\n└── estrutura_pastas.txt\n\
+  ```\n\nEsses arquivos contêm:\n\n- lista completa de arquivos do ZIP;\n- extensão, tamanho e pasta de\
+  \ cada arquivo;\n- árvore de diretórios do dataset.\n\n---\n\n## 6. Manifestos e resumos do dataset\n\
+  \nO notebook identifica automaticamente a modalidade de cada arquivo:\n\n- `audio`;\n- `video_ir`;\n\
+  - `video_visible`;\n- `label_mat`;\n- `spreadsheet`;\n- `matlab_script`;\n- `readme`;\n- `other`.\n\n\
+  Também normaliza os nomes das amostras, por exemplo:\n\n```text\nV_DRONE_001.mp4       -> DRONE_001\n\
+  IR_DRONE_001.mp4      -> DRONE_001\nDRONE_001_LABELS.mat  -> DRONE_001\nDRONE_001.wav         -> DRONE_001\n\
+  ```\n\nSaídas geradas:\n\n```text\nexploracao_drone_dataset/\n├── resumo_por_pasta_classe.csv\n├── resumo_classes.csv\n\
+  ├── dataset_manifest_limpo.csv\n├── resumo_classes_limpo.csv\n├── resumo_pares_video_label.csv\n└──\
+  \ arquivos_sem_par.csv\n```\n\nEsses arquivos permitem verificar:\n\n- número de arquivos por classe;\n\
+  - número de arquivos por modalidade;\n- presença de áudio, vídeo IR, vídeo visível e labels `.mat`;\n\
+  - amostras com vídeo sem label ou label sem vídeo.\n\n---\n\n## 7. Inspeção de arquivos `.mat`, `.xlsx`\
+  \ e scripts MATLAB\n\nO notebook também inspeciona os arquivos de anotação e metadados do dataset.\n\
+  \nSaídas:\n\n```text\nexploracao_drone_dataset/\n├── resumo_conteudo_mat_direto_zip.csv\n└── resumo_xlsx_direto_zip.txt\n\
+  ```\n\nO arquivo `.xlsx` contém metadados como:\n\n```text\nSENSOR\nCLASS\nNUMBER\nDISTANCE BIN\nINTER\
+  \ BIN NUMBER\nDRONE TYPE / INTERNET SOURCE\n```\n\n---\n\n## 8. Preparação do dataset YOLO\n\nA etapa\
+  \ de detecção converte as anotações dos CSVs `trainingData_IR.csv` e `trainingData_V.csv` para o formato\
+  \ YOLO.\n\nClasses usadas:\n\n```text\n0: AIRPLANE\n1: BIRD\n2: DRONE\n3: HELICOPTER\n```\n\nA conversão\
+  \ transforma caixas no formato MATLAB:\n\n```text\nx, y, width, height\n```\n\npara o formato YOLO normalizado:\n\
+  \n```text\nclass_id x_center y_center width height\n```\n\nA divisão é feita por `sample_id`, evitando\
+  \ vazamento entre treino, validação e teste.\n\nProporção dos splits:\n\n```text\ntrain: 70%\nval: \
+  \  15%\ntest:  15%\n```\n\nSaídas:\n\n```text\ndetector_training_data/\n└── yolo_drone_detection/\n\
+  \    ├── annotations_long.csv\n    ├── classes_summary.csv\n    ├── data.yaml\n    ├── images/\n   \
+  \ │   ├── train/\n    │   ├── val/\n    │   └── test/\n    └── labels/\n        ├── train/\n       \
+  \ ├── val/\n        └── test/\n```\n\n---\n\n## 9. Extração de features\n\n### 9.1. Features de imagem\n\
+  \nPara os sensores IR e V, cada frame é convertido para escala de cinza, redimensionado para `32 x 32`\
+  \ e representado por:\n\n- pixels achatados;\n- histograma de intensidade;\n- histograma de magnitude\
+  \ do gradiente;\n- estatísticas globais da imagem.\n\nAs features são agregadas no nível da amostra\
+  \ por média e desvio-padrão.\n\n### 9.2. Features de áudio\n\nPara cada arquivo `.wav`, o notebook extrai:\n\
+  \n- log-mel spectrogram;\n- MFCC;\n- RMS;\n- zero-crossing rate;\n- spectral centroid;\n- spectral bandwidth;\n\
+  - spectral rolloff.\n\nAs features temporais são agregadas por média e desvio-padrão.\n\nSaídas:\n\n\
+  ```text\nfusion_3sensors_baseline/\n├── features_IR.csv\n├── features_V.csv\n└── features_AUDIO.csv\n\
+  ```\n\n---\n\n## 10. Classificação binária: DRONE vs NON-DRONE\n\nA primeira avaliação supervisionada\
+  \ trata o problema como classificação binária:\n\n```text\nDRONE      -> 1\nNON-DRONE  -> 0\n```\n\n\
+  Combinações avaliadas:\n\n```text\nIR\nV\nAUDIO\nIR+V\nIR+AUDIO\nV+AUDIO\nIR+V+AUDIO\n```\n\nModelos\
+  \ usados:\n\n- Regressão logística;\n- Random Forest.\n\nMétricas calculadas:\n\n- accuracy;\n- balanced\
+  \ accuracy;\n- precision;\n- recall;\n- F1-score;\n- ROC-AUC;\n- matriz de confusão.\n\nSaídas:\n\n\
+  ```text\nfusion_3sensors_baseline/\n├── combination_sizes.csv\n├── fusion_metrics.csv\n└── fusion_predictions.csv\n\
+  ```\n\n---\n\n## 11. Classificação multiclasse com fusão de sensores\n\nA versão multiclasse avalia\
+  \ as seguintes classes globais:\n\n```text\nAIRPLANE\nBACKGROUND\nBIRD\nDRONE\nHELICOPTER\n```\n\nComo\
+  \ nem todos os sensores contêm todas as classes, o protocolo usa fusão tolerante a modalidades ausentes.\
+  \ O dataset combinado inclui indicadores de presença de sensores, como:\n\n```text\nhas_IR\nhas_V\n\
+  has_AUDIO\n```\n\nCombinações avaliadas:\n\n```text\nIR\nV\nAUDIO\nIR+V\nIR+AUDIO\nV+AUDIO\nIR+V+AUDIO\n\
+  ```\n\nEstratégias avaliadas:\n\n- unimodal;\n- early fusion por concatenação;\n- late fusion por média;\n\
+  - late fusion ponderada por predições OOF;\n- late fusion por stacking.\n\nModelos usados:\n\n- Dummy\
+  \ prior;\n- Logistic Regression L2;\n- Linear SVM;\n- Random Forest;\n- Extra Trees;\n- HistGradientBoosting;\n\
+  - MLP.\n\nModelos opcionais, se habilitados:\n\n- XGBoost;\n- LightGBM;\n- CatBoost.\n\nMétricas calculadas:\n\
+  \n- balanced accuracy;\n- macro-F1 calculado apenas sobre classes presentes no teste;\n- macro-F1 global\
+  \ para auditoria;\n- weighted-F1;\n- matriz de confusão do melhor modelo.\n\nSaídas:\n\n```text\nmulticlass_fusion_audio_results_fixed/\n\
+  ├── combination_sizes_multiclass.csv\n├── metrics_all_repeats_multiclass.csv\n├── metrics_summary_multiclass.csv\n\
+  ├── predictions_all_multiclass.csv\n├── global_classes.json\n└── confusion_matrix_best_model.png\n```\n\
+  \n---\n\n## 12. Resultados observados no notebook\n\nNa avaliação multiclasse corrigida, os melhores\
+  \ resultados médios observados foram obtidos principalmente com a combinação `IR+V+AUDIO`.\n\nExemplo\
+  \ de melhores configurações:\n\n```text\nIR+V+AUDIO | early_concat_missing | hist_gb\nBalanced Accuracy\
+  \ média: 0.9084\nMacro-F1 médio:          0.9072\n\nIR+V+AUDIO | late_stacking | logreg_meta\nBalanced\
+  \ Accuracy média: 0.9072\nMacro-F1 médio:          0.9084\n\nIR+V+AUDIO | early_concat_missing | extra_trees\n\
+  Balanced Accuracy média: 0.9018\nMacro-F1 médio:          0.9032\n```\n\nResumo de amostras por combinação:\n\
+  \n```text\nIR:          365 amostras\nV:           285 amostras\nAUDIO:        90 amostras\nIR+V:  \
+  \      371 amostras\nIR+AUDIO:    395 amostras\nV+AUDIO:     315 amostras\nIR+V+AUDIO:  401 amostras\n\
+  ```\n\n---\n\n## 13. Observações metodológicas\n\nAs combinações avaliadas não representam exatamente\
+  \ a mesma tarefa de classificação, pois cada sensor cobre subconjuntos diferentes do espaço global de\
+  \ classes.\n\nPor isso, os resultados devem ser interpretados como uma avaliação de fusão em cenário\
+  \ heterogêneo e tolerante a modalidades ausentes, e não como uma comparação perfeitamente pareada entre\
+  \ sensores.\n\nUma limitação importante é que os indicadores de presença de modalidade podem codificar\
+  \ padrões de disponibilidade do dataset. Avaliações futuras devem incluir:\n\n- ablação sem indicadores\
+  \ `has_IR`, `has_V` e `has_AUDIO`;\n- validação em dados estritamente pareados;\n- calibração de confiança;\n\
+  - análise por classe;\n- avaliação em base externa.\n\n---\n\n## 14. Como executar\n\n1. Baixe ou mantenha\
+  \ disponível o arquivo:\n\n```text\nDrone-detection-dataset-master.zip\n```\n\n2. Ajuste os caminhos\
+  \ no notebook `FUSAO.ipynb`.\n\n3. Execute as células na seguinte ordem:\n\n```text\n1. Exploração do\
+  \ ZIP\n2. Resumos e manifestos\n3. Inspeção de .mat e .xlsx\n4. Geração do dataset YOLO\n5. Extração\
+  \ de features IR, V e AUDIO\n6. Classificação binária\n7. Classificação multiclasse corrigida\n```\n\
+  \n4. Verifique os resultados nos diretórios:\n\n```text\nexploracao_drone_dataset/\ndetector_training_data/yolo_drone_detection/\n\
+  fusion_3sensors_baseline/\nmulticlass_fusion_audio_results_fixed/\n```\n\n---\n\n## 15. Reprodutibilidade\n\
+  \nO notebook usa semente fixa:\n\n```python\nRANDOM_STATE = 42\n```\n\nNa etapa multiclasse, o número\
+  \ de repetições é controlado por:\n\n```python\nN_REPEATS = 10\n```\n\nPara testes rápidos, recomenda-se\
+  \ usar:\n\n```python\nN_REPEATS = 3\n```\n\nPara resultados finais, recomenda-se:\n\n```python\nN_REPEATS\
+  \ = 10\n```\n\nou\n\n```python\nN_REPEATS = 20\n```\n\n---\n\n## 16. Organização recomendada do repositório\n\
+  \n```text\n.\n├── FUSAO.ipynb\n├── README.md\n├── data/\n│   └── Drone-detection-dataset-master.zip\n\
+  ├── outputs/\n│   ├── exploracao_drone_dataset/\n│   ├── yolo_drone_detection/\n│   ├── fusion_3sensors_baseline/\n\
+  │   └── multiclass_fusion_audio_results_fixed/\n└── requirements.txt\n```\n\nExemplo de `requirements.txt`:\n\
+  \n```text\nnumpy\npandas\nscikit-learn\nmatplotlib\npillow\nlibrosa\nsoundfile\nscipy\nopenpyxl\n```\n\
+  \nPara modelos opcionais:\n\n```text\nxgboost\nlightgbm\ncatboost\n```\n\n---\n\n## 17. Licença e citação\n\
+  \nVerifique a licença original do **Drone Detection Dataset** antes de redistribuir os dados ou publicar\
+  \ resultados derivados.\n\nAo usar este código em trabalhos acadêmicos, recomenda-se citar:\n\n- a fonte\
+  \ original do dataset;\n- as bibliotecas utilizadas;\n- a metodologia de fusão de sensores adotada.\n"

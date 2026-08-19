@@ -1,0 +1,133 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Raymond-Zhou-2005/radiotherapy-physics-rag
+url: https://github.com/Raymond-Zhou-2005/radiotherapy-physics-rag
+platform: github
+description: Local RAG skill for grounded evidence QA over radiotherapy physics reports.
+license: MIT
+language: Python
+keywords: []
+stars: 1
+updated_at: '2026-07-16T06:10:06Z'
+image_source: null
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 5 support term(s).
+readme_excerpt: "# Radiotherapy Physics RAG Skill\n\n`radiotherapy-physics-rag` is an open-source, local-first\
+  \ RAG skill for evidence-grounded radiotherapy physics report QA. It is designed for Codex-style agents,\
+  \ MCP clients, Python users, and maintainers who need a reproducible report-grounded evidence workflow\
+  \ rather than a general chatbot.\n\nThe project retrieves evidence from locally built AAPM/IAEA radiotherapy\
+  \ physics PDFs and returns structured citations with document title, section, page range, chunk ID,\
+  \ scores, and routing metadata.\n\n## What This Is\n\n- A Codex-usable skill under `skills/radiotherapy-physics-rag/`.\n\
+  - A local MCP stdio server with tools for querying reports and fetching chunks.\n- A reproducible PDF\
+  \ -> OpenDataLoader parse -> chunk -> BM25/semantic dense -> navigator pipeline.\n- A topic-tree navigator\
+  \ under `navigator/`.\n- A scene-aware routed retrieval layer under `src/orchestration/`.\n- A public\
+  \ open-source topic benchmark under `evaluation/`.\n\n## What This Is Not\n\n- Not a patient-specific\
+  \ clinical decision support system.\n- Not medical advice.\n- Not a redistribution package for third-party\
+  \ PDFs.\n- Not an expert-adjudicated board-exam benchmark.\n\n## Current Local Build\n\nThe current\
+  \ local runtime bundle used for validation contains:\n\n- Source catalog records: 49.\n- Downloaded/indexed\
+  \ runtime PDFs: 49.\n- Manual source candidates not included in runtime: none in this local build.\n\
+  - Indexed chunks: 8948.\n- PDF asset metadata: 440 tables and 2140 images across 49 documents.\n- ChatGPT\
+  \ Knowledge upload files generated locally: 49.\n- Public answer-target benchmark: 61 questions, including\
+  \ public external answer-key seeds and open-report answer targets.\n- External public MCQ benchmark:\
+  \ 100 Apache-2.0 medical-physics questions with source answer keys, kept outside runtime retrieval.\n\
+  - Direct skill-contract benchmark: 40 tasks, including 10 hard medical-boundary OOD tasks.\n- MCP stdio\
+  \ contract benchmark: 7 separate-process client/server tasks.\n- Combined evaluation inventory: 622\
+  \ test cases across topic retrieval/refusal,\n  answer targets, asset/table questions, direct skill/MCP\
+  \ contracts, and the\n  external MCQ set. These are separate benchmark families, not 622 independent\n\
+  \  clinical cases.\n- Navigator topics: 10.\n- Semantic dense artifacts present: `BAAI/bge-small-en-v1.5`\
+  \ via `sentence-transformers`, 384 dimensions, FAISS inner-product index.\n- Cross-encoder reranker:\
+  \ `BAAI/bge-reranker-base`, with lexical fallback when neural models are unavailable.\n- No-model hash\
+  \ dense remains available as an explicit CI/debug fallback, but it is not treated as a semantic baseline.\n\
+  \nThe public GitHub repository intentionally excludes PDFs, parsed full text, chunks, indexes, extracted\
+  \ asset metadata, and generated ChatGPT upload files. Users rebuild them locally from permitted public\
+  \ sources.\n\n## Install\n\nThe PDF parser is OpenDataLoader PDF. It is a Python library backed by a\
+  \ local\nJava process, so install Java 11 or newer before building or inspecting PDFs.\nThe parser adapter\
+  \ automatically adds a documented legacy Java sort compatibility\noption for one older IAEA PDF that\
+  \ triggers an upstream OpenDataLoader 2.5.0\ncomparator failure; this does not restore or depend on\
+  \ PyMuPDF.\n\n```bash\npython -m pip install -r requirements.txt -c constraints.txt\npython -m pip install\
+  \ -e \".[dev]\" -c constraints.txt\n```\n\n## Build The Local Corpus\n\n```bash\npython scripts/download_starter_corpus.py\
+  \ --allow-manual-missing\nEMBEDDING_MODEL_NAME=BAAI/bge-small-en-v1.5 RERANKER_MODEL_NAME=BAAI/bge-reranker-base\
+  \ python scripts/prepare_index.py --reports-dir reports/raw --manifest reports/manifest.jsonl --parsed-dir\
+  \ parsed --chunks-dir chunks --index-dir index --index-backend both\npython scripts/build_navigator.py\
+  \ --index-dir index --manifest reports/manifest.jsonl --output-dir navigator --skill-dir skills/radiotherapy-physics-navigator\n\
+  python scripts/extract_pdf_assets.py reports/raw --output-dir assets/extracted\npython scripts/build_provenance_manifest.py\
+  \ --output reports/provenance_manifest.json\npython scripts/build_chatgpt_knowledge.py --root .\n```\n\
+  \nOn Windows PowerShell:\n\n```powershell\nRemove-Item Env:RAG_FORCE_HASH_EMBEDDINGS -ErrorAction SilentlyContinue\n\
+  $env:EMBEDDING_MODEL_NAME=\"BAAI/bge-small-en-v1.5\"\n$env:RERANKER_MODEL_NAME=\"BAAI/bge-reranker-base\"\
+  \npython scripts/prepare_index.py --reports-dir reports/raw --manifest reports/manifest.jsonl --parsed-dir\
+  \ parsed --chunks-dir chunks --index-dir index --index-backend both\n```\n\nFor a fully local no-model\
+  \ hybrid baseline:\n\n```bash\nRAG_FORCE_HASH_EMBEDDINGS=1 EMBEDDING_MODEL_NAME=hash-fallback python\
+  \ scripts/prepare_index.py --reports-dir reports/raw --manifest reports/manifest.jsonl --parsed-dir\
+  \ parsed --chunks-dir chunks --index-dir index --index-backend both\n```\n\nOn Windows PowerShell:\n\
+  \n```powershell\n$env:RAG_FORCE_HASH_EMBEDDINGS=\"1\"\n$env:RAG_FORCE_LEXICAL_RERANK=\"1\"\n$env:EMBEDDING_MODEL_NAME=\"\
+  hash-fallback\"\npython scripts/prepare_index.py --reports-dir reports/raw --manifest reports/manifest.jsonl\
+  \ --parsed-dir parsed --chunks-dir chunks --index-dir index --index-backend both\n```\n\nSome AAPM/Wiley\
+  \ sources are public or free-access but may block scripted downloads or point to publisher pages. If\
+  \ a source is reported as manual, download or browser-render it yourself if permitted and place it at\
+  \ the exact `reports/raw/*.pdf` path listed in `reports/starter_corpus_sources.json`. The current local\
+  \ build includes refreshed TG100 and TG158 runtime files; TG158 was browser-rendered from the Wiley\
+  \ free-access full-text page rather than copied from a raw publisher PDF endpoint.\n\n## Query\n\nEvidence\
+  \ mode:\n\n```bash\npython scripts/plugin_query.py --mode evidence --retrieval-backend routed \"What\
+  \ accuracy and uncertainty issues matter for radiotherapy dose delivery?\"\n```\n\nExtractive answer\
+  \ mode:\n\n```bash\npython scripts/plugin_query.py --mode answer --answer-engine extractive --extractive-selector\
+  \ auto --retrieval-backend sparse \"What does the corpus say about treatment planning system commissioning?\"\
+  \n```\n\nMCP server:\n\n```bash\npython scripts/mcp_server.py --index-dir index\n```\n\nMain MCP tools:\n\
+  \n- `query_reports`\n- `list_reports`\n- `get_chunk`\n- `list_navigator_topics`\n\n## Evaluation\n\n\
+  Generate the open-source benchmark:\n\n```bash\npython scripts/generate_public_benchmark.py --runtime-only\
+  \ --output evaluation/public_credible_questions.json\n```\n\nRun retrieval strategy evaluation:\n\n\
+  ```bash\nEMBEDDING_MODEL_NAME=BAAI/bge-small-en-v1.5 RERANKER_MODEL_NAME=BAAI/bge-reranker-base python\
+  \ scripts/evaluate_strategies.py --questions evaluation/radiotherapy_skill_open_questions.json --index-dir\
+  \ index --strategies sparse hybrid auto routed --ignore-report-scope --output-json evaluation/strategy_eval_results.json\
+  \ --output-md evaluation/strategy_eval_results.md\n```\n\nRun navigator evaluation:\n\n```bash\npython\
+  \ scripts/evaluate_navigator.py --questions evaluation/radiotherapy_skill_open_questions.json --navigator-dir\
+  \ navigator --output-json evaluation/navigator_eval_results.json --output-md evaluation/navigator_eval_results.md\n\
+  ```\n\nRun end-to-end skill-contract evaluation:\n\n```bash\nEMBEDDING_MODEL_NAME=BAAI/bge-small-en-v1.5\
+  \ RERANKER_MODEL_NAME=BAAI/bge-reranker-base python scripts/evaluate_agent_skill.py --questions evaluation/radiotherapy_skill_open_questions.json\
+  \ --index-dir index --retrieval-backend auto --output-json evaluation/agent_skill_eval_results.json\
+  \ --output-md evaluation/agent_skill_eval_results.md\n```\n\nRun asset and answer-quality proxy evaluations:\n\
+  \n```bash\npython scripts/generate_asset_benchmark.py --assets-dir assets/extracted --sources reports/starter_corpus_sources.json\
+  \ --output evaluation/radiotherapy_asset_questions.json\nEMBEDDING_MODEL_NAME=BAAI/bge-small-en-v1.5\
+  \ RERANKER_MODEL_NAME=BAAI/bge-reranker-base python scripts/evaluate_asset_qa.py --questions evaluation/radiotherapy_asset_questions.json\
+  \ --index-dir index --retrieval-backend auto --output-json evaluation/asset_qa_eval_results.json --output-md\
+  \ evaluation/asset_qa_eval_results.md\npython scripts/generate_table_cell_benchmark.py --output evaluation/radiotherapy_table_cell_questions.json\n\
+  EMBEDDING_MODEL_NAME=BAAI/bge-small-en-v1.5 RERANKER_MODEL_NAME=BAAI/bge-reranker-base python scripts/evaluate_table_cell_qa.py\
+  \ --questions evaluation/radiotherapy_table_cell_questions.json --index-dir index --retrieval-backend\
+  \ auto --output-json evaluation/table_cell_qa_eval_results.json --output-md evaluation/table_cell_qa_eval_results.md\n\
+  python scripts/generate_gold_answer_benchmark.py --output evaluation/radiotherapy_gold_answer_questions.json\n\
+  EMBEDDING_MODEL_NAME=BAAI/bge-small-en-v1.5 RERANKER_MODEL_NAME=BAAI/bge-reranker-base python scripts/evaluate_gold_answers.py\
+  \ --questions evaluation/radiotherapy_gold_answer_questions.json --index-dir index --retrieval-backend\
+  \ auto --output-json evaluation/gold_answer_eval_results.json --output-md evaluation/gold_answer_eval_results.md\n\
+  EMBEDDING_MODEL_NAME=BAAI/bge-small-en-v1.5 RERANKER_MODEL_NAME=BAAI/bge-reranker-base python scripts/evaluate_answer_generation.py\
+  \ --questions evaluation/radiotherapy_gold_answer_questions.json --index-dir index --retrieval-backend\
+  \ auto --output-json evaluation/answer_generation_eval_results.json --output-md evaluation/answer_generation_eval_results.md\n\
+  python scripts/generate_agent_task_benchmark.py --output evaluation/radiotherapy_agent_tasks.json\n\
+  EMBEDDING_MODEL_NAME=BAAI/bge-small-en-v1.5 RERANKER_MODEL_NAME=BAAI/bge-reranker-base python scripts/evaluate_agent_tasks.py\
+  \ --tasks evaluation/radiotherapy_agent_tasks.json --index-dir index --retrieval-backend auto --output-json\
+  \ evaluation/agent_task_eval_results.json --output-md evaluation/agent_task_eval_results.md\npython\
+  \ scripts/evaluate_mcp_contract.py --index-dir index --output-json evaluation/mcp_contract_eval_results.json\
+  \ --output-md evaluation/mcp_contract_eval_results.md\nEMBEDDING_MODEL_NAME=BAAI/bge-small-en-v1.5 RERANKER_MODEL_NAME=BAAI/bge-reranker-base\
+  \ python scripts/evaluate_answer_quality.py --questions evaluation/radiotherapy_skill_open_questions.json\
+  \ --index-dir index --retrieval-backend auto --output-json evaluation/answer_quality_eval_results.json\
+  \ --output-md evaluation/answer_quality_eval_results.md\npython scripts/evaluate_ablation.py --questions\
+  \ evaluation/radiotherapy_skill_open_questions.json --index-dir index --output-json evaluation/ablation_eval_results.json\
+  \ --output-md evaluation/ablation_eval_results.md\npython scripts/evaluate_public_mcq_exam.py --questions\
+  \ evaluation/external/public_medical_physics_100_mcq.json --index-dir index --retrieval-backend auto\
+  \ --output-json evaluation/public_mcq_eval_results.json --output-md evaluation/public_mcq_eval_results.md\
+  \ --export-host-tasks evaluation/external/public_mcq_codex_host_tasks.jsonl\npython scripts/score_host_mcq_answers.py\
+  \ --tasks evaluation/external/public_mcq_codex_host_tasks.jsonl --answers evaluation/external/codex_agent_skill_answers.jsonl\
+  \ --gold evaluation/external/public_medical_physics_100_mcq.json --output-json evaluation/external/codex_agent_skill_score.json\
+  \ --output-md evaluation/external/codex_agent_skill_score.md\npython scripts/compare_mcq_answer_methods.py\
+  \ --pymupdf evaluation/parser_comparison/pymupdf_baseline/public_mcq_eval_results.json --opendataloader\
+  \ evaluation/parser_comparison/opendataloader/public_mcq_eval_results.json --codex-score evaluation/external/codex_agent_skill_score.json\
+  \ --output-json evaluation/external/mcq_method_comparison.json --output-md evaluation/external/mcq_method_comparison.md\n\
+  python scripts/analyze_failure_taxonomy.py --eval-dir evaluation --output-json evaluation/failure_taxonomy.json\
+  \ --output-md evaluation/failure_taxonomy.md\npython scripts/build_paper_experiment_matrix.py --eval-dir\
+  \ evaluation --output-json evaluation/paper_experiment_matrix.json --output-md evaluation/paper_experiment_matrix.md\n\
+  ```\n\nCurrent OpenDataLoader results:\n\n| Evaluation | Main result |\n| --- | --- |\n| Formal retrieval\
+  \ ablation, best document recall | Hybrid semantic + cross-encoder, no report-aware rules: Document\
+  \ Re"

@@ -1,0 +1,49 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: medicalphysicist23-source/DicomRT2NIfTI
+url: https://github.com/medicalphysicist23-source/DicomRT2NIfTI
+platform: github
+description: ''
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-05-14T21:04:22Z'
+image_source: null
+heuristic_total_score: 9
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 4 support term(s).
+readme_excerpt: "# \U0001F9E0 DicomRT2NIfTI\n\nThis repository provides a step-by-step Python pipeline\
+  \ for converting **DICOM CT and RTSTRUCT** files into **aligned, multi-channel NIfTI masks** for pelvic\
+  \ **Organs at Risk (OAR)** segmentation.  \nThe pipeline ensures clean data preprocessing for deep learning–based\
+  \ segmentation or radiotherapy QA analysis.\n\n---\n\n## ⚙️ 1. Installation\n\nInstall the required\
+  \ dependencies:\n\n```bash\npip install pydicom nibabel numpy opencv-python SimpleITK tqdm matplotlib\n\
+  ```\n\n---\n\n## \U0001F4C2 2. Folder Setup\n\nEach patient should be organized as follows before starting:\n\
+  \n```\nPatients/\n └── 63524/\n      ├── 63524CT/                 # Original CT DICOMs\n      └── 63524_StrctrSets.dcm\
+  \     # RTSTRUCT file\n```\n\nAll generated folders (step1 → step7) will be automatically created during\
+  \ processing.\n\n---\n\n## \U0001F680 3. Pipeline Overview\n\n| Step | Description | Output |\n|------|--------------|---------|\n\
+  | **1. Load & Sort CTs** | Sorts CT slices by Z-coordinate | `step1/` |\n| **2. Fix UIDs** | Makes CT\
+  \ and RTSTRUCT share the same Study/Frame UIDs | `ct_step2/`, `rt_step2` |\n| **3. Alignment** | Keeps\
+  \ only CT slices that contain contours | `ct_step3/` |\n| **4. Label Harmonization** | Standardizes\
+  \ structure names (e.g., “Vessie” → “Bladder”) | `rt_step4` |\n| **5. Channel Mapping** | Assigns each\
+  \ OAR a label number (1–5) | Console output |\n| **6. Mask Generation** | Creates a 5-channel segmentation\
+  \ mask (Bladder, Rectum, Bowel, Femoral Heads) | `masks/mask_5ch.nii.gz` |\n| **7. Convert CT to NIfTI**\
+  \ | Converts CT slices into a single 3D NIfTI | `ct_step7/ct.nii.gz` |\n\n---\n\n## \U0001F9FE 4. Output\
+  \ Summary\n\n| File Type | Description | Example Path |\n|------------|--------------|---------------|\n\
+  | CT Volume | 3D NIfTI of the CT stack | `/ct_step7/ct.nii.gz` |\n| OAR Mask | 5-channel NIfTI mask\
+  \ (Bladder, Rectum, Bowel, FH_L, FH_R) | `/masks/mask_5ch.nii.gz` |\n| RTSTRUCT Fixed | Cleaned and\
+  \ standardized RTSTRUCT file | `/rt_step4` |\n\n---\n\n## \U0001F50D 5. Quality Control\n\nThree verification\
+  \ steps are included:\n\n- **QC1:** Check if UIDs match between CT and RTSTRUCT  \n- **QC2:** Visualize\
+  \ contours over CT slices  \n- **QC3:** Confirm shape match between CT and mask, detect any overlaps\n\
+  \n---\n\n## \U0001F9E0 6. Notes\n\n- Works for Google Colab or local Python environments  \n- Each step\
+  \ can be executed independently  \n- Output masks are stored as `(Z, 512, 512, 5)` with `uint8` dtype\
+  \  \n- Organ mapping used:  \n  - Bladder → 1  \n  - Rectum → 2  \n  - Bowel → 3  \n  - Femoral Head\
+  \ Right → 4  \n  - Femoral Head Left → 5\n\n---\n\n## \U0001F9E9 7. Example Command\n\nTo run all steps\
+  \ for one patient, simply follow the pipeline in order by executing the provided scripts (Step 1 → Step\
+  \ 7).\n\n```python\n# Example: run Step 1\n!python step1_sort_ct.py\n\n# Example: run Step 6 to create\
+  \ masks\n!python step6_create_masks.py\n```\n\n---\n\n## \U0001F4F8 8. Verification Visualization Example\n\
+  \nEach QC step will show overlays like this:\n\n```\n✅ UID check passed  \n✅ Bladder, Rectum, Bowel\
+  \ correctly labeled  \n✅ No overlaps detected\n```\n"

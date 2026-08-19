@@ -1,0 +1,67 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Szczepanski-Marcin/PET-Image-Classification-for-Lung-Cancer-Subtypes
+url: https://github.com/Szczepanski-Marcin/PET-Image-Classification-for-Lung-Cancer-Subtypes
+platform: github
+description: Developed a PET/CT image classification pipeline for lung cancer subtypes, integrating DICOM
+  processing, radiomic feature extraction, and machine learning models for non-invasive tumor characterization.
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-04-13T11:42:01Z'
+image_source: https://raw.githubusercontent.com/Szczepanski-Marcin/PET-Image-Classification-for-Lung-Cancer-Subtypes/HEAD/images/Confusion_matrix.png
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# PET Image Classification for Lung Cancer Subtypes\n\n## Project Overview\n\nThis project\
+  \ explores **lung cancer subtype classification using PET scan data**. The goal is to extract meaningful\
+  \ **radiomics-inspired features** from medical images and train a machine learning model to distinguish\
+  \ between cancer types.\n\nThe pipeline demonstrates:\n\n- Medical image preprocessing (DICOM handling)\
+  \  \n- Feature extraction (intensity, texture, shape proxies)  \n- Machine learning classification \
+  \ \n- Model evaluation using clinically relevant metrics  \n\n## Dataset\n\n- Source: Lung Cancer PET/CT\
+  \ dataset (DICOM format)  \n- Classes:\n  - Adenocarcinoma  \n  - Squamous Cell Carcinoma  \n  - Small\
+  \ Cell Carcinoma  \n  - Large Cell Carcinoma  \n\n- Total samples: ~18,500 slices  \n\n  **Important\
+  \ limitations**\n - No tumor segmentation masks available  \n - No patient-level identifiers (possible\
+  \ data leakage)  \n - Slice-level classification instead of patient-level analysis  \n\n## Methodology\n\
+  \n### 1. Data Loading & Preprocessing\n\n- DICOM images loaded using `pydicom`  \n- Pixel intensities\
+  \ normalized to [0, 1]  \n- Empty or invalid images removed  \n\n\n### 2. Feature Extraction\n\nEach\
+  \ image is represented using three groups of features:\n\n#### Intensity Features\n- Mean intensity\
+  \  \n- Standard deviation  \n- Maximum intensity  \n- 10th and 90th percentiles  \n\n#### Texture Features\
+  \ (GLCM)\n- Contrast  \n- Homogeneity  \n- Energy  \n\nThese features capture spatial intensity patterns\
+  \ in the image.\n\n#### Shape Proxy\n- Approximate “high-intensity region volume” using percentile thresholding\
+  \  \n\n This is a **proxy feature**, not true tumor segmentation.\n\n\n### 3. Model Training\n\n- Model:\
+  \ **Random Forest Classifier**\n- Parameters:\n  - `n_estimators = 200`\n  - `class_weight = \"balanced\"\
+  `\n\n- Validation strategy:\n  - Train/test split (80/20)\n  - 5-fold stratified cross-validation  \n\
+  \n\n\n## Results\n\n### Cross-Validation Performance\n\nCV Scores: [0.8027027  0.79324324 0.80033784\
+  \ 0.80439189 0.80709459]\n\nMean CV: 0.802\n\n\n```\nClassification Report\n                       \
+  \  precision    recall  f1-score   support\n\n         Adenocarcinoma       0.82      0.95      0.88\
+  \      2000\n   Large Cell Carcinoma       0.78      0.39      0.52       100\n   Small Cell Carcinoma\
+  \       0.82      0.62      0.70       600\nSquamous Cell Carcinoma       0.81      0.70      0.75 \
+  \     1000\n\n               accuracy                           0.81      3700\n              macro\
+  \ avg       0.81      0.66      0.71      3700\n           weighted avg       0.81      0.81      0.81\
+  \      3700\n```\n\n\n## Visualizations\n\n### Confusion Matrix\n\n![Confusion Matrix](images/Confusion_matrix.png)\n\
+  \n*Figure: Model performance across cancer subtypes.*\n\n\n### ROC Curves\n\n![ROC Curve](images/roc_curve.png)\n\
+  \n*Figure: ROC curves showing class-wise separability.*\n\n\n### Feature Importance\n\n![Feature Importance](images/feature_importance.png)\n\
+  \n*Figure: Most influential features used by the model.*\n\n\n### Sample PET Slices\n\n<p align=\"center\"\
+  >\n  <img src=\"images/sample_1.png\" width=\"30%\">\n  <img src=\"images/sample_2.png\" width=\"30%\"\
+  >\n  <img src=\"images/sample_3.png\" width=\"30%\">\n</p>\n\n*Figure: Example PET slices from the dataset.*\n\
+  \n Note: No ROI overlays are shown to avoid misleading interpretation.\n\n\n## Key Insights\n\n- The\
+  \ model achieves **~81% accuracy**, indicating that radiomics-style features contain predictive signal\
+  \  \n- Strong performance for **Adenocarcinoma**, weaker for **Large Cell Carcinoma** due to class imbalance\
+  \  \n- Texture and intensity features are the most informative  \n\n\n## ⚠️ Limitations\n\nThis project\
+  \ highlights real-world challenges in medical imaging:\n\n-  No tumor segmentation masks → no true ROI-based\
+  \ features  \n-  Slice-level splitting → potential data leakage  \n-  Class imbalance impacts minority\
+  \ classes  \n-  PET intensities not standardized (no SUV normalization)  \n\n\n## Future Improvements\n\
+  \n- Patient-level splitting to avoid leakage  \n- Integration of tumor segmentation masks  \n- Deep\
+  \ learning models (CNNs, 3D architectures)  \n- Standardized radiomics (e.g., PyRadiomics)  \n- Multimodal\
+  \ learning (PET + CT)  \n\n\n## Relevance for Medical Imaging Roles\n\nThis project demonstrates:\n\n\
+  - Experience with **DICOM medical imaging workflows**  \n- Understanding of **radiomics feature extraction**\
+  \  \n- Ability to build and evaluate **machine learning models**  \n- Awareness of **clinical and methodological\
+  \ limitations**  \n\n\n## Final Note\n\nThis project focuses on building a **transparent, reproducible\
+  \ ML pipeline** rather than presenting misleading visual results. All limitations are explicitly acknowledged\
+  \ to reflect real-world medical imaging challenges.\n"

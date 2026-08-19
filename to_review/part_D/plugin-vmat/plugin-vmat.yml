@@ -1,0 +1,141 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: iurymk/Plugin_VMAT
+url: https://github.com/iurymk/Plugin_VMAT
+platform: github
+description: ''
+license: null
+language: C#
+keywords: []
+stars: 0
+updated_at: '2026-04-11T14:17:47Z'
+image_source: null
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 4 support term(s).
+readme_excerpt: '# SCRIPT_NA — plug-in ESAPI (Eclipse / Varian)
+
+
+  Projeto em **C# / .NET Framework 4.8** para automação de tarefas de planejamento no Eclipse Treatment
+  Planning, usando a **ESAPI** (`VMS.TPS.Common.Model.API`).
+
+
+  ## O que faz
+
+
+  - Interface WPF com lista de estruturas do `StructureSet` atual.
+
+  - **Criar anéis:** gera `SCRIPT_PTV` e anéis auxiliares (`SCRIPT_ANEL1` … `SCRIPT_ANEL_C`) a partir
+  do volume selecionado (mesma lógica do script original).
+
+  - **Criar arcos VMAT:** abre o curso em edição (ou cria um), adiciona plano externo, cria arcos com
+  parâmetros de máquina configuráveis, ajusta MLC ao PTV e executa `FitCollimatorToStructure`.
+
+  - **Checagens do planejamento:** após criar os arcos, o script monta um relatório com métricas e consistência
+  do plano (feixes, volume do PTV, prescrição, e — quando a dose já foi calculada no Eclipse — Dmax, D95
+  e D50 no PTV). Isso **não** substitui validação clínica nem QA físico.
+
+
+  ## Tecnologias
+
+
+  - C# 8, WPF, bibliotecas **Varian ESAPI** (versão do caminho no `.csproj` deve coincidir com a sua instalação,
+  ex.: RTM 15.6).
+
+  - Saída do plug-in: `SCRIPT_NA_Auto_2.esapi` (nome do assembly definido no `.csproj`).
+
+
+  ## Organização do código
+
+
+  | Pasta / arquivo | Função |
+
+  |-----------------|--------|
+
+  | `Esapi/ScriptEntry.cs` | Classe `VMS.TPS.Script` e atributos de assembly (`ESAPIScript`, versões).
+  |
+
+  | `Views/` | XAML + code-behind da interface (`PlanningPluginView`). |
+
+  | `Planning/` | `RingBuilder`, `VmatArcPlanner`, `PlanningParameters`, `PlanningMetricsInspector` (relatório
+  de métricas do plano). |
+
+  | `SCRIPT_NA.Settings/` | Constantes de máquina/VMAT (`BeamPlanningDefaults`), referenciadas por `PlanningParameters`.
+  |
+
+  | `Validation/` | Checagens de contexto e de seleção de estrutura. |
+
+  | `Diagnostics/PluginLog.cs` | Mensagens via `System.Diagnostics.Trace`. |
+
+  | `Config/planning_defaults.json` | Referência documental dos defaults (espelho de `BeamPlanningDefaults`;
+  pode evoluir para leitura em JSON). |
+
+
+  Fluxo: `Script.Execute` → valida paciente/CT → `BeginModifications` → exibe `PlanningPluginView` → ações
+  chamam `RingBuilder` / `VmatArcPlanner`; após VMAT, `PlanningMetricsInspector` gera o texto exibido
+  ao usuário.
+
+
+  ## Build e referências ESAPI
+
+
+  1. No Visual Studio, abra `SCRIPT_NA.sln` (plataforma **x64**).
+
+  2. Ajuste os `HintPath` em `SCRIPT_NA.csproj` para a pasta `esapi\API` da sua instalação Varian (o caminho
+  padrão no repositório aponta para `C:\Program Files (x86)\Varian\RTM\15.6\esapi\API\`).
+
+  3. Compile **Release | x64** para gerar o `.esapi` na pasta configurada em `OutputPath` (por padrão
+  `..\..\plugins` em Release).
+
+
+  > **Nota:** `dotnet build` numa máquina **sem** as DLLs Varian falha ao compilar o plug-in; isso é esperado.
+  O projeto `SCRIPT_NA.Settings` pode ser compilado sozinho, mas o artefato principal é o plug-in WPF.
+
+
+  ## Métricas do planejamento (relatório automático)
+
+
+  Depois de **Criar arcos VMAT**, a caixa de diálogo inclui:
+
+
+  - contagem de feixes vs. `ArcCount` configurado;
+
+  - volume do PTV (cm³, via API);
+
+  - por feixe: energia, número de control points, gantry inicial/final e comprimento de arco aproximado;
+
+  - dados de prescrição do plano (frações, dose por fração, dose total prescrita, quando disponíveis na
+  API);
+
+  - se `IsDoseValid`: dose máxima 3D e **D95/D50** no PTV (volume relativo), via `GetDoseAtVolume`.
+
+
+  Se a dose ainda não foi calculada, o relatório informa isso claramente; após o cálculo no Eclipse, volte
+  a abrir o plano ou rode o fluxo de novo para atualizar essas linhas.
+
+
+  Documentação de referência da API: [Varian Innovation Center — VMS.TPS.Common.Model.API](https://docs.developer.varian.com/api/16.1/VMS.TPS.Common.Model.API.html).
+
+
+  ## Exemplo de uso no Eclipse
+
+
+  1. Abrir paciente e `StructureSet`.
+
+  2. Executar o script; escolher a estrutura alvo (ex.: PTV).
+
+  3. **Criar anéis** ou **Criar arcos VMAT** conforme a etapa desejada; no VMAT, leia o bloco **Checagens
+  do planejamento** na mensagem final.
+
+
+  ### Notas
+
+
+  Último build conhecido pelo autor: `SCRIPT_NA_Auto_2.esapi`.
+
+  '

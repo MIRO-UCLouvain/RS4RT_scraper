@@ -1,0 +1,105 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: ShauryaDosapati/ddpm_synthetic-ct
+url: https://github.com/ShauryaDosapati/ddpm_synthetic-ct
+platform: github
+description: ''
+license: NOASSERTION
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-18T20:19:21Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "<h1 align=\"center\">Synthetic Chest-CT Generation with a DDPM</h1>\n<p align=\"center\"\
+  >\n  <em>Denoising Diffusion Probabilistic Models for medical-image synthesis in low-resource environments</em>\n\
+  </p>\n\n<p align=\"center\">\n  <img alt=\"Python\" src=\"https://img.shields.io/badge/python-3.10%2B-blue.svg\"\
+  >\n  <img alt=\"TensorFlow\" src=\"https://img.shields.io/badge/TensorFlow-2.15-orange.svg\">\n  <img\
+  \ alt=\"License\" src=\"https://img.shields.io/badge/license-MIT-green.svg\">\n  <img alt=\"Status\"\
+  \ src=\"https://img.shields.io/badge/status-research--prototype-yellow.svg\">\n</p>\n\n> ⚕️ **Research\
+  \ use only.** The models here generate *synthetic* images that\n> approximate the statistics of chest\
+  \ CT scans. They do **not** reproduce real\n> patient anatomy, are **not** medically validated, and\
+  \ must **never** be used\n> for diagnosis, screening, or any clinical or patient-care purpose.\n\nA\
+  \ faithful, reproducible implementation of the experiments in\n**\"Synthetic Medical Image Generation\
+  \ Using Diffusion Models in Low-Resource\nEnvironments\"** ([full paper](docs/paper.md)). A DDPM with\
+  \ a U-Net backbone is\ntrained on the IQ-OTH/NCCD Lung Cancer Dataset at 64×64 resolution to generate\n\
+  diverse synthetic CT scans — demonstrating stable, mode-collapse-free generation\nas a path toward data\
+  \ augmentation when real medical data is scarce.\n\n---\n\n## Highlights\n\n- **Stable training, no\
+  \ mode collapse.** MSE loss falls monotonically from\n  **0.3883 → 0.0990** over 50 epochs, with diverse\
+  \ outputs throughout.\n- **Runs on a laptop.** Trained end-to-end on a MacBook Air (M2); `T = 300`\n\
+  \  timesteps and 64×64 images keep it tractable without a dedicated GPU.\n- **Clean, modular code.**\
+  \ Noise schedule, forward process, U-Net, samplers, and\n  training loop are cleanly separated and unit-tested.\n\
+  - **DDPM + DDIM sampling.** Ancestral DDPM sampling (the paper) plus an optional\n  DDIM sampler for\
+  \ ~6× faster generation.\n- **Reproducible.** Single YAML config, fixed seed, pinned dependencies, one\n\
+  \  command to train and one to sample.\n\n## Results\n\n| Metric | Value |\n| --- | --- |\n| Epoch 1\
+  \ MSE loss | 0.3883 |\n| Epoch 50 MSE loss | 0.0990 |\n| Mode collapse | None observed |\n| Training\
+  \ hardware | MacBook Air (M2) |\n| Resolution | 64 × 64, grayscale |\n\n<p align=\"center\">\n  <img\
+  \ src=\"assets/samples_grid.png\" alt=\"Synthetic CT samples\" width=\"45%\">\n  <img src=\"assets/loss_curve.png\"\
+  \ alt=\"Training loss curve\" width=\"45%\">\n</p>\n\n> Add the figures to `assets/` to make them render\
+  \ here — see\n> [`assets/README.md`](assets/README.md). `scripts/train.py` writes\n> `loss_curve.png`\
+  \ and per-epoch sample grids automatically.\n\n## Repository structure\n\n```\nddpm-synthetic-ct/\n\
+  ├── README.md                  # you are here\n├── pyproject.toml             # packaging / pip install\
+  \ -e .\n├── requirements.txt           # pinned dependencies\n├── configs/\n│   └── default.yaml   \
+  \        # all hyperparameters (matches the paper)\n├── src/ddpm_ct/\n│   ├── config.py            \
+  \  # YAML config loader\n│   ├── data.py                # dataset loading + [-1,1] normalization\n│\
+  \   ├── diffusion.py           # noise schedule, forward process, DDPM/DDIM samplers\n│   ├── model.py\
+  \               # U-Net + sinusoidal timestep embedding\n│   ├── train.py               # training loop\n\
+  │   └── viz.py                 # sample grids + loss curve plotting\n├── scripts/\n│   ├── download_data.py\
+  \       # CLI: fetch the IQ-OTH/NCCD dataset from Kaggle\n│   ├── prepare_data.py        # CLI: arrange\
+  \ data per the paper (benign+malignant, no normal)\n│   ├── train.py               # CLI: train a model\n\
+  │   └── sample.py              # CLI: generate samples from a checkpoint\n├── data/\n│   └── README.md\
+  \              # how to obtain the dataset (images are git-ignored)\n├── tests/\n│   └── test_diffusion.py\
+  \      # shape/sanity tests (no dataset needed)\n└── docs/\n    ├── paper.md               # the full\
+  \ research paper\n    └── improvements.md        # roadmap: GroupNorm, EMA, FID, conditioning, ...\n\
+  ```\n\n## Installation\n\n```bash\ngit clone https://github.com/<your-username>/ddpm-synthetic-ct.git\n\
+  cd ddpm-synthetic-ct\n\npython -m venv .venv && source .venv/bin/activate\npip install -r requirements.txt\n\
+  ```\n\n**Apple Silicon (M1/M2/M3):** replace `tensorflow` in `requirements.txt` with\n`tensorflow-macos`\
+  \ + `tensorflow-metal` (commented lines are included) to get GPU\nacceleration via Metal.\n\n## Dataset\n\
+  \nThis repo does **not** redistribute the **IQ-OTH/NCCD Lung Cancer Dataset**\n(Al-Yasriy et al., 2020).\
+  \ Two scripts fetch and arrange it for you:\n\n```bash\npip install kagglehub                      \
+  \ # + Kaggle API token (~/.kaggle/kaggle.json)\npython scripts/download_data.py             # downloads\
+  \ from Kaggle\npython scripts/prepare_data.py --src <path printed above>\n```\n\n`prepare_data.py` reproduces\
+  \ the paper's setup automatically — it **combines\nbenign + malignant**, **excludes normal**, and splits\
+  \ into train/test:\n\n```\ndata/\n├── train/lesion/      # *.jpg\n└── test/lesion/\n```\n\n`configs/default.yaml`\
+  \ already points `data.train_dir` / `data.valid_dir` here.\nAlready have the dataset locally? Skip the\
+  \ download and run\n`python scripts/prepare_data.py --src /path/to/your/copy`. See\n[`data/README.md`](data/README.md)\
+  \ for details. The model is unconditional, so\nthe single `lesion/` class folder is just to satisfy\
+  \ Keras' loader — the label\nis ignored during training.\n\n## Usage\n\n**Train** (writes checkpoints\
+  \ to `checkpoints/`, sample grids + loss curve to `outputs/`):\n\n```bash\npython scripts/train.py --config\
+  \ configs/default.yaml\n# override anything on the CLI:\npython scripts/train.py --config configs/default.yaml\
+  \ --epochs 100 --batch-size 16\n```\n\n**Sample** from a trained checkpoint:\n\n```bash\n# DDPM ancestral\
+  \ sampling (the paper's method)\npython scripts/sample.py --checkpoint checkpoints/ddpm_model.keras\
+  \ --num 16\n\n# DDIM — faster, deterministic (extension; see docs/improvements.md)\npython scripts/sample.py\
+  \ --checkpoint checkpoints/ddpm_model.keras \\\n    --sampler ddim --ddim-steps 50\n```\n\n**Run the\
+  \ tests** (no dataset or GPU required):\n\n```bash\npip install pytest\npytest -q\n```\n\n## Configuration\n\
+  \nEvery hyperparameter lives in [`configs/default.yaml`](configs/default.yaml) and\nmatches the paper:\
+  \ `T = 300`, linear schedule `β ∈ [1e-4, 0.02]`, Adam @ `1e-4`,\ngradient clipping at norm 1.0, batch\
+  \ size 32, 50 epochs, 64×64 grayscale.\n\n## Reproducing the paper\n\n1. Install dependencies and prepare\
+  \ the dataset as above.\n2. `python scripts/train.py --config configs/default.yaml` (defaults already\n\
+  \   match the paper; seed fixed at 42).\n3. Compare your `outputs/loss_curve.png` to the reported 0.3883\
+  \ → 0.0990 trend\n   and inspect `outputs/samples_epoch_*.png` for diversity.\n\nExact pixel-level reproduction\
+  \ isn't guaranteed across hardware/TF builds due to\nnondeterministic GPU ops, but the loss trajectory\
+  \ and qualitative behavior\nshould match.\n\n## Method in brief\n\nA DDPM learns to reverse a gradual\
+  \ noising process. **Forward:** Gaussian noise\nis added to a clean scan over `T` steps until it becomes\
+  \ pure noise. **Reverse:**\na U-Net is trained to predict the noise at each step (MSE objective), and\n\
+  sampling iterates that prediction from noise back to an image. The U-Net uses an\nencoder–decoder with\
+  \ skip connections, Swish activations, and a sinusoidal\ntimestep embedding. See [`docs/paper.md`](docs/paper.md)\
+  \ for the full treatment.\n\n## Limitations\n\n64×64 resolution (vs. clinical 512×512); no class conditioning;\
+  \ no quantitative\nevaluation (FID/SSIM) or radiologist review; small training set. This is a\n**proof\
+  \ of concept**, not a clinical tool. See the paper's Limitations section\nand [`docs/improvements.md`](docs/improvements.md)\
+  \ for the roadmap addressing\neach point.\n\n## Citation\n\nIf you use this code or reproduce these\
+  \ experiments, please cite the work (see\n[`CITATION.cff`](CITATION.cff)):\n\n```bibtex\n@misc{ddpm_synthetic_ct_2026,\n\
+  \  title  = {Synthetic Medical Image Generation Using Diffusion Models in Low-Resource Environments},\n\
+  \  author = {<Your Name>},\n  year   = {2026},\n  note   = {Research prototype. https://github.com/<your-username>/ddpm-synthetic-ct}\n\
+  }\n```\n\nPlease also cite the underlying methods and dataset: Ho et al. (2020), Ronneberger\net al.\
+  \ (2015), and Al-Yasriy et al. (2020) — full references in\n[`docs/paper.md`](docs/paper.md).\n\n##\
+  \ License\n\nCode is released under the [MIT License](LICENSE). The dataset is **not** covered\nby this\
+  \ license and remains under its original terms; no dataset images are\nredistributed here.\n\n## Acknowledgments\n\
+  \nBuilt on the foundational work of Ho, Jain & Abbeel (DDPM) and Ronneberger et al.\n(U-Net), using\
+  \ the IQ-OTH/NCCD Lung Cancer Dataset (Al-Yasriy et al.).\n"

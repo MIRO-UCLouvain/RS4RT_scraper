@@ -1,0 +1,137 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: pergazuz/Synthetic-CT-images-from-cone-beam-CT
+url: https://github.com/pergazuz/Synthetic-CT-images-from-cone-beam-CT
+platform: github
+description: Synthetic CT images from cone beam CT for adaptive radiotherapy in pelvic region using CUT-KAN
+license: NOASSERTION
+language: Jupyter Notebook
+keywords: []
+stars: 1
+updated_at: '2025-09-15T01:15:45Z'
+image_source: https://raw.githubusercontent.com/pergazuz/Synthetic-CT-images-from-cone-beam-CT/HEAD/imgs/gif_cut.gif
+heuristic_total_score: 29
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 2 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 4 support term(s).
+readme_excerpt: "\n\n# Contrastive Unpaired Translation (CUT)\n\n### [video (1m)](https://youtu.be/Llg0vE_MVgk)\
+  \ |  [video (10m)](https://youtu.be/jSGOzjmN8q0) | [website](http://taesung.me/ContrastiveUnpairedTranslation/)\
+  \ |   [paper](https://arxiv.org/pdf/2007.15651)\n<br>\n\n<img src='imgs/gif_cut.gif' align=\"right\"\
+  \ width=960>\n\n<br><br><br>\n\n\n\nWe provide our PyTorch implementation of unpaired image-to-image\
+  \ translation based on patchwise contrastive learning and adversarial learning.  No hand-crafted loss\
+  \ and inverse network is used. Compared to [CycleGAN](https://github.com/junyanz/CycleGAN), our model\
+  \ training is faster and less memory-intensive. In addition, our method can be extended to single image\
+  \ training, where each “domain” is only a *single* image.\n\n\n\n\n[Contrastive Learning for Unpaired\
+  \ Image-to-Image Translation](http://taesung.me/ContrastiveUnpairedTranslation/)  \n [Taesung Park](https://taesung.me/),\
+  \ [Alexei A. Efros](https://people.eecs.berkeley.edu/~efros/), [Richard Zhang](https://richzhang.github.io/),\
+  \ [Jun-Yan Zhu](https://www.cs.cmu.edu/~junyanz/)<br>\nUC Berkeley and Adobe Research<br>\n In ECCV\
+  \ 2020\n\n\n<img src='imgs/patchnce.gif' align=\"right\" width=960>\n\n<br><br><br>\n\n### Pseudo code\n\
+  ```python\nimport torch\ncross_entropy_loss = torch.nn.CrossEntropyLoss()\n\n# Input: f_q (BxCxS) and\
+  \ sampled features from H(G_enc(x))\n# Input: f_k (BxCxS) are sampled features from H(G_enc(G(x))\n\
+  # Input: tau is the temperature used in PatchNCE loss.\n# Output: PatchNCE loss\ndef PatchNCELoss(f_q,\
+  \ f_k, tau=0.07):\n    # batch size, channel size, and number of sample locations\n    B, C, S = f_q.shape\n\
+  \n    # calculate v * v+: BxSx1\n    l_pos = (f_k * f_q).sum(dim=1)[:, :, None]\n\n    # calculate v\
+  \ * v-: BxSxS\n    l_neg = torch.bmm(f_q.transpose(1, 2), f_k)\n\n    # The diagonal entries are not\
+  \ negatives. Remove them.\n    identity_matrix = torch.eye(S)[None, :, :]\n    l_neg.masked_fill_(identity_matrix,\
+  \ -float('inf'))\n\n    # calculate logits: (B)x(S)x(S+1)\n    logits = torch.cat((l_pos, l_neg), dim=2)\
+  \ / tau\n\n    # return PatchNCE loss\n    predictions = logits.flatten(0, 1)\n    targets = torch.zeros(B\
+  \ * S, dtype=torch.long)\n    return cross_entropy_loss(predictions, targets)\n```\n## Example Results\n\
+  \n### Unpaired Image-to-Image Translation\n<img src=\"imgs/results.gif\" width=\"800px\"/>\n\n### Single\
+  \ Image Unpaired Translation\n<img src=\"imgs/singleimage.gif\" width=\"800px\"/>\n\n\n### Russian Blue\
+  \ Cat to Grumpy Cat\n<img src=\"imgs/grumpycat.jpg\" width=\"800px\"/>\n\n### Parisian Street to Burano's\
+  \ painted houses\n<img src=\"imgs/paris.jpg\" width=\"800px\"/>\n\n\n\n## Prerequisites\n- Linux or\
+  \ macOS\n- Python 3\n- CPU or NVIDIA GPU + CUDA CuDNN\n\n### Update log\n\n9/12/2020: Added single-image\
+  \ translation.\n\n### Getting started\n\n- Clone this repo:\n```bash\ngit clone https://github.com/taesungp/contrastive-unpaired-translation\
+  \ CUT\ncd CUT\n```\n\n- Install PyTorch 1.1 and other dependencies (e.g., torchvision, visdom, dominate,\
+  \ gputil).\n\n  For pip users, please type the command `pip install -r requirements.txt`.\n\n  For Conda\
+  \ users,  you can create a new Conda environment using `conda env create -f environment.yml`.\n\n\n\
+  ### CUT and FastCUT Training and Test\n\n- Download the `grumpifycat` dataset (Fig 8 of the paper. Russian\
+  \ Blue -> Grumpy Cats)\n```bash\nbash ./datasets/download_cut_dataset.sh grumpifycat\n```\nThe dataset\
+  \ is downloaded and unzipped at `./datasets/grumpifycat/`.\n\n- To view training results and loss plots,\
+  \ run `python -m visdom.server` and click the URL http://localhost:8097.\n\n- Train the CUT model:\n\
+  ```bash\npython train.py --dataroot ./datasets/grumpifycat --name grumpycat_CUT --CUT_mode CUT\n```\n\
+  \ Or train the FastCUT model\n ```bash\npython train.py --dataroot ./datasets/grumpifycat --name grumpycat_FastCUT\
+  \ --CUT_mode FastCUT\n```\nThe checkpoints will be stored at `./checkpoints/grumpycat_*/web`.\n\n- Test\
+  \ the CUT model:\n```bash\npython test.py --dataroot ./datasets/grumpifycat --name grumpycat_CUT --CUT_mode\
+  \ CUT --phase train\n```\n\nThe test results will be saved to a html file here: `./results/grumpifycat/latest_train/index.html`.\n\
+  \n### CUT, FastCUT, and CycleGAN\n<img src=\"imgs/horse2zebra_comparison.jpg\" width=\"800px\"/><br>\n\
+  \nCUT is trained with the identity preservation loss and with `lambda_NCE=1`, while FastCUT is trained\
+  \ without the identity loss but with higher `lambda_NCE=10.0`. Compared to CycleGAN, CUT learns to perform\
+  \ more powerful distribution matching, while FastCUT is designed as a lighter (half the GPU memory,\
+  \ can fit a larger image), and faster (twice faster to train) alternative to CycleGAN. Please refer\
+  \ to the [paper](https://arxiv.org/abs/2007.15651) for more details.\n\nIn the above figure, we measure\
+  \ the percentage of pixels belonging to the horse/zebra bodies, using a pre-trained semantic segmentation\
+  \ model. We find a distribution mismatch between sizes of horses and zebras images -- zebras usually\
+  \ appear larger (36.8\\% vs. 17.9\\%). Our full method CUT has the flexibility to enlarge the horses,\
+  \ as a means of better matching of the training statistics than CycleGAN. FastCUT behaves more conservatively\
+  \ like CycleGAN.\n\n### Training using our launcher scripts\n\nPlease see `experiments/grumpifycat_launcher.py`\
+  \ that generates the above command line arguments. The launcher scripts are useful for configuring rather\
+  \ complicated command-line arguments of training and testing.\n\nUsing the launcher, the command below\
+  \ generates the training command of CUT and FastCUT.\n```bash\npython -m experiments grumpifycat train\
+  \ 0   # CUT\npython -m experiments grumpifycat train 1   # FastCUT\n```\n\nTo test using the launcher,\n\
+  ```bash\npython -m experiments grumpifycat test 0   # CUT\npython -m experiments grumpifycat test 1\
+  \   # FastCUT\n```\n\nPossible commands are run, run_test, launch, close, and so on. Please see `experiments/__main__.py`\
+  \ for all commands. Launcher is easy and quick to define and use. For example, the grumpifycat launcher\
+  \ is defined in a few lines:\n```python\nfrom .tmux_launcher import Options, TmuxLauncher\n\n\nclass\
+  \ Launcher(TmuxLauncher):\n    def common_options(self):\n        return [\n            Options(   \
+  \ # Command 0\n                dataroot=\"./datasets/grumpifycat\",\n                name=\"grumpifycat_CUT\"\
+  ,\n                CUT_mode=\"CUT\"\n            ),\n\n            Options(    # Command 1\n       \
+  \         dataroot=\"./datasets/grumpifycat\",\n                name=\"grumpifycat_FastCUT\",\n    \
+  \            CUT_mode=\"FastCUT\",\n            )\n        ]\n\n    def commands(self):\n        return\
+  \ [\"python train.py \" + str(opt) for opt in self.common_options()]\n\n    def test_commands(self):\n\
+  \        # Russian Blue -> Grumpy Cats dataset does not have test split.\n        # Therefore, let's\
+  \ set the test split to be the \"train\" set.\n        return [\"python test.py \" + str(opt.set(phase='train'))\
+  \ for opt in self.common_options()]\n\n```\n\n\n\n### Apply a pre-trained CUT model and evaluate FID\n\
+  \nTo run the pretrained models, run the following.\n\n```bash\n\n# Download and unzip the pretrained\
+  \ models. The weights should be located at\n# checkpoints/horse2zebra_cut_pretrained/latest_net_G.pth,\
+  \ for example.\nwget http://efrosgans.eecs.berkeley.edu/CUT/pretrained_models.tar\ntar -xf pretrained_models.tar\n\
+  \n# Generate outputs. The dataset paths might need to be adjusted.\n# To do this, modify the lines of\
+  \ experiments/pretrained_launcher.py\n# [id] corresponds to the respective commands defined in pretrained_launcher.py\n\
+  # 0 - CUT on Cityscapes\n# 1 - FastCUT on Cityscapes\n# 2 - CUT on Horse2Zebra\n# 3 - FastCUT on Horse2Zebra\n\
+  # 4 - CUT on Cat2Dog\n# 5 - FastCUT on Cat2Dog\npython -m experiments pretrained run_test [id]\n\n#\
+  \ Evaluate FID. To do this, first install pytorch-fid of https://github.com/mseitzer/pytorch-fid\n#\
+  \ pip install pytorch-fid\n# For example, to evaluate horse2zebra FID of CUT,\n# python -m pytorch_fid\
+  \ ./datasets/horse2zebra/testB/ results/horse2zebra_cut_pretrained/test_latest/images/fake_B/\n# To\
+  \ evaluate Cityscapes FID of FastCUT,\n# python -m pytorch_fid ./datasets/cityscapes/valA/ ~/projects/contrastive-unpaired-translation/results/cityscapes_fastcut_pretrained/test_latest/images/fake_B/\n\
+  # Note that a special dataset needs to be used for the Cityscapes model. Please read below. \npython\
+  \ -m pytorch_fid [path to real test images] [path to generated images]\n\n```\n\nNote: the Cityscapes\
+  \ pretrained model was trained and evaluated on a resized and JPEG-compressed version of the original\
+  \ Cityscapes dataset. To perform evaluation, please download [this](http://efrosgans.eecs.berkeley.edu/CUT/datasets/cityscapes_val_for_CUT.tar)\
+  \ validation set and perform evaluation. \n\n\n### SinCUT Single Image Unpaired Training\n\nTo train\
+  \ SinCUT (single-image translation, shown in Fig 9, 13 and 14 of the paper), you need to\n\n1. set the\
+  \ `--model` option as `--model sincut`, which invokes the configuration and codes at `./models/sincut_model.py`,\
+  \ and\n2. specify the dataset directory of one image in each domain, such as the example dataset included\
+  \ in this repo at `./datasets/single_image_monet_etretat/`. \n\nFor example, to train a model for the\
+  \ [Etretat cliff (first image of Figure 13)](https://github.com/taesungp/contrastive-unpaired-translation/blob/master/imgs/singleimage.gif),\
+  \ please use the following command.\n\n```bash\npython train.py --dataroot ./datasets/cbct2ct --name\
+  \ cbct2ct_KANCUT --CUT_mode kancut\n```\n\nor by using the experiment launcher script,\n```bash\npython\
+  \ -m experiments singleimage run 0\n```\n\nFor single-image translation, we adopt network architectural\
+  \ components of [StyleGAN2](https://github.com/NVlabs/stylegan2), as well as the pixel identity preservation\
+  \ loss used in [DTN](https://arxiv.org/abs/1611.02200) and [CycleGAN](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix/blob/master/models/cycle_gan_model.py#L160).\
+  \ In particular, we adopted the code of [rosinality](https://github.com/rosinality/stylegan2-pytorch),\
+  \ which exists at `models/stylegan_networks.py`.\n\nThe training takes several hours. To generate the\
+  \ final image using the checkpoint,\n\n```bash\npython test.py --model sincut --name singleimage_monet_etretat\
+  \ --dataroot ./datasets/single_image_monet_etretat\n```\n\nor simply\n\n```bash\npython -m experiments\
+  \ singleimage run_test 0\n```\n\n### [Datasets](./docs/datasets.md)\nDownload CUT/CycleGAN/pix2pix datasets.\
+  \ For example,\n\n```bash\nbash datasets/download_cut_datasets.sh horse2zebra\n```\n\nThe Cat2Dog dataset\
+  \ is prepared from the AFHQ dataset. Please visit https://github.com/clovaai/stargan-v2 and download\
+  \ the AFHQ dataset by `bash download.sh afhq-dataset` of the github repo. Then reorganize directories\
+  \ as follows.\n```bash\nmkdir datasets/cat2dog\nln -s datasets/cat2dog/trainA [path_to_afhq]/train/cat\n\
+  ln -s datasets/cat2dog/trainB [path_to_afhq]/train/dog\nln -s datasets/cat2dog/testA [path_to_afhq]/test/cat\n\
+  ln -s datasets/cat2dog/testB [path_to_afhq]/test/dog\n```\n\nThe Cityscapes dataset can be downloaded\
+  \ from https://cityscapes-dataset.com.\nAfter that, use the script `./datasets/prepare_cityscapes_dataset.py`\
+  \ to prepare the dataset. \n\n\n#### Preprocessing of input images\n\nThe preprocessing of the input\
+  \ images, such as resizing or random cropping, is controlled by the option `--preprocess`, `--load_size`,\
+  \ and `--crop_size`. The usage follows the [CycleGAN/pix2pix](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix)\
+  \ repo. \n\nFor example, the default setting `--preprocess resize_and_crop --load_size 286 --crop_size\
+  \ 256` resizes the input image to `286x286`, and then makes a random crop of size `256x256` as a way\
+  \ to perform data augmentation. There are other preprocessing options that can be specified, and they\
+  \ are specified in [base_dataset.py](https://github.com/taesungp/contrastive-unpaired-translation/blob/master/data/base_dataset.py#L82).\
+  \ Below are some example options. \n\n - `--preprocess none`: does not perform any preprocessing. Note\
+  \ that the image size is still scaled to be a closest multiple of 4, because the convolutional generator\
+  \ cannot maintain the same image size otherwise. \n - `--preprocess scale_width --load_size 768`: scales\
+  \ the width of the image to be of size 768.\n - `--pr"

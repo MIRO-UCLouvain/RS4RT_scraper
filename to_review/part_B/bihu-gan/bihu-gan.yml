@@ -1,0 +1,120 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: uLeeIU/BiHU-GAN
+url: https://github.com/uLeeIU/BiHU-GAN
+platform: github
+description: Core implementation of CT-Number-Preserving Bidirectional Cycle GAN for Contrast Addition
+  and Removal in Head-and-Neck Radiotherapy Planning CT
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-10T09:12:57Z'
+image_source: null
+heuristic_total_score: 18
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 6 support term(s).
+readme_excerpt: "# BiHU-GAN  \n**CT-Number-Preserving Bidirectional Cycle GAN for Contrast Addition and\
+  \ Removal in Head-and-Neck Radiotherapy Planning CT**\n\n[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n\
+  [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)\n\
+  [![PyTorch 2.0+](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c.svg)](https://pytorch.org/)\n\n> In\
+  \ this repository, Hounsfield Units (HU) refer to the CT number scale used for radiotherapy dose calculation.\n\
+  >\n> Official PyTorch implementation of **BiHU-GAN** – a physically constrained bidirectional cycle‑consistent\
+  \ GAN that simultaneously synthesizes contrast‑enhanced CT from non‑contrast CT and recovers CT-number‑faithful\
+  \ non‑contrast CT from contrast‑enhanced CT, specifically designed for head‑and‑neck radiotherapy planning.\n\
+  > \n> We are currently working to extend BiHU‑GAN to more anatomical sites (thorax, abdomen, pelvis,\
+  \ etc.), and sincerely hope to have the honor of continuing to share our research progress and improvements\
+  \ with peers in the field.\n\n---\n\n## \U0001F4CC Overview\n\nRadiotherapy planning for head‑and‑neck\
+  \ cancer faces an inherent trade‑off:  \n- **Non‑contrast CT (NCCT)** provides accurate CT number for\
+  \ dose calculation but lacks soft‑tissue contrast.  \n- **Contrast‑enhanced CT (CECT)** improves target\
+  \ delineation but introduces iodine‑induced CT number shifts, compromising dose accuracy.\n\n**BiHU‑GAN**\
+  \ resolves this by offering bidirectional synthesis with explicit CT number preservation:\n\n| Direction\
+  \ | Clinical Use |\n|-----------|---------------|\n| **NCCT → CECT** | Generate synthetic contrast‑enhanced\
+  \ CT (sCECT) to assist contouring without contrast agent injection. |\n| **CECT → NCCT** | Remove contrast\
+  \ effects to produce CT-number‑faithful synthetic non‑contrast CT (sNCCT) for accurate dose calculation.\
+  \ |\n\nThe model incorporates **CT number‑deviation loss**, **gradient‑consistency loss**, and **CBAM\
+  \ attention** to maintain anatomical fidelity, edge sharpness, and physical CT number accuracy – validated\
+  \ on multicenter data with dosimetric endpoints.\n\n---\n\n## ✨ Key Features\n\n- **Bidirectional unpaired\
+  \ translation** – works with paired or unpaired CT volumes.\n- **CT number‑aware constraints** – tissue‑weighted\
+  \ CT number loss (soft‑tissue vs. bone) enforces physical radiodensity fidelity.\n- **Gradient consistency\
+  \ loss** – preserves high‑density boundaries (bone, metal‑adjacent regions).\n- **CBAM modules** – enhance\
+  \ low‑contrast structures (vessels, lymph nodes).\n- **Monte Carlo Dropout** – supports uncertainty\
+  \ estimation during inference.\n- **Full DICOM integration** – read/write DICOM series with preserved\
+  \ metadata (RescaleSlope/Intercept, positioning).\n- **Built‑in evaluation** – masked SSIM, PSNR, NMAE,\
+  \ CT-number‑MAD, and contouring/dosimetric metrics.\n- **Optimized training** – mixed precision (AMP),\
+  \ gradient accumulation, cosine warm‑up, early stopping.\n\n---\n\n## \U0001F9EC Repository Structure\n\
+  \n```\nBiHU-GAN/\n├── configs/\n│   └── bihugan.yaml               # Main configuration file\n├── bihugan/\n\
+  │   ├── config.py                  # YAML config parser\n│   ├── data/\n│   │   └── volume_paired_dataset.py\
+  \   # paired volume loading & augmentation\n│   ├── models/\n│   │   ├── generator.py           # ResNet‑based\
+  \ generator with CBAM\n│   │   ├── discriminator.py       # PatchGAN discriminator\n│   │   ├── resnet_blocks.py\
+  \       # Residual blocks\n│   │   └── cbam.py                # Channel & spatial attention\n│   ├──\
+  \ losses/\n│   │   ├── gan_lsgan.py           # LSGAN adversarial loss\n│   │   ├── cycle.py       \
+  \        # Cycle and L1 loss\n│   │   ├── gradients.py           # Sobel gradient consistency loss\n\
+  │   │   └── hu_loss.py             # CT number Consistency Loss\n│   └── utils/\n│       ├── metrics.py\
+  \             # SSIM, PSNR, NMAE, HU‑MAD\n│       └── export_dicom.py        # DICOM series export\n\
+  ├── train.py                       # Training entry point\n├── test_infer.py                  # Inference\
+  \ & evaluation\n├── requirements.txt\n├── LICENSE\n└── README.md\n```\n\n---\n\n## \U0001F680 Getting\
+  \ Started\n\n### 1. Environment Setup\n\n```bash\ngit clone https://github.com/Linjiaze-IU/BiHU-GAN.git\n\
+  cd BiHU-GAN\npip install -r requirements.txt\n```\n\n**Requirements**:\n- Python 3.8 / 3.9\n- PyTorch\
+  \ ≥ 2.0\n- CUDA 11.7 / 11.8 (recommended)\n\n### 2. Data Preparation\n\nYou need to prepare **paired\
+  \ or unpaired** CT volumes (NCCT and CECT) from your own institution.  \nThe dataset loader expects\
+  \ a **text file** listing **all slice paths** of the source modality (e.g., all NCCT DICOM files). \
+  \ \nIt automatically derives the corresponding target modality path by replacing a keyword (e.g., `AC0`\
+  \ → `AC1`) – see `pair_from` / `pair_to` in the config.\n\n**Example format** (`train.txt`):\n```\n\
+  /path/to/patient_001/NCCT/slice_001.dcm\n/path/to/patient_001/NCCT/slice_002.dcm\n...\n```\n\nThe paired\
+  \ volume is loaded by matching the series directory structure.  \nAll preprocessing (CT number clipping,\
+  \ normalization, rigid registration, augmentation) is handled inside `PairedVolumeDataset`.\n\n### 3.\
+  \ Configuration\n\nEdit `configs/bihugan.yaml` to set your data paths, resolution, CT number window,\
+  \ loss weights, etc.\n\n**Key parameters**:\n\n| Parameter | Description |\n|-----------|-------------|\n\
+  | `train_list` / `val_list` / `test_list` | Text files with slice paths |\n| `pair_from` / `pair_to`\
+  \ | Keyword replacement for modality pairing (e.g., `\"AC0\"` → `\"AC1\"`) |\n| `CT number_min`, `CT\
+  \ number_max` | CT number clipping range (default `-1000`, `2047`) |\n| `body_CT number_thresh` | Threshold\
+  \ for body mask (default `-600`) |\n| `bone_CT number_thresh` | Threshold separating soft tissue and\
+  \ bone (default `250`) |\n| `global_scaling_factor` | Global multiplier for non‑CT number losses (recommended\
+  \ `1.2`) |\n| `CT number_loss_weight` | Weight for CT number consistency loss (recommended `1.2`) |\n\
+  | `model_input_resolution` | Training resolution (`1024` recommended for head‑neck) |\n| `epochs`, `batchSize`,\
+  \ `lr` | Training hyperparameters |\n\n> **Note**: The model was trained on 1024×1024 axial slices.\
+  \ For external 512×512 data, the loader automatically upsamples during inference.\n\n### 4. Training\n\
+  \n```bash\npython train.py --config configs/bihugan.yaml\n```\n\n- Checkpoints are saved in `checkpoints_dir/`\
+  \ (both `*_best.pth` and `*_latest.pth`).\n- Validation runs every 5 epochs; early stopping monitors\
+  \ combined SSIM + CT-number‑MAD.\n- Mixed precision and gradient accumulation are enabled by default.\n\
+  \n### 5. Inference & Evaluation\n\n```bash\n# Synthesize CECT from NCCT (A→B)\npython test_infer.py\
+  \ --config configs/bihugan.yaml --direction A2B\n\n# Synthesize NCCT from CECT (B→A)\npython test_infer.py\
+  \ --config configs/bihugan.yaml --direction B2A\n\n# Do not export DICOM (only compute metrics)\npython\
+  \ test_infer.py --config configs/bihugan.yaml --direction A2B --no_export\n```\n\n**Output**:\n- Console\
+  \ prints masked SSIM, PSNR, NMAE, and CT-number‑MAD.\n- DICOM series are exported to `output_root/`\
+  \ with preserved spatial metadata and a “(BiHU‑GAN)” tag.\n\n---\n\n## \U0001F4CA Evaluation Metrics\n\
+  \nThe code computes radiotherapy‑relevant metrics directly on **CT-number‑space**:\n\n| Metric | Description\
+  \ |\n|--------|-------------|\n| **SSIM** | Structural similarity (masked to body region) |\n| **PSNR**\
+  \ | Peak signal‑to‑noise ratio (dB) |\n| **NMAE** | Normalized mean absolute error (range `[-1,1]`)\
+  \ |\n| **CT-number‑MAD** | Mean absolute deviation of CT number (global / soft‑tissue / bone) |\n\n\
+  For dosimetric evaluation (gamma pass rate, DVH differences) we used an external TPS (Varian Eclipse)\
+  \ – those scripts are not included but can be implemented using the exported DICOM series.\n\n---\n\n\
+  ## \U0001F9EA Core Innovations (Code Highlights)\n\n### CT number Consistency Loss\n\n```python\n# bihugan/losses/hu_loss.py\n\
+  class HUConsistencyLoss(nn.Module):\n    def forward(self, x_norm_ref, x_norm_pred, mask_body):\n  \
+  \      hu_ref = inv_normalize_hu(x_norm_ref)\n        hu_pred = inv_normalize_hu(x_norm_pred)\n    \
+  \    # tissue‑weighted mask: soft tissue (1.0) vs bone (1.5)\n        loss = weighted_mae(hu_pred, hu_ref,\
+  \ mask_body)\n        return loss\n```\n\n### Gradient Consistency Loss\n\n```python\n# bihugan/losses/gradients.py\n\
+  def gradient_consistency_loss(x_fake, x_real, grad_op):\n    grad_fake = grad_op(x_fake)   # Sobel magnitude\n\
+  \    grad_real = grad_op(x_real)\n    return F.l1_loss(grad_fake, grad_real)\n```\n\n### CBAM Integration\n\
+  \n```python\n# bihugan/models/generator.py\nself.cbam1 = CBAM(base)   # after first conv\nself.cbam2\
+  \ = CBAM(base*2) # after first downsampling\n...\n```\n\n---\n\n## \U0001F4DD Important Notes for Users\n\
+  \n- **Data privacy**: The repository does **not** include any patient data or institution‑specific preprocessing\
+  \ pipelines. You must adapt the DICOM path reading logic to your local storage structure.\n- **Rigid\
+  \ registration**: The current dataset loader assumes that paired NCCT and CECT are already roughly aligned\
+  \ (same‑session acquisition). For unpaired or misaligned data, you need to add a registration step before\
+  \ feeding into the dataloader.\n- **External resolution**: The model was trained on 1024×1024. If your\
+  \ data is 512×512, set `upsample_to_model: true` in the config – the loader will bilinearly upsample\
+  \ during training and inference.\n- **MC Dropout**: Set `mc_dropout_p_train > 0` to enable Monte Carlo\
+  \ Dropout during training; set `mc_dropout_p_infer > 0` to sample multiple forward passes for uncertainty\
+  \ maps (not yet implemented in the test script – you can easily extend it).\n\n---\n\n## \U0001F4C4\
+  \ Citation & Contact\n\nIf you find this code inspiring for your research or wish to apply it in your\
+  \ work, we would greatly appreciate it if you could **cite our paper** once it is published (citation\
+  \ details will be provided upon acceptance).  \n\nIf you would like to learn more about our ongoing\
+  \ projects or discuss potential collaboration, please feel free to contact us at **18144845204@163.com**.\
+  \ Thank you very much for your support!\n\n---\n\n## \U0001F4DC License\n\nThis project is released\
+  \ under the **MIT License**. See `LICENSE` for details.\n\n"

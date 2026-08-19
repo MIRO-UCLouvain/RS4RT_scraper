@@ -1,0 +1,122 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: reriri0426/radiation-therapy
+url: https://github.com/reriri0426/radiation-therapy
+platform: github
+description: ''
+license: null
+language: HTML
+keywords: []
+stars: 0
+updated_at: '2023-09-06T12:12:02Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# radiation-therapy\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"\
+  UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>放射線治療を体験しよう！</title>\n\
+  \n    <style>\n        body {\n            background-color: #f0f0f0;\n            text-align: center;\n\
+  \        }\n        #game-container {\n            display: flex;\n            flex-wrap: wrap;\n  \
+  \          justify-content: center;\n            align-items: center;\n            width: 400px;\n \
+  \           height: 400px;\n            margin: 0 auto;\n            border: 2px solid #333;\n     \
+  \       background-color: #ffb6c1;\n            position: relative;\n            overflow: hidden; /*\
+  \ 放射線を切り取るために必要 */\n        }\n        .cell {\n            width: 100px;\n            height: 100px;\n\
+  \            border-radius: 50%;\n            margin: 10px;\n            position: relative;\n     \
+  \   }\n        #cancer-cell {\n            background-color: red;\n            width: 200px;\n     \
+  \       height: 200px;\n            margin: auto; /* 中央配置 */\n            position: absolute;\n    \
+  \        top: 50%;\n            left: 50%;\n            transform: translate(-50%, -50%);\n        \
+  \    z-index: 1;\n            opacity: 1; /* 初期透明度 */\n        }\n        .normal-cell {\n         \
+  \   background-color: green;\n            position: absolute;\n            z-index: 1;\n           \
+  \ opacity: 1; /* 初期透明度 */\n        }\n        /* 放射線のスタイル */\n        .radiation {\n            position:\
+  \ absolute;\n            width: 100%; /* 大きくする */\n            height: 200%; /* 大きくする */\n         \
+  \   clip-path: polygon(50% 0%, 0% 100%, 100% 100%); /* 逆扇状に変更 */\n             /* 黄色の放射線 */\n      \
+  \      transform-origin: center top;\n            background-color: rgba(255, 255, 0, 0.5);\n      \
+  \      transform: scaleY(0);\n            transition: transform 1s ease-in-out; /* アニメーション効果 */\n  \
+  \          z-index: 1;\n        } \n\n        .radiation2 {\n            position: absolute;\n     \
+  \       width: 100%; /* 大きくする */\n            height: 200%; /* 大きくする */\n            clip-path: polygon(50%\
+  \ 100%, 0% 0%, 100% 0%); /* 逆扇状に変更 */\n           /* 黄色の放射線 */\n            background-color: rgba(255,\
+  \ 255, 0, 0.5);\n            transform-origin: center bottom;\n            transform: scaleY(0);\n \
+  \           transition: transform 1s ease-in-out; /* アニメーション効果 */\n            z-index: 1;\n       \
+  \ }\n        .radiation3 {\n            position: absolute;\n            width: 100%; /* 大きくする */\n\
+  \            height: 100%; /* 大きくする */\n            clip-path: polygon(0% 50%, 100% 100%, 100% 0%);\
+  \ /* 逆扇状に変更 */\n             /* 黄色の放射線 */\n            background-color: rgba(255, 255, 0, 0.5);\n \
+  \           transform-origin: center left;\n            transform: scaleY(0);\n            transition:\
+  \ transform 1s ease-in-out; /* アニメーション効果 */\n            z-index: 1;\n        } \n\n        .radiation4\
+  \ {\n            position: absolute;\n            width: 100%; /* 大きくする */\n            height: 100%;\
+  \ /* 大きくする */\n            clip-path: polygon(0% 0%, 0% 100%, 100% 50%); /* 逆扇状に変更 */\n            /*\
+  \ 黄色の放射線 */\n            background-color: rgba(255, 255, 0, 0.5);\n            transform-origin: right;\n\
+  \            transform: scaleY(0);\n            transition: transform 1s ease-in-out; /* アニメーション効果 */\n\
+  \            z-index: 1;\n        } \n\n\n    </style>\n</head>\n<body>\n    <h1>放射線治療を体験しよう！</h1>\n\
+  \    <button onclick=\"shootRadiation(1)\">Shoot Up</button>\n    <button onclick=\"shootRadiation(2)\"\
+  >Shoot Down</button>\n    <button onclick=\"shootRadiation(3)\">Shoot Left</button>\n    <button onclick=\"\
+  shootRadiation(4)\">Shoot Right</button>\n    <button onclick=\"resetGame()\">Reset Game</button>\n\
+  \    <p>線源はＸ線　赤い丸はがん細胞　緑の丸は正常細胞</p>\n    <div id=\"game-container\">\n        <!-- 周囲に正常細胞を均等に配置 -->\n\
+  \        <div class=\"normal-cell cell\" style=\"top: 75px; left: 0;\"></div>\n        <div class=\"\
+  normal-cell cell\" style=\"top: 0; left: 75px;\"></div>\n        <div class=\"normal-cell cell\" style=\"\
+  top: 75px; right: 0;\"></div>\n        <div class=\"normal-cell cell\" style=\"top: 0; right: 75px;\"\
+  ></div>\n        <div class=\"normal-cell cell\" style=\"bottom: 75px; left: 0;\"></div>\n        <div\
+  \ class=\"normal-cell cell\" style=\"bottom: 0; left: 75px;\"></div>\n        <div class=\"normal-cell\
+  \ cell\" style=\"bottom: 75px; right: 0;\"></div>\n        <div class=\"normal-cell cell\" style=\"\
+  bottom: 0; right: 75px;\"></div>\n        <!-- 中心にがん細胞を配置 -->\n        <div id=\"cancer-cell\" class=\"\
+  cell\"></div>\n        <!-- 放射線を表示する要素 -->\n        <div class=\"radiation\" id=\"radiation-up\"></div>\n\
+  \        <div class=\"radiation2\" id=\"radiation-down\"></div>\n        <div class=\"radiation3\" id=\"\
+  radiation-left\"></div>\n        <div class=\"radiation4\" id=\"radiation-right\"></div>\n    </div>\n\
+  \n    <script>\n        let radiationCount = 0;\n        let radiationCount2 = 0;\n        let radiationCount3\
+  \ = 0;\n        let radiationCount4 = 0;\n        const maxRadiationCount = 8; // 各正常細胞が消える放射線の最大回数\n\
+  \        \n        function shootRadiation(direction) {\n            // 放射線の要素を取得\n            const\
+  \ radiation = document.getElementById(`radiation-up`);\n            const radiation2 = document.getElementById(`radiation-down`);\n\
+  \            const radiation3 = document.getElementById(`radiation-left`);\n            const radiation4\
+  \ = document.getElementById(`radiation-right`);\n            \n            // すべての放射線を非表示にする\n     \
+  \       radiation.style.transform = 'scaleY(0)';\n            radiation2.style.transform = 'scaleY(0)';\n\
+  \            radiation3.style.transform = 'scaleY(0)';\n            radiation4.style.transform = 'scaleY(0)';\n\
+  \            \n            // クリックされたボタンに対応する放射線を表示\n            if (direction === 1) {\n          \
+  \      radiation.style.transform = 'scaleY(1)';\n                // 上部の正常細胞だけを薄くする\n               \
+  \ document.querySelectorAll('.normal-cell:not([style*=\"bottom\"])').forEach(function(cell) {\n    \
+  \                let opacity = parseFloat(cell.style.opacity || 1);\n                    if (opacity\
+  \ > 0) {\n                        opacity -= 1 / maxRadiationCount;\n                        cell.style.opacity\
+  \ = opacity;\n                        // 透明度が一定以下になったら非表示\n                        if (opacity <= 0)\
+  \ {\n                            cell.style.display = 'none';\n                        }\n         \
+  \           }\n                });\n                radiationCount++;\n            } else if (direction\
+  \ === 2) {\n                radiation2.style.transform = 'scaleY(1)';\n                // 下部の正常細胞だけを薄くする\n\
+  \                document.querySelectorAll('.normal-cell:not([style*=\"top\"])').forEach(function(cell)\
+  \ {\n                    let opacity = parseFloat(cell.style.opacity || 1);\n                    if\
+  \ (opacity > 0) {\n                        opacity -= 1 / maxRadiationCount;\n                     \
+  \   cell.style.opacity = opacity;\n                        // 透明度が一定以下になったら非表示\n                   \
+  \     if (opacity <= 0) {\n                            cell.style.display = 'none';\n              \
+  \          }\n                    }\n                });\n                radiationCount2++;\n     \
+  \       } else if (direction === 3) {\n                radiation3.style.transform = 'scaleY(1)';\n \
+  \               // 左部の正常細胞だけを薄くする\n                document.querySelectorAll('.normal-cell:not([style*=\"\
+  right\"])').forEach(function(cell) {\n                    let opacity = parseFloat(cell.style.opacity\
+  \ || 1);\n                    if (opacity > 0) {\n                        opacity -= 1 / maxRadiationCount;\n\
+  \                        cell.style.opacity = opacity;\n                        // 透明度が一定以下になったら非表示\n\
+  \                        if (opacity <= 0) {\n                            cell.style.display = 'none';\n\
+  \                        }\n                    }\n                });\n                radiationCount3++;\n\
+  \            } else if (direction === 4) {\n                radiation4.style.transform = 'scaleY(1)';\n\
+  \                // 右部の正常細胞だけを薄くする\n                document.querySelectorAll('.normal-cell:not([style*=\"\
+  left\"])').forEach(function(cell) {\n                    let opacity = parseFloat(cell.style.opacity\
+  \ || 1);\n                    if (opacity > 0) {\n                        opacity -= 1 / maxRadiationCount;\n\
+  \                        cell.style.opacity = opacity;\n                        // 透明度が一定以下になったら非表示\n\
+  \                        if (opacity <= 0) {\n                            cell.style.display = 'none';\n\
+  \                        }\n                    }\n                });\n                radiationCount4++;\n\
+  \            }\n\n            const cancerCell = document.getElementById('cancer-cell');\n         \
+  \  \n            // がん細胞の透明度を設定して薄くする\n            let cancerOpacity = parseFloat(cancerCell.style.opacity\
+  \ || 1);\n            if (cancerOpacity > 0) {\n                cancerOpacity -= 1 / maxRadiationCount;\n\
+  \                cancerCell.style.opacity = cancerOpacity;\n                // がん細胞の透明度が一定以下になったら非表示\n\
+  \                if (cancerOpacity <= 0) {\n                    cancerCell.style.display = 'none';\n\
+  \                }\n            }\n        }\n\n        function resetGame() {\n            // すべての放射線を非表示にする\n\
+  \            const radiation = document.getElementById('radiation-up');\n            const radiation2\
+  \ = document.getElementById('radiation-down');\n            const radiation3 = document.getElementById('radiation-left');\n\
+  \            const radiation4 = document.getElementById('radiation-right');\n            radiation.style.transform\
+  \ = 'scaleY(0)';\n            radiation2.style.transform = 'scaleY(0)';\n            radiation3.style.transform\
+  \ = 'scaleY(0)';\n            radiation4.style.transform = 'scaleY(0)';\n\n            // がん細胞を再表示し、透明度をリセットする\n\
+  \            const cancerCell = document.getElementById('cancer-cell');\n            cancerCell.style.display\
+  \ = 'block';\n            cancerCell.style.opacity = 1;\n\n            // 正常細胞を再表示し、透明度をリセットする\n   \
+  \         const normalCells = document.querySelectorAll('.normal-cell');\n            normalCells.forEach(function(cell)\
+  \ {\n                cell.style.display = 'block';\n                cell.style.opacity = 1;\n      \
+  \      });\n\n            // 放射線が当たった回数をリセット\n            radiationCount = 0;\n            radiationCount2\
+  \ = 0;\n            radiationCount3 = 0;\n            radiationCount4 = 0;\n        }\n    </script>\n\
+  </body>\n</html>\n"

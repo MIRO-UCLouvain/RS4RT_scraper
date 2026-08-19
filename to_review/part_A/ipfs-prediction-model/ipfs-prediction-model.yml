@@ -1,0 +1,74 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: BlitzRanMys/iPFS-prediction-model
+url: https://github.com/BlitzRanMys/iPFS-prediction-model
+platform: github
+description: EGFR-TKI + BM radiotherapy iPFS
+license: null
+language: null
+keywords: []
+stars: 0
+updated_at: '2025-06-24T09:12:05Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+- Matched 2 AI/ML term(s) in repository name.
+readme_excerpt: "# Load necessary packages\nlibrary(rms)\nlibrary(Hmisc)\nlibrary(survival)\nlibrary(shiny)\n\
+  library(ggplot2)\n\n# Set working directory\nsetwd(\"C:\\\\Users\\\\ls970\\\\Desktop\")\n\n# Read data\n\
+  bc <- read.csv(\"xunlian.csv\")\nbc <- na.omit(bc)\n\n# Convert RMethod to factor with descriptive labels\n\
+  bc$RMethod <- factor(bc$RMethod, \n                     levels = c(1, 2, 3),\n                     labels\
+  \ = c(\"WBRT\", \"WBRT-SIB\", \"SRT\"))\n\n# Set data distribution\ndd <- datadist(bc)\noptions(datadist\
+  \ = \"dd\")\n\n# Build Cox proportional hazards model\nf <- cph(Surv(iPFS, response) ~ Radscore + GPA\
+  \ + BMVolume + NonFirstline + RMethod,\n         x = TRUE, y = TRUE, surv = TRUE, data = bc)\n\n# Create\
+  \ Shiny app\nui <- fluidPage(\n  titlePanel(\"iPFS Prediction Model - Dynamic Nomogram\"),\n  sidebarLayout(\n\
+  \    sidebarPanel(\n      h4(\"Patient Characteristics\"),\n      sliderInput(\"Radscore\", \"Radscore:\"\
+  , \n                  min = round(min(bc$Radscore), 1), \n                  max = round(max(bc$Radscore),\
+  \ 1), \n                  value = median(bc$Radscore), step = 0.1),\n      sliderInput(\"GPA\", \"GPA\
+  \ Score:\", \n                  min = min(bc$GPA), \n                  max = max(bc$GPA), \n       \
+  \           value = median(bc$GPA), step = 0.5),\n      radioButtons(\"BMVolume\", \"Brain Metastasis\
+  \ Volume:\", \n                   choices = list(\"Low (0)\" = 0, \"High (1)\" = 1), \n            \
+  \       selected = 0),\n      radioButtons(\"NonFirstline\", \"Treatment Line:\", \n               \
+  \    choices = list(\"First-line (0)\" = 0, \"Non-first-line (1)\" = 1), \n                   selected\
+  \ = 0),\n      radioButtons(\"RMethod\", \"Radiotherapy Method:\", \n                   choices = list(\"\
+  WBRT\" = \"WBRT\", \"WBRT-SIB\" = \"WBRT-SIB\", \"SRT\" = \"SRT\"), \n                   selected =\
+  \ \"WBRT\"),\n      actionButton(\"calculate\", \"Calculate Survival Probability\", class = \"btn-primary\"\
+  ),\n      \n      # Add brief explanation of variables with updated BMVolume threshold\n      hr(),\n\
+  \      h5(\"Variable Explanation:\"),\n      tags$ul(\n        tags$li(tags$b(\"Radscore:\"), \"Radiomics\
+  \ score derived from imaging features\"),\n        tags$li(tags$b(\"GPA:\"), \"Lung-molGPA (Lung cancer-specific\
+  \ Graded Prognostic Assessment)\"),\n        tags$li(tags$b(\"Brain Metastasis Volume:\"), \"0 = Low\
+  \ (<1647 mm³), 1 = High (≥1647 mm³)\"),  # 修改阈值\n        tags$li(tags$b(\"Treatment Line:\"), \"0 =\
+  \ First-line therapy, 1 = Non-first-line therapy\"),\n        tags$li(tags$b(\"Radiotherapy Methods:\"\
+  ), \n                tags$ul(\n                  tags$li(tags$b(\"WBRT:\"), \"Whole-brain radiotherapy\"\
+  ),\n                  tags$li(tags$b(\"WBRT-SIB:\"), \"Whole-brain radiotherapy with simultaneous integrated\
+  \ boost\"),\n                  tags$li(tags$b(\"SRT:\"), \"Stereotactic radiotherapy\")\n          \
+  \      )\n        )\n      )\n    ),\n    mainPanel(\n      h4(\"Predicted Progression-Free Survival\
+  \ Probabilities:\"),\n      tableOutput(\"predictionTable\"),\n      plotOutput(\"survivalPlot\", height\
+  \ = \"400px\")\n    )\n  )\n)\n\nserver <- function(input, output) {\n  # Define survival functions\n\
+  \  surv_func <- Survival(f)\n  surv_0.5y <- function(x) surv_func(180, x)  # 0.5-year survival probability\n\
+  \  surv_1y <- function(x) surv_func(365, x)    # 1-year survival probability\n  surv_1.5y <- function(x)\
+  \ surv_func(547, x)  # 1.5-year survival probability\n  \n  # Respond to calculate button\n  observeEvent(input$calculate,\
+  \ {\n    # Create new data\n    new_data <- data.frame(\n      Radscore = input$Radscore,\n      GPA\
+  \ = input$GPA,\n      BMVolume = as.numeric(input$BMVolume),\n      NonFirstline = as.numeric(input$NonFirstline),\n\
+  \      RMethod = factor(input$RMethod, levels = c(\"WBRT\", \"WBRT-SIB\", \"SRT\"))\n    )\n    \n \
+  \   # Calculate linear predictor\n    lp <- predict(f, newdata = new_data)\n    \n    # Calculate survival\
+  \ probabilities\n    prob_0.5y <- round(surv_0.5y(lp), 3)\n    prob_1y <- round(surv_1y(lp), 3)\n  \
+  \  prob_1.5y <- round(surv_1.5y(lp), 3)\n    \n    # Create results table\n    results <- data.frame(\n\
+  \      Timepoint = c(\"0.5 years\", \"1 year\", \"1.5 years\"),\n      PFS_Probability = c(prob_0.5y,\
+  \ prob_1y, prob_1.5y)\n    )\n    \n    output$predictionTable <- renderTable({\n      results\n   \
+  \ }, rownames = FALSE, digits = 3)\n    \n    # Create survival curve plot\n    output$survivalPlot\
+  \ <- renderPlot({\n      # Generate survival curve data\n      surv_data <- data.frame(\n        Time\
+  \ = c(0, 180, 365, 547),\n        Survival = c(1, prob_0.5y, prob_1y, prob_1.5y)\n      )\n      \n\
+  \      # Plot survival curve\n      ggplot(surv_data, aes(x = Time, y = Survival)) +\n        geom_step(color\
+  \ = \"#2c7fb8\", size = 1.5) +\n        geom_point(size = 3, color = \"#2c7fb8\") +\n        labs(title\
+  \ = \"Predicted Progression-Free Survival Curve\",\n             x = \"Time (Days)\", y = \"PFS Probability\"\
+  ) +\n        scale_x_continuous(breaks = c(0, 180, 365, 547), \n                           labels =\
+  \ c(\"Baseline\", \"0.5 years\", \"1 year\", \"1.5 years\")) +\n        scale_y_continuous(limits =\
+  \ c(0, 1), breaks = seq(0, 1, 0.1)) +\n        theme_minimal(base_size = 14) +\n        theme(\n   \
+  \       plot.title = element_text(hjust = 0.5, face = \"bold\", size = 16),\n          axis.title =\
+  \ element_text(face = \"bold\", size = 12),\n          axis.text = element_text(size = 12),\n      \
+  \    panel.grid.major = element_line(color = \"gray90\"),\n          panel.grid.minor = element_blank()\n\
+  \        )\n    })\n  })\n}\n\n# Run Shiny app\nshinyApp(ui = ui, server = server)\n"

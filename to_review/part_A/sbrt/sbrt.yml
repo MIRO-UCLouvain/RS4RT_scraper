@@ -1,0 +1,68 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: BenjaminBenetti/sbrt
+url: https://github.com/BenjaminBenetti/sbrt
+platform: github
+description: Spring Boot Rest Template (SBRT)
+license: null
+language: Java
+keywords: []
+stars: 0
+updated_at: '2021-12-26T22:23:30Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "## Spring Boot REST Template SBRT.\nGet a Spring Boot based REST API up and running fast.\
+  \ This project allows quick and easy generation\nof ready to code spring boot projects. Sort of a Spring\
+  \ Boot, Boot if you think about it.\n\n### Prerequisites \nTo run this template you need\n- **Ruby**\
+  \ likely already installed by your distro\n- **Docker**  https://docs.docker.com/engine/install/\n-\
+  \ **Git** I suspect you already have this ;)\n\n### Usage \nTo create a new project using this template\
+  \ simply paste this in your terminal and follow the prompts. \n\n`\ncurl https://raw.githubusercontent.com/CanadianCommander/sbrt/master/script/boot.sh\
+  \ | bash\n`\n\nAfter setup is complete enter the newly created directory `sbrt` (which you can rename)\
+  \ and run \n\n`\n./docker/docker dev -R\n`\n\nThen in your browser navigate to `http://localhost:7080/api/v1/`\
+  \ you should see \"Hello World\"!\nYou're now ready to start writing your REST service. \n\n### Implementation\
+  \ advice\n\n#### Running your new project\nThis template provides a docker script through which you\
+  \ can perform all actions.\n- Running the dev environment `./docker/docker.sh dev [-R]` \U0001F680\n\
+  - Generate the openapi spec for the API. After adding or removing endpoints use this \n  to update your\
+  \ openapi specification file. This file is used to generate client api code\n  `./docker/docker.sh generate_api\
+  \ [-R]`\n- Deploy client api code to remote registries. This will only include the apis you configured\
+  \ at setup.\n  `./docker/docker.sh deploy_client_libraries [-R]` \n- Deploy to staging env (OpenShift)\
+  \ `./docker/docker.sh deploy_staging [-R]`\ncheck `./docker/docker.sh --help` for a full list of options\n\
+  \n#### Multi Tenant System\nThis template contains an automatic multi tenant system! This allows one\
+  \ database to be shared \nby multiple clients while insuring data isolation. All queries (excluding\
+  \ raw sql)\nwill be automatically filtered by the tenantId for the current request! This greatly reduces\
+  \ the chance \nof leaking one client's data to another. It is up to you to decide how tenantId will\
+  \ be set. Or perhaps \nyou don't want a multi tenant system? In that case you can just leave it as a\
+  \ constant. \nSee: `SecurityInterceptor` to customize.    \n\n#### Soft Delete\nThis template features\
+  \ a soft delete system. This is controlled by the `deleted_at` column on each table.\nIf this column\
+  \ is not null the row will automatically become invisible to your app! If you want your app\nto temporarily\
+  \ see deleted rows simply disable the `whereNotDeleted` filter on the JPA session.\nUnfortunately due\
+  \ to limitations of JPA / Hibernate you do have to put the following annotation on your models\nif you\
+  \ want them to soft delete (if you forget it they will hard delete). If anyone knows how to fix this\
+  \ that would be amazing!\n```\n@SQLDelete(sql = \"UPDATE <table name> SET deleted_at = NOW() where id\
+  \ = ?\")\n```\n#### JPA / Data models \nThis template provides a base model which contains the following\
+  \ fields \n```\nid - UUID\ntenantId - UUID (for tenanting system)\ncreatedByApiClientId - UUID\ncreatedAt\
+  \ - Timestamp\nupdatedAt - Timestamp\ndeletedAt - Timestamp  (for soft delete)\n```\nThese fields will\
+  \ be automatically managed for you if you extend the appropriate interfaces.\n\nThis template also provides\
+  \ it's own JPA repository implementation. All repositories should extend \n`BaseRepository` if you intend\
+  \ to use the features outlined here.\n\n#### DB and Migrations\nThis template features a Postgres database\
+  \ running in a container. Migrations are handled through liquibase.\nIf you want to automatically generate\
+  \ migrations based on your JPA models see https://plugins.jetbrains.com/plugin/15075-jpa-buddy/features\n\
+  In just a few clicks it will generate liquibase changelogs for your project. To support this the database\
+  \ is \nassigned a static IP `172.21.32.4` This allows JPA buddy to scan the database to generate a liquibase\
+  \ changelog. \n\n#### Important Interfaces / Abstract Classes\nThis template is specifically designed\
+  \ to provide robust interfaces to allow for rappid development \nwhile still following maintainable\
+  \ code practices. Of course using these abstractions is optional.\nThe general flow of data is as follows\n\
+  \n```\n# outbound \nAbstractModel -> convert: AbstractModelToTransferConverter -> produces: AbstractModelTransfer\
+  \ -> wrap: ApplicationResponse<AbstractModelTransfer> -> client\n# inbound\nclient -> AbstractModelInboundTransfer\
+  \ -> convert: AbstractInboundTransferToAbstractModelConverter -> produces: AbstractModel -> DB \n```\n\
+  \nIf you chose to extend / implement these classes you will benefit from automatic conversion of common\
+  \ model\nfields when transfers come in / out. You will also have hibernated persistence managed to allow\
+  \ for cascading \ncreation / updates of nested transfer objects (if you so configure your associations).\n\
+  Finally, you will be able to use the `CRUDController` interfaces(s) which \nallow for quick and easy\
+  \ addition of CRUD api endpoints. \n"

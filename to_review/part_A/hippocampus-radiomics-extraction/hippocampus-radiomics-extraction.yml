@@ -1,0 +1,109 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: manolina-13/hippocampus_radiomics_extraction
+url: https://github.com/manolina-13/hippocampus_radiomics_extraction
+platform: github
+description: PyRadiomics-based extraction of 3D shape, intensity, and texture features from MSD Dataset105
+  Hippocampus MRI scans — separately for Anterior and Posterior regions.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-30T07:06:34Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Hippocampus Radiomics Feature Extraction\n\nAutomated extraction of 3D radiomic features\
+  \ from the **Medical Segmentation Decathlon (MSD) Dataset105 — Hippocampus** using [PyRadiomics](https://pyradiomics.readthedocs.io/).\
+  \ The pipeline processes MRI images paired with multi-label segmentation masks and extracts comprehensive\
+  \ shape, intensity, and texture features separately for the **Anterior** and **Posterior** hippocampal\
+  \ regions.\n\n---\n\n## Project Structure\n\n```\nDataset105_Hippocampus/\n├── extract_hippocampus_radiomics.py\
+  \   # Main extraction script\n├── requirements.txt                   # Python dependencies\n├── README.md\
+  \                          # This file\n├── imagesTr/                          # MRI images (*_0000.nii.gz)\n\
+  ├── labelsTr/                          # Segmentation masks (*.nii.gz)\n│   │                      \
+  \            #   0 = Background\n│   │                                  #   1 = Anterior Hippocampus\n\
+  │   │                                  #   2 = Posterior Hippocampus\n└── hippocampus_radiomics.csv\
+  \          # Output: extracted features\n```\n\n---\n\n## How It Works\n\nFor each patient the script:\n\
+  \n1. **Reads** the MRI image and its multi-label mask\n2. **Z-score normalises** the image (`sitk.Normalize`)\
+  \ — standard for MRI intensity\n3. **Checks** voxel spacing consistency across the dataset; if inconsistent,\
+  \ resamples to **1x1x1 mm**\n4. **Creates two binary masks** from the multi-label mask:\n   - `mask_anterior`\
+  \ — pixels where `label == 1`\n   - `mask_posterior` — pixels where `label == 2`\n5. **Runs PyRadiomics**\
+  \ independently on each binary mask\n6. **Saves** 2 rows per patient (Anterior + Posterior) to a single\
+  \ CSV\n\n---\n\n## Server Paths\n\n| Path | Description |\n|---|---|\n| Dataset | `/data1/students/manolina/dataset/nnUNet_raw/Dataset105_Hippocampus/`\
+  \ |\n| Images | `/data1/students/manolina/dataset/nnUNet_raw/Dataset105_Hippocampus/imagesTr/` |\n|\
+  \ Masks | `/data1/students/manolina/dataset/nnUNet_raw/Dataset105_Hippocampus/labelsTr/` |\n| Output\
+  \ CSV | `/data1/students/manolina/hippocampus_radiomics.csv` |\n\n---\n\n## Installation and Usage\n\
+  \n### 1. Activate Environment\n\n```bash\nconda activate manolina\n```\n\n### 2. Install Dependencies\n\
+  \n```bash\n# Recommended: conda (pre-built binaries, no compiler needed)\nconda install -c conda-forge\
+  \ -c radiomics numpy SimpleITK pandas pyradiomics -y\n\n# Alternative: pip from GitHub (requires gcc\
+  \ on Linux)\npip install setuptools wheel\npip install git+https://github.com/Radiomics/pyradiomics.git@master\n\
+  ```\n\n### 3. Run Extraction\n\n```bash\ncd /data1/students/manolina/\npython extract_hippocampus_radiomics.py\n\
+  ```\n\n### 4. Expected Output\n\n```\nStep 1: Checking voxel spacings across the dataset...\nUnique\
+  \ Spacings Found: {(1.0, 1.0, 1.0)}\nVoxel spacing is consistent. No resampling required by PyRadiomics.\n\
+  \nStep 2: Starting extraction for Anterior and Posterior regions...\nProcessing: hippocampus_001\nProcessing:\
+  \ hippocampus_002\n...\nExtraction complete. Saved 400 rows to /data1/students/manolina/hippocampus_radiomics.csv\n\
+  ```\n\n---\n\n## Dependencies\n\n| Package | Version Used | Purpose |\n|---|---|---|\n| `numpy` | 2.2.6\
+  \ | Numerical operations |\n| `SimpleITK` | 2.5.5 | Medical image I/O and processing |\n| `pyradiomics`\
+  \ | 3.1.1 | Radiomic feature extraction |\n| `pandas` | 2.3.3 | CSV output |\n\n---\n\n## Output CSV\
+  \ — hippocampus_radiomics.csv\n\n| | Value |\n|---|---|\n| **Total Rows** | 401 (1 header + 400 data\
+  \ rows) |\n| **Total Columns** | 131 |\n| **Patients** | 200 patients (e.g., `hippocampus_107`, `hippocampus_004`)\
+  \ |\n| **Rows per Patient** | 2 — one Anterior, one Posterior |\n\n---\n\n## Column Groups\n\n### Identity\
+  \ Columns (2)\n\n| Column | Meaning |\n|---|---|\n| `Patient` | Patient ID (e.g., `hippocampus_107`)\
+  \ |\n| `Label_Region` | Which ROI: `Anterior` or `Posterior` hippocampus |\n\n---\n\n### Diagnostics\
+  \ Columns (22) — `diagnostics_*`\n\nMetadata about the extraction run. Not actual features — safe to\
+  \ drop before ML.\n\n| Column | Meaning |\n|---|---|\n| `diagnostics_Versions_*` | PyRadiomics, Numpy,\
+  \ SimpleITK, PyWavelet, Python versions |\n| `diagnostics_Configuration_Settings` | Full extractor settings\
+  \ used (`binWidth=25`, etc.) |\n| `diagnostics_Image-original_Hash` | MD5 of the input image (reproducibility\
+  \ check) |\n| `diagnostics_Image-original_Spacing` | Voxel spacing e.g. `(1.0, 1.0, 1.0)` |\n| `diagnostics_Image-original_Size`\
+  \ | Full image dimensions |\n| `diagnostics_Image-original_Mean/Min/Max` | Intensity range of the whole\
+  \ image |\n| `diagnostics_Mask-original_Hash` | MD5 of the binary mask |\n| `diagnostics_Mask-original_BoundingBox`\
+  \ | Bounding box of the ROI `(x, y, z, w, h, d)` |\n| `diagnostics_Mask-original_VoxelNum` | Number\
+  \ of voxels inside the mask |\n| `diagnostics_Mask-original_VolumeNum` | Number of connected regions\
+  \ (should be 1) |\n| `diagnostics_Mask-original_CenterOfMassIndex` | Voxel-space centre of ROI |\n|\
+  \ `diagnostics_Mask-original_CenterOfMass` | Physical-space centre of ROI (in mm) |\n\n---\n\n### Shape\
+  \ Features (14) — `original_shape_*`\n\n3D geometric properties of the ROI mask. Resolution-independent.\n\
+  \n| Column | Meaning |\n|---|---|\n| `MeshVolume` / `VoxelVolume` | Volume in mm3 |\n| `SurfaceArea`\
+  \ | Surface area in mm2 |\n| `SurfaceVolumeRatio` | Compactness indicator |\n| `Sphericity` | How sphere-like\
+  \ the shape is (1 = perfect sphere) |\n| `Elongation` | Ratio of 2nd to 1st axis length |\n| `Flatness`\
+  \ | Ratio of least to major axis |\n| `LeastAxisLength` / `MinorAxisLength` / `MajorAxisLength` | PCA-derived\
+  \ axis lengths |\n| `Maximum3DDiameter` | Longest diameter across any direction |\n| `Maximum2DDiameter(Column/Row/Slice)`\
+  \ | Longest 2D diameter per plane |\n\n---\n\n### First-Order Features (18) — `original_firstorder_*`\n\
+  \nStatistics of raw intensity values inside the mask (after Z-score normalization).\n\n| Column | Meaning\
+  \ |\n|---|---|\n| `Mean`, `Median` | Central tendency of voxel intensities |\n| `Minimum`, `Maximum`,\
+  \ `Range` | Intensity spread |\n| `10Percentile`, `90Percentile`, `InterquartileRange` | Robust intensity\
+  \ spread |\n| `Variance`, `RootMeanSquared` | Dispersion |\n| `Skewness` | Asymmetry of intensity distribution\
+  \ |\n| `Kurtosis` | Peakedness / tail weight |\n| `Entropy` | Randomness of intensity values |\n| `Uniformity`\
+  \ | Opposite of entropy — how uniform intensities are |\n| `Energy` / `TotalEnergy` | Sum of squared\
+  \ intensities |\n| `MeanAbsoluteDeviation` / `RobustMeanAbsoluteDeviation` | Average deviation from\
+  \ mean |\n\n---\n\n### Texture Feature Groups (75 total)\n\n#### GLCM — 24 features (`original_glcm_*`)\n\
+  \nGray-Level Co-occurrence Matrix. Captures pairwise voxel intensity relationships (texture patterns).\n\
+  \nKey features: `Contrast`, `Correlation`, `Homogeneity (Idm)`, `Entropy (JointEntropy)`, `Energy (JointEnergy)`,\
+  \ `Autocorrelation`, `ClusterShade`, `ClusterProminence`\n\n#### GLDM — 14 features (`original_gldm_*`)\n\
+  \nGray-Level Dependence Matrix. Measures how dependent neighbouring voxels are on having similar intensities.\n\
+  \nKey features: `DependenceEntropy`, `GrayLevelVariance`, `HighGrayLevelEmphasis`, `LowGrayLevelEmphasis`,\
+  \ `LargeDependenceEmphasis`, `SmallDependenceEmphasis`\n\n#### GLRLM — 16 features (`original_glrlm_*`)\n\
+  \nGray-Level Run-Length Matrix. Measures consecutive voxel runs of the same intensity (directional texture).\n\
+  \nKey features: `RunEntropy`, `LongRunEmphasis`, `ShortRunEmphasis`, `GrayLevelNonUniformity`, `RunLengthNonUniformity`,\
+  \ `RunPercentage`\n\n#### GLSZM — 16 features (`original_glszm_*`)\n\nGray-Level Size Zone Matrix. Similar\
+  \ to GLRLM but for connected 3D zones instead of runs.\n\nKey features: `ZoneEntropy`, `LargeAreaEmphasis`,\
+  \ `SmallAreaEmphasis`, `ZonePercentage`, `GrayLevelNonUniformity`\n\n#### NGTDM — 5 features (`original_ngtdm_*`)\n\
+  \nNeighbourhood Gray-Tone Difference Matrix. Captures local contrast and coarseness.\n\nKey features:\
+  \ `Coarseness`, `Contrast`, `Busyness`, `Complexity`, `Strength`\n\n---\n\n## Recommended ML Preprocessing\n\
+  \n```python\nimport pandas as pd\n\ndf = pd.read_csv(\"hippocampus_radiomics.csv\")\n\n# Drop diagnostic\
+  \ metadata columns (not features)\ndrop_cols = [c for c in df.columns if c.startswith('diagnostics_')]\n\
+  df_ml = df.drop(columns=drop_cols)\n\n# Remaining: 2 ID columns + 107 actual radiomic features\n# Shape:\
+  \ (400, 109)\nprint(df_ml.shape)\nprint(df_ml[['Patient', 'Label_Region']].head())\n```\n\n---\n\n##\
+  \ Extractor Settings\n\n| Setting | Value | Rationale |\n|---|---|---|\n| `binWidth` | 25 | Histogram\
+  \ bin width for texture features |\n| `resampledPixelSpacing` | None (auto) | Set to `[1,1,1]` if multiple\
+  \ spacings detected |\n| `interpolator` | `sitkBSpline` | High-quality resampling |\n| `normalize` |\
+  \ False (PyRadiomics) | Z-score normalisation done manually before extraction |\n\nNote: Z-score normalization\
+  \ (`sitk.Normalize`) is applied before PyRadiomics runs, which is the recommended approach for MRI data\
+  \ where absolute intensities are scanner-dependent.\n\n---\n\n## References\n\n- [PyRadiomics Documentation](https://pyradiomics.readthedocs.io/)\n\
+  - [MSD Dataset105 — Hippocampus](http://medicaldecathlon.com/)\n- [SimpleITK Documentation](https://simpleitk.readthedocs.io/)\n\
+  \n---\n## License\n\nThis project is distributed under the MIT License. See `LICENSE` for more information.\n\
+  \n---\n## Contact\n\nManolina Das - [GitHub Profile](https://github.com/manolina-13)\n"

@@ -1,0 +1,79 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: fus3r/cardiac-toxicity-ml
+url: https://github.com/fus3r/cardiac-toxicity-ml
+platform: github
+description: Cardiac-toxicity modelling after thoracic radiotherapy. Team project with INSERM and Gustave
+  Roussy; patient data is confidential.
+license: NOASSERTION
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-23T14:05:01Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 3 support term(s).
+readme_excerpt: "# Cardiac Toxicity after Thoracic Radiotherapy\n\n[![smoke](https://github.com/fus3r/cardiac-toxicity-ml/actions/workflows/ci.yml/badge.svg)](https://github.com/fus3r/cardiac-toxicity-ml/actions/workflows/ci.yml)\n\
+  \nThis repository is a public snapshot of CentraleSupélec project P15, completed\nwith INSERM and Gustave\
+  \ Roussy using the French Childhood Cancer Survivors Study\n(FCCSS). The project team is Ayoub Chikri,\
+  \ Thibault Cohen, Riad Darwish, Carl\nKairouz and Hugo Likaj. Rodrigue Allodji supervised the work.\n\
+  \nThe source is available for inspection, but it is not open source. The code is\nall rights reserved.\
+  \ Reuse requires permission from the authors and supervisor.\nPatient data is confidential and is not\
+  \ included. See [`LICENSE`](LICENSE) and\n[`data/README.md`](data/README.md).\n\n## Established findings\n\
+  \nThe analysis covers 1,375 survivors of childhood cancer treated with thoracic\nradiotherapy. It includes\
+  \ 236 severe cardiac events (17.2%) and a median\nfollow-up of about 32 years.\n\n| Model | Evaluation\
+  \ | Result |\n|---|---|---|\n| Random Forest, five clinical variables | stratified 5-fold cross-validation,\
+  \ with a separate nested 5 x 3 selection check | ROC-AUC 0.770 +/- 0.047 |\n| Cox proportional hazards,\
+  \ three covariates | cross-validated survival analysis | C-index 0.739 +/- 0.018 |\n\nMean heart dose\
+  \ carries the strongest signal. The clinical models also use year\nand age at diagnosis, cancer type,\
+  \ and anthracycline exposure. Class weighting\nhandles the outcome imbalance; the pipeline does not\
+  \ synthesize patients with\nSMOTE.\n\n## Spatial analysis\n\nThe 3D result is not finished. The published\
+  \ CNN, MedicalNet and Grad-CAM\nfigures came from an older registration guided by the dose image. They\
+  \ are kept\nas preliminary records and are not final evidence that spatial dose improves\nprediction.\n\
+  \nRegistration on the heart mask improved mean Dice from 0.62 to 0.92. The full\ncohort is being regenerated\
+  \ on that geometry before the deep models are run\nagain. No corrected deep-learning effect size or\
+  \ p-value is reported.\n\nGrad-CAM is used as a model-sensitivity display. It indicates which input\n\
+  regions affect a network score. It does not locate the biological source of\ncardiac risk or identify\
+  \ a treatment target.\n\n## Individual contribution\n\nRiad Darwish was responsible for the machine-learning\
+  \ workstream within the\nfive-student project. That work covers the clinical classification and Cox\n\
+  baselines, validation and leakage checks, the 3D models, and the\nanatomy-guided rerun. The cohort,\
+  \ clinical framing and final report are team\nwork produced with the partner institutions.\n\n## Run\
+  \ the public smoke test\n\nThe confidential FCCSS files are not needed for the software check. A\ndeterministic\
+  \ synthetic cohort uses the same preprocessing, splitting and\ntraining interfaces.\n\n```bash\npython3\
+  \ -m venv .venv\nsource .venv/bin/activate\npip install -r requirements-smoke.txt\nmake test\nmake smoke\n\
+  ```\n\n`make smoke` runs a small CPU experiment and writes\n`results/synthetic_smoke.json`. Its numbers\
+  \ only confirm that the public\npipeline executes and records the expected protocol. They are not clinical\n\
+  results.\n\n## Evaluation rules\n\nThe current deep-learning entry points enforce these constraints:\n\
+  \n- Each outer fold learns its active-voxel mask from its fit rows only.\n- Dose scaling uses the non-zero\
+  \ p99 from the same fit rows.\n- Early stopping uses a stratified internal validation split, never the\
+  \ outer\n  test fold.\n- Group-aware cross-validation keeps treatment centres separate in the outer\n\
+  \  split and the early-stopping split.\n- The hybrid comparison names its primary classifier before\
+  \ the paired\n  bootstrap. Any better classifier found afterwards is labelled exploratory.\n\nThe tests\
+  \ include voxels and dose outliers that occur only in the holdout. A\nglobal preprocessing regression\
+  \ therefore fails the test suite.\n\n## Repository map\n\n```text\n.\n├── data/             confidential-data\
+  \ contract and synthetic cohort notes\n├── EDA/notebooks/    exploration, clinical classification and\
+  \ survival\n├── rescaling/        registration to a shared 3D atlas\n├── DL/               MLP, 3D CNN,\
+  \ MedicalNet and activation maps\n├── reports/figures/  selected clinical and preliminary 3D figures\n\
+  ├── results/          versioned synthetic smoke result\n└── tests/            split, preprocessing and\
+  \ pipeline checks\n```\n\n## Full environment\n\nPython 3.13 is the reference version.\n\n```bash\n\
+  make setup\n```\n\nThe Conda specification is in `environment.yml`. Clinical and dosimetry files\nmust\
+  \ come from the project supervisor and follow the layout described in\n[`data/README.md`](data/README.md).\n\
+  \nTo regenerate anatomy-guided registrations:\n\n```bash\npython -u rescaling/regen_corrected_parallel.py\
+  \ --n_jobs 12\n```\n\nTo run the current 3D entry point:\n\n```bash\npython DL/dl_cardiac.py --model\
+  \ cnn3d --features clinical --data mask\npython DL/dl_cardiac.py --model cnn3d --features clinical --data\
+  \ mask --cv group\n```\n\nMedicalNet uses a ResNet-18 checkpoint from\n[`TencentMedicalNet/MedicalNet-Resnet18`](https://huggingface.co/TencentMedicalNet/MedicalNet-Resnet18).\n\
+  The downloader pins the repository revision and verifies SHA-256\n`61224f9317fcce873366deb3703183e92cc47325b726b69691b33536244e10f4`.\n\
+  Pass `--weights none` for random initialization or provide a checkpoint path.\n\n## Limits\n\n- The\
+  \ anatomy-guided 3D cohort and its downstream models are still being\n  recomputed.\n- A public clone\
+  \ cannot reproduce clinical results without the confidential\n  FCCSS files.\n- Two patients have an\
+  \ entirely null dose, so several dose metrics are\n  undefined for them.\n- A patient-level bootstrap\
+  \ over out-of-fold predictions is not external\n  validation and does not retrain the model inside every\
+  \ bootstrap replicate.\n\n## References\n\n- Chounta S., Allodji R., et al. \"Dosiomics-Based Prediction\
+  \ of\n  Radiation-Induced Valvulopathy after Childhood Cancer\", *Cancers*, 2023.\n  DOI: 10.3390/cancers15123107\n\
+  - Bentriou M., Letort V., et al. \"Combining dosiomics and machine learning\n  methods for predicting\
+  \ severe cardiac diseases in childhood cancer survivors:\n  the FCCSS\", *Frontiers in Oncology*, 2024.\n\
+  \  DOI: 10.3389/fonc.2024.1241221\n"

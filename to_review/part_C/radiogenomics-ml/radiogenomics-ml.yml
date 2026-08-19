@@ -1,0 +1,50 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: andreagastaldi03/radiogenomics_ml
+url: https://github.com/andreagastaldi03/radiogenomics_ml
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-19T15:58:52Z'
+image_source: null
+heuristic_total_score: 15
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Pipeline ML per studio radiogenomico (ADK vs SCC)\n\n## Logica generale\n\nIl problema\
+  \ centrale con questi dati è **n=54 pazienti vs centinaia di feature**.\nOgni scelta della pipeline\
+  \ è pensata per limitare l'overfitting e per dare stime\noneste della performance, mantenendo allo stesso\
+  \ tempo un output interpretabile\n(coefficienti, feature stabili) che sarà riusato nello studio di rete.\n\
+  \n## Struttura dei file\n\n- `config.py` — tutti i parametri e percorsi in un unico posto. Modifica\
+  \ qui.\n- `data_utils.py` — caricamento dati e **riduzione feature neutra** (varianza +\n  ridondanza\
+  \ via clustering di correlazione). Non guarda mai la label: questo è\n  intenzionale, per evitare circolarità\
+  \ tra selezione e stima delle performance,\n  e per poter riusare lo stesso set ridotto nello studio\
+  \ di rete.\n- `ml_pipeline.py` — nested cross-validation, modelli (Elastic Net, Random Forest,\n  SVM\
+  \ lineare, XGBoost opzionale), stability selection via bootstrap, SHAP.\n- `run_analysis.py` — orchestratore,\
+  \ salva tutti i risultati in `outputs/`.\n\n## Come procedere passo-passo\n\n1. **Prepara i dati**:\
+  \ metti in `data/` i tre CSV attesi (`radiomics_features.csv`,\n   `genomics_features.csv`, `labels.csv`)\
+  \ con `patient_id` come chiave comune.\n   Se hai già un unico file, basta adattare `data_utils.load_data()`.\n\
+  \n2. **Prima esecuzione**: lancia con `config.DATA_SOURCE = \"both\"`.\n   ```\n   pip install -r requirements.txt\n\
+  \   python run_analysis.py\n   ```\n\n3. **Confronta le tre sorgenti dati**: rilancia con `\"radiomics\"\
+  ` e `\"genomics\"`\n   separatamente. Confronta `model_comparison_summary.csv` tra le tre run.\n   Questo\
+  \ confronto — quanto separa ADK/SCC l'imaging da solo, la genomica da\n   sola, o l'integrazione — è\
+  \ già un risultato scientifico rilevante per il tuo\n   obiettivo di caratterizzazione, indipendentemente\
+  \ dalla performance assoluta.\n\n4. **Guarda la stabilità, non solo la performance**: con n=54 la metrica\
+  \ più\n   utile spesso non è l'AUC in sé (che avrà una varianza alta tra fold/seed),\n   ma `stable_features_final.csv`\
+  \ — le feature/geni che l'Elastic Net seleziona\n   consistentemente su centinaia di bootstrap. Sono\
+  \ quelle su cui costruirai\n   l'interpretazione biologica e il collegamento con lo studio di rete.\n\
+  \n5. **Ripeti la nested CV con più seed** (vedi `config.RANDOM_SEEDS_MULTI_RUN`):\n   con un campione\
+  \ così piccolo, una singola run di CV può essere fortunata o\n   sfortunata. Se vuoi, posso aggiungerti\
+  \ uno script che itera su più seed e\n   produce un box-plot delle AUC per avere un'idea onesta della\
+  \ variabilità.\n\n## Cose da NON fare (errori comuni con n<<p)\n\n- Non fare feature selection supervisionata\
+  \ (es. filtrare per differenza tra\n  gruppi) su tutto il dataset prima dello split train/test: è leakage,\
+  \ gonfia\n  artificialmente la performance riportata. Nel codice, la selezione supervisionata\n  avviene\
+  \ solo dentro la CV (Elastic Net con L1 dentro ogni fold).\n- Non fidarti di una singola AUC da un singolo\
+  \ split: usa sempre nested CV o\n  ripetizioni multiple.\n- Non concludere che un gene/feature è \"\
+  importante\" da un solo fit: usa la\n  stability selection bootstrap.\n"

@@ -1,0 +1,93 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: secondbear/DeformCTMovement
+url: https://github.com/secondbear/DeformCTMovement
+platform: github
+description: Anatomically plausible deformable CT generation for motion-resolved radiotherapy dose calculation
+  (GenDoseCalc ecosystem)
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-12T06:41:15Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 4 support term(s).
+readme_excerpt: "# DeformCTMovement\n\n> Anatomically plausible deformable CT generation for motion-resolved\
+  \ radiotherapy dose calculation.\n\nPart of the **GenDoseCalc** ecosystem. Applies a displacement vector\
+  \ field (DVF) to a reference planning CT, preserving pelvic bone rigidity while elastically deforming\
+  \ surrounding soft tissue — enabling per-fraction dose recalculation on realistic anatomy rather than\
+  \ simple isocenter shifts.\n\n---\n\n## Motivation\n\nCurrent pencil-beam pipelines apply prostate motion\
+  \ as a rigid isocenter shift per projection (from Synchrony motion logs). This ignores:\n\n- Bladder/rectal\
+  \ filling-driven soft-tissue deformation\n- Rotational components of prostate motion  \n- Dose perturbation\
+  \ from changed radiological path through deformed anatomy\n\nA deformed CT lets the existing dose engine\
+  \ see the *actual* anatomy each beam traverses.\n\n---\n\n## Features\n\n| Feature | Status |\n|---------|--------|\n\
+  | Load/save DVF (MHA, NIfTI) | Phase 1 |\n| Convert CT ↔ SimpleITK Image (preserve HU, LPS coords) |\
+  \ Phase 1 |\n| HU-based bone segmentation with Gaussian-smoothed boundary | Phase 2 |\n| Apply DVF with\
+  \ bone rigidity masking | Phase 2 |\n| Generate DVF from 6DOF rigid parameters | Phase 3 |\n| Generate\
+  \ DVF from Synchrony motion log entry | Phase 3 |\n| Pipeline flag `--deform-ct` in `run_pipeline.py`\
+  \ | Phase 4 |\n| DICOM export of deformed CT series | Phase 4 |\n| Patient-level pooling, fixed-count\
+  \ and tolerance selection | Complete |\n| Manifest hashes, motion provenance, and DVF quality metrics\
+  \ | Complete |\n\n---\n\n## Architecture\n\n```\ngendosecalc/deform/\n├── __init__.py\n├── models.py\
+  \           — DeformationField, DeformationConfig dataclasses\n├── sitk_bridge.py      — CT ↔ SimpleITK,\
+  \ DVF ↔ SimpleITK vector image\n├── dvf_io.py           — Load/save DVF files (MHA, NIfTI) via SimpleITK\n\
+  ├── dvf_generate.py     — DVF from 6DOF params or Synchrony motion log entry\n├── bone_mask.py     \
+  \   — HU thresholding + Gaussian-smoothed tissue weight map\n└── apply_deformation.py — Core: mask DVF\
+  \ for bone rigidity, resample CT\n    dvf_quality.py     — Jacobian, inverse-consistency, and bone metrics\n\
+  ```\n\n### Bone rigidity strategy\n\nDVF masking via HU-threshold segmentation — fast, deterministic,\
+  \ no mesh required:\n\n```\nbone_mask   = ct_hu > 300\nbone_smooth = gaussian_filter(bone_mask, σ =\
+  \ transition_mm / spacing)\nweight      = 1.0 − bone_smooth        # 0 in bone, 1 in soft tissue\nmasked_dvf\
+  \  = dvf * weight\ndeformed_ct = SimpleITK.Resample(ct, DisplacementFieldTransform(masked_dvf))\n```\n\
+  \n---\n\n## Installation\n\n```bash\npip install SimpleITK>=2.3\n# scipy is already a project dependency\n\
+  ```\n\nOr add to `pyproject.toml`:\n\n```toml\n[project.dependencies]\n\"SimpleITK >= 2.3\",\n```\n\n\
+  ---\n\n## Quick Start\n\n```python\nfrom pathlib import Path\nfrom gendosecalc.deform import deform_ct,\
+  \ load_dvf, rigid_to_dvf\nfrom gendosecalc.deform.models import DeformationConfig\n\n# Option A: apply\
+  \ a pre-computed DVF file\ndvf = load_dvf(Path(\"motion_state_01.mha\"))\nconfig = DeformationConfig(bone_threshold_hu=300,\
+  \ transition_width_mm=3.0)\ndeformed = deform_ct(ct, dvf, config)\n\n# Option B: generate DVF from known\
+  \ 6DOF shift\ndvf = rigid_to_dvf(tx=5.0, ty=-2.0, tz=1.0, rx=0, ry=0, rz=0, reference_ct=ct)\ndeformed\
+  \ = deform_ct(ct, dvf)\n```\n\n---\n\n## Data Models\n\n### `DeformationField`\n\n```python\n@dataclass\n\
+  class DeformationField:\n    vectors: np.ndarray       # (3, nz, ny, nx) float32, displacement in mm\
+  \ (dz, dy, dx)\n    spacing_mm: np.ndarray    # (3,) — (dz, dy, dx)\n    origin_mm: np.ndarray     #\
+  \ (3,) — LPS mm\n    direction: np.ndarray     # (3, 3)\n    source_description: str   # e.g. \"rigid_shift_tx5_ty-2_tz1\"\
+  \n```\n\n### `DeformationConfig`\n\n```python\n@dataclass\nclass DeformationConfig:\n    bone_threshold_hu:\
+  \ float = 300.0\n    transition_width_mm: float = 3.0\n    interpolation: str = \"linear\"   # \"linear\"\
+  \ | \"bspline\" | \"nearest\"\n    preserve_hounsfield: bool = True\n```\n\n---\n\n## DVF Formats\n\n\
+  | Format | Extension | Notes |\n|--------|-----------|-------|\n| MetaImage | `.mha` | Project default\
+  \ — lossless, single file, full spatial metadata |\n| NIfTI | `.nii.gz` | Research interchange; 3D Slicer,\
+  \ ANTs, FSL |\n| NRRD | `.nrrd` | 3D Slicer, Plastimatch |\n\n**Mapping convention**: SimpleITK `Resample`\
+  \ uses inverse mapping (output → input). Forward DVFs are inverted automatically via `InvertDisplacementField()`.\n\
+  \n---\n\n## Testing\n\nAll tests use synthetic phantoms — no patient data.\n\n```bash\npytest tests/deform/\
+  \ -v\n```\n\n| Test file | Covers |\n|-----------|--------|\n| `test_sitk_bridge.py` | CT → SimpleITK\
+  \ → CT round-trip (HU, spacing, origin, direction) |\n| `test_dvf_io.py` | DVF save/load round-trip\
+  \ (MHA, NIfTI) |\n| `test_bone_mask.py` | Bone mask correctness; weight map smooth at boundary |\n|\
+  \ `test_apply_deformation.py` | Zero DVF → identical CT; translation DVF; bone voxels unchanged |\n\
+  | `test_dvf_generate.py` | Identity params → zero DVF; known translation; rotation pattern |\n| `test_deform_pipeline.py`\
+  \ | End-to-end smoke test |\n\n---\n\n## Implementation Phases\n\n- **Phase 1** — Core DVF infrastructure\
+  \ (models, sitk_bridge, dvf_io)\n- **Phase 2** — Bone masking and DVF application\n- **Phase 3** — DVF\
+  \ generation from motion parameters\n- **Phase 4** — Pipeline integration (`--deform-ct` flag, DICOM\
+  \ export)\n- **Phase 5** — Validation and refinement\n\nSee [plan_deform.md](plan_deform.md) for full\
+  \ specification and [HOWTO.md](HOWTO.md) for an end-to-end usage guide.\n\nPatient-level runs pool all\
+  \ supplied movement files before selecting states, so\nthe requested state count is per patient rather\
+  \ than per fraction. Use\n`--patient-id` and repeated `--fraction-id` options when stable provenance\
+  \ is\nneeded. The manifest records source files, fraction IDs, input hashes,\nselection coverage, and\
+  \ per-state quality diagnostics.\n\nDense motion logs are deduplicated by exact weighted 6DOF state\
+  \ before\nselection. Observation counts remain as cluster weights, so repeated dwell\npositions still\
+  \ influence the result without creating an oversized pairwise\ndistance matrix.\n\nCount selection uses\
+  \ weighted FastPAM-style swaps after deduplication, while\npreserving real source motion samples as\
+  \ medoids.\n\nSelection has configurable safety limits for unique states and estimated\nworking memory,\
+  \ preventing tolerance-mode pairwise matrices from exhausting\nthe host process unexpectedly.\n\nRotation\
+  \ weighting remains backward-compatible at `10 mm/degree`. You can\ninstead provide a physical reference\
+  \ radius; the selector derives\n`radius_mm * pi / 180` mm/degree and records the calibration in the\
+  \ manifest.\n\nUse `--balance-fractions` when pooled motion logs have very different sample\ncounts.\
+  \ It gives each fraction equal total selection weight while retaining\nthe actual observation count\
+  \ in each manifest state.\n\n---\n\n## Known Risks\n\n| Risk | Mitigation |\n|------|-----------|\n\
+  | SimpleITK inverse-mapping direction errors | Unit test with known translation; visual check in 3D\
+  \ Slicer |\n| LPS/voxel coordinate mismatch | Round-trip test in `test_sitk_bridge.py` |\n| Bone mask\
+  \ too aggressive near pelvis | Configurable threshold + Gaussian smoothing |\n| HU interpolation artefacts\
+  \ at boundaries | Linear interpolation; clamp HU to int16 range |\n\n---\n\n## License\n\nApache 2.0\
+  \ — same as SimpleITK. See [LICENSE](LICENSE).\n"

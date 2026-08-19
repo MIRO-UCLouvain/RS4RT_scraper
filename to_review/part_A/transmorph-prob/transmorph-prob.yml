@@ -1,0 +1,59 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: cwei42/TransMorph_prob
+url: https://github.com/cwei42/TransMorph_prob
+platform: github
+description: An end-to-end uncertainty-aware deformable image registration
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-16T09:21:43Z'
+image_source: https://raw.githubusercontent.com/cwei42/TransMorph_prob/HEAD/figures/Archi.png
+heuristic_total_score: 21
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 6 support term(s).
+readme_excerpt: "# TM-prob: TransMorph-prob\n\nA variational Bayesian deep-learning model for **uncertainty-aware\
+  \ deformable image registration**, developed for dose accumulation in MRI-guided radiotherapy (MRgRT)\
+  \ of lung cancer.\n\nTM-prob predicts a voxel-wise **Gaussian distribution over dense displacement fields\
+  \ (DDFs)** — mean and variance — in a single forward pass, rather than a single deterministic deformation.\
+  \ Spatially correlated uncertainty samples are drawn via frequency-domain filtering with an anisotropic\
+  \ Gaussian-process prior, so the resulting displacement uncertainty is smooth and physically plausible\
+  \ rather than voxel-independent noise.\n\n![TM-prob architecture](figures/Archi.png)\n\n*The fixed and\
+  \ moving images are concatenated and passed through a TransMorph (transformer-convolution) backbone\
+  \ to predict a voxel-wise mean deformation velocity field (DVF) and diagonal covariance of the DDF.\
+  \ The mean DVF is integrated via scaling-and-squaring into a diffeomorphic mean DDF; a DDF sample is\
+  \ then drawn via the reparameterization trick with frequency-domain correlated noise.*\n\n## Model\n\
+  \n- **Backbone**: TransMorph, a hybrid transformer/convolutional architecture for 3D deformable image\
+  \ registration ([Chen et al., 2022](https://github.com/junyuchen245/TransMorph_Transformer_for_Medical_Image_Registration)).\n\
+  - **Output**: voxel-wise mean DVF and log-variance; the mean is integrated via scaling-and-squaring\
+  \ into a diffeomorphic DDF.\n- **Uncertainty sampling**: reparameterization with noise filtered in the\
+  \ frequency domain (anisotropic Gaussian kernel, physical correlation length in mm) to produce spatially\
+  \ correlated DDF samples.\n- **Loss**: image MSE + bending-energy regularization + a frequency-domain\
+  \ Gaussian-process KL term regularizing the predicted variance toward a prior. The training starts with\
+  \ a warm-up schedule so the model first learns accurate alignment before the variance term is enabled.\n\
+  - **Downstream uncertainty propagation**: DDF samples can be warped through to organ contours (including\
+  \ dilated GTV margins) and dose distributions, giving mean/std maps for clinical review.\n\nThe model\
+  \ is implementated using PyTorch Lightning and MONAI.\n\n\n## Data format\n\nTraining and validation\
+  \ pairs are described by a JSON manifest — a list of dicts, each one fixed/moving image pair:\n\n```json\n\
+  [\n  {\n    \"fixed_image\": \"path/to/case001/fixed_image.mha\",\n    \"moving_image\": \"path/to/case001/moving_image.mha\"\
+  ,\n    \"fixed_label\": \"path/to/case001/fixed_label.mha\",\n    \"moving_label\": \"path/to/case001/moving_label.mha\"\
+  ,\n    \"fixed_dose\": \"path/to/case001/fixed_dose.mha\",\n    \"moving_dose\": \"path/to/case001/moving_dose.mha\"\
+  ,\n    \"fixed_PTV\": \"path/to/case001/fixed_PTV.mha\",\n    \"moving_PTV\": \"path/to/case001/moving_PTV.mha\"\
+  \n  }\n]\n```\n\n`fixed_dose`/`moving_dose`/`fixed_PTV`/`moving_PTV` are optional and only needed for\
+  \ dose-uncertainty propagation at validation time. Labels are single integer-encoded segmentation volumes;\
+  \ class order (1–8) is Lung Left, Lung Right, Spinal Canal, Trachea, Aorta, Esophagus, Heart, GTV, matching\
+  \ `sample_contours` in `model.py`.\n\nFor landmark-based TRE evaluation, place a CSV of moving/fixed\
+  \ landmark voxel coordinates alongside each case (see `TMProb.validation_step` in `model.py` for the\
+  \ expected naming convention, or adapt the path there to your own layout).\n\n## Training\n\n```bash\n\
+  python train.py --train-manifest data/train.json --val-manifest data/val.json \\\n    --logdir ./logs\
+  \ --epochs 200\n```\n\nKey hyperparameters (see `train.py --help` for the full list): `--lr`, `--lMSE`,\
+  \ `--lBE`, `--kl`, `--prior-lambda` (prior variance), `--correlation-length` (mm), `--kl-warmup-epochs`.\n\
+  \n## Validation\n\n```bash\npython val.py --val-manifest data/val.json --ckpt path/to/checkpoint.ckpt\
+  \ \\\n    --save-samples-for 0 5 10\n```\n\n`--save-samples-for` selects which validation batch indices\
+  \ get full DDF-sample propagation to contours/doses written to disk (this is expensive to do for every\
+  \ case).\n\n\n## Contact \n[LMU ART lab group](https://lmu-art-lab.userweb.mwn.de/)\\\nChengtao.Wei@med.uni-muenchen.de\\\
+  \nGuillaume.Landry@med.uni-muenchen.de\\\nChristopher.Kurz@med.uni-muenchen.de\n"

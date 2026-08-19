@@ -1,0 +1,59 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: kshitij-shekhar/Radiotherapy-Beam-Optimization
+url: https://github.com/kshitij-shekhar/Radiotherapy-Beam-Optimization
+platform: github
+description: My Optimization Methods course project in uni
+license: null
+language: MATLAB
+keywords: []
+stars: 0
+updated_at: '2026-06-05T17:39:02Z'
+image_source: null
+heuristic_total_score: 27
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 6 support term(s).
+readme_excerpt: "# Radiotherapy Beam Angle Optimization\n\n![MATLAB](https://img.shields.io/badge/MATLAB-R2023a+-blue.svg)\n\
+  ![Optimization](https://img.shields.io/badge/Optimization-Memetic%20Algorithm-brightgreen.svg)\n![Course](https://img.shields.io/badge/Course-Optimization%20Methods-orange.svg)\n\
+  \nThis repository contains the codebase for a Biomedical Engineering (BME) optimization project developed\
+  \ for my Optimization Methods course at the joint MS program in BME at the University of Basel and the\
+  \ FHNW in Muttenz. \n\nThe project solves a highly non-convex clinical problem: finding the optimal\
+  \ intersecting angles for two radiotherapy beams to deliver a lethal dose to a central Tumor while minimising\
+  \ radiation doses to an adjacent Organ at Risk (OAR).\n\n## \U0001F9EC The Clinical Problem\nIn external\
+  \ beam radiotherapy, a single high-intensity radiation beam will destroy all healthy tissue in its path.\
+  \ To solve this, oncologists use multiple intersecting beams of lower intensity. The goal is to optimize\
+  \ the angles ($\\theta_1$ and $\\theta_2$) so that the intersection (the \"crossfire\") maximizes the\
+  \ dose over the tumor and minimizes the dose to critical adjacent organs.\n\n## \U0001F9EE Mathematical\
+  \ Formulation\nThe physical space is abstracted into a 2D 100x100 grid. The radiation beams are modeled\
+  \ analytically using a Gaussian decay function based on the perpendicular distance $d$ to the beam's\
+  \ center line:\n\n$$D(x,y) = I \\cdot \\exp\\left(-\\frac{d^2}{2\\sigma^2}\\right)$$\n\nThe Objective\
+  \ Function calculates the Sum of Squared Errors (SSE) across three regional masks, heavily penalizing\
+  \ any radiation that exceeds safe limits in the Organ at Risk ($W_{oar}$):\n\n$$J = J_{tumor} + W_{oar}\
+  \ \\cdot J_{oar} + J_{normal}$$\n\n## ⚙️ Optimization Strategy (Memetic Algorithm)\nDue to strict OAR\
+  \ constraints, the mathematical landscape is highly non-convex, meaning standard gradient descent algorithms\
+  \ frequently get trapped in local minima. To solve this, the project implements a two-phase hybrid \"\
+  Memetic\" algorithm:\n\n1. **Phase 1: Global Search (Particle Swarm Optimization - PSO)**\n   - A swarm\
+  \ of 15 particles explores the bounded $[0, \\pi]$ solution space.\n   - Escapes local minima and identifies\
+  \ the mathematical \"safe valley.\"\n2. **Phase 2: Local Refinement (Nelder-Mead Downhill Simplex)**\n\
+  \   - Initialized exactly around the PSO's best global coordinate.\n   - Uses a derivative-free geometric\
+  \ tumbling method (reflection, expansion, contraction) to pinpoint the exact decimal optimal angles.\n\
+  \n## \U0001F4C2 Repository Structure\nThe project is built entirely in Base MATLAB (no external Optimization\
+  \ or Image Processing toolboxes required). \n\n- `RadiotherapyCost.m` : The Forward Model and Objective\
+  \ Cost Function.\n- `RadiotherapyCostMap.m` : Vectorized wrapper for generating 3D surface visualizations.\n\
+  - `run_PSO.m` : The bounded Particle Swarm Optimization algorithm.\n- `main.m` : The master script running\
+  \ the Memetic pipeline, Nelder-Mead loop, and generating all visualizations.\n\n## \U0001F680 Getting\
+  \ Started\n1. Clone this repository or download the ZIP file.\n2. Extract all four `.m` files into a\
+  \ single directory.\n3. Open MATLAB and navigate to that directory.\n4. Open `main.m` and press **Run**.\n\
+  \n## \U0001F4CA Visual Outputs\nThe `main.m` script automatically generates four distinct layers of\
+  \ evaluation:\n1. **3D Landscape Tumbling:** Real-time `surf` plotting of the Nelder-Mead simplex navigating\
+  \ the cost function landscape.\n2. **Dose Heatmap:** A 2D contour plot showing the physical geometry\
+  \ of the optimized beam crossfire against the organ boundaries.\n3. **Clinical DVH:** A standard Dose-Volume\
+  \ Histogram proving 100% target coverage and 0% OAR toxicity.\n4. **Pareto Trade-off Front:** A sensitivity\
+  \ analysis looping through various $W_{oar}$ parameter weights to map the fundamental mathematical compromise\
+  \ between tumor underdosing and OAR overdosing.\n\n---\n*Developed for the MS in Biomedical Engineering\
+  \ program.*\n"

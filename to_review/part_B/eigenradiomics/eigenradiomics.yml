@@ -1,0 +1,68 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: martonkolossvary/eigenradiomics
+url: https://github.com/martonkolossvary/eigenradiomics
+platform: github
+description: Modular, scikit-learn-compatible dimensionality reduction framework for high-dimensional
+  feature matrices such as radiomic feature matrices.
+license: Apache-2.0
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-06-30T10:25:26Z'
+image_source: null
+heuristic_total_score: 8
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: "# eigenradiomics\n\n[![CI](https://github.com/martonkolossvary/eigenradiomics/actions/workflows/ci.yml/badge.svg)](https://github.com/martonkolossvary/eigenradiomics/actions/workflows/ci.yml)\n\
+  [![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://martonkolossvary.github.io/eigenradiomics/)\n\
+  [![PyPI](https://img.shields.io/pypi/v/eigenradiomics)](https://pypi.org/project/eigenradiomics/)\n\
+  [![Python](https://img.shields.io/pypi/pyversions/eigenradiomics)](https://pypi.org/project/eigenradiomics/)\n\
+  [![Downloads](https://img.shields.io/pypi/dm/eigenradiomics)](https://pypi.org/project/eigenradiomics/)\n\
+  [![License](https://img.shields.io/github/license/martonkolossvary/eigenradiomics)](https://github.com/martonkolossvary/eigenradiomics/blob/main/LICENSE)\n\
+  [![codecov](https://codecov.io/gh/martonkolossvary/eigenradiomics/graph/badge.svg)](https://codecov.io/gh/martonkolossvary/eigenradiomics)\n\
+  [![Ruff](https://img.shields.io/badge/ruff-0%20issues-261230.svg)](https://github.com/astral-sh/ruff)\n\
+  [![Mypy](https://img.shields.io/badge/mypy-0%20errors-blue.svg)](https://mypy-lang.org/)\n\n**eigenradiomics**\
+  \ is a modular, scikit-learn-compatible dimensionality reduction framework for high-dimensional feature\
+  \ matrices, with an initial focus on wide radiomics outputs such as the tables produced by [Pictologics](https://github.com/martonkolossvary/pictologics).\n\
+  \nDocumentation (User Guide, API, Recipes): https://martonkolossvary.github.io/eigenradiomics/\n\n##\
+  \ Goals\n\n- Accept generic `n_samples x n_features` matrices from numpy arrays or pandas DataFrames.\n\
+  - Support training once and transforming unseen data later with the same fitted reducer.\n- Preserve\
+  \ scikit-learn ergonomics: pipelines, parameter grids, feature-name checks, and estimator-style APIs.\n\
+  - Stay modular so new reducers can be added without changing the package architecture.\n\n## Current\
+  \ Components\n\nCurrently, the package is focused on evaluating the WGCNA implementation to serve as\
+  \ a stable scaffolding and UI model before expanding.\n\n- `WGCNAReducer`: module-based reduction using\
+  \ PyWGCNA network construction plus stored SVD loadings for transform-time projection.\n\nUse standard\
+  \ sklearn-compatible preprocessors upstream in a normal `Pipeline`.\n\n## Installation\n\nBase package:\n\
+  \n```bash\npip install eigenradiomics\n```\n\nWith WGCNA support:\n\n```bash\npip install 'eigenradiomics[wgcna]'\n\
+  ```\n\nWith ComBat batch-effect harmonization support (`inmoose`, requires Python >= 3.11):\n\n```bash\n\
+  pip install 'eigenradiomics[combat]'\n```\n\nFor local development:\n\n```bash\npoetry install --with\
+  \ dev --extras wgcna\n```\n\n## Quick Start\n\n```python\nimport pandas as pd\nfrom sklearn.feature_selection\
+  \ import VarianceThreshold\nfrom sklearn.impute import SimpleImputer\nfrom sklearn.pipeline import Pipeline\n\
+  from sklearn.preprocessing import StandardScaler\n\nfrom eigenradiomics import WGCNAReducer\n\nX = pd.read_csv(\"\
+  radiomics_features.csv\")\n\npipe = Pipeline(\n\t[\n\t\t(\"impute\", SimpleImputer(strategy=\"median\"\
+  )),\n\t\t(\"var\", VarianceThreshold(threshold=0.0)),\n\t\t(\"scale\", StandardScaler()),\n\t\t(\"reduce\"\
+  , WGCNAReducer(soft_power=\"auto\", min_module_size=30)),\n\t]\n)\n\nY = pipe.fit_transform(X)\n```\n\
+  \nTo split selected Pictologics features out before reduction, use the preprocessing\nutilities:\n\n\
+  ```python\nfrom eigenradiomics.preprocessing import split_radiomics_file\n\nsplit_radiomics_file(\n\
+  \    \"pictologics_features.csv\",\n    \"preprocessed/\",\n    features=[\"volume_RNU0\", \"surface_area_C0JK\"\
+  ],\n)\n```\n\nFor sklearn pipelines, `RadiomicsFeatureRemover` removes matching columns during\n`transform`\
+  \ and keeps the same fitted column contract as the reducers.\n\n## Design Notes\n\n- Reducers inherit\
+  \ from a common base class and use reducer-specific output names such as `wgcna_0`, `wgcna_1`, ...\n\
+  - numpy inputs are supported; synthetic feature names are generated internally so fitted reducers can\
+  \ still validate future inputs safely.\n- The package framework is designed as a stable scaffolding\
+  \ for future add-ins such as PCA, sparse PCA, dictionary learning, NMF, and encoder-based reducers.\
+  \ (Currently, only WGCNA is implemented for initial evaluation.)\n\n## Quality Checks\n\nGitHub Actions\
+  \ runs the core quality gates on every push and pull request across Python 3.10, 3.11, and 3.12:\n\n\
+  - `ruff check eigenradiomics tests`\n- `pytest -q`\n- `sklearn.utils.estimator_checks.check_estimator(...)`\
+  \ for all public estimators\n\nThe same checks can be run locally after installing the dev dependencies:\n\
+  \n```bash\npoetry install --with dev --extras wgcna\npoetry run ruff check eigenradiomics tests\npoetry\
+  \ run pytest -q\n```\n\n## Documentation\n\nThe project now includes a full MkDocs site with a Pictologics-style\
+  \ layout: a tutorial-first\nuser guide, API reference pages powered by docstrings, and a generated quality\
+  \ report.\n\nTo build the documentation locally:\n\n```bash\npoetry install --with dev --extras wgcna\n\
+  poetry run python dev/generate_docs.py\npoetry run mkdocs serve\n```\n\nThe site is built in CI and\
+  \ deployed to GitHub Pages from `main`.\n"

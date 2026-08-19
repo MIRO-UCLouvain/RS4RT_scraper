@@ -1,0 +1,264 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Youssef-Elshinnawi/Fan-Beam-Cone-Beam-CT-Reconstruction-FDK-ASTRA
+url: https://github.com/Youssef-Elshinnawi/Fan-Beam-Cone-Beam-CT-Reconstruction-FDK-ASTRA
+platform: github
+description: From-scratch fan-beam and cone-beam (FDK) CT reconstruction in Python and C++, built on the
+  ASTRA Toolbox and validated against real ASTRA GPU output via Colab.
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-07T12:36:57Z'
+image_source: https://raw.githubusercontent.com/Youssef-Elshinnawi/Fan-Beam-Cone-Beam-CT-Reconstruction-FDK-ASTRA/HEAD/py/figures/stage3_astra_ground_truth_comparison.png
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 1 support term(s).
+readme_excerpt: '# Fan-Beam / Cone-Beam CT Reconstruction — FDK, ASTRA, and a C++ Port
+
+
+  Extends [Project 1](../Project_1/ct_reconstruction) (parallel-beam FBP) and [Project 2](../Project_2)
+  (iterative SART+TV) to the geometries real CT scanners actually use: a point-like X-ray source with
+  a diverging beam, rather than an idealized parallel-ray source. Builds fan-beam geometry with the [ASTRA
+  Toolbox](https://astra-toolbox.com/) (FAU Erlangen''s Pattern Recognition Lab), implements fan-beam
+  FBP and cone-beam FDK (Feldkamp–Davis–Kress) from scratch, adds realistic Poisson noise and beam-hardening
+  artifacts, validates the cone-beam implementation against ASTRA''s real GPU reconstruction (via Google
+  Colab, since this machine has no CUDA GPU), and ports the core FDK loop to C++.
+
+
+  ## What''s here
+
+
+  | Stage | Description | Result |
+
+  |---|---|---|
+
+  | 1 | Fan-beam sinogram via ASTRA''s CPU line-driven projector | — |
+
+  | 2 | Fan-beam FBP from scratch (cosine weighting + ramp filter + weighted backprojection) | NRMSE 9.2%
+  (image), 7.9% (reprojection) |
+
+  | 3 | Cone-beam forward projector + FDK from scratch | NRMSE 8.7% vs. phantom; validated against ASTRA''s
+  real GPU `FDK_CUDA` (Colab): 2.6% vs. ASTRA''s own reconstruction |
+
+  | 4 | Poisson noise + beam-hardening simulation | Confirmed correct via radial brightness profile |
+
+  | 5 | C++ port of the core FDK loop | NRMSE 9.2%, 18x faster than Python (0.79s vs. 14.3s, forward projection
+  + reconstruction, 80³ volume) |
+
+
+  **Cone-beam validation:** ASTRA''s cone-beam/FDK code requires a CUDA GPU, unavailable locally, so the
+  from-scratch implementation is validated against ASTRA''s actual `FDK_CUDA` running on a Colab GPU,
+  on the same phantom and geometry. The two independent implementations agree far more closely with each
+  other (2.6% NRMSE) than either does with the ideal phantom (~9%) — the gap to the phantom is FDK''s
+  known Feldkamp approximation error, not an implementation bug.
+
+
+  ![Cone-beam FDK vs. ASTRA GPU ground truth](py/figures/stage3_astra_ground_truth_comparison.png)
+
+
+  *Left to right: phantom, ASTRA''s real GPU FDK reconstruction, this project''s from-scratch FDK reconstruction,
+  absolute difference between the two.*
+
+
+  ## Key equations
+
+
+  Notation: `D` = source-to-rotation-center distance, `D_sd` = source-to-detector distance, `β` = source
+  rotation angle, `(x,y,z)` = a reconstruction voxel''s physical coordinates.
+
+
+  **Fan-beam FBP** (`py/recon/fanbeam_fbp.py`) — cosine pre-weighting compensates for longer, angled off-center
+  rays before ramp filtering:
+
+
+  $$w(t) = \frac{D}{\sqrt{D^2 + t^2}}$$
+
+
+  Weighted backprojection, where `U` is the source-to-voxel distance along the beam axis (the magnification
+  factor) and `t''` is the detector position the ray through `(x,y)` actually hits:
+
+
+  $$U(\beta,x,y) = D + y\cos\beta - x\sin\beta \qquad t''(\beta,x,y) = \frac{(x\cos\beta - y\sin\beta)\,D_{sd}}{U}$$
+
+
+  $$f(x,y) = \frac{\Delta\beta}{2} \sum_{\beta} \frac{D^2}{U^2}\, p_{\text{filtered}}(\beta,\, t'')$$
+
+
+  **Ramp filter** (`py/recon/fanbeam_fbp.py`, `py/recon/fdk.py`, `cpp/src/ramp_filter.cpp`) — applied
+  in the frequency domain to every projection row, optionally Hann-windowed to trade resolution for reduced
+  noise amplification:
+
+
+  $$H(\omega) = |\omega| \qquad H_{\text{Hann}}(\omega) = |\omega| \cdot \tfrac{1}{2}\left(1 + \cos\frac{\pi\omega}{\omega_{\text{Nyquist}}}\right)$$
+
+
+  **Cone-beam FDK** (`py/recon/fdk.py`, `cpp/src/fdk.cpp`) — the 2D (u,v) extension of the cosine weight,
+  `U` unchanged from fan-beam, and a new `v''` mapping the z-coordinate onto the detector''s second axis
+  with the same magnification as `u''`:
+
+
+  $$w(u,v) = \frac{D}{\sqrt{D^2 + u^2 + v^2}} \qquad u''(\beta,x,y) = \frac{(x\cos\beta + y\sin\beta)\,D_{sd}}{U}
+  \qquad v''(\beta,x,y,z) = \frac{z\,D_{sd}}{U}$$
+
+
+  $$f(x,y,z) = \frac{\Delta\beta}{2} \sum_{\beta} \frac{D^2}{U^2}\, p_{\text{filtered}}(\beta,\, u'',\,
+  v'')$$
+
+
+  `u''`''s plus sign (vs. fan-beam `t''`''s minus) reflects a different source/detector axis convention
+  between the two projectors — not a typo; see `cpp/src/fdk.cpp`.
+
+
+  This backprojection is the **Feldkamp approximation**: `D²/U²` doesn''t depend on `z`, i.e. every detector
+  row is filtered and backprojected as an independent fan-beam slice. That''s exact only for the central
+  row (`v=0`); off-center rows accumulate error because a circular source orbit doesn''t satisfy the Tuy–Smith
+  data-sufficiency condition for exact 3D reconstruction — a known, inherent limitation of FDK, not a
+  bug.
+
+
+  **Poisson noise + beam hardening** (`py/noise/noise_beam_hardening.py`) — applied to the line-integral
+  sinogram `p` before reconstruction:
+
+
+  $$p_{\text{bh}} = p - \beta_{bh}\, p^2 \qquad\qquad I_{\text{mean}} = I_0 e^{-p},\quad N \sim \text{Poisson}(I_{\text{mean}}),\quad
+  p_{\text{noisy}} = -\ln\frac{N}{I_0}$$
+
+
+  **Validation metric (NRMSE)**, used throughout — reconstruction values are rescaled to the reference''s
+  `[min, max]` range first, since FBP/FDK''s absolute output scale isn''t calibrated to the phantom''s:
+
+
+  $$\text{NRMSE} = \frac{\sqrt{\frac{1}{n}\sum_i (\hat{f}_i - f_i)^2}}{\max(f) - \min(f)}$$
+
+
+  ## Repo structure
+
+
+  ```
+
+  Project_3/
+
+  ├── py/
+
+  │   ├── geometry/       # fan-beam (ASTRA) and cone-beam (from-scratch ray marching) projectors
+
+  │   ├── phantom/         # 3D phantom generation
+
+  │   ├── recon/           # fan-beam FBP and cone-beam FDK reconstruction
+
+  │   ├── noise/            # Poisson noise + beam-hardening simulation
+
+  │   ├── validation/       # NRMSE + reprojection-consistency checks
+
+  │   └── figures/           # generated output figures
+
+  ├── cpp/
+
+  │   ├── include/, src/     # C++17 port of the core FDK loop (phantom, geometry,
+
+  │   │                       # forward projection, FDK, FFT/ramp filter reused from Project 2)
+
+  │   ├── build/
+
+  │   └── figures/            # raw .bin dumps for cross-validation against Python
+
+  ├── colab/
+
+  │   └── astra_cone_beam_ground_truth.ipynb  # runs ASTRA''s real GPU FDK_CUDA on Colab
+
+  │                                             # for the Stage 3 ground-truth comparison
+
+  ├── .gitignore
+
+  ├── LICENSE
+
+  └── README.md
+
+  ```
+
+
+  Detailed study notes (stage-by-stage narrative, full debugging history) live outside this
+
+  repo, in `../Project_3_notes/`.
+
+
+  ## Running it
+
+
+  **Python** (requires a CUDA-free ASTRA Toolbox build — this project uses a dedicated conda env since
+  ASTRA isn''t available via pip):
+
+  ```bash
+
+  conda create -n ct-project3 -c conda-forge -c astra-toolbox python=3.11 astra-toolbox numpy scipy matplotlib
+
+  conda activate ct-project3
+
+
+  python py/geometry/fanbeam_sino.py       # Stage 1
+
+  python py/recon/fanbeam_fbp.py           # Stage 2
+
+  python py/validation/stage2_validation.py
+
+  python py/geometry/conebeam_proj.py      # Stage 3
+
+  python py/recon/fdk.py
+
+  python py/validation/stage3_validation.py
+
+  python py/noise/noise_beam_hardening.py  # Stage 4
+
+  ```
+
+
+  **C++** (no external dependencies, just a C++17 compiler):
+
+  ```bash
+
+  cd cpp
+
+  make
+
+  ./build/fdk_recon
+
+  ```
+
+  Regenerates the phantom, runs the full forward-projection + FDK pipeline, prints NRMSE against the ground-truth
+  phantom, and writes `phantom.bin`/`recon.bin` to `figures/` for cross-checking against the Python output.
+
+
+  ## Two real bugs, found by independent validation
+
+
+  **The cone-beam backprojection formula had a sign error**, caught only by validating against ASTRA''s
+  real GPU output. Aggregate NRMSE looked fine on its own (~9%), but checking a specific physically-motivated
+  sub-quantity — the relative brightness ratio between two known phantom features — exposed an inverted
+  result. Isolating variables one at a time (size vs. position, then per-axis offset) traced it to a backprojection
+  formula copied from the fan-beam version without re-deriving it for the cone-beam forward projector''s
+  own geometry convention.
+
+
+  **The C++ ramp filter silently produced garbage on a non-power-of-2 input.** Reusing Project 2''s FFT-based
+  ramp filter (radix-2 Cooley–Tukey, requires a power-of-2 length) directly on 96-length detector rows
+  violated that precondition without erroring — the recursive FFT just returns wrong values for sizes
+  that don''t halve evenly. Found by comparing each pipeline stage''s output against its Python equivalent
+  individually rather than guessing from the (very wrong) final image.
+
+
+  Both are a useful reminder that a single aggregate error metric, or a plausible-looking result, isn''t
+  validation — cross-checking against an independent implementation and isolating pipeline stages is.
+
+
+  ## License
+
+
+  MIT — see [LICENSE](LICENSE).
+
+  '

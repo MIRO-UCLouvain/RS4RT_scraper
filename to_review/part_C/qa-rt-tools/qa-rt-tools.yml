@@ -1,0 +1,139 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: a-mariano/QA-RT-Tools
+url: https://github.com/a-mariano/QA-RT-Tools
+platform: github
+description: Permite visualizar e editar arquivos DICOM Rtplan
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-06-11T10:22:41Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 4 support term(s).
+readme_excerpt: "# QA-RTplan-Editor\n\nEste repositório contém o **QA-RTplan-Editor**, uma aplicação em\
+  \ Python com interface gráfica (PyQt5) para:\n\n- Abrir, visualizar e editar **RTPLAN DICOM** de um\
+  \ plano de radioterapia.\n- Navegar pelos beams e control points, com visualização de **MLC** e **jaw\
+  \ positions**.\n- Exportar e importar parâmetros de control points via **Excel**.\n- Exportar para o\
+  \ formato **.efs** (usando o conversor DCM3EFS.py sem modificações).\n- Gerar um **CT Phantom** (cubo\
+  \ de água em fundo de ar) por meio da interface original do `PyCuboQA.py` (Tkinter).\n- Atualizar, em\
+  \ memória, o RTPLAN para referenciar esse novo CT (ajustando PatientName, PatientID, Study/Series UIDs,\
+  \ FrameOfReferenceUID e sequências de referência).\n- Salvar as modificações do RTPLAN em disco quando\
+  \ desejado.\n\n---\n\n## Índice\n\n1. [Visão Geral](#visão-geral)  \n2. [Funcionalidades Principais](#funcionalidades-principais)\
+  \  \n   1. [Edição de Tags DICOM (RTPLAN)](#edição-de-tags-dicom-rtplan)  \n   2. [Visualização de MLC\
+  \ e Jaws](#visualização-de-mlc-e-jaws)  \n   3. [Navegação entre Beams e Control Points](#navegação-entre-beams-e-control-points)\
+  \  \n   4. [Exportar/Importar Control Points em Excel](#exportarimportar-control-points-em-excel)  \n\
+  \   5. [Exportar para EFS](#exportar-para-efs)  \n   6. [Gerar CT Phantom (PyCuboQA)](#gerar-ct-phantom-pycuboqa)\
+  \  \n   7. [Atualizar RTPLAN para Nova CT em Memória](#atualizar-rtplan-para-nova-ct-em-memória)  \n\
+  3. [Estrutura do Projeto](#estrutura-do-projeto)  \n4. [Instalação e Dependências](#instalação-e-dependências)\
+  \  \n5. [Como Executar](#como-executar)  \n6. [Menu e Uso da GUI](#menu-e-uso-da-gui)  \n7. [Licença](#licença)\
+  \  \n\n---\n\n## Visão Geral\n\nO **QA-RTplan-Editor** foi desenvolvido para facilitar a análise, verificação\
+  \ e edição de arquivos RTPLAN DICOM utilizados em radioterapia. Com ele, é possível:\n\n- Inspecionar\
+  \ e modificar **qualquer Data Element** (exceto sequências) diretamente na interface.\n- Visualizar,\
+  \ slice a slice, o comportamento de **MLC** (Multileaf Collimator) e **jaws** em cada Control Point,\
+  \ com cores e limites fixos.\n- Exportar e importar tabelas de Control Points em Excel, formatadas em\
+  \ colunas (cada coluna = um Control Point), incluindo posições de todas as lâminas MLC (esquerda e direita\
+  \ separadas) e novas colunas caso sejam adicionados CPs.\n- Gerar e abrir um **CT Phantom** (cubo de\
+  \ água centralizado em fundo de ar) usando a interface Tkinter original (`PyCuboQA.py`), sem replicar\
+  \ diálogos—ao clicar no menu, a janela do PyCuboQA surge com visualização de cortes e parâmetros.\n\
+  - Adaptar o RTPLAN atual para referenciar esse CT (em memória), copiando `PatientName`, `PatientID`,\
+  \ `StudyInstanceUID`, `SeriesInstanceUID` e `FrameOfReferenceUID` diretamente do primeiro slice do CT;\
+  \ atualizar também `ReferencedStudySequence`, `ReferencedSeriesSequence` e `ReferencedFrameOfReferenceSequence`.\n\
+  - Exportar o RTPLAN modificado para disco (por “Salvar Como…”) ou gerar arquivos `.efs` — o conversor\
+  \ `DCM3EFS.py` também está incluído sem alterações, e pode ser chamado diretamente pelo menu “Arquivo\
+  \ → Exportar EFS”.\n\nO resultado final é uma ferramenta única para QA de planos de radioterapia, edição\
+  \ de tags e integração/fusão com imagens de referência.\n\n---\n\n## Funcionalidades Principais\n\n\
+  ### Edição de Tags DICOM (RTPLAN)\n\n- **Árvore hierárquica** de todos os Data Elements (incluindo sequences).\
+  \  \n- Clicar em qualquer tag exibe **Group, Element, VR, Nome** e valor atual.  \n- Para elementos\
+  \ de VR diferente de SQ, é possível **editar o valor** diretamente e salvá-lo em memória.  \n- Comando\
+  \ “Salvar Como...” grava o DICOM modificado em disco.\n\n### Visualização de MLC e Jaws\n\n- Para cada\
+  \ **Control Point**, desenha:\n  - Retângulos horizontais indicando a porção “aberta” do MLC (ambos\
+  \ bancos de lâminas, com offset centralizado, espessura definida no combo de modelo).\n  - **Jaws X**:\
+  \ duas linhas verticais (vermelhas) nos valores `Leaf/Jaw Positions` axis X.  \n  - **Jaws Y**: duas\
+  \ linhas horizontais (azuis) nos valores `Leaf/Jaw Positions` axis Y.  \n- O eixo X é fixo de **−200\
+  \ mm a +200 mm** (tamanho máximo de campo).  \n- Constrói dinamicamente a altura total (número de lâminas\
+  \ × espessura do modelo: “Agility 5 mm” ou “MLCi2 10 mm”).  \n- Em “OBS” (abaixo do canvas), indica\
+  \ se não há jaw X e/ou jaw Y naquele CP.  \n- Religa a visualização a cada mudança de **beam** ou **control\
+  \ point**.\n\n### Navegação entre Beams e Control Points\n\n- Combo “Feixe” lista todos os elementos\
+  \ de `RTBeamSequence` (exibindo `BeamNumber` e `BeamName`).  \n- Botões “Anterior CP” / “Próximo CP”\
+  \ percorrem todos os CPs do beam selecionado.  \n- Rótulo “CP: X/Y” mostra índice atual e total.  \n\
+  - Ao trocar de beam ou CP, a árvore de DICOM permanece, mas o visualizador de MLC/Jaws é atualizado\
+  \ automaticamente.\n\n### Exportar/Importar Control Points em Excel\n\n- **Exportar CPs para Excel**:\
+  \ gera um arquivo `*.xlsx` em que cada **coluna** corresponde a um control point.  \n  - A primeira\
+  \ coluna (largura dobrada) lista **nomes das variáveis** (ex.: `GantryAngle`, `BeamMeterset`, `Leaf_Jaw_Positions[0]\
+  \ Left`, etc.).  \n  - Para cada CP, há colunas contendo:\n    - `GantryAngle`  \n    - `BeamLimitingDeviceAngle`\
+  \ (colimador)  \n    - `PatientSupportAngle` (mesa)  \n    - `CumulativeMetersetWeight` (fração de dose)\
+  \  \n    - `BeamMeterset` (MU)  \n    - Todas as posições de cada lâmina MLC (cada lâmina em célula\
+  \ separada, numeradas a partir de 1; indicando também “Left” ou “Right”).  \n  - Se o plano tiver **mais\
+  \ de um campo (beam)**, cada beam é esportado em **planilhas diferentes** do mesmo arquivo.  \n- **Importar\
+  \ CPs do Excel**: ao fechar o Excel, o aplicativo lê o arquivo e atualiza todos os CPs do beam selecionado\
+  \ (ou adiciona novos CPs, copiando parâmetros do último CP e substituindo apenas os valores fornecidos\
+  \ no Excel).  \n- Essa troca bidirecional facilita a edição em lote de dezenas/hundreds de CPs e lamelas.\n\
+  \n### Exportar para EFS\n\n- Comando “Arquivo → Exportar EFS”: chama o script original `DCM3EFS.py`\
+  \ (sem nenhuma modificação) para converter o DICOM RTPLAN em arquivos `.efs`.  \n- O usuário escolhe\
+  \ a pasta de destino; o conversor gera, para cada CP/beam, o `.efs` correspondente.  \n- Caso falhe\
+  \ algum CP, exibe **mensagem de erro** detalhando o motivo.\n\n### Gerar CT Phantom (PyCuboQA)\n\n-\
+  \ Menu “CT → Gerar Novo CT Phantom” abre **exclusivamente** a interface Tkinter original de `PyCuboQA.py`\
+  \ (terminal separado), que contém:\n  1. Campos para inserir **dimensões (X, Y, Z em mm)**, **pixel\
+  \ size**, **slice thickness**, **PatientName** e **PatientID**.  \n  2. Visualizador de cortes (usando\
+  \ Matplotlib no Tkinter), mostrando o cubo de água centralizado em fundo de ar.  \n  3. Botão para selecionar\
+  \ diretório e exportar cada slice axial como DICOM.  \n- Esse código foi mantido **sem alterações**\
+  \ (importado via `subprocess.Popen`), garantindo que a interface original seja preservada.\n\n### Atualizar\
+  \ RTPLAN para Nova CT em Memória\n\n- Menu “CT → Atualizar RTPLAN com CT” (sem pedir “Salvar Como…”):\n\
+  \  1. Abre diálogo para selecionar **pasta** contendo os DICOMs do CT recém-gerado.  \n  2. Lê o **primeiro\
+  \ slice** de CT (`pydicom.dcmread`) e extrai:\n     - `PatientName` e `PatientID`  \n     - `StudyInstanceUID`,\
+  \ `SeriesInstanceUID`  \n     - `FrameOfReferenceUID`  \n  3. Em `self.dataset` (RTPLAN carregado):\n\
+  \     - Atualiza **PatientName** / **PatientID**.  \n     - Atualiza **StudyInstanceUID**, **SeriesInstanceUID**.\
+  \  \n     - Gera novo **SOPInstanceUID** para o RTPLAN.  \n     - Atualiza **FrameOfReferenceUID** no\
+  \ RTPLAN.  \n     - Percorre **ReferencedStudySequence**, **ReferencedSeriesSequence** e **ReferencedFrameOfReferenceSequence**,\
+  \ ajustando UIDs para a nova série de CT.  \n  4. Recarrega a **árvore de tags** e a **visualização\
+  \ de MLC/Jaws**, refletindo imediatamente as alterações, **sem** solicitar ao usuário que grave o arquivo.\
+  \  \n  5. Exibe alerta “RTPLAN Atualizado” avisando que, para persistir em disco, basta usar “Salvar\
+  \ Como…”.\n\nEssa operação garante que, em memória, o RTPLAN carregado passe a “vincular” todas as suas\
+  \ referências de imagem ao novo CT Phantom gerado.\n\n---\n\n## Estrutura do Projeto\n\n```\nQA-RTplan-Editor/\n\
+  ├── README.md                    # Este arquivo\n├── main_window.py               # Código principal\
+  \ da GUI (PyQt5)\n├── DCM3EFS.py                   # Conversor RTPLAN → .efs (sem alterações)\n├── dicom_utils/\n\
+  │   ├── reader.py                # Funções de leitura e navegação em DICOM\n│   └── export_excel.py\
+  \          # Exportação/Importação de CPs em Excel\n├── efs_converter/\n│   └── converter.py       \
+  \      # Wrapper para DCM3EFS.py\n└── utils/\n    ├── PyCuboQA.py              # Interface Tkinter para\
+  \ gerar CT Phantom (inalterado)\n    └── ct_generator.py          # (Sob demanda) funções auxiliares\
+  \ de CT\n```\n\n- **`main_window.py`**  \n  - Contém a aplicação principal em PyQt5.  \n  - Júnto aos\
+  \ menus, botões e canvas de Matplotlib.\n- **`dicom_utils/`**  \n  - **`reader.py`**: abstração para\
+  \ abrir DICOM, popular QTreeWidget, buscar beams, CPs, MLC/jaws etc.  \n  - **`export_excel.py`**: funções\
+  \ para exportar/importar Control Points em arquivos `.xlsx`.\n- **`efs_converter/converter.py`**  \n\
+  \  - Em volta de `subprocess` ou chamada direta ao `DCM3EFS.py`.\n- **`DCM3EFS.py`**  \n  - Script original\
+  \ (sem modificações) que converte um RTPLAN DICOM em arquivos `.efs`.\n- **`utils/PyCuboQA.py`**  \n\
+  \  - Interface Tkinter para gerar CT Phantom com visualização de cortes.  \n  - Agora protegido por\
+  \ `if __name__ == \"__main__\":` para só abrir a janela quando executado diretamente.\n- **`utils/ct_generator.py`**\
+  \  \n  - (Opcional) contém funções de geração de volume cúbico, caso queira reaproveitar em outro contexto.\n\
+  \n---\n\n## Instalação e Dependências\n\n1. **Python 3.7+** (testado com 3.8 e 3.9).  \n2. Crie um ambiente\
+  \ virtual (recomendado):\n\n   ```bash\n   python -m venv venv\n   source venv/bin/activate      # Linux/macOS\n\
+  \   venv\\Scripts\\activate.bat   # Windows\n   ```\n\n3. Instale as dependências listadas abaixo:\n\
+  \n   ```bash\n   pip install -r requirements.txt\n   ```\n\n   > Se não houver um `requirements.txt`,\
+  \ instale manualmente:\n   > ```\n   > pip install pydicom PyQt5 matplotlib openpyxl numpy\n   > ```\n\
+  \   > - **pydicom**: leitura/escrita de DICOM  \n   > - **PyQt5**: interface gráfica principal  \n \
+  \  > - **matplotlib**: plotagem de MLC/Jaws e visualização de cortes no PyCuboQA  \n   > - **openpyxl**:\
+  \ leitura/escrita de Excel para CPs  \n   > - **numpy**: manipulação de arrays para CT Phantom\n\n4.\
+  \ Verifique se o seu Python está no **PATH**, pois o PyQt5 chama `sys.executable` para abrir o PyCuboQA\
+  \ via `subprocess`.\n\n---\n\n## Como Executar\n\nNo diretório raiz do projeto (`QA-RTplan-Editor/`),\
+  \ execute:\n\n```bash\npython main_window.py\n```\n\n- A janela principal abrirá:\n  - Use **Arquivo\
+  \ → Abrir RTPLAN DICOM** para carregar um `.dcm` de RTPLAN.\n  - O painel esquerdo exibe a árvore de\
+  \ tags editáveis.\n  - O painel direito contém controles de MLC/Jaws, Excel e CT/EFS.\n\n---\n\n## Menu\
+  \ e Uso da GUI\n\n### 1. Menu “Arquivo”\n\n- **Abrir RTPLAN DICOM**: abre um diálogo para selecionar\
+  \ o arquivo `.dcm`.  \n  - Ao carregar, a árvore de tags é populada.  \n  - O título da janela passa\
+  \ a exibir o caminho do arquivo aberto.\n- **Salvar Como…**: salva o RTPLAN (com todas as edições de\
+  \ tags) em outro caminho `.dcm`.\n- **Exportar EFS**: abre diálogo para escolher pasta de destino. \
+  \ \n  - Gera arquivos `.efs` para todas as combinações de beams/CPs usando o `DCM3EFS.py` inalterado.\n\
+  \n### 2. Menu “CT”\n\n- **Gerar Novo CT Phantom**: inicia um processo separado chamando `python utils/PyCuboQA.py`.\
+  \  \n  - Abre a interface Tkinter original (PyCuboQA) com visualizador de cortes do cubo de água.  \n\
+  \  - Permite inserir dimensões, pixel size, slice thickness, PatientName, PatientID.  \n  - Salva cada\
+  \ slice axial como DICOM na pasta escolhida.\n- **Atualizar RTPLAN com CT**: abre diálogo para selecionar\
+  \ a pasta gerada pelo PyCuboQA.  \n  - Carrega o primeiro slice de CT na memória, extrai `PatientName`,\
+  \ `PatientID`, `StudyInstanceUID`, `SeriesInstanceUID`, `FrameOfReferenceUID`.  \n  - Em memória, no\
+  \ RTPLAN carreg"

@@ -1,0 +1,142 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: MehdiPanahii/PD-Radiomics-Preprocessing-Analysis
+url: https://github.com/MehdiPanahii/PD-Radiomics-Preprocessing-Analysis
+platform: github
+description: Impact of MRI Preprocessing Methods on Radiomics Feature Variability in Parkinson's Disease
+license: MIT
+language: Python
+keywords: []
+stars: 2
+updated_at: '2026-05-15T17:10:36Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Impact of MRI Preprocessing Methods on Radiomics Feature Variability in Parkinson's\
+  \ Disease\r\n\r\n[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)\r\
+  \n[![R 4.0+](https://img.shields.io/badge/R-4.0+-blue.svg)](https://www.r-project.org/)\r\n[![License:\
+  \ MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\r\n\
+  \r\nThis repository contains the complete code implementation for the research paper:\r\n\r\n**\"Impact\
+  \ of Image Preprocessing Methods on MRI Radiomics Feature Variability and Classification Performance\
+  \ in Parkinson's Disease Motor Subtype Analysis\"**\r\n\r\n## Abstract\r\n\r\nThis study evaluates the\
+  \ impact of various MRI preprocessing methods on radiomic feature reproducibility and classification\
+  \ performance in differentiating Parkinson's disease (PD) motor subtypes. We analyzed 210 T1-weighted\
+  \ MRI scans from the PPMI database, including 140 PD patients (70 tremor-dominant, 70 postural instability/gait\
+  \ difficulty) and 70 healthy controls. Our findings demonstrate that preprocessing choices significantly\
+  \ impact both feature stability and classification accuracy, with wavelet-based features showing the\
+  \ highest reproducibility (37% with ICC ≥ 0.90).\r\n\r\n## Key Findings\r\n\r\n- **Wavelet-based features**\
+  \ showed highest reproducibility across preprocessing methods\r\n- **S+B+ZN preprocessing** achieved\
+  \ best classification performance (AUC = 0.88)\r\n- **Excluding non-reproducible features** generally\
+  \ improved classification accuracy\r\n- **Texture features** (GLCM, GLSZM) demonstrated high stability\
+  \ across methods\r\n\r\n## Features\r\n\r\n### Preprocessing Pipelines\r\n- **ZN**: Z-score Normalization\r\
+  \n- **B+ZN**: Bias field correction + Z-score Normalization  \r\n- **S+ZN**: SUSAN denoising + Z-score\
+  \ Normalization\r\n- **B+S+ZN**: Bias field correction + SUSAN denoising + Z-score Normalization\r\n\
+  - **S+B+ZN**: SUSAN denoising + Bias field correction + Z-score Normalization\r\n\r\n### Analysis Capabilities\r\
+  \n- **22,560 Radiomic Features** extracted from 16 brain regions\r\n- **ICC-based Reproducibility Assessment**\
+  \ using R's irr package\r\n- **Feature Selection** with L1-regularized LinearSVC\r\n- **Machine Learning\
+  \ Classification** with SVM and cross-validation\r\n- **Statistical Analysis** including Kruskal-Wallis\
+  \ tests with FDR correction\r\n- **Comprehensive Visualization** tools for results interpretation\r\n\
+  \r\n## Installation\r\n\r\n### Prerequisites\r\n\r\n- **Python 3.8+**\r\n- **R 4.0+** with 'irr' package\r\
+  \n- **Git** for cloning the repository\r\n\r\n### Clone Repository\r\n\r\n```bash\r\ngit clone https://github.com/username/PD-Radiomics-Preprocessing-Analysis.git\r\
+  \ncd PD-Radiomics-Preprocessing-Analysis\r\n\r\n### Python Dependencies\r\n\r\n```bash\r\npip install\
+  \ -r requirements.txt\r\n```\r\n\r\n### R Dependencies\r\n\r\n```r\r\ninstall.packages(\"irr\")\r\n\
+  ```\r\n\r\n## Data Requirements\r\n\r\n### Important Note\r\n**This pipeline works with pre-extracted\
+  \ radiomic features, NOT raw MRI images.** The input should be CSV files containing radiomic features\
+  \ that have already been extracted from T1-weighted MRI scans using different preprocessing methods.\r\
+  \n\r\n### Input Data Structure\r\n\r\nYour data directory should be organized as follows:\r\n\r\n```\r\
+  \ndata/raw/\r\n├── HC/                                    # Healthy Controls\r\n│   ├── Bias/\r\n│ \
+  \  │   └── HC_Bias_combined_features.csv\r\n│   ├── SUSAN/\r\n│   │   └── HC_SUSAN_combined_features.csv\r\
+  \n│   ├── Bias+SUSAN/\r\n│   │   └── HC_Bias+SUSAN_combined_features.csv\r\n│   ├── SUSAN+Bias/\r\n\
+  │   │   └── HC_SUSAN+Bias_combined_features.csv\r\n│   └── No_Preprocessing/\r\n│       └── HC_No_Preprocessing_combined_features.csv\r\
+  \n├── TD/                                    # Tremor-Dominant PD\r\n│   ├── Bias/\r\n│   │   └── TD_Bias_combined_features.csv\r\
+  \n│   ├── SUSAN/\r\n│   │   └── TD_SUSAN_combined_features.csv\r\n│   ├── Bias+SUSAN/\r\n│   │   └──\
+  \ TD_Bias+SUSAN_combined_features.csv\r\n│   ├── SUSAN+Bias/\r\n│   │   └── TD_SUSAN+Bias_combined_features.csv\r\
+  \n│   └── No_Preprocessing/\r\n│       └── TD_No_Preprocessing_combined_features.csv\r\n├── PIGD/  \
+  \                                # Postural Instability/Gait Difficulty PD\r\n│   ├── Bias/\r\n│   │\
+  \   └── PIGD_Bias_combined_features.csv\r\n│   ├── SUSAN/\r\n│   │   └── PIGD_SUSAN_combined_features.csv\r\
+  \n│   ├── Bias+SUSAN/\r\n│   │   └── PIGD_Bias+SUSAN_combined_features.csv\r\n│   ├── SUSAN+Bias/\r\n\
+  │   │   └── PIGD_SUSAN+Bias_combined_features.csv\r\n│   └── No_Preprocessing/\r\n│       └── PIGD_No_Preprocessing_combined_features.csv\r\
+  \n├── HC_metadata.xlsx                       # Healthy Controls metadata\r\n├── TD_metadata.xlsx   \
+  \                    # Tremor-Dominant metadata\r\n└── PIGD_metadata.xlsx                     # PIGD\
+  \ metadata\r\n```\r\n\r\n### Data Source\r\n\r\nOriginal data should be downloaded from the [Parkinson's\
+  \ Progression Markers Initiative (PPMI)](https://www.ppmi-info.org/access-data-specimens/download-data)\
+  \ database. The radiomic features should be extracted using PyRadiomics or similar tools before using\
+  \ this pipeline.\r\n\r\n### Feature CSV Format\r\n\r\nEach feature CSV file should contain:\r\n- **Columns**:\
+  \ Radiomic feature names (e.g., `T1_Left_Ac_original_firstorder_Mean`)\r\n- **Rows**: Individual subjects\r\
+  \n- **Features**: 1,410 features per subject (before filtering)\r\n\r\nExample feature naming convention:\r\
+  \n```\r\nT1_[Left/Right]_[Region]_[Filter]_[Group]_[Feature]\r\n```\r\n\r\nWhere:\r\n- **Region**: Ac,\
+  \ Am, CN, H, Pa, Pu, SN, Th (8 bilateral regions = 16 total)\r\n- **Filter**: original, wavelet-HHH,\
+  \ wavelet-HHL, etc.\r\n- **Group**: firstorder, glcm, glrlm, glszm, gldm, ngtdm\r\n- **Feature**: specific\
+  \ feature name\r\n\r\n### Metadata Excel Format\r\n\r\nEach metadata Excel file should contain:\r\n\
+  - `SUBJECT`: Subject identifier\r\n- `SCANNER_MODEL`: MRI scanner model (e.g., \"Siemens_Prisma\")\r\
+  \n- `SEX`: Subject sex (M/F)\r\n- `AGE`: Subject age\r\n- `TE`: Echo time (ms)\r\n- `TR`: Repetition\
+  \ time (ms)\r\n\r\n## Quick Start\r\n\r\n### 1. Configuration\r\n\r\nEdit `config.py` to set your data\
+  \ paths:\r\n\r\n```python\r\n# Update these paths in config.py\r\nBASE_DIR = Path(\"/path/to/your/project\"\
+  )\r\nDATA_DIR = BASE_DIR / \"data\"\r\nRAW_DATA_DIR = DATA_DIR / \"raw\"  # Point to your data directory\r\
+  \n```\r\n\r\n### 2. Run Complete Pipeline\r\n\r\n```bash\r\npython scripts/run_full_pipeline.py\r\n\
+  ```\r\n\r\n### 3. Run Individual Steps\r\n\r\n```bash\r\n# Step 1: Data harmonization\r\npython scripts/run_preprocessing.py\r\
+  \n\r\n# Step 2: ICC analysis and feature selection\r\npython scripts/run_icc_analysis.py\r\n\r\n# Step\
+  \ 3: Classification experiments\r\npython scripts/run_classification.py\r\n```\r\n\r\n## Usage Examples\r\
+  \n\r\n### Example 1: Basic ICC Analysis\r\n\r\n```python\r\nfrom src.statistical_analysis.icc_analysis\
+  \ import run_complete_icc_analysis\r\nfrom config import HARMONIZED_DATA_DIR\r\n\r\n# Calculate ICC\
+  \ values for all features\r\nicc_results = run_complete_icc_analysis(str(HARMONIZED_DATA_DIR))\r\n\r\
+  \n# Display results\r\nprint(f\"ICC analysis completed for {len(icc_results['original'])} features\"\
+  )\r\ntop_features = icc_results['original'].nlargest(10, 'ICC')\r\nprint(\"Top 10 most reproducible\
+  \ features:\")\r\nprint(top_features[['Feature', 'Set', 'Group', 'ICC']])\r\n```\r\n\r\n### Example\
+  \ 2: Custom Classification\r\n\r\n```python\r\nfrom src.machine_learning.classification_pipeline import\
+  \ run_classification_experiment\r\nfrom config import REPRODUCIBLE_DATA_DIR, PREPROCESSING_METHODS\r\
+  \n\r\n# Run classification with specific methods\r\nresults = run_classification_experiment(\r\n   \
+  \ data_dir=str(REPRODUCIBLE_DATA_DIR),\r\n    preprocessing_types=['Bias', 'SUSAN+Bias'],  # Specific\
+  \ methods\r\n    data_types=['original', 'reproducible90_original']\r\n)\r\n\r\n# Display results\r\n\
+  for data_type, experiments in results.items():\r\n    print(f\"\\n{data_type.upper()} Results:\")\r\n\
+  \    for result in experiments:\r\n        print(f\"  {result['Preprocessing']}: AUC={result['AUC']:.3f},\
+  \ \"\r\n              f\"Accuracy={result['Accuracy']:.3f}\")\r\n```\r\n\r\n### Example 3: Feature Analysis\r\
+  \n\r\n```python\r\nimport pandas as pd\r\nfrom config import ICC_VALUES_DIR\r\n\r\n# Load ICC results\r\
+  \nicc_df = pd.read_csv(ICC_VALUES_DIR / \"icc_values_original_irr.csv\")\r\n\r\n# Analyze by feature\
+  \ categories\r\nprint(\"Features by reproducibility:\")\r\ncategories = {\r\n    'Poor (< 0.5)': (icc_df['ICC']\
+  \ < 0.5).sum(),\r\n    'Moderate (0.5-0.75)': ((icc_df['ICC'] >= 0.5) & (icc_df['ICC'] < 0.75)).sum(),\r\
+  \n    'Good (0.75-0.9)': ((icc_df['ICC'] >= 0.75) & (icc_df['ICC'] < 0.9)).sum(),\r\n    'Excellent\
+  \ (≥ 0.9)': (icc_df['ICC'] >= 0.9).sum()\r\n}\r\n\r\nfor category, count in categories.items():\r\n\
+  \    percentage = (count / len(icc_df)) * 100\r\n    print(f\"  {category}: {count} ({percentage:.1f}%)\"\
+  )\r\n\r\n# Analyze by feature groups\r\ngroup_analysis = icc_df.groupby('Group')['ICC'].agg(['count',\
+  \ 'mean', 'std'])\r\nprint(f\"\\nICC statistics by feature group:\\n{group_analysis}\")\r\n```\r\n\r\
+  \n## Output Files\r\n\r\nThe pipeline generates several categories of output files:\r\n\r\n### 1. Harmonized\
+  \ Data\r\n- `Harmonized_Data/combined_{method}_original.csv`: Original combined data\r\n- `Harmonized_Data/combined_{method}_full_harmonized.csv`:\
+  \ Harmonized data\r\n\r\n### 2. Feature Analysis\r\n- `ICC_Values/icc_values_original_irr.csv`: ICC\
+  \ values for all features\r\n- `Reproducible/combined_{method}_reproducible90_original.csv`: Features\
+  \ with ICC > 0.90\r\n- `Reproducible/combined_{method}_reproducible95_original.csv`: Features with ICC\
+  \ > 0.95\r\n\r\n### 3. Statistical Analysis\r\n- `statistical_analysis/kruskal_wallis_results.csv`:\
+  \ KW test results\r\n- `statistical_analysis/kw_percentages_summary.xlsx`: KW summary statistics\r\n\
+  \r\n### 4. Classification Results\r\n- `classification_results/classification_results.xlsx`: Performance\
+  \ metrics\r\n- `classification_results/detailed_results_{data_type}.csv`: Detailed results\r\n\r\n###\
+  \ 5. Visualizations\r\n- `plots/icc_analysis/`: ICC distribution and category plots\r\n- `plots/feature_distributions/`:\
+  \ Feature distribution comparisons\r\n- Various PNG files with high-resolution plots (600 DPI)\r\n\r\
+  \n## Configuration\r\n\r\nKey parameters can be modified in `config.py`:\r\n\r\n### Preprocessing Methods\r\
+  \n```python\r\nPREPROCESSING_METHODS = [\r\n    'Bias',           # B+ZN\r\n    'SUSAN',          #\
+  \ S+ZN  \r\n    'Bias+SUSAN',     # B+S+ZN\r\n    'SUSAN+Bias',     # S+B+ZN\r\n    'No_Preprocessing'\
+  \ # ZN\r\n]\r\n```\r\n\r\n### ICC Thresholds\r\n```python\r\nICC_THRESHOLDS = {\r\n    'reproducible90':\
+  \ 0.90,  # Excellent reproducibility\r\n    'reproducible95': 0.95   # Outstanding reproducibility\r\
+  \n}\r\n```\r\n\r\n### Machine Learning Parameters\r\n```python\r\nML_CONFIG = {\r\n    'cv_folds': 5,\
+  \              # Cross-validation folds\r\n    'max_features': 10,         # Maximum features to select\r\
+  \n    'feature_selection_c': 0.2, # L1 regularization strength\r\n    'svm_c': 1.0,              # SVM\
+  \ regularization\r\n    'random_state': 42         # Reproducibility seed\r\n}\r\n```\r\n\r\n### Statistical\
+  \ Analysis\r\n```python\r\nSTATS_CONFIG = {\r\n    'alpha': 0.05,           # Significance level\r\n\
+  \    'fdr_method': 'fdr_bh',  # Benjamini-Hochberg FDR\r\n    'icc_model': 'twoway',   # ICC model type\r\
+  \n    'icc_type': 'agreement', # ICC type\r\n    'icc_unit': 'average'    # ICC unit\r\n}\r\n```\r\n\
+  \r\n## Technical Details\r\n\r\n### Brain Regions Analyzed\r\n16 bilateral brain regions relevant to\
+  \ Parkinson's disease:\r\n- **Ac**: Nucleus Accumbens\r\n- **Am**: Amygdala  \r\n- **CN**: Caudate Nucleus\r\
+  \n- **H**: Hippocampus\r\n- **Pa**: Globus Pallidus\r\n- **Pu**: Putamen\r\n- **SN**: Substantia Nigra\r\
+  \n- **Th**: Thalamus\r\n\r\n### Feature Categories\r\n- **First-order statistics** (19 features): Intensity\
+  \ distribution\r\n- **GLCM** (24 features): Gray Level Co-occurrence Matrix\r\n- **GLRLM** (16 features):\
+  \ Gray Level Run Length Matrix\r\n- **GLSZM** (16 features): Gray Level Size Zone Matrix\r\n- **GLDM**\
+  \ (14 features): Gray Level Dependence Matrix\r\n- **NGTDM** (5 features): Neighboring Gray Tone Difference\
+  \ Matrix\r\n\r\n### Image Filters Applied\r\n- **Original**: No filtering\r\n- **Wavelet**: 8 combinations\
+  \ (HHH, HHL, HLH, HLL, LHH, LHL, LLH, LLL)\r\n- **LoG**: Laplacian of Gaussian (σ=1mm)\r\n- **Exponential,\
+  \ Gradient, Logarithm, Square, Square Root**\r\n\r\n### Statistical Methods\r\n- **ICC**: Intraclass\
+  \ Correlation Coefficient (two-way random effects, absolute agreement)\r\n- **Kruskal-Wallis**: Non-parametric\
+  \ test for multiple g"

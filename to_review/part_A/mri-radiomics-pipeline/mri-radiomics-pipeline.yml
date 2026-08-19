@@ -1,0 +1,59 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: loriyang018/MRI-radiomics-pipeline
+url: https://github.com/loriyang018/MRI-radiomics-pipeline
+platform: github
+description: ''
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-31T15:09:30Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# MRI Radiomics Pipeline\n\nA reproducible pipeline for turning **raw, real-world multi-center\
+  \ MRI** into\nanalysis-ready radiomics tables and exploratory imaging-change indicators for\nclinical-outcome\
+  \ analysis (PFS / OS).\n\nThe emphasis of this project is **data governance and reproducibility** on\
+  \ messy,\nreal-world imaging: reconstructing patient identity across inconsistent\nidentifiers, enforcing\
+  \ de-identification and QC, aligning longitudinal scans to\nfixed time windows, and screening early\
+  \ imaging-change (Δ) features against\noutcomes — with explicit handling of the site/phase heterogeneity\
+  \ that dominates\nreal-world radiomics.\n\n## Pipeline overview\n\n```\nRaw DICOM ──► de-identify ──►\
+  \ DICOM→NIfTI ──► QC ──► feature extraction\n     │                                                \
+  \     │\n     └── build_person_map.py                               ▼\n         (recover patient identity,\
+  \                 radiomics_long.csv\n          flag cross-modality)                             │\n\
+  \                                                           ▼\n                                    \
+  \      align_timepoints.py  (T0/T1 → Δ)\n                                                          \
+  \ │\n                                                           ▼\n                                \
+  \                  radiomics_delta.csv\n                                                           │\n\
+  \                                                           ▼\n                                    \
+  \   analyze_correlations.py (Δ vs PFS/OS)\n```\n\n## Repository layout\n\n```\nsrc/\n  build_person_map.py\
+  \      # recover true patient identity from DICOM tags; flag cross-modality\n  extract_features.py \
+  \     # NIfTI → per-scan long-format features (whole-image, first-order)\n  align_timepoints.py    \
+  \  # select T0/T1 by fixed windows; compute per-patient Δ features\n  analyze_correlations.py  # Spearman\
+  \ screening of Δ features vs PFS/OS\nconfigs/\n  pyradiomics.yaml         # fixed feature-extraction\
+  \ settings (MRI-aware)\ndocs/\n  handoff_MRI_radiomics.md # full pipeline design & handoff spec\nrequirements.txt\n\
+  ```\n\n## Quick start\n\n```bash\npip install -r requirements.txt\n\n# 1) reconstruct patient identity\
+  \ from a de-identified DICOM tree\npython src/build_person_map.py\n\n# 2) extract per-scan features\
+  \ from NIfTI\npython src/extract_features.py\n\n# 3) align time points and compute delta features\n\
+  python src/align_timepoints.py\n\n# 4) screen delta features against outcomes\npython src/analyze_correlations.py\n\
+  ```\n\n## Design notes (real-world lessons)\n\n- **Identity before analysis.** The same patient can\
+  \ appear under several\n  `PatientID`s across visits; a few are imaged on more than one modality.\n\
+  \  Everything is re-keyed to a single `patient_id`, and cross-modality patients\n  are excluded before\
+  \ comparable analysis.\n- **MRI ≠ CT.** MRI intensity is not standardized across scanners, so the\n\
+  \  preprocessing uses intensity normalization (and, where appropriate, N4 bias\n  correction) rather\
+  \ than a CT-style HU window.\n- **Fixed time windows.** T0/T1 selection rules are fixed in code, and\n\
+  \  sensitivity analyses (strict vs relaxed windows, single contrast phase) guard\n  against time-window\
+  \ artifacts.\n- **Heterogeneity is the hard part.** In a heterogeneous real-world MRI cohort\n  (mixed\
+  \ contrast agents and protocols), cross-site harmonization and\n  texture-based quantitative indices\
+  \ are treated as **exploratory** until a\n  curated, phase-consistent dataset is available. See\n  [`docs/handoff_MRI_radiomics.md`](docs/handoff_MRI_radiomics.md).\n\
+  \n## Privacy\n\nThis repository contains **code and methodology only**. No patient-level data,\nDICOM\
+  \ files, center names, identifier maps, or study results are included. Input\npaths in the scripts are\
+  \ placeholders; supply your own de-identified data\nlocally. See [`docs/handoff_MRI_radiomics.md`](docs/handoff_MRI_radiomics.md)\n\
+  section 3 for de-identification requirements.\n\n## License\n\nMIT (code). No clinical data is distributed\
+  \ with this repository.\n"

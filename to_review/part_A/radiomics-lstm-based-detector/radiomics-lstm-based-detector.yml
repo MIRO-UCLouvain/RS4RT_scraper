@@ -1,0 +1,83 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: kaustavbanerjee81-bot/radiomics-lstm-based-detector-
+url: https://github.com/kaustavbanerjee81-bot/radiomics-lstm-based-detector-
+platform: github
+description: This project uses radiomic features from longitudinal MRI scans and an LSTM model to capture
+  how tumors evolve over time, instead of treating each scan independently.
+license: null
+language: null
+keywords: []
+stars: 0
+updated_at: '2026-04-08T05:35:15Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "# radiomics-lstm-based-detector-\n### Written by Kaustav Banerjee\n\n---\n\n## \U0001F4CC\
+  \ Overview\nThis project uses radiomic features from longitudinal MRI scans and an LSTM model to capture\
+  \ how tumors evolve over time, instead of treating each scan independently.\n\n---\n\n## \U0001F4CA\
+  \ Dataset Description\n\nThe dataset (`radiomics_36features.csv`) contains radiomic features extracted\
+  \ from MRI scans of glioma patients across multiple timepoints.\n\n### Key Characteristics:\n- ~93 samples\n\
+  - 36 radiomic features per scan\n- Longitudinal structure (multiple scans per patient)\n\n### Important\
+  \ Columns:\n- **Patient ID** → Identifies individual patients  \n- **Timepoint** → Indicates scan stage\
+  \ (baseline / follow-up)  \n- **Radiomic Features** → Quantitative descriptors of tumor  \n\n### Feature\
+  \ Types:\n- **First-order statistics** → Intensity-based features  \n- **Texture features**:\n  - GLCM\
+  \ (Gray Level Co-occurrence Matrix)\n  - GLRLM (Gray Level Run Length Matrix)\n  - GLSZM (Gray Level\
+  \ Size Zone Matrix)\n  - NGTDM (Neighborhood Gray Tone Difference Matrix)\n\nThese features capture:\n\
+  - Tumor heterogeneity  \n- Shape and structure  \n- Intensity variations  \n\n---\n\n## ⚙️ Code Description\n\
+  \nThe implementation is provided below.\n\n# ================================\n# Necessary Imports\n\
+  # ================================\nimport pandas as pd\nimport numpy as np\nimport matplotlib.pyplot\
+  \ as plt\n\nimport torch\nimport torch.nn as nn\nimport torch.optim as optim\n\nfrom torch.utils.data\
+  \ import Dataset, DataLoader\nfrom sklearn.preprocessing import MinMaxScaler\nfrom sklearn.metrics import\
+  \ mean_squared_error, r2_score, mean_absolute_error\n\n\n# ================================\n# Load\
+  \ Data\n# ================================\ndata = pd.read_excel(\"/content/sample_data/patients_with_all_timepoints.xlsx\"\
+  )\n\n# ================================\n# Preprocessing\n# ================================\ndata =\
+  \ data.dropna(how='all')\n\n# Drop first 2 columns (non-feature columns)\ndropped_data = data.drop(data.columns[0:2],\
+  \ axis=1)\n\n# Normalize data\nscaler = MinMaxScaler()\nnormalized_data = scaler.fit_transform(dropped_data)\n\
+  \n\n# ================================\n# Sequence Construction\n# ================================\n\
+  data_list = []\n\nrows, cols = normalized_data.shape\nblock_size = 4\n\nfor start_row in range(0, rows,\
+  \ block_size):\n    end_row = min(start_row + block_size, rows)\n    for col in range(cols):\n     \
+  \   sublist = normalized_data[start_row:end_row, col].tolist()\n        data_list.append(sublist)\n\n\
+  \n# ================================\n# Training Sequences\n# ================================\ntraining_sequence\
+  \ = []\n\nfor i in data_list:\n    for j in range(1, len(i)):\n        training_sequence.append(i[:j+1])\n\
+  \n# Padding (front padding with zeros)\nmax_len = max(len(seq) for seq in training_sequence)\n\npadded_sequences\
+  \ = []\nfor seq in training_sequence:\n    pad_len = max_len - len(seq)\n    padded_seq = [0]*pad_len\
+  \ + seq\n    padded_sequences.append(padded_seq)\n\npadded_training_sequence = torch.tensor(padded_sequences,\
+  \ dtype=torch.float32)\n\n\n# ================================\n# X and Y Formation\n# ================================\n\
+  X = padded_training_sequence[:, :-1]\nY = padded_training_sequence[:, -1]\n\nX = X.unsqueeze(-1)\n\n\
+  \n# ================================\n# Custom Dataset\n# ================================\nclass CustomDataset(Dataset):\n\
+  \    def __init__(self, X, Y):\n        self.X = X.float()\n        self.Y = Y.float()\n\n    def __len__(self):\n\
+  \        return len(self.X)\n\n    def __getitem__(self, idx):\n        return self.X[idx], self.Y[idx]\n\
+  \n\ndataset = CustomDataset(X, Y)\ndataloader = DataLoader(dataset, batch_size=10, shuffle=True)\n\n\
+  \n# ================================\n# LSTM Model\n# ================================\nclass LSTMmodel(nn.Module):\n\
+  \    def __init__(self, input_size=1, hidden_size=64):\n        super().__init__()\n\n        self.lstm\
+  \ = nn.LSTM(\n            input_size=input_size,\n            hidden_size=hidden_size,\n           \
+  \ batch_first=True\n        )\n\n        self.fc = nn.Linear(hidden_size, 1)\n\n    def forward(self,\
+  \ x):\n        lstm_out, (h_n, c_n) = self.lstm(x)\n        last_hidden = h_n[-1]\n        output =\
+  \ self.fc(last_hidden)\n        return output.squeeze(1)\n\n\nmodel = LSTMmodel()\n\ndevice = torch.device(\"\
+  cuda\" if torch.cuda.is_available() else \"cpu\")\nmodel.to(device)\n\n\n# ================================\n\
+  # Training Setup\n# ================================\nepochs = 50\nlr = 0.001\n\ncriterion = nn.MSELoss()\n\
+  optimizer = torch.optim.Adam(model.parameters(), lr=lr)\n\n\n# ================================\n# Training\
+  \ Loop\n# ================================\nfor epoch in range(epochs):\n    model.train()\n    total_loss\
+  \ = 0\n\n    for batch_X, batch_Y in dataloader:\n        batch_X = batch_X.to(device)\n        batch_Y\
+  \ = batch_Y.to(device)\n\n        predictions = model(batch_X)\n        loss = criterion(predictions,\
+  \ batch_Y)\n\n        optimizer.zero_grad()\n        loss.backward()\n        optimizer.step()\n\n \
+  \       total_loss += loss.item()\n\n    print(f\"Epoch [{epoch+1}/{epochs}] Loss: {total_loss:.6f}\"\
+  )\n\n\n# ================================\n# Evaluation\n# ================================\nmodel.eval()\n\
+  all_preds = []\nall_targets = []\n\nwith torch.no_grad():\n    for batch_X, batch_Y in dataloader:\n\
+  \        batch_X = batch_X.to(device)\n        batch_Y = batch_Y.to(device)\n\n        predictions =\
+  \ model(batch_X)\n\n        all_preds.extend(predictions.cpu().numpy())\n        all_targets.extend(batch_Y.cpu().numpy())\n\
+  \nall_preds = np.array(all_preds)\nall_targets = np.array(all_targets)\n\nn_cols = scaler.n_features_in_\n\
+  col_index = 0\n\n\ndef inverse_col(values, scaler, col_index, n_cols):\n    dummy = np.zeros((len(values),\
+  \ n_cols))\n    dummy[:, col_index] = values\n    return scaler.inverse_transform(dummy)[:, col_index]\n\
+  \n\npreds_original = inverse_col(all_preds, scaler, col_index, n_cols)\ntargets_original = inverse_col(all_targets,\
+  \ scaler, col_index, n_cols)\n\nmse = mean_squared_error(targets_original, preds_original)\nrmse = np.sqrt(mse)\n\
+  mae = mean_absolute_error(targets_original, preds_original)\nr2 = r2_score(targets_original, preds_original)\n\
+  \nprint(\"\\nMODEL PERFORMANCE\")\nprint(f\"MSE  : {mse:.6f}\")\nprint(f\"RMSE : {rmse:.6f}\")\nprint(f\"\
+  MAE  : {mae:.6f}\")\nprint(f\"R2   : {r2:.6f}\")\n"

@@ -1,0 +1,70 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: yaseen-moh/dvh-analysis-toolkit
+url: https://github.com/yaseen-moh/dvh-analysis-toolkit
+platform: github
+description: 'A statistical toolkit for comparing radiotherapy planning techniques across patients via
+  dose-volume-histogram (DVH) metrics: Friedman tests, patient-vs-technique variance decomposition, and
+  Bonferroni/ Benjamini-Hochberg-corrected pairwise comparisons. Ships with a synthetic data generator
+  so the full pipeline runs with zero real patient data.'
+license: MIT
+language: Python
+keywords: []
+stars: 2
+updated_at: '2026-07-27T16:03:55Z'
+image_source: https://raw.githubusercontent.com/yaseen-moh/dvh-analysis-toolkit/HEAD/dvh_comparison.png
+heuristic_total_score: 24
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 5 support term(s).
+readme_excerpt: "# DVH Analysis Toolkit\n\n**[Try the live demo →](./demo/index.html)** (pick any organ/metric,\
+  \ toggle which techniques to include, and see a live in-browser Friedman test, mean-rank chart, and\
+  \ raw data table — or upload your own tidy CSV to analyze real data, entirely client-side. No install\
+  \ needed.)\n\n![DVH comparison](dvh_comparison.png)\n\nA general-purpose statistical toolkit for comparing\
+  \ radiotherapy planning\ntechniques across patients using dose-volume-histogram (DVH) metrics.\nBuilt\
+  \ out of a real workflow comparing multiple planning techniques for\norgan-at-risk sparing (e.g. lenses,\
+  \ lacrimal glands, parotids) in\nvolumetric arc therapy / hippocampal-avoidance whole-brain radiation\n\
+  planning.\n\n**No real patient data is included or required.** This repo ships a\nsynthetic data generator\
+  \ (`generate_synthetic_data.py`) that produces a\ndataset with the same shape and structure as a real\
+  \ multi-technique DVH\ncomparison study, so the whole pipeline is runnable and demonstrable\nwithout\
+  \ any PHI or clinical data ever touching this repo.\n\n## Why this statistical approach\n\n- **Friedman\
+  \ test** (not repeated-measures ANOVA) as the primary test: DVH\n  metrics across techniques are a repeated-measures\
+  \ design (the same\n  patient is planned under every technique), but dose metrics are often\n  not normally\
+  \ distributed, so a non-parametric, rank-based test blocked\n  by patient is the more defensible choice.\n\
+  - **Post-hoc pairwise Wilcoxon signed-rank tests** when the Friedman test\n  is significant, to identify\
+  \ *which* technique pairs actually differ.\n- **Multiple comparison correction** (both Bonferroni and\n\
+  \  Benjamini-Hochberg are implemented) applied across every pairwise test\n  run for a given organ,\
+  \ since testing all `C(k,2)` technique pairs\n  without correction inflates the false-positive rate.\
+  \ Bonferroni\n  controls family-wise error (conservative); BH controls the false\n  discovery rate (usually\
+  \ more powered when many tests are run) --\n  both are provided so you can see how the conclusion changes\
+  \ depending\n  on which error-control philosophy you use.\n- **Variance decomposition** (two-way ANOVA-style,\
+  \ patient effect vs.\n  technique effect) to answer a different question than significance\n  testing\
+  \ alone: *how much* of the spread in dose comes from\n  patient-to-patient anatomical variation vs.\
+  \ the planning technique\n  itself. A technique can be statistically significant while still\n  explaining\
+  \ a small fraction of total variance.\n\n## Usage\n\n```bash\npip install -r requirements.txt\n\n# Generate\
+  \ a synthetic dataset shaped like a real study\npython generate_synthetic_data.py\n\n# Run the full\
+  \ statistical pipeline (Friedman -> variance decomposition -> post-hoc)\npython dvh_toolkit.py\n\n#\
+  \ Generate boxplot + per-patient \"spaghetti plot\" comparison figures\npython plot_dvh.py\n\npython\
+  \ -m pytest tests/ -v\n```\n\n### Sample output\n\n```\n=== Friedman test across techniques, by organ\
+  \ (Dmean_Gy) ===\n     Organ   Metric  friedman_stat  p_value  n_patients\n L_Parotid Dmean_Gy     \
+  \     10.80 0.028906          10\n     R_Eye Dmean_Gy          20.56 0.000387          10\n...\n\n===\
+  \ Variance decomposition for L_Parotid (Dmean_Gy) ===\n   Source        SS  df       MS        F  p_value\
+  \  pct_variance_explained\n  Patient 42.43   9  4.71  4.05  0.0012                   39.7\nTechnique\
+  \ 22.48   4  5.62  4.83  0.0032                   21.0\n Residual 41.90  36  1.16   NaN     NaN    \
+  \                39.2\n```\n\nNote how the Friedman test can be significant for an organ, and the\n\
+  variance decomposition shows technique still explains a real share of\nvariance -- but the pairwise\
+  \ post-hoc comparisons (with correction\napplied) may not survive for any single pair. That's a genuine\
+  \ and useful\nfinding, not a bug: it means techniques differ *as a group* without any\none pair being\
+  \ clearly and individually better after accounting for\nmultiple testing, in a dataset this size.\n\n\
+  ## Using this on your own data\n\nReplace `synthetic_dvh_data.csv` with a real tidy long-format CSV\
+  \ with\ncolumns `PatientID, Organ, Technique, <metric columns...>` and every\nfunction in `dvh_toolkit.py`\
+  \ will work unchanged -- `to_4d_array()`\nhandles the reshape into the patients x organs x techniques\
+  \ structure\nautomatically from any correctly-shaped long dataframe.\n\n## Extending this\n\n- Add `V_x`\
+  \ (volume receiving at least x Gy) style metrics beyond the\n  three included (`Dmean`, `Dmax`, `V20`).\n\
+  - Add a mixed-effects model option (patient as random effect) as an\n  alternative to the ANOVA-style\
+  \ decomposition here, for when you want to\n  properly account for unbalanced designs (missing organ\
+  \ contours, etc.)\n- QUANTEC-style organ-specific dose constraint checking as an automated\n  pass/fail\
+  \ layer on top of the raw metrics.\n"

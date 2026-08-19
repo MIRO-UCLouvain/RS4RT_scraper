@@ -1,0 +1,90 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: lalithasrihitha/voxel_based_radiomics_heatmaps
+url: https://github.com/lalithasrihitha/voxel_based_radiomics_heatmaps
+platform: github
+description: Python pipeline for voxel-based radiomics feature extraction and heatmap visualization from
+  prostate T2-weighted MRI using PyRadiomics, producing interpretable three-panel figures.
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-03-13T01:08:01Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Radiomic Heatmap Visualization for Prostate MRI\n\nThis repository contains a Python\
+  \ workflow for generating **voxel-based radiomic heatmaps** from **prostate T2-weighted MRI** and corresponding\
+  \ **gland segmentation masks** using **PyRadiomics**.\n\nFor each case and each selected voxel-based\
+  \ feature map, the script saves a **three-panel PNG**:\n\n1. **Anatomical Image (T2W) with ROI contour**\n\
+  2. **Heatmap Only** (zoomed around the ROI)\n3. **Overlay (ROI Only)** showing the heatmap inside the\
+  \ gland region on the anatomical image\n\nThis project is intended for **radiomics interpretation, visualization,\
+  \ and exploratory medical imaging analysis**.\n\n---\n\n# Project Purpose\n\nRadiomics extracts quantitative\
+  \ information from medical images, such as:\n\n- intensity-based characteristics  \n- texture patterns\
+  \  \n- spatial heterogeneity  \n\nWhile scalar radiomics features provide one value per lesion or region,\
+  \ **voxel-based radiomics** produces a full feature map across the image volume. These maps help visualize\
+  \ **where** specific texture or intensity patterns are located inside the gland.\n\nThis repository\
+  \ focuses on making those voxel-wise radiomic features easier to inspect visually.\n\n---\n\n# What\
+  \ This Script Does\n\nThe script:\n\n- loads **T2-weighted MRI volumes** (`*_t2w.nii.gz`)\n- loads matching\
+  \ **gland segmentation masks** (`*_gland.nii.gz`)\n- resamples and cleans masks\n- extracts **voxel-based\
+  \ radiomic feature maps** using PyRadiomics\n- identifies the slice with the largest gland area\n- creates\
+  \ three-panel visualizations for each feature\n- saves output PNGs in patient-specific folders\n\n---\n\
+  \n# Visualization Panels\nRadiomic heatmaps visualize how radiomic features vary across the tissue region.\
+  \ Instead of a single numeric value, heatmaps reveal the **spatial distribution of intensity and texture\
+  \ patterns**, helping researchers understand tissue heterogeneity and interpret radiomics features within\
+  \ the anatomical context.\nEach generated image contains the following panels:\n\n### Panel 1 — Anatomical\
+  \ Image (T2W) with ROI\n- displays the selected T2-weighted slice\n- shows the gland segmentation contour\n\
+  - helps visually locate the region being analyzed\n\n### Panel 2 — Heatmap Only\n- displays the radiomic\
+  \ feature map\n- zooms around the ROI region\n- highlights spatial variation of the feature\n\n### Panel\
+  \ 3 — Overlay (ROI Only)\n- shows the full anatomical T2 image\n- overlays the radiomic heatmap only\
+  \ inside the ROI\n- provides anatomical context for the radiomic feature\n\n---\n\n# Expected Folder\
+  \ Structure\n\nPlace your files like this:\n\n```\nproject_root/\n│\n├── t2w_files/\n│   ├── 10001_t2w.nii.gz\n\
+  │   ├── 10002_t2w.nii.gz\n│   └── ...\n│\n├── gland_files/\n│   ├── 10001_gland.nii.gz\n│   ├── 10002_gland.nii.gz\n\
+  │   └── ...\n│\n├── radiomic_heatmap_batch.py\n├── requirements.txt\n└── README.md\n```\n\n---\n\n#\
+  \ Input File Naming Convention\n\nThe script expects image and mask pairs with the following naming\
+  \ format:\n\nT2 image  \n```\nCASEID_t2w.nii.gz\n```\n\nMask  \n```\nCASEID_gland.nii.gz\n```\n\nExample:\n\
+  \n```\n10001_t2w.nii.gz\n10001_gland.nii.gz\n```\n\nThe script automatically matches files using the\
+  \ shared **case ID**.\n\n---\n\n# Output Structure\n\nThe script creates an output folder:\n\n```\n\
+  radiomic_heatmaps_clean_all/\n```\n\nInside it, each case will have its own folder:\n\n```\nradiomic_heatmaps_clean_all/\n\
+  │\n├── 10001/\n│   ├── original_firstorder_Mean_3panel.png\n│   ├── original_firstorder_Entropy_3panel.png\n\
+  │   └── ...\n│\n├── 10002/\n│   ├── original_firstorder_Mean_3panel.png\n│   └── ...\n```\n\nEach image\
+  \ corresponds to one **voxel-based radiomic feature map**.\n\n---\n\n# Installation\n\nClone the repository:\n\
+  \n```\ngit clone https://github.com/your-username/prostate-radiomic-heatmaps.git\ncd prostate-radiomic-heatmaps\n\
+  ```\n\n(Optional) create a virtual environment:\n\n```\npython -m venv .venv\nsource .venv/bin/activate\n\
+  ```\n\nInstall dependencies:\n\n```\npip install -r requirements.txt\n```\n\n---\n\n# Requirements\n\
+  \nThis repository requires the following Python packages:\n\n- Python 3.10+\n- numpy\n- matplotlib\n\
+  - SimpleITK\n- scipy\n- six\n- pyradiomics\n\nInstall them using:\n\n```\npip install -r requirements.txt\n\
+  ```\n\n---\n\n# How to Run\n\nRun the script from the project root:\n\n```\npython radiomic_heatmap_batch.py\n\
+  ```\n\nThe script will automatically:\n\n1. scan the **t2w_files/** folder  \n2. match masks in **gland_files/**\
+  \  \n3. extract voxel-based radiomic feature maps  \n4. generate three-panel heatmap visualizations\
+  \  \n5. save them to **radiomic_heatmaps_clean_all/**\n\n---\n\n# Main Configuration Options\n\nThese\
+  \ parameters can be adjusted in the script.\n\n## Generate all radiomic features\n\n```\nGENERATE_ALL_FEATURES\
+  \ = True\n```\n\nIf set to **False**, only selected features will be visualized.\n\n---\n\n## Feature\
+  \ subset\n\n```\nFEATURES_TO_VISUALIZE = [\n    \"original_firstorder_Mean\",\n    \"original_firstorder_Entropy\"\
+  ,\n    \"original_firstorder_Kurtosis\",\n    \"original_glcm_Contrast\",\n    \"original_glcm_Correlation\"\
+  ,\n    \"original_glcm_JointEnergy\",\n    \"original_glrlm_RunEntropy\"\n]\n```\n\n---\n\n## Heatmap\
+  \ zoom level\n\n```\nPANEL2_PAD = 25\n```\n\nSmaller values produce **tighter zoom** around the ROI.\n\
+  \n---\n\n## Overlay transparency\n\n```\nALPHA = 0.65\n```\n\nControls transparency of the heatmap overlay\
+  \ in Panel 3.\n\n---\n\n# Method Details\n\n## Mask Preprocessing\n\nThe segmentation mask undergoes:\n\
+  \n1. resampling to the T2 image grid\n2. thresholding to produce a binary mask\n3. largest connected\
+  \ component selection\n\nThis removes noise and small disconnected regions.\n\n---\n\n## Slice Selection\n\
+  \nThe slice containing the **largest ROI area** is selected as the representative visualization slice.\n\
+  \n---\n\n## Radiomics Extraction\n\nVoxel-based radiomics extraction is performed with **PyRadiomics**.\n\
+  \nKey parameters:\n\n```\nbinWidth = 25\nnormalize = False\nresampledPixelSpacing = None\ninterpolator\
+  \ = sitkBSpline\nenableCExtensions = False\n```\n\nFeature classes enabled:\n\n- First Order\n- GLCM\n\
+  - GLRLM\n- GLSZM\n- GLDM\n\n---\n\n## Numerical Stability\n\nThe radiomic feature **GLCM:MCC** is disabled\
+  \ because it can sometimes produce **NaN or infinite eigenvalues**, which can cause extraction failures.\n\
+  \n---\n\n## Progress Reporter Patch\n\nSome PyRadiomics development builds contain a progress reporter\
+  \ bug when running `voxelBased=True`.\n\nA small patch is included in this script to bypass that issue\
+  \ and ensure stable execution.\n\n---\n\n# Why Relative Paths Are Used\n\nThis repository uses:\n\n\
+  ```\nBASE_DIR = Path(\".\")\n```\n\ninstead of Google Drive paths or Colab mounting.\n\nThis makes the\
+  \ project:\n\n- portable\n- easier to run locally\n- cleaner for GitHub\n- reproducible across systems\n\
+  \nSimply place the `t2w_files/` and `gland_files/` folders in the repository root.\n\n---\n\n# Example\
+  \ Applications\n\nThis repository can be used for:\n\n- radiomics visualization\n- prostate MRI feature\
+  \ analysis\n- imaging biomarker exploration\n- explainable radiomics research\n- scientific presentations\
+  \ and publications\n"

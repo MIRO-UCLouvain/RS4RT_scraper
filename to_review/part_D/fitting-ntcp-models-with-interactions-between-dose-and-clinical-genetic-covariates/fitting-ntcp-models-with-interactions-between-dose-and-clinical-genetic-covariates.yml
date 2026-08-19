@@ -1,0 +1,76 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: gianluvilla/Fitting-NTCP-models-with-interactions-between-dose-and-clinical-genetic-covariates
+url: https://github.com/gianluvilla/Fitting-NTCP-models-with-interactions-between-dose-and-clinical-genetic-covariates
+platform: github
+description: 'Code used to implement the analyses described in “Cellular versus genetic radiosensitivity:
+  distinct predictive roles across dose ranges,” including NTCP model fitting with dose–clinical and dose–genetic
+  interactions, SNP and PRS evaluation, bootstrap analysis, and model performance assessment.'
+license: MIT
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-07-15T11:28:08Z'
+image_source: null
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "## Overview\r\n\r\nThis repository contains the code used to implement the methodology\
+  \ presented in the paper **“Cellular versus genetic radiosensitivity: distinct predictive roles across\
+  \ dose ranges. Analysis of late post-radiotherapy overreaction in prostate cancer patients”**.\r\n\r\
+  \nIt includes the functions required to fit and evaluate the proposed NTCP model and rank SNPs according\
+  \ to their relevance to the outcome. The model incorporates dose, genetic risk, radiosensitivity, and\
+  \ their interactions.\r\n\r\nThe methodology is illustrated using synthetic datasets containing 100\
+  \ and 1000 patients. The repository also includes the code used to generate these datasets and their\
+  \ corresponding outcome variables.\r\n\r\n## Repository structure\r\n\r\n```text\r\nNTCP_with_interactions/\r\
+  \n│\r\n├── data/\r\n│   ├── synth_data_100pts.xlsx                     # Synthetic data used in the\
+  \ 100-patient examples\r\n│   └── synth_data_1000pts.xlsx                    # Synthetic data used in\
+  \ the 1000-patient examples\r\n│\r\n├── notebooks/\r\n│   ├── ntcp_model_fitting/\r\n│   │   ├── ntcp_model_on_synthetic_data_100pts.ipynb\
+  \   # Fit and evaluate the NTCP model on 100 patients\r\n│   │   └── ntcp_model_on_synthetic_data_1000pts.ipynb\
+  \  # Fit and evaluate the NTCP model on 1000 patients\r\n│   │\r\n│   ├── SNPs_ranking/\r\n│   │   ├──\
+  \ SNPs_ranking_100pts.ipynb              # Apply the SNP-ranking procedure to the smaller dataset\r\n\
+  │   │   ├── SNPs_ranking_1000pts.ipynb             # Apply the SNP-ranking procedure to the larger dataset\r\
+  \n│   │   └── SNPs_ranking_explicit_example.ipynb    # Test the ranking with predefined SNP–outcome\
+  \ associations\r\n│   │\r\n│   └── synthetic_data_generation/\r\n│       ├── synth_data_generation_100pts.ipynb\
+  \      # Generate the synthetic variables and outcomes for 100 patients\r\n│       └── synth_data_generation_1000pts.ipynb\
+  \     # Generate the synthetic variables and outcomes for 1000 patients\r\n│\r\n├── src/\r\n│   ├──\
+  \ ntcp_fit/\r\n│   │   ├── __init__.py\r\n│   │   ├── bootstrap.py\r\n│   │   ├── config.py\r\n│   │\
+  \   ├── goodness_of_fit.py\r\n│   │   ├── optimization.py\r\n│   │   └── utilities.py\r\n│   │\r\n│\
+  \   ├── SNPs_selection/\r\n│   │   ├── __init__.py\r\n│   │   └── snps_selection.py\r\n│   │\r\n│  \
+  \ └── synth_data/\r\n│       ├── __init__.py\r\n│       └── outcome_generation.py\r\n│\r\n├── LICENSE\r\
+  \n└── README.md\r\n```\r\n\r\n\r\n- `src/ntcp_fit/`: package containing the functions required to configure,\
+  \ fit, and evaluate the NTCP model. It includes parameter optimization, bootstrap analysis, goodness-of-fit\
+  \ tests, and supporting utilities.\r\n\r\n- `notebooks/ntcp_model_fitting/`: practical examples showing\
+  \ the complete model-fitting workflow on synthetic cohorts of 100 and 1000 patients. The notebooks include\
+  \ model configuration, parameter estimation, and performance evaluation.\r\n\r\n- `src/SNPs_selection/`:\
+  \ package containing the functions used to assess the relevance of the available SNPs and rank them\
+  \ according to their contribution to the model.\r\n\r\n- `notebooks/SNPs_ranking/SNPs_ranking_100pts.ipynb`:\
+  \ applies the SNP-ranking procedure to the synthetic dataset containing 100 patients.\r\n\r\n- `notebooks/SNPs_ranking/SNPs_ranking_1000pts.ipynb`:\
+  \ applies the same SNP-ranking procedure to the larger synthetic dataset containing 1000 patients.\r\
+  \n\r\n- `notebooks/SNPs_ranking/SNPs_ranking_explicit_example.ipynb`: illustrative example in which\
+  \ the outcome is generated to depend strongly on `SNP_1` and `SNP_2`, but not on `SNP_3` and `SNP_4`.\
+  \ The resulting ranking is expected to show a clear elbow-shaped separation between associated and non-associated\
+  \ SNPs.\r\n\r\n- `src/synth_data/`: package containing the functions used to generate synthetic outcomes\
+  \ based on dose, genetic risk, radiosensitivity, and their interactions.\r\n\r\n- `notebooks/synthetic_data_generation/`:\
+  \ notebooks describing how the synthetic patient characteristics and outcome variables are generated\
+  \ for cohorts of 100 and 1000 patients.\r\n\r\n- `data/synth_data_100pts.xlsx`: synthetic dataset generated\
+  \ for the examples based on a cohort of 100 patients.\r\n\r\n- `data/synth_data_1000pts.xlsx`: synthetic\
+  \ dataset generated for the examples based on a cohort of 1000 patients.\r\n\r\n\r\n## Dependencies\r\
+  \n\r\nThe project requires Python and the following external packages:\r\n\r\n- `numpy`: numerical operations\
+  \ and synthetic data generation.\r\n- `pandas`: dataset creation and manipulation.\r\n- `scipy`: parameter\
+  \ optimization and statistical calculations.\r\n- `matplotlib`: plots of results and generated data.\r\
+  \n- `statsmodels`: statistical tests and model diagnostics.\r\n- `scikit-learn`: data scaling and performance\
+  \ metrics.\r\n- `joblib`: parallel implementation.,\r\n- `openpyxl`: reading and writing Excel files.\r\
+  \n\r\n\r\n<!-- ## Citation\r\n\r\nWhen using this code, please cite the associated article:\r\n\r\n\
+  ```text\r\n<<COMPLETE_ARTICLE_CITATION>>\r\n```\r\n\r\nBibTeX:\r\n\r\n```bibtex\r\n@article{<<BIBTEX_KEY>>,\r\
+  \n    author  = {<<AUTHORS>>},\r\n    title   = {<<ARTICLE_TITLE>>},\r\n    journal = {<<JOURNAL>>},\r\
+  \n    year    = {<<YEAR>>},\r\n    volume  = {<<VOLUME>>},\r\n    number  = {<<ISSUE>>},\r\n    pages\
+  \   = {<<PAGES_OR_ARTICLE_NUMBER>>},\r\n    doi     = {<<ARTICLE_DOI>>}\r\n}\r\n``` -->\r\n\r\n## License\r\
+  \nThis project is licensed under the MIT [License](LICENSE).\r\n\r\n## Contact\r\n\r\nName: Gianluca\
+  \ Villa<br>\r\nInstitution: Fondazione IRCCS Istituto Nazionale dei Tumori (Milan, Italy)<br>\r\nE-mail:\
+  \ Gianluca.Villa@istitutotumori.mi.it\r\n"

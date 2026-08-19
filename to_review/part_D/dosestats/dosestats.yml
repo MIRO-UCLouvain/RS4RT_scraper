@@ -1,0 +1,69 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: esimiele/doseStats
+url: https://github.com/esimiele/doseStats
+platform: github
+description: an open-source ESAPI script to increase planning efficiency and safety in HDR GYN brachytherapy
+license: MIT
+language: C#
+keywords: []
+stars: 13
+updated_at: '2026-01-23T10:50:44Z'
+image_source: null
+heuristic_total_score: 23
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 6 support term(s).
+readme_excerpt: "1-9-2022\n\nLatest release: \ndoseStats_v0.8\n\nChanges from 5-20-2022\n-revised structure\
+  \ of dose stats folder\n-fixed an issue in secondary dose calculation where the wrong activity is used\
+  \ for calculation on treatment approved plans (the activity should be the activity on the day of treatment\
+  \ approval)\n\nChanges from previous release:\n-version was incremented to 0.7 from 0.5 as I didn't\
+  \ push v0.6 to this repo (minor changes from v0.5 and forgot to do it). The current version in my clinic\
+  \ is v0.7\n-number of fractions is now calculated from the primary reference point total dose / primary\
+  \ reference point session dose (instead of daily dose). This fixes an issue for BID treatments\nwhere\
+  \ the number of calculated fractions would be a factor of 2 less than the actual number of fractions\n\
+  -The results TextBox was changed to a TextBlock so I could include formatting to the results text. The\
+  \ Met? column in the text window is now highlighted green/red depending on if the constraint\nwas met.\
+  \ In addition the YES/NO text in the Met? column is bolded.\n-Add toggle option so user can quickly\
+  \ toggle back and forth and see the physical dose that needs to be delivered for this fraction and subsequent\
+  \ fractions to achieve the desired EQD2 constraint\n-Added manual dose adjustment window that the user\
+  \ can launch. A common part of reviewing/revising a plan in our clinic is seeing \"if we give this much\
+  \ dose, what's the EQD2? Ok, well what about this dose?\" \nThis becomes tedious in excel as you have\
+  \ to type in the number and copy the value for all subsequent fractions. This issue is addressed in\
+  \ the manual dose adjustment window where the user\ncan launch the window and it will report the doses\
+  \ delivered in the previous fractions, the dose in the current fraction, the EQD2, and if the constraint\
+  \ is met. The user can adjust the dose for the current\nfraction and the EQD2 will update on-the-fly\
+  \ so you can quickly determine what physical dose you should be shooting for in this fraction.\n-revised\
+  \ some of the underlying structure of the code and moved redundant functions to the helpers class\n\
+  -added option for user to specify physician Id (along with the name) in the config.ini file. The script\
+  \ can then match the primary oncologist Id with the Id list entered from the config.ini file\nand write\
+  \ the physician name, rather than physician Id to the excel spreadsheet\n\n------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\
+  The purpose of this script is to improve the efficiency and safety of planning for HDR GYN brachytherapy.\
+  \ The ABS and GEC-ESTRO recommends brachytherapy as an integral part of the\ntreatment process from\
+  \ GYN cancer patients. The treatment dose (external beam and brachy) should be evaluated in terms of\
+  \ EQD2 where the ABS recommends an EQD2 of 80-90 Gy be delivered to the\nHRCTV for cervical carcinoma.\
+  \ In the clinics I've worked in, the dose from external beam is assumed to be uniform and equal to the\
+  \ prescription dose whereas the EQD2 is explicitly evaluated for each fraction of brachytherapy.\nFurthermore,\
+  \ the achieved EQD2 for a given fraction is propagated forward for the remaining fractions to see if\
+  \ the ABS recommendations will be met with the given plan quality. If not, adjustments\nare made to\
+  \ the plan and the EQD2 values are updated (rinse and repeat). The EQD2 is typically calculated by entering\
+  \ the DVH doses for the relevant organs (HRCTV, rectum, bladder, etc.) into a spreadsheet.\nAs you can\
+  \ imagine, this becomes tedious when multiple adjustments are made to the plan. In addition, this limits\
+  \ the amount of data that can be collected for research purposes (based on the time it takes \nto enter\
+  \ the data for each requested metric).\n\nThis script addresses these issues by automatically retriving\
+  \ the achieved DVH doses for the current and previously treated fractions for user-defined metrics.\
+  \ The achieved doses for the current fraction \nare propagated forward and the EQD2 values are evaluated\
+  \ and compared against user-defined tolerances. This way, you can immediately see if you are meeting\
+  \ the EQD2 constraints without having to enter the \nDVH doses into a spreadsheet. Once an optimal plan\
+  \ is achieved, the doses can be written to a spreadsheet for recordkeeping. The retrived metrics can\
+  \ be adjusted in the main GUI.\nIn addition, the metrics and the tolerances can be adjusted in a configuration\
+  \ file that is read upon launch. \n\nA second dose calculation check is included with the program and\
+  \ uses the point source approximation. In general, the agreement between the planned and calculated\
+  \ doses are within ~2%. The results of this\ncalculation can also be written to a text file or an excel\
+  \ spreadsheet.\n\nPlease see the doseStats_guide.pdf file to learn more about the code and how to get\
+  \ it up and running. I'll work on writing a short run and install guide (similar to the one I wrote\
+  \ for the VMAT TBI code).\n\nIf you have questions, leave a comment and i'll try and respond as quickly\
+  \ as I can.\n"

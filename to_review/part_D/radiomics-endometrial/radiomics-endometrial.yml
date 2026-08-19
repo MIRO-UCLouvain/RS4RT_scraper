@@ -1,0 +1,137 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: brenoAT/radiomics-endometrial
+url: https://github.com/brenoAT/radiomics-endometrial
+platform: github
+description: Radiomics-based cancer image classification — SBCAS 2025
+license: MIT
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-08-15T14:56:23Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Classificação de Carcinoma Endometrioide de Ovário por Transformação de Cor e Radiomics\
+  \ em Imagens Histopatológicas\n\n![SBCAS 2025](https://img.shields.io/badge/SBCAS-2025-purple)\n![FAPEMA](https://img.shields.io/badge/Prêmio-FAPEMA_2025-gold)\n\
+  ![Python](https://img.shields.io/badge/Python-3.10+-blue)\n![License](https://img.shields.io/badge/License-MIT-green)\n\
+  ![OpenCV](https://img.shields.io/badge/OpenCV-4.8+-orange)\n\n---\n\n## \U0001F3C6 Prêmio FAPEMA 2025\n\
+  \nEste trabalho foi premiado pela **FAPEMA** — Fundação de Amparo à Pesquisa e ao\nDesenvolvimento Científico\
+  \ e Tecnológico do Maranhão.\n\n> [\U0001F4CE Certificado](docs/Premio_Fapema.pdf)\n\n---\n\n## \U0001F4C4\
+  \ Artigo Publicado\n\n> **Classificação de Carcinoma Endometrioide de Ovário por Transformação de\n\
+  > Cor e Radiomics em Imagens Histopatológicas**\n>\n> Breno A. Tamanini, Victor G. O. Sousa, Lissandro\
+  \ P. S. C. Rodrigues,\n> Danilo M. Oliveira, Calebe X. Dias, Luana B. da Cruz,\n> João O. B. Diniz,\
+  \ Luiz O. O. Souza Júnior\n>\n> *Simpósio Brasileiro de Computação Aplicada à Saúde (SBCAS), 2025*\n\
+  >\n> [\U0001F4CE PDF](docs/SBCAS2025_artigo.pdf) · [\U0001F517 https://sol.sbc.org.br/index.php/sbcas/article/view/35485]\n\
+  \n```bibtex\n@inproceedings{tamanini2025classificacao,\n  author    = {Tamanini, Breno A. and Sousa,\
+  \ Victor G. O. and Rodrigues,\n               Lissandro P. S. C. and Oliveira, Danilo M. and Dias, Calebe\
+  \ X.\n               and da Cruz, Luana B. and Diniz, Joao O. B. and\n               Souza Junior, Luiz\
+  \ O. O.},\n  title     = {Classificacao de Carcinoma Endometrioide de Ovario por\n               Transformacao\
+  \ de Cor e Radiomics em Imagens Histopatologicas},\n  booktitle = {Anais do Simpósio Brasileiro de Computação\
+  \ Aplicada à Saúde (SBCAS)},\n  year      = {2025},\n  address   = {Brasil}\n}\n```\n\n---\n\n## Visão\
+  \ Geral\n\nEste projeto investiga qual **espaço de cor** oferece a melhor representação de imagens\n\
+  histopatológicas para a classificação de **Carcinoma Endometrioide de Ovário** (CEO).\n\nO pipeline\
+  \ combina **extração de características radiômicas** (PyRadiomics) com\n**seleção incremental de features**\
+  \ (I-RFE) e avaliação por **validação cruzada\nK-Fold (n=5)**, cobrindo 8 espaços de cor e 5 classificadores\
+  \ distintos. O método\nproposto atinge **97,96% de acurácia** e **98,26% de F1-Score**, superando CNNs\n\
+  (VGG-16, ResNet-50 e InceptionV3) usadas na literatura.\n\n```\nImagem histopatológica\n        │\n\
+  \        ▼\nConversão de espaço de cor   ←── 8 esquemas (YCrCb, RGB, HSV, HLS, LUV, XYZ, LAB, GRAY)\n\
+  \        │\n        ▼\nExtração de features\n  ├── Textura: GLCM + Haralick + LBP   (Atividades 1–3)\n\
+  \  └── Radiômica: PyRadiomics           (Atividades 4–5)\n        │\n        ▼\nSeleção incremental\
+  \ de features (I-RFE) + K-Fold (n=5)\n        │\n        ▼\nClassificadores: RF · XGBoost · SVM · KNN\
+  \ · AdaBoost\n```\n\n---\n\n## Atividades\n\nO projeto é organizado em 5 atividades que evoluem a análise\
+  \ até o experimento final:\n\n| Atividade | Arquivo | Objetivo |\n|---|---|---|\n| **1** | `src/Atividade1_Sistema_Cores.py`\
+  \ | Converte as imagens para 8 espaços de cor (LAB, HSV, LUV, XYZ, HLS, escala de cinza, YCrCb, YUV)\
+  \ |\n| **2** | `src/Atividade2_Analise_Sistemas_Cores.py` | Extrai textura (GLCM/Haralick/LBP) por espaço\
+  \ de cor e treina Random Forest |\n| **3** | `src/Atividade3_Registro_de_Resultados.py` | Registra os\
+  \ resultados de textura em Excel (`results/resultados_sistemas_cores.xlsx`) |\n| **4** | `src/Atividade4_Radiomics.py`\
+  \ | Extrai features radiômicas (PyRadiomics) e avalia por K-Fold sem seleção |\n| **5** | `src/Atividade5_Selecao_Features.py`\
+  \ | Aplica seleção de features (RFE) com busca incremental (I-RFE) |\n\n> Além das 5 atividades, `src/`\
+  \ contém o pipeline refatorado\n> (`radiomics_pipeline.py`) e drivers de execução (`run_experiment.py`,\n\
+  > `run_article_experiments.py`), que unificam e automatizam a reprodução dos\n> experimentos do artigo\
+  \ de forma controlada e retomável.\n\n---\n\n## Resultados\n\nO código reproduz os experimentos radiômicos\
+  \ do artigo SBCAS2025. O Experimento 4\n(CNNs — VGG-16, ResNet-50, InceptionV3) depende de TensorFlow/Keras,\
+  \ não instalado\nneste ambiente, e fica fora do escopo do pipeline radiômico.\n\n### Experimento 1 —\
+  \ RGB + Radiomics + Todos os classificadores (SEM RFE)\n\n| Classificador | Acurácia | F1-Score | Kappa\
+  \ | AUC-ROC |\n|:---:|:---:|:---:|:---:|:---:|\n| SVM   | 0.6599 | 0.7303 | 0.3202 | 0.6608 |\n| KNN\
+  \   | 0.8324 | 0.8384 | 0.6652 | 0.8347 |\n| **RF**   | **0.9645** | **0.9655** | **0.9281** | **0.9626**\
+  \ |\n| XGB   | 0.9488 | 0.9501 | 0.8958 | 0.9455 |\n| ADA   | 0.9592 | 0.9603 | 0.9176 | 0.9571 |\n\n\
+  > Reproduz exatamente a Tabela 1 do artigo para SVM, KNN, XGB e ADA. O RF\n> reproduz o valor do artigo\
+  \ quando há seleção de features (I-RFE).\n\n### Experimento 2 — Todos os esquemas + Melhor classificador\
+  \ (SEM RFE)\n\n| Espaço de Cor | Classificador | Acurácia | F1-Score | Kappa | AUC-ROC |\n|:---:|:---:|:---:|:---:|:---:|:---:|\n\
+  | YCrCb | RF   | 0.9796 | 0.9812 | 0.9585 | 0.9777 |\n| GRAY  | ADA  | 0.9696 | 0.9712 | 0.9385 | 0.9679\
+  \ |\n| LUV   | RF   | 0.9694 | 0.9711 | 0.9373 | 0.9659 |\n| XYZ   | RF   | 0.9642 | 0.9657 | 0.9269\
+  \ | 0.9617 |\n| RGB   | RF   | 0.9645 | 0.9655 | 0.9281 | 0.9626 |\n| HLS   | RF   | 0.9596 | 0.9590\
+  \ | 0.9187 | 0.9593 |\n| LAB   | ADA  | 0.9492 | 0.9499 | 0.8981 | 0.9493 |\n| HSV   | ADA  | 0.9290\
+  \ | 0.9269 | 0.8572 | 0.9287 |\n\n### Experimento 3 — Todos os esquemas + I-RFE + Melhor classificador\n\
+  \n| Espaço de Cor | Classificador | Nº Features | Acurácia | F1-Score | Kappa | AUC-ROC |\n|:---:|:---:|:---:|:---:|:---:|:---:|:---:|\n\
+  | YCrCb | RF  | 166 | 0.9796 | 0.9812 | 0.9585 | 0.9777 |\n| GRAY  | ADA | 66  | 0.9696 | 0.9712 | 0.9385\
+  \ | 0.9679 |\n| XYZ   | RF  | 168 | 0.9694 | 0.9698 | 0.9377 | 0.9675 |\n| RGB   | RF  | 259 | 0.9645\
+  \ | 0.9655 | 0.9281 | 0.9626 |\n| LUV   | RF  | 249 | 0.9694 | 0.9711 | 0.9373 | 0.9659 |\n| HLS   |\
+  \ RF  | 259 | 0.9545 | 0.9536 | 0.9084 | 0.9540 |\n| LAB   | ADA | 259 | 0.9492 | 0.9499 | 0.8981 |\
+  \ 0.9493 |\n| HSV   | ADA | 259 | 0.9290 | 0.9269 | 0.8572 | 0.9287 |\n\n> **Resultado principal (reproduzido):**\
+  \ YCrCb com 166 features confirma o melhor\n> desempenho (ACC 0.9796, AUC 0.9777), batendo com os valores\
+  \ reportados no\n> artigo SBCAS2025 (ACC 0.9796, F1 0.9826, Kappa 0.9580, AUC 0.9771). RGB, YCrCb\n\
+  > e HSV (Exp. 3) e GRAY, XYZ e HSV (Exp. 2) reproduzem os valores do artigo de\n> forma exata; demais\
+  \ esquemas ficam a ~0.01 de diferença, atribuíveis ao dataset\n> disponível (197 imagens JPG vs 200\
+  \ PNG do artigo).\n>\n> > **Reprodutibilidade:** os resultados são reproduzidos fielmente quando os\n\
+  > > canais são passados ao pyradiomics como **uint8** (como no script original,\n> > via `cv2.split`)\
+  \ e o ROC-AUC é calculado com as **classes previstas**\n> > (`roc_auc_score(y_true, y_pred)`), não com\
+  \ probabilidades. Usar int16 ou\n> > `predict_proba` altera as features/métricas e diverge do artigo.\n\
+  >\n> Os resultados detalhados de cada espaço de cor (por fold e classificador) estão\n> nos arquivos\
+  \ `.xlsx` em `results/`.\n\n---\n\n## Estrutura do Projeto\n\n```\nradiomics-endometrial/\n├── src/\n\
+  │   ├── Atividade1_Sistema_Cores.py          # Atividade 1 — conversão de cores\n│   ├── Atividade2_Analise_Sistemas_Cores.py\
+  \ # Atividade 2 — textura por espaço\n│   ├── Atividade3_Registro_de_Resultados.py # Atividade 3 — registro\
+  \ em Excel\n│   ├── Atividade4_Radiomics.py              # Atividade 4 — radiômica + K-Fold\n│   ├──\
+  \ Atividade5_Selecao_Features.py       # Atividade 5 — RFE (I-RFE)\n│   ├── radiomics_pipeline.py  \
+  \              # Pipeline refatorado (extração, RFE, K-Fold)\n│   ├── run_experiment.py            \
+  \        # Executor de um experimento por vez (CLI)\n│   └── run_article_experiments.py           #\
+  \ Reproduz os Experimentos 1, 2 e 3 do artigo\n├── configs/\n│   ├── experiment_config.py          \
+  \       # Configuração dos experimentos do artigo\n│   └── requirements.txt\n├── notebooks/\n│   └──\
+  \ Pipeline_Completo.ipynb              # Notebook reproduzível do pipeline\n├── results/\n│   ├── metrics_Kfold_Feature_Selection_YCRCB166.xlsx\
+  \  ← melhor resultado\n│   ├── metrics_Kfold_Feature_Selection_RGB259.xlsx\n│   ├── metrics_Kfold_Feature_Selection_XYZ168.xlsx\n\
+  │   ├── metrics_Kfold_Feature_Selection_GRAY66.xlsx\n│   ├── metrics_Kfold_Feature_Selection_HLS259.xlsx\n\
+  │   ├── metrics_Kfold_Feature_Selection_HSV259.xlsx\n│   ├── metrics_Kfold_Feature_Selection_LUV249.xlsx\n\
+  │   ├── metrics_Kfold_Feature_Selection_LAB259.xlsx\n│   ├── metrics_Kfold_Sem_RFE_*              #\
+  \ Experimentos 1 e 2 (sem RFE)\n│   ├── resultados_sistemas_cores.xlsx       # Resultado de textura\
+  \ (Atividades 2–3)\n│   └── *.png                                # Gráficos comparativos\n├── Dataset/\
+  \                                 # Imagens (baixar do Kaggle — ignorado pelo git)\n│   ├── Endometri/\
+  \                           # CEO (label = 1)\n│   └── Non_Cancerous/                       # Não-canceroso\
+  \ (label = 0)\n├── docs/\n│   ├── SBCAS2025_artigo.pdf                 # Artigo publicado\n│   └── Premio_Fapema.pdf\
+  \                    # Certificado FAPEMA\n├── data/\n│   └── README_data.md                       #\
+  \ Instruções para download do dataset\n├── .gitignore\n└── README.md\n```\n\n---\n\n## Dataset\n\nImagens\
+  \ histopatológicas de Carcinoma Endometrioide de Ovário, organizadas em duas classes:\n\n```\nDataset/Endometri/\
+  \      →  imagens com carcinoma endometrioide (CEO) (label = 1)\nDataset/Non_Cancerous/  →  imagens\
+  \ de tecido não-canceroso (label = 0)\n```\n\n> **Nota:** o artigo reporta 100 imagens por classe em\
+  \ PNG; a versão disponível\n> contém 98 (Endometri) e 99 (Non_Cancerous) em JPG. As métricas reproduzidas\n\
+  > refletem esse conjunto de 197 imagens.\n\nConsulte [`data/README_data.md`](data/README_data.md) para\
+  \ instruções de download e\nconfiguração do dataset.\n\n---\n\n## Instalação\n\n```bash\ngit clone https://github.com/seuusuario/radiomics-endometrial.git\
+  \   # ← preencha o repositório\ncd radiomics-endometrial\n\npython -m venv .venv\nsource .venv/bin/activate\n\
+  \npip install -r configs/requirements.txt\n```\n\nApós instalar, baixe o dataset do Kaggle e coloque\
+  \ as imagens em `Dataset/`\n(veja [`data/README_data.md`](data/README_data.md)).\n\n---\n\n## Reproduzindo\
+  \ os Experimentos\n\nExecute um experimento por vez a partir da linha de comando:\n\n```bash\n# Melhor\
+  \ resultado — YCrCb, Random Forest, 166 features (I-RFE, Exp. 3)\npython -m src.run_experiment --color\
+  \ YCRCB --model rf --n-features 166\n\n# RGB, Random Forest, 259 features (I-RFE, Exp. 3)\npython -m\
+  \ src.run_experiment --color RGB --model rf --n-features 259\n\n# Experimento 1 — RGB com todos os classificadores,\
+  \ SEM RFE\npython -m src.run_experiment --color RGB --model rf --n-features 0\npython -m src.run_experiment\
+  \ --color RGB --model svm --n-features 0\n```\n\n> Use `--n-features 0` (ou `None`) para executar **sem**\
+  \ seleção de features\n> (Experimentos 1 e 2 do artigo, que usam todas as 279 features).\n\nPara reproduzir\
+  \ **todos** os Experimentos 1, 2 e 3 do artigo de uma vez:\n\n```bash\npython -m src.run_article_experiments\
+  \            # roda 1, 2 e 3\npython -m src.run_article_experiments --experiments 1  # só o Experimento\
+  \ 1\n```\n\nAs features são extraídas uma única vez por espaço de cor e ficam em cache\n(`features_cache/`,\
+  \ ignorado pelo git). Use `--force-extract` para reextrair e\n`--force-result` para recalcular um resultado\
+  \ existente.\n\nOu execute tudo de forma interativa pelo notebook:\n\n```bash\njupyter notebook notebooks/Pipeline_Completo.ipynb\n\
+  ```\n\n---\n\n## Tecnologias\n\n| Biblioteca | Papel no projeto |\n|---|---|\n| OpenCV | Conversão entre\
+  \ espaços de cor |\n| PyRadiomics + SimpleITK | Extração de características radiômicas |\n| scikit-image\
+  \ + mahotas | GLCM, Haralick, LBP |\n| scikit-learn | Classificação, RFE, K-Fold |\n| XGBoost | Classificador\
+  \ Gradient Boosting |\n| Pandas / NumPy | Manipulação e análise de dados |\n\n---\n\n## Autores\n\n\
+  **Fábrica de Inovação — Instituto Federal do Maranhão (IFMA)**\nCEP 65940-000 — Grajaú — MA\n\n- Breno\
+  \ A. Tamanini\n- Victor G. O. Sousa\n- Lissandro P. S. C. Rodrigues\n- Danilo M. Oliveira\n- Calebe\
+  \ X. Dias\n- João O. B. Diniz\n- Luiz O. O. Souza Júnior\n\n**Laboratório de Inteligência Computacional\
+  \ Aplicada (LICA) — Universidade Federal do Cariri (UFCA)**\nCEP 63.048-080 — Juazeiro do Norte — CE\n\
+  \n- Luana B. da "

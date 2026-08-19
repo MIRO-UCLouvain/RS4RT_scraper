@@ -1,0 +1,147 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hash123shaikh/hnc-radiomics
+url: https://github.com/hash123shaikh/hnc-radiomics
+platform: github
+description: IBSI-compliant radiomics feature extraction pipeline for head and neck cancer CT imaging.
+  Automated quantitative biomarker analysis from DICOM RT structure sets. Extracts 100+ shape, first-order,
+  and texture features for tumor characterization and outcome prediction. Built with PyRadiomics, SimpleITK,
+  and rt-utils.
+license: null
+language: Jupyter Notebook
+keywords:
+- dicom-images
+- head-neck-cancer
+- pyradiomics
+- quantitative-image-analysis
+- radiomics-feature-extraction
+stars: 0
+updated_at: '2025-11-10T10:08:46Z'
+image_source: null
+heuristic_total_score: 27
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 8 support term(s).
+readme_excerpt: "# HNC Radiomics: Quantitative Imaging Analysis Pipeline\n\n[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)\n\
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)\n\
+  [![PyRadiomics](https://img.shields.io/badge/PyRadiomics-IBSI%20Compliant-green.svg)](https://pyradiomics.readthedocs.io/)\n\
+  \n## Overview\n\nThis repository implements a comprehensive radiomics feature extraction pipeline for\
+  \ **Head and Neck Cancer (HNC)** CT imaging analysis. The pipeline extracts quantitative imaging biomarkers\
+  \ following Image Biomarker Standardization Initiative (IBSI) guidelines, enabling objective tumor characterization\
+  \ and outcome prediction from medical imaging data.\n\n### Key Features\n\n- \U0001F50D **Automated\
+  \ RT Structure Detection**: Intelligent search and validation of tumor contours across DICOM RT structure\
+  \ sets\n- \U0001F4CA **IBSI-Compliant Feature Extraction**: 100+ standardized radiomics features (shape,\
+  \ first-order, texture)\n- \U0001F3AF **Batch Processing**: Efficient pipeline for large-scale cohort\
+  \ analysis\n- \U0001F4C8 **Quality Control**: Built-in data validation and error handling\n- \U0001F52C\
+  \ **Research-Ready**: Output format compatible with machine learning frameworks\n\n### Clinical Applications\n\
+  \n- Tumor characterization and staging\n- Treatment response prediction\n- Survival analysis and prognostic\
+  \ modeling\n- Radiogenomics studies\n- Clinical decision support systems\n\n---\n\n## Table of Contents\n\
+  \n- [Installation](#installation)\n- [Quick Start](#quick-start)\n- [Pipeline Components](#pipeline-components)\n\
+  - [Dataset Requirements](#dataset-requirements)\n- [Usage Guide](#usage-guide)\n- [Output Description](#output-description)\n\
+  - [Configuration](#configuration)\n- [Troubleshooting](#troubleshooting)\n- [Citation](#citation)\n\
+  - [Contributing](#contributing)\n- [License](#license)\n\n---\n\n## Installation\n\n### Prerequisites\n\
+  \n- Python 3.8 or higher\n- Conda or pip package manager\n- Minimum 8GB RAM\n- DICOM dataset with CT\
+  \ scans and RT structure sets\n\n### Environment Setup\n\n#### Option 1: Conda Environment (Recommended)\n\
+  \n```bash\n# Create dedicated environment\nconda create -n pyradiomics python=3.8\nconda activate pyradiomics\n\
+  \n# Install dependencies\npip install pyradiomics\npip install rt-utils\npip install SimpleITK\npip\
+  \ install pydicom\npip install pandas\npip install numpy\npip install jupyter\n```\n\n#### Option 2:\
+  \ pip Installation\n\n```bash\n# Create virtual environment\npython -m venv radiomics_env\nsource radiomics_env/bin/activate\
+  \  # On Windows: radiomics_env\\Scripts\\activate\n\n# Install dependencies\npip install -r requirements.txt\n\
+  ```\n\n### Verify Installation\n\n```python\nimport radiomics\nimport SimpleITK as sitk\nimport rt_utils\n\
+  \nprint(f\"PyRadiomics version: {radiomics.__version__}\")\nprint(f\"SimpleITK version: {sitk.Version.VersionString()}\"\
+  )\nprint(\"Installation successful!\")\n```\n\n---\n\n## Quick Start\n\n### 1. Prepare Your Dataset\n\
+  \nOrganize your DICOM data following this structure:\n\n```\nmaastro dataset/\n├── Images/\n│   ├──\
+  \ PATIENT-001/\n│   │   ├── CT/              # CT DICOM series\n│   │   └── RTSTRUCT/        # RT structure\
+  \ set\n│   ├── PATIENT-002/\n│   └── ...\n```\n\n### 2. Check Structure Names\n\nBefore feature extraction,\
+  \ identify the correct structure nomenclature in your dataset:\n\n```bash\njupyter notebook check_RTstructure_name.ipynb\n\
+  ```\n\nThis notebook will:\n- Scan all patient RT structure files\n- List available structure names\
+  \ (GTV, CTV, PTV, etc.)\n- Generate frequency statistics\n- Provide code recommendations for your specific\
+  \ dataset\n\n**Example Output:**\n```\nStructure Names Found:\n  'GTV-1': 180 patients (90.0%)\n  'CTV':\
+  \ 175 patients (87.5%)\n  'PTV': 200 patients (100.0%)\n```\n\n### 3. Extract Radiomics Features\n\n\
+  Run the main extraction pipeline:\n\n```bash\njupyter notebook extract_radiomics_features.ipynb\n```\n\
+  \nConfigure the target structure and processing mode:\n\n```python\nTARGET_ROI = \"GTV-1\"         \
+  \  # Update based on check_RTstructure output\nFEATURE_MODE = \"original\"      # Options: \"original\"\
+  , \"wavelet\", \"log\", \"all\"\nOUTPUT_CSV = \"radiomics_features.csv\"\n```\n\n### 4. Analyze Results\n\
+  \nThe pipeline generates a CSV file with extracted features:\n\n```python\nimport pandas as pd\n\n#\
+  \ Load results\ndf = pd.read_csv(\"radiomics_features.csv\")\n\nprint(f\"Patients analyzed: {len(df)}\"\
+  )\nprint(f\"Features extracted: {len(df.columns) - 2}\")\nprint(f\"\\nFeature categories:\")\nprint(\"\
+  \  - Shape features: ~14\")\nprint(\"  - First-order features: ~18\")\nprint(\"  - Texture features:\
+  \ ~75\")\n```\n\n---\n\n## Pipeline Components\n\n### 1. Structure Name Checker (`check_RTstructure_name.ipynb`)\n\
+  \n**Purpose**: Dataset reconnaissance and structure nomenclature discovery\n\n**Functionality:**\n-\
+  \ Scans all patient RT structure files\n- Extracts structure name lists\n- Generates frequency distributions\n\
+  - Identifies naming inconsistencies\n- Provides structure selection code recommendations\n\n**Output:**\n\
+  - Console report with structure statistics\n- Code snippets optimized for your dataset\n\n**When to\
+  \ Use:**\n- First time analyzing a new dataset\n- Dataset contains multiple structure variants\n- Uncertain\
+  \ about structure naming conventions\n\n### 2. Feature Extraction Pipeline (`extract_radiomics_features.ipynb`)\n\
+  \n**Purpose**: High-throughput radiomics feature extraction\n\n**Functionality:**\n\n#### Stage 1: CT\
+  \ Loading\n- Reads DICOM CT series using SimpleITK\n- Preserves spatial metadata (spacing, origin, direction)\n\
+  - Handles multi-slice volumes\n\n#### Stage 2: Structure Processing\n- Locates target ROI in RT structure\
+  \ sets\n- Converts vector contours to binary masks\n- Performs spatial registration with CT\n\n####\
+  \ Stage 3: Feature Extraction\nExtracts IBSI-compliant features:\n\n| Category | Features | Description\
+  \ |\n|----------|----------|-------------|\n| **Shape** | 14 | Geometric properties (volume, surface\
+  \ area, sphericity) |\n| **First-Order** | 18 | Intensity statistics (mean, median, skewness, kurtosis)\
+  \ |\n| **GLCM** | 24 | Gray Level Co-occurrence Matrix (texture) |\n| **GLRLM** | 16 | Gray Level Run\
+  \ Length Matrix (texture) |\n| **GLSZM** | 16 | Gray Level Size Zone Matrix (texture) |\n| **GLDM**\
+  \ | 14 | Gray Level Dependence Matrix (texture) |\n| **NGTDM** | 5 | Neighboring Gray Tone Difference\
+  \ Matrix (texture) |\n\n**Total Features:** ~107 (original mode)\n\n#### Stage 4: Quality Control\n\
+  - Data validation and error handling\n- Missing value detection\n- Success rate reporting\n\n**Output:**\n\
+  - CSV file with complete feature matrix\n- Processing logs and quality metrics\n\n---\n\n## Dataset\
+  \ Requirements\n\n### Directory Structure\n\nYour dataset must follow this standardized organization:\n\
+  \n```\nbase_folder/\n├── PATIENT-001/\n│   ├── CT/                    # Or \"CT SCAN\" (configurable)\n\
+  │   │   ├── slice001.dcm\n│   │   ├── slice002.dcm\n│   │   └── ...\n│   └── RTSTRUCT/\n│       └──\
+  \ RS.1.2.3.dcm\n├── PATIENT-002/\n└── ...\n```\n\n### DICOM Requirements\n\n**CT Series:**\n- Modality:\
+  \ CT\n- Consistent slice spacing\n- Complete series (no missing slices)\n- Hounsfield Unit calibration\n\
+  \n**RT Structure Sets:**\n- Modality: RTSTRUCT\n- Contains target tumor structures (GTV, CTV, etc.)\n\
+  - Spatially registered with CT series\n- Valid contour geometry\n\n### Supported Structure Names\n\n\
+  Common nomenclature patterns:\n- **Primary Tumor**: GTV, GTV-1, GTV-Primary, GTV_1\n- **Clinical Target**:\
+  \ CTV, CTV-High, CTV-Low\n- **Planning Target**: PTV, PTV-1, PTV54, PTV60\n- **Organs at Risk**: Lung_L,\
+  \ Lung_R, Heart, Esophagus, SpinalCord\n\n---\n\n## Usage Guide\n\n### Basic Usage\n\n```python\n# 1.\
+  \ Import libraries\nimport os\nfrom pathlib import Path\n\n# 2. Configure paths\nbase_folder = \"/path/to/maastro_dataset/Images\"\
+  \nos.chdir(base_folder)\n\n# 3. Set analysis parameters\nTARGET_ROI = \"GTV-1\"\nFEATURE_MODE = \"original\"\
+  \nOUTPUT_CSV = \"radiomics_features.csv\"\n\n# 4. Run batch processing\ndf = process_multiple_patients(\n\
+  \    base_folder=base_folder,\n    output_csv=OUTPUT_CSV,\n    target_roi=TARGET_ROI,\n    feature_mode=FEATURE_MODE\n\
+  )\n```\n\n### Advanced Configuration\n\n#### Feature Extraction Modes\n\n```python\n# Mode 1: Original\
+  \ (Fast, ~107 features)\nFEATURE_MODE = \"original\"\n# Execution time: ~5-10 min per 100 patients\n\
+  # Use case: Large cohorts, initial exploration\n\n# Mode 2: Wavelet (Comprehensive, ~856 features)\n\
+  FEATURE_MODE = \"wavelet\"\n# Execution time: ~40-60 min per 100 patients\n# Use case: Deep phenotyping,\
+  \ high-dimensional analysis\n\n# Mode 3: LoG Filtering (~428 features)\nFEATURE_MODE = \"log\"\n# Execution\
+  \ time: ~20-30 min per 100 patients\n# Use case: Multi-scale texture analysis\n\n# Mode 4: All Transformations\
+  \ (~2000+ features)\nFEATURE_MODE = \"all\"\n# Execution time: ~2-3 hours per 100 patients\n# Use case:\
+  \ Comprehensive feature discovery\n```\n\n#### Custom Structure Selection\n\nIf your dataset has multiple\
+  \ GTV variants:\n\n```python\n# Option 1: Accept any GTV\nfor s in structures:\n    if 'GTV' in s.upper():\n\
+  \        selected_structure = s\n        break\n\n# Option 2: Priority-based selection\ngtv_priority\
+  \ = ['GTV-1', 'GTV', 'GTV-Primary']\nfor preferred in gtv_priority:\n    if preferred in structures:\n\
+  \        selected_structure = preferred\n        break\n```\n\n### Single Patient Testing\n\nBefore\
+  \ batch processing, test on one patient:\n\n```python\ntest_patient = \"PATIENT-001\"\n\nfeatures =\
+  \ process_patient_folder(\n    test_patient,\n    target_roi=\"GTV-1\",\n    feature_mode=\"original\"\
+  \n)\n\n# Save test results\nimport pandas as pd\ndf_test = pd.DataFrame([features])\ndf_test.to_csv(\"\
+  test_output.csv\", index=False)\n\nprint(f\"Features extracted: {len(features) - 2}\")\n```\n\n---\n\
+  \n## Output Description\n\n### Feature Matrix Structure\n\nThe output CSV file contains:\n\n```\nPatientID\
+  \ | ROI_Name | original_shape_Volume | original_firstorder_Mean | ...\n----------|----------|----------------------|-------------------------|-----\n\
+  PATIENT-001 | GTV-1  | 15847.3             | -142.5                  | ...\nPATIENT-002 | GTV-1  | 22103.8\
+  \             | -156.2                  | ...\n```\n\n### Feature Naming Convention\n\nFeatures follow\
+  \ PyRadiomics nomenclature:\n\n```\n{imageType}_{featureClass}_{featureName}\n\nExamples:\n- original_shape_Volume\n\
+  - original_firstorder_Mean\n- original_glcm_Contrast\n- wavelet-LHL_glcm_Correlation  (if wavelet mode\
+  \ enabled)\n```\n\n### Feature Categories\n\n**Shape Features (14):**\n- `Volume`, `SurfaceArea`, `Sphericity`,\
+  \ `Compactness`\n- `MajorAxisLength`, `MinorAxisLength`, `LeastAxisLength`\n- `Elongation`, `Flatness`,\
+  \ `SphericalDisproportion`\n\n**First-Order Features (18):**\n- `Mean`, `Median`, `StandardDeviation`,\
+  \ `Variance`\n- `Skewness`, `Kurtosis`, `Energy`, `Entropy`\n- `Minimum`, `Maximum`, `Range`, `RootMeanSquared`\n\
+  \n**Texture Features (~75):**\n- GLCM: Contrast, Correlation, Energy, Homogeneity, etc.\n- GLRLM: Run\
+  \ length patterns and distributions\n- GLSZM: Size zone characteristics\n- GLDM: Dependence metrics\n\
+  - NGTDM: Gray tone differences\n\n---\n\n## Configuration\n\n### Modifying Dataset Structure\n\nIf your\
+  \ dataset uses different folder names:\n\n```python\n# In process_patient_folder() function\nct_folder\
+  \ = Path(patient_folder) / \"CT SCAN\"  # Change from \"CT\"\nrtstruct_folder = Path(patient_folder)\
+  \ / \"STRUCTURES\"  # Change from \"RTSTRUCT\"\n```\n\n### PyRadiomics Settings\n\nCustomize feature\
+  \ extraction parameters:\n\n```python\nfrom radiomics import featureextractor\n\nextractor = featureextractor.RadiomicsFeatureExtractor()\n\
+  \n# Modify settings\nextractor.settings['binWidth'] = 25  # Intensity bin width\nextractor.settings['resampledPixelSpacing']\
+  \ = [1, 1, 1]  # Resampling\nextractor.settings['interpolator'] = 'sitkBSpline'  # Interpolation method\n\
+  \n# Disable specific feature classes\nextractor.disableAllFeatures()\nextractor.enableFeatureClassByName('firstorder')\n\
+  extractor.enableFeatureClassByName('shape')\n```\n\n---\n\n## Troubleshooting\n\n### Common Issues\n\
+  \n#### 1. Structure Not Found Error\n\n```\nValueError: ROI 'GTV-1' not found in any RTSTRUCT file\n\
+  ```\n\n**Solution:**\n- Run `check_RTstructure_name.ipynb` to identify correct structure names\n- Update\
+  \ `TARGET_ROI` parameter to match your dataset\n- Check for case sensitivity (e.g., \"GTV-1\" vs \"\
+  gtv-1\")\n\n#### 2. Dimension Mismatch\n\n```\nValueError: Mask size (512, 512, 120) doesn't match CT\
+  \ size (512, 512, 118)\n``"

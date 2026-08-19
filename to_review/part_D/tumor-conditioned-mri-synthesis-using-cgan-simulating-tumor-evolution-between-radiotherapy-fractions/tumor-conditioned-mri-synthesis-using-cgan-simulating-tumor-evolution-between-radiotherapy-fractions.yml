@@ -1,0 +1,106 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Ayoub-Elkhaiari/Tumor-Conditioned-MRI-Synthesis-using-cGAN-Simulating-Tumor-Evolution-Between-Radiotherapy-Fractions
+url: https://github.com/Ayoub-Elkhaiari/Tumor-Conditioned-MRI-Synthesis-using-cGAN-Simulating-Tumor-Evolution-Between-Radiotherapy-Fractions
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 1
+updated_at: '2026-06-07T19:30:52Z'
+image_source: null
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Tumor-Conditioned MRI Synthesis using Conditional GAN: Simulating Tumor Evolution Between\
+  \ Radiotherapy Fractions\n\n> A conditional GAN that synthesizes realistic brain MRI slices conditioned\
+  \ on evolved tumor\n> segmentation masks, simulating tumor state changes between radiotherapy treatment\
+  \ fractions.\n> Achieves **SSIM=0.9933**, **PSNR=39.18dB**, **MAE=0.0032** on the test set.\n\n---\n\
+  \n## Table of Contents\n\n- [Overview](#overview)\n- [Motivation](#motivation)\n- [Dataset](#dataset)\n\
+  - [Tumor Evolution Operators](#tumor-evolution-operators)\n- [Architecture](#architecture)\n- [Training](#training)\n\
+  - [Results](#results)\n- [Qualitative Results](#qualitative-results)\n- [Difference Maps](#difference-maps)\n\
+  - [Training Curves](#training-curves)\n- [Metrics Table](#metrics-table)\n- [Setup](#setup)\n- [Relevance\
+  \ to Radiotherapy Digital Twins](#relevance-to-radiotherapy-digital-twins)\n\n---\n\n## Overview\n\n\
+  This project implements a **tumor-conditioned image synthesis pipeline** using a conditional GAN\n(Pix2Pix).\
+  \ Given a real MRI slice at timepoint T and a modified segmentation mask representing\nthe tumor state\
+  \ at T+1, the model generates a realistic synthetic MRI at T+1 that reflects the\nnew tumor state.\n\
+  \nThis directly mirrors the digital twin loop in adaptive radiotherapy planning:\n\n```\nsegment → evolve\
+  \ mask → synthesize image → plan next fraction → repeat\n```\n\n---\n\n## Motivation\n\nIn radiotherapy\
+  \ planning, clinicians need to predict how a tumor will look after each treatment\nfraction to adapt\
+  \ the dose delivery. Building a **digital twin** of the patient requires a model\nthat can generate\
+  \ realistic medical images conditioned on a predicted tumor state. This project\ndemonstrates that a\
+  \ conditional GAN can learn this mapping directly from data, producing\nhigh-fidelity synthetic MRI\
+  \ that reflects biologically meaningful tumor changes.\n\nThe methodology is directly transferable to:\n\
+  - Prostate MRI \n- Pseudo-CT synthesis from MRI\n- Pseudo-PET synthesis from MRI\n\n---\n\n## Dataset\n\
+  \n**BraTS 2020 — Brain Tumor Segmentation Challenge** (Kaggle: awsaf49/brats20-dataset-training-validation)\n\
+  \n| Property | Value |\n|---|---|\n| Patients used | 50 |\n| MRI modality | T2 |\n| Total slices extracted\
+  \ | 3,078 |\n| Slice filter | tumor pixels > 50 |\n| Image size | 256 × 256 |\n| MRI normalization |\
+  \ [−1, 1] (Tanh) |\n| Mask normalization | [0, 1] binary |\n| Train / Val / Test split | 35 / 7 / 8\
+  \ patients |\n| Train slices | 2,185 |\n| Val slices | 436 |\n| Test slices | 457 |\n\nSegmentation\
+  \ classes: 0=background, 1=necrotic core, 2=edema, 4=enhancing tumor.\nAll classes binarized to a single\
+  \ tumor mask for conditioning.\n\n---\n\n## Tumor Evolution Operators\n\nThree biologically-motivated\
+  \ operators simulate tumor state changes between fractions:\n\n<img width=\"1314\" height=\"985\" alt=\"\
+  image\" src=\"https://github.com/user-attachments/assets/ff201d13-a668-4167-8b0f-71b20c9eb225\" />\n\
+  \n\n| Operator | Implementation | Biological Meaning | Probability |\n|---|---|---|---|\n| Shrinkage\
+  \ | Binary erosion (3–8 iter) | Treatment response | 50% |\n| Growth | Binary dilation (2–6 iter) |\
+  \ Tumor progression | 30% |\n| Necrosis | Random core dropout (20–50%) | Necrotic core formation | 20%\
+  \ |\n\n---\n\n## Architecture\n\n### Generator — Conditional U-Net\n\n```\nInput: concat(MRI slice,\
+  \ Evolved Mask) → 2 channels\n\nEncoder:\n  Conv(2→64)   → LeakyReLU           [no BN on first layer]\n\
+  \  Conv(64→128) → InstanceNorm → LeakyReLU\n  Conv(128→256)→ InstanceNorm → LeakyReLU\n  Conv(256→512)→\
+  \ InstanceNorm → LeakyReLU\n  Conv(512→512)→ InstanceNorm → LeakyReLU  × 3\n\nBottleneck:\n  Conv(512→512)\
+  \ → ReLU\n\nDecoder (with skip connections + Dropout on first 3 blocks):\n  ConvTranspose(512→512) →\
+  \ InstanceNorm → ReLU → Dropout(0.5)  × 3\n  ConvTranspose(1024→512)→ InstanceNorm → ReLU\n  ConvTranspose(1024→256)→\
+  \ InstanceNorm → ReLU\n  ConvTranspose(512→128) → InstanceNorm → ReLU\n  ConvTranspose(256→64)  → InstanceNorm\
+  \ → ReLU\n\nOutput: ConvTranspose(128→1) → Tanh → synthesized MRI in [-1, 1]\n```\n\n**Generator params:\
+  \ 54,399,553**\n\n### Discriminator — PatchGAN\n\n```\nInput: concat(MRI, Mask) → 2 channels\n\nConv(2→64)\
+  \   → LeakyReLU            [no norm]\nConv(64→128) → InstanceNorm → LeakyReLU\nConv(128→256)→ InstanceNorm\
+  \ → LeakyReLU\nConv(256→512)→ InstanceNorm → LeakyReLU\nConv(512→1)  → patch output (30×30)\n```\n\n\
+  **Discriminator params: 2,762,817**\n**Patch size: 30×30** — each output value classifies a 70×70 receptive\
+  \ field as real or fake.\n\n---\n\n## Training\n\n| Setting | Value |\n|---|---|\n| Loss | GAN (BCEWithLogitsLoss)\
+  \ + L1 (λ=100) |\n| Optimizer | Adam (β1=0.5, β2=0.999) |\n| Learning rate | 2e-4 |\n| LR schedule |\
+  \ Linear decay after epoch 50 |\n| Batch size | 4 |\n| Max epochs | 100 |\n| Early stopping | Patience=15\
+  \ on val SSIM |\n| Mixed precision | torch.cuda.amp |\n| Label smoothing | Real=0.9, Fake=0.0 |\n| Hardware\
+  \ | Google Colab T4 GPU |\n| Random seed | 42 |\n\n**Training strategy:**\n- Update Discriminator once\
+  \ per batch\n- Update Generator once per batch\n- Generator loss = adversarial loss + 100 × L1 loss\n\
+  \n---\n\n## Results\n\n### Overall Test Set Performance\n\n| Metric | Mean | Std | Min | Max |\n|---|---|---|---|---|\n\
+  | MAE | 0.003215 | 0.000658 | 0.001664 | 0.005515 |\n| MSE | 0.000127 | 0.000044 | 0.000054 | 0.000315\
+  \ |\n| RMSE | 0.011135 | 0.001840 | 0.007338 | 0.017739 |\n| NRMSE | 0.011135 | 0.001840 | 0.007338\
+  \ | 0.017739 |\n| **PSNR** | **39.18 dB** | 1.398 | 35.021 | 42.688 |\n| **SSIM** | **0.9933** | 0.0026\
+  \ | 0.9850 | 0.9979 |\n| MID | 0.000253 | 0.000547 | -0.001108 | 0.002781 |\n| SID | 0.011122 | 0.001821\
+  \ | 0.007336 | 0.017704 |\n| Tumor MAE | 0.032456 | 0.010357 | 0.010879 | 0.087659 |\n| Tumor SSIM |\
+  \ 0.910336 | 0.044918 | 0.717064 | 0.983291 |\n| BG MAE | 0.002777 | 0.000543 | 0.001562 | 0.004624\
+  \ |\n| **Dice** | **0.9762** | 0.0092 | 0.9373 | 0.9910 |\n\n### Per-Mode Breakdown\n\n| Mode | SSIM\
+  \ | PSNR (dB) | MAE | Dice | Difficulty |\n|---|---|---|---|---|---|\n| Shrinkage | 0.9945 | 39.72 |\
+  \ 0.0030 | 0.9796 | Easiest |\n| Necrosis | 0.9930 | 39.44 | 0.0032 | 0.9753 | Medium |\n| Growth |\
+  \ 0.9917 | 38.19 | 0.0036 | 0.9716 | Hardest |\n\n> Growth is hardest to synthesize as it requires generating\
+  \ new tissue\n> outside the original anatomical boundary — a fundamentally harder task\n> than shrinking\
+  \ or perturbing existing structures.\n\n---\n\n## Qualitative Results\n\n4-panel visualization: Input\
+  \ MRI (T) | Evolved Mask (T+1) | Generated MRI (T+1) | Real MRI\n\n<img width=\"1352\" height=\"1965\"\
+  \ alt=\"image\" src=\"https://github.com/user-attachments/assets/2c6c01e0-f120-4f6b-9f84-9ff44182f5a0\"\
+  \ />\n\n\nGenerated MRI is visually nearly indistinguishable from real MRI across all three\nevolution\
+  \ types after only 10 epochs of training.\n\n---\n\n## Difference Maps\n\nSigned difference maps (Generated\
+  \ − Real) overlaid with tumor boundary contour (yellow).\nErrors concentrate at tumor boundaries — consistent\
+  \ with high-frequency structural\ndetail being hardest to learn.\n\n<img width=\"1790\" height=\"1137\"\
+  \ alt=\"image\" src=\"https://github.com/user-attachments/assets/60d93a61-f2eb-47bc-8c64-914ae2187853\"\
+  \ />\n\n<img width=\"788\" height=\"490\" alt=\"image\" src=\"https://github.com/user-attachments/assets/946b9039-08cc-4302-bdba-46762ad5a375\"\
+  \ />\n\n---\n\n## Training Curves\n\n<img width=\"1352\" height=\"1377\" alt=\"image\" src=\"https://github.com/user-attachments/assets/0a14fe6e-e9fc-4f09-ad69-cb8ca3f7d2d4\"\
+  \ />\n\n<img width=\"1582\" height=\"887\" alt=\"image\" src=\"https://github.com/user-attachments/assets/2a57b951-7829-4cc4-ac5a-dd365a4c6720\"\
+  \ />\n\n\n- L1 loss converges rapidly from epoch 1\n- SSIM climbs to 0.993 within 10 epochs\n- G loss\
+  \ increases as D gets stronger — classic GAN dynamic\n- SSIM vs PSNR scatter shows consistent improvement\
+  \ over epochs\n\n---\n\n## Metrics Table\n\n<img width=\"1389\" height=\"495\" alt=\"image\" src=\"\
+  https://github.com/user-attachments/assets/a3cf17ff-d536-4e43-88be-7438d6875716\" />\n\n\nFull per-mode\
+  \ comparison showing MAE, SSIM, and PSNR across shrinkage, growth, and necrosis.\n\n---\n\n## Setup\n\
+  \n### Requirements\n\n```bash\npip install torch torchvision kagglehub nibabel scikit-image\npip install\
+  \ scikit-learn scipy matplotlib seaborn pandas tqdm monai\n```\n\n### Run on Google Colab\n\nThe entire\
+  \ project is in a single self-contained notebook:\n\n```\nTumorConditioned_cGAN_Synthesis.ipynb\n```\n\
+  \nOpen in Colab → Runtime → Run All\n\nThe notebook will automatically:\n1. Download BraTS2020 via `kagglehub`\n\
+  2. Extract and preprocess tumor slices\n3. Apply evolution operators to generate paired training data\n\
+  4. Train Generator + Discriminator\n5. Evaluate all 12 metrics on the test set\n6. Generate all visualizations\n\
+  \n---\n\n## Stack\n\nPython · PyTorch · BraTS2020 · kagglehub · nibabel · scikit-image · matplotlib\
+  \ · Google Colab T4\n\n---\n\n## Author\n\n**Ayoub EL KHAIARI**\nMSc Advanced Machine Learning and Multimedia\
+  \ Intelligence — USMBA, Fez\n[GitHub](https://github.com/Ayoub-Elkhaiari) · [Portfolio](https://ayoub-elkhaiari.netlify.app/)\n"

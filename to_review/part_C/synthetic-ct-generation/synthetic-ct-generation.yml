@@ -1,0 +1,93 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: medical-physics-usz/synthetic_CT_generation
+url: https://github.com/medical-physics-usz/synthetic_CT_generation
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 6
+updated_at: '2026-07-22T14:37:30Z'
+image_source: https://raw.githubusercontent.com/medical-physics-usz/synthetic_CT_generation/HEAD/training_set_size_example.gif
+heuristic_total_score: 28
+heuristic_reasons:
+- Matched 3 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 7 support term(s).
+readme_excerpt: "# MR-based synthetic CT generation towards MR-only radiotherapy\n![Demo Training set\
+  \ size GIF](training_set_size_example.gif)\n## Installing Pix2Pix, CycleGAN, and CUT\n\n### Clone the\
+  \ Original Repositories and Modify Data Handling for NIfTI Compatibility\nDownload the official implementations\
+  \ from the original papers:\n\n- **CUT (Contrastive Unpaired Translation)**: [GitHub Repository](https://github.com/taesungp/contrastive-unpaired-translation)\n\
+  - **Pix2Pix & CycleGAN**: [GitHub Repository](https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix)\n\
+  - Replace the scripts in the `data/` folder to enable compatibility with **NIfTI** files instead of\
+  \ eg, PNGs.\n- Ensure that the pipeline correctly reads and processes single-channel NIfTI images rather\
+  \ than three-channel RGB PNGs.\n- Follow the **preprocessing and postprocessing scripts** from our repository\
+  \ to prepare **MR and CT** input data and process generated synthetic CTs.  \n\n\n## Clone our repository\n\
+  - Clone this repository:\n```bash\ngit clone https://github.com/medical-physics-usz/synthetic_CT_generation\n\
+  cd sCT_generation\n```\n\n## Set up environment\n1)  ```conda env create --file sCT_env.yml ```\n2)\
+  \  ```conda env create --file sCT_pytorch_env.yml ```\n3) If the intensity normalization package has\
+  \ not been installed correctly:\n ```\npip install intensity-normalization\n ```\nor check instructions\
+  \ here https://github.com/jcreinhold/intensity-normalization\n<TBD: raise a bug: Nyul is not working\
+  \ if we have slices with the only backgorund in the set>\n\n## Preprocessing\n1) Script CT_MR_preprocessing.py\
+  \ transforms the series of DICOM files to a single NIFTI file for every modality. Then, it creates a\
+  \ set of masks: \n* extraction of body mask for non-registered CTs is based on the background filtering:\
+  \ threshold_ct_body_mask = -400 + max contouring and morphological operations\n* extraction of body\
+  \ mask for registered CTs\\MRs  is based on the delineated structure file with the tag ['skin'] +morphological\
+  \ operations for smoothing\n* extraction of delineated set of organs for tissue-based intensity normalisation\
+  \ (based on STRUCT: ['liver'],['water','bladder','gallbladder', 'water_or'] ) + (“fat” extracted from\
+  \ CT_reg based on HU: pixels with intensities in [-160;-60])\n* extraction of tumour mask with the biggest\
+  \ delineated volume out of following tags ['ptv2_vX_1a'], or ['ptv1_vX_xa'] and take the biggest\n*\
+  \ creates NIFTIs for every treatment and modality with all background pixels set to 0 or -1024\n* check\
+  \ cmd parameters\n ```\n!python -u CT_MR_preprocessing.py \"$@\"\n ```\n2) Script resampling.py resize\
+  \ the voxels and crop_or_pad image as following:\n* accepted_modal_folders= [\"CT_reg\",\"MR\"]\n* accepted_tr_days=\
+  \ [\"day0\"]\n* crop_x_desired=256\n* crop_y_desired=256\n* desired_voxel_size_x = 1.6304\n* desired_voxel_size_y\
+  \ = 1.6304\n* desired_voxel_size_z =3\n* background_mri=0\n* background_ct=-1024\n* check cmd parameters\n\
+  \ ```\n!python -u resampling.py \"$@\"\n ```\n Then, it saves only the 20 slides around tumour_center_slide\
+  \ for each image. In case it is close to the image border, it moves the 20-slices window to another\
+  \ direction in order to get not corrupted slices. Exceptions: 3 patients with diff shapeZ of CT_reg\
+  \ and MR -> then, defined manually. <TBD>All masks resampled respectively and saved \n3) Script ct_min_max_normalization.py\
+  \ performs min-max normalization of prepared registered CTs\n ```\n!python -u /ct_min_max_normalization.py\
+  \ \"$@\"\n ```\n4) Script mry_norm_nyul performs Nyul, intensity based, non-linear normaliztion of MRIs\n\
+  \ ```\nnyul-normalize data/normalization/before/MR/ -m data/normalization/before/masks/ -o data/normalization/Nyul_normalized/\
+  \ -v\n\n ```\n5) Script slice_creator.py create axial slices out of both normalized modalities and writes\
+  \ them in folders for alligned and not-alligned dataset training\n ```\npython -u slice_creator.py \"\
+  $@\"\n ```\n6) We have pix2pix, cycleGAN and CUT, which could be trained on NIFTIs <TBD>: check the\
+  \ input and output ranges of all NN\n7) NN script test.py test the network performance, based on the\
+  \ provided slices, saves the outputs in nifti format + calculate the geometrical metrics (MAE, MSE,\
+  \ PSNR, SSIM ) for the pixels in the body contour\n8) Script niftitodicom.py creates dicom slices from\
+  \ the NN nifti outputs for CT_reg in HU <TBD>: check for MR,what is there that could be used further\
+  \ for the dosimetric accuracy calcs\n ```\npython -u /CUT/niftitodicom.py \"$@\"\n ```\n\n## Train the\
+  \ models\nChange directory:\n ```bash\ncd CUT\n```\n \n \n### pix2pix\n For pix2pix the alligned dataset\
+  \ firstly should be created, then, the model could be trained\n ```bash\n !python datasets/combine_A_and_B.py\
+  \ --fold_B data/pix2pix_test_scr/A --fold_A data/pix2pix_test_scr/B --fold_AB data/pix2pix_test_scr/data_AB\n\
+  \n!python train.py --dataroot data/pix2pix_test_nifti/data_AB --name nifti_NEW_sCT_CUT_whole_data_pix2pix\
+  \ --model pix2pix --direction BtoA --input_nc 1 --output_nc 1\n ```\n\n### CycleGAN\n ```\n!python train.py\
+  \ --dataroot 'data/model_test_nifti/train' --name nifti_New_sCT_CUT_cyclegan --model cycle_gan --input_nc\
+  \ 1 --output_nc 1 ```\n  ```\n \n ### CUT\n ```bash\n!python train.py --dataroot '/data/model_test_nifti/train'\
+  \ --name nifti_sCT_CUT_cut --model cut --CUT_mode CUT --input_nc 1 --output_nc 1\n ```\n\n\n## Test\
+  \ the models\nTo obtain the synthetic CT images, the steps to reproduce are the following:\n\n### pix2pix\n\
+  \ For pix2pix the alligned dataset firstly should be created, then, the model could be trained\n ```\n\
+  !python test.py --phase test --dataroot data/pix2pix_test_nifti/data_AB --name nifti_NEW_sCT_CUT_whole_data_pix2pix\
+  \ --model pix2pix --direction BtoA --input_nc 1 --output_nc 1\n ```\n<TBD:change direction of training>\
+  \ \n\n### CycleGAN\n ```\n!python test.py --dataroot 'data/model_test_nifti/test' --phase test --name\
+  \ nifti_New_sCT_CUT_cyclegan --model cycle_gan --input_nc 1 --output_nc 1\n  ```\n \n ### CUT\n ```bash\n\
+  !python test.py --dataroot 'data/model_test_nifti/test' --phase test  --name nifti_sCT_CUT_cut --model\
+  \ cut --CUT_mode CUT --input_nc 1 --output_nc 1\n ```\nAfter testing is completed, the results will\
+  \ be shown under the results folder in the repository directory\n\n## Calculate DVH differences: dCT-sCT\n\
+  Install MatRAD from: https://github.com/e0404/matRad\nReplace corresponding files from the DVH calculation\
+  \ repo and pass your parameters for plan calcs and tumour\\OAR structure selection\n\n\U0001F680 **[NEW]**\
+  \ The dosimetric calculation pipeline [matRad_example19_CT_sCT_DVH_difference_photons.m] is available\
+  \ on the develop branch of matRad [![Dosimetric Pipeline](https://img.shields.io/badge/matRad-Develop%20Branch-blue?logo=github)](https://github.com/e0404/matRad/blob/dev/examples/matRad_example19_CT_sCT_DVH_difference_photons.m)\
+  \  \n\n# Citation\n\nIf you use this code for your research, please cite our paper. \n\n```bibtex\n\
+  @article{https://doi.org/10.1002/mp.18038,\nauthor = {Lapaeva, Mariia and La Greca Saint-Esteven, Agustina\
+  \ and Wallimann, Philipp and Andratschke, Nicolaus and Guckenberger, Matthias and Günther, Manuel and\
+  \ Tanadini-Lang, Stephanie and Dal Bello, Riccardo},\ntitle = {A comprehensive comparative study of\
+  \ generative adversarial network architectures for synthetic computed tomography generation in the abdomen},\n\
+  journal = {Medical Physics},\nvolume = {52},\nnumber = {8},\npages = {e18038},\nkeywords = {deep learning,\
+  \ generative adversarial networks, medical image analysis, MR-only radiotherapy, synthetic CT},\ndoi\
+  \ = {https://doi.org/10.1002/mp.18038},\nurl = {https://aapm.onlinelibrary.wiley.com/doi/abs/10.1002/mp.18038},\n\
+  eprint = {https://aapm.onlinelibrary.wiley.com/doi/pdf/10.1002/mp.18038},\nyear = {2025}\n}\n"

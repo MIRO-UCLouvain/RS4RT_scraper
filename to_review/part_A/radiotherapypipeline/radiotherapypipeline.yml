@@ -1,0 +1,73 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: Eudes9/radiotherapypipeline-
+url: https://github.com/Eudes9/radiotherapypipeline-
+platform: github
+description: ''
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-25T09:35:57Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# Radiotherapy Clinical Data Pipeline\n\nPipeline de traitement de données cliniques\
+  \ multi-sources destiné à la préparation de jeux de données exploitables pour l'entraînement de modèles\
+  \ d'intelligence artificielle en radiothérapie oncologique.\n\n---\n\n## \U0001F3AF Objectif\n\nL'objectif\
+  \ de ce projet est de produire un **dataset ML-ready** à partir de données cliniques hétérogènes issues\
+  \ de patients traités par radiothérapie.\n\nLe pipeline applique une chaîne de traitement reproductible\
+  \ et documentée :\n\n```text\nIngestion → Nettoyage → Imputation → Contrôle Qualité → Dataset ML-ready\n\
+  ```\n\n---\n\n## \U0001F4CA Sources de données\n\n| Dataset                 | Patients | Type de cancer\
+  \           | Variables principales                 |\n| ----------------------- | -------- | ------------------------\
+  \ | ------------------------------------- |\n| NSCLC-Radiomics         | 422      | Cancer du poumon\
+  \ (NSCLC) | Stade TNM, survie, histologie         |\n| HEAD-NECK-RADIOMICS-HN1 | 137      | Cancer tête\
+  \ et cou       | Stade TNM, survie, dose RT, fractions |\n\n---\n\n## ✅ Résultats\n\n* **559 patients**\
+  \ fusionnés à partir de deux sources indépendantes\n* **24 variables** cliniques et radiothérapeutiques\
+  \ harmonisées\n* **Variable cible** : `survived_1yr` (survie à 1 an)\n\n  * Taux de survie : **70.7\
+  \ %**\n* **Pipeline validé** et reproductible\n\n---\n\n## \U0001F5C2️ Structure du projet\n\n```text\n\
+  rtp/\n│\n├── data/\n│   ├── raw/                    # Données sources brutes\n│   ├── interim/     \
+  \           # Étapes intermédiaires traçables\n│   │   ├── 01_raw_merged.csv\n│   │   ├── 02_cleaned.csv\n\
+  │   │   └── 03_imputed.csv\n│   │\n│   └── processed/              # Données finales\n│       ├── dataset_ml_ready.csv\n\
+  │       └── quality_report.json\n│\n├── src/\n│   ├── ingestion.py            # Chargement et fusion\
+  \ des sources\n│   ├── cleaning.py             # Nettoyage et normalisation\n│   ├── missing_data.py\
+  \         # Analyse et imputation\n│   ├── quality_report.py       # Contrôle qualité\n│   └── pipeline.py\
+  \             # Orchestration complète\n│\n├── notebooks/\n│   ├── 01_ingestion.ipynb\n│   ├── 02_exploration.ipynb\n\
+  │   ├── 03_cleaning.ipynb\n│   ├── 04_missing_data.ipynb\n│   └── 05_quality_report.ipynb\n│\n├── docs/\n\
+  │   └── figures/                # Visualisations exportées\n│\n├── config.py\n└── requirements.txt\n\
+  ```\n\n---\n\n## ⚙️ Installation\n\n```bash\npip install -r requirements.txt\n```\n\n---\n\n## \U0001F680\
+  \ Utilisation\n\nExécuter l'ensemble du pipeline :\n\n```bash\npython src/pipeline.py\n```\n\n---\n\n\
+  ## \U0001F504 Flux de traitement\n\n```text\nNSCLC-Radiomics (422 patients) ──┐\n                  \
+  \               │\n                                 ├─→ Fusion\n                                 ├─→\
+  \ Nettoyage\n                                 ├─→ Imputation\n                                 ├─→ Contrôle\
+  \ Qualité\n                                 └─→ Dataset ML-ready\n                                 │\n\
+  HN1 Clinical Data (137 patients) ─┘\n```\n\n---\n\n## \U0001F9E9 Gestion des données manquantes\n\n\
+  Trois mécanismes de données manquantes ont été identifiés et traités selon leur nature :\n\n| Pattern\
+  \            | Variables concernées                                       | Stratégie              \
+  \               |\n| ------------------ | ----------------------------------------------------------\
+  \ | ------------------------------------- |\n| **MCAR**           | `age`, `overall_stage`, `t_stage`\
+  \                          | Imputation par médiane                |\n| **MNAR**           | `hemoglobin`,\
+  \ `performance_status_ecog`                    | `IterativeImputer` (cohorte HN1)      |\n| **MAR structurel**\
+  \ | `rt_total_dose_gy`, `rt_n_fractions`, `chemotherapy`, etc. | Non imputé (absence liée à la source)\
+  \ |\n\n---\n\n## \U0001F4CB Variables principales\n\n| Variable           | Description            \
+  \             | Source         |\n| ------------------ | ----------------------------------- | --------------\
+  \ |\n| `age`              | Âge au diagnostic                   | NSCLC + HN1    |\n| `t_stage`    \
+  \      | Stade T normalisé                   | NSCLC + HN1    |\n| `n_stage`          | Stade N normalisé\
+  \                   | NSCLC + HN1    |\n| `m_stage`          | Stade M normalisé                   |\
+  \ NSCLC + HN1    |\n| `survival_days`    | Survie depuis le traitement (jours) | NSCLC + HN1    |\n\
+  | `rt_total_dose_gy` | Dose totale de radiothérapie (Gy)   | HN1 uniquement |\n| `rt_n_fractions`  \
+  \ | Nombre de fractions                 | HN1 uniquement |\n| `rt_total_time`    | Durée totale du traitement\
+  \ (jours)  | HN1 uniquement |\n| `survived_1yr`     | **Variable cible** : survie à 1 an  | Calculée\
+  \       |\n\n---\n\n## \U0001F4C8 Contrôle qualité\n\nLe pipeline génère automatiquement :\n\n* Un rapport\
+  \ de complétude des données\n* Une détection des valeurs aberrantes\n* Des statistiques descriptives\n\
+  * Un rapport JSON de qualité (`quality_report.json`)\n\n---\n\n## \U0001F4DA Références\n\nSi vous utilisez\
+  \ ces données ou ce pipeline dans vos travaux, merci de citer :\n\n**Aerts, H. J. W. L. et al. (2014).**\n\
+  *Decoding tumour phenotype by noninvasive imaging using a quantitative radiomics approach.*\nNature\
+  \ Communications, 5, 4006.\n\n**Wee, L., & Dekker, A. (2019).**\n*Data from HEAD-NECK-RADIOMICS-HN1.*\n\
+  The Cancer Imaging Archive (TCIA).\n\n---\n\n## \U0001F4C4 Licence\n\nCe projet est destiné à des fins\
+  \ de recherche académique et d'enseignement. Veuillez respecter les conditions d'utilisation des jeux\
+  \ de données d'origine fournis par TCIA.\n"

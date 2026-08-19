@@ -1,0 +1,93 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hannahgsimon/HALModeling2024Graphs
+url: https://github.com/hannahgsimon/HALModeling2024Graphs
+platform: github
+description: Created code to develop and analyze statistical graphs for the spatial radiotherapy model,
+  which can be found at https://github.com/hannahgsimon/HALModeling2024. This project was in association
+  with the Cleveland Clinic Lerner Research Institute, Jacob Scott Lab.
+license: MIT
+language: Python
+keywords:
+- agent-based-model
+- bifurcation-analysis
+- cancer-models
+- computational-biology
+- data-visualization
+- hybrid-automata
+- immune-response
+- mathematical-modelling
+- ordinary-differential-equations
+- radiation-therapy
+- spatial-model
+- statistics
+- systems-biology
+stars: 0
+updated_at: '2026-01-04T13:40:33Z'
+image_source: null
+heuristic_total_score: 12
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 2 support term(s).
+readme_excerpt: "# HALModeling2024Graphs\n\n## Overview\nThe HALModeling2024Graphs repository contains\
+  \ Python scripts to generate and analyze graphs for the HALModeling2024 project, found at https://github.com/hannahgsimon/HALModeling2024.\
+  \ This code graphs cell population changes in response to radiotherapy, as well as the immune response.\n\
+  \n## Prerequisites\n- **Python**: Version 3.6 or higher.\n- **Required Python packages**: You can install\
+  \ them using `pip`:\n   ```bash\n   pip install pandas matplotlib\n\n## Installation\n1. Clone the repository:\n\
+  \    - git clone https://github.com/hannahgsimon/HALModeling2024Graphs.git\n2. Navigate to the project\
+  \ directory with the cd command.\n3. Import the project into your preferred Python IDE.\n4. Build the\
+  \ project.\n\n## Features\n- **<ins>Plot Trial Cell Populations</ins>:** Plots cell counts at each timestep\
+  \ for the last trial.\n- **<ins>Plot Trial Immune Response</ins>:** Plots the total immune response,\
+  \ primary immune response, and secondary immune response at each timestep.\n- **<ins>Plot Scenario Cell\
+  \ Populations with Confidence Intervals</ins>:** For the indicated scenario, plots the average cell\
+  \ counts with confidence intervals (±1 SD) at each timestep across all trials. For scenarios C, D, and\
+  \ E, will only plot trials with initial escape & radiation.\n- **<ins>Plot Tumor Cells at Equilibrium</ins>:**\
+  \ For trials in which bifurcation to escape occurred, plots a box and whisker plot of the number of\
+  \ tumor cells at equilibrium across each scenario.\n- **<ins>Plot Timesteps to Equilibrium</ins>:**\
+  \ For trials in which bifurcation to escape occurred, plots a box and whisker plot of the number of\
+  \ timesteps to equilibrium across each scenario.\n\n## Usage\nBefore running the code, you will need\
+  \ to update the file paths.  \nIn `HALModeling2024Graphs.py`:  \n  ```python\n  file_path = r'C:\\Users\\\
+  Hannah\\Documents\\HALModeling2024Outs\\TrialRunCounts.csv'\n  folder_path = fr'C:\\Users\\Hannah\\\
+  Documents\\HALModeling2024Outs\\Scenario{scenario}\\*.csv'\n  file_path = fr'C:\\Users\\Hannah\\Documents\\\
+  HALModeling2024Outs\\Scenario{scenario}\\*.csv'\n  save_path = fr'C:\\Users\\Hannah\\Documents\\HALModeling2024Outs\\\
+  TrialRunGraphScenario{scenario}.png'\n  save_path = r'C:\\Users\\Hannah\\Documents\\HALModeling2024Outs\\\
+  TrialRunGraphImmuneResponse.png'\n   ```\nIn `HALModeling2024Plots.py`:  \n  ```python\n  file_path\
+  \ = r'C:\\Users\\Hannah\\Documents\\HALModeling2024Outs\\AvgTimestepstoEscape.csv'\n  timesteps_save_path\
+  \ = fr'C:\\Users\\Hannah\\Documents\\HALModeling2024Outs\\BoxplotTimesteps.png'\n  tumorcells_save_path\
+  \ = fr'C:\\Users\\Hannah\\Documents\\HALModeling2024Outs\\BoxplotTumorCells.png'\n  ```\n##### Usage\
+  \ in `HALModeling2024Graphs.py`:\n- Input 1: `TrialRunCounts.csv` — Contains data from the final trial\
+  \ (non-scenario-specific), generated when `printCounts = true` and `scenarioActive = false` in `OnLattice2DGrid.java`.\n\
+  - Input 2: A folder containing trials for a specific scenario, generated when `printCounts = true` and\
+  \ `scenarioActive = true` in `OnLattice2DGrid.java`.\n\nThe simulation starts with the below initial\
+  \ conditions (modifiable in the code). You can update these parameters in the indicated lines of code\
+  \ to fit your specific simulation requirements.\n- **<ins>Plot with Confidence Intervals</ins>:** Disabled.\
+  \ For the indicated scenario, plots the average cell counts with confidence intervals (±1 SD) at each\
+  \ timestep across all trials. For scenarios C, D, and E, will only plot trials with initial escape &\
+  \ radiation.\n     ```python\n    plot_with_CIs = False\n     ```\n- **<ins>Scenario Analysis</ins>:**\
+  \ Disabled. For the last trial of the indicated scenario, plots the cell counts at each timestep.\n\
+  \     ```python\n     scenarioAnalysis = False\n     ```\n- **<ins>Scenario</ins>:** A. The indicated\
+  \ scenario that will be graphed for `plot_with_CIs = True` or `scenarioAnalysis = True`.\n     ```python\n\
+  \    scenario = 'A'\n     ```\n- **<ins>Timesteps 500</ins>:** Enabled. For `plot_with_CIs = True`,\
+  \ only the first 500 timesteps are plotted.  In the original `OnLattice2DGrid.java` code, this corresponds\
+  \ to the time by which the triggering cell population typically reaches 0. This occurs because there\
+  \ are initially 500 triggering cells, with 1 removed per timestep; however, the population may reach\
+  \ 0 sooner if cells are killed by radiation.\n     ```python\n    timesteps500 = True\n     ```\n- **<ins>Plot\
+  \ Immune Response</ins>:** Enabled. Plots the total immune response, primary immune response, and secondary\
+  \ immune response at each timestep. If `scenarioAnalysis = True`, plots the data for the last trial\
+  \ of the indicated scenario. If `scenarioAnalysis = False`, plots the data for the last trial (titled\
+  \ `TrialRunCounts.csv`, not a specific scenario).\n     ```python\n    graph_immune = True\n     ```\n\
+  - Note: When both `plot_with_CIs = False` and `scenarioAnalysis = False`, plots cell counts at each\
+  \ timestep for the last trial (`TrialRunCounts.csv`, not tied to a specific scenario).\n\n#### Usage\
+  \ in `HALModeling2024Plots.py`:\n- Input: A CSV file with 5 columns: \"Scenario\", \"Trial\" number,\
+  \ \"Bifurcation to Escape\" (Y/N), \"Timesteps to Equilibrium\", and \"Tumor Cells at Equilibrium\"\
+  . The last 2 columns are blank for non-escape trials.\n- Output 1: For trials in which bifurcation to\
+  \ escape occurred, plots a box and whisker plot of the number of tumor cells at equilibrium across each\
+  \ scenario.\n- Output 2: For trials in which bifurcation to escape occurred, plots a box and whisker\
+  \ plot of the number of timesteps to equilibrium across each scenario.\n\n## Contributing\nContributions\
+  \ are welcome! To contribute:\n1. Fork the repository.\n2. Create a new branch for your feature or bug\
+  \ fix:\n    - git checkout -b feature-name\n3. Commit your changes and push the branch:\n    - git commit\
+  \ -m \"Add new feature\"\n    - git push origin feature-name\n4. Open a pull request and describe your\
+  \ changes in detail.\n\n## License\nThis project is licensed under the MIT License. See the LICENSE\
+  \ file for details.\n\n## Contact\nFor questions or feedback, please contact Hannah G. Simon at hgsimon2@gmail.com.\n"

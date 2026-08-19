@@ -1,0 +1,102 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: esimiele/VMAT-TBI-CSI-TMLI
+url: https://github.com/esimiele/VMAT-TBI-CSI-TMLI
+platform: github
+description: ESAPI program used for auto-planning of VMAT-TBI, CSI, and TMLI
+license: MIT
+language: C#
+keywords: []
+stars: 9
+updated_at: '2026-07-29T17:35:36Z'
+image_source: null
+heuristic_total_score: 23
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 particle-therapy term(s).
+- Matched 7 support term(s).
+readme_excerpt: "# VMAT-TBI-CSI-TMLI Auto-Planner\n\nThis repository contains the source code for a suite\
+  \ of tools designed to automate the treatment planning process for VMAT-based Craniospinal Irradiation\
+  \ (CSI), Total Body Irradiation (TBI), and Total Marrow and Lymphoid Irradiation (TMLI). The application\
+  \ is developed in C# using WPF for the user interface and is intended for use in a clinical radiation\
+  \ oncology setting.\n\n## Authors\n- Primary contributors and authors:\n\t- Eric Simiele: primary developer\
+  \ and maintainer of code\n\t- Ignacio Romero: developer and tester\n\t- Nataliya Kovalchuk: tester and\
+  \ project PI\n\n## Updates\nSee [Changes log]()\n\n## Key Features\n\n* **Automated Planning:** Scripts\
+  \ and workflows to automate plan generation for CSI, TBI, and TMLI.\n* **Optimization Loop:** An iterative\
+  \ process to refine treatment plan parameters to meet clinical objectives.\n* **Modular Design:** The\
+  \ solution is broken down into several projects, each handling a specific part of the workflow:\n  *\
+  \ `CSIAutoPlanner`: Handles the specifics of Craniospinal Irradiation planning.\n  * `TBIAutoPlanner`:\
+  \ Manages Total Body Irradiation workflows.\n  * `TMLIAutoPlanner`: Contains the logic for Total Marrow\
+  \ and Lymphoid Irradiation.\n  * `AutoPlannerOptimizationLoop`: A dedicated tool for running plan optimizations.\n\
+  \  * `AutoPlannerHelpers`: Shared library with common code and utilities used across modules.\n  * `ImportListener`:\
+  \ Service that listens for new patient data imports.\n* **DICOM Integration:** Uses libraries like `EvilDICOM`\
+  \ and `SimpleITK` to handle medical imaging data.\n* **Configuration Templates:** INI-based configuration\
+  \ files for each modality to standardize planning parameters.\n* **Plan Templates:** Predefined templates\
+  \ for different prescription doses (e.g., TMLI_2Gy.ini, TMLI_12Gy.ini, TMLI_20Gy.ini).\n\n## Project\
+  \ Structure\n\nThe main application logic is contained within the `VMATTBICSITMLIAutoPlanner` directory,\
+  \ which is a Visual Studio Solution (`.sln`).\n\n* `/VMATTBICSITMLIAutoPlanner`: Root directory for\
+  \ the Visual Studio solution.\n  * `/AutoPlannerLauncher`: Main entry point and launcher for the various\
+  \ tools.\n  * `/CSIAutoPlanner`, `/TBIAutoPlanner`, `/TMLIAutoPlanner`: Individual applications for\
+  \ each treatment modality.\n  * `/AutoPlannerOptimizationLoop`: Core optimization engine.\n  * `/AutoPlannerHelpers`:\
+  \ Shared library with common code and utilities.\n  * `/ImportListener`: Patient data import listener\
+  \ service.\n  * `/PlanTemplates`: Contains modality-specific plan templates.\n  * `/Configuration`:\
+  \ INI configuration files for each modality.\n  * `/AutoPlannerOptimizationLoopTests`: Unit tests for\
+  \ optimization loop components.\n\n\n## Initial public release of code v1.0\n- The purpose of this code\
+  \ is to automate as much of the treatment planning process as possible for VMAT TBI, CSI, and TMLI following\
+  \ the planning techniques used at Stanford University\n- Code is now available to public following clinical\
+  \ release at Stanford\n- Feel free to download and use the code\n- No example patients are provided\
+  \ with the code\n\t- Wanted to avoid dealing with any privacy/HIPAA issues\n- The solution file is located\
+  \ under VMATTBICSITMLIAutoPlanner/VMATTBICSITMLIAutoPlanner.sln\n- This code has been developed over\
+  \ the past year through a Stanford Clinical Innovation Fund grant\n\n## Getting Started\n\n### Prerequisites\n\
+  \n* Visual Studio 2019 or later\n* .NET Framework 4.6.1 or higher\n* Access to a clinical treatment\
+  \ planning system (for data and validation)\n\n## Install and run guide\n### Install and build\n- Clone\
+  \ the repository to your local computer\n- Open the solution file in visual studio\n- Fixes any references\
+  \ to the Varian DLL files for the following projects:\n\t- ImportListener\n\t- CSIAutoPlanner\n\t- TBIAutoPlanner\n\
+  \    - TMLIAutoPlanner\n\t- AutoPlannerHelpers\n\t- AutoPlannerOptimizationLoop\n    - AutoPlannerLauncher\n\
+  - The code was compiled using the v15.6 ESAPI libraries\n- Ignore any warnings from the test projects\n\
+  - Under the CSIAutoPlanner, TBIAutoPlanner, and TMLIAutoPlanner projects, in the Configuration folders,\
+  \ open the .ini configuration files and update the file paths to the desired locations on the computer/network\n\
+  \t- documentation\n\t- image export\n\t- Aria DB daemon, VMS File Daemon, local Daemon information (if\
+  \ you want automated import/export of CT and RT Struct dicom data)\n\t- RT structure set import file\
+  \ location\n- At the top of Visual Studio select --> build --> rebuild solution\n- Resolve any build\
+  \ errors\n\n### Troubleshooting\n- Again, don't care about build failures for test projects\n- A likely\
+  \ failure is the varian ESAPI dlls not being found/correctly referenced\n\t- be sure to update them\
+  \ to **YOUR VERSION OF ECLIPSE/ESAPI** for all projects listed in the installation section\n- Another\
+  \ failure is in nuget package restoration. This project uses two main nuget packages: simpleprogresswindow\
+  \ and EvilDicom\n- Info on the two packages can be found here:\n\t- Github: [SimpleProgressWindow](https://github.com/esimiele/SimpleProgressWindow)\
+  \ Nuget: [SimpleProgressWindow](https://www.codecademy.com/resources/docs/markdown/links)\n\t- [EvilDicom](https://github.com/rexcardan/Evil-DICOM)\
+  \ \n\n### Build files and testing\n- All files will be built in the top parent directory under /bin\n\
+  - Included in this folder are the configuration files (placed in a created folder under /bin/configuration)\
+  \ and plan template files (/bin/templates/\\<plan type\\>)\n\t- All autoplanning scripts have been built\
+  \ around the concept of plan templates\n\t- These plan template files are read upon launch and are available\
+  \ to the user for selection for planning\n\t\t- They contain the relevant information regarding targets,\
+  \ rings, optimization structures, optimization constraints, etc.\n- Upon successful build of all projects,\
+  \ at the top of Visual Studio next to the build configuration drop downs, select the CSIAutoPlanner\
+  \ project in the drop down (i.e., which project to launch in debug mode)\n- Hit Start, there should\
+  \ be one error message regarding no connection to aria. Pay attention to any other error messages, particularly\
+  \ any messages regarding not being able to find folders\n- Once the gui pops up, switch to the Script\
+  \ configuration tab and review the settings to ensure they match what you changed in the .ini files\
+  \ previously\n\n### Run\n- The scripts can be run either through citrix or as stand-alone applications\
+  \ on a thick-client\n- To run through citrix:\n\t- Copy the bin/ folder and all of its contents to a\
+  \ network drive that citrix can access\n\t- Open a patient structure set in Eclipse, select tools -->\
+  \ scripts --> change folder --> select folder --> navigate to the bin/ directory --> hit ok\n\t\t- A\
+  \ script should show up in the scripts window called *LaunchAutoPlanner.cs* select this script and hit\
+  \ run\n\t\t- You will be presented with a small window asking you to choose between VMAT TBI, VMAT CSI,\
+  \ or VMAT TMLI. Select VMAT CSI\n\t\t- The VMAT CSI UI should pop up. Repeat for other two options to\
+  \ ensure everything is wired up correctly\n- To run as a stand-alone application:\n\t- Copy the bin/\
+  \ folder and all of its contents to the desktop of a thick client\n\t\t- Open the bin/ folder and double\
+  \ click on the CSIAutoPlanner.exe file\n\t\t\t- You will be prompted to enter a patient MRN and a warning\
+  \ message should pop up saying that you need to select a structure set in the UI\n\n### Approvals\n\
+  - Please test the code on a t-box prior to approving in your clinical system\n\t- **I'm not responsible\
+  \ if the code is not configured correctly for your system and it ends up causing problems**\n- Once\
+  \ you have configured the code correctly and tested it and are ready to move to the clinical system,\
+  \ you will need to approve the following files under script approvals:\n\t- ImportListener\n\t- CSIAutoPlanner\n\
+  \t- TBIAutoPlanner\n    - TMLIAutoPlanner\n\t- AutoPlannerHelpers\n\t- AutoPlannerOptimizationLoop\n\
+  \n## Contributing\n- The authors welcome contributions, suggestions, issues, etc.\n- For contributions,\
+  \ fork the code, make your changes and open a pull request with a short description of your changes\n\
+  \t- I will review it and determine if it should be incorporated into the code\n- For all other items:\n\
+  \t- Feel free to open an issue for problems with the code or feature requests\n\t- I monitor it fairly\
+  \ regularly so I should get back to you in a week or so"

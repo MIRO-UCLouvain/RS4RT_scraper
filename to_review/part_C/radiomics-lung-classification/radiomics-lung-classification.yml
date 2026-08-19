@@ -1,0 +1,77 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: brareisds/radiomics-lung-classification
+url: https://github.com/brareisds/radiomics-lung-classification
+platform: github
+description: ''
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2025-12-27T16:08:57Z'
+image_source: null
+heuristic_total_score: 11
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+- Matched 1 AI/ML term(s) in repository name.
+readme_excerpt: "### Autores:\nBarbara Reis dos Santos - GRR20222538\nElen Pasqualli Gesser - GRR20213400\n\
+  Erick da Silva Santos - GRR20242593\nIgor Garcia - GRR20213409\nMayara L. de F. Neves - GRR20235083\n\
+  \n\n# Classificação Radiômica de Imagens Pulmonares DICOM com KNN e Validação Cruzada\n\nEste repositório\
+  \ contém o código completo para o processamento de imagens e análise de dados utilizando PyRadiomics\
+  \ e o algoritmo KNN com validação cruzada estratificada por paciente. O pipeline envolve várias etapas,\
+  \ desde a preparação dos dados até a avaliação do modelo de classificação. Abaixo, explicamos cada uma\
+  \ das etapas, as entradas e saídas de cada script, além das bibliotecas necessárias para rodar os códigos.\n\
+  \n## Estrutura do Repositório\n\n- **03_knn_classifier_por_mascara.py**: Script para classificação utilizando\
+  \ o algoritmo KNN com base em máscaras.\n- **03_resultados_previstos**: Diretório com os resultados\
+  \ previstos pelo modelo.\n- **01_split_em_folds_balanceados.py**: Script para dividir os dados em folds\
+  \ balanceados para validação cruzada.\n- **02_extracao_caracteristicas.py**: Script para extrair características\
+  \ dos dados, essencial para a construção do modelo.\n- **04_calculo_metricas.py**: Script para calcular\
+  \ as métricas de desempenho do modelo.\n- **resultados_gerais_metricas.txt**: Arquivo de saída com os\
+  \ resultados gerais das métricas de avaliação.\n- **01_metadados_folds.csv**: Arquivo CSV com os metadados\
+  \ dos folds gerados.\n- **01_gera_metadados.py**: Script para gerar os metadados a partir dos dados\
+  \ de entrada.\n- **01_metadados_imagens.csv**: Arquivo CSV contendo os metadados das imagens utilizadas.\n\
+  - **01_organiza_em_pastas.py**: Estrutura os dados em diretórios organizados por fold, paciente e classe.\n\
+  - **02_features_folds_mascaras.csv**: Arquivo CSV contendo as características extraídas e os folds com\
+  \ máscaras.\n- **Dados_organizados.tar.xz**: Arquivo compactado contendo os dados organizados para o\
+  \ processamento.\n\n## Dependências\n\nCertifique-se de ter as seguintes bibliotecas Python instaladas\
+  \ para executar os scripts:\n\n- `pandas` \n- `numpy` \n- `scikit-learn`\n- `matplotlib`\n- `scipy`\n\
+  - `joblib`\n- `tarfile`\n- `os`\n\nPara instalar todas as dependências, você pode usar o seguinte comando:\n\
+  \n```bash\npip install -r requirements.txt\n```\n---\n\n## Etapas de Execução\n\n### 1. Balanceamento\
+  \ dos Dados\n\n#### 1.1 Geração de Metadados\n\nO script `01_gera_metadados.py` processa os arquivos\
+  \ `.dcm` presentes na pasta `lung_blocks` e gera:\n\n* Diretório `dados_convertidos` contendo os arquivos\
+  \ `.npy`;\n* Arquivo `01_metadados_imagens.csv` com as colunas: `paciente`, `classe`, `arquivo_dcm`,\
+  \ `arquivo_npy`.\n\nComando:\n\n```bash\npython 01_gera_metadados.py\n```\n\n---\n\n#### 1.2 Divisão\
+  \ em Folds Balanceados\n\nO script `01_split_em_folds_balanceados.py` realiza a divisão dos dados em\
+  \ folds balanceados, garantindo que:\n\n* As imagens de um mesmo paciente permaneçam no mesmo fold;\n\
+  * As classes fiquem balanceadas entre os folds.\n\nEntrada:\n\n* Arquivo `01_metadados_imagens.csv`\n\
+  \nSaída:\n\n* Arquivo `01_metadados_folds.csv` com as colunas: `paciente`, `classe`, `arquivo_dcm`,\
+  \ `arquivo_npy`, `fold`.\n\nComando:\n\n```bash\npython 01_split_em_folds_balanceados.py\n```\n\n---\n\
+  \n#### 1.3 Organização dos Arquivos em Pastas\n\nO script `01_organiza_em_pastas.py` organiza os arquivos\
+  \ `.npy` conforme a estrutura dos folds.\n\nEntrada:\n\n* Diretório `dados_convertidos`\n* Arquivo `01_metadados_folds.csv`\n\
+  \nSaída:\n\n* Diretório `Dados_organizados` com a estrutura: `Fold/Paciente/Classe`\n\nComando:\n\n\
+  ```bash\npython 01_organiza_em_pastas.py\n```\n\n---\n\n### 2. Extração de Características Radiômicas\n\
+  \n#### 2.1 Extração de Atributos\n\nO script `02_extracao_caracteristicas.py` realiza a extração de\
+  \ características radiômicas das imagens, utilizando diferentes métodos de geração de máscara:\n\n*\
+  \ Métodos de máscara: `full`, `threshold_50`, `otsu`, `entropia`\n* Famílias de características: `firstorder`,\
+  \ `glcm`, `glrlm`, `glszm`, `ngtdm`, `gldm`\n\nEntrada:\n\n* Diretório `Dados_organizados`\n\nSaída:\n\
+  \n* Arquivo `02_features_folds_mascaras.csv` contendo: características extraídas, `fold`, `paciente`,\
+  \ `classe`, `arquivo`, `metodo_mascara`\n\nComando:\n\n```bash\npython 02_extracao_caracteristicas.py\n\
+  ```\n\n---\n\n### 3. Treinamento e Classificação com KNN\n\nO script `03_knn_classifier_por_mascara.py`\
+  \ aplica o algoritmo KNN para cada método de máscara separadamente.\n\nEntrada:\n\n* Arquivo `02_features_folds_mascaras.csv`\n\
+  \nSaída:\n\n* Diretório `03_resultados_previstos` com os seguintes arquivos:\n\n  * `predicoes_knn_full.csv`\n\
+  \  * `predicoes_knn_otsu.csv`\n  * `predicoes_knn_threshold_50.csv`\n  * `predicoes_knn_entropia.csv`\n\
+  \nComando:\n\n```bash\npython 03_knn_classifier_por_mascara.py\n```\n\n---\n\n### 4. Cálculo das Métricas\
+  \ de Avaliação\n\nO script `04_calculo_metricas.py` calcula as métricas de desempenho para cada método:\n\
+  \n* Sensibilidade\n* Especificidade\n* Precisão\n* F1-Score\n\nEntrada:\n\n* Arquivos do diretório `03_resultados_previstos`\n\
+  \nSaída:\n\n* Resultados exibidos no terminal com métricas por classe, fold e média geral\n* Opcionalmente,\
+  \ salvar em arquivo texto\n\nComando:\n\n```bash\npython 04_calculo_metricas.py\n```\n\nPara salvar\
+  \ a saída em um arquivo:\n\n```bash\npython 04_calculo_metricas.py > resultados_gerais_metricas.txt\n\
+  ```\n\n---\n\n## Execução Completa com Makefile\n\nPara executar todas as etapas automaticamente, utilize\
+  \ o `Makefile` disponível no projeto:\n\n```bash\nmake all\n```\n\n---\n\n## Estrutura Esperada de Diretórios\n\
+  \n```\nlung_blocks/                  # Imagens .dcm originais\ndados_convertidos/            # Imagens\
+  \ convertidas em .npy\nDados_organizados/            # Folds organizados por paciente e classe\n03_resultados_previstos/\
+  \      # Arquivos de predição por método\n```\n\n\n\n\n"

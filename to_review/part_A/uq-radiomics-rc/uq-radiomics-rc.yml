@@ -1,0 +1,58 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: oncoray/UQ_Radiomics_RC
+url: https://github.com/oncoray/UQ_Radiomics_RC
+platform: github
+description: ''
+license: CC-BY-4.0
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-06-15T10:57:05Z'
+image_source: null
+heuristic_total_score: 16
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 2 support term(s).
+readme_excerpt: "# Uncertainty Quantification for Safer Application of Radiomics-Based Prediction Models\
+  \ in Rectal Cancer\n\n## Introduction\n\nThis repository provides a reproducible workflow for the paper\
+  \ **\"Uncertainty Quantification for Safer Application of Radiomics-Based Prediction Models in Rectal\
+  \ Cancer\"**.\n\nIn this study, we explored potential use cases of uncertainty estimation and outlier\
+  \ detection for radiomics-based outcome modelling in radiotherapy. As an example, we used a retrospective\
+  \ dataset of patients with locally advanced rectal cancer who received pretreatment T2-weighted MRI\
+  \ scans. Further details can be found in the manuscript.\n\n## Workflow\n\nEach step of the study is\
+  \ implemented in a separate Jupyter notebook. Intermediate and final results are saved in the corresponding\
+  \ output folders. We provide the generated results, meaning that almost all notebooks should run directly.\
+  \ All settings in the notebooks match the settings used in the manuscript.\n\n- `00_feature_extraction.ipynb`\
+  \  \n  Feature extraction using MIRP with all relevant settings. This notebook can be used to extract\
+  \ the same radiomics features from your own data. You need to specify the location of your data and\
+  \ the path where the resulting CSV file should be saved. For details on how to use MIRP, please visit:\
+  \ <https://oncoray.github.io/mirp/>\n\n- `01_train_model.ipynb`  \n  Training and testing of the logistic\
+  \ regression and random forest models. The files `train.csv` and `val.csv` are used in this notebook.\
+  \ The trained models and corresponding results are saved in the `model` folder.\n\n- `02_outlier_detection.ipynb`\
+  \  \n  Application of outlier detection methods to the pretrained models. Scores and performance values\
+  \ for the sparsification plots are saved in `results_outlier_detection`. ID lists of excluded patients\
+  \ at specific thresholds are saved in `data`.\n\n- `03_bootstrap_training.ipynb`  \n  Repeated retraining\
+  \ of both models using 100 bootstrap resamples. This includes repetition of the feature selection procedure.\
+  \ The input files used here are `train_robust_volume.csv` and `val_robust_volume.csv`. Model performance,\
+  \ patient indices used for training, and predicted probabilities for all patients across all bootstrapped\
+  \ models are saved in `bootstrapping`.\n\n- `04_estimation_uncertainty.ipynb`  \n  Calculation and application\
+  \ of estimation uncertainty measures based on the output of the bootstrap training notebook. Outliers\
+  \ can optionally be removed before evaluation. Scores and performance values for the sparsification\
+  \ plots are saved in `results_estimation_uncertainty`.\n\n## Applicability to New Data\n\nTo apply the\
+  \ workflow to new data, the same naming conventions as in the provided data tables should be used. The\
+  \ data tables should contain the columns `SSID`, `TRG`, and `response`, as well as columns for all radiomics\
+  \ features used in the models.\n\nIt should be sufficient to run `00_feature_extraction.ipynb` and copy\
+  \ all the extracted features into your data table.\n\nThe trained prediction models can be tested by\
+  \ loading the corresponding `*_model.pkl` file and the feature signature saved in `*_results.yaml`.\n\
+  \nSeparate models for outlier detection and estimation uncertainty are not saved. Therefore, these scripts\
+  \ need to be rerun when applying the workflow to new data. The simplest way to test your own data is\
+  \ to replace `val.csv` and `val_robust_volume.csv` with comparable CSV files containing your own data.\n\
+  \n\n## Data Availability\n\nThe original patient imaging data are not included in this repository due\
+  \ to data protection regulations.\n\nFor reproducibility, this repository provides pseudonymized tabular\
+  \ datasets containing the extracted radiomics features and the corresponding outcome parameters used\
+  \ in the analyses. These datasets do not contain imaging data or directly identifying patient information.\n\
+  \n\n## Citation\nIf you use this repository, please cite the following paper: <br>\n```Placeholder```"

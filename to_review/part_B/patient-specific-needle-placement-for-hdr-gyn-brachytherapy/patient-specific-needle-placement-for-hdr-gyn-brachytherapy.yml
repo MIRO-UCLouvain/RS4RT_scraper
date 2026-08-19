@@ -1,0 +1,48 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: hathewaygia/Patient-Specific-Needle-Placement-for-HDR-GYN-Brachytherapy
+url: https://github.com/hathewaygia/Patient-Specific-Needle-Placement-for-HDR-GYN-Brachytherapy
+platform: github
+description: Reinforcement Learning algorithm that predicts needle, tandem, and dwell times for patient
+  specific anatomy in HDR GYN Hybrid Brachytherapy cases using Ir-192. Utilizes RTSTRUCT patient data
+  and CT patient data
+license: null
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-04-29T16:38:36Z'
+image_source: null
+heuristic_total_score: 13
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 4 support term(s).
+readme_excerpt: "# Patient-Specific-Needle-Placement-for-HDR-GYN-Brachytherapy\nReinforcement Learning\
+  \ algorithm that predicts needle, tandem, and dwell times for patient specific anatomy in HDR GYN Hybrid\
+  \ Brachytherapy cases using Ir-192. Utilizes RTSTRUCT patient data and CT patient data\n\nRun files\
+  \ in the following order (descriptions included)\ncache_patient_masks: Build patient caches + manifest\
+  \ file\ncache_anatomical_library: Precompute anatomical libraries (optional but recommended for speed)\n\
+  \ntrain_agent: train/eval with that manifest file\n\nYou do not run these directly:\nstructure_utils.py,\
+  \ multi_patient_env.py, multi_patient_needle_env.py, rtplan_baseline.py.\nThey are called by the scripts\
+  \ above.\n\n\ncache_patient_masks -> (structure_mask, label_mapping, spacing, origin, manifest)\ncache_anatomical_library\
+  \ -> (anatomical_library.npy)\nmulti_patient_needle_env -> builds BrachyRL_TG43 (entire environment)\n\
+  train_agent/PPO -> calls env.reset()/env.step() on BrachyRL_TG43\n\n\n\nSTEPS TO RUN THIS PROJECT FROM\
+  \ SCRATCH:\n\n1. Set up Python env (3.10 works in this repo) and install dependencies\n     run this\
+  \ in python terminal: \"python3.10 -m venv .venv\nsource .venv/bin/activate\npip install -U pip\npip\
+  \ install numpy scipy numba gymnasium stable-baselines3 torch SimpleITK rt-utils pydicom scikit-image\
+  \ pyvista nibabel trimesh matplotlib\"\n\n2. Put patient data in this layout (per patient):\n  data/PtX\
+  \ Fx1/CT_Slices/ (CT DICOMs)\n  data/PtX Fx1/STRUCT/ (RTSTRUCT, and ideally RTPLAN RP*.dcm)\n\n3. Build\
+  \ cached masks + manifest (this is the first real prep step)\n     run this in the python terminal:\
+  \ \"python scripts/cache_patient_masks.py \\\n  --data-root data \\\n  --cache-root data/cache \\\n\
+  \  --manifest-path data/patient_manifest.json\"\n\n4. Precompute anatomical needle libraries (recommended)\n\
+  \     run this in python terminal: \"python scripts/cache_anatomical_library.py \\\n  --manifest data/patient_manifest.json\"\
+  \n\n5. Train the needle agent\n   run this in python terminal: \"python env/train_agent.py \\\n  --patient-manifest\
+  \ data/patient_manifest.json \\\n  --patient-split train \\\n  --eval-patient-split eval \\\n  --run-name\
+  \ my_run\"\n\n6. If you do not want to re-train, but want to evaluate, run this in python terminal:\n\
+  \     python env/train_agent.py \\\n  --patient-manifest data/patient_manifest.json \\\n  --patient-split\
+  \ train \\\n  --eval-patient-split eval \\\n  --run-name my_run \\\n  --export-only \\\n  --model-path\
+  \ runs/my_run/final_model.zip \\\n  --vecnorm-path runs/my_run/vecnormalize.pkl\n\n*** IMPORTANT FAILURE\
+  \ MODES***\nanatomical_lib needs HRCTV and Vagina labels, and training in manifest mode requires a baseline\
+  \ dose (from RTPLAN)\n\n\n\n\n\n\n"

@@ -1,0 +1,69 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: The-Veeraraghavan-Lab/OneShotPACS
+url: https://github.com/The-Veeraraghavan-Lab/OneShotPACS
+platform: github
+description: Code for CT to Cone beam CT registration-segmentation method for thoracic CT/CBCTs
+license: null
+language: Python
+keywords: []
+stars: 2
+updated_at: '2026-07-21T19:08:51Z'
+image_source: https://raw.githubusercontent.com/The-Veeraraghavan-Lab/OneShotPACS/HEAD/imgs/figure.png
+heuristic_total_score: 14
+heuristic_reasons:
+- Matched 2 strong particle-therapy term(s) in metadata/content.
+- Matched 1 particle-therapy term(s).
+- Matched 2 support term(s).
+readme_excerpt: "# One-Shot PACS\n### Patient specific Anatomic Context and Shape prior aware recurrent\
+  \ registration-segmentation of longitudinal thoracic cone beam CTs \n\n<img src=\"imgs/figure.png\"\
+  \ width=\"100%\"/>\n\n---\n\n## \U0001F4CC Overview\nThis repository provides the official implementation\
+  \ of **One-Shot PACS** [[Jiang & Veeraraghavan, *IEEE TMI 2022*](https://arxiv.org/pdf/2201.11000)],\
+  \ a recurrent registration–segmentation framework for longitudinal thoracic CBCTs with patient-specific\
+  \ anatomical context and shape priors.\n\n---\n\n## Prerequisites\n- Linux\n- Python 3.9\n- NVIDIA GPU\
+  \ with CUDA CuDNN (CUDA 11.8 or higher)\n\n---\n\n## \U0001F680 Setup\n\n#### 1. Clone this repository\n\
+  ```bash\ngit clone https://github.com/The-Veeraraghavan-Lab/OneShotPACS.git\ncd OneShotPACS\n```\n\n\
+  #### 2. Create environment and install Pytorch (CUDA 11.8) with dependencies\n- Install pytorch (our\
+  \ GPU is at CUDA 11.8, so we use the following command\n```bash\npip install torch==2.1.0 torchvision==0.16.0\
+  \ torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu118\n```\n- Install the requirements\n\
+  ```bash\npip install -r requirements.txt\n```\n\n#### 3. Download the pretrained weights\n\nDownload\
+  \ the pretrained weights from [MSKCC Box](https://mskcc.box.com/s/2gb0kxb7k6rdsftinodzxd5gahujve55)\
+  \ and and save them to `saved_weights` folder inside `sv_dir`\n\n#### 4. Data organization\n\n- The\
+  \ data should be present in the `dataset` folder, with the json organizing each instance under `validation`\
+  \ key as the following template:\n  - datasets\n    - imagefiles\n      - image1\n        - ct\n   \
+  \       - *_image.nii.gz\n          - *_label.nii.gz\n        - cbct\n          - *_image.nii.gz\n \
+  \         - *_label.nii.gz\n      - image2\n      - image3\n      - ...\n  \nA corresponding **Decathlon-style\
+  \ JSON file** (e.g., `example.json`) should list cases under the `validation` key. The naming convention\
+  \ are as follows:\n- Image volumes should end with **`_image`**  \n- Segmentation labels should end\
+  \ with **`_label`**  \n\nYou can modify these conventions in `register_images.py` and `inference.py`\
+  \ if your dataset uses a different pattern.\n\n## \U0001F916 Usage\n\n#### Step 1: Pre-alignment\nRegister\
+  \ raw CT/CBCT pairs (optional if aligned data is already provided):\n\n```bash\npython register_images.py\
+  \ --path_images dataset/\n```\nThis will save the pre-processed registered data in the same image directory\
+  \ under the `aligned_data` folder. Note, this step has already been executed for the set of reference\
+  \ images given as examples on  this page.\n\n#### Step 2: Inference\nRun registration and segmentation\
+  \ together using:\n\n```bash\n  python inference.py \\\n  --data_dir dataset \\\n  --json_list example.json\
+  \ \\\n  --sv_dir sv_dir \\\n  --val_dir inference_190 \\\n  --reg_model VoxelMorph \\\n  --reg_weights\
+  \ saved_weights/0190_reg.pt \\\n  --seg_model CLSTM \\\n  --seg_weights saved_weights/0190_seg.pt \\\
+  \n  --flownum 8 \\\n  --int_steps 7 \\\n  --int_downsize 2 \\\n  --bidir \\\n  —-a_min -500 —-a_max\
+  \ 500 —-b_min 0.0 —-b_max 1.0 \\\n  —-space_x 1.5 —-space_y 1.5 —-space_z 1.5 \\\n  —-roi_x 256 —-roi_y\
+  \ 256 —-roi_z 64 \\\n  --gpu 0 --batch_size 1 --workers 1\n  ```\n\nGenerally, this means: \n```bash\n\
+  python inference.py \\\n  --data_dir {/path/to/dataset} \\\n  --json_list {your_list.json in the dataset\
+  \ folder} \\\n  --sv_dir {/path/to/save/dir} \\\n  --val_dir {run_name} \\\n  --reg_model VoxelMorph\
+  \ \\\n  --reg_weights {path to your saved weights for registration model} \\\n  --seg_model CLSTM \\\
+  \n  --seg_weights {path to your saved weights for segmentation model} \\\n  --flownum 8 \\\n  --int_steps\
+  \ 7 \\\n  --int_downsize 2 \\\n  --bidir \\ #uncomment if you do not want bidirectional cost\n  —-a_min\
+  \ -500 —-a_max 500 —-b_min 0.0 —-b_max 1.0 \\\n  —-space_x 1.5 —-space_y 1.5 —-space_z 1.5 \\\n  —-roi_x\
+  \ 256 —-roi_y 256 —-roi_z 64 \\\n  --gpu 0 --batch_size 1 --workers 1\n  # optional flags\n  # --no_img_sv\
+  \       # disable saving images\n  # --cudnn-nondet    # allow non-deterministic CuDNN (faster, less\
+  \ reproducible)\n  # --affine          # apply affine rotations\n  # --rotate 10.0     # rotation in\
+  \ degrees if --affine is enabled\n  # --trans 5         # translation in voxels if --affine is enabled\n\
+  ```\nRunning these steps should produce the outputs and a corresponding CSV at `sv_dir/inference_190`,\
+  \ the reference case sample results can be found <a href=\"https://mskcc.box.com/s/nxmkjqkllwjhv7se2flninlotyzrh6yn\"\
+  >here</a> for cross-verification.\n\n## Citation\nIf you use this code for your research, please cite\
+  \ our paper <a href=\"https://arxiv.org/pdf/2201.11000\">One shot PACS</a>:\n\n```\n@article{jiang2022one,\n\
+  \  title={One shot PACS: Patient specific Anatomic Context and Shape prior aware recurrent registration-segmentation\
+  \ of longitudinal thoracic cone beam CTs},\n  author={Jiang, Jue and Veeraraghavan, Harini},\n  journal={IEEE\
+  \ transactions on medical imaging},\n  volume={41},\n  number={8},\n  pages={2021--2032},\n  year={2022},\n\
+  \  publisher={IEEE}\n}\n```\n"

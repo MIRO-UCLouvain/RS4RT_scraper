@@ -1,0 +1,177 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: marina15rodriguez/monte-carlo-proton-transport
+url: https://github.com/marina15rodriguez/monte-carlo-proton-transport
+platform: github
+description: Monte Carlo simulation of proton transport (for proton therapy)
+license: null
+language: Jupyter Notebook
+keywords: []
+stars: 0
+updated_at: '2026-03-29T14:51:52Z'
+image_source: null
+heuristic_total_score: 17
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 6 particle-therapy term(s).
+readme_excerpt: '# Monte Carlo Proton Transport Simulation
+
+
+  A Monte Carlo simulation of proton beam transport and dose deposition in biological tissues, developed
+  as part of the LGBIO2070 course at UCLouvain.
+
+
+  ## Overview
+
+
+  This project implements a full proton therapy Monte Carlo simulation, progressively building from basic
+  physics to a complete model:
+
+
+  1. **CSDA** — Continuous Slowing Down Approximation for energy loss
+
+  2. **Beam sampling** — Gaussian spot size and energy spread
+
+  3. **Energy straggling** — stochastic energy loss fluctuations (Vavilov-Landau)
+
+  4. **Multiple Coulomb Scattering (MCS)** — lateral deflections via the Highland formula (Fippel correction)
+
+  5. **Nuclear interactions** — p-p elastic, p-O elastic, p-O inelastic cross-sections with secondary
+  particle tracking
+
+  6. **Heterogeneous media** — water/bone phantoms with on-the-fly material switching
+
+
+  Results are validated against the MCsquare reference Monte Carlo code.
+
+
+  ## Project Structure
+
+
+  ```
+
+  monte-carlo-proton-transport/
+
+  ├── src/
+
+  │   ├── geometry.py       # Voxel indexing and boundary crossing
+
+  │   ├── physics.py        # CSDA, straggling, MCS, nuclear interactions
+
+  │   ├── simulation.py     # Particle transport engine
+
+  │   ├── visualization.py  # Dose map and depth-dose plots
+
+  │   └── main.py           # Full pipeline entry point
+
+  ├── notebooks/
+
+  │   └── mc_proton_transport.ipynb  # Original lab notebook
+
+  ├── data/                 # Not tracked — see Data section below
+
+  ├── results/              # Generated plots (not tracked)
+
+  ├── requirements.txt
+
+  └── README.md
+
+  ```
+
+
+  ## Data
+
+
+  The data files are not included in this repository (course material, UCLouvain LGBIO2070):
+
+
+  | File | Description |
+
+  |------|-------------|
+
+  | `data/stopping_power_water.txt` | Proton stopping power in water [MeV·cm²/g] vs energy [MeV] |
+
+  | `data/stopping_power_bone.txt`  | Proton stopping power in bone |
+
+  | `data/dose_mcsquare.npy`        | Reference dose from MCsquare (optional, for comparison) |
+
+
+  ## Installation
+
+
+  ```bash
+
+  git clone https://github.com/marina15rodriguez/monte-carlo-proton-transport.git
+
+  cd monte-carlo-proton-transport
+
+  pip install -r requirements.txt
+
+  ```
+
+
+  ## Usage
+
+
+  ```bash
+
+  python src/main.py
+
+  ```
+
+
+  Results (dose slices, Bragg curves, MCsquare comparison) are saved to `results/`.
+
+
+  ## Physics
+
+
+  ### Energy Loss (CSDA)
+
+  ```
+
+  dE = ρ · SP(E) · dx
+
+  ```
+
+  Where `SP(E)` is the mass stopping power interpolated from tabulated data.
+
+
+  ### Energy Straggling
+
+  Gaussian approximation of Vavilov-Landau fluctuations:
+
+  ```
+
+  δE ~ N(0, √Ω²)
+
+  Ω² = 4π·re²·me · (NA/A) · Z · ρ · dx · Te_max / β²
+
+  ```
+
+
+  ### Multiple Coulomb Scattering
+
+  Highland formula with Fippel radiation length correction:
+
+  ```
+
+  θ₀ = (Es / βp) · √(dx / X₀)
+
+  ```
+
+
+  ### Nuclear Interactions
+
+  Macroscopic cross-sections for p-p and p-O elastic/inelastic collisions. Secondary protons are tracked
+  via a particle queue.
+
+
+  ## Authors
+
+
+  Marina Rodríguez — LGBIO2070, UCLouvain
+
+  '

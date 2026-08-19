@@ -1,0 +1,142 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: nazztar/A_Multimodal_Radiomics_Foundation_Model_for_Gastric_Cancer_Staging
+url: https://github.com/nazztar/A_Multimodal_Radiomics_Foundation_Model_for_Gastric_Cancer_Staging
+platform: github
+description: ''
+license: NOASSERTION
+language: Python
+keywords: []
+stars: 0
+updated_at: '2026-07-09T06:22:52Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+- Matched 2 AI/ML term(s) in repository name.
+readme_excerpt: '# A Multimodal Radiomics Foundation Model for Gastric Cancer Staging
+
+
+  This repository contains the CAIS research code for gastric cancer staging from multiphase contrast-enhanced
+  CT and structured clinical variables. The implementation covers cached Merlin-style imaging latents,
+  conditional acquisition-invariance, perigastric ring phenotypes, entropy-gated clinical fusion, conformal
+  prediction sets, abstention, and the reported multi-task staging endpoints: cT, cN, cM, resectability,
+  and neoadjuvant treatment decision.
+
+
+  ## Installation
+
+
+  Python 3.10 is expected.
+
+
+  ```bash
+
+  python -m venv .venv
+
+  . .venv/bin/activate
+
+  pip install -e .
+
+  pip install -r requirements.txt
+
+  ```
+
+
+  Conda users can create the environment from `environment.yml`.
+
+
+  ```bash
+
+  conda env create -f environment.yml
+
+  conda activate cais-gastric
+
+  pip install -e .
+
+  ```
+
+
+  Docker users can build the pinned image.
+
+
+  ```bash
+
+  docker build -t cais-gastric .
+
+  ```
+
+
+  ## Data
+
+
+  Dataset links are listed in `dataset_links.txt`. The private gastric CECT cohort requires institutional
+  governance approval and is represented by manifest schemas in `manifests/`. Auxiliary public abdominal
+  CT resources are used for backbone pretraining, organ-region definition, and robustness analysis only;
+  they do not provide TNM labels.
+
+
+  Expected manifest fields are `patient_id`, `site`, `split`, `arterial`, `portal`, `delayed`, `tumor_mask`,
+  `stomach_mask`, `clinical_json`, `ct`, `cn`, `cm`, `resectable`, and `neoadjuvant`.
+
+
+  ## Training
+
+
+  The main configuration uses the manuscript training profile: batch size 16, 80 epochs, learning rate
+  5e-5, weight decay 1e-4, 1 mm isotropic spacing, HU clipping from -125 to 225, five seeds, and five
+  staging heads.
+
+
+  ```bash
+
+  python -m cais_core.interfaces.train --config settings/main.json
+
+  ```
+
+
+  A small local verification run uses synthetic tensors and does not change reported settings.
+
+
+  ```bash
+
+  python -m cais_core.interfaces.train --config settings/local_check.json
+
+  ```
+
+
+  ## Evaluation
+
+
+  ```bash
+
+  python -m cais_core.interfaces.evaluate --config settings/main.json --predictions outputs/predictions.jsonl
+
+  ```
+
+
+  Primary expected values are cT accuracy 0.871 on the held-out retrospective test set, cN accuracy 0.814,
+  cM AUROC 0.883, resectability AUROC 0.901, and neoadjuvant decision accuracy 0.871. Prospective silent-mode
+  values are cT accuracy 0.866, cN accuracy 0.807, cM AUROC 0.876, and resectability AUROC 0.895.
+
+
+  ## Compute Budget
+
+
+  The manuscript reports 31 GPU-hours for CAIS adapter and head training with cached frozen-backbone latents
+  and inference latency of 1.8 seconds per case on one A100-class GPU. Full preprocessing stores arterial,
+  portal, delayed CT volumes, masks, cached latents, 107 ring features, and clinical records per case.
+
+
+  ## Outputs
+
+
+  Model weights, conformal quantiles, seed state, training metrics, and run manifests are written under
+  `outputs/` by default. Public weight release locations are configured through `settings/release.json`
+  when an approved archive is available.
+
+  '

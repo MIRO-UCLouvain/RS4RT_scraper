@@ -1,0 +1,82 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: nicolecassimiro/FSIRO
+url: https://github.com/nicolecassimiro/FSIRO
+platform: github
+description: A fuzzy fluence-map optimization method for radiotherapy based on the surprise function,
+  with a custom primal-dual interior-point solver. MATLAB.
+license: MIT
+language: MATLAB
+keywords: []
+stars: 0
+updated_at: '2026-07-07T22:48:45Z'
+image_source: null
+heuristic_total_score: 30
+heuristic_reasons:
+- Matched 4 strong particle-therapy term(s) in metadata/content.
+- Matched 2 particle-therapy term(s).
+- Matched 6 support term(s).
+readme_excerpt: "# FSIRO — Fuzzy Surprise Interior-point Radiotherapy Optimization\n\nA fuzzy fluence-map\
+  \ optimization method for external-beam radiotherapy, based on\nthe **surprise function**, and solved\
+  \ by a **custom primal-dual interior-point\nsolver**. FSIRO models each anatomical structure as a fuzzy\
+  \ number and minimizes\nthe total surprise of the delivered dose, comparing **triangular** and\n**trapezoidal**\
+  \ membership functions. MATLAB, no toolboxes required.\n\n> Companion code for the manuscript *\"Fuzzy\
+  \ Radiotherapy Optimization Based on the\n> Surprise Function: A Comparative Study of Triangular and\
+  \ Trapezoidal\n> Memberships\"* (under review).\n\n---\n\n## Method\n\nLet $A$ be the dose-influence\
+  \ matrix and $x \\ge 0$ the beamlet intensities, so\nthe dose is $d = A x$. Each structure is described\
+  \ by a fuzzy number whose\nmembership $\\mu(d) \\in [0,1]$ expresses how acceptable a dose is (1 = ideal).\
+  \ The\n**surprise function** of Neumaier,\n\n$$S(\\mu) = \\left(\\tfrac{1}{\\mu} - 1\\right)^2,$$\n\n\
+  penalizes deviation from the ideal, growing without bound as $\\mu \\to 0$. FSIRO\nsolves\n\n$$\\min_{x}\\\
+  \ \\sum_i S\\!\\big(\\mu_i(A x)\\big)\n\\quad \\text{s.t.}\\quad A x = \\omega,\\ \\ b_1 \\le \\omega\
+  \ \\le b_E,\\ \\ 0 \\le x \\le U,$$\n\nwhere the fuzzy **support** $[b_1, b_E]$ is enforced as a hard\
+  \ constraint\n(so the dose stays within the admissible range) and $\\mu$ is a **triangular**\n(3-point)\
+  \ or **trapezoidal** (4-point) membership.\n\n### What this code contributes\n\n- **A custom primal-dual\
+  \ interior-point solver** for the fuzzy-surprise model\n  (the full KKT system, search directions and\
+  \ step control are implemented here,\n  rather than delegated to an off-the-shelf solver).\n- To obtain\
+  \ robust convergence on this ill-conditioned problem, the solver\n  employs a **Mehrotra predictor-corrector**\
+  \ strategy and solves the Newton step\n  **matrix-free** by preconditioned conjugate gradients (never\
+  \ forming the dense\n  normal matrix).\n- A **$C^1$-smoothed surprise function**: $S$ is regularized\
+  \ below a threshold\n  $\\mu_{\\min}$ by a quadratic extension that matches value and first derivative,\n\
+  \  removing the pole and the kink that otherwise prevent convergence. The\n  ill-conditioning of the\
+  \ raw surprise, and this fix, are discussed in the paper.\n- A **protocol-driven design**: structures\
+  \ are located by name and the fuzzy\n  numbers are built from a small protocol file, so no per-patient\
+  \ index editing\n  is needed. New treatment sites are added by writing a protocol, not by touching\n\
+  \  the solver.\n\nThe method is evaluated against the reference plans of the public\n[**TROTS**](https://sebastiaanbreedveld.nl/trots/)\
+  \ benchmark (head-and-neck and\nliver cases).\n\n---\n\n## Repository structure\n\n```\nFSIRO.m    \
+  \             Main solver (interior-point, both membership shapes)\ndvh_metrics.m           Generic\
+  \ DVH metrics for one structure (D98, V_x, HI, ...)\nrun_all_site.m          Shared batch engine used\
+  \ by the run_all_* wrappers\n\nprotocols/\n  protocol_HN.m         Head-and-Neck protocol (structures,\
+  \ goals, supports, limits)\n  protocol_liver.m      Liver SBRT protocol\n\nevaluation/\n  evaluate_plan_HN.m\
+  \    Clinical (ICRU-83 / QUANTEC) plan evaluation, head-and-neck\n  evaluate_plan_liver.m Clinical (QUANTEC)\
+  \ plan evaluation, liver\n\nexamples/\n  example_HN.m          Minimal usage example\n  run_all_HN.m\
+  \          Batch: all HN patients x both shapes, DVH vs TROTS\n  run_all_liver.m       Batch: all liver\
+  \ patients x both shapes, DVH vs TROTS\n```\n\nThe TROTS patient `.mat` files are **not** redistributed\
+  \ here; download them from\nthe [TROTS website](https://sebastiaanbreedveld.nl/trots/) and place the\n\
+  `Head-and-Neck/` and `Liver/` folders alongside the code.\n\n---\n\n## Requirements\n\nMATLAB (R2018b\
+  \ or newer recommended). No additional toolboxes — the DVH\npercentiles are implemented locally, so\
+  \ the Statistics Toolbox is not required.\n\n---\n\n## Quick start\n\nBecause the code is organized\
+  \ in subfolders, first add them to the path:\n\n```matlab\naddpath(genpath('.'))    % run once from\
+  \ the repository root\n```\n\nThen:\n\n```matlab\n% single plan\nP   = protocol_HN();\nout = FSIRO('Head-and-Neck/Head-and-Neck_01.mat',\
+  \ 'triangular', P, true);\nevaluate_plan_HN(out.dose, out.sizes, out.Dp);\n\n% compare triangular vs\
+  \ trapezoidal\nexample_HN\n\n% liver\nout = FSIRO('Liver/Liver_01.mat', 'triangular', protocol_liver(),\
+  \ true);\nevaluate_plan_liver(out.dose, out.sizes, out.Dp);\n```\n\n`out` contains the beamlet vector\
+  \ `x`, the voxel dose `dose`, per-structure mean\ndoses, iteration count, run time, the stopping certificate\
+  \ `cp`, and the stopping\n`criterion`.\n\n### Batch runs\n\n```matlab\nrun_all_liver('/path/to/data')\
+  \   % ~minutes; validates the pipeline\nrun_all_HN('/path/to/data')      % longer; runs overnight\n\
+  ```\n\nEach writes one `.mat` per plan under `resultados/<site>/planos/` and a tidy\n`<site>_resumo.csv`\
+  \ with one row per (patient, structure, method), where `method`\nis `triangular`, `trapezoidal`, or\
+  \ `TROTS` (reference). Batch runs are\n**resumable**: plans already computed are not re-optimized.\n\
+  \n---\n\n## Adding a treatment site\n\nCopy `protocols/protocol_liver.m`, change the structure name\
+  \ patterns, clinical\ngoals and supports, and pass it to `FSIRO`. The prescription and target reference\n\
+  dose are read automatically from the `.mat` file. Note that each OAR **support**\nmust sit above the\
+  \ achievable per-voxel dose (structures adjacent to the target\nunavoidably receive high dose); clinical\
+  \ dose limits are applied in the DVH\nevaluation, not as fuzzy supports.\n\n---\n\n## How to cite\n\n\
+  If you use FSIRO, please cite the manuscript (currently under review):\n\n> N. C. Cassimiro and A. R.\
+  \ L. Oliveira, *\"Fuzzy Radiotherapy Optimization Based\n> on the Surprise Function: A Comparative Study\
+  \ of Triangular and Trapezoidal\n> Memberships\"*, under review, 2025.\n\nA machine-readable citation\
+  \ is provided in [`CITATION.cff`](CITATION.cff)\n(\"Cite this repository\" on GitHub). This entry will\
+  \ be updated with the full\nreference and DOI upon acceptance.\n\n---\n\n## Authors\n\n- **Nicole C.\
+  \ Cassimiro** — University of Campinas (Unicamp)\n- **Aurelio R. L. Oliveira** — University of Campinas\
+  \ (Unicamp)\n\n## License\n\nReleased under the [MIT License](LICENSE).\n"
