@@ -1,0 +1,65 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: manchester_qbi/manchester_qbi_public/dce_radiomics_repeatability
+url: https://gitlab.com/manchester_qbi/manchester_qbi_public/dce_radiomics_repeatability
+platform: gitlab
+description: Follow on from Damien McHugh's work on repeatability of radiomics features of MRI T1W and
+  T2W anatomical images, a study of features computed from DCE-MRI output maps (eg Ktrans and IAUC_60)
+license: null
+language: null
+keywords: []
+stars: 0
+updated_at: '2023-09-29T09:22:38.295Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# DCE-MRI radiomics repeatability\n\nThis project has been used to develop methodology\
+  \ and generate results and figures for our paper \n*Radiomic features derived from DCE-MRI Ktrans maps\
+  \ offer marginal benefit over analysis with median values* submitted \nto European Radiology, with manuscript\
+  \ number EURA-D-23-00567.\n\nThe repository is organised as follows:\n\n### Code\n\n- `dce_radiomics_interactive_script.py`\
+  \ is the main top level script for generating results and plots for the paper. It is designed to be\
+  \ run in an iPython kernel using the `dce_radiomics` python environment (see below)\n where each cell\
+  \ can be executed sequentially. It performs the following tasks:\n\n    - Compute radiomics features\
+  \ for each tumour in the two study datasets. The two studies are labelled `bevacizumab` and `travastin`\
+  \ throughout, referring to the data cited in references 13 and 14 respectively of the main paper\n\n\
+  \    - Computes summary stats epxorted to CSV spreadsheets\n\n    - Computes each of the statistical\
+  \ metrics described in the methods section of the main paper for the radiomics features\n\n    - Produces\
+  \ plots of the statistical metrics used in the figures of the main paper\n\n    Note the script is set-up\
+  \ to run analysis for `Ktrans` maps, but results can be computed for any of the other tracer-kinetic\
+  \ parameter maps (*ie* `v_e`, `v_p`, `IAUC_60`) simply by changing the `map_names` variable.\n\n- `dce_radiomics.py`,\
+  \ `dce_radiomics_stats.py` and `dce_radiomics_plots.py` contain the python code that actually implements\
+  \ the steps called by `dce_radiomics_interactive_script.py`. These are standard python module files\
+  \ that can be imported into other modules.\n\n- `copy_figs.py` copies the plots and figures created\
+  \ in the main script into the final set of multipart figures used in the main paper\n\n- `recompute_tk_maps.py`\
+  \ provides an interactive script for recomputing maps of `Ktrans`, `v_e`, `v_p`, `tau_a` and `IAUC_60`\
+  \ for each tumour in the two study datasets by fitting the extended-Tofts model to the DCE-MRI time-series\
+  \ data of each patient using the [`Madym` toolkit](https://gitlab.com/manchester_qbi/manchester_qbi_public/madym_cxx).\n\
+  \n- `conda_env.yml` is a YAML file defining the `conda` environment in which the above scripts are run.\
+  \ The environment can be created by calling\n\n> `conda env create -f conda_env.yml`\n\nThis will create\
+  \ an environment `dce_radiomics` which should be activated before running the main script. Alternatively,\
+  \ there is a `requirements.txt` file specifying the python package dependencies if you would like to\
+  \ create your own environment manually (or not in `conda`).\n\n- `Params_normalise_false.yaml` and `Params_normalise_true.yaml`\
+  \ define the configuration used to compute radiomics features using the `pyradiomics` package. `feature_names.txt`\
+  \ provides a complete list of the 105 generated features. For the final work, features were computed\
+  \ using normalise false.\n\n### Data\nThe `data` folder contains:\n\n- Python pickle files `bevacizumab_patients.pkl`\
+  \ and `travastin_patients.pkl` containing summary details for each tumour in the two study datasets.\n\
+  \n- Python pickles files `bevacizumab_normalise_false.pkl` and `travastin_normalise_false.pkl` containing\
+  \ the computed features for each tumour\n\n- Excel spreadsheets `bevacizumab_tumour_counts.xlsx` and\
+  \ `travastin_tumour_counts.xlsx` summarise the number of tumours for each patient at each visit\n\n\
+  - `features_lookup.csv` and `features_lookup.xlsx` provide lookup tables for matching features by class\
+  \ and index to their full feature names\n\n- The `all_tumours` sub-folder contains pyhton pickle files\
+  \ for all the statistical metrics of the radiomics features defined in the main methods section of the\
+  \ paper \n\n### Results\nThe `results` folder contains two sub-folders.\n\n- `tumour_maps` contains\
+  \ plots of `Ktrans` at each visit for every tumour in the two study datasets\n\n- `all_tumours` contains\
+  \ summary plots for each the statistical metrics used as figures in the main paper and supplementary\
+  \ material. There are also additional plots for which there were no room in the submitted material but\
+  \ nevertheless may provide an interested reader further insight into the analysis. In particular:\n\n\
+  \    - `all_tumours\\combined\\boxcox_plots\\Ktrans` contains plots showing the effect of Box-Cox transforms\
+  \ as shown in supplementary Figure S1 for every radiomics feature.\n\n    - `all_tumours/combined/treatment_tumours/visit[3,4]/ktrans/boxcox`\
+  \ contains quadrant plots as shown in supplementary Figure S3 for every feature at treatment timepoints\
+  \ 48hrs and EC1.\n\n\n"

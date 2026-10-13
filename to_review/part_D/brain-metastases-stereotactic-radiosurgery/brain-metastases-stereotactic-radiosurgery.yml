@@ -1,0 +1,58 @@
+review:
+  approved: false
+  reviewer: ''
+  note: ''
+name: branchkey/demo-applications/brain-metastases-stereotactic-radiosurgery
+url: https://gitlab.com/branchkey/demo-applications/brain-metastases-stereotactic-radiosurgery
+platform: gitlab
+description: ''
+license: null
+language: null
+keywords: []
+stars: 0
+updated_at: '2026-08-13T10:11:41.355Z'
+image_source: null
+heuristic_total_score: 10
+heuristic_reasons:
+- Matched 1 strong particle-therapy term(s) in metadata/content.
+- Matched 1 strong particle-therapy term(s) in repository name.
+- Matched 1 support term(s).
+readme_excerpt: "# Brain Metastases Federated Segmentation — BranchKey Example\n\nA runnable companion\
+  \ to the BranchKey documentation example\n**[Brain metastasis segmentation (UCSF-BMSR)](https://app.branchkey.com/docs/examples/brain-mets)**.\n\
+  \nIt walks through building a small **2D U-Net from scratch** in PyTorch and federating it across\n\
+  sites with [BranchKey](https://branchkey.com) — training on the\n[UCSF Brain Metastases Stereotactic\
+  \ Radiosurgery (UCSF-BMSR)](https://imagingdatasets.ucsf.edu/dataset/1)\nMRI dataset, using the T1-weighted\
+  \ post-contrast (`T1post`) sequence.\n\nThe goal is to learn the full federated loop — *extract weights\
+  \ → upload → average → download →\nreload* — on a model you fully control, before moving to heavier\
+  \ frameworks such as nnU-Net.\n\nThe [notebook](./brain_mets_federated.ipynb) runs the whole thing end\
+  \ to end:\n\n1. Load the UCSF-BMSR T1post volumes and slice them into 2D training data.\n2. Build a\
+  \ small 2D U-Net from scratch (with Dice loss) and train it locally.\n3. Federate it with BranchKey\
+  \ — upload weights, receive the average, reload, repeat.\n\n## The dataset is not included\n\nThe UCSF-BMSR\
+  \ data is **not** committed to this repository — it is large and released under its own\nusage terms.\
+  \ Download it yourself from the\n[dataset page](https://imagingdatasets.ucsf.edu/dataset/1) and point\
+  \ the notebook at your local\ncopy. Do not commit the volumes here.\n\nThe expected layout (training\
+  \ split) is:\n\n```\nUCSF_BrainMetastases_v1.3/\n└── UCSF_BrainMetastases_TRAIN/\n    ├── 100101A/\n\
+  \    │   ├── 100101A_T1post.nii.gz    # input  (T1 post-contrast)\n    │   ├── 100101A_seg.nii.gz  \
+  \     # target (metastasis mask)\n    │   └── ...                       # other sequences, unused here\n\
+  \    └── ...\n```\n\n## Setup\n\n```bash\n# 1. Create and activate a virtual environment\npython3 -m\
+  \ venv .venv\nsource .venv/bin/activate\n\n# 2. Install dependencies\npip install -r requirements.txt\n\
+  \n# 3. Tell the notebook where the dataset lives\nexport UCSF_BMSR_DIR=\"/path/to/UCSF_BrainMetastases_v1.3/UCSF_BrainMetastases_TRAIN\"\
+  \n\n# 4. Launch Jupyter\njupyter notebook\n```\n\nOr just use the `Makefile`: **`make run`** creates\
+  \ the venv, installs the dependencies, and\nlaunches Jupyter Lab in one step (`make setup` / `make clean`\
+  \ are also available).\n\n### Troubleshooting the environment\n\n- **`ensurepip is not available` /\
+  \ venv fails to create.** On Debian/Ubuntu the venv module is a\n  separate package. Install the one\
+  \ matching your Python, e.g. `sudo apt install python3-venv`\n  (or `python3.12-venv`). If a broken\
+  \ `.venv/` was left behind, run `make clean` first.\n- **`pip install torch` fails on a very new Python.**\
+  \ PyTorch wheels can lag the latest Python\n  release, so a brand-new interpreter (e.g. 3.14) may have\
+  \ no compatible `torch`. Build the venv\n  with a slightly older interpreter instead:\n  ```bash\n \
+  \ make clean\n  make run PYTHON=python3.12\n  ```\n  The `Makefile` accepts any `PYTHON=` you have installed.\n\
+  \n## BranchKey credentials\n\nTo run the federated part you need a BranchKey **leaf** and its credentials\
+  \ JSON\n(see the [Getting Started guide](https://app.branchkey.com/docs/getting-started)). Keep it out\
+  \ of\nversion control — put it in a `secret/` directory (already gitignored). The `session_token` is\n\
+  shown only once at leaf creation, so save it immediately.\n\n## Repository layout\n\n```\n.\n├── brain_mets_federated.ipynb\
+  \   # the walkthrough notebook (run this)\n├── Makefile                     # `make run` -> venv + deps\
+  \ + Jupyter Lab\n├── requirements.txt\n├── README.md\n├── LICENCE                      # GPL v3\n└──\
+  \ .gitignore                   # excludes the dataset, secrets, venv, outputs\n```\n\n## Licence\n\n\
+  The code in this repository is licensed under the **GNU General Public License v3.0** — see\n[`LICENCE`](./LICENCE).\
+  \ The **UCSF-BMSR dataset is governed by its own separate licence and usage\nterms** (it is not covered\
+  \ by this repository's licence) — see the\n[dataset page](https://imagingdatasets.ucsf.edu/dataset/1).\n"
